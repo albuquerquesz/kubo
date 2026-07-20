@@ -15,6 +15,11 @@ node_modules
 # Testing
 coverage
 
+# Playwright local artifacts (CLI dumps, layout measurements, UI validation shots)
+.playwright-cli/
+docs/.playwright-cli/
+output/playwright/
+
 # Turbo
 .turbo
 
