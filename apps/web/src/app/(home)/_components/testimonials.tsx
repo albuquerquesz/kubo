@@ -50,7 +50,7 @@ function CommunityCard({ entry, index }: { entry: CommunityEntry; index: number 
   const Icon = entry.kind === "video" ? Play : MessageSquareText;
 
   return (
-    <article className="w-[86%] shrink-0 snap-start border border-rule bg-card sm:w-[58%] lg:w-[38%]">
+    <article className="w-[86%] shrink-0 snap-start border border-rule bg-card sm:w-[58%] lg:w-auto lg:min-w-0 lg:flex-1 lg:shrink">
       <div className="flex items-center justify-between border-rule border-b p-5">
         <span className="ui-kicker text-primary">{String(index + 1).padStart(2, "0")}</span>
         <Icon className="size-4 text-muted-foreground" aria-hidden />
@@ -67,7 +67,7 @@ function CommunityCard({ entry, index }: { entry: CommunityEntry; index: number 
           href={entry.href}
           target={isExternal ? "_blank" : undefined}
           rel={isExternal ? "noreferrer" : undefined}
-          className="group mt-10 flex min-h-12 items-center justify-between border-rule border-t pt-4 font-mono text-xs uppercase tracking-[0.1em] text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="group mt-auto flex min-h-12 items-center justify-between pt-10 font-mono text-xs uppercase tracking-[0.1em] text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           {entry.cta}
           <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
