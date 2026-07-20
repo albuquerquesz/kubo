@@ -12,8 +12,8 @@ export default function HeroSection() {
   return (
     <section id="top" className="ui-scroll-target border-rule border-b">
       <div className="grid lg:grid-cols-12">
-        <div className="relative flex min-h-[42rem] flex-col justify-between overflow-hidden border-rule px-5 py-8 sm:px-8 sm:py-10 lg:col-span-8 lg:min-h-[calc(100svh-3.5rem)] lg:border-r lg:px-12 lg:py-14">
-          <div className="relative my-16 max-w-5xl lg:my-20">
+        <div className="relative flex min-h-[42rem] flex-col justify-center overflow-hidden border-rule px-5 py-8 sm:px-8 sm:py-10 lg:col-span-8 lg:min-h-[calc(100svh-3.5rem)] lg:border-r lg:px-12 lg:py-14">
+          <div className="relative max-w-5xl">
             <h1 className="ui-display ui-enter text-[clamp(3.5rem,8vw,8.5rem)] leading-[0.9]">
               One command.
               <br />
@@ -22,29 +22,10 @@ export default function HeroSection() {
               Yours.
             </h1>
           </div>
-
-          <div className="ui-enter relative border-rule border-t pt-7 [animation-delay:160ms]">
-            <div className="flex flex-col gap-px sm:flex-row sm:justify-end">
-              <Link
-                href="/new"
-                className="inline-flex min-h-12 items-center justify-between gap-8 bg-primary px-5 font-semibold text-primary-foreground transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-              >
-                Build in the browser
-                <ArrowUpRight className="size-4" />
-              </Link>
-              <Link
-                href="/docs"
-                className="inline-flex min-h-12 items-center justify-between gap-8 border border-rule px-5 font-semibold transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-              >
-                Read the docs
-                <ArrowDownRight className="size-4" />
-              </Link>
-            </div>
-          </div>
         </div>
 
         <aside className="flex flex-col bg-card lg:col-span-4 lg:self-start">
-          <div className="relative flex flex-col justify-center gap-6 p-5 sm:gap-8 sm:p-8">
+          <div className="relative flex flex-col gap-6 p-5 sm:gap-8 sm:p-8">
             <div
               aria-hidden
               className="absolute top-0 bottom-0 left-10 w-px bg-primary/55 sm:left-14"
@@ -71,6 +52,23 @@ export default function HeroSection() {
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="flex flex-col gap-px border-rule border-t sm:flex-row">
+            <Link
+              href="/new"
+              className="inline-flex min-h-12 flex-1 items-center justify-between gap-4 bg-primary px-5 font-semibold text-primary-foreground transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              Build in the browser
+              <ArrowUpRight className="size-4 shrink-0" />
+            </Link>
+            <Link
+              href="/docs"
+              className="inline-flex min-h-12 flex-1 items-center justify-between gap-4 border-rule px-5 font-semibold transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:border-l"
+            >
+              Read the docs
+              <ArrowDownRight className="size-4 shrink-0" />
+            </Link>
           </div>
         </aside>
       </div>
