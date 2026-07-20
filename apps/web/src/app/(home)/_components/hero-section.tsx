@@ -23,12 +23,8 @@ export default function HeroSection() {
             </h1>
           </div>
 
-          <div className="ui-enter relative grid gap-8 border-rule border-t pt-7 [animation-delay:160ms] md:grid-cols-[1fr_auto] md:items-end">
-            <p className="max-w-xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              Compose a production-ready TypeScript stack, generate it locally, and keep every line
-              of the result. No platform lock-in. No hidden runtime.
-            </p>
-            <div className="flex flex-col gap-px sm:flex-row">
+          <div className="ui-enter relative border-rule border-t pt-7 [animation-delay:160ms]">
+            <div className="flex flex-col gap-px sm:flex-row sm:justify-end">
               <Link
                 href="/new"
                 className="inline-flex min-h-12 items-center justify-between gap-8 bg-primary px-5 font-semibold text-primary-foreground transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
