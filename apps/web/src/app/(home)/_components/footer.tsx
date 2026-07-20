@@ -136,17 +136,14 @@ export default function Footer() {
 
       <div className="grid border-rule border-t sm:grid-cols-2">
         <p className="ui-kicker flex min-h-14 items-center px-5 text-muted-foreground sm:px-8">
-          © {new Date().getFullYear()} Kubo / MIT
-        </p>
-        <p className="ui-kicker flex min-h-14 items-center border-rule border-t px-5 text-muted-foreground sm:justify-end sm:border-t-0 sm:border-l sm:px-8">
-          Source owned / TypeScript end to end
+          © {new Date().getFullYear()} Kubo
         </p>
       </div>
 
       <div className="overflow-hidden border-rule border-t px-5 py-8 sm:px-8">
         <p
           aria-hidden
-          className="ui-display whitespace-nowrap text-[clamp(4rem,12.7vw,12rem)] leading-[0.75] text-foreground"
+          className="ui-display text-center whitespace-nowrap text-[clamp(4rem,12.7vw,12rem)] leading-[0.75] text-foreground"
         >
           KUBO_
         </p>
