@@ -339,6 +339,8 @@
   --ring: #e0b43e;
   /* Structural rails — light gray (matches white/15 on dark canvas) */
   --rule: color-mix(in srgb, white 15%, var(--background));
+  /* Outer page-frame laterals only — stronger presence on tablet/mobile */
+  --rule-frame: color-mix(in srgb, white 28%, var(--background));
   --signal: #c49314;
   --signal-foreground: #080806;
   --page-gutter: clamp(1rem, 4vw, 3rem);
@@ -389,10 +391,22 @@
   }
 }
 
+/* Frame shell: gutters + rails only below lg (1024). Desktop is edge-to-edge up to max. */
 .ui-frame {
-  width: min(calc(100% - (var(--page-gutter) * 2)), 1600px);
+  width: 100%;
+  max-width: 1600px;
   margin-inline: auto;
-  border-inline: 1px solid var(--rule);
+  border-inline-width: 0;
+  border-inline-style: solid;
+  border-inline-color: transparent;
+}
+
+@media (max-width: 1023px) {
+  .ui-frame {
+    width: min(calc(100% - (var(--page-gutter) * 2)), 1600px);
+    max-width: none;
+    border-inline: 1px solid var(--rule-frame);
+  }
 }
 
 .ui-kicker {
