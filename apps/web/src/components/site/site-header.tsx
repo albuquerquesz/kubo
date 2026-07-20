@@ -1,20 +1,12 @@
 "use client";
 
-import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { FaGithub } from "react-icons/fa6";
 
 import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 const primaryLinks = [
@@ -59,7 +51,6 @@ function BrandMark() {
           className="size-10 object-contain sm:size-11"
         />
       </span>
-      <span className="hidden text-sm font-semibold tracking-[-0.035em] sm:inline">Kubo</span>
     </Link>
   );
 }
@@ -71,53 +62,11 @@ function DesktopNavigation() {
         <Link
           key={link.href}
           href={link.href}
-          className="flex min-w-24 items-center justify-center border-rule border-r px-5 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+          className="flex min-w-24 items-center justify-center border-rule border-r px-5 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
         >
           {link.label}
         </Link>
       ))}
-
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <Button
-              variant="ghost"
-              className="h-14 min-w-28 border-rule border-r px-5 font-mono uppercase tracking-[0.08em]"
-            />
-          }
-        >
-          Explore
-          <ChevronDown data-icon="inline-end" />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="start"
-          sideOffset={0}
-          className="w-[min(38rem,calc(100vw-2rem))] p-0"
-        >
-          <div className="grid sm:grid-cols-2">
-            {exploreGroups.map((group) => (
-              <DropdownMenuGroup
-                key={group.label}
-                className="border-rule p-3 not-last:border-b sm:not-last:border-r sm:not-last:border-b-0"
-              >
-                <DropdownMenuLabel className="ui-kicker px-2 text-primary">
-                  {group.label}
-                </DropdownMenuLabel>
-                {group.links.map((link) => (
-                  <DropdownMenuItem
-                    key={link.href}
-                    render={<Link href={link.href} />}
-                    className="min-h-10"
-                  >
-                    {link.label}
-                    <ArrowUpRight className="ml-auto" />
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            ))}
-          </div>
-        </DropdownMenuContent>
-      </DropdownMenu>
     </nav>
   );
 }
