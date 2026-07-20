@@ -39,7 +39,7 @@ function BrandMark() {
   return (
     <Link
       href="/"
-      className="flex h-14 shrink-0 items-center gap-1.5 border-rule border-r px-4 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:gap-2 sm:px-5"
+      className="flex h-14 shrink-0 items-center gap-1.5 border-rule border-r px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:gap-2 sm:px-5"
       aria-label="Kubo home"
     >
       <span aria-hidden className="relative size-10 shrink-0 overflow-hidden sm:size-11">

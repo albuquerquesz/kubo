@@ -67,7 +67,7 @@ export default function FeaturedRail({
       )}
       aria-label="Mission and featured links"
     >
-      <div className="flex min-h-[16rem] flex-[4] flex-col justify-end px-4 py-10 sm:px-5 lg:px-10 lg:py-0 lg:pb-10">
+      <div className="flex min-h-[12rem] flex-[3] flex-col justify-end px-4 py-10 sm:px-5 lg:px-10 lg:py-0 lg:pb-10">
         {/*
           Mistral right-rail sentence strategy: intentional line blocks + lg:text-nowrap
           so breaks are editorial, not viewport-reflow. sr-only holds full sentence.
@@ -84,26 +84,26 @@ export default function FeaturedRail({
         </p>
       </div>
 
-      <div className="flex min-h-[12rem] flex-[1.5] flex-col border-rule border-t px-4 pt-10 pb-6 sm:px-5 lg:px-10 lg:pb-10">
+      <div className="flex min-h-[12rem] flex-[2] flex-col border-t border-rule/40 px-4 pt-10 pb-8 sm:px-5 lg:px-10 lg:pb-12">
         <button
           type="button"
           onClick={scrollToNextSection}
-          className="flex w-fit flex-col gap-2.5 text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="flex w-fit flex-col gap-2 text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           aria-label="Scroll to next section"
         >
           <ArrowDown
             aria-hidden
-            className="size-6 animate-fading-arrow-scroll-1"
+            className="size-4 animate-fading-arrow-scroll-1"
             strokeWidth={1.75}
           />
           <ArrowDown
             aria-hidden
-            className="size-6 animate-fading-arrow-scroll-2"
+            className="size-4 animate-fading-arrow-scroll-2"
             strokeWidth={1.75}
           />
           <ArrowDown
             aria-hidden
-            className="size-6 animate-fading-arrow-scroll-3"
+            className="size-4 animate-fading-arrow-scroll-3"
             strokeWidth={1.75}
           />
         </button>
@@ -113,7 +113,7 @@ export default function FeaturedRail({
 
           <Link
             href={active.href}
-            className="flex w-full items-center gap-4 rounded-[12px] border border-rule p-2 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+            className="flex w-full items-center gap-4 rounded-[12px] border border-rule/40 p-2 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
           >
             <span className="relative size-16 shrink-0 overflow-hidden rounded-md bg-muted">
               <Image

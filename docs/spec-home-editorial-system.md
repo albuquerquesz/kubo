@@ -51,7 +51,7 @@ The product mosaic already provides the right structural starting point. Extend 
 1. **The frame is the interface.** A restrained 1 px rule grid creates hierarchy and alignment. Surfaces touch; gaps are reserved for actual content rhythm, not for card decoration.
 2. **Type establishes the route.** Use one concise, declarative headline per module. Supporting prose is narrow and calm. Monospace labels provide navigation, indexes, and metadata.
 3. **One visual signal at a time.** Gold is reserved for the primary action, a selected state, or a small active marker. It must not fill every module.
-4. **Motion explains state, never structure.** Animate only color, opacity, and a small directional icon offset. Functional destinations must be complete before motion starts and without JavaScript.
+4. **Motion explains state, never structure.** Animate only color, opacity, and a small directional icon offset. Functional destinations must be complete before motion starts and without JavaScript. Authored marketing/page motion uses **GSAP** as the project standard; see [`spec-gsap-motion-system-and-hero-title.md`](./spec-gsap-motion-system-and-hero-title.md).
 5. **A dark interface needs depth without shadows.** Use the existing background, card, secondary, and muted tokens plus fine rules; do not introduce blur-heavy glass, gradients, or elevation stacks.
 
 ## Better T Stack token contract
@@ -94,7 +94,7 @@ Preserve this content order. At mobile widths, it is also the reading and tab or
 
 - Keep the fixed 56 px Better T Stack header. Treat it as a row of outlined cells: mark, section links, GitHub utility, and gold `Build a stack` action.
 - Place the hero under the header in a 12-column grid, with a minimum first-viewport height of `calc(100svh - 3.5rem)` only when content remains above the fold.
-- The lead statement spans 7–8 columns. Use `ui-display`, `clamp(3.5rem, 8vw, 8.5rem)`, `line-height: 0.9–0.96`, tight tracking, and no more than two or three lines.
+- The lead statement spans 7–8 columns. Use `ui-display`, `clamp(3.5rem, 8vw, 8.5rem)`, `line-height: 0.9–0.96`, tight tracking, and no more than two or three lines. For the SEO dual-title pattern (visually hidden `h1` + decorative animated display line) and the GSAP motion standard, see [`spec-gsap-motion-system-and-hero-title.md`](./spec-gsap-motion-system-and-hero-title.md).
 - A 4–5-column companion panel contains an eyebrow/index, a 2–4 line positioning statement, a compact proof item or rotating release note, and the primary action only if it does not duplicate the header action.
 - Place a decorative `SignalField` below or adjacent to the content in an explicitly non-interactive grid region. It must not cover text or links and must be absent from the accessibility tree.
 - Use `border-rule` on the outer edge and internal divisions. Avoid rounded hero containers, drop shadows, gradients, and editorial photography.
