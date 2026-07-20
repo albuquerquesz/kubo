@@ -445,6 +445,33 @@
   }
 }
 
+/* Featured rail scroll cue — staggered cascade (Mistral grammar, Kubo tokens) */
+@keyframes fading-arrow-scroll {
+  0%,
+  40% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+  60%,
+  100% {
+    opacity: 0.2;
+  }
+}
+
+.animate-fading-arrow-scroll-1 {
+  animation: fading-arrow-scroll 2s 0s linear infinite;
+}
+
+.animate-fading-arrow-scroll-2 {
+  animation: fading-arrow-scroll 2s 0.2s linear infinite;
+}
+
+.animate-fading-arrow-scroll-3 {
+  animation: fading-arrow-scroll 2s 0.4s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -457,6 +484,13 @@
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .animate-fading-arrow-scroll-1,
+  .animate-fading-arrow-scroll-2,
+  .animate-fading-arrow-scroll-3 {
+    animation: none !important;
+    opacity: 0.55;
   }
 }
 
