@@ -104,7 +104,7 @@ function MosaicTile({ item }: { item: MosaicItem }) {
   return (
     <Link
       href={item.href}
-      className={`group relative min-h-40 p-5 outline-none ring-1 ring-transparent motion-safe:transition-[background-color,box-shadow] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring hover:ring-1 sm:min-h-48 sm:p-6 lg:min-h-0 lg:p-7 ${toneClassNames[item.tone]} ${item.layoutClassName}`}
+      className={`group relative min-h-40 p-5 outline-none ring-1 ring-transparent transition-[background-color,box-shadow] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring hover:ring-1 sm:min-h-48 sm:p-6 lg:min-h-0 lg:p-7 ${toneClassNames[item.tone]} ${item.layoutClassName}`}
     >
       <span className="flex h-full min-h-0 flex-col justify-between overflow-hidden">
         <span className="flex items-center justify-between gap-4">
@@ -112,7 +112,7 @@ function MosaicTile({ item }: { item: MosaicItem }) {
             {item.index} / {item.eyebrow}
           </span>
           <ArrowUpRight
-            className={`size-4 shrink-0 ${arrowClassName} motion-safe:transition-transform motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1`}
+            className={`size-4 shrink-0 ${arrowClassName} motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1`}
             aria-hidden
           />
         </span>

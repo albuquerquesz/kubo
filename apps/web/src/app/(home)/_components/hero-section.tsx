@@ -1,4 +1,6 @@
 import FeaturedRail, { type FeaturedRailItem } from "./featured-rail";
+import HeroDisplayTitle from "./hero-display-title";
+import SignalField from "./signal-field";
 
 /** Editorial line breaks — Mistral right-rail sentence strategy (one block per line, lg:nowrap). */
 const mission = [
@@ -46,18 +48,25 @@ export default function HeroSection() {
       id="top"
       className="ui-scroll-target flex min-h-[calc(100svh-3.5rem)] w-full flex-col border-rule border-b"
     >
-      {/* Full remaining viewport under fixed header (h-14). Desktop: ~70 / 30. Mobile: stack. */}
+      {/*
+        Desktop: 12-col editorial split (~70 / 30) under fixed header.
+        Mobile reading order: label → headline → mission/proof (rail) → SignalField.
+      */}
       <div className="grid min-h-[calc(100svh-3.5rem)] w-full flex-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,30%)] lg:grid-rows-1">
-        <div className="relative flex min-h-[28rem] w-full flex-col justify-center overflow-hidden px-5 py-8 sm:min-h-[36rem] sm:px-8 sm:py-10 lg:min-h-0 lg:px-12 lg:py-14">
-          <div className="relative max-w-5xl">
-            <h1 className="ui-display ui-enter text-[clamp(3.5rem,8vw,8.5rem)] leading-[0.9]">
-              One command.
-              <br />
-              <span className="text-primary">Every layer.</span>
-              <br />
-              Yours.
-            </h1>
-          </div>
+        <div className="relative flex min-h-[22rem] w-full flex-col justify-center overflow-hidden py-8 sm:min-h-[28rem] sm:py-10 lg:min-h-0 lg:py-14">
+          <HeroDisplayTitle
+            title="One command. Every layer. Yours."
+            className={
+              "text-[clamp(2.75rem,12vw,4.25rem)] leading-[0.96] " +
+              "lg:text-[clamp(3.5rem,8vw,8.5rem)] lg:leading-[0.9]"
+            }
+          >
+            One command.
+            <br />
+            <span className="text-primary">Every layer.</span>
+            <br />
+            Yours.
+          </HeroDisplayTitle>
         </div>
 
         <FeaturedRail
@@ -67,6 +76,8 @@ export default function HeroSection() {
           scrollTargetId="product"
         />
       </div>
+
+      <SignalField />
     </section>
   );
 }

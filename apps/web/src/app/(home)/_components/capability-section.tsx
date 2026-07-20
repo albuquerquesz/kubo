@@ -162,7 +162,7 @@ export default function CapabilitySection() {
 
         <Link
           href="/docs"
-          className="group flex min-h-80 flex-col justify-between bg-card p-6 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:p-8 lg:col-span-4 lg:p-10"
+          className="group flex min-h-80 flex-col justify-between bg-card p-6 transition-colors duration-150 ease-out hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:p-8 lg:col-span-4 lg:p-10"
         >
           <span className="ui-kicker text-primary">Architecture guide</span>
           <span className="text-3xl font-semibold tracking-tight">
@@ -170,7 +170,7 @@ export default function CapabilitySection() {
           </span>
           <span className="flex items-center justify-between border-rule border-t pt-5 font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground">
             Open documentation
-            <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+            <ArrowUpRight className="size-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1" />
           </span>
         </Link>
       </div>

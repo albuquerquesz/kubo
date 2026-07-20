@@ -65,7 +65,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
           className="group mt-auto flex min-h-12 items-center justify-between pt-10 font-mono text-xs uppercase tracking-[0.1em] text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           {entry.cta}
-          <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+          <ArrowUpRight className="size-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1" />
         </Link>
       </div>
     </article>
@@ -171,7 +171,7 @@ export default function Testimonials({
           <div className="flex">
             <button
               type="button"
-              className="grid size-14 place-items-center border-rule border-l text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+              className="grid size-14 place-items-center border-rule border-l text-muted-foreground transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
               aria-label="Previous community stories"
               disabled={!canGoBack}
               onClick={() => moveRail(-1)}
@@ -180,7 +180,7 @@ export default function Testimonials({
             </button>
             <button
               type="button"
-              className="grid size-14 place-items-center border-rule border-l text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+              className="grid size-14 place-items-center border-rule border-l text-muted-foreground transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
               aria-label="Next community stories"
               disabled={!canGoForward}
               onClick={() => moveRail(1)}

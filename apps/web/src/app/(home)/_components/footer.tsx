@@ -61,7 +61,7 @@ export default function Footer() {
             <span className="ui-kicker">Interactive path</span>
             <span className="flex items-end justify-between gap-6 text-3xl font-semibold tracking-tight">
               Build your stack
-              <ArrowUpRight className="size-6 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+              <ArrowUpRight className="size-6 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1" />
             </span>
           </Link>
           <div className="flex min-h-44 flex-col justify-between border-rule border-t bg-card p-6 sm:p-8 lg:p-10">
@@ -120,7 +120,7 @@ export default function Footer() {
                         href={link.href}
                         target={isExternal ? "_blank" : undefined}
                         rel={isExternal ? "noreferrer" : undefined}
-                        className="group flex items-center justify-between gap-4 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                        className="group flex items-center justify-between gap-4 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                       >
                         {link.label}
                         <ArrowUpRight className="size-3.5 opacity-0 transition-opacity group-hover:opacity-100" />

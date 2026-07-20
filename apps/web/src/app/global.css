@@ -335,11 +335,17 @@
   --accent-foreground: #11110d;
   --destructive: #e86f5d;
   --destructive-foreground: #11110d;
-  --border: #3d3824;
   --input: #2a2616;
   --ring: #e0b43e;
-  /* Structural rails — light gray (matches white/15 on dark canvas) */
-  --rule: color-mix(in srgb, white 15%, var(--background));
+  /*
+   * Soft structural rule (application-wide default).
+   * Quiet hairline on the dark canvas — present enough to define bands,
+   * never loud enough to compete with type or gold actions.
+   * See docs/spec-home-editorial-system.md + docs/captures/editorial-soft-rule-border.png
+   */
+  --rule: color-mix(in srgb, white 6%, var(--background));
+  /* Component chrome uses the same soft language as the page grid */
+  --border: var(--rule);
   /* Outer page-frame laterals only — stronger presence on tablet/mobile */
   --rule-frame: color-mix(in srgb, white 28%, var(--background));
   --signal: #c49314;
@@ -356,7 +362,7 @@
   --sidebar-primary-foreground: #11110d;
   --sidebar-accent: #2a2616;
   --sidebar-accent-foreground: #f2ede0;
-  --sidebar-border: #3d3824;
+  --sidebar-border: var(--rule);
   --sidebar-ring: #e0b43e;
   --radius: 0;
   --letter-spacing: -0.01em;
@@ -426,17 +432,10 @@
 }
 
 .ui-rule-grid {
+  /* Use full soft --rule so the pattern stays visible after the 6% token */
   background-image:
-    linear-gradient(
-      to right,
-      color-mix(in srgb, var(--rule) 62%, transparent) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--rule) 62%, transparent) 1px,
-      transparent 1px
-    );
+    linear-gradient(to right, var(--rule) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
   background-size: 3rem 3rem;
 }
 
@@ -488,6 +487,38 @@
   animation: fading-arrow-scroll 2s 0.4s linear infinite;
 }
 
+/* SignalField — original decorative pulse (home editorial system) */
+@keyframes signal-cell-pulse {
+  0%,
+  100% {
+    opacity: 0.22;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes signal-glyph-swap {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  45%,
+  55% {
+    opacity: 0.95;
+  }
+}
+
+.signal-cell-pulse {
+  animation: signal-cell-pulse var(--signal-duration, 3.2s) ease-in-out infinite;
+  animation-delay: var(--signal-delay, 0s);
+}
+
+.signal-glyph-swap {
+  animation: signal-glyph-swap var(--signal-duration, 3.6s) ease-in-out infinite;
+  animation-delay: var(--signal-delay, 0s);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -507,6 +538,19 @@
   .animate-fading-arrow-scroll-3 {
     animation: none !important;
     opacity: 0.55;
+  }
+
+  .signal-cell-pulse,
+  .signal-glyph-swap {
+    animation: none !important;
+  }
+
+  .signal-cell-pulse {
+    opacity: 0.55;
+  }
+
+  .signal-glyph-swap {
+    opacity: 0.7;
   }
 }
 

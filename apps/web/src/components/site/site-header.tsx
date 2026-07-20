@@ -62,7 +62,7 @@ function DesktopNavigation() {
         <Link
           key={link.href}
           href={link.href}
-          className="flex min-w-24 items-center justify-center border-rule border-r px-5 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+          className="flex min-w-24 items-center justify-center border-rule border-r px-5 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
         >
           {link.label}
         </Link>
@@ -200,7 +200,7 @@ function MobileNavigation() {
                     key={`${group.label}-${link.href}`}
                     href={link.href}
                     onClick={closeNavigation}
-                    className="min-h-14 bg-background px-5 py-4 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+                    className="min-h-14 bg-background px-5 py-4 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
                   >
                     {link.label}
                   </Link>
@@ -225,7 +225,7 @@ export function SiteHeader() {
           href={githubUrl}
           target="_blank"
           rel="noreferrer"
-          className="flex h-14 items-center gap-2 border-rule border-l px-4 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+          className="flex h-14 items-center gap-2 border-rule border-l px-4 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
           aria-label="Kubo on GitHub"
         >
           <FaGithub />

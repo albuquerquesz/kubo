@@ -60,7 +60,7 @@ export default function CommandSection() {
                   key={manager}
                   type="button"
                   className={cn(
-                    "ui-kicker min-h-11 min-w-16 border-rule px-3 transition-colors not-last:border-r hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring",
+                    "ui-kicker min-h-11 min-w-16 border-rule px-3 transition-colors duration-150 ease-out not-last:border-r hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring",
                     selectedManager === manager
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground",
@@ -93,7 +93,7 @@ export default function CommandSection() {
               </div>
               <button
                 type="button"
-                className="ui-kicker flex min-h-12 w-full items-center justify-between border-rule border-t px-4 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+                className="ui-kicker flex min-h-12 w-full items-center justify-between border-rule border-t px-4 text-muted-foreground transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
                 onClick={copyCommand}
               >
                 <span aria-live="polite">{copied ? "Command copied" : "Copy command"}</span>
@@ -167,7 +167,7 @@ export default function CommandSection() {
                 <FileCode2 className="size-4" aria-hidden />
                 <span className="flex items-end justify-between gap-4 text-xl font-semibold">
                   Open the visual builder
-                  <ArrowUpRight className="size-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+                  <ArrowUpRight className="size-5 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1" />
                 </span>
               </Link>
             </div>
