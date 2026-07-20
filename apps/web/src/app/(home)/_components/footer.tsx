@@ -74,19 +74,20 @@ export default function Footer() {
         <div className="border-rule p-6 sm:p-8 lg:col-span-3 lg:min-h-[22rem] lg:border-r lg:p-12 lg:py-20">
           <Link
             href="/"
-            className="inline-flex items-end gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+            className="inline-flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
             aria-label="Kubo home"
           >
-            <span aria-hidden className="relative size-16 overflow-hidden">
+            <span aria-hidden className="relative size-14 shrink-0 sm:size-16">
               <Image
                 src="/assets/kubo-mark.png"
                 alt=""
                 width={64}
-                height={64}
-                className="size-16 object-contain"
+                height={57}
+                className="size-full object-contain object-center"
+                priority
               />
             </span>
-            <span className="text-lg font-semibold leading-none">Kubo</span>
+            <span className="text-lg font-semibold leading-none tracking-tight">Kubo</span>
           </Link>
           <p className="mt-8 max-w-xs text-sm leading-relaxed text-muted-foreground">
             A source-first generator for end-to-end TypeScript projects.
