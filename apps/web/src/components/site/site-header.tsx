@@ -35,20 +35,26 @@ const exploreGroups = [
 
 const githubUrl = "https://github.com/AmanVarshney01/create-better-t-stack";
 
+/** Shared fixed-bar height — keep mark, nav, utilities, and layout offset in sync. */
+const headerRowClass = "h-12";
+
 function BrandMark() {
   return (
     <Link
       href="/"
-      className="flex h-14 shrink-0 items-center gap-1.5 border-rule border-r px-2.5 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:gap-2 sm:px-3"
+      className={cn(
+        "flex shrink-0 items-center gap-1.5 border-rule border-r px-2.5 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:gap-2 sm:px-3",
+        headerRowClass,
+      )}
       aria-label="Kubo home"
     >
-      <span aria-hidden className="relative size-12 shrink-0 overflow-hidden sm:size-14">
+      <span aria-hidden className="relative size-9 shrink-0 overflow-hidden sm:size-10">
         <Image
           src="/assets/kubo-mark.png"
           alt=""
-          width={56}
-          height={56}
-          className="size-12 object-contain sm:size-14"
+          width={40}
+          height={40}
+          className="size-9 object-contain sm:size-10"
         />
       </span>
     </Link>
@@ -57,7 +63,10 @@ function BrandMark() {
 
 function DesktopNavigation() {
   return (
-    <nav className="hidden h-14 items-stretch lg:flex" aria-label="Primary navigation">
+    <nav
+      className={cn("hidden items-stretch lg:flex", headerRowClass)}
+      aria-label="Primary navigation"
+    >
       {primaryLinks.map((link) => (
         <Link
           key={link.href}
@@ -130,7 +139,7 @@ function MobileNavigation() {
         ref={triggerRef}
         variant="ghost"
         size="icon-lg"
-        className="h-14 w-14 border-rule border-l lg:hidden"
+        className={cn("w-12 border-rule border-l lg:hidden", headerRowClass)}
         aria-label="Open navigation"
         aria-controls="mobile-navigation"
         aria-expanded={isOpen}
@@ -217,7 +226,7 @@ function MobileNavigation() {
 export function SiteHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-40 bg-background/95 transition-colors duration-150">
-      <div className="ui-frame flex h-14 items-stretch border-b border-rule">
+      <div className={cn("ui-frame flex items-stretch border-b border-rule", headerRowClass)}>
         <BrandMark />
         <DesktopNavigation />
         <div className="min-w-0 flex-1" />
@@ -225,17 +234,21 @@ export function SiteHeader() {
           href={githubUrl}
           target="_blank"
           rel="noreferrer"
-          className="flex h-14 items-center gap-2 border-rule border-l px-4 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+          className={cn(
+            "flex items-center gap-2 border-rule border-l px-3 font-mono text-sm text-muted-foreground uppercase tracking-[0.08em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:px-4",
+            headerRowClass,
+          )}
           aria-label="Kubo on GitHub"
         >
-          <FaGithub />
+          <FaGithub className="size-5" />
           <span className="hidden md:inline">GitHub</span>
         </a>
         <Link
           href="/new"
           className={cn(
             buttonVariants({ size: "lg" }),
-            "hidden h-14 min-w-36 border-0 px-5 sm:inline-flex",
+            "hidden min-w-36 border-0 px-4 text-sm font-semibold sm:inline-flex sm:px-5",
+            headerRowClass,
           )}
         >
           Build a stack

@@ -22,17 +22,18 @@ export default function HeroSection() {
   return (
     <section
       id="top"
-      className="ui-scroll-target flex min-h-[calc(100svh-3.5rem)] w-full flex-col border-rule border-b"
+      className="ui-scroll-target flex min-h-[calc(100svh-3rem)] w-full flex-col border-rule border-b"
       aria-label="Hero"
     >
       {/*
         One parent grid owns both the ~70/30 columns and the 60/40 rows.
         Shared row tracks force the mid-rule (border-t on lower cells) to align.
         DOM order = mobile reading order: title → mission → install (empty L2 hidden <lg).
+        Header offset uses 3rem to match site-header h-12.
       */}
       <div
         className={
-          "grid min-h-[calc(100svh-3.5rem)] w-full flex-1 grid-cols-1 " +
+          "grid min-h-[calc(100svh-3rem)] w-full flex-1 grid-cols-1 " +
           "lg:grid-cols-[minmax(0,1fr)_minmax(0,30%)] " +
           "lg:grid-rows-[minmax(0,3fr)_minmax(0,2fr)]"
         }

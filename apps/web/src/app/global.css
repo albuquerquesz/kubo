@@ -351,6 +351,8 @@
   --signal: #c49314;
   --signal-foreground: #11110d;
   --page-gutter: clamp(1rem, 4vw, 3rem);
+  /* Fixed site header row — keep layout offsets (pt-*, hero 100svh) in sync */
+  --site-header-height: 3rem;
   --chart-1: #d6a72b;
   --chart-2: #b78012;
   --chart-3: #e1c56d;
