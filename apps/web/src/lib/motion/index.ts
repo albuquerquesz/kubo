@@ -12,3 +12,8 @@ export type {
   HeroDisplayIntroOptions,
   HeroDisplayIntroHandle,
 } from "./timelines/hero-display-intro";
+export { playScrollRevealIcons } from "./timelines/scroll-reveal-icons";
+export type {
+  ScrollRevealIconsOptions,
+  ScrollRevealIconsHandle,
+} from "./timelines/scroll-reveal-icons";

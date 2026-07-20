@@ -1,5 +1,10 @@
+"use client";
+
+import { useRef } from "react";
+
 import HeroDisplayTitle from "./hero-display-title";
 import HeroRailLower from "./hero-rail-lower";
+import ScrollRevealIcons from "./scroll-reveal-icons";
 import SignalField from "./signal-field";
 
 /** Editorial line breaks — three lines only (right-rail sentence strategy). */
@@ -17,8 +22,11 @@ const upperBandClass =
   "flex h-full min-h-[10rem] flex-col justify-end px-4 py-10 sm:min-h-[12rem] sm:px-5 lg:min-h-0 lg:px-10 lg:pt-0 lg:pb-10";
 
 export default function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
   return (
     <section
+      ref={sectionRef}
       id="top"
       className="ui-scroll-target flex min-h-[calc(100svh-3rem)] w-full flex-col border-rule border-b"
       aria-label="Hero"
@@ -57,6 +65,7 @@ export default function HeroSection() {
             upperBandClass + " border-rule border-t bg-background lg:border-t-0 lg:border-l"
           }
         >
+          <ScrollRevealIcons triggerRef={sectionRef} />
           <p className="text-2xl leading-[1.3] font-medium text-foreground sm:text-[1.65rem] lg:text-[1.75rem]">
             <span className="sr-only">{mission.join(" ")}</span>
             <span aria-hidden className="flex flex-col items-start">
