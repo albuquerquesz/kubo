@@ -40,13 +40,21 @@ const fallbackEntries: CommunityEntry[] = [
     cta: "Join Discord",
     kind: "note",
   },
+  {
+    eyebrow: "Documentation",
+    title: "Read how the layers fit.",
+    description: "Walk through generators, stack choices, and how each layer wires into the next.",
+    href: "/docs",
+    cta: "Open docs",
+    kind: "project",
+  },
 ];
 
 function CommunityCard({ entry }: { entry: CommunityEntry }) {
   const isExternal = entry.href.startsWith("http");
 
   return (
-    <article className="w-[86%] shrink-0 snap-start border border-rule bg-card sm:w-[58%] lg:w-auto lg:min-w-0 lg:flex-1 lg:shrink">
+    <article className="w-[86%] shrink-0 snap-start bg-card sm:w-[58%] lg:w-auto lg:min-w-0 lg:flex-1 lg:shrink">
       <div className="flex min-h-96 flex-col justify-between p-6 sm:min-h-[28rem] sm:p-8">
         <div>
           <p className="ui-kicker text-muted-foreground">{entry.eyebrow}</p>
@@ -119,9 +127,9 @@ export default function Testimonials({
         </div>
       </div>
 
-      <div className="border-rule border-t">
+      <div className="border-rule border-t p-5 sm:p-8 lg:p-10">
         <div
-          className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto p-5 sm:p-8 lg:p-10"
+          className="no-scrollbar flex snap-x snap-mandatory gap-px overflow-x-auto border border-rule bg-rule"
           tabIndex={0}
           aria-label="Community stories"
         >
