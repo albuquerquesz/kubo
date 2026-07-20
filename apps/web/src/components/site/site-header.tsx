@@ -20,7 +20,6 @@ import { cn } from "@/lib/utils";
 const primaryLinks = [
   { href: "/#product", label: "Product" },
   { href: "/#capabilities", label: "System" },
-  { href: "/#proof", label: "Proof" },
 ] as const;
 
 const exploreGroups = [

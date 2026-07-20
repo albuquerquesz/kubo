@@ -11,7 +11,6 @@ import Footer from "./_components/footer";
 import HeroSection from "./_components/hero-section";
 import ProductMosaicSection from "./_components/product-mosaic-section";
 import SponsorsSection from "./_components/sponsors-section";
-import StatsSection from "./_components/stats-section";
 import Testimonials from "./_components/testimonials";
 
 export default async function HomePage() {
@@ -34,7 +33,6 @@ export default async function HomePage() {
       <CommandSection />
       <ProductMosaicSection />
       <CapabilitySection />
-      <StatsSection />
       <Testimonials tweets={tweets} videos={videos} />
       <Footer />
     </main>
