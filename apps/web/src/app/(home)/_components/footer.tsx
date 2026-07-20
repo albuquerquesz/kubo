@@ -1,4 +1,4 @@
-import { ArrowUpRight, Copy } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -40,15 +40,14 @@ export default function Footer() {
         className="grid border-rule border-b lg:grid-cols-12"
       >
         <div className="ui-rule-grid min-h-[32rem] p-6 sm:p-8 lg:col-span-8 lg:min-h-[40rem] lg:border-r lg:p-12">
-          <div className="flex h-full flex-col justify-between">
-            <p className="ui-kicker text-primary">Ready / Generate locally</p>
+          <div className="flex h-full flex-col justify-end">
             <h2
               id="final-cta-title"
-              className="ui-display max-w-5xl text-[clamp(3.4rem,7.5vw,8rem)] leading-[0.84]"
+              className="ui-display max-w-5xl text-[clamp(3.4rem,7.5vw,8rem)] leading-[0.84] text-foreground"
             >
               Stop assembling.
               <br />
-              <span className="text-primary">Start shipping.</span>
+              <span>Start shipping.</span>
             </h2>
           </div>
         </div>
@@ -56,46 +55,40 @@ export default function Footer() {
         <div className="grid lg:col-span-4">
           <Link
             href="/new"
-            className="group flex min-h-72 flex-col justify-between bg-primary p-6 text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:p-8 lg:min-h-80 lg:p-10"
+            className="group flex min-h-72 flex-col justify-end bg-primary p-6 text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:p-8 lg:min-h-80 lg:p-10"
           >
-            <span className="ui-kicker">Interactive path</span>
             <span className="flex items-end justify-between gap-6 text-3xl font-semibold tracking-tight">
               Build your stack
               <ArrowUpRight className="size-6 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1" />
             </span>
           </Link>
-          <div className="flex min-h-52 flex-col justify-between border-rule border-t bg-card p-6 sm:p-8 lg:min-h-56 lg:p-10">
-            <span className="ui-kicker text-muted-foreground">Terminal path</span>
+          <div className="flex min-h-52 flex-col justify-center border-rule border-t bg-card p-6 sm:p-8 lg:min-h-56 lg:p-10">
             <code className="break-all font-mono text-sm leading-relaxed">
               bun create kubojs@latest
             </code>
-            <span className="ui-kicker flex items-center gap-2 text-primary">
-              <Copy className="size-3.5" aria-hidden />
-              One command
-            </span>
           </div>
         </div>
       </section>
 
       <div className="grid lg:grid-cols-12">
-        <div className="border-rule p-6 sm:p-8 lg:col-span-3 lg:min-h-[16rem] lg:border-r lg:p-12 lg:py-14">
+        <div className="border-rule p-6 sm:p-8 lg:col-span-3 lg:min-h-[22rem] lg:border-r lg:p-12 lg:py-20">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+            className="inline-flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
             aria-label="Kubo home"
           >
-            <span aria-hidden className="relative size-12 overflow-hidden">
+            <span aria-hidden className="relative size-16 overflow-hidden">
               <Image
                 src="/assets/kubo-mark.png"
                 alt=""
-                width={48}
-                height={48}
-                className="size-12 object-contain"
+                width={64}
+                height={64}
+                className="size-16 object-contain"
               />
             </span>
-            <span className="font-semibold">Kubo</span>
+            <span className="text-lg font-semibold leading-none">Kubo</span>
           </Link>
-          <p className="mt-6 max-w-xs text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-8 max-w-xs text-sm leading-relaxed text-muted-foreground">
             A source-first generator for end-to-end TypeScript projects.
           </p>
         </div>
@@ -107,7 +100,7 @@ export default function Footer() {
           {footerGroups.map((group) => (
             <div
               key={group.label}
-              className="border-rule p-6 not-last:border-b sm:p-8 sm:not-last:border-r sm:not-last:border-b-0 lg:p-12 lg:py-14"
+              className="border-rule p-6 not-last:border-b sm:p-8 sm:not-last:border-r sm:not-last:border-b-0 lg:p-12 lg:py-20"
             >
               <p className="ui-kicker text-primary">{group.label}</p>
               <ul className="mt-8 space-y-4">
