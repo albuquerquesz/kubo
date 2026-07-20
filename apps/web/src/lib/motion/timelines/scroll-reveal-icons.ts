@@ -55,24 +55,32 @@ export function playScrollRevealIcons(options: ScrollRevealIconsOptions): Scroll
   }
 
   if (prefersReducedMotion()) {
-    gsap.set(icons, { yPercent: 0 });
+    gsap.set(icons, { yPercent: 0, clearProps: "" });
     return { tween: null, kill };
   }
 
-  gsap.set(icons, { yPercent: 100 });
+  // Force clipped rest immediately (overrides any FOUC / layout pass)
+  gsap.set(icons, { yPercent: 100, force3D: true });
 
-  tween = gsap.to(icons, {
-    yPercent: 0,
-    ease: "none",
-    stagger,
-    force3D: true,
-    scrollTrigger: {
-      trigger,
-      start,
-      end,
-      scrub,
+  tween = gsap.fromTo(
+    icons,
+    { yPercent: 100 },
+    {
+      yPercent: 0,
+      ease: "none",
+      stagger,
+      force3D: true,
+      immediateRender: true,
+      scrollTrigger: {
+        trigger,
+        start,
+        end,
+        scrub,
+        // Pin progress at 0 until start so first paint stays clipped
+        invalidateOnRefresh: true,
+      },
     },
-  });
+  );
 
   return { tween, kill };
 }

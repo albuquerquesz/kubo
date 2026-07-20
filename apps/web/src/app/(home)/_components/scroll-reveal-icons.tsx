@@ -40,14 +40,15 @@ export default function ScrollRevealIcons({
       const iconEls = iconRefs.current.filter((el): el is HTMLSpanElement => el !== null);
       if (iconEls.length === 0) return;
 
-      // Hero-section trigger: scrub while scrolling through the hero so icons
-      // start clipped at page load. Self-trigger (default) uses enter-viewport range.
+      // Hero-section trigger: scrub only after the user starts scrolling so
+      // icons stay clipped at rest (progress 0). Self-trigger uses enter range.
       const usingSectionTrigger = Boolean(triggerRef?.current);
       const handle = playScrollRevealIcons({
         icons: iconEls,
         trigger,
         start: usingSectionTrigger ? "top top" : "top 75%",
-        end: usingSectionTrigger ? "bottom top" : "top 35%",
+        // Finish rise partway through the hero so icons are fully in by mid-scroll
+        end: usingSectionTrigger ? "center top" : "top 35%",
       });
 
       return handle.kill;
@@ -62,11 +63,15 @@ export default function ScrollRevealIcons({
     <div ref={rowRef} className={cn("mb-6 hidden gap-4 lg:flex", className)} aria-hidden>
       {icons.map((Icon, i) => (
         <div key={i} className="flex size-14 overflow-hidden text-primary">
+          {/*
+            CSS rest state keeps icons clipped before GSAP hydrates (no FOUC).
+            motion-reduce shows final state without waiting for JS.
+          */}
           <span
             ref={(el) => {
               iconRefs.current[i] = el;
             }}
-            className="block size-full will-change-transform"
+            className="block size-full translate-y-full will-change-transform motion-reduce:translate-y-0"
           >
             <Icon className="size-full" strokeWidth={1.25} />
           </span>
