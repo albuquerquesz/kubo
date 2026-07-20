@@ -14,16 +14,6 @@ const commands: Record<PackageManager, string> = {
   npm: "npx create-kubots@latest",
 };
 
-const generatedFiles = [
-  { depth: 0, name: "apps/", kind: "dir" },
-  { depth: 1, name: "web/", kind: "dir" },
-  { depth: 1, name: "server/", kind: "dir" },
-  { depth: 0, name: "packages/", kind: "dir" },
-  { depth: 1, name: "db/", kind: "dir" },
-  { depth: 1, name: "auth/", kind: "dir" },
-  { depth: 0, name: "turbo.json", kind: "file" },
-] as const;
-
 export default function CommandSection() {
   const [selectedManager, setSelectedManager] = useState<PackageManager>("bun");
   const [copied, setCopied] = useState(false);
@@ -183,18 +173,6 @@ export default function CommandSection() {
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="border-rule border-t px-5 py-4 sm:px-8">
-        <p className="ui-kicker text-muted-foreground">
-          Output preview /{" "}
-          {generatedFiles.map((file) => (
-            <span key={file.name} className="mr-4 inline-block text-foreground">
-              {file.depth > 0 ? "↳ " : ""}
-              {file.name}
-            </span>
-          ))}
-        </p>
       </div>
     </section>
   );

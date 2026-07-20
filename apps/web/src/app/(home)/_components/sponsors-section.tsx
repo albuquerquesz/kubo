@@ -1,8 +1,3 @@
-import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
-
-import type { SponsorsData } from "@/lib/types";
-
 const ecosystem = [
   "Next.js",
   "React",
@@ -18,9 +13,7 @@ const ecosystem = [
   "Better Auth",
 ] as const;
 
-export default function SponsorsSection({ sponsorsData }: { sponsorsData: SponsorsData }) {
-  const currentSponsors = [...sponsorsData.specialSponsors, ...sponsorsData.sponsors];
-
+export default function SponsorsSection() {
   return (
     <section aria-labelledby="ecosystem-title" className="border-rule border-b">
       <div className="grid lg:grid-cols-12">
@@ -46,29 +39,6 @@ export default function SponsorsSection({ sponsorsData }: { sponsorsData: Sponso
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="grid border-rule border-t md:grid-cols-[1fr_auto]">
-        <div className="flex min-h-16 items-center overflow-x-auto px-5 sm:px-8">
-          <p className="ui-kicker whitespace-nowrap text-muted-foreground">
-            Community-backed /{" "}
-            <span className="text-foreground">
-              {currentSponsors.length > 0
-                ? currentSponsors
-                    .slice(0, 5)
-                    .map((sponsor) => sponsor.name)
-                    .join(" · ")
-                : "Open source, open decisions, open contributions"}
-            </span>
-          </p>
-        </div>
-        <Link
-          href="/sponsors"
-          className="ui-kicker flex min-h-14 items-center justify-between gap-10 border-rule border-t px-5 text-primary transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring md:min-h-16 md:border-t-0 md:border-l"
-        >
-          Meet the sponsors
-          <ArrowUpRight className="size-4" />
-        </Link>
       </div>
     </section>
   );

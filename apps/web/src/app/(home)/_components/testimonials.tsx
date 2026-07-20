@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, ArrowUpRight, MessageSquareText, Play } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -45,17 +45,12 @@ const fallbackEntries: CommunityEntry[] = [
   },
 ];
 
-function CommunityCard({ entry, index }: { entry: CommunityEntry; index: number }) {
+function CommunityCard({ entry }: { entry: CommunityEntry }) {
   const isExternal = entry.href.startsWith("http");
-  const Icon = entry.kind === "video" ? Play : MessageSquareText;
 
   return (
     <article className="w-[86%] shrink-0 snap-start border border-rule bg-card sm:w-[58%] lg:w-auto lg:min-w-0 lg:flex-1 lg:shrink">
-      <div className="flex items-center justify-between border-rule border-b p-5">
-        <span className="ui-kicker text-primary">{String(index + 1).padStart(2, "0")}</span>
-        <Icon className="size-4 text-muted-foreground" aria-hidden />
-      </div>
-      <div className="flex min-h-80 flex-col justify-between p-6 sm:p-8">
+      <div className="flex min-h-96 flex-col justify-between p-6 sm:min-h-[28rem] sm:p-8">
         <div>
           <p className="ui-kicker text-muted-foreground">{entry.eyebrow}</p>
           <h3 className="mt-8 max-w-md text-3xl font-semibold leading-tight tracking-tight">
@@ -165,7 +160,7 @@ export default function Testimonials({
           aria-label="Community stories"
         >
           {entries.map((entry, index) => (
-            <CommunityCard key={`${entry.href}-${index}`} entry={entry} index={index} />
+            <CommunityCard key={`${entry.href}-${index}`} entry={entry} />
           ))}
         </div>
 
