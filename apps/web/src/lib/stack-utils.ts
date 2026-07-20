@@ -141,9 +141,9 @@ export function getDesktopBuildNote(stack: Pick<StackState, "addons" | "backend"
 
 export function generateStackCommand(stack: StackState) {
   const packageManagerCommands = {
-    npm: "npx create-better-t-stack@latest",
-    pnpm: "pnpm create better-t-stack@latest",
-    default: "bun create better-t-stack@latest",
+    npm: "npx create-kubots@latest",
+    pnpm: "pnpm create kubots@latest",
+    default: "bun create kubots@latest",
   };
 
   const base =

@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils";
 type PackageManager = "bun" | "pnpm" | "npm";
 
 const commands: Record<PackageManager, string> = {
-  bun: "bun create better-t-stack@latest",
-  pnpm: "pnpm create better-t-stack@latest",
-  npm: "npx create-better-t-stack@latest",
+  bun: "bun create kubots@latest",
+  pnpm: "pnpm create kubots@latest",
+  npm: "npx create-kubots@latest",
 };
 
 const generatedFiles = [

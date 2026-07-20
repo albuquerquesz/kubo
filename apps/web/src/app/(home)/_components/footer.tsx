@@ -67,7 +67,7 @@ export default function Footer() {
           <div className="flex min-h-44 flex-col justify-between border-rule border-t bg-card p-6 sm:p-8 lg:p-10">
             <span className="ui-kicker text-muted-foreground">Terminal path</span>
             <code className="break-all font-mono text-sm leading-relaxed">
-              bun create better-t-stack@latest
+              bun create kubots@latest
             </code>
             <span className="ui-kicker flex items-center gap-2 text-primary">
               <Copy className="size-3.5" aria-hidden />
