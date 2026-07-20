@@ -1,0 +1,24 @@
+{
+  "source": "Playwright Chromium probe of https://mistral.ai/",
+  "date": "2026-07-20",
+  "viewport": { "width": 1440, "height": 900 },
+  "logNote": "Canonical extract from implementer/mistral-motion-probe.log ICON_SCROLL_MAP",
+  "familyB_sectionScale": [
+    { "scrollY": 0, "scale": 0.4664 },
+    { "scrollY": 150, "scale": 0.6294 },
+    { "scrollY": 300, "scale": 0.7628 },
+    { "scrollY": 450, "scale": 0.8666 },
+    { "scrollY": 600, "scale": 0.9407 },
+    { "scrollY": 800, "scale": 0.9934 },
+    { "scrollY": 1000, "scale": 1.0 }
+  ],
+  "familyC_iconYPercent": [
+    { "scrollY": 0, "icons": [100, 100, 100] },
+    { "scrollY": 150, "icons": [100, 100, 100] },
+    { "scrollY": 300, "icons": [54.9058, 72.2267, 93.6668] },
+    { "scrollY": 450, "icons": [21.7439, 30.1907, 41.0797] },
+    { "scrollY": 600, "icons": [9.2354, 13.6023, 19.4839] },
+    { "scrollY": 800, "icons": [2.7393, 4.4655, 6.9693] },
+    { "scrollY": 1000, "icons": [0.5559, 1.0762, 1.9288] }
+  ]
+}

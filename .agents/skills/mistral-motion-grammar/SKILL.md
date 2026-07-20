@@ -77,7 +77,7 @@ Keep Archivo `.ui-display` and product clamps — **do not** use ALTMistral or h
 | scrollY | section scale (approx) | notes                                                        |
 | ------- | ---------------------- | ------------------------------------------------------------ |
 | 0       | **0.4664**             | `scale(0.4664)`                                              |
-| 150     | **0.629**              | + translate                                                  |
+| 150     | **0.6294**             | + translate                                                  |
 | 300–800 | rising toward 1        | translateX positive, translateY negative                     |
 | ≥900    | **1.0**                | then pure translate (e.g. `translate(258px, -63%)` at y=900) |
 
@@ -118,15 +118,23 @@ Placement: **above** mission sentences inside `.js-right-top-content`. Desktop o
 | Count          | **3** icons on reference                                                                     |
 | Reduced motion | `yPercent: 0` immediately; no scrub                                                          |
 
-### Probe samples (icon Y%)
+### Probe samples (icon Y% + section scale)
 
-| scrollY                               | icon0      | icon1  | icon2  | section scale     |
-| ------------------------------------- | ---------- | ------ | ------ | ----------------- |
-| 0–150                                 | 100%       | 100%   | 100%   | 0.47–0.63         |
-| 900                                   | ~83%\*     | ~76%\* | ~67%\* | 1.0 (+ translate) |
-| (earlier full rise windows ~300–1200) | decreasing | lag    | lag    | rising            |
+Canonical rows from Playwright probe log (1440×900, 2026-07-20). Icon order: bag → robot → earth. Y% from inline `transform: translate(…, N%)` / `translate3d`.
 
-\*At scrollY=900 icons may still be mid-rise depending on pin length; full **0%** is later in the sticky range. Implement with element-relative `ScrollTrigger` (`start`/`end` on host), not hard-coded px from this table.
+| scrollY | icon0 Y%  | icon1 Y%  | icon2 Y%  | section scale |
+| ------- | --------- | --------- | --------- | ------------- |
+| 0       | 100       | 100       | 100       | **0.4664**    |
+| 150     | 100       | 100       | 100       | **0.6294**    |
+| 300     | **54.91** | **72.23** | **93.67** | **0.7628**    |
+| 450     | **21.74** | **30.19** | **41.08** | **0.8666**    |
+| 600     | **9.24**  | **13.60** | **19.48** | **0.9407**    |
+| 800     | **2.74**  | **4.47**  | **6.97**  | **0.9934**    |
+| 1000    | **0.56**  | **1.08**  | **1.93**  | **1.0**       |
+| 1200    | ~0.07     | ~0.19     | ~0.43     | 1.0           |
+| 2000    | 0         | 0         | ~0        | 1.0           |
+
+Icons stay fully clipped through scrollY≈150, then rise **300–800** (near fully visible by 800; residual &lt;2% by 1000). Section scale reaches **1.0** around **1000**. Fixture: `apps/web/test/fixtures/mistral-motion-probe-sample.json`. Use element-relative `ScrollTrigger` for implementation — do not invent mid-rise values that contradict this table.
 
 **Assets:** original Kubo/Lucide only — never hotlink Mistral CMS files.
 
