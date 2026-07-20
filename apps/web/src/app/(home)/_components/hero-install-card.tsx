@@ -84,7 +84,7 @@ export default function HeroInstallCard({
               return (
                 <SelectItem key={manager} value={manager}>
                   <Icon className="size-4 shrink-0" aria-hidden />
-                  <span className="font-mono uppercase tracking-[0.06em]">{manager}</span>
+                  <span className="font-mono tracking-[0.06em]">{manager}</span>
                 </SelectItem>
               );
             })}
@@ -92,7 +92,7 @@ export default function HeroInstallCard({
         </Select>
       </div>
 
-      {/* Script shell — command + copy only */}
+      {/* Script shell — transparent border; gold only on copy control */}
       {/*
         Explicit px radius: dark shell sets --radius: 0, so rounded-xl ≈ 4px (reads square).
       */}
@@ -104,20 +104,17 @@ export default function HeroInstallCard({
         <button
           type="button"
           onClick={copyCommand}
-          className="flex h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-[8px] border border-rule bg-background px-0 text-muted-foreground transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:px-3"
+          className="flex h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-[8px] border border-primary bg-primary px-0 text-primary-foreground transition-colors duration-150 ease-out hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:px-3"
           aria-label={copied ? "Command copied" : "Copy command"}
         >
           <span className="sr-only" aria-live="polite">
             {copied ? "Command copied" : "Copy command"}
           </span>
-          <span
-            className="hidden font-mono text-xs uppercase tracking-[0.08em] sm:inline"
-            aria-hidden
-          >
+          <span className="hidden font-mono text-xs tracking-[0.02em] sm:inline" aria-hidden>
             {copied ? "Copied" : "Copy"}
           </span>
           {copied ? (
-            <Check className="size-4 text-primary" aria-hidden />
+            <Check className="size-4" aria-hidden />
           ) : (
             <Copy className="size-4" aria-hidden />
           )}
