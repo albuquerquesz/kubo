@@ -47,7 +47,11 @@ spacing:
   control-sm: "8px"
   control-md: "12px"
   cell: "20px"
-  page-gutter: "clamp(1rem, 3vw, 2.5rem)"
+  frame-max: "1728px"
+  frame-gutter-min: "16px"
+  frame-inline-pad: "clamp(1rem, 2.5vw, 2.5rem)"
+  frame-rail: "1px solid var(--rule)"
+  page-gutter: "deprecated — use frame-max + optional frame-gutter-min; see docs/spec-page-frame-and-aligned-rails.md"
   section: "clamp(3.5rem, 8vw, 8rem)"
 components:
   button-primary:

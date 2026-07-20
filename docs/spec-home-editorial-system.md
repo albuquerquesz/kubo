@@ -42,6 +42,7 @@ Use the current home structure and tokens as the foundation:
 - Fixed header and responsive navigation: `apps/web/src/components/site/site-header.tsx`.
 - Home primitives: `.ui-frame`, `.ui-rule-grid`, `.ui-kicker`, `.ui-display`, and `.ui-scroll-target` in `apps/web/src/app/global.css`.
 - Current modules: hero, sponsors, command, product mosaic, capabilities, stats, testimonials, and footer.
+- **Page frame + continuous rails:** see [`spec-page-frame-and-aligned-rails.md`](./spec-page-frame-and-aligned-rails.md) (Playwright-measured Mistral gutters + Efferd aligned borders). Implement that spec before further density work on the shell.
 
 The product mosaic already provides the right structural starting point. Extend the language across the page; do not replace its navigable, full-surface link behavior with decorative cards.
 
