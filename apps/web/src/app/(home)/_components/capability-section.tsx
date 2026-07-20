@@ -1,4 +1,4 @@
-import { ArrowUpRight, Box, Braces, GitCompare, LockKeyhole, ServerCog } from "lucide-react";
+import { ArrowUpRight, GitCompare } from "lucide-react";
 import Link from "next/link";
 
 const phases = [
@@ -21,24 +21,6 @@ const phases = [
   },
 ] as const;
 
-const ownershipPoints = [
-  {
-    icon: Braces,
-    label: "Type contracts",
-    value: "Across client, API, and data",
-  },
-  {
-    icon: LockKeyhole,
-    label: "Credentials",
-    value: "Declared as local environment",
-  },
-  {
-    icon: ServerCog,
-    label: "Runtime",
-    value: "Selected by the project",
-  },
-] as const;
-
 export default function CapabilitySection() {
   return (
     <section id="capabilities" className="ui-scroll-target border-rule border-b">
@@ -55,67 +37,6 @@ export default function CapabilitySection() {
             <br />
             <span>Boring to own.</span>
           </h2>
-        </div>
-      </div>
-
-      <div className="grid border-rule border-t lg:grid-cols-12">
-        <div className="border-rule bg-primary text-primary-foreground lg:col-span-7 lg:border-r">
-          <div className="flex items-center justify-between border-primary-foreground/30 border-b p-5 sm:p-6">
-            <p className="ui-kicker">Type ownership map</p>
-            <Box className="size-4" aria-hidden />
-          </div>
-
-          <div className="grid min-h-[34rem] content-center gap-5 p-5 sm:p-8 lg:p-12">
-            <div className="grid grid-cols-[1fr_auto_1fr] items-center">
-              <div className="border border-primary-foreground/40 bg-background p-5 text-foreground">
-                <span className="ui-kicker text-muted-foreground">Input</span>
-                <strong className="mt-3 block text-2xl">Stack config</strong>
-              </div>
-              <div className="h-px w-10 bg-primary-foreground sm:w-20" aria-hidden />
-              <div className="border border-primary-foreground/40 bg-accent p-5 text-primary-foreground">
-                <span className="ui-kicker text-primary-foreground/65">Processor</span>
-                <strong className="mt-3 block text-2xl">Templates</strong>
-              </div>
-            </div>
-
-            <div className="mx-auto h-16 w-px bg-primary-foreground" aria-hidden />
-
-            <div className="border border-primary-foreground/40 bg-background p-6 text-foreground">
-              <div className="flex items-center justify-between gap-4">
-                <span className="ui-kicker text-muted-foreground">Output</span>
-                <span className="ui-kicker text-primary">No runtime attached</span>
-              </div>
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                {["apps/web", "apps/server", "packages/db"].map((path) => (
-                  <code key={path} className="border border-foreground/20 p-3 font-mono text-xs">
-                    {path}
-                  </code>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid lg:col-span-5">
-          <div className="border-rule border-b p-6 sm:p-8">
-            <p className="ui-kicker text-muted-foreground">Ownership contract</p>
-            <h3 className="mt-5 text-3xl font-semibold tracking-tight">
-              Your repository is the product.
-            </h3>
-          </div>
-
-          {ownershipPoints.map(({ icon: Icon, label, value }) => (
-            <div
-              key={label}
-              className="grid grid-cols-[3rem_1fr] items-start border-rule border-b p-6 last:border-b-0 sm:p-8"
-            >
-              <Icon className="mt-1 size-4 text-primary" aria-hidden />
-              <div>
-                <p className="ui-kicker text-muted-foreground">{label}</p>
-                <p className="mt-2 text-lg font-semibold">{value}</p>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
 
@@ -168,7 +89,7 @@ export default function CapabilitySection() {
           <span className="text-3xl font-semibold tracking-tight">
             See how every generated layer connects.
           </span>
-          <span className="flex items-center justify-between border-rule border-t pt-5 font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground">
+          <span className="flex items-center justify-between pt-5 font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground">
             Open documentation
             <ArrowUpRight className="size-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1" />
           </span>
