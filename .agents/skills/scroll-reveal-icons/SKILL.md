@@ -40,25 +40,26 @@ Placement on Mistral: **above** mission sentence lines in the right sticky hero 
 
 ### Observed motion
 
-| Property          | Start (scrub)                                           | End (scrub)                              |
-| ----------------- | ------------------------------------------------------- | ---------------------------------------- |
-| Icon `translateY` | `100%` (below mask)                                     | `0%` (fully in view)                     |
-| Wrapper           | `overflow-hidden` + fixed square (56px)                 | unchanged                                |
-| Engine            | GSAP updates inline `transform` / `translate3d`         |                                          |
-| Stagger           | First icon leads; later icons lag on same scrub range   |                                          |
-| Parent (optional) | Section scale ~0.47→1 + translate over tall sticky hero | **Not required** to ship the icon effect |
+| Property          | Start (scrub)                                              | End (scrub)                           |
+| ----------------- | ---------------------------------------------------------- | ------------------------------------- |
+| Icon `translateY` | `100%` (below mask)                                        | `0%` (fully in view)                  |
+| Wrapper           | `overflow-hidden` + fixed square (56px)                    | unchanged                             |
+| Engine            | GSAP updates inline `transform` / `translate3d`            |                                       |
+| Stagger           | First icon leads; later icons lag on same scrub range      |                                       |
+| Parent (host)     | Family B host: **scale ~0.47→1 + translate** on sticky pin | Icons sit **inside** that scaled host |
 
-Sample scrub progression at 1440×900 (approx.):
+Sample scrub progression at 1440×900 (live revalidation 2026-07-20 — **shape**, not hard pixels):
 
-| scrollY | bag Y% | robot Y% | earth Y% |
-| ------- | ------ | -------- | -------- |
-| 0–200   | 100    | 100      | 100      |
-| 400     | ~40    | ~54      | ~71      |
-| 600     | ~13    | ~19      | ~27      |
-| 900     | ~1     | ~2       | ~4       |
-| 1200+   | 0      | 0        | 0        |
+| scrollY | bag Y%  | robot Y% | earth Y% | notes               |
+| ------- | ------- | -------- | -------- | ------------------- |
+| 0–200   | 100     | 100      | 100      | fully clipped       |
+| ~225    | &lt;100 | 100      | 100      | first leaves rest   |
+| 300     | ~36     | ~49      | ~65      | mid-rise + stagger  |
+| 450     | ~5      | ~8       | ~12      | near in             |
+| 600     | ~0.2    | ~0.4     | ~0.8     | residual            |
+| ≥800    | 0       | 0        | 0        | done before scale=1 |
 
-Use these as **shape**, not hard-coded scroll pixels — bind to element-relative `ScrollTrigger` start/end.
+Host scale still rises after icons settle (scale locks ~875–900). Prefer pin-relative `ScrollTrigger` so icons finish **before** Family B scale locks. Full grammar (scale+translate host): `.agents/skills/mistral-motion-grammar/SKILL.md`.
 
 ## Implementation recipe (Kubo)
 
