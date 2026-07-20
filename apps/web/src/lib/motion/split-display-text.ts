@@ -85,7 +85,7 @@ export function splitDisplayText(
       return;
     }
 
-    // Preserve class on emphasis wrappers so "Every layer." keeps text-primary after split
+    // Preserve class on emphasis wrappers (e.g. optional span utilities) after split
     const className = el.className || parentClassName;
     for (const child of Array.from(el.childNodes)) {
       walk(child, className);
@@ -130,7 +130,7 @@ export function splitDisplayText(
         wordEl.className = [wordClass, wordExtraClass].filter(Boolean).join(" ");
         wordEl.style.display = "inline-block";
         if (seg.parentClassName) {
-          // Apply emphasis classes (e.g. text-primary) on the word level
+          // Apply emphasis classes from original wrappers on the word level
           wordEl.className = `${wordEl.className} ${seg.parentClassName}`.trim();
         }
 

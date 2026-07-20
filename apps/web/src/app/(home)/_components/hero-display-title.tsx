@@ -60,7 +60,11 @@ export default function HeroDisplayTitle({
   return (
     <div ref={rootRef} className="relative max-w-5xl">
       <h1 className="sr-only">{title}</h1>
-      <p ref={titleRef} className={cn("ui-display js-hero-title", className)} aria-hidden="true">
+      <p
+        ref={titleRef}
+        className={cn("ui-display js-hero-title text-foreground", className)}
+        aria-hidden="true"
+      >
         {children}
       </p>
     </div>

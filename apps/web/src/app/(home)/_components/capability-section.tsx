@@ -50,10 +50,10 @@ export default function CapabilitySection() {
           </p>
         </div>
         <div className="p-5 sm:p-8 lg:col-span-8 lg:p-10">
-          <h2 className="ui-display max-w-5xl text-[clamp(2.7rem,5.5vw,5.8rem)] leading-[0.92]">
+          <h2 className="ui-display max-w-5xl text-[clamp(2.7rem,5.5vw,5.8rem)] leading-[0.92] text-foreground">
             Fast to start.
             <br />
-            <span className="text-primary">Boring to own.</span>
+            <span>Boring to own.</span>
           </h2>
         </div>
       </div>
@@ -146,10 +146,10 @@ export default function CapabilitySection() {
             <span className="ui-kicker text-muted-foreground">Deployment posture</span>
             <GitCompare className="size-4 text-primary" aria-hidden />
           </div>
-          <p className="ui-display max-w-3xl text-[clamp(2.5rem,5vw,5rem)] leading-[0.9]">
+          <p className="ui-display max-w-3xl text-[clamp(2.5rem,5vw,5rem)] leading-[0.9] text-foreground">
             Take the code
             <br />
-            <span className="text-primary">anywhere.</span>
+            <span>anywhere.</span>
           </p>
           <div className="flex flex-wrap gap-2">
             {["Local first", "CI ready", "Host agnostic"].map((item) => (

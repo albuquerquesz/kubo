@@ -49,13 +49,14 @@ export default function HeroSection() {
           <HeroDisplayTitle
             title="One command. Every layer."
             className={
-              "text-[clamp(2rem,8vw,2.75rem)] leading-[1.02] " +
-              "lg:text-[clamp(2.5rem,4.5vw,4.5rem)] lg:leading-[0.95]"
+              "text-foreground text-[clamp(2rem,8vw,2.75rem)] leading-[1.02] " +
+              "lg:text-[clamp(2.5rem,4.5vw,4.5rem)] lg:leading-[0.95] " +
+              "[&_*]:text-foreground"
             }
           >
             One command.
             <br />
-            <span className="text-primary">Every layer.</span>
+            Every layer.
           </HeroDisplayTitle>
         </div>
 
