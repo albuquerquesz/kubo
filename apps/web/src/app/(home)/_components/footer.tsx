@@ -81,16 +81,16 @@ export default function Footer() {
         <div className="border-rule p-6 sm:p-8 lg:col-span-3 lg:border-r lg:p-10">
           <Link
             href="/"
-            className="inline-flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+            className="inline-flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
             aria-label="Kubo home"
           >
-            <span aria-hidden className="relative size-10 overflow-hidden">
+            <span aria-hidden className="relative size-12 overflow-hidden">
               <Image
                 src="/assets/kubo-mark.png"
                 alt=""
-                width={40}
-                height={40}
-                className="size-10 object-contain"
+                width={48}
+                height={48}
+                className="size-12 object-contain"
               />
             </span>
             <span className="font-semibold">Kubo</span>
