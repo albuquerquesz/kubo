@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback } from "react";
@@ -16,7 +16,11 @@ export type FeaturedRailItem = {
 };
 
 export type FeaturedRailProps = {
-  mission: string;
+  /**
+   * Mission copy as intentional line breaks (Mistral right-rail grammar).
+   * Prefer a string array; a single string is split on newlines.
+   */
+  mission: string | readonly string[];
   kicker?: string;
   items: readonly FeaturedRailItem[];
   /** Target for the optional scroll cue (e.g. `#product`). */
@@ -26,7 +30,7 @@ export type FeaturedRailProps = {
 
 /**
  * Right-rail grammar from the Mistral featured column:
- * mission (bottom-biased) → triple chevron pulse → kicker + horizontal card.
+ * mission (bottom-biased) → triple arrow pulse → kicker + horizontal card.
  */
 export default function FeaturedRail({
   mission,
@@ -36,6 +40,14 @@ export default function FeaturedRail({
   className,
 }: FeaturedRailProps) {
   const active = items[0];
+
+  const missionLines =
+    typeof mission === "string"
+      ? mission
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean)
+      : mission;
 
   const scrollToNextSection = useCallback(() => {
     const target = document.getElementById(scrollTargetId);
@@ -50,37 +62,48 @@ export default function FeaturedRail({
   return (
     <aside
       className={cn(
-        "flex flex-col border-rule border-t bg-background lg:min-h-[calc(100svh-3.5rem)] lg:border-t-0 lg:border-l",
+        "flex h-full min-h-[28rem] w-full flex-col border-rule border-t bg-background sm:min-h-[32rem] lg:min-h-0 lg:border-t-0 lg:border-l",
         className,
       )}
       aria-label="Mission and featured links"
     >
-      <div className="flex min-h-[14rem] flex-3 flex-col justify-end px-4 py-10 sm:px-5 lg:px-10 lg:py-0 lg:pb-10">
-        <p className="max-w-[22rem] text-xl leading-snug font-normal text-foreground sm:text-[1.35rem] sm:leading-[1.35]">
-          {mission}
+      <div className="flex min-h-[16rem] flex-[4] flex-col justify-end px-4 py-10 sm:px-5 lg:px-10 lg:py-0 lg:pb-10">
+        {/*
+          Mistral right-rail sentence strategy: intentional line blocks + lg:text-nowrap
+          so breaks are editorial, not viewport-reflow. sr-only holds full sentence.
+        */}
+        <p className="text-2xl leading-[1.3] font-medium text-foreground sm:text-[1.65rem] lg:text-[1.75rem]">
+          <span className="sr-only">{missionLines.join(" ")}</span>
+          <span aria-hidden className="flex flex-col items-start">
+            {missionLines.map((line) => (
+              <span key={line} className="block lg:text-nowrap">
+                {line}
+              </span>
+            ))}
+          </span>
         </p>
       </div>
 
-      <div className="flex min-h-[16rem] flex-2 flex-col border-rule border-t px-4 pt-10 pb-6 sm:px-5 lg:px-10 lg:pb-10">
+      <div className="flex min-h-[12rem] flex-[1.5] flex-col border-rule border-t px-4 pt-10 pb-6 sm:px-5 lg:px-10 lg:pb-10">
         <button
           type="button"
           onClick={scrollToNextSection}
-          className="flex w-fit flex-col gap-2 text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="flex w-fit flex-col gap-2.5 text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           aria-label="Scroll to next section"
         >
-          <ChevronDown
+          <ArrowDown
             aria-hidden
-            className="size-4 animate-fading-arrow-scroll-1"
+            className="size-6 animate-fading-arrow-scroll-1"
             strokeWidth={1.75}
           />
-          <ChevronDown
+          <ArrowDown
             aria-hidden
-            className="size-4 animate-fading-arrow-scroll-2"
+            className="size-6 animate-fading-arrow-scroll-2"
             strokeWidth={1.75}
           />
-          <ChevronDown
+          <ArrowDown
             aria-hidden
-            className="size-4 animate-fading-arrow-scroll-3"
+            className="size-6 animate-fading-arrow-scroll-3"
             strokeWidth={1.75}
           />
         </button>
@@ -90,7 +113,7 @@ export default function FeaturedRail({
 
           <Link
             href={active.href}
-            className="flex w-full items-center gap-4 rounded-md border border-rule p-2 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+            className="flex w-full items-center gap-4 rounded-[12px] border border-rule p-2 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
           >
             <span className="relative size-16 shrink-0 overflow-hidden rounded-md bg-muted">
               <Image
