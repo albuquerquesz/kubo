@@ -2,13 +2,11 @@ import HeroDisplayTitle from "./hero-display-title";
 import HeroRailLower from "./hero-rail-lower";
 import SignalField from "./signal-field";
 
-/** Editorial line breaks — Mistral right-rail sentence strategy (one block per line, lg:nowrap). */
+/** Editorial line breaks — three lines only (right-rail sentence strategy). */
 const mission = [
-  "We give you a full-stack",
-  "TypeScript app",
+  "A full-stack TypeScript app",
   "from one command",
-  "with every layer typed",
-  "and every choice yours.",
+  "with every layer typed.",
 ] as const;
 
 /**
