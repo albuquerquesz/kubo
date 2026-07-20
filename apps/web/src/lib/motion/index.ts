@@ -1,4 +1,4 @@
-export { gsap } from "./gsap-client";
+export { gsap, ScrollTrigger } from "./gsap-client";
 export { ease, duration, stagger } from "./eases";
 export { prefersReducedMotion, onReducedMotionChange } from "./reduced-motion";
 export { useGsapContext } from "./use-gsap-context";
@@ -12,7 +12,19 @@ export type {
   HeroDisplayIntroOptions,
   HeroDisplayIntroHandle,
 } from "./timelines/hero-display-intro";
-export { playScrollRevealIcons } from "./timelines/scroll-reveal-icons";
+export {
+  playHeroStickyScale,
+  HERO_STICKY_SCALE_FROM,
+  HERO_STICKY_SCALE_TO,
+  HERO_STICKY_SCROLL,
+  HERO_STICKY_MQ,
+} from "./timelines/hero-sticky-scale";
+export type { HeroStickyScaleOptions, HeroStickyScaleHandle } from "./timelines/hero-sticky-scale";
+export {
+  playScrollRevealIcons,
+  SCROLL_REVEAL_ICONS_DEFAULTS,
+  SCROLL_REVEAL_ICONS_HERO,
+} from "./timelines/scroll-reveal-icons";
 export type {
   ScrollRevealIconsOptions,
   ScrollRevealIconsHandle,

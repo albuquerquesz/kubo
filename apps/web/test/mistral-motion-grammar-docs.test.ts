@@ -117,7 +117,9 @@ describe("spec-mistral-identical-home-motion change map", () => {
     expect(spec).toContain("top 35%");
     expect(spec).toContain("Hero wiring");
     expect(spec).toContain("top top");
+    // Spec documents pre-pin wiring (center top) and requires retune to sticky pin
     expect(spec).toContain("center top");
+    expect(spec).toMatch(/sticky pin|Family B sticky/i);
   });
 });
 
@@ -139,19 +141,45 @@ describe("shipped motion tokens match skill Family A", () => {
     expect(src).toContain("prefersReducedMotion");
   });
 
-  test("scroll-reveal-icons timeline defaults + hero wiring overrides", () => {
+  test("scroll-reveal-icons timeline defaults + hero pin window", () => {
     const timeline = readRepo("apps/web/src/lib/motion/timelines/scroll-reveal-icons.ts");
     expect(timeline).toContain("yPercent: 100");
     expect(timeline).toContain("yPercent: 0");
     expect(timeline).toContain("scrub");
     expect(timeline).toContain('ease: "none"');
-    expect(timeline).toContain('start = "top 75%"');
-    expect(timeline).toContain('end = "top 35%"');
+    expect(timeline).toContain('start: "top 75%"');
+    expect(timeline).toContain('end: "top 35%"');
+    expect(timeline).toContain("SCROLL_REVEAL_ICONS_HERO");
+    expect(timeline).toContain("HERO_STICKY_SCROLL");
 
     const component = readRepo("apps/web/src/app/(home)/_components/scroll-reveal-icons.tsx");
-    expect(component).toContain('"top top"');
-    expect(component).toContain('"center top"');
+    expect(component).toContain("SCROLL_REVEAL_ICONS_HERO");
     expect(component).toContain("usingSectionTrigger");
+  });
+
+  test("hero-sticky-scale ships Family B scale scrub tokens", () => {
+    const src = readRepo("apps/web/src/lib/motion/timelines/hero-sticky-scale.ts");
+    expect(src).toContain("HERO_STICKY_SCALE_FROM = 0.47");
+    expect(src).toContain("HERO_STICKY_SCALE_TO = 1");
+    expect(src).toContain('transformOrigin: "bottom left"');
+    expect(src).toContain('ease: "none"');
+    expect(src).toContain("prefersReducedMotion");
+    expect(src).toContain("matchMedia");
+    expect(src).toContain("playHeroStickyScale");
+
+    const hero = readRepo("apps/web/src/app/(home)/_components/hero-section.tsx");
+    expect(hero).toContain("lg:min-h-[200dvh]");
+    expect(hero).toContain("lg:sticky");
+    expect(hero).toContain("playHeroStickyScale");
+    expect(hero).toContain("origin-bottom-left");
+  });
+
+  test("motion index exports sticky scale + scroll icons helpers", () => {
+    const index = readRepo("apps/web/src/lib/motion/index.ts");
+    expect(index).toContain("playHeroStickyScale");
+    expect(index).toContain("HERO_STICKY_SCROLL");
+    expect(index).toContain("playScrollRevealIcons");
+    expect(index).toContain("ScrollTrigger");
   });
 });
 

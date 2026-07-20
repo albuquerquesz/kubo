@@ -3,7 +3,11 @@
 import { Box, Layers, Terminal, type LucideIcon } from "lucide-react";
 import { useRef, type RefObject } from "react";
 
-import { playScrollRevealIcons } from "@/lib/motion/timelines/scroll-reveal-icons";
+import {
+  playScrollRevealIcons,
+  SCROLL_REVEAL_ICONS_DEFAULTS,
+  SCROLL_REVEAL_ICONS_HERO,
+} from "@/lib/motion/timelines/scroll-reveal-icons";
 import { useGsapContext } from "@/lib/motion/use-gsap-context";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +20,7 @@ export type ScrollRevealIconsProps = {
   /**
    * ScrollTrigger root. Prefer the hero section when icons are already in the
    * initial viewport so scrub starts at rest (yPercent 100) on page load.
+   * Hero pin uses Family B window (start top top → icons end before scale locks).
    */
   triggerRef?: RefObject<HTMLElement | null>;
 };
@@ -40,15 +45,17 @@ export default function ScrollRevealIcons({
       const iconEls = iconRefs.current.filter((el): el is HTMLSpanElement => el !== null);
       if (iconEls.length === 0) return;
 
-      // Hero-section trigger: scrub only after the user starts scrolling so
-      // icons stay clipped at rest (progress 0). Self-trigger uses enter range.
+      // Hero section trigger: scrub across sticky pin (Family B range).
+      // Self-trigger: enter-viewport defaults (75% → 35%).
       const usingSectionTrigger = Boolean(triggerRef?.current);
+      const range = usingSectionTrigger ? SCROLL_REVEAL_ICONS_HERO : SCROLL_REVEAL_ICONS_DEFAULTS;
       const handle = playScrollRevealIcons({
         icons: iconEls,
         trigger,
-        start: usingSectionTrigger ? "top top" : "top 75%",
-        // Finish rise partway through the hero so icons are fully in by mid-scroll
-        end: usingSectionTrigger ? "center top" : "top 35%",
+        start: range.start,
+        end: range.end,
+        scrub: range.scrub,
+        stagger: range.stagger,
       });
 
       return handle.kill;

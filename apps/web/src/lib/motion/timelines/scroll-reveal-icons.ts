@@ -1,10 +1,10 @@
 "use client";
 
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-import { gsap } from "@/lib/motion/gsap-client";
+import { gsap, ScrollTrigger } from "@/lib/motion/gsap-client";
 import { prefersReducedMotion } from "@/lib/motion/reduced-motion";
+import { HERO_STICKY_SCROLL } from "@/lib/motion/timelines/hero-sticky-scale";
 
+// Ensure plugin is registered even if this module loads first
 gsap.registerPlugin(ScrollTrigger);
 
 export type ScrollRevealIconsOptions = {
@@ -27,6 +27,25 @@ export type ScrollRevealIconsHandle = {
   kill: () => void;
 };
 
+/** Defaults when icons self-trigger (not hero pin). */
+export const SCROLL_REVEAL_ICONS_DEFAULTS = {
+  start: "top 75%",
+  end: "top 35%",
+  scrub: 0.45,
+  stagger: 0.12,
+} as const;
+
+/**
+ * Hero pin window (Family B + C): same start as sticky scale; end slightly
+ * earlier so icons finish while scale still approaches 1 (probe y≈800 vs 1000).
+ */
+export const SCROLL_REVEAL_ICONS_HERO = {
+  start: HERO_STICKY_SCROLL.start,
+  end: HERO_STICKY_SCROLL.iconsEnd,
+  scrub: HERO_STICKY_SCROLL.scrub,
+  stagger: 0.12,
+} as const;
+
 /**
  * Masked icon rise scrubbed to scroll (yPercent 100 → 0).
  * Icons must sit inside overflow-hidden fixed squares for the mask to work.
@@ -36,10 +55,10 @@ export function playScrollRevealIcons(options: ScrollRevealIconsOptions): Scroll
   const {
     icons,
     trigger,
-    stagger = 0.12,
-    start = "top 75%",
-    end = "top 35%",
-    scrub = 0.45,
+    stagger = SCROLL_REVEAL_ICONS_DEFAULTS.stagger,
+    start = SCROLL_REVEAL_ICONS_DEFAULTS.start,
+    end = SCROLL_REVEAL_ICONS_DEFAULTS.end,
+    scrub = SCROLL_REVEAL_ICONS_DEFAULTS.scrub,
   } = options;
 
   let tween: gsap.core.Tween | null = null;

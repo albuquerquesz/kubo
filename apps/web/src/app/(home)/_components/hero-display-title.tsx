@@ -18,7 +18,8 @@ export type HeroDisplayTitleProps = {
   randomness?: number;
   /**
    * Optional Mistral-style line height grow + selective glyph doubling.
-   * Default false — Kubo ships the clean masked rise only.
+   * Default false — intentional product delta vs Mistral host `data-grow="true"`.
+   * Family A mask + play-once rise still matches; grow is opt-in only.
    */
   grow?: boolean;
 };
