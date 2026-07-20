@@ -2,7 +2,10 @@
 
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
+import type { IconType } from "react-icons";
+import { SiBun, SiNpm, SiPnpm } from "react-icons/si";
 
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import {
   DEFAULT_PACKAGE_MANAGER,
   getCreateCommand,
@@ -10,6 +13,12 @@ import {
   type PackageManager,
 } from "@/lib/create-commands";
 import { cn } from "@/lib/utils";
+
+const PM_ICONS: Record<PackageManager, IconType> = {
+  bun: SiBun,
+  pnpm: SiPnpm,
+  npm: SiNpm,
+};
 
 export type HeroInstallCardProps = {
   className?: string;
@@ -20,6 +29,7 @@ export type HeroInstallCardProps = {
 /**
  * Hero install control:
  * - eyebrow + package manager select sit **outside** the script shell
+ * - PM trigger shows icon (react-icons/si), not the label text
  * - bordered script shell = command line + copy only
  */
 export default function HeroInstallCard({
@@ -29,6 +39,7 @@ export default function HeroInstallCard({
   const [selectedManager, setSelectedManager] = useState<PackageManager>(defaultManager);
   const [copied, setCopied] = useState(false);
   const command = getCreateCommand(selectedManager);
+  const SelectedIcon = PM_ICONS[selectedManager];
 
   const copyCommand = async () => {
     try {
@@ -45,42 +56,48 @@ export default function HeroInstallCard({
       {/* Meta row — outside the script shell */}
       <div className="flex items-center justify-between gap-3">
         <p className="ui-kicker text-muted-foreground">Initialize with</p>
-        <label className="sr-only" htmlFor="hero-install-pm">
-          Package manager
-        </label>
-        <select
-          id="hero-install-pm"
+        <Select
           value={selectedManager}
-          aria-label="Package manager"
-          onChange={(event) => {
-            setSelectedManager(event.target.value as PackageManager);
+          onValueChange={(value) => {
+            if (value == null) return;
+            setSelectedManager(value as PackageManager);
             setCopied(false);
           }}
-          className={cn(
-            "ui-kicker min-h-9 cursor-pointer appearance-none border-0 bg-transparent py-1.5 pr-7 pl-1 text-foreground",
-            "bg-[length:0.75rem] bg-[right_0.15rem_center] bg-no-repeat",
-            "bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23888%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')]",
-            "transition-colors duration-150 ease-out hover:text-primary",
-            "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-          )}
         >
-          {PACKAGE_MANAGERS.map((manager) => (
-            <option key={manager} value={manager}>
-              {manager}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger
+            id="hero-install-pm"
+            size="sm"
+            aria-label={`Package manager: ${selectedManager}`}
+            className={cn(
+              "h-9 min-h-9 w-auto min-w-0 gap-1.5 border-0 bg-transparent px-1.5 py-1.5",
+              "text-foreground shadow-none ring-0",
+              "hover:bg-transparent hover:text-primary dark:bg-transparent dark:hover:bg-transparent",
+              "focus-visible:border-0 focus-visible:ring-1 focus-visible:ring-ring",
+            )}
+          >
+            <SelectedIcon className="size-4 shrink-0" aria-hidden />
+            <span className="sr-only">{selectedManager}</span>
+          </SelectTrigger>
+          <SelectContent align="end" className="min-w-36">
+            {PACKAGE_MANAGERS.map((manager) => {
+              const Icon = PM_ICONS[manager];
+              return (
+                <SelectItem key={manager} value={manager}>
+                  <Icon className="size-4 shrink-0" aria-hidden />
+                  <span className="font-mono uppercase tracking-[0.06em]">{manager}</span>
+                </SelectItem>
+              );
+            })}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Script shell — command + copy only */}
       {/*
         Explicit px radius: dark shell sets --radius: 0, so rounded-xl ≈ 4px (reads square).
       */}
-      <div className="flex items-center gap-2 overflow-hidden rounded-[12px] border border-rule bg-card p-2.5 sm:gap-3 sm:p-3">
+      <div className="flex items-center gap-2 overflow-hidden rounded-[12px] border border-rule p-2.5 sm:gap-3 sm:p-3">
         <p className="min-w-0 flex-1 truncate font-mono text-xs text-foreground sm:text-sm">
-          <span className="text-primary" aria-hidden>
-            ${" "}
-          </span>
           <code className="font-mono">{command}</code>
         </p>
 

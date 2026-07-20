@@ -33,7 +33,7 @@ export default function CommandSection() {
           <p className="ui-kicker text-primary">01 / Compose</p>
         </div>
         <div className="border-rule p-5 sm:p-8 lg:col-span-8 lg:p-10">
-          <h2 className="ui-display max-w-4xl text-[clamp(2.7rem,5.5vw,5.8rem)] leading-[0.92]">
+          <h2 className="ui-display max-w-4xl text-[clamp(2.7rem,5.5vw,5.8rem)] leading-[0.92] text-foreground">
             Choose the parts.
             <br />
             Keep the whole.
@@ -103,14 +103,12 @@ export default function CommandSection() {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-px bg-rule border border-rule">
+            <div className="grid grid-cols-2 gap-px border border-rule bg-rule">
               <div className="bg-card p-4">
-                <span className="ui-kicker text-muted-foreground">Prompt</span>
-                <strong className="mt-2 block text-2xl">Guided</strong>
+                <strong className="block text-2xl">Guided</strong>
               </div>
               <div className="bg-card p-4">
-                <span className="ui-kicker text-muted-foreground">Result</span>
-                <strong className="mt-2 block text-2xl">Editable</strong>
+                <strong className="block text-2xl">Editable</strong>
               </div>
             </div>
           </div>
@@ -118,35 +116,26 @@ export default function CommandSection() {
 
         <div className="relative overflow-hidden lg:col-span-7">
           <div className="ui-rule-grid absolute inset-0 opacity-35" aria-hidden />
-          <div className="relative flex min-h-[42rem] flex-col justify-between p-5 sm:p-8 lg:p-10">
-            <div className="flex items-center justify-between">
-              <span className="ui-kicker text-muted-foreground">Generated architecture</span>
-              <span className="ui-kicker text-primary">Type graph intact</span>
-            </div>
-
-            <div className="mx-auto grid w-full max-w-2xl grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] items-center gap-y-3">
+          <div className="relative flex min-h-[42rem] flex-col justify-between gap-10 p-5 sm:p-8 lg:p-10">
+            <div className="mx-auto my-auto grid w-full max-w-2xl grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] items-center gap-y-3">
               <div className="border border-primary bg-primary p-5 text-primary-foreground">
-                <span className="ui-kicker">Client</span>
-                <strong className="mt-2 block text-xl">App Router</strong>
+                <strong className="block text-xl">App Router</strong>
               </div>
               <div className="h-px bg-primary" aria-hidden />
               <div className="border border-rule bg-background p-5">
-                <span className="ui-kicker text-muted-foreground">Contract</span>
-                <strong className="mt-2 block text-xl">Typed API</strong>
+                <strong className="block text-xl">Typed API</strong>
               </div>
 
               <div className="col-start-3 h-8 w-px justify-self-center bg-primary" aria-hidden />
 
               <div className="col-start-3 border border-rule bg-background p-5">
-                <span className="ui-kicker text-muted-foreground">Server</span>
-                <strong className="mt-2 block text-xl">Runtime</strong>
+                <strong className="block text-xl">Runtime</strong>
               </div>
 
               <div className="col-start-3 h-8 w-px justify-self-center bg-primary" aria-hidden />
 
               <div className="col-start-3 border border-rule bg-background p-5">
-                <span className="ui-kicker text-muted-foreground">Data</span>
-                <strong className="mt-2 block text-xl">Schema</strong>
+                <strong className="block text-xl">Schema</strong>
               </div>
             </div>
 
