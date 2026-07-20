@@ -1,8 +1,7 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
 
 type CommunityEntry = {
   eyebrow: string;
@@ -12,8 +11,6 @@ type CommunityEntry = {
   cta: string;
   kind: "video" | "note" | "project";
 };
-
-const RAIL_EDGE_TOLERANCE = 24;
 
 const fallbackEntries: CommunityEntry[] = [
   {
@@ -79,10 +76,6 @@ export default function Testimonials({
   videos: Array<{ embedId: string; title: string }>;
   tweets: Array<{ tweetId: string }>;
 }) {
-  const railRef = useRef<HTMLDivElement>(null);
-  const [canGoBack, setCanGoBack] = useState(false);
-  const [canGoForward, setCanGoForward] = useState(true);
-
   const liveEntries: CommunityEntry[] = [
     ...videos.map((video) => ({
       eyebrow: "Community walkthrough",
@@ -104,31 +97,6 @@ export default function Testimonials({
   ];
 
   const entries = liveEntries.length > 0 ? [...liveEntries, ...fallbackEntries] : fallbackEntries;
-
-  const updateControls = useCallback(() => {
-    const rail = railRef.current;
-    if (!rail) return;
-
-    setCanGoBack(rail.scrollLeft > RAIL_EDGE_TOLERANCE);
-    setCanGoForward(rail.scrollLeft + rail.clientWidth < rail.scrollWidth - RAIL_EDGE_TOLERANCE);
-  }, []);
-
-  useEffect(() => {
-    updateControls();
-    window.addEventListener("resize", updateControls);
-    return () => window.removeEventListener("resize", updateControls);
-  }, [updateControls]);
-
-  const moveRail = (direction: -1 | 1) => {
-    const rail = railRef.current;
-    if (!rail) return;
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    rail.scrollBy({
-      left: direction * rail.clientWidth * 0.78,
-      behavior: reducedMotion ? "auto" : "smooth",
-    });
-  };
 
   return (
     <section aria-labelledby="community-title" className="border-rule border-b">
@@ -153,41 +121,13 @@ export default function Testimonials({
 
       <div className="border-rule border-t">
         <div
-          ref={railRef}
           className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto p-5 sm:p-8 lg:p-10"
-          onScroll={updateControls}
           tabIndex={0}
           aria-label="Community stories"
         >
           {entries.map((entry, index) => (
             <CommunityCard key={`${entry.href}-${index}`} entry={entry} />
           ))}
-        </div>
-
-        <div className="flex items-center justify-between border-rule border-t">
-          <p className="ui-kicker px-5 text-muted-foreground sm:px-8">
-            Manual rail / {entries.length} entries
-          </p>
-          <div className="flex">
-            <button
-              type="button"
-              className="grid size-14 place-items-center border-rule border-l text-muted-foreground transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
-              aria-label="Previous community stories"
-              disabled={!canGoBack}
-              onClick={() => moveRail(-1)}
-            >
-              <ArrowLeft className="size-4" />
-            </button>
-            <button
-              type="button"
-              className="grid size-14 place-items-center border-rule border-l text-muted-foreground transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
-              aria-label="Next community stories"
-              disabled={!canGoForward}
-              onClick={() => moveRail(1)}
-            >
-              <ArrowRight className="size-4" />
-            </button>
-          </div>
         </div>
       </div>
     </section>
