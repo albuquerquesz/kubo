@@ -4,14 +4,15 @@ import Image from "next/image";
 import discordLogo from "@/public/icon/discord.svg";
 import npmLogo from "@/public/icon/npm.svg";
 import xLogo from "@/public/icon/x.svg";
-import mainLogoDark from "@/public/logo-dark.svg";
-import mainLogoLight from "@/public/logo-light.svg";
 
 export const logo = (
-  <>
-    <Image alt="better-t-stack" src={mainLogoLight} className="w-8 dark:hidden" />
-    <Image alt="better-t-stack" src={mainLogoDark} className="hidden w-8 dark:block" />
-  </>
+  <Image
+    alt="Kubo"
+    src="/assets/kubo-mark.png"
+    width={32}
+    height={32}
+    className="size-8 object-contain"
+  />
 );
 
 export const links: LinkItemType[] = [
@@ -75,7 +76,7 @@ export const baseOptions: BaseLayoutProps = {
     title: (
       <>
         {logo}
-        <span className="font-medium font-mono text-md tracking-tighter">Better T Stack</span>
+        <span className="font-medium font-mono text-md tracking-tighter">Kubo</span>
       </>
     ),
   },

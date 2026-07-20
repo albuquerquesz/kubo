@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { FaGithub } from "react-icons/fa6";
@@ -47,18 +48,19 @@ function BrandMark() {
   return (
     <Link
       href="/"
-      className="flex h-14 shrink-0 items-center gap-3 border-rule border-r px-4 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:px-5"
-      aria-label="Better T Stack home"
+      className="flex h-14 shrink-0 items-center gap-1.5 border-rule border-r px-4 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:gap-2 sm:px-5"
+      aria-label="Kubo home"
     >
-      <span
-        aria-hidden
-        className="grid size-8 place-items-center border border-primary bg-primary font-mono font-semibold text-primary-foreground"
-      >
-        B_
+      <span aria-hidden className="relative size-10 shrink-0 overflow-hidden sm:size-11">
+        <Image
+          src="/assets/kubo-mark.png"
+          alt=""
+          width={44}
+          height={44}
+          className="size-10 object-contain sm:size-11"
+        />
       </span>
-      <span className="hidden text-sm font-semibold tracking-[-0.035em] sm:inline">
-        Better T Stack
-      </span>
+      <span className="hidden text-sm font-semibold tracking-[-0.035em] sm:inline">Kubo</span>
     </Link>
   );
 }
@@ -199,7 +201,7 @@ function MobileNavigation() {
         >
           <div className="flex min-h-14 shrink-0 items-center justify-between border-rule border-b px-5 py-3">
             <div>
-              <p className="text-base font-semibold">Navigate Better T Stack</p>
+              <p className="text-base font-semibold">Navigate Kubo</p>
               <p className="text-muted-foreground text-xs">
                 Build, inspect, and share a TypeScript stack.
               </p>
@@ -266,8 +268,8 @@ function MobileNavigation() {
 
 export function SiteHeader() {
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-rule border-b bg-background/95 transition-colors duration-150">
-      <div className="ui-frame flex h-14 items-stretch border-y-0">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-rule bg-background/95 transition-colors duration-150">
+      <div className="ui-frame flex h-14 items-stretch border-x-0">
         <BrandMark />
         <DesktopNavigation />
         <div className="min-w-0 flex-1" />
@@ -276,7 +278,7 @@ export function SiteHeader() {
           target="_blank"
           rel="noreferrer"
           className="flex h-14 items-center gap-2 border-rule border-l px-4 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
-          aria-label="Better T Stack on GitHub"
+          aria-label="Kubo on GitHub"
         >
           <FaGithub />
           <span className="hidden md:inline">GitHub</span>

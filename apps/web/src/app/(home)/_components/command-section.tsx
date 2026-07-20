@@ -51,8 +51,8 @@ export default function CommandSection() {
             Keep the whole.
           </h2>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            Better T Stack resolves compatible choices into a codebase you can read, change, and
-            deploy on your own terms.
+            Kubo resolves compatible choices into a codebase you can read, change, and deploy on
+            your own terms.
           </p>
         </div>
       </div>

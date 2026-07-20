@@ -1,4 +1,5 @@
 import { ArrowUpRight, Copy } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 const footerGroups = [
@@ -81,12 +82,18 @@ export default function Footer() {
           <Link
             href="/"
             className="inline-flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-            aria-label="Better T Stack home"
+            aria-label="Kubo home"
           >
-            <span className="grid size-10 place-items-center bg-primary font-mono text-sm font-semibold text-primary-foreground">
-              B_
+            <span aria-hidden className="relative size-10 overflow-hidden">
+              <Image
+                src="/assets/kubo-mark.png"
+                alt=""
+                width={40}
+                height={40}
+                className="size-10 object-contain"
+              />
             </span>
-            <span className="font-semibold">Better T Stack</span>
+            <span className="font-semibold">Kubo</span>
           </Link>
           <p className="mt-6 max-w-xs text-sm leading-relaxed text-muted-foreground">
             A source-first generator for end-to-end TypeScript projects.
@@ -129,7 +136,7 @@ export default function Footer() {
 
       <div className="grid border-rule border-t sm:grid-cols-2">
         <p className="ui-kicker flex min-h-14 items-center px-5 text-muted-foreground sm:px-8">
-          © {new Date().getFullYear()} Better T Stack / MIT
+          © {new Date().getFullYear()} Kubo / MIT
         </p>
         <p className="ui-kicker flex min-h-14 items-center border-rule border-t px-5 text-muted-foreground sm:justify-end sm:border-t-0 sm:border-l sm:px-8">
           Source owned / TypeScript end to end
@@ -141,7 +148,7 @@ export default function Footer() {
           aria-hidden
           className="ui-display whitespace-nowrap text-[clamp(4rem,12.7vw,12rem)] leading-[0.75] text-foreground"
         >
-          BETTER T STACK_
+          KUBO_
         </p>
       </div>
     </footer>
