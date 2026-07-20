@@ -2,9 +2,12 @@
 
 import { gsap, ScrollTrigger } from "@/lib/motion/gsap-client";
 import { prefersReducedMotion } from "@/lib/motion/reduced-motion";
-import { HERO_STICKY_SCROLL } from "@/lib/motion/timelines/hero-sticky-scale";
+import {
+  HERO_STICKY_SCROLL,
+  heroIconScrollRange,
+  pinTravelPx,
+} from "@/lib/motion/timelines/hero-sticky-scale";
 
-// Ensure plugin is registered even if this module loads first
 gsap.registerPlugin(ScrollTrigger);
 
 export type ScrollRevealIconsOptions = {
@@ -36,15 +39,28 @@ export const SCROLL_REVEAL_ICONS_DEFAULTS = {
 } as const;
 
 /**
- * Hero pin window (Family B + C): same start as sticky scale; end slightly
- * earlier so icons finish while scale still approaches 1 (probe y≈800 vs 1000).
+ * Hero pin window (Family B + C): delayed start so icons stay clipped while
+ * scale begins; end before host scale locks (probe ~20%–58% of pin travel).
  */
 export const SCROLL_REVEAL_ICONS_HERO = {
-  start: HERO_STICKY_SCROLL.start,
-  end: HERO_STICKY_SCROLL.iconsEnd,
   scrub: HERO_STICKY_SCROLL.scrub,
-  stagger: 0.12,
+  stagger: 0.1,
 } as const;
+
+function resetIconTransforms(icons: HTMLElement[]) {
+  for (const el of icons) {
+    el.style.transform = "";
+    el.style.translate = "none";
+  }
+  gsap.set(icons, {
+    x: 0,
+    y: 0,
+    xPercent: 0,
+    yPercent: 100,
+    force3D: true,
+    immediateRender: true,
+  });
+}
 
 /**
  * Masked icon rise scrubbed to scroll (yPercent 100 → 0).
@@ -74,18 +90,20 @@ export function playScrollRevealIcons(options: ScrollRevealIconsOptions): Scroll
   }
 
   if (prefersReducedMotion()) {
-    gsap.set(icons, { yPercent: 0, clearProps: "" });
+    gsap.set(icons, { y: 0, yPercent: 0, clearProps: "transform" });
     return { tween: null, kill };
   }
 
-  // Force clipped rest immediately (overrides any FOUC / layout pass)
-  gsap.set(icons, { yPercent: 100, force3D: true });
+  resetIconTransforms(icons);
 
   tween = gsap.fromTo(
     icons,
-    { yPercent: 100 },
+    { yPercent: 100, y: 0, x: 0, xPercent: 0 },
     {
       yPercent: 0,
+      y: 0,
+      x: 0,
+      xPercent: 0,
       ease: "none",
       stagger,
       force3D: true,
@@ -95,7 +113,6 @@ export function playScrollRevealIcons(options: ScrollRevealIconsOptions): Scroll
         start,
         end,
         scrub,
-        // Pin progress at 0 until start so first paint stays clipped
         invalidateOnRefresh: true,
       },
     },
@@ -103,3 +120,103 @@ export function playScrollRevealIcons(options: ScrollRevealIconsOptions): Scroll
 
   return { tween, kill };
 }
+
+/**
+ * Map full-pin scrub progress → icon rise progress (for tests / probes).
+ * Stay fully clipped until iconsStartPin, finish by iconsEndPin.
+ */
+export function iconRiseEaseFromPinProgress(pinProgress: number): number {
+  const startAt = HERO_STICKY_SCROLL.iconsStartPin;
+  const endAt = HERO_STICKY_SCROLL.iconsEndPin;
+  if (pinProgress <= startAt) return 0;
+  if (pinProgress >= endAt) return 1;
+  return (pinProgress - startAt) / (endAt - startAt);
+}
+
+/**
+ * Hero-wired icon rise on the **same pin travel** as Family B host scale.
+ * Scrubbed timeline: hold clipped until iconsStartPin, rise by iconsEndPin.
+ */
+export function playHeroScrollRevealIcons(options: {
+  icons: HTMLElement[];
+  trigger: HTMLElement;
+  stagger?: number;
+  scrub?: number | boolean;
+}): ScrollRevealIconsHandle {
+  const {
+    icons,
+    trigger,
+    stagger = SCROLL_REVEAL_ICONS_HERO.stagger,
+    scrub = SCROLL_REVEAL_ICONS_HERO.scrub,
+  } = options;
+
+  let timeline: gsap.core.Timeline | null = null;
+
+  const kill = () => {
+    timeline?.scrollTrigger?.kill();
+    timeline?.kill();
+    timeline = null;
+  };
+
+  if (icons.length === 0) {
+    return { tween: null, kill };
+  }
+
+  if (prefersReducedMotion()) {
+    gsap.set(icons, { y: 0, yPercent: 0, clearProps: "transform" });
+    return { tween: null, kill };
+  }
+
+  resetIconTransforms(icons);
+
+  const startAt = HERO_STICKY_SCROLL.iconsStartPin;
+  const endAt = HERO_STICKY_SCROLL.iconsEndPin;
+  // Budget stagger into the rise window so the LAST icon finishes by endAt
+  const staggerSpan = stagger * Math.max(icons.length - 1, 0);
+  const riseDur = Math.max(endAt - startAt - staggerSpan, 0.08);
+
+  timeline = gsap.timeline({
+    defaults: { ease: "none" },
+    scrollTrigger: {
+      trigger,
+      start: HERO_STICKY_SCROLL.start,
+      // Explicit pin distance — avoids sticky-shell confusion with bottom bottom
+      end: () => `+=${pinTravelPx(trigger)}`,
+      scrub,
+      invalidateOnRefresh: true,
+    },
+  });
+
+  // Empty hold so playhead stays before the rise until startAt
+  timeline.to({}, { duration: startAt }, 0);
+  timeline.fromTo(
+    icons,
+    { yPercent: 100, y: 0, x: 0, xPercent: 0 },
+    {
+      yPercent: 0,
+      y: 0,
+      x: 0,
+      xPercent: 0,
+      duration: riseDur,
+      stagger,
+      force3D: true,
+    },
+    startAt,
+  );
+  // Pad to duration 1 so remaining pin keeps icons settled
+  const lastIconEnd = startAt + riseDur + staggerSpan;
+  timeline.to({}, { duration: Math.max(1 - lastIconEnd, 0.01) }, lastIconEnd);
+
+  // Snap to from-state at progress 0 (scrub can otherwise leave end-state FOUC)
+  timeline.scrollTrigger?.update();
+  if ((timeline.scrollTrigger?.progress ?? 0) <= 0) {
+    gsap.set(icons, { yPercent: 100, y: 0, x: 0, xPercent: 0, force3D: true });
+  }
+
+  return {
+    tween: timeline as unknown as gsap.core.Tween,
+    kill,
+  };
+}
+
+export { heroIconScrollRange };

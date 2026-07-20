@@ -2,7 +2,13 @@
   "source": "Playwright Chromium probe of https://mistral.ai/",
   "date": "2026-07-20",
   "viewport": { "width": 1440, "height": 900 },
-  "logNote": "Canonical extract from implementer/mistral-motion-probe.log ICON_SCROLL_MAP",
+  "logNote": "Revalidated live 2026-07-20 via docs/.playwright-cli/probe-mistral-motion.mjs + fine curve (jump-scroll + settle). Host transform on .js-right-top-content; icon Y% from matrix ty/56*100.",
+  "pin": {
+    "heroMinHeightPx": 1800,
+    "stickyHeightPx": 900,
+    "pinTravelPx": 900,
+    "heroMinHeightCss": "200dvh"
+  },
   "familyB_sectionScale": [
     { "scrollY": 0, "scale": 0.4664 },
     { "scrollY": 150, "scale": 0.6294 },
@@ -10,15 +16,41 @@
     { "scrollY": 450, "scale": 0.8666 },
     { "scrollY": 600, "scale": 0.9407 },
     { "scrollY": 800, "scale": 0.9934 },
+    { "scrollY": 900, "scale": 1.0 },
     { "scrollY": 1000, "scale": 1.0 }
+  ],
+  "familyB_hostTransform": [
+    { "scrollY": 0, "scale": 0.4664, "translateX": 0, "translateY": 0 },
+    { "scrollY": 150, "scale": 0.6294, "translateX": 78.83, "translateY": -77 },
+    { "scrollY": 300, "scale": 0.7628, "translateX": 143.33, "translateY": -140 },
+    { "scrollY": 450, "scale": 0.8666, "translateX": 193.5, "translateY": -189 },
+    { "scrollY": 600, "scale": 0.9407, "translateX": 229.33, "translateY": -224 },
+    { "scrollY": 800, "scale": 0.9934, "translateX": 254.81, "translateY": -248.89 },
+    { "scrollY": 900, "scale": 1.0, "translateX": 258, "translateY": -252 },
+    { "scrollY": 1000, "scale": 1.0, "translateX": 258, "translateY": -199.11 }
+  ],
+  "familyB_sentenceTranslateX": [
+    { "scrollY": 0, "lines": [0, 0, 0] },
+    { "scrollY": 150, "lines": [15.92, 0, 21.71] },
+    { "scrollY": 450, "lines": [39.08, 0, 53.28] },
+    { "scrollY": 900, "lines": [52.1, 0, 71.04] }
   ],
   "familyC_iconYPercent": [
     { "scrollY": 0, "icons": [100, 100, 100] },
     { "scrollY": 150, "icons": [100, 100, 100] },
-    { "scrollY": 300, "icons": [54.9058, 72.2267, 93.6668] },
-    { "scrollY": 450, "icons": [21.7439, 30.1907, 41.0797] },
-    { "scrollY": 600, "icons": [9.2354, 13.6023, 19.4839] },
-    { "scrollY": 800, "icons": [2.7393, 4.4655, 6.9693] },
-    { "scrollY": 1000, "icons": [0.5559, 1.0762, 1.9288] }
-  ]
+    { "scrollY": 250, "icons": [64.84, 84.55, 100] },
+    { "scrollY": 300, "icons": [36.4, 48.99, 64.84] },
+    { "scrollY": 400, "icons": [10.24, 14.97, 21.31] },
+    { "scrollY": 450, "icons": [5.03, 7.78, 11.6] },
+    { "scrollY": 600, "icons": [0.19, 0.42, 0.84] },
+    { "scrollY": 800, "icons": [0, 0, 0] },
+    { "scrollY": 1000, "icons": [0, 0, 0] }
+  ],
+  "familyC_riseWindow": {
+    "fullyClippedUntilScrollY": 200,
+    "leaveRestApproxScrollY": 225,
+    "nearDoneUnder5PercentScrollY": 525,
+    "doneApproxScrollY": 625,
+    "hostScaleLocksApproxScrollY": 900
+  }
 }

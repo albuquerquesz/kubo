@@ -14,14 +14,24 @@ export type {
 } from "./timelines/hero-display-intro";
 export {
   playHeroStickyScale,
+  heroIconScrollRange,
+  pinTravelPx,
+  hostEaseProgress,
+  hostTransformAtPinProgress,
+  lineTranslateXAtPinProgress,
   HERO_STICKY_SCALE_FROM,
   HERO_STICKY_SCALE_TO,
   HERO_STICKY_SCROLL,
   HERO_STICKY_MQ,
+  HERO_HOST_EASE,
+  HERO_HOST_X_END_RATIO,
+  HERO_HOST_Y_END_RATIO,
+  HERO_LINE_X_END_RATIOS,
 } from "./timelines/hero-sticky-scale";
 export type { HeroStickyScaleOptions, HeroStickyScaleHandle } from "./timelines/hero-sticky-scale";
 export {
   playScrollRevealIcons,
+  playHeroScrollRevealIcons,
   SCROLL_REVEAL_ICONS_DEFAULTS,
   SCROLL_REVEAL_ICONS_HERO,
 } from "./timelines/scroll-reveal-icons";
