@@ -43,18 +43,18 @@ function BrandMark() {
     <Link
       href="/"
       className={cn(
-        "flex shrink-0 items-center gap-1.5 border-rule border-r px-2.5 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:gap-2 sm:px-3",
+        "flex shrink-0 items-center gap-1.5 overflow-hidden border-rule border-r px-2 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:gap-2 sm:px-2.5",
         headerRowClass,
       )}
       aria-label="Kubo home"
     >
-      <span aria-hidden className="relative size-9 shrink-0 overflow-hidden sm:size-10">
+      <span aria-hidden className="relative size-11 shrink-0 overflow-hidden sm:size-12">
         <Image
           src="/assets/kubo-mark.png"
           alt=""
-          width={40}
-          height={40}
-          className="size-9 object-contain sm:size-10"
+          width={48}
+          height={48}
+          className="size-11 object-contain sm:size-12"
         />
       </span>
     </Link>
@@ -71,7 +71,7 @@ function DesktopNavigation() {
         <Link
           key={link.href}
           href={link.href}
-          className="flex min-w-24 items-center justify-center border-rule border-r px-5 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+          className="flex min-w-24 items-center justify-center border-rule border-r px-5 font-mono text-xs text-muted-foreground tracking-[0.04em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
         >
           {link.label}
         </Link>
@@ -235,7 +235,7 @@ export function SiteHeader() {
           target="_blank"
           rel="noreferrer"
           className={cn(
-            "flex items-center gap-2 border-rule border-l px-3 font-mono text-sm text-muted-foreground uppercase tracking-[0.08em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:px-4",
+            "flex items-center gap-2 border-rule border-l px-3 font-mono text-sm text-muted-foreground tracking-[0.04em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:px-4",
             headerRowClass,
           )}
           aria-label="Kubo on GitHub"
@@ -247,12 +247,12 @@ export function SiteHeader() {
           href="/new"
           className={cn(
             buttonVariants({ size: "lg" }),
-            "hidden min-w-36 border-0 px-4 text-sm font-semibold sm:inline-flex sm:px-5",
+            "hidden min-w-36 border-0 px-4 text-base font-semibold sm:inline-flex sm:px-5",
             headerRowClass,
           )}
         >
           Build a stack
-          <ArrowUpRight data-icon="inline-end" />
+          <ArrowUpRight data-icon="inline-end" className="size-5" />
         </Link>
         <MobileNavigation />
       </div>
