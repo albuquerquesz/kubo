@@ -39,16 +39,16 @@ function BrandMark() {
   return (
     <Link
       href="/"
-      className="flex h-14 shrink-0 items-center gap-1.5 border-rule border-r px-4 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:gap-2 sm:px-5"
+      className="flex h-14 shrink-0 items-center gap-1.5 border-rule border-r px-2.5 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:gap-2 sm:px-3"
       aria-label="Kubo home"
     >
-      <span aria-hidden className="relative size-10 shrink-0 overflow-hidden sm:size-11">
+      <span aria-hidden className="relative size-12 shrink-0 overflow-hidden sm:size-14">
         <Image
           src="/assets/kubo-mark.png"
           alt=""
-          width={44}
-          height={44}
-          className="size-10 object-contain sm:size-11"
+          width={56}
+          height={56}
+          className="size-12 object-contain sm:size-14"
         />
       </span>
     </Link>

@@ -4,23 +4,21 @@ import { ArrowUpRight, Check, Copy, FileCode2, GitBranch, Terminal } from "lucid
 import Link from "next/link";
 import { useState } from "react";
 
+import {
+  CREATE_COMMANDS,
+  DEFAULT_PACKAGE_MANAGER,
+  PACKAGE_MANAGERS,
+  type PackageManager,
+} from "@/lib/create-commands";
 import { cn } from "@/lib/utils";
 
-type PackageManager = "bun" | "pnpm" | "npm";
-
-const commands: Record<PackageManager, string> = {
-  bun: "bun create kubots@latest",
-  pnpm: "pnpm create kubots@latest",
-  npm: "npx create-kubots@latest",
-};
-
 export default function CommandSection() {
-  const [selectedManager, setSelectedManager] = useState<PackageManager>("bun");
+  const [selectedManager, setSelectedManager] = useState<PackageManager>(DEFAULT_PACKAGE_MANAGER);
   const [copied, setCopied] = useState(false);
 
   const copyCommand = async () => {
     try {
-      await navigator.clipboard.writeText(commands[selectedManager]);
+      await navigator.clipboard.writeText(CREATE_COMMANDS[selectedManager]);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
@@ -55,7 +53,7 @@ export default function CommandSection() {
               <span className="ui-kicker">Start from your terminal</span>
             </span>
             <div className="flex border border-rule" role="group" aria-label="Package manager">
-              {(Object.keys(commands) as PackageManager[]).map((manager) => (
+              {PACKAGE_MANAGERS.map((manager) => (
                 <button
                   key={manager}
                   type="button"
@@ -89,7 +87,7 @@ export default function CommandSection() {
               </div>
               <div className="flex min-h-32 items-center gap-3 overflow-x-auto px-4 py-6 font-mono text-sm sm:text-base">
                 <span className="text-primary">$</span>
-                <code className="whitespace-nowrap">{commands[selectedManager]}</code>
+                <code className="whitespace-nowrap">{CREATE_COMMANDS[selectedManager]}</code>
               </div>
               <button
                 type="button"

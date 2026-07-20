@@ -1,4 +1,9 @@
 import { DEFAULT_STACK, isStackDefault, type StackState, TECH_OPTIONS } from "@/lib/constant";
+import {
+  CREATE_COMMANDS,
+  DEFAULT_PACKAGE_MANAGER,
+  type PackageManager,
+} from "@/lib/create-commands";
 import { stackUrlKeys } from "@/lib/stack-url-keys";
 
 const CATEGORY_ORDER: Array<keyof typeof TECH_OPTIONS> = [
@@ -140,15 +145,10 @@ export function getDesktopBuildNote(stack: Pick<StackState, "addons" | "backend"
 }
 
 export function generateStackCommand(stack: StackState) {
-  const packageManagerCommands = {
-    npm: "npx create-kubots@latest",
-    pnpm: "pnpm create kubots@latest",
-    default: "bun create kubots@latest",
-  };
-
-  const base =
-    packageManagerCommands[stack.packageManager as keyof typeof packageManagerCommands] ||
-    packageManagerCommands.default;
+  const manager = (
+    stack.packageManager in CREATE_COMMANDS ? stack.packageManager : DEFAULT_PACKAGE_MANAGER
+  ) as PackageManager;
+  const base = CREATE_COMMANDS[manager];
   const projectName = stack.projectName || "my-better-t-app";
 
   const isStackDefaultExceptProjectName = Object.entries(DEFAULT_STACK).every(
