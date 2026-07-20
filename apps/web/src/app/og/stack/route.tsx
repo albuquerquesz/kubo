@@ -25,9 +25,9 @@ const categoryChipColors: Partial<Record<string, string>> = {
 };
 
 function commandBase(packageManager: StackState["packageManager"]) {
-  if (packageManager === "npm") return "npx create-kubots@latest";
-  if (packageManager === "pnpm") return "pnpm create kubots@latest";
-  return "bun create kubots@latest";
+  if (packageManager === "npm") return "npx create-kubojs@latest";
+  if (packageManager === "pnpm") return "pnpm create kubojs@latest";
+  return "bun create kubojs@latest";
 }
 
 export async function GET(req: NextRequest) {

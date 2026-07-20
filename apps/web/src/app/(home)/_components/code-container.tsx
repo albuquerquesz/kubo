@@ -12,9 +12,9 @@ const CodeContainer = () => {
   const [copied, setCopied] = useState(false);
 
   const commands = {
-    npm: "npx create-kubots@latest",
-    pnpm: "pnpm create kubots@latest",
-    bun: "bun create kubots@latest",
+    npm: "npx create-kubojs@latest",
+    pnpm: "pnpm create kubojs@latest",
+    bun: "bun create kubojs@latest",
   };
 
   const copyToClipboard = async () => {

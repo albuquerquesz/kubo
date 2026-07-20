@@ -8,9 +8,9 @@ export type PackageManager = "bun" | "pnpm" | "npm";
 export const PACKAGE_MANAGERS = ["bun", "pnpm", "npm"] as const satisfies readonly PackageManager[];
 
 export const CREATE_COMMANDS: Record<PackageManager, string> = {
-  bun: "bun create kubots@latest",
-  pnpm: "pnpm create kubots@latest",
-  npm: "npx create-kubots@latest",
+  bun: "bun create kubojs@latest",
+  pnpm: "pnpm create kubojs@latest",
+  npm: "npx create-kubojs@latest",
 };
 
 export const DEFAULT_PACKAGE_MANAGER: PackageManager = "bun";

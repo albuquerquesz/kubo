@@ -14,14 +14,14 @@ const PAGES: Record<
     section: "home",
     title: "Roll Your Own Stack",
     description: "Modern CLI for scaffolding end-to-end type-safe TypeScript projects",
-    command: "bun create kubots@latest",
+    command: "bun create kubojs@latest",
   },
   new: {
     path: "~/new",
     section: "stack builder",
     title: "Stack Builder",
     description: "Pick your stack, get a ready-to-run command",
-    command: "bun create kubots@latest my-app --yes",
+    command: "bun create kubojs@latest my-app --yes",
   },
   showcase: {
     path: "~/showcase",
