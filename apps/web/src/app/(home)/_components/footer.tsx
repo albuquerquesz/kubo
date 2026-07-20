@@ -74,7 +74,7 @@ export default function Footer() {
         <div className="border-rule p-6 sm:p-8 lg:col-span-3 lg:min-h-[22rem] lg:border-r lg:p-12 lg:py-20">
           <Link
             href="/"
-            className="inline-flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+            className="inline-flex items-end gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
             aria-label="Kubo home"
           >
             <span aria-hidden className="relative size-16 overflow-hidden">
