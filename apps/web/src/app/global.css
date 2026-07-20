@@ -337,7 +337,8 @@
   --border: #373220;
   --input: #242012;
   --ring: #e0b43e;
-  --rule: #3b3522;
+  /* Structural rails — light gray (matches white/15 on dark canvas) */
+  --rule: color-mix(in srgb, white 15%, var(--background));
   --signal: #c49314;
   --signal-foreground: #080806;
   --page-gutter: clamp(1rem, 4vw, 3rem);
