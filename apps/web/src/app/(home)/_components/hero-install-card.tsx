@@ -1,34 +1,36 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 
 import {
-  CREATE_COMMANDS,
   DEFAULT_PACKAGE_MANAGER,
-  PACKAGE_MANAGERS,
+  getCreateCommand,
   type PackageManager,
 } from "@/lib/create-commands";
 import { cn } from "@/lib/utils";
 
 export type HeroInstallCardProps = {
   className?: string;
-  /** Default package manager. Default "bun". */
+  /** Override create command for tests. Defaults to bun create string. */
+  command?: string;
+  /** Default package manager when `command` is omitted. Default "bun". */
   defaultManager?: PackageManager;
 };
 
 /**
- * Compact create-command control for the hero right rail:
- * package manager tabs + monospace command + copy.
+ * Horizontal install shell for the hero right rail:
+ * mark thumb + default create command + copy control.
+ * Full package-manager switching lives in CommandSection below the fold.
  */
 export default function HeroInstallCard({
   className,
+  command: commandProp,
   defaultManager = DEFAULT_PACKAGE_MANAGER,
 }: HeroInstallCardProps) {
-  const [selectedManager, setSelectedManager] = useState<PackageManager>(defaultManager);
   const [copied, setCopied] = useState(false);
-
-  const command = CREATE_COMMANDS[selectedManager];
+  const command = commandProp ?? getCreateCommand(defaultManager);
 
   const copyCommand = async () => {
     try {
@@ -43,63 +45,53 @@ export default function HeroInstallCard({
   return (
     <div
       className={cn(
-        "flex w-full flex-col gap-3 rounded-xl border border-rule bg-card p-3 sm:p-3.5",
+        "flex w-full items-center gap-2.5 rounded-xl border border-rule bg-card p-2 sm:gap-3 sm:p-2.5",
         className,
       )}
     >
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div
-          className="flex min-h-11 overflow-hidden rounded-lg border border-rule"
-          role="group"
-          aria-label="Package manager"
-        >
-          {PACKAGE_MANAGERS.map((manager) => (
-            <button
-              key={manager}
-              type="button"
-              className={cn(
-                "ui-kicker min-h-11 min-w-12 border-rule px-2.5 transition-colors duration-150 ease-out not-last:border-r hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:min-w-14 sm:px-3",
-                selectedManager === manager
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-background text-muted-foreground",
-              )}
-              aria-pressed={selectedManager === manager}
-              onClick={() => {
-                setSelectedManager(manager);
-                setCopied(false);
-              }}
-            >
-              {manager}
-            </button>
-          ))}
-        </div>
+      <span
+        aria-hidden
+        className="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted sm:size-14"
+      >
+        <Image
+          src="/assets/kubo-mark.png"
+          alt=""
+          width={56}
+          height={56}
+          className="size-9 object-contain sm:size-10"
+        />
+      </span>
 
-        <button
-          type="button"
-          onClick={copyCommand}
-          className="ui-kicker flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-lg border border-rule bg-background px-3 text-muted-foreground transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
-          aria-label={copied ? "Command copied" : "Copy command"}
-        >
-          <span className="sr-only" aria-live="polite">
-            {copied ? "Command copied" : "Copy command"}
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-mono text-xs text-foreground sm:text-sm">
+          <span className="text-primary" aria-hidden>
+            ${" "}
           </span>
-          <span className="hidden sm:inline" aria-hidden>
-            {copied ? "Copied" : "Copy"}
-          </span>
-          {copied ? (
-            <Check className="size-4 text-primary" aria-hidden />
-          ) : (
-            <Copy className="size-4" aria-hidden />
-          )}
-        </button>
+          <code className="font-mono">{command}</code>
+        </p>
       </div>
 
-      <div className="flex min-h-11 items-center gap-2 overflow-x-auto rounded-lg border border-rule bg-background px-3 py-2.5 font-mono text-xs sm:text-sm">
-        <span className="shrink-0 text-primary" aria-hidden>
-          $
+      <button
+        type="button"
+        onClick={copyCommand}
+        className="flex h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-lg border border-rule bg-background px-0 text-muted-foreground transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:px-3"
+        aria-label={copied ? "Command copied" : "Copy command"}
+      >
+        <span className="sr-only" aria-live="polite">
+          {copied ? "Command copied" : "Copy command"}
         </span>
-        <code className="whitespace-nowrap text-foreground">{command}</code>
-      </div>
+        <span
+          className="hidden font-mono text-xs uppercase tracking-[0.08em] sm:inline"
+          aria-hidden
+        >
+          {copied ? "Copied" : "Copy"}
+        </span>
+        {copied ? (
+          <Check className="size-4 text-primary" aria-hidden />
+        ) : (
+          <Copy className="size-4" aria-hidden />
+        )}
+      </button>
     </div>
   );
 }
