@@ -39,7 +39,7 @@ export default function Footer() {
         aria-labelledby="final-cta-title"
         className="grid border-rule border-b lg:grid-cols-12"
       >
-        <div className="ui-rule-grid min-h-[30rem] p-6 sm:p-8 lg:col-span-8 lg:border-r lg:p-12">
+        <div className="ui-rule-grid min-h-[32rem] p-6 sm:p-8 lg:col-span-8 lg:min-h-[40rem] lg:border-r lg:p-12">
           <div className="flex h-full flex-col justify-between">
             <p className="ui-kicker text-primary">Ready / Generate locally</p>
             <h2
@@ -56,7 +56,7 @@ export default function Footer() {
         <div className="grid lg:col-span-4">
           <Link
             href="/new"
-            className="group flex min-h-60 flex-col justify-between bg-primary p-6 text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:p-8 lg:p-10"
+            className="group flex min-h-72 flex-col justify-between bg-primary p-6 text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:p-8 lg:min-h-80 lg:p-10"
           >
             <span className="ui-kicker">Interactive path</span>
             <span className="flex items-end justify-between gap-6 text-3xl font-semibold tracking-tight">
@@ -64,7 +64,7 @@ export default function Footer() {
               <ArrowUpRight className="size-6 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1" />
             </span>
           </Link>
-          <div className="flex min-h-44 flex-col justify-between border-rule border-t bg-card p-6 sm:p-8 lg:p-10">
+          <div className="flex min-h-52 flex-col justify-between border-rule border-t bg-card p-6 sm:p-8 lg:min-h-56 lg:p-10">
             <span className="ui-kicker text-muted-foreground">Terminal path</span>
             <code className="break-all font-mono text-sm leading-relaxed">
               bun create kubojs@latest
@@ -78,7 +78,7 @@ export default function Footer() {
       </section>
 
       <div className="grid lg:grid-cols-12">
-        <div className="border-rule p-6 sm:p-8 lg:col-span-3 lg:border-r lg:p-10">
+        <div className="border-rule p-6 sm:p-8 lg:col-span-3 lg:min-h-[16rem] lg:border-r lg:p-12 lg:py-14">
           <Link
             href="/"
             className="inline-flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
@@ -107,7 +107,7 @@ export default function Footer() {
           {footerGroups.map((group) => (
             <div
               key={group.label}
-              className="border-rule p-6 not-last:border-b sm:p-8 sm:not-last:border-r sm:not-last:border-b-0 lg:p-10"
+              className="border-rule p-6 not-last:border-b sm:p-8 sm:not-last:border-r sm:not-last:border-b-0 lg:p-12 lg:py-14"
             >
               <p className="ui-kicker text-primary">{group.label}</p>
               <ul className="mt-8 space-y-4">
@@ -135,12 +135,12 @@ export default function Footer() {
       </div>
 
       <div className="grid border-rule border-t sm:grid-cols-2">
-        <p className="ui-kicker flex min-h-14 items-center px-5 text-muted-foreground sm:px-8">
+        <p className="ui-kicker flex min-h-16 items-center px-5 text-muted-foreground sm:px-8">
           © {new Date().getFullYear()} Kubo
         </p>
       </div>
 
-      <div className="overflow-hidden border-rule border-t px-5 py-8 sm:px-8">
+      <div className="overflow-hidden border-rule border-t px-5 py-12 sm:px-8 sm:py-14 lg:py-16">
         <p
           aria-hidden
           className="ui-display text-center whitespace-nowrap text-[clamp(4rem,12.7vw,12rem)] leading-[0.75] text-foreground"
