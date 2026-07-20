@@ -1,136 +1,126 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-18T23:39:35Z",
+  "generatedAt": "2026-07-20T19:40:33.000Z",
   "title": "Design System: Better T Stack",
   "extensions": {
     "colorMeta": {
-      "midnight-canvas": {
+      "warm-canvas": {
         "role": "neutral",
-        "displayName": "Midnight Canvas",
-        "canonical": "oklch(0.125 0.014 286)",
+        "displayName": "Warm Canvas",
+        "canonical": "#11110d",
+        "cssVar": "--background",
         "tonalRamp": [
-          "oklch(0.12 0.014 286)",
-          "oklch(0.18 0.014 286)",
-          "oklch(0.26 0.013 286)",
-          "oklch(0.38 0.012 286)",
-          "oklch(0.52 0.011 286)",
-          "oklch(0.68 0.01 286)",
-          "oklch(0.82 0.008 286)",
-          "oklch(0.95 0.006 286)"
+          "#0a0a08",
+          "#11110d",
+          "#181814",
+          "#211f16",
+          "#222118",
+          "#3a3628",
+          "#b0a78d",
+          "#f2ede0"
         ]
       },
-      "builder-violet": {
+      "cream-ink": {
+        "role": "neutral",
+        "displayName": "Cream Ink",
+        "canonical": "#f2ede0",
+        "cssVar": "--foreground",
+        "tonalRamp": [
+          "#4a4638",
+          "#6a6454",
+          "#8a8370",
+          "#b0a78d",
+          "#cfc7b0",
+          "#e0d9c4",
+          "#f2ede0",
+          "#faf7f0"
+        ]
+      },
+      "signal-gold": {
         "role": "primary",
-        "displayName": "Builder Violet",
-        "canonical": "oklch(0.75 0.19 308)",
+        "displayName": "Signal Gold",
+        "canonical": "#c49314",
+        "cssVar": "--primary",
         "tonalRamp": [
-          "oklch(0.18 0.07 308)",
-          "oklch(0.28 0.11 308)",
-          "oklch(0.4 0.15 308)",
-          "oklch(0.52 0.18 308)",
-          "oklch(0.64 0.19 308)",
-          "oklch(0.75 0.19 308)",
-          "oklch(0.86 0.13 308)",
-          "oklch(0.95 0.05 308)"
+          "#3d2e08",
+          "#6b5010",
+          "#8f6c12",
+          "#c49314",
+          "#d6a72b",
+          "#e0b43e",
+          "#e1c56d",
+          "#f2ede0"
         ]
       },
-      "signal-cyan": {
-        "role": "secondary",
-        "displayName": "Signal Cyan",
-        "canonical": "oklch(0.8 0.13 200)",
-        "tonalRamp": [
-          "oklch(0.18 0.05 200)",
-          "oklch(0.28 0.08 200)",
-          "oklch(0.4 0.1 200)",
-          "oklch(0.52 0.12 200)",
-          "oklch(0.64 0.13 200)",
-          "oklch(0.76 0.13 200)",
-          "oklch(0.86 0.09 200)",
-          "oklch(0.95 0.03 200)"
-        ]
+      "soft-rule": {
+        "role": "neutral",
+        "displayName": "Soft Rule",
+        "canonical": "color-mix(in srgb, white 6%, #11110d)",
+        "cssVar": "--rule",
+        "tonalRamp": []
       },
-      "signal-lime": {
-        "role": "secondary",
-        "displayName": "Signal Lime",
-        "canonical": "oklch(0.84 0.16 132)",
+      "destructive-coral": {
+        "role": "tertiary",
+        "displayName": "Destructive Coral",
+        "canonical": "#e86f5d",
+        "cssVar": "--destructive",
         "tonalRamp": [
-          "oklch(0.18 0.05 132)",
-          "oklch(0.28 0.08 132)",
-          "oklch(0.4 0.11 132)",
-          "oklch(0.52 0.14 132)",
-          "oklch(0.64 0.16 132)",
-          "oklch(0.76 0.16 132)",
-          "oklch(0.86 0.12 132)",
-          "oklch(0.95 0.04 132)"
-        ]
-      },
-      "signal-amber": {
-        "role": "secondary",
-        "displayName": "Signal Amber",
-        "canonical": "oklch(0.82 0.15 76)",
-        "tonalRamp": [
-          "oklch(0.18 0.05 76)",
-          "oklch(0.28 0.08 76)",
-          "oklch(0.4 0.11 76)",
-          "oklch(0.52 0.14 76)",
-          "oklch(0.64 0.15 76)",
-          "oklch(0.76 0.15 76)",
-          "oklch(0.86 0.1 76)",
-          "oklch(0.95 0.035 76)"
+          "#4a1812",
+          "#7a2a1e",
+          "#b04434",
+          "#e86f5d",
+          "#f08a7a",
+          "#f5a89c",
+          "#f8c4bc",
+          "#fde8e4"
         ]
       }
     },
     "typographyMeta": {
       "display": {
-        "displayName": "Display Statement",
-        "purpose": "One short dominant statement per major viewport."
+        "displayName": "Display",
+        "purpose": "Section hero statements via .ui-display; cream ink only."
       },
-      "headline": {
-        "displayName": "Section Headline",
-        "purpose": "Orient and convert at section scale."
-      },
-      "body": {
-        "displayName": "Body",
-        "purpose": "Explain product behavior in lines capped near 70 characters."
+      "display-hero": {
+        "displayName": "Display hero",
+        "purpose": "Home dual-title decorative line; GSAP masked rise."
       },
       "label": {
-        "displayName": "Technical Label",
-        "purpose": "Configuration metadata, indexes, commands, and chips."
+        "displayName": "Kicker",
+        "purpose": ".ui-kicker mono uppercase indexes and metadata."
       }
     },
     "shadows": [],
     "motion": [
       {
-        "name": "state-fast",
-        "value": "150ms cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Color and opacity feedback on controls."
+        "name": "ui-state",
+        "value": "150ms ease-out",
+        "purpose": "Color/opacity hover on interactive chrome."
       },
       {
-        "name": "directional",
-        "value": "200ms cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Small arrow or icon translations that communicate direction."
+        "name": "ui-enter",
+        "value": "420ms cubic-bezier(0.2, 0.7, 0.2, 1)",
+        "purpose": "Legacy CSS enter; prefer GSAP for authored marketing."
+      },
+      {
+        "name": "hero-display-intro",
+        "value": "GSAP char yPercent rise, power4-style ease",
+        "purpose": "Dual-title decorative intro; reduced-motion skips."
+      },
+      {
+        "name": "scroll-reveal-icons",
+        "value": "GSAP ScrollTrigger scrub yPercent 100→0 + stagger",
+        "purpose": "Mission-adjacent masked icon rise; desktop only."
       }
     ],
     "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
       {
-        "name": "narrow-check",
-        "value": "390px"
-      },
-      {
-        "name": "sm",
-        "value": "640px"
-      },
-      {
-        "name": "md",
-        "value": "768px"
-      },
-      {
-        "name": "lg",
-        "value": "1024px"
-      },
-      {
-        "name": "wide-check",
-        "value": "1440px"
+        "name": "frame-edge",
+        "value": "1023px",
+        "purpose": "ui-frame lateral gutters and rule-frame below lg"
       }
     ]
   },
@@ -139,92 +129,105 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "High-commitment action with compact geometry and decisive violet fill.",
-      "html": "<button class=\"ds-btn-primary\">BUILD A STACK <span aria-hidden=\"true\">↗</span></button>",
-      "css": ".ds-btn-primary { min-height: 48px; border: 1px solid var(--primary); border-radius: var(--ui-radius-control); background: var(--primary); color: var(--primary-foreground); padding: 12px 20px; font: 500 14px/1 var(--font-archivo); transition: background-color 150ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { background: color-mix(in oklch, var(--primary) 85%, var(--background)); } .ds-btn-primary:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }"
+      "description": "Signal gold conversion control; square shell.",
+      "html": "<button type=\"button\" class=\"ds-btn-primary\">Build a stack</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 20px; border: 0; border-radius: 0; background: #c49314; color: #11110d; font-family: Archivo, system-ui, sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; cursor: pointer; transition: background-color 150ms ease-out; } .ds-btn-primary:hover { background: #d6a72b; } .ds-btn-primary:focus-visible { outline: 2px solid #e0b43e; outline-offset: 2px; }"
     },
     {
-      "name": "Secondary Button",
+      "name": "Ghost Utility",
       "kind": "button",
-      "refersTo": "button-secondary",
-      "description": "Low-commitment action on a graphite surface.",
-      "html": "<button class=\"ds-btn-secondary\">READ THE DOCS <span aria-hidden=\"true\">↓</span></button>",
-      "css": ".ds-btn-secondary { min-height: 48px; border: 1px solid var(--rule); border-radius: var(--ui-radius-control); background: var(--surface-raised); color: var(--foreground); padding: 12px 20px; font: 500 14px/1 var(--font-archivo); transition: background-color 150ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-secondary:hover { background: var(--surface); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }"
+      "refersTo": "button-ghost",
+      "description": "Header/nav utility (GitHub style).",
+      "html": "<a class=\"ds-btn-ghost\" href=\"#\">GitHub</a>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; height: 48px; padding: 0 16px; border-left: 1px solid color-mix(in srgb, white 6%, #11110d); background: transparent; color: #b0a78d; font-family: \"IBM Plex Mono\", ui-monospace, monospace; font-size: 0.875rem; letter-spacing: 0.04em; text-decoration: none; transition: color 150ms ease-out, background-color 150ms ease-out; } .ds-btn-ghost:hover { color: #f2ede0; background: #222118; } .ds-btn-ghost:focus-visible { outline: 2px solid #e0b43e; outline-offset: -2px; }"
     },
     {
-      "name": "Navigation Cell",
-      "kind": "nav",
-      "description": "Fixed-header destination rendered as one adjoining ruled cell.",
-      "html": "<a class=\"ds-nav-cell\" href=\"#\">BUILDER</a>",
-      "css": ".ds-nav-cell { display: inline-flex; min-height: 64px; align-items: center; justify-content: center; border-right: 1px solid var(--rule); background: var(--background); color: var(--muted-foreground); padding: 0 20px; font: 500 11px/1 var(--font-azeret-mono); letter-spacing: .08em; text-decoration: none; } .ds-nav-cell:hover { background: var(--muted); color: var(--foreground); } .ds-nav-cell:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }"
-    },
-    {
-      "name": "Metadata Chip",
+      "name": "Metadata Kicker",
       "kind": "chip",
-      "refersTo": "metadata-chip",
-      "description": "Quiet technical summary used after explanatory content.",
-      "html": "<span class=\"ds-chip\"><span aria-hidden=\"true\"></span> COMPATIBILITY CHECKS</span>",
-      "css": ".ds-chip { display: inline-flex; min-height: 32px; align-items: center; gap: 8px; border-radius: var(--ui-radius-control); background: var(--surface); color: var(--muted-foreground); padding: 8px 12px; font: 500 11px/1.45 var(--font-azeret-mono); letter-spacing: .12em; } .ds-chip span { width: 6px; height: 6px; background: var(--primary); }"
+      "refersTo": "metadata-kicker",
+      "description": "Section index / technical label.",
+      "html": "<p class=\"ds-kicker\">01 / Compose</p>",
+      "css": ".ds-kicker { margin: 0; font-family: \"IBM Plex Mono\", ui-monospace, monospace; font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.12em; line-height: 1.4; text-transform: uppercase; color: #b0a78d; }"
     },
     {
-      "name": "Framed Product Panel",
+      "name": "Framed Panel",
       "kind": "card",
       "refersTo": "framed-panel",
-      "description": "Square product-explanation surface joined to the shared grid.",
-      "html": "<article class=\"ds-panel\"><small>01 / FRONTEND</small><strong>Next.js</strong><p>React framework with hybrid rendering.</p></article>",
-      "css": ".ds-panel { border: 1px solid var(--rule); border-radius: 0; background: var(--background); color: var(--foreground); padding: 20px; } .ds-panel small { display: block; color: var(--muted-foreground); font: 500 11px/1.45 var(--font-azeret-mono); letter-spacing: .12em; } .ds-panel strong { display: block; margin-top: 40px; font: 600 24px/1.1 var(--font-archivo); } .ds-panel p { max-width: 48ch; color: var(--muted-foreground); font: 400 14px/1.7 var(--font-archivo); } .ds-panel:focus-within { outline: 2px solid var(--ring); outline-offset: -2px; }"
+      "description": "Structural cell on the soft-rule grid.",
+      "html": "<div class=\"ds-panel\"><p class=\"ds-kicker\">Ready</p><p class=\"ds-panel-title\">Stop assembling.</p></div>",
+      "css": ".ds-panel { background: #11110d; color: #f2ede0; border: 1px solid color-mix(in srgb, white 6%, #11110d); border-radius: 0; padding: 20px; font-family: Archivo, system-ui, sans-serif; } .ds-kicker { margin: 0 0 1rem; font-family: \"IBM Plex Mono\", ui-monospace, monospace; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: #b0a78d; } .ds-panel-title { margin: 0; font-size: clamp(2rem, 4vw, 3rem); font-weight: 600; letter-spacing: -0.065em; line-height: 0.92; }"
     },
     {
-      "name": "Configuration Input",
-      "kind": "input",
-      "description": "Compact field for project names and explicit configuration.",
-      "html": "<label class=\"ds-field\">PROJECT NAME<input value=\"my-better-t-app\" /></label>",
-      "css": ".ds-field { display: grid; gap: 8px; color: var(--muted-foreground); font: 500 11px/1.45 var(--font-azeret-mono); letter-spacing: .12em; } .ds-field input { min-height: 44px; border: 1px solid var(--rule); border-radius: var(--ui-radius-control); background: var(--background); color: var(--foreground); padding: 10px 12px; font: 400 14px/1 var(--font-azeret-mono); } .ds-field input:focus-visible { border-color: var(--ring); outline: 2px solid color-mix(in oklch, var(--ring) 35%, transparent); outline-offset: 1px; }"
+      "name": "Install Script Shell",
+      "kind": "custom",
+      "refersTo": "install-script-shell",
+      "description": "Hero command box only; eyebrow + select sit outside.",
+      "html": "<div class=\"ds-install\"><span class=\"ds-install-prompt\">$</span><code class=\"ds-install-cmd\">bun create kubojs@latest</code><button type=\"button\" class=\"ds-install-copy\">Copy</button></div>",
+      "css": ".ds-install { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid color-mix(in srgb, white 6%, #11110d); border-radius: 12px; background: #181814; color: #f2ede0; font-family: \"IBM Plex Mono\", ui-monospace, monospace; font-size: 0.875rem; } .ds-install-prompt { color: #c49314; } .ds-install-cmd { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ds-install-copy { height: 44px; padding: 0 12px; border: 1px solid color-mix(in srgb, white 6%, #11110d); border-radius: 8px; background: #11110d; color: #b0a78d; font: inherit; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.6875rem; cursor: pointer; } .ds-install-copy:hover { color: #f2ede0; background: #222118; } .ds-install-copy:focus-visible { outline: 2px solid #e0b43e; outline-offset: -2px; }"
+    },
+    {
+      "name": "Site Header Bar",
+      "kind": "nav",
+      "refersTo": "site-header",
+      "description": "Fixed 48px soft-rule row.",
+      "html": "<header class=\"ds-header\"><span class=\"ds-header-mark\">K</span><nav class=\"ds-header-nav\"><a href=\"#\">Product</a><a href=\"#\">System</a></nav><a class=\"ds-header-util\" href=\"#\">GitHub</a><a class=\"ds-btn-primary\" href=\"#\">Build a stack</a></header>",
+      "css": ".ds-header { display: flex; align-items: stretch; height: 48px; max-width: 1600px; margin: 0 auto; border-bottom: 1px solid color-mix(in srgb, white 6%, #11110d); background: color-mix(in srgb, #11110d 95%, transparent); color: #b0a78d; font-family: \"IBM Plex Mono\", ui-monospace, monospace; font-size: 0.875rem; } .ds-header-mark { display: flex; align-items: center; justify-content: center; width: 48px; border-right: 1px solid color-mix(in srgb, white 6%, #11110d); color: #c49314; font-weight: 700; } .ds-header-nav { display: flex; } .ds-header-nav a { display: flex; align-items: center; padding: 0 20px; border-right: 1px solid color-mix(in srgb, white 6%, #11110d); color: inherit; text-decoration: none; } .ds-header-nav a:hover { color: #f2ede0; background: #222118; } .ds-header-util { display: flex; align-items: center; margin-left: auto; padding: 0 16px; border-left: 1px solid color-mix(in srgb, white 6%, #11110d); color: inherit; text-decoration: none; } .ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 20px; background: #c49314; color: #11110d; font-family: Archivo, system-ui, sans-serif; font-weight: 600; text-decoration: none; }"
     }
   ],
   "narrative": {
     "northStar": "The System Manual",
-    "overview": "Better T Stack should feel like a well-made infrastructure manual brought to life: exact, independent, and kinetic. A visible grid, explicit states, and compact technical metadata make complex architecture choices feel inspectable. The interface is dark-only because it lives beside editors and terminals in a developer's working environment, not because developer tools are expected to look neon or theatrical.",
+    "overview": "Better T Stack (product face: Kubo) should feel like a well-made infrastructure manual brought to life: exact, independent, and kinetic. A visible soft-rule grid, explicit states, and compact technical metadata make architecture choices feel inspectable. The shell is dark-first because it lives beside editors and terminals, not because developer tools must look neon or theatrical.\n\nThe design is architectural, not card-driven. Sections, navigation, controls, diagrams, and footers meet at shared 1 px soft rules. Product behavior carries the visual story through stack diagrams, create commands, compatibility states, and real usage data. Gold is a signal, not wallpaper: primary conversion surfaces, selected states, and structural emphasis only. Display titles stay cream ink; accent color is not used to colorize every second line of a headline.\n\nIt explicitly rejects Mistral's identity and assets, generic purple gradients, glowing glass cards, decorative terminal chrome, excessive shadows, rounded-card grids as default layout, and a split light/dark dual identity.",
     "keyCharacteristics": [
-      "Dark-only, tinted neutral canvas",
-      "Contiguous grid cells separated by a shared 1 px rule",
-      "Large, compressed Archivo statements paired with compact Azeret Mono metadata",
-      "Violet as the primary action color, with cyan, lime, and amber isolated by module",
-      "Product UI and CSS diagrams instead of stock imagery or decorative gradients",
-      "Mobile layouts recomposed into a single reading order with 44 px targets"
+      "Dark, warm-olive canvas (#11110d) with cream ink (#f2ede0)",
+      "Soft structural rules (white mixed 6% into canvas), not loud brown rails",
+      "Contiguous grid cells; gutters reserved for content rhythm, not card decoration",
+      "Archivo display + IBM Plex Mono kickers/commands",
+      "Signal gold (#c49314) for primary actions and chart emphasis; cream titles",
+      "Flat elevation: no decorative shadows on the marketing shell",
+      "Mobile recomposes reading order; fixed header is 48 px (3rem)",
+      "Authored marketing motion uses GSAP; UI state uses short 150 ms color transitions"
     ],
     "rules": [
       {
-        "name": "The Isolated Signal Rule",
-        "body": "A module owns one vivid family. Adjacent reading surfaces remain neutral so color continues to communicate state and category.",
+        "name": "The Soft-Rule Rule",
+        "body": "Structural borders default to the soft white mix, not a high-contrast brown rail. Soft rules define bands; they never replace text contrast or focus rings.",
+        "section": "colors"
+      },
+      {
+        "name": "The Gold Rarity Rule",
+        "body": "Signal Gold is for actions, selected state, and intentional markers. Display headlines stay Cream Ink. Do not paint every alternating title line gold by default.",
         "section": "colors"
       },
       {
         "name": "The One Statement Rule",
-        "body": "Display type is for a single declarative message. Feature detail moves into body copy and metadata instead of competing in the same scale.",
+        "body": "Display type carries a single declarative message. Feature detail moves into body copy and metadata instead of competing at the same scale.",
         "section": "typography"
       },
       {
         "name": "The Structural Depth Rule",
-        "body": "If a surface needs hierarchy, change its position, rule, or tone. Do not add a shadow to compensate for weak structure.",
+        "body": "If hierarchy is weak, change tone, rule, or position. Do not add a drop shadow to compensate.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "Do use the 1 px Structural Rule to join sections, controls, diagrams, and footer groups into one frame.",
+      "Do use the Soft Rule (--rule / border-rule) to join sections, controls, diagrams, and footer groups into one frame.",
+      "Do keep display titles in Cream Ink; reserve Signal Gold for actions and intentional markers.",
       "Do use semantic tokens from apps/web/src/app/global.css instead of raw Tailwind palette colors.",
       "Do keep primary narrow-layout targets at least 44 px high.",
-      "Do place explanatory copy before product visuals when the layout collapses.",
+      "Do recompose mobile reading order; do not merely shrink the desktop grid.",
       "Do preserve visible focus, semantic headings, reduced-motion behavior, and keyboard access.",
-      "Do use commands, configuration, diagrams, and real output to explain the product."
+      "Do use commands, configuration, diagrams, and real output to explain the product.",
+      "Do keep header height and hero 100svh offset in sync (3rem)."
     ],
     "donts": [
       "Don't copy Mistral's identity, logo, navigation, copy, color arrangement, pixel artwork, or proprietary imagery.",
       "Don't use generic purple gradients, glowing glass cards, decorative terminal chrome, excessive shadows, or rounded-card grids as shorthand for developer tooling.",
-      "Don't split the product into unrelated light and dark visual systems or add a theme toggle.",
+      "Don't split the product into unrelated light and dark visual systems or treat violet explorer palettes as the marketing primary.",
       "Don't hide essential navigation or product information behind hover-only interaction.",
       "Don't use gradient text or colored side-stripe borders greater than 1 px.",
-      "Don't wrap every section in an isolated card when a shared rule and clear spatial rhythm communicate the hierarchy."
+      "Don't wrap every section in an isolated floating card when a shared rule and clear spatial rhythm communicate hierarchy.",
+      "Don't reintroduce high-contrast brown rails for routine seams (soft-rule is the default).",
+      "Don't animate layout properties; prefer transform/opacity and GSAP for authored marketing motion."
     ]
   }
 }
