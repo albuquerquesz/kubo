@@ -59,7 +59,7 @@ Sample scrub progression at 1440×900 (live revalidation 2026-07-20 — **shape*
 | 600     | ~0.2    | ~0.4     | ~0.8     | residual            |
 | ≥800    | 0       | 0        | 0        | done before scale=1 |
 
-Host scale still rises after icons settle (scale locks ~875–900). Prefer pin-relative `ScrollTrigger` so icons finish **before** Family B scale locks. Full grammar (scale+translate host): `.agents/skills/mistral-motion-grammar/SKILL.md`.
+Host scale still rises after icons settle (scale locks ~875–900). Prefer pin-relative `ScrollTrigger` so icons finish **before** Family B scale locks. Full grammar (scale+translate host): `.agents/skills/kubo-motion-grammar/SKILL.md`.
 
 ## Implementation recipe (Kubo)
 

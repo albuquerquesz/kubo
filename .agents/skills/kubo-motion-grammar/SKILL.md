@@ -1,5 +1,5 @@
 ---
-name: mistral-motion-grammar
+name: kubo-motion-grammar
 description: >
   Playwright-backed Mistral.ai motion grammar for text (dual-title, masked
   char rise) and scroll (sticky scale+translate, icon mask rise, scrub). Use
@@ -7,7 +7,7 @@ description: >
   Mistral brand, assets, type, or copy.
 ---
 
-# Mistral motion grammar (research skill)
+# Kubo motion grammar (Mistral-researched)
 
 **Scope:** motion **mechanics** only (masks, axes, eases, scrub, stagger, dual-title a11y).  
 **Not in scope:** ALTMistral, Mistral palette, logo, CMS SVGs (`bag.svg` / `robot.svg` / `earth.svg` from mistral.ai), copy, or shipping Mistral classnames as product API.
@@ -175,6 +175,26 @@ Artifacts: `docs/captures/mistral-container-grow-2026-07-21/` (`down-y*.png`, `u
 
 So: **the sticky stage owns 100% of the viewport**; the mission **content** grows (scale 0.47→1) and **translates into the center** of that stage. Do **not** implement a literal `width/height: 100%` expanding layout box as the scale target — that mis-models the site and breaks reverse scrub.
 
+#### Coordinate-remap rule (when applying the grammar to another rail layout)
+
+The reference's raw matrix ends at roughly `translate(258px, -252px)` because its
+unscaled host begins in a particular right-rail location. Those **signs and pixel
+values are not portable** to a product whose in-flow card begins somewhere else.
+The portable contract is the painted end pose:
+
+```text
+hostRect.center ≈ stickyRect.center
+```
+
+At the reference viewport, both deltas are within about 1px. Derive the destination
+translation from the current unscaled layout box and sticky bounds on refresh, with
+the same `transform-origin: bottom left`; do not copy `+258/-252` blindly. A Kubo
+host beginning farther down/right can correctly use negative X / positive Y matrix
+translation while landing at the identical visual center.
+
+Probe this using `getBoundingClientRect()` at the rest and end samples. Comparing
+only matrix signs will produce a false failure for a structurally different grid.
+
 #### Reverse scrub (scroll up)
 
 Same pin ScrollTrigger with `scrub` is **bidirectional**:
@@ -310,6 +330,7 @@ CSS/looping effects (arrow fade stack, signal field pulse) are **not** the Mistr
 - [ ] Family C: three icons, 56px masks, `yPercent` 100→0 scrub + stagger; done before scale locks
 - [ ] Rest: mission readable **inside** right-top card (not floating over install)
 - [ ] End: mission dominates stage; title off-top; lower rail covered/secondary
+- [ ] End geometry: painted mission host center is within a few pixels of sticky-stage center (do not assert raw translate signs outside the reference DOM)
 - [ ] All families: reduced-motion final state
 - [ ] Zero requests to mistral.ai for media
 

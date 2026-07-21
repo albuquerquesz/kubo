@@ -49,8 +49,8 @@ function skillMentionsProbeValue(skill: string, value: number, decimals = 2): bo
   );
 }
 
-describe("mistral-motion-grammar skill", () => {
-  const skill = readRepo(".agents/skills/mistral-motion-grammar/SKILL.md");
+describe("kubo-motion-grammar skill", () => {
+  const skill = readRepo(".agents/skills/kubo-motion-grammar/SKILL.md");
 
   test("covers text and scroll families with measurable params", () => {
     expect(skill).toContain("Family A");
@@ -119,6 +119,8 @@ describe("mistral-motion-grammar skill", () => {
     expect(skill).toMatch(/sentence|line index|middle line/i);
     expect(skill).toMatch(/not linear/i);
     expect(skill).toMatch(/bottom left|origin-bottom-left|transform-origin/i);
+    expect(skill).toContain("Coordinate-remap rule");
+    expect(skill).toContain("hostRect.center ≈ stickyRect.center");
   });
 });
 
@@ -126,7 +128,7 @@ describe("spec-mistral-identical-home-motion change map", () => {
   const spec = readRepo("docs/spec-mistral-identical-home-motion.md");
 
   test("links skill and maps each family to Kubo paths", () => {
-    expect(spec).toContain("mistral-motion-grammar");
+    expect(spec).toContain("kubo-motion-grammar");
     expect(spec).toContain("hero-display-title.tsx");
     expect(spec).toContain("hero-display-intro.ts");
     expect(spec).toContain("hero-section.tsx");
@@ -142,6 +144,13 @@ describe("spec-mistral-identical-home-motion change map", () => {
     expect(spec).toMatch(/Identical ≠ brand|not.*brand clone|Forbidden/i);
   });
 
+  test("records the implemented sticky-stage center contract", () => {
+    expect(spec).toContain("Implemented and verified");
+    expect(spec).toContain("hostRect.center ≈ stickyRect.center");
+    expect(spec).toContain("kubo-motion-grammar");
+    expect(spec).toMatch(/bidirectional|reverse/i);
+  });
+
   test("Family C Current distinguishes module defaults vs hero wiring", () => {
     expect(spec).toContain("Module defaults");
     expect(spec).toContain("top 75%");
@@ -151,9 +160,9 @@ describe("spec-mistral-identical-home-motion change map", () => {
     expect(spec).toMatch(/sticky pin|Family B sticky|HERO_STICKY|SCROLL_REVEAL_ICONS_HERO/i);
   });
 
-  test("Family B required includes compound translate not scale-only", () => {
+  test("Family B documents the implemented compound transform", () => {
     expect(spec).toMatch(/translateX|translateY|translate/i);
-    expect(spec).toMatch(/scale-only|Not scale alone|compound|scale \+ translate/i);
+    expect(spec).toMatch(/co-scrubbed|scale.*translation|transform-origin/i);
   });
 });
 
@@ -208,6 +217,8 @@ describe("shipped motion tokens match skill Family A", () => {
     expect(src).toContain("HERO_LINE_X_END_RATIOS");
     expect(src).toContain("HERO_TITLE_Y_END_RATIO");
     expect(src).toContain("titleExitYAtPinProgress");
+    expect(src).toContain("hostEndTranslateForStage");
+    expect(src).toContain("HERO_STAGE_CLEAR");
     expect(src).toContain("prefersReducedMotion");
     expect(src).toContain("matchMedia");
     expect(src).toContain("playHeroStickyScale");
@@ -278,5 +289,26 @@ describe("canonical probe fixture integrity", () => {
     const win = fixture.familyC_riseWindow!;
     expect(win.doneApproxScrollY).toBeLessThan(win.hostScaleLocksApproxScrollY);
     expect(win.leaveRestApproxScrollY).toBeGreaterThan(win.fullyClippedUntilScrollY);
+  });
+});
+
+describe("Playwright hero parity probe (shipped script gates)", () => {
+  test("asserts sticky, center, dual-title, icons, reverse, and no-mistral media", () => {
+    const probe = readRepo("docs/.playwright-cli/probe-hero-parity.mjs");
+    // Configurable scratch (not a stale hard-coded goal dir only)
+    expect(probe).toMatch(/HERO_PARITY_SCRATCH|GOAL_SCRATCH/);
+    expect(probe).toContain("jumpScroll");
+    expect(probe).toContain("scrollBehavior");
+    // Required hard gates
+    expect(probe).toContain("B end host is centered in its sticky stage");
+    expect(probe).toContain("A dual title");
+    expect(probe).toContain("B2 title exits upward vs rest by pin end");
+    expect(probe).toContain("reverse: rest scale restored after end→0");
+    expect(probe).toContain("no mistral.ai media from local home");
+    expect(probe).toContain("C icons 100 at rest");
+    expect(probe).toContain("C icons ~0 by 800");
+    expect(probe).toContain("sticky shell remains pinned");
+    expect(probe).toContain("1440");
+    expect(probe).toContain("900");
   });
 });
