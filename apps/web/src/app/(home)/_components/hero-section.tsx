@@ -30,16 +30,14 @@ const upperBandClass =
  * Large desktop type + padding create the unscaled offset box; GSAP scale
  * 0.47→1 makes rest look like a rail chip and end like stage type.
  *
- * Desktop: `lg:w-max` so nowrap mission lines size the host past the 30% rail
- * (Mistral flex min-content ≈924px inside a ~431 card). Do NOT use w-full on lg
- * (that locks offset to the rail and kills stage occupancy). Do NOT absolute
- * an empty % box over the sticky shell.
+ * Desktop: `lg:w-max` so nowrap mission lines size the host past the 30% rail.
+ * End pose centers the host in the sticky shell (stage takeover).
  */
 const rightTopHostClass =
-  "relative z-10 origin-bottom-left will-change-transform motion-reduce:transform-none " +
+  "relative z-20 origin-bottom-left will-change-transform motion-reduce:transform-none " +
   "flex w-full flex-col items-start justify-end " +
   "lg:w-max lg:max-w-none " +
-  // Mistral: lg:p-20 (80px) — pad grows layout host with type
+  // Mistral: lg:p-20 (80px)
   "lg:p-16 xl:p-20";
 
 export default function HeroSection() {
@@ -47,6 +45,8 @@ export default function HeroSection() {
   const stickyRef = useRef<HTMLDivElement>(null);
   const titleWrapRef = useRef<HTMLDivElement>(null);
   const scaleTargetRef = useRef<HTMLDivElement>(null);
+  const stageClearLowerRef = useRef<HTMLDivElement>(null);
+  const stageClearL2Ref = useRef<HTMLDivElement>(null);
   const sentenceRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const iconsRef = useRef<ScrollRevealIconsHandle>(null);
 
@@ -60,12 +60,16 @@ export default function HeroSection() {
 
       const sentences = sentenceRefs.current.filter((el): el is HTMLSpanElement => el !== null);
       const icons = iconsRef.current?.getIcons() ?? [];
+      const stageClear = [stageClearLowerRef.current, stageClearL2Ref.current].filter(
+        (el): el is HTMLDivElement => el !== null,
+      );
 
       const scaleHandle = playHeroStickyScale({
         trigger,
         target,
         sticky,
         title,
+        stageClear,
         sentences,
       });
 
@@ -103,15 +107,14 @@ export default function HeroSection() {
       aria-label="Hero"
     >
       {/*
-        Sticky shell ≈ one viewport under the fixed header.
+        Sticky shell ≈ one viewport under the fixed header = full stage.
         overflow-x-hidden: scaled host may extend past the right rail (Mistral).
-        overflow-y visible so scaled host can cover lower band.
       */}
       <div
         ref={stickyRef}
         data-hero-motion="sticky-shell"
         className={
-          "relative flex w-full flex-col min-h-[calc(100svh-3rem)] " +
+          "relative flex w-full flex-col bg-background min-h-[calc(100svh-3rem)] " +
           "lg:sticky lg:top-12 " +
           "lg:h-[calc(100dvh-3rem)] lg:min-h-[calc(100dvh-3rem)] lg:max-h-[calc(100dvh-3rem)] " +
           "lg:overflow-x-hidden"
@@ -128,7 +131,7 @@ export default function HeroSection() {
             "lg:grid-rows-[minmax(0,3fr)_minmax(0,2fr)]"
           }
         >
-          {/* L1 — title; Family B2 translateY exit targets this wrap */}
+          {/* L1 — title; Family B2 translateY + opacity exit */}
           <div ref={titleWrapRef} data-hero-motion="title-exit" className={upperBandClass}>
             <HeroDisplayTitle
               title="One command. Every layer."
@@ -146,7 +149,7 @@ export default function HeroSection() {
 
           {/*
             R1 — mission card. Host is in-flow (not absolute stage layer).
-            overflow-visible so scale can paint over R2; z-10 host covers install.
+            overflow-visible so scale can paint over R2; z-20 host covers chrome.
           */}
           <div
             className={
@@ -162,14 +165,13 @@ export default function HeroSection() {
             >
               <ScrollRevealIcons ref={iconsRef} />
               {/*
-                Large desktop type: rest optical ≈ font×0.47 (~26px at 56px).
-                End optical = full size — this is what “takes the stage”, not an empty box.
+                ~56px desktop type (Mistral mission size). Rest optical ≈ font×0.47.
               */}
               <p
                 className={
                   "font-medium text-foreground " +
                   "text-2xl leading-[1.25] sm:text-[1.65rem] " +
-                  "lg:text-[clamp(2.25rem,2.8vw,3.5rem)] lg:leading-[1.15]"
+                  "lg:text-[3.5rem] lg:leading-[1.12]"
                 }
               >
                 <span className="sr-only">{mission.join(" ")}</span>
@@ -191,11 +193,20 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* L2 — empty structural band (desktop only; keeps shared row track) */}
-          <div className="hidden border-rule border-t bg-background lg:block" aria-hidden />
+          {/* L2 — empty structural band; fades as stage clears */}
+          <div
+            ref={stageClearL2Ref}
+            data-hero-motion="stage-clear"
+            className="hidden border-rule border-t bg-background lg:block"
+            aria-hidden
+          />
 
-          {/* R2 — scroll cue + install card (shares lower row track with L2) */}
-          <div className="border-rule border-t bg-background lg:border-l">
+          {/* R2 — scroll cue + install card; fades as stage clears */}
+          <div
+            ref={stageClearLowerRef}
+            data-hero-motion="stage-clear"
+            className="border-rule border-t bg-background lg:border-l"
+          >
             <HeroRailLower scrollTargetId="product" />
           </div>
         </div>

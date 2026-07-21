@@ -127,9 +127,26 @@
       "reverseVerified": true
     },
     "kuboLocalAfterFix": {
-      "strategy": "in-flow-type-pad",
-      "logNote": "Remap 2026-07-21: prefer content-driven offset (type+pad) over absolute % stage. Re-probe after implement to fill painted samples.",
-      "hostOffsetShare": { "w": null, "h": null }
+      "strategy": "in-flow-type-pad + title-exit + stage-clear + center",
+      "logNote": "Live 1440×900 after stage polish 2026-07-21. Host centers (dx→0); title opacity→0; install/L2 fade; reverse scrub restores rest.",
+      "hostOffset": { "w": 829, "h": 428 },
+      "hostOffsetShare": { "w": 0.576, "h": 0.502 },
+      "rest": {
+        "scrollY": 0,
+        "scale": 0.4664,
+        "painted": { "w": 386, "h": 200, "left": 1049, "top": 319 },
+        "centerDx": 522,
+        "titleOp": 1
+      },
+      "endPin": {
+        "scrollY": 900,
+        "scale": 1.0,
+        "painted": { "w": 829, "h": 428, "left": 306, "top": 260 },
+        "centerDx": 0,
+        "titleOp": 0,
+        "stageClearOp": 0
+      },
+      "reverseVerified": true
     }
   }
 }

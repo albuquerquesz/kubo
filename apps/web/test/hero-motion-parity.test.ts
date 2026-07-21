@@ -146,6 +146,16 @@ describe("shipped Family B hostTransformAtPinProgress", () => {
     expect(titleExitYAtPinProgress(0.5, PROBE_STICKY_H)).toBeLessThan(0);
   });
 
+  test("hero wires stage-clear targets for install / L2 fade", () => {
+    const hero = readFileSync(
+      join(import.meta.dir, "../src/app/(home)/_components/hero-section.tsx"),
+      "utf8",
+    );
+    expect(hero).toContain('data-hero-motion="stage-clear"');
+    expect(hero).toContain("stageClear");
+    expect(hero).toContain("lg:text-[3.5rem]");
+  });
+
   test("sentence translateX: outer lines move, middle stays 0", () => {
     const fixture = loadFixture();
     const at900 = fixture.familyB_sentenceTranslateX.find((r) => r.scrollY === 900)!;

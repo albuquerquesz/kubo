@@ -87,7 +87,7 @@ describe("spec-hero-sticky-scale-screen-occupancy", () => {
 
   test("gap-spec links skill and parent motion map", () => {
     const spec = readFileSync(gapSpecPath, "utf8");
-    expect(spec).toContain("mistral-motion-grammar");
+    expect(spec).toContain("kubo-motion-grammar");
     expect(spec).toContain("spec-mistral-identical-home-motion");
     expect(spec).toContain("probe-hero-occupancy");
   });
