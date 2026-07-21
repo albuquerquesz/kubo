@@ -12,11 +12,11 @@ import {
   paintedSizeAtScale,
 } from "../src/lib/motion/occupancy.ts";
 import {
-  HERO_STAGE_END_LEFT_SHARE,
-  HERO_STAGE_END_TOP_SHARE,
-  HERO_STAGE_HOST_HEIGHT_SHARE,
-  HERO_STAGE_HOST_WIDTH_SHARE,
-  hostEndTranslateForStage,
+  HERO_HOST_X_END_RATIO,
+  HERO_HOST_Y_END_RATIO,
+  HERO_TITLE_Y_END_RATIO,
+  hostTransformAtPinProgress,
+  titleExitYAtPinProgress,
 } from "../src/lib/motion/timelines/hero-sticky-scale.ts";
 
 const repoRoot = join(import.meta.dir, "../../..");
@@ -155,22 +155,20 @@ describe("shipped occupancy helpers", () => {
   });
 });
 
-describe("strategy B sticky-stage tokens (post-fix)", () => {
-  test("host layout shares meet ≥55% width and ≥40% height floors", () => {
-    expect(HERO_STAGE_HOST_WIDTH_SHARE).toBeGreaterThanOrEqual(0.55);
-    expect(HERO_STAGE_HOST_HEIGHT_SHARE).toBeGreaterThanOrEqual(0.4);
-    // End painted shares at scale 1 ≈ layout shares (unclipped)
-    const sticky = { width: 1440, height: 852 };
-    const host = {
-      width: sticky.width * HERO_STAGE_HOST_WIDTH_SHARE,
-      height: sticky.height * HERO_STAGE_HOST_HEIGHT_SHARE,
-    };
-    const shares = occupancyShares(host, sticky);
+describe("remap: in-flow host + title exit tokens", () => {
+  test("host offset ratios and title exit match Mistral probe", () => {
+    expect(HERO_HOST_X_END_RATIO).toBeCloseTo(258 / 924, 5);
+    expect(HERO_HOST_Y_END_RATIO).toBeCloseTo(-252 / 396, 5);
+    // Title exit at least as strong as Mistral (−0.5 sticky H)
+    expect(HERO_TITLE_Y_END_RATIO).toBeLessThanOrEqual(-0.5);
+    const end = hostTransformAtPinProgress(1, 924, 396);
+    expect(end.x).toBeCloseTo(258, 1);
+    expect(end.y).toBeCloseTo(-252, 1);
+    expect(titleExitYAtPinProgress(1, 900)).toBeLessThanOrEqual(-450);
+  });
+
+  test("area growth physics still ~4.6× under pure scale", () => {
     const { occupancy } = loadFixture();
-    expect(shares.widthShare).toBeGreaterThanOrEqual(occupancy.targetsAfterFix.endStickyShareW_min);
-    expect(shares.areaShare).toBeGreaterThanOrEqual(
-      occupancy.targetsAfterFix.endStickyShareArea_min,
-    );
     expect(areaGrowthRatio(0.4664, 1)).toBeGreaterThanOrEqual(
       occupancy.targetsAfterFix.paintedAreaGrowthRatio.min,
     );
@@ -179,47 +177,12 @@ describe("strategy B sticky-stage tokens (post-fix)", () => {
     );
   });
 
-  test("stage end position shares match Mistral probe geometry", () => {
-    expect(HERO_STAGE_END_LEFT_SHARE).toBeCloseTo(259 / 1440, 4);
-    expect(HERO_STAGE_END_TOP_SHARE).toBeCloseTo(252 / 900, 4);
-  });
-
-  test("hostEndTranslateForStage is exported and pure on synthetic boxes", () => {
-    // jsdom-free: function needs DOM; assert export is a function
-    expect(typeof hostEndTranslateForStage).toBe("function");
-  });
-
-  test("fixture records sticky-stage strategy and live probe passes floors", () => {
-    const { occupancy } = loadFixture();
-    expect(occupancy.targetsAfterFix.strategy).toMatch(/sticky-stage|B/i);
-    const after = occupancy.kuboLocalAfterFix;
-    expect(after).toBeTruthy();
-    expect(after!.strategy).toMatch(/sticky-stage/i);
-    expect(after!.hostOffsetShare.w).toBeGreaterThanOrEqual(0.55);
-    expect(after!.hostOffsetShare.h).toBeGreaterThanOrEqual(0.4);
-
-    // Live end-pin samples (when present) must clear fix floors
-    if (after && "endPin" in after && after.endPin) {
-      const end = after.endPin as {
-        stickyShareW: number;
-        stickyShareArea: number;
-        painted: { left: number };
-      };
-      const rest = (
-        after as {
-          rest?: { painted: { left: number } };
-        }
-      ).rest;
-      expect(end.stickyShareW).toBeGreaterThanOrEqual(
-        occupancy.targetsAfterFix.endStickyShareW_min,
-      );
-      expect(end.stickyShareArea).toBeGreaterThanOrEqual(
-        occupancy.targetsAfterFix.endStickyShareArea_min,
-      );
-      // Stage claim: painted left moves into frame (not further into right margin)
-      if (rest) {
-        expect(end.painted.left).toBeLessThan(rest.painted.left);
-      }
-    }
+  test("remap spec exists and rejects absolute stage host", () => {
+    const remapPath = join(repoRoot, "docs/spec-hero-sticky-stage-remap.md");
+    expect(existsSync(remapPath)).toBe(true);
+    const remap = readFileSync(remapPath, "utf8");
+    expect(remap).toMatch(/title exit|Family B2|translateY/i);
+    expect(remap).toMatch(/in-flow|type \+ padding|type\+pad/i);
+    expect(remap).toMatch(/absolute|rejected|false-positive/i);
   });
 });

@@ -9,15 +9,19 @@ import { join } from "node:path";
 import { ease, duration, stagger } from "../src/lib/motion/eases.ts";
 import {
   HERO_HOST_EASE,
+  HERO_HOST_X_END_RATIO,
+  HERO_HOST_Y_END_RATIO,
   HERO_LINE_X_END_RATIOS,
   HERO_STICKY_SCALE_FROM,
   HERO_STICKY_SCALE_TO,
   HERO_STICKY_SCROLL,
+  HERO_TITLE_Y_END_RATIO,
   heroIconScrollRange,
   hostEaseProgress,
   hostTransformAtPinProgress,
   lineTranslateXAtPinProgress,
   pinTravelPx,
+  titleExitYAtPinProgress,
 } from "../src/lib/motion/timelines/hero-sticky-scale.ts";
 import {
   SCROLL_REVEAL_ICONS_DEFAULTS,
@@ -48,10 +52,11 @@ function loadFixture(): Fixture {
   return JSON.parse(readFileSync(fixturePath, "utf8")) as Fixture;
 }
 
-/** Mistral probe host box at 1440×900 (from skill / live probe). */
-const PROBE_HOST_W = 431;
+/** Mistral probe **offset** host box at 1440×900 (type + padding, not painted rest). */
+const PROBE_HOST_W = 924;
 const PROBE_HOST_H = 396;
 const PROBE_PIN = 900;
+const PROBE_STICKY_H = 900;
 
 describe("shipped Family A tokens", () => {
   test("intro ease/duration/stagger match skill", () => {
@@ -98,7 +103,7 @@ describe("shipped Family B hostTransformAtPinProgress", () => {
     expect(hostEaseProgress(0.5)).toBeCloseTo(0.75, 4);
   });
 
-  test("host curve matches fixture scale+tx+ty at sample scrollYs (probe host box)", () => {
+  test("host curve matches fixture scale+tx+ty at sample scrollYs (offset host box)", () => {
     const fixture = loadFixture();
     for (const row of fixture.familyB_hostTransform) {
       // Map scrollY to pin progress (scale phase ends ~900 on 900px pin)
@@ -117,7 +122,10 @@ describe("shipped Family B hostTransformAtPinProgress", () => {
     }
   });
 
-  test("rest and end endpoints match skill mechanics", () => {
+  test("rest and end endpoints match skill mechanics (offset ratios)", () => {
+    expect(HERO_HOST_X_END_RATIO).toBeCloseTo(258 / 924, 5);
+    expect(HERO_HOST_Y_END_RATIO).toBeCloseTo(-252 / 396, 5);
+
     const rest = hostTransformAtPinProgress(0, PROBE_HOST_W, PROBE_HOST_H);
     expect(rest.scale).toBeCloseTo(0.4664, 4);
     expect(rest.x).toBeCloseTo(0, 10);
@@ -125,10 +133,17 @@ describe("shipped Family B hostTransformAtPinProgress", () => {
 
     const end = hostTransformAtPinProgress(1, PROBE_HOST_W, PROBE_HOST_H);
     expect(end.scale).toBe(1);
-    expect(end.x).toBeCloseTo(PROBE_HOST_W * (258 / 431), 1);
-    expect(end.y).toBeCloseTo(PROBE_HOST_H * (-252 / 396), 1);
+    expect(end.x).toBeCloseTo(258, 1);
+    expect(end.y).toBeCloseTo(-252, 1);
     expect(end.y).toBeLessThan(0);
     expect(end.x).toBeGreaterThan(0);
+  });
+
+  test("Family B2 title exit clears upper band (≤ −50% sticky height)", () => {
+    expect(HERO_TITLE_Y_END_RATIO).toBeLessThanOrEqual(-0.5);
+    expect(titleExitYAtPinProgress(0, PROBE_STICKY_H)).toBeCloseTo(0, 10);
+    expect(titleExitYAtPinProgress(1, PROBE_STICKY_H)).toBeLessThanOrEqual(-450);
+    expect(titleExitYAtPinProgress(0.5, PROBE_STICKY_H)).toBeLessThan(0);
   });
 
   test("sentence translateX: outer lines move, middle stays 0", () => {
@@ -141,6 +156,7 @@ describe("shipped Family B hostTransformAtPinProgress", () => {
       if (i === 1) {
         expect(x).toBe(0);
       } else {
+        // ratios are of offset width; fixture lines are absolute px from Mistral
         expect(x).toBeCloseTo(at900.lines[i], 0);
       }
     }
@@ -214,18 +230,18 @@ describe("hero sticky shell layout (shipped markup)", () => {
     expect(shellMatch![1]).not.toContain("flex-1");
   });
 
-  test("Family B host uses sticky-stage occupancy strategy (spec B)", () => {
+  test("Family B host is in-flow type+pad (remap); title exit wired", () => {
     const hero = readFileSync(
       join(import.meta.dir, "../src/app/(home)/_components/hero-section.tsx"),
       "utf8",
     );
-    expect(hero).toContain('data-hero-occupancy-strategy="sticky-stage"');
-    expect(hero).toContain("lg:w-[64%]");
-    expect(hero).toContain("lg:h-[44%]");
+    expect(hero).toContain('data-hero-occupancy-strategy="in-flow-type-pad"');
+    expect(hero).toContain('data-hero-motion="title-exit"');
+    expect(hero).toContain("titleWrapRef");
     expect(hero).toContain("lg:overflow-x-hidden");
-    expect(hero).toContain("sticky");
-    // Stage end translate is wired with sticky shell ref
-    expect(hero).toContain("stickyRef");
-    expect(hero).toContain("sticky,");
+    // Reject absolute empty stage host regression
+    expect(hero).not.toContain("lg:w-[64%]");
+    expect(hero).not.toContain("lg:left-[70%]");
+    expect(hero).not.toContain('sticky-stage"');
   });
 });

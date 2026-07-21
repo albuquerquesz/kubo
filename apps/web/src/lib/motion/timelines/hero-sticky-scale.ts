@@ -14,33 +14,43 @@ export const HERO_STICKY_SCALE_FROM = 0.4664;
 export const HERO_STICKY_SCALE_TO = 1;
 
 /**
- * Legacy Mistral host end translate as fractions of the unscaled host box
- * (probe @1440×900: painted rest host ~431×396, end translate(258, -252)).
- * Kept for curve unit tests / fixture parity. Runtime stage translate uses
- * {@link hostEndTranslateForStage} against the sticky shell.
+ * Host end translate as fractions of the **unscaled offset** box
+ * (Mistral probe @1440×900: offset ~924×396, end matrix translate(258, −252)).
+ *
+ * Runtime **Y** uses the height ratio. Runtime **X** prefers sticky-stage
+ * landing ({@link hostEndTranslateXForStage}) so an in-flow right-rail host
+ * moves into center stage (Mistral painted left 1009→259) instead of deeper
+ * into the right margin.
  */
-export const HERO_HOST_X_END_RATIO = 258 / 431;
+export const HERO_HOST_X_END_RATIO = 258 / 924;
 export const HERO_HOST_Y_END_RATIO = -252 / 396;
 
 /**
- * Strategy B (screen occupancy): sticky-stage host layout shares of the sticky shell.
- * Mistral probe offset ~924×396 on 1440×900 → ~0.64 × ~0.44.
- */
-export const HERO_STAGE_HOST_WIDTH_SHARE = 0.64;
-export const HERO_STAGE_HOST_HEIGHT_SHARE = 0.44;
-
-/**
- * End-of-pin painted host position within the sticky shell
+ * End painted host position as fractions of sticky box
  * (Mistral end: left ~259/1440, top ~252/900).
+ * Used when `sticky` is passed to {@link playHeroStickyScale}.
  */
 export const HERO_STAGE_END_LEFT_SHARE = 259 / 1440;
 export const HERO_STAGE_END_TOP_SHARE = 252 / 900;
 
 /**
- * Per-line translateX end as fraction of host width (middle line fixed at 0).
- * Probe @900: ~[52.1, 0, 71.04] on ~431px host.
+ * Title exit magnitude as fraction of sticky height.
+ * Probe −450/900 = −0.5 clears most of Mistral’s upper band; Kubo’s
+ * justify-end title sits lower in a taller L1 cell — use a stronger exit.
  */
-export const HERO_LINE_X_END_RATIOS = [52.1 / 431, 0, 71.04 / 431] as const;
+export const HERO_TITLE_Y_END_RATIO = -0.62;
+
+/**
+ * Mistral painted-rest host box (scale×offset at rest) — fixture reference.
+ */
+export const HERO_HOST_PAINTED_REST_W = 431;
+export const HERO_HOST_PAINTED_REST_H = 396;
+
+/**
+ * Per-line translateX end as fraction of host **offset** width
+ * (middle line fixed at 0). Probe @900 on ~924px host: ~[52, 0, 71].
+ */
+export const HERO_LINE_X_END_RATIOS = [52.1 / 924, 0, 71.04 / 924] as const;
 
 /**
  * Scrub maps scroll progress linearly; tween ease recreates Mistral's
@@ -50,7 +60,7 @@ export const HERO_HOST_EASE = "power2.out";
 
 /**
  * Shared ScrollTrigger window for the sticky hero pin (section is ~200dvh).
- * Scale/translate and icon scrub bind to the same trigger with different ends.
+ * Scale/translate, title exit, and icon scrub bind to the same trigger.
  */
 export const HERO_STICKY_SCROLL = {
   start: "top top",
@@ -77,10 +87,13 @@ export type HeroStickyScaleOptions = {
   /** Element that receives scale + translate (mission / right-top content). */
   target: HTMLElement;
   /**
-   * Sticky shell used for stage-occupancy end translate.
-   * When omitted, falls back to legacy host-box ratios.
+   * Sticky shell — used for title exit magnitude (fraction of sticky height).
    */
   sticky?: HTMLElement | null;
+  /**
+   * Title wrap / left column — Family B2 translateY exit (0 → −50% sticky H).
+   */
+  title?: HTMLElement | null;
   /** Mission line elements for per-line translateX (outer lines move). */
   sentences?: HTMLElement[];
   /** Start scale. Default probe 0.4664. */
@@ -98,6 +111,7 @@ export type HeroStickyScaleOptions = {
 export type HeroStickyScaleHandle = {
   tween: gsap.core.Tween | null;
   sentenceTween: gsap.core.Tween | null;
+  titleTween: gsap.core.Tween | null;
   kill: () => void;
 };
 
@@ -110,49 +124,6 @@ export function pinTravelPx(
 }
 
 /**
- * Unscaled layout top-left of `target` in viewport coordinates, accounting for
- * current GSAP scale/x/y with transform-origin bottom-left.
- */
-export function hostLayoutViewportOrigin(target: HTMLElement): {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-} {
-  const x = Number(gsap.getProperty(target, "x")) || 0;
-  const y = Number(gsap.getProperty(target, "y")) || 0;
-  const scale = Number(gsap.getProperty(target, "scale")) || 1;
-  const rect = target.getBoundingClientRect();
-  const height = target.offsetHeight;
-  const width = target.offsetWidth;
-  // origin bottom-left: painted left = layoutLeft + x; painted bottom = layoutBottom + y
-  // painted top = layoutTop + height*(1-scale) + y
-  const left = rect.left - x;
-  const top = rect.top - y - height * (1 - scale);
-  return { left, top, width, height };
-}
-
-/**
- * End translate so the scale-1 painted box lands in the sticky-stage region
- * (occupancy gap-spec: claim mid/right stage, not the right margin).
- */
-export function hostEndTranslateForStage(
-  target: HTMLElement,
-  sticky: HTMLElement,
-  endLeftShare: number = HERO_STAGE_END_LEFT_SHARE,
-  endTopShare: number = HERO_STAGE_END_TOP_SHARE,
-): { x: number; y: number } {
-  const stickyRect = sticky.getBoundingClientRect();
-  const layout = hostLayoutViewportOrigin(target);
-  const targetLeft = stickyRect.left + stickyRect.width * endLeftShare;
-  const targetTop = stickyRect.top + stickyRect.height * endTopShare;
-  return {
-    x: targetLeft - layout.left,
-    y: targetTop - layout.top,
-  };
-}
-
-/**
  * Same curve as GSAP `power2.out` under linear scrub progress.
  * Used by probes/tests; runtime tweens use `HERO_HOST_EASE` string for GSAP.
  */
@@ -162,9 +133,8 @@ export function hostEaseProgress(scrollProgress: number): number {
 }
 
 /**
- * Host scale + translate at pin progress (0–1), matching shipped ratios + ease.
- * Uses legacy host-box ratios (Mistral probe box) for fixture curve checks.
- * Runtime stage occupancy uses {@link hostEndTranslateForStage} instead.
+ * Host scale + translate at pin progress (0–1) using **offset-box** ratios.
+ * (Fixture / unit checks — runtime X may use stage landing instead.)
  */
 export function hostTransformAtPinProgress(
   scrollProgress: number,
@@ -179,6 +149,64 @@ export function hostTransformAtPinProgress(
     y: hostHeight * HERO_HOST_Y_END_RATIO * eased,
     eased,
   };
+}
+
+/**
+ * Unscaled layout top-left of `target` in viewport coords, given current GSAP
+ * scale/x/y with transform-origin bottom-left.
+ */
+export function hostLayoutViewportOrigin(target: HTMLElement): { left: number; top: number } {
+  const x = Number(gsap.getProperty(target, "x")) || 0;
+  const y = Number(gsap.getProperty(target, "y")) || 0;
+  const scale = Number(gsap.getProperty(target, "scale")) || 1;
+  const rect = target.getBoundingClientRect();
+  const height = target.offsetHeight;
+  // origin bottom-left: painted left = layoutLeft + x
+  // painted top = layoutTop + height*(1-scale) + y
+  return {
+    left: rect.left - x,
+    top: rect.top - y - height * (1 - scale),
+  };
+}
+
+/** @deprecated use hostLayoutViewportOrigin */
+export function hostLayoutViewportLeft(target: HTMLElement): number {
+  return hostLayoutViewportOrigin(target).left;
+}
+
+/**
+ * End translate so scale-1 painted box lands in the sticky-stage region
+ * (Mistral-like left/top shares). Right-rail hosts get negative x (into stage).
+ */
+export function hostEndTranslateForStage(
+  target: HTMLElement,
+  sticky: HTMLElement,
+  endLeftShare: number = HERO_STAGE_END_LEFT_SHARE,
+  endTopShare: number = HERO_STAGE_END_TOP_SHARE,
+): { x: number; y: number } {
+  const stickyRect = sticky.getBoundingClientRect();
+  const layout = hostLayoutViewportOrigin(target);
+  return {
+    x: stickyRect.left + stickyRect.width * endLeftShare - layout.left,
+    y: stickyRect.top + stickyRect.height * endTopShare - layout.top,
+  };
+}
+
+/** X-only helper (tests / callers that only need horizontal stage landing). */
+export function hostEndTranslateXForStage(
+  target: HTMLElement,
+  sticky: HTMLElement,
+  endLeftShare: number = HERO_STAGE_END_LEFT_SHARE,
+): number {
+  return hostEndTranslateForStage(target, sticky, endLeftShare).x;
+}
+
+/**
+ * Title wrap translateY at pin progress (Family B2).
+ * @param stickyHeight sticky shell height (probe 900)
+ */
+export function titleExitYAtPinProgress(scrollProgress: number, stickyHeight: number): number {
+  return stickyHeight * HERO_TITLE_Y_END_RATIO * hostEaseProgress(scrollProgress);
 }
 
 /** Per-line translateX at pin progress (middle index stays 0). */
@@ -210,14 +238,16 @@ export function heroIconScrollRange(
 
 /**
  * Family B: scrub scale ~0.47→1 + translateX/Y on the mission host over a sticky pin.
+ * Family B2: optional title wrap translateY exit (0 → −50% sticky H).
  * Optional per-line translateX (outer lines; middle fixed).
- * Desktop only (matchMedia lg+). Reduced motion → finals (scale 1 + end occupancy), no scrub.
+ * Desktop only (matchMedia lg+). Reduced motion → host scale 1, title visible, no scrub.
  */
 export function playHeroStickyScale(options: HeroStickyScaleOptions): HeroStickyScaleHandle {
   const {
     trigger,
     target,
     sticky = null,
+    title = null,
     sentences = [],
     fromScale = HERO_STICKY_SCALE_FROM,
     toScale = HERO_STICKY_SCALE_TO,
@@ -228,6 +258,7 @@ export function playHeroStickyScale(options: HeroStickyScaleOptions): HeroSticky
 
   let tween: gsap.core.Tween | null = null;
   let sentenceTween: gsap.core.Tween | null = null;
+  let titleTween: gsap.core.Tween | null = null;
   let mm: gsap.MatchMedia | null = null;
 
   const clearHost = () => {
@@ -235,16 +266,9 @@ export function playHeroStickyScale(options: HeroStickyScaleOptions): HeroSticky
     if (sentences.length) {
       gsap.set(sentences, { clearProps: "transform" });
     }
-  };
-
-  const resolveEndTranslate = (): { x: number; y: number } => {
-    if (sticky) {
-      return hostEndTranslateForStage(target, sticky);
+    if (title) {
+      gsap.set(title, { clearProps: "transform" });
     }
-    return {
-      x: target.offsetWidth * HERO_HOST_X_END_RATIO,
-      y: target.offsetHeight * HERO_HOST_Y_END_RATIO,
-    };
   };
 
   const kill = () => {
@@ -254,13 +278,16 @@ export function playHeroStickyScale(options: HeroStickyScaleOptions): HeroSticky
     sentenceTween?.scrollTrigger?.kill();
     sentenceTween?.kill();
     sentenceTween = null;
+    titleTween?.scrollTrigger?.kill();
+    titleTween?.kill();
+    titleTween = null;
     mm?.revert();
     mm = null;
     clearHost();
   };
 
   if (prefersReducedMotion()) {
-    // Final occupancy: scale 1 + stage end translate (no scrub).
+    // Finals: full-scale mission in place; title stays readable (no exit).
     gsap.set(target, {
       scale: toScale,
       x: 0,
@@ -268,24 +295,19 @@ export function playHeroStickyScale(options: HeroStickyScaleOptions): HeroSticky
       transformOrigin: "bottom left",
       force3D: true,
     });
-    const endTx = resolveEndTranslate();
-    gsap.set(target, {
-      scale: toScale,
-      x: endTx.x,
-      y: endTx.y,
-      transformOrigin: "bottom left",
-      force3D: true,
-    });
     if (sentences.length) {
       gsap.set(sentences, { x: 0 });
     }
-    return { tween: null, sentenceTween: null, kill };
+    if (title) {
+      gsap.set(title, { y: 0 });
+    }
+    return { tween: null, sentenceTween: null, titleTween: null, kill };
   }
 
   mm = gsap.matchMedia();
 
   mm.add(HERO_STICKY_MQ, () => {
-    // Establish origin + rest transform before measuring layout for end translate.
+    // Establish rest transform before measuring layout for stage end X.
     gsap.set(target, {
       scale: fromScale,
       x: 0,
@@ -294,10 +316,30 @@ export function playHeroStickyScale(options: HeroStickyScaleOptions): HeroSticky
       force3D: true,
     });
 
-    const endX = () => resolveEndTranslate().x;
-    const endY = () => resolveEndTranslate().y;
+    const endXY = () => {
+      if (sticky) {
+        return hostEndTranslateForStage(target, sticky);
+      }
+      return {
+        x: target.offsetWidth * HERO_HOST_X_END_RATIO,
+        y: target.offsetHeight * HERO_HOST_Y_END_RATIO,
+      };
+    };
+    const endX = () => endXY().x;
+    const endY = () => endXY().y;
+    const titleEndY = () => {
+      const h = sticky?.clientHeight || sticky?.offsetHeight || window.innerHeight;
+      return h * HERO_TITLE_Y_END_RATIO;
+    };
 
     const pinEnd = () => `+=${pinTravelPx(trigger)}`;
+    const stBase = {
+      trigger,
+      start,
+      end: end === HERO_STICKY_SCROLL.scaleEnd ? pinEnd : end,
+      scrub,
+      invalidateOnRefresh: true,
+    } as const;
 
     tween = gsap.fromTo(
       target,
@@ -309,20 +351,13 @@ export function playHeroStickyScale(options: HeroStickyScaleOptions): HeroSticky
         ease: HERO_HOST_EASE,
         force3D: true,
         immediateRender: true,
-        scrollTrigger: {
-          trigger,
-          start,
-          end: end === HERO_STICKY_SCROLL.scaleEnd ? pinEnd : end,
-          scrub,
-          invalidateOnRefresh: true,
-        },
+        scrollTrigger: { ...stBase },
       },
     );
 
     if (sentences.length > 0) {
       gsap.set(sentences, { x: 0, force3D: true });
 
-      // Per-line end x from host width ratios (middle stays 0)
       sentenceTween = gsap.to(sentences, {
         x: (i: number) => {
           const ratio = HERO_LINE_X_END_RATIOS[i] ?? 0;
@@ -332,14 +367,23 @@ export function playHeroStickyScale(options: HeroStickyScaleOptions): HeroSticky
         force3D: true,
         stagger: 0,
         immediateRender: false,
-        scrollTrigger: {
-          trigger,
-          start,
-          end: end === HERO_STICKY_SCROLL.scaleEnd ? pinEnd : end,
-          scrub,
-          invalidateOnRefresh: true,
-        },
+        scrollTrigger: { ...stBase },
       });
+    }
+
+    if (title) {
+      gsap.set(title, { y: 0, force3D: true });
+      titleTween = gsap.fromTo(
+        title,
+        { y: 0 },
+        {
+          y: titleEndY,
+          ease: HERO_HOST_EASE,
+          force3D: true,
+          immediateRender: true,
+          scrollTrigger: { ...stBase },
+        },
+      );
     }
 
     return () => {
@@ -349,6 +393,9 @@ export function playHeroStickyScale(options: HeroStickyScaleOptions): HeroSticky
       sentenceTween?.scrollTrigger?.kill();
       sentenceTween?.kill();
       sentenceTween = null;
+      titleTween?.scrollTrigger?.kill();
+      titleTween?.kill();
+      titleTween = null;
       clearHost();
     };
   });
@@ -364,7 +411,10 @@ export function playHeroStickyScale(options: HeroStickyScaleOptions): HeroSticky
     if (sentences.length) {
       gsap.set(sentences, { clearProps: "transform" });
     }
+    if (title) {
+      gsap.set(title, { clearProps: "transform" });
+    }
   });
 
-  return { tween, sentenceTween, kill };
+  return { tween, sentenceTween, titleTween, kill };
 }

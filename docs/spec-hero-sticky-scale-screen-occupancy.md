@@ -2,7 +2,9 @@
 
 ## Status
 
-**Implemented** (strategy B — sticky-stage host). Live probe 1440×900: end sticky width share **0.64**, area share **0.281**, painted growth **~4.59×**, host left **1008 → 260** (into stage). Scale scrub unchanged (~0.47→1).
+**Superseded for structure** by [`spec-hero-sticky-stage-remap.md`](./spec-hero-sticky-stage-remap.md) (2026-07-21).
+
+Absolute sticky-stage host (strategy B) hit occupancy numbers but **tore mission text out of its card** and never cleared title/install. Keep this doc for probe definitions and numeric floors; implement **in-flow type+pad host + Family B2 title exit** per the remap spec.
 
 ## Date
 

@@ -96,35 +96,40 @@
       "gapNote": "Scale ratio matches Mistral (~4.6× area) but end sticky area share is ~5× smaller because layout host is ~2.6× narrower."
     },
     "targetsAfterFix": {
-      "strategy": "sticky-stage (B)",
+      "strategy": "in-flow-type-pad + title-exit (remap 2026-07-21)",
       "endStickyShareW_min": 0.55,
       "endStickyShareArea_min": 0.2,
       "paintedAreaGrowthRatio": { "min": 4.4, "max": 4.8 },
-      "hostOffsetShare_min": { "w": 0.55, "h": 0.4 }
+      "titleExitY_end_ratio": -0.5,
+      "hostOffsetShare_min": { "w": 0.55, "h": 0.4 },
+      "note": "Absolute sticky-stage host rejected — see spec-hero-sticky-stage-remap.md"
+    },
+    "familyB2_titleExit": [
+      { "scrollY": 0, "translateY": 0 },
+      { "scrollY": 150, "translateY": -137.5 },
+      { "scrollY": 300, "translateY": -250 },
+      { "scrollY": 450, "translateY": -337.5 },
+      { "scrollY": 600, "translateY": -400 },
+      { "scrollY": 900, "translateY": -450 }
+    ],
+    "familyB_stageTakeover": {
+      "logNote": "2026-07-21 probe-mistral-container-grow.mjs. Optical full-viewport stage = sticky shell 100%; host painted max ~64%×44% but centerΔx→0. Reverse scrub matches.",
+      "viewport": { "width": 1440, "height": 900 },
+      "stickyIsFullViewport": true,
+      "hostPaintedMaxShare": { "w": 0.642, "h": 0.44, "area": 0.282 },
+      "centerDeltaX": [
+        { "scrollY": 0, "dx": 504 },
+        { "scrollY": 300, "dx": 224 },
+        { "scrollY": 500, "dx": 100 },
+        { "scrollY": 700, "dx": 26 },
+        { "scrollY": 900, "dx": 1 }
+      ],
+      "reverseVerified": true
     },
     "kuboLocalAfterFix": {
-      "strategy": "sticky-stage",
-      "logNote": "Live probe 1440×900 2026-07-20 after strategy B. Host lg:w-[64%]×lg:h-[44%] of sticky; end translate from HERO_STAGE_END_*_SHARE (hostLeft 1008→260 into stage).",
-      "hostOffset": { "w": 922, "h": 375 },
-      "hostOffsetShare": { "w": 0.64, "h": 0.44 },
-      "rest": {
-        "scrollY": 0,
-        "scale": 0.4664,
-        "painted": { "w": 429.8, "h": 174.8, "left": 1008, "top": 384.4 },
-        "stickyShareArea": 0.061,
-        "stickyShareW": 0.298,
-        "stickyShareH": 0.205
-      },
-      "endPin": {
-        "scrollY": 900,
-        "scale": 0.9995,
-        "painted": { "w": 921.1, "h": 374.7, "left": 259.7, "top": 286.7 },
-        "stickyShareArea": 0.281,
-        "stickyShareW": 0.64,
-        "stickyShareH": 0.44,
-        "translate": { "x": -748.34, "y": 102.21 }
-      },
-      "paintedAreaGrowthRatio": 4.592
+      "strategy": "in-flow-type-pad",
+      "logNote": "Remap 2026-07-21: prefer content-driven offset (type+pad) over absolute % stage. Re-probe after implement to fill painted samples.",
+      "hostOffsetShare": { "w": null, "h": null }
     }
   }
 }
