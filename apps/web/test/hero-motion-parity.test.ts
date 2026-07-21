@@ -213,4 +213,19 @@ describe("hero sticky shell layout (shipped markup)", () => {
     expect(shellMatch).toBeTruthy();
     expect(shellMatch![1]).not.toContain("flex-1");
   });
+
+  test("Family B host uses sticky-stage occupancy strategy (spec B)", () => {
+    const hero = readFileSync(
+      join(import.meta.dir, "../src/app/(home)/_components/hero-section.tsx"),
+      "utf8",
+    );
+    expect(hero).toContain('data-hero-occupancy-strategy="sticky-stage"');
+    expect(hero).toContain("lg:w-[64%]");
+    expect(hero).toContain("lg:h-[44%]");
+    expect(hero).toContain("lg:overflow-x-hidden");
+    expect(hero).toContain("sticky");
+    // Stage end translate is wired with sticky shell ref
+    expect(hero).toContain("stickyRef");
+    expect(hero).toContain("sticky,");
+  });
 });

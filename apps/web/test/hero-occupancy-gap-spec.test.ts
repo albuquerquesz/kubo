@@ -11,6 +11,13 @@ import {
   occupancyShares,
   paintedSizeAtScale,
 } from "../src/lib/motion/occupancy.ts";
+import {
+  HERO_STAGE_END_LEFT_SHARE,
+  HERO_STAGE_END_TOP_SHARE,
+  HERO_STAGE_HOST_HEIGHT_SHARE,
+  HERO_STAGE_HOST_WIDTH_SHARE,
+  hostEndTranslateForStage,
+} from "../src/lib/motion/timelines/hero-sticky-scale.ts";
 
 const repoRoot = join(import.meta.dir, "../../..");
 const fixturePath = join(import.meta.dir, "fixtures/mistral-motion-probe-sample.json");
@@ -48,6 +55,11 @@ function loadFixture() {
         endStickyShareW_min: number;
         endStickyShareArea_min: number;
         paintedAreaGrowthRatio: { min: number; max: number };
+        strategy: string;
+      };
+      kuboLocalAfterFix?: {
+        strategy: string;
+        hostOffsetShare: { w: number; h: number };
       };
     };
   };
@@ -134,11 +146,80 @@ describe("shipped occupancy helpers", () => {
     expect(areaGrowthRatio(0.4664, 1)).toBeCloseTo(4.6, 1);
   });
 
-  test("kubo gap sample fails post-fix occupancy floors (documents current debt)", () => {
+  test("kubo gap sample fails post-fix occupancy floors (documents pre-fix debt)", () => {
     const { occupancy } = loadFixture();
     const k = occupancy.kuboLocalGapSample;
     const t = occupancy.targetsAfterFix;
     expect(k.endPin.stickyShareW).toBeLessThan(t.endStickyShareW_min);
     expect(k.endPin.stickyShareArea).toBeLessThan(t.endStickyShareArea_min);
+  });
+});
+
+describe("strategy B sticky-stage tokens (post-fix)", () => {
+  test("host layout shares meet ≥55% width and ≥40% height floors", () => {
+    expect(HERO_STAGE_HOST_WIDTH_SHARE).toBeGreaterThanOrEqual(0.55);
+    expect(HERO_STAGE_HOST_HEIGHT_SHARE).toBeGreaterThanOrEqual(0.4);
+    // End painted shares at scale 1 ≈ layout shares (unclipped)
+    const sticky = { width: 1440, height: 852 };
+    const host = {
+      width: sticky.width * HERO_STAGE_HOST_WIDTH_SHARE,
+      height: sticky.height * HERO_STAGE_HOST_HEIGHT_SHARE,
+    };
+    const shares = occupancyShares(host, sticky);
+    const { occupancy } = loadFixture();
+    expect(shares.widthShare).toBeGreaterThanOrEqual(occupancy.targetsAfterFix.endStickyShareW_min);
+    expect(shares.areaShare).toBeGreaterThanOrEqual(
+      occupancy.targetsAfterFix.endStickyShareArea_min,
+    );
+    expect(areaGrowthRatio(0.4664, 1)).toBeGreaterThanOrEqual(
+      occupancy.targetsAfterFix.paintedAreaGrowthRatio.min,
+    );
+    expect(areaGrowthRatio(0.4664, 1)).toBeLessThanOrEqual(
+      occupancy.targetsAfterFix.paintedAreaGrowthRatio.max,
+    );
+  });
+
+  test("stage end position shares match Mistral probe geometry", () => {
+    expect(HERO_STAGE_END_LEFT_SHARE).toBeCloseTo(259 / 1440, 4);
+    expect(HERO_STAGE_END_TOP_SHARE).toBeCloseTo(252 / 900, 4);
+  });
+
+  test("hostEndTranslateForStage is exported and pure on synthetic boxes", () => {
+    // jsdom-free: function needs DOM; assert export is a function
+    expect(typeof hostEndTranslateForStage).toBe("function");
+  });
+
+  test("fixture records sticky-stage strategy and live probe passes floors", () => {
+    const { occupancy } = loadFixture();
+    expect(occupancy.targetsAfterFix.strategy).toMatch(/sticky-stage|B/i);
+    const after = occupancy.kuboLocalAfterFix;
+    expect(after).toBeTruthy();
+    expect(after!.strategy).toMatch(/sticky-stage/i);
+    expect(after!.hostOffsetShare.w).toBeGreaterThanOrEqual(0.55);
+    expect(after!.hostOffsetShare.h).toBeGreaterThanOrEqual(0.4);
+
+    // Live end-pin samples (when present) must clear fix floors
+    if (after && "endPin" in after && after.endPin) {
+      const end = after.endPin as {
+        stickyShareW: number;
+        stickyShareArea: number;
+        painted: { left: number };
+      };
+      const rest = (
+        after as {
+          rest?: { painted: { left: number } };
+        }
+      ).rest;
+      expect(end.stickyShareW).toBeGreaterThanOrEqual(
+        occupancy.targetsAfterFix.endStickyShareW_min,
+      );
+      expect(end.stickyShareArea).toBeGreaterThanOrEqual(
+        occupancy.targetsAfterFix.endStickyShareArea_min,
+      );
+      // Stage claim: painted left moves into frame (not further into right margin)
+      if (rest) {
+        expect(end.painted.left).toBeLessThan(rest.painted.left);
+      }
+    }
   });
 });

@@ -96,9 +96,35 @@
       "gapNote": "Scale ratio matches Mistral (~4.6× area) but end sticky area share is ~5× smaller because layout host is ~2.6× narrower."
     },
     "targetsAfterFix": {
+      "strategy": "sticky-stage (B)",
       "endStickyShareW_min": 0.55,
       "endStickyShareArea_min": 0.2,
-      "paintedAreaGrowthRatio": { "min": 4.4, "max": 4.8 }
+      "paintedAreaGrowthRatio": { "min": 4.4, "max": 4.8 },
+      "hostOffsetShare_min": { "w": 0.55, "h": 0.4 }
+    },
+    "kuboLocalAfterFix": {
+      "strategy": "sticky-stage",
+      "logNote": "Live probe 1440×900 2026-07-20 after strategy B. Host lg:w-[64%]×lg:h-[44%] of sticky; end translate from HERO_STAGE_END_*_SHARE (hostLeft 1008→260 into stage).",
+      "hostOffset": { "w": 922, "h": 375 },
+      "hostOffsetShare": { "w": 0.64, "h": 0.44 },
+      "rest": {
+        "scrollY": 0,
+        "scale": 0.4664,
+        "painted": { "w": 429.8, "h": 174.8, "left": 1008, "top": 384.4 },
+        "stickyShareArea": 0.061,
+        "stickyShareW": 0.298,
+        "stickyShareH": 0.205
+      },
+      "endPin": {
+        "scrollY": 900,
+        "scale": 0.9995,
+        "painted": { "w": 921.1, "h": 374.7, "left": 259.7, "top": 286.7 },
+        "stickyShareArea": 0.281,
+        "stickyShareW": 0.64,
+        "stickyShareH": 0.44,
+        "translate": { "x": -748.34, "y": 102.21 }
+      },
+      "paintedAreaGrowthRatio": 4.592
     }
   }
 }

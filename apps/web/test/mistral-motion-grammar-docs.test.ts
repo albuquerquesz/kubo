@@ -206,6 +206,8 @@ describe("shipped motion tokens match skill Family A", () => {
     expect(src).toContain("HERO_HOST_X_END_RATIO");
     expect(src).toContain("HERO_HOST_Y_END_RATIO");
     expect(src).toContain("HERO_LINE_X_END_RATIOS");
+    expect(src).toContain("HERO_STAGE_HOST_WIDTH_SHARE");
+    expect(src).toContain("hostEndTranslateForStage");
     expect(src).toContain("prefersReducedMotion");
     expect(src).toContain("matchMedia");
     expect(src).toContain("playHeroStickyScale");
