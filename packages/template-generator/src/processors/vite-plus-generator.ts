@@ -3,7 +3,7 @@
  * Generates the root vite.config.ts used by vp lint/fmt/staged commands.
  */
 
-import type { ProjectConfig } from "@better-t-stack/types";
+import type { ProjectConfig } from "@kubo/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { getStackGeneratedIgnorePatterns } from "../utils/generated-ignore-patterns";

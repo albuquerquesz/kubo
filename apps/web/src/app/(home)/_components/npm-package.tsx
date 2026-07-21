@@ -8,7 +8,7 @@ const NpmPackage = () => {
   useEffect(() => {
     const getLatestVersion = async () => {
       try {
-        const res = await fetch("https://registry.npmjs.org/create-better-t-stack/latest");
+        const res = await fetch("https://registry.npmjs.org/kubojs/latest");
         if (!res.ok) throw new Error("Failed to fetch version");
         const data = await res.json();
         const latestVersion =

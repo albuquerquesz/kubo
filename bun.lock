@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "better-t-stack",
+      "name": "kubo",
       "dependencies": {
         "@clack/prompts": "^1.5.1",
       },
@@ -21,16 +21,16 @@
       },
     },
     "apps/cli": {
-      "name": "create-better-t-stack",
+      "name": "kubojs",
       "version": "3.36.3",
       "bin": {
-        "create-better-t-stack": "dist/cli.mjs",
+        "kubojs": "dist/cli.mjs",
       },
       "dependencies": {
-        "@better-t-stack/template-generator": "workspace:*",
-        "@better-t-stack/types": "workspace:*",
         "@clack/core": "^1.4.1",
         "@clack/prompts": "^1.5.1",
+        "@kubo/template-generator": "workspace:*",
+        "@kubo/types": "workspace:*",
         "@modelcontextprotocol/sdk": "1.29.0",
         "@trpc/server": "^11.17.0",
         "better-result": "^2.9.2",
@@ -65,11 +65,11 @@
       "dependencies": {
         "@base-ui/react": "^1.4.1",
         "@base-ui/utils": "^0.2.8",
-        "@better-t-stack/backend": "workspace:*",
-        "@better-t-stack/template-generator": "workspace:*",
-        "@better-t-stack/types": "workspace:*",
         "@erquhart/convex-oss-stats": "catalog:",
         "@gsap/react": "^2.1.2",
+        "@kubo/backend": "workspace:*",
+        "@kubo/template-generator": "workspace:*",
+        "@kubo/types": "workspace:*",
         "@number-flow/react": "^0.6.0",
         "@orama/orama": "^3.1.18",
         "@shikijs/transformers": "^4.0.2",
@@ -86,7 +86,6 @@
         "clsx": "^2.1.1",
         "convex": "catalog:",
         "convex-helpers": "catalog:",
-        "create-better-t-stack": "workspace:*",
         "culori": "^4.0.2",
         "d3-array": "^3.2.4",
         "date-fns": "^4.1.0",
@@ -94,6 +93,7 @@
         "fumadocs-mdx": "15.0.4",
         "fumadocs-ui": "npm:@fumadocs/base-ui@16.8.10",
         "gsap": "^3.15.0",
+        "kubojs": "workspace:*",
         "lucide-react": "^1.14.0",
         "motion": "^12.38.0",
         "next": "^16.2.6",
@@ -134,7 +134,7 @@
       },
     },
     "packages/backend": {
-      "name": "@better-t-stack/backend",
+      "name": "@kubo/backend",
       "version": "1.0.0",
       "dependencies": {
         "@convex-dev/crons": "^0.2.0",
@@ -153,14 +153,14 @@
         "create-bts": "cli.js",
       },
       "dependencies": {
-        "create-better-t-stack": "^3.28.0",
+        "kubojs": "^3.28.0",
       },
     },
     "packages/template-generator": {
-      "name": "@better-t-stack/template-generator",
+      "name": "@kubo/template-generator",
       "version": "3.36.3",
       "dependencies": {
-        "@better-t-stack/types": "^3.36.3",
+        "@kubo/types": "^3.36.3",
         "better-result": "^2.9.2",
         "handlebars": "^4.7.9",
         "memfs": "^4.57.2",
@@ -179,7 +179,7 @@
       },
     },
     "packages/types": {
-      "name": "@better-t-stack/types",
+      "name": "@kubo/types",
       "version": "3.36.3",
       "dependencies": {
         "zod": "^4.4.3",
@@ -246,12 +246,6 @@
     "@base-ui/react": ["@base-ui/react@1.4.1", "", { "dependencies": { "@babel/runtime": "^7.29.2", "@base-ui/utils": "0.2.8", "@floating-ui/react-dom": "^2.1.8", "@floating-ui/utils": "^0.2.11", "use-sync-external-store": "^1.6.0" }, "peerDependencies": { "@date-fns/tz": "^1.2.0", "@types/react": "^17 || ^18 || ^19", "date-fns": "^4.0.0", "react": "^17 || ^18 || ^19", "react-dom": "^17 || ^18 || ^19" }, "optionalPeers": ["@date-fns/tz", "@types/react", "date-fns"] }, "sha512-Ab5/LIhcmL8BQcsBUYiOfkSDRdLpvgUBzMK30cu684JPcLclYlztharvCZyNNgzJtbAiREzI9q0pI5erHCMgCw=="],
 
     "@base-ui/utils": ["@base-ui/utils@0.2.8", "", { "dependencies": { "@babel/runtime": "^7.29.2", "@floating-ui/utils": "^0.2.11", "reselect": "^5.1.1", "use-sync-external-store": "^1.6.0" }, "peerDependencies": { "@types/react": "^17 || ^18 || ^19", "react": "^17 || ^18 || ^19", "react-dom": "^17 || ^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-jvOi+c+ftGlGotNcKnzPVg2IhCaDTB6/6R3JeqdjdXktuAJi3wKH9T7+svuaKh1mmfVU11UWzUZVH74JDfi/wQ=="],
-
-    "@better-t-stack/backend": ["@better-t-stack/backend@workspace:packages/backend"],
-
-    "@better-t-stack/template-generator": ["@better-t-stack/template-generator@workspace:packages/template-generator"],
-
-    "@better-t-stack/types": ["@better-t-stack/types@workspace:packages/types"],
 
     "@clack/core": ["@clack/core@1.4.1", "", { "dependencies": { "fast-wrap-ansi": "^0.2.0", "sisteransi": "^1.0.5" } }, "sha512-FILJa1gGKEFTGZAJE9RpVhrjKz3c3h4ar60dSv6cGuDqufQ84YEIS3GAGvZiN+H6yaLbbvTFNejjCC4tXpZEuw=="],
 
@@ -446,6 +440,12 @@
     "@jsonjoy.com/json-pointer": ["@jsonjoy.com/json-pointer@1.0.2", "", { "dependencies": { "@jsonjoy.com/codegen": "^1.0.0", "@jsonjoy.com/util": "^1.9.0" }, "peerDependencies": { "tslib": "2" } }, "sha512-Fsn6wM2zlDzY1U+v4Nc8bo3bVqgfNTGcn6dMgs6FjrEnt4ZCe60o6ByKRjOGlI2gow0aE/Q41QOigdTqkyK5fg=="],
 
     "@jsonjoy.com/util": ["@jsonjoy.com/util@1.9.0", "", { "dependencies": { "@jsonjoy.com/buffers": "^1.0.0", "@jsonjoy.com/codegen": "^1.0.0" }, "peerDependencies": { "tslib": "2" } }, "sha512-pLuQo+VPRnN8hfPqUTLTHk126wuYdXVxE6aDmjSeV4NCAgyxWbiOIeNJVtID3h1Vzpoi9m4jXezf73I6LgabgQ=="],
+
+    "@kubo/backend": ["@kubo/backend@workspace:packages/backend"],
+
+    "@kubo/template-generator": ["@kubo/template-generator@workspace:packages/template-generator"],
+
+    "@kubo/types": ["@kubo/types@workspace:packages/types"],
 
     "@mdx-js/mdx": ["@mdx-js/mdx@3.1.1", "", { "dependencies": { "@types/estree": "^1.0.0", "@types/estree-jsx": "^1.0.0", "@types/hast": "^3.0.0", "@types/mdx": "^2.0.0", "acorn": "^8.0.0", "collapse-white-space": "^2.0.0", "devlop": "^1.0.0", "estree-util-is-identifier-name": "^3.0.0", "estree-util-scope": "^1.0.0", "estree-walker": "^3.0.0", "hast-util-to-jsx-runtime": "^2.0.0", "markdown-extensions": "^2.0.0", "recma-build-jsx": "^1.0.0", "recma-jsx": "^1.0.0", "recma-stringify": "^1.0.0", "rehype-recma": "^1.0.0", "remark-mdx": "^3.0.0", "remark-parse": "^11.0.0", "remark-rehype": "^11.0.0", "source-map": "^0.7.0", "unified": "^11.0.0", "unist-util-position-from-estree": "^2.0.0", "unist-util-stringify-position": "^4.0.0", "unist-util-visit": "^5.0.0", "vfile": "^6.0.0" } }, "sha512-f6ZO2ifpwAQIpzGWaBQT2TXxPv6z3RBzQKpVftEWN78Vl/YweF1uwussDx8ECAXVtr3Rs89fKyG9YlzUs9DyGQ=="],
 
@@ -1207,8 +1207,6 @@
 
     "cors": ["cors@2.8.6", "", { "dependencies": { "object-assign": "^4", "vary": "^1" } }, "sha512-tJtZBBHA6vjIAaF6EnIaq6laBBP9aq/Y3ouVJjEfoHbRBcHBAHYcMh/w8LDrk2PvIMMq8gmopa5D4V8RmbrxGw=="],
 
-    "create-better-t-stack": ["create-better-t-stack@workspace:apps/cli"],
-
     "create-bts": ["create-bts@workspace:packages/create-bts"],
 
     "cron-parser": ["cron-parser@4.9.0", "", { "dependencies": { "luxon": "^3.2.1" } }, "sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q=="],
@@ -1746,6 +1744,8 @@
     "keyv": ["keyv@4.5.4", "", { "dependencies": { "json-buffer": "3.0.1" } }, "sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw=="],
 
     "kind-of": ["kind-of@6.0.3", "", {}, "sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw=="],
+
+    "kubojs": ["kubojs@workspace:apps/cli"],
 
     "language-subtag-registry": ["language-subtag-registry@0.3.23", "", {}, "sha512-0K65Lea881pHotoGEa5gDlMxt3pctLi2RplBb7Ezh4rRdLEOtgi7n4EwK9lamnUCkKBqaeKRVebTq6BAxSkpXQ=="],
 

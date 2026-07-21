@@ -1,5 +1,5 @@
 {
-  "name": "@better-t-stack/template-generator",
+  "name": "@kubo/template-generator",
   "version": "3.36.3",
   "description": "Virtual file system generator for Better-T-Stack templates - works in browsers and Node.js",
   "keywords": [
@@ -14,7 +14,7 @@
   "author": "Aman Varshney",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AmanVarshney01/create-better-t-stack.git",
+    "url": "git+https://github.com/albuquerquesz/kubo.git",
     "directory": "packages/template-generator"
   },
   "files": [
@@ -48,7 +48,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@better-t-stack/types": "^3.36.3",
+    "@kubo/types": "^3.36.3",
     "better-result": "^2.9.2",
     "handlebars": "^4.7.9",
     "memfs": "^4.57.2",

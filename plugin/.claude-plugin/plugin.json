@@ -1,17 +1,17 @@
 {
   "name": "better-t-stack",
   "version": "3.36.3",
-  "description": "Let your AI scaffold and extend projects with Better-T-Stack. Bundles the create-better-t-stack MCP server plus skills, commands, and an agent so the assistant plans a valid stack and generates it instead of hand-rolling boilerplate.",
+  "description": "Let your AI scaffold and extend projects with Better-T-Stack. Bundles the kubojs MCP server plus skills, commands, and an agent so the assistant plans a valid stack and generates it instead of hand-rolling boilerplate.",
   "author": {
     "name": "Aman Varshney",
     "url": "https://github.com/AmanVarshney01"
   },
   "homepage": "https://better-t-stack.dev",
-  "repository": "https://github.com/AmanVarshney01/create-better-t-stack",
+  "repository": "https://github.com/albuquerquesz/kubo",
   "license": "MIT",
   "keywords": [
     "better-t-stack",
-    "create-better-t-stack",
+    "kubojs",
     "scaffold",
     "starter",
     "boilerplate",

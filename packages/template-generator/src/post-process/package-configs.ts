@@ -3,7 +3,7 @@
  * Updates package names, scripts, and workspaces after template generation
  */
 
-import { desktopWebFrontends, type ProjectConfig } from "@better-t-stack/types";
+import { desktopWebFrontends, type ProjectConfig } from "@kubo/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { dependencyVersionMap } from "../utils/add-deps";

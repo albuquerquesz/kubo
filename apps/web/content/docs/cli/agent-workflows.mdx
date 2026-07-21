@@ -22,7 +22,7 @@ If you are automating the CLI from an LLM, CI job, or another tool, start here i
 Create a project from a single JSON payload instead of many flags.
 
 ```bash
-create-better-t-stack create-json --input '{
+kubojs create-json --input '{
   "projectName": "my-app",
   "frontend": ["tanstack-router"],
   "backend": "hono",
@@ -55,7 +55,7 @@ This is the best path when:
 Add addons to an existing project with a single JSON payload.
 
 ```bash
-create-better-t-stack add-json --input '{
+kubojs add-json --input '{
   "projectDir": "./my-app",
   "addons": ["skills", "ultracite"],
   "addonOptions": {
@@ -88,12 +88,12 @@ create-better-t-stack add-json --input '{
 Use the CLI itself as the source of truth for current input shapes.
 
 ```bash
-create-better-t-stack schema --name all
-create-better-t-stack schema --name cli
-create-better-t-stack schema --name createInput
-create-better-t-stack schema --name addInput
-create-better-t-stack schema --name addonOptions
-create-better-t-stack schema --name dbSetupOptions
+kubojs schema --name all
+kubojs schema --name cli
+kubojs schema --name createInput
+kubojs schema --name addInput
+kubojs schema --name addonOptions
+kubojs schema --name dbSetupOptions
 ```
 
 Useful patterns:
@@ -108,13 +108,13 @@ Useful patterns:
 Run Better-T-Stack itself as a local MCP server over stdio:
 
 ```bash
-npx create-better-t-stack@latest mcp
+npx kubojs@latest mcp
 ```
 
 Install it into supported agent configs with `add-mcp`:
 
 ```bash
-npx -y add-mcp@latest "npx -y create-better-t-stack@latest mcp"
+npx -y add-mcp@latest "npx -y kubojs@latest mcp"
 ```
 
 Exposed tools:
@@ -169,10 +169,10 @@ Important field rules:
 If you scaffold a project with the `mcp` addon, Better-T-Stack itself is now one of the recommended MCP servers. The addon installs it through `add-mcp` with a package runner command so the generated config does not rely on a globally installed CLI:
 
 ```bash
-npx -y add-mcp@latest "npx -y create-better-t-stack@latest mcp"
+npx -y add-mcp@latest "npx -y kubojs@latest mcp"
 ```
 
-For Bun projects, the generated config uses the equivalent `bunx create-better-t-stack@latest mcp` server command inside `add-mcp`. That means MCP-capable agents inside the generated project can talk back to Better-T-Stack without any extra global install, alongside other recommended docs, framework, and database MCP servers.
+For Bun projects, the generated config uses the equivalent `bunx kubojs@latest mcp` server command inside `add-mcp`. That means MCP-capable agents inside the generated project can talk back to Better-T-Stack without any extra global install, alongside other recommended docs, framework, and database MCP servers.
 
 ## Use it inside your AI agent
 
@@ -183,7 +183,7 @@ Install the Better-T-Stack plugin and your assistant will scaffold and extend pr
 Add the marketplace and install the plugin:
 
 ```bash
-/plugin marketplace add AmanVarshney01/create-better-t-stack
+/plugin marketplace add albuquerquesz/kubo
 /plugin install better-t-stack@better-t-stack
 ```
 
@@ -199,7 +199,7 @@ Add the same marketplace from the Codex plugins screen and install **Better-T-St
 Prefer just the tools without the plugin? Wire the MCP server into Codex with `add-mcp`:
 
 ```bash
-npx -y add-mcp@latest "npx -y create-better-t-stack@latest mcp"   # choose "codex"
+npx -y add-mcp@latest "npx -y kubojs@latest mcp"   # choose "codex"
 ```
 
 Or add it to `~/.codex/config.toml` directly:
@@ -207,7 +207,7 @@ Or add it to `~/.codex/config.toml` directly:
 ```toml
 [mcp_servers.better-t-stack]
 command = "npx"
-args = ["-y", "create-better-t-stack@latest", "mcp"]
+args = ["-y", "kubojs@latest", "mcp"]
 ```
 
 ### opencode
@@ -215,15 +215,15 @@ args = ["-y", "create-better-t-stack@latest", "mcp"]
 Add the MCP server, then ask for a project in chat:
 
 ```bash
-npx -y add-mcp@latest "npx -y create-better-t-stack@latest mcp"   # choose "opencode"
+npx -y add-mcp@latest "npx -y kubojs@latest mcp"   # choose "opencode"
 ```
 
 ### Other agents
 
 Any other agent works too, because Better-T-Stack is a CLI underneath:
 
-- **MCP-capable agents** (Cursor, VS Code, Gemini CLI, Zed, and more) — wire the server with `npx -y add-mcp@latest "npx -y create-better-t-stack@latest mcp"` and pick your agent.
-- **CLI-first agents** like [pi](https://pi.dev) — just ask it to scaffold with Better-T-Stack and it runs the `create-better-t-stack` CLI directly.
+- **MCP-capable agents** (Cursor, VS Code, Gemini CLI, Zed, and more) — wire the server with `npx -y add-mcp@latest "npx -y kubojs@latest mcp"` and pick your agent.
+- **CLI-first agents** like [pi](https://pi.dev) — just ask it to scaffold with Better-T-Stack and it runs the `kubojs` CLI directly.
 
 ## Structured Addon Options
 
@@ -263,7 +263,7 @@ Structured addon options are still persisted in `bts.jsonc`, but the printed rep
 Example:
 
 ```bash
-create-better-t-stack create-json --input '{
+kubojs create-json --input '{
   "projectName": "db-app",
   "database": "postgres",
   "orm": "drizzle",
@@ -304,9 +304,9 @@ Provider-specific options are intentionally small today:
 Use `--dry-run` to validate inputs and target directories without writing files.
 
 ```bash
-create-better-t-stack --yes --dry-run
-create-better-t-stack create-json --input '{"projectName":"my-app","yes":true,"dryRun":true}'
-create-better-t-stack add-json --input '{"projectDir":"./my-app","addons":["mcp"],"dryRun":true}'
+kubojs --yes --dry-run
+kubojs create-json --input '{"projectName":"my-app","yes":true,"dryRun":true}'
+kubojs add-json --input '{"projectDir":"./my-app","addons":["mcp"],"dryRun":true}'
 ```
 
 This is especially useful for:

@@ -12,7 +12,7 @@ The Better-T-Stack CLI provides several commands to manage your TypeScript proje
 Creates a new Better-T-Stack project.
 
 ```bash
-create-better-t-stack [project-directory] [options]
+kubojs [project-directory] [options]
 ```
 
 ### Parameters
@@ -54,16 +54,16 @@ For JSON-first automation and agent usage, see [Agent Workflows](/docs/cli/agent
 
 ```bash
 # Default setup with prompts
-create-better-t-stack
+kubojs
 
 # Quick setup with defaults
-create-better-t-stack --yes
+kubojs --yes
 
 # Specific configuration
-create-better-t-stack --database postgres --backend hono --frontend tanstack-router
+kubojs --database postgres --backend hono --frontend tanstack-router
 
 # Validate without writing files
-create-better-t-stack my-app --yes --dry-run
+kubojs my-app --yes --dry-run
 ```
 
 ## `add`
@@ -71,7 +71,7 @@ create-better-t-stack my-app --yes --dry-run
 Adds addons to an existing Better-T-Stack project.
 
 ```bash
-create-better-t-stack add [options]
+kubojs add [options]
 ```
 
 ### Options
@@ -85,13 +85,13 @@ create-better-t-stack add [options]
 
 ```bash
 # Add addons interactively
-create-better-t-stack add
+kubojs add
 
 # Add specific addons
-create-better-t-stack add --addons pwa tauri --install
+kubojs add --addons pwa tauri --install
 
 # Add addons in a specific project directory
-create-better-t-stack add --project-dir ./my-app --addons mcp skills
+kubojs add --project-dir ./my-app --addons mcp skills
 ```
 
 ## `create-json`
@@ -99,7 +99,7 @@ create-better-t-stack add --project-dir ./my-app --addons mcp skills
 Create a project from a raw JSON payload.
 
 ```bash
-create-better-t-stack create-json --input '{"projectName":"my-app","yes":true,"dryRun":true}'
+kubojs create-json --input '{"projectName":"my-app","yes":true,"dryRun":true}'
 ```
 
 Use this when you want a single machine-readable input object instead of many flags.
@@ -109,7 +109,7 @@ Use this when you want a single machine-readable input object instead of many fl
 Add addons from a raw JSON payload.
 
 ```bash
-create-better-t-stack add-json --input '{"projectDir":"./my-app","addons":["wxt"],"addonOptions":{"wxt":{"template":"react"}}}'
+kubojs add-json --input '{"projectDir":"./my-app","addons":["wxt"],"addonOptions":{"wxt":{"template":"react"}}}'
 ```
 
 ## `schema`
@@ -117,10 +117,10 @@ create-better-t-stack add-json --input '{"projectDir":"./my-app","addons":["wxt"
 Print runtime CLI and input schemas as JSON.
 
 ```bash
-create-better-t-stack schema --name all
-create-better-t-stack schema --name createInput
-create-better-t-stack schema --name addonOptions
-create-better-t-stack schema --name dbSetupOptions
+kubojs schema --name all
+kubojs schema --name createInput
+kubojs schema --name addonOptions
+kubojs schema --name dbSetupOptions
 ```
 
 This is the best way for scripts and agents to discover the current input contract at runtime.
@@ -130,7 +130,7 @@ This is the best way for scripts and agents to discover the current input contra
 Start the Better-T-Stack MCP server over stdio. It is launched by an MCP client (Claude Code, Codex, Cursor, opencode, and others), not run directly.
 
 ```bash
-create-better-t-stack mcp
+kubojs mcp
 ```
 
 It exposes tools for planning and creating projects (`bts_plan_project`, `bts_create_project`) and managing addons (`bts_plan_addons`, `bts_add_addons`), plus schema and guidance helpers. See [Agent Workflows](/docs/cli/agent-workflows#use-it-inside-your-ai-agent) for setup and the full tool list.
@@ -140,7 +140,7 @@ It exposes tools for planning and creating projects (`bts_plan_project`, `bts_cr
 Displays Better-T-Stack sponsors.
 
 ```bash
-create-better-t-stack sponsors
+kubojs sponsors
 ```
 
 Shows a list of project sponsors and supporters.
@@ -150,7 +150,7 @@ Shows a list of project sponsors and supporters.
 Opens the Better-T-Stack documentation in your default browser.
 
 ```bash
-create-better-t-stack docs
+kubojs docs
 ```
 
 Opens `https://better-t-stack.dev/docs` in your browser.
@@ -160,7 +160,7 @@ Opens `https://better-t-stack.dev/docs` in your browser.
 Opens the web-based stack builder in your default browser.
 
 ```bash
-create-better-t-stack builder
+kubojs builder
 ```
 
 Opens `https://better-t-stack.dev/new` where you can configure your stack visually.
@@ -170,7 +170,7 @@ Opens `https://better-t-stack.dev/new` where you can configure your stack visual
 Shows project creation history stored on your local machine.
 
 ```bash
-create-better-t-stack history [options]
+kubojs history [options]
 ```
 
 ### Options
@@ -183,16 +183,16 @@ create-better-t-stack history [options]
 
 ```bash
 # Show latest entries
-create-better-t-stack history
+kubojs history
 
 # Show 5 entries
-create-better-t-stack history --limit 5
+kubojs history --limit 5
 
 # JSON output
-create-better-t-stack history --json
+kubojs history --json
 
 # Clear history
-create-better-t-stack history --clear
+kubojs history --clear
 ```
 
 ## Global Options
@@ -207,7 +207,7 @@ These options work with any command:
 ### Create a Full-Stack App
 
 ```bash
-create-better-t-stack \
+kubojs \
   --database postgres \
   --orm drizzle \
   --backend hono \
@@ -219,7 +219,7 @@ create-better-t-stack \
 ### Create a Backend-Only Project
 
 ```bash
-create-better-t-stack api-server \
+kubojs api-server \
   --frontend none \
   --backend hono \
   --database postgres \
@@ -231,13 +231,13 @@ create-better-t-stack api-server \
 
 ```bash
 cd my-existing-project
-create-better-t-stack add --addons tauri starlight --install
+kubojs add --addons tauri starlight --install
 ```
 
 ### Show Local History
 
 ```bash
-create-better-t-stack history --limit 20
+kubojs history --limit 20
 ```
 
 ## Programmatic Usage
@@ -245,7 +245,7 @@ create-better-t-stack history --limit 20
 For advanced use cases, automation, or integration with other tools, you can use the [Programmatic API](/docs/cli/programmatic-api) to create projects from Node.js code:
 
 ```typescript
-import { create } from "create-better-t-stack";
+import { create } from "kubojs";
 
 const result = await create("my-app", {
   frontend: ["tanstack-router"],

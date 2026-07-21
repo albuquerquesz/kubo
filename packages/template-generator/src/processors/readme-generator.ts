@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@better-t-stack/types";
+import type { ProjectConfig } from "@kubo/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { getDbScriptSupport } from "../utils/db-scripts";
@@ -183,7 +183,7 @@ function generateReadmeContent(options: ProjectConfig): string {
 
   return `# ${projectName}
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack${
+This project was created with [Better-T-Stack](https://github.com/albuquerquesz/kubo), a modern TypeScript stack${
     stackDescription ? ` that combines ${stackDescription}` : ""
   }.
 

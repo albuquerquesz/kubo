@@ -1,4 +1,4 @@
-import type { BetterTStackConfig, ProjectConfig } from "@better-t-stack/types";
+import type { BetterTStackConfig, ProjectConfig } from "@kubo/types";
 
 import type { VirtualFileSystem } from "./core/virtual-fs";
 
@@ -46,9 +46,9 @@ export function writeBtsConfigToVfs(
 
   const addCommand =
     projectConfig.packageManager === "npm"
-      ? "npx create-better-t-stack add"
+      ? "npx kubojs add"
       : projectConfig.packageManager === "pnpm"
-        ? "pnpm dlx create-better-t-stack add"
+        ? "pnpm dlx kubojs add"
         : "bun create better-t-stack add";
 
   const finalContent = `// Better-T-Stack

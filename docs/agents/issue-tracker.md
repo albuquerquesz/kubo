@@ -1,6 +1,6 @@
 # Issue tracker: GitHub
 
-Issues and PRDs for this repo live in GitHub Issues for `AmanVarshney01/create-better-t-stack`. Use the `gh` CLI for issue operations.
+Issues and PRDs for this repo live in GitHub Issues for `albuquerquesz/kubo`. Use the `gh` CLI for issue operations.
 
 ## Conventions
 

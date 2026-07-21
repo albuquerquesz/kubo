@@ -1,15 +1,12 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { desktopWebFrontends } from "@better-t-stack/types";
+import { desktopWebFrontends } from "@kubo/types";
 
 import { getUserPkgManager } from "./utils/get-package-manager";
 
 // Re-export from template-generator (single source of truth)
-export {
-  dependencyVersionMap,
-  type AvailableDependencies,
-} from "@better-t-stack/template-generator";
+export { dependencyVersionMap, type AvailableDependencies } from "@kubo/template-generator";
 
 const __filename = fileURLToPath(import.meta.url);
 const distPath = path.dirname(__filename);

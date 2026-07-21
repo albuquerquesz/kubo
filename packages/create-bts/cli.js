@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-import("create-better-t-stack/cli");
+import("kubojs/cli");

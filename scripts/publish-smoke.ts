@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Verify create-better-t-stack installs and runs under npm, pnpm, and bun.
+// Verify kubojs installs and runs under npm, pnpm, and bun.
 // Catches any regression that breaks the published artifact for consumers —
 // unresolved protocol refs, missing files, broken bin entry, import failures
 // from missing transitive deps, etc.
@@ -7,7 +7,7 @@
 // Packs each publishable workspace with `npm pack` (matching the release
 // workflow, which uses `npm publish`), installs the CLI tarball in a temp
 // dir using overrides to redirect sibling workspace deps at their local
-// tarballs, then runs `create-better-t-stack --version` to prove the binary
+// tarballs, then runs `kubojs --version` to prove the binary
 // actually executes.
 
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -27,12 +27,12 @@ type Publishable = {
 };
 
 const PUBLISHABLES: Publishable[] = [
-  { name: "@better-t-stack/types", dir: "packages/types" },
-  { name: "@better-t-stack/template-generator", dir: "packages/template-generator" },
+  { name: "@kubo/types", dir: "packages/types" },
+  { name: "@kubo/template-generator", dir: "packages/template-generator" },
   {
-    name: "create-better-t-stack",
+    name: "kubojs",
     dir: "apps/cli",
-    rewriteWorkspaceDeps: ["@better-t-stack/types", "@better-t-stack/template-generator"],
+    rewriteWorkspaceDeps: ["@kubo/types", "@kubo/template-generator"],
   },
 ];
 
@@ -84,14 +84,14 @@ async function installAndRun(
   mkdirSync(dir, { recursive: true });
 
   const overrides: Record<string, string> = {
-    "@better-t-stack/types": `file:${tarballs["@better-t-stack/types"]}`,
-    "@better-t-stack/template-generator": `file:${tarballs["@better-t-stack/template-generator"]}`,
+    "@kubo/types": `file:${tarballs["@kubo/types"]}`,
+    "@kubo/template-generator": `file:${tarballs["@kubo/template-generator"]}`,
   };
   const fixture: Record<string, unknown> = {
     name: `smoke-${pm}`,
     private: true,
     version: "0.0.0",
-    dependencies: { "create-better-t-stack": `file:${tarballs["create-better-t-stack"]}` },
+    dependencies: { kubojs: `file:${tarballs["kubojs"]}` },
   };
   if (pm === "pnpm") fixture.pnpm = { overrides };
   else fixture.overrides = overrides;
@@ -106,18 +106,18 @@ async function installAndRun(
 module.exports = {
   hooks: {
     readPackage(pkg) {
-      if (pkg.name === "create-better-t-stack") {
+      if (pkg.name === "kubojs") {
         pkg.dependencies = {
           ...pkg.dependencies,
-          "@better-t-stack/types": localDeps["@better-t-stack/types"],
-          "@better-t-stack/template-generator": localDeps["@better-t-stack/template-generator"],
+          "@kubo/types": localDeps["@kubo/types"],
+          "@kubo/template-generator": localDeps["@kubo/template-generator"],
         };
       }
 
-      if (pkg.name === "@better-t-stack/template-generator") {
+      if (pkg.name === "@kubo/template-generator") {
         pkg.dependencies = {
           ...pkg.dependencies,
-          "@better-t-stack/types": localDeps["@better-t-stack/types"],
+          "@kubo/types": localDeps["@kubo/types"],
         };
       }
 
@@ -139,10 +139,10 @@ module.exports = {
 
   // Execute the CLI via its installed bin path to prove it actually works —
   // not just that the file got linked into node_modules/.bin.
-  const bin = join(dir, "node_modules", ".bin", "create-better-t-stack");
+  const bin = join(dir, "node_modules", ".bin", "kubojs");
   const run = await $`${bin} --version`.cwd(dir).quiet().nothrow();
   if (run.exitCode !== 0) {
-    console.error(red(`✗ ${pm}: create-better-t-stack --version failed (exit ${run.exitCode})`));
+    console.error(red(`✗ ${pm}: kubojs --version failed (exit ${run.exitCode})`));
     console.error(dim(run.stderr.toString() + run.stdout.toString()));
     process.exit(1);
   }
@@ -165,7 +165,7 @@ for (const pkg of PUBLISHABLES) {
   console.log(dim(`  ${pkg.name}`));
 }
 
-console.log("\nInstalling and running create-better-t-stack under each package manager...");
+console.log("\nInstalling and running kubojs under each package manager...");
 for (const pm of ["npm", "pnpm", "bun"] as const) {
   if (!(await hasPackageManager(pm))) {
     console.log(dim(`  - ${pm} not available, skipping`));

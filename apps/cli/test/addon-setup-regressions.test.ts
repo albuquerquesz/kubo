@@ -94,7 +94,7 @@ describe("Addon setup regressions", () => {
     const servers = getRecommendedMcpServers(createProjectConfig(), "project");
     const betterTStackServer = servers.find((server) => server.key === "better-t-stack");
 
-    expect(betterTStackServer?.target).toBe("bunx create-better-t-stack@latest mcp");
+    expect(betterTStackServer?.target).toBe("bunx kubojs@latest mcp");
   });
 
   it("preserves explicit empty MCP selections in silent mode", async () => {

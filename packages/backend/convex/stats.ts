@@ -5,7 +5,7 @@ import { components } from "./_generated/api";
 export const ossStats = new OssStats(components.ossStats, {
   githubOwners: ["albuquerquesz"],
   githubRepos: ["albuquerquesz/idk"],
-  npmPackages: ["create-better-t-stack"],
+  npmPackages: ["kubojs"],
 });
 
 export const {

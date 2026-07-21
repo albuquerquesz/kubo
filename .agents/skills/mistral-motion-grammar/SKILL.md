@@ -73,28 +73,50 @@ Kubo intentional delta: `grow` default **false** (Mistral host ships `data-grow=
 
 ### Observed structure
 
-| Piece                | Observation                                                                                                             |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Hero host            | `mistral-section-hero-home` — `lg:min-h-[200dvh]` (probe: min-height **1800px** at 900px viewport)                      |
-| Sticky shell         | `.js-sticky` — `sticky top-0`, `lg:min-h-dvh` (**900px**), pin travel ≈ **900px** (hero − sticky)                       |
-| Right column content | `.js-right-top-content` — `origin-bottom-left`, `will-change-transform` — **this** node receives the scrubbed transform |
-| Mission lines        | `.js-right-top-content-sentence` — intentional `lg:text-nowrap` line blocks (3 lines)                                   |
+| Piece                | Observation                                                                                                            |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Hero host            | `mistral-section-hero-home` — `lg:min-h-[200dvh]` (probe: min-height **1800px** at 900px viewport)                     |
+| Sticky shell         | `.js-sticky` — `sticky top-0`, `lg:min-h-dvh` (**900px**), pin travel ≈ **900px** (hero − sticky)                      |
+| Right column card    | `.js-col-right-top-inner` — **fixed shell** (bg + border, z-5); does **not** receive the scale tween                   |
+| Right column content | `.js-right-top-content` — **`position: relative` in-flow**, `origin-bottom-left`, `lg:p-20`, z-5 — **scale+translate** |
+| Mission type         | **~56px** constant (scale changes optical size: rest ≈26px, end 56px)                                                  |
+| Mission lines        | `.js-right-top-content-sentence` — intentional `lg:text-nowrap` line blocks (3 lines)                                  |
+| Host offset box      | **~924×396** from **type + padding**, not an absolute % of sticky                                                      |
+
+**Critical (2026-07-21 remap):** do **not** implement Family B as an empty absolute layer (`w-[64%] h-[44%]`) over the sticky shell. That passes bbox occupancy while the mission text leaves its card. See `docs/spec-hero-sticky-stage-remap.md`.
 
 ### Host transform (required mechanics)
 
 **Not scale alone.** Live site scrubs a **compound transform** on `.js-right-top-content`:
 
-| Axis / prop        | Start (scrollY≈0)   | End of scale phase (scrollY≈900)   | Notes                                               |
-| ------------------ | ------------------- | ---------------------------------- | --------------------------------------------------- |
-| `scale`            | **~0.4664** (~0.47) | **1.0**                            | locks at 1 after ~875–900                           |
-| `translateX`       | **0**               | **~258px**                         | positive (content drifts right as it grows)         |
-| `translateY`       | **0**               | **~−252px** (~−63% of host height) | negative (content lifts)                            |
-| `transform-origin` | **bottom left**     | unchanged                          | probe: `0px 396px` (left edge, bottom of host box)  |
-| Scrub ease         | progress-driven     | —                                  | use GSAP scrub with **`ease: "none"`** on the tween |
+| Axis / prop        | Start (scrollY≈0)   | End of scale phase (scrollY≈900) | Notes                                               |
+| ------------------ | ------------------- | -------------------------------- | --------------------------------------------------- |
+| `scale`            | **~0.4664** (~0.47) | **1.0**                          | locks at 1 after ~875–900                           |
+| `translateX`       | **0**               | **~258px**                       | ≈ **0.279 × offsetWidth** (258/924)                 |
+| `translateY`       | **0**               | **~−252px**                      | ≈ **−0.636 × offsetHeight** (−252/396)              |
+| `transform-origin` | **bottom left**     | unchanged                        | probe: `0px 396px` (left edge, bottom of host box)  |
+| Scrub ease         | progress-driven     | —                                | use GSAP scrub with **`ease: "none"`** on the tween |
 
 After scale locks at 1, **translate can keep adjusting** (e.g. at y=1000: `scale(1)` + `translate(258px, ~−199px)`). Treat post-1.0 motion as pure translate / sticky release — secondary to the scale phase.
 
 **Scale is not linear in scrollY.** Sampled scale rises faster early, then eases into 1 (table below). Do not implement as `lerp(0.47, 1, y/900)` and expect visual match.
+
+### Family B2 — Title / left column exit (required for stage clear)
+
+Scrubbed on **title wrap** (`.js-main-title` / left upper column), **same pin** as host. Opacity stays **1** — pure `translateY`:
+
+| scrollY | title wrap `translateY` (px)         |
+| ------- | ------------------------------------ |
+| 0       | **0**                                |
+| 150     | **~−137.5**                          |
+| 300     | **~−250**                            |
+| 450     | **~−337.5**                          |
+| 600     | **~−400**                            |
+| 900     | **~−450** (≈ **−50% sticky height**) |
+
+This is how the end frame becomes mission-only: title leaves upward; host grows and **covers** lower rail (z-index). Lower cards do **not** need an opacity tween for parity.
+
+**Reduced motion:** no title exit scrub; keep title readable; host at scale 1.
 
 ### Probe map — host scale + translate (1440×900)
 
@@ -125,12 +147,53 @@ Use for optical alignment of nowrap lines as the host scales. Secondary to host 
 
 **Reduced motion:** final scale **1**, translate identity (or final rested layout), no scrub.
 
+### Stage takeover (user language vs measured bbox) — revalidated 2026-07-21
+
+Users correctly describe: _“as you scroll, the text container grows until it takes the whole screen; icons appear; text centers; scrolling up reverses.”_
+
+**Playwright evidence** (1440×900, jump-scroll + settle, dual down/up passes):
+
+| scrollY | scale | painted host W×H | host center Δx (vs vp center) | title wrap ty | notes                        |
+| ------- | ----- | ---------------- | ----------------------------- | ------------- | ---------------------------- |
+| 0       | 0.466 | 431×185          | **+504** (right rail)         | 0             | rest chip in right-top card  |
+| 300     | 0.763 | 705×302          | **+224**                      | −250          | growing + moving center      |
+| 500     | 0.895 | 827×354          | **+100**                      | −361          | icons in; mosaic fringe only |
+| 700     | 0.974 | 900×386          | **+26**                       | −428          | nearly centered              |
+| 900     | 1.000 | 924×396          | **+1 ≈ 0**                    | −450          | **fully centered** stage     |
+| up→0    | 0.466 | 431×185          | +504                          | 0             | **exact reverse** of rest    |
+
+Artifacts: `docs/captures/mistral-container-grow-2026-07-21/` (`down-y*.png`, `up-y*.png`, `grow-summary.json`), script `docs/.playwright-cli/probe-mistral-container-grow.mjs`.
+
+#### What “100% of the viewport” means (important)
+
+| Layer                                        | Measured at end (y≈900)              | Role                                                         |
+| -------------------------------------------- | ------------------------------------ | ------------------------------------------------------------ |
+| Sticky shell `.js-sticky`                    | **~1440×900 = 100% viewport**        | Full-bleed stage background (cream/white)                    |
+| Mission host `.js-right-top-content` painted | **~924×396 ≈ 64% × 44%** of viewport | Scaled content block — **not** a 100vw×100vh box             |
+| Host center                                  | Δx≈0, Δy≈0                           | **Optical center** of the stage                              |
+| Title / mosaic / featured                    | off-screen or out of composition     | Cleared by B2 exit + cover, not by resizing the host to 100% |
+
+So: **the sticky stage owns 100% of the viewport**; the mission **content** grows (scale 0.47→1) and **translates into the center** of that stage. Do **not** implement a literal `width/height: 100%` expanding layout box as the scale target — that mis-models the site and breaks reverse scrub.
+
+#### Reverse scrub (scroll up)
+
+Same pin ScrollTrigger with `scrub` is **bidirectional**:
+
+- down y=0 and up y=0: scale **0.4664**, tx/ty **0** (match)
+- down y=900 and up y=900: scale **1**, tx **258**, ty **−252** (match)
+
+No separate reverse timeline. If Kubo’s end state does not reverse cleanly, the scrub binding or `invalidateOnRefresh` is wrong — not a missing “scroll up” animation.
+
 ### Identical mechanics (implementer checklist)
 
-1. Tall sticky hero (~**200dvh** host / ~**100dvh** sticky shell).
-2. Scrub **scale 0.47→1** + **x/y translate** on mission/right-top host; **`transform-origin: bottom left`**.
-3. Optional but recommended for parity: per-line **translateX** (outer lines move, middle fixed).
-4. Desktop (`lg+`) only by default; reduced-motion → finals, no scrub.
+1. Tall sticky hero (~**200dvh** host / ~**100dvh** sticky shell that **fills the viewport** as the stage).
+2. Host **in-flow** in right-top card with **large type + padding** (offset box from content, not absolute empty % stage).
+3. Scrub **scale 0.47→1** + **x/y translate** on mission host; **`transform-origin: bottom left`** — end pose **centers** content on the sticky stage.
+4. Family B2: scrub **title wrap `translateY` 0 → ~−50% sticky H** on the same pin (clears left column).
+5. Per-line **translateX** (outer lines move, middle fixed).
+6. Host z-index above lower rail so growth can cover install/featured.
+7. **Reverse for free** via scrub — verify y=0 and y=end match on scroll-up.
+8. Desktop (`lg+`) only by default; reduced-motion → finals, no scrub.
 
 ---
 
@@ -233,15 +296,20 @@ CSS/looping effects (arrow fade stack, signal field pulse) are **not** the Mistr
 - Scrubbing the hero char intro (Family A is play-once)
 - Play-once icons that should scrub (Family C)
 - **Scale-only** Family B host (missing co-scrubbed **translateX/Y**)
+- **Absolute empty stage host** sized as % of sticky to fake occupancy (mission leaves its card)
+- Small mission type (e.g. 28px) under 0.47 scale without large end type
 - Shipping Mistral SVGs, ALTMistral, or `js-right-top-content-icon` as public API names
 - Hard-coding mid-scroll icon Y% pixels instead of pin-relative ScrollTrigger
 
 ### QA checklist (mechanics)
 
 - [ ] Family A: chars rise from `y:100%` under line mask; dual `h1` + decorative `aria-hidden`
-- [ ] Family B: sticky shell; host **scale ~0.47→1** + **translate** scrubbed; origin bottom-left
+- [ ] Family B: host **in-flow** in rail card; large type+pad; **scale ~0.47→1** + **translate**; origin bottom-left
+- [ ] Family B2: title wrap **translateY** exits up (~−50% sticky H) on same pin
 - [ ] Family B (parity): mission outer lines get small scrubbed **translateX**; middle line ~0
 - [ ] Family C: three icons, 56px masks, `yPercent` 100→0 scrub + stagger; done before scale locks
+- [ ] Rest: mission readable **inside** right-top card (not floating over install)
+- [ ] End: mission dominates stage; title off-top; lower rail covered/secondary
 - [ ] All families: reduced-motion final state
 - [ ] Zero requests to mistral.ai for media
 

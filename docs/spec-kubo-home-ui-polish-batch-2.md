@@ -262,7 +262,7 @@ Respect `prefers-reduced-motion: reduce` — static opacity ~0.55, no pulse (alr
 | ------------------- | ----------------------------------- | ------------------------------- |
 | Bun (default shown) | `bun create better-t-stack@latest`  | **`bun create kubots@latest`**  |
 | pnpm                | `pnpm create better-t-stack@latest` | **`pnpm create kubots@latest`** |
-| npm                 | `npx create-better-t-stack@latest`  | **`npx create-kubots@latest`**  |
+| npm                 | `npx kubojs@latest`                 | **`npx create-kubots@latest`**  |
 
 ### Inventory (must update)
 
@@ -284,7 +284,7 @@ Respect `prefers-reduced-motion: reduce` — static opacity ~0.55, no pulse (alr
 ### Acceptance
 
 ```bash
-rg "better-t-stack@latest|create-better-t-stack@latest" apps/web/src
+rg "better-t-stack@latest|kubojs@latest" apps/web/src
 ```
 
 → **zero** intentional UI/OG hits. Copy-to-clipboard still copies the new string.
@@ -402,7 +402,7 @@ feat(web): show kubots create commands across web displays
 
 1. Visual: `bun dev`, `/` at 390, 768, 1440 against the five captures (structure/intent).
 2. `rg "stays typed|STAYS TYPED" apps/web/src` → no hero strip.
-3. `rg "better-t-stack@latest|create-better-t-stack@latest" apps/web/src` → zero intentional hits.
+3. `rg "better-t-stack@latest|kubojs@latest" apps/web/src` → zero intentional hits.
 4. `rg "ChevronDown" apps/web/src/app/(home)/_components/featured-rail.tsx` → none (use `ArrowDown`).
 5. Footer brand: only `kubo-mark.png`, size ≥ 48px, gap ≤ 8px.
 6. `bun run check`.

@@ -1,6 +1,6 @@
 # create-bts
 
-This is an alias package for [`create-better-t-stack`](https://www.npmjs.com/package/create-better-t-stack).
+This is an alias package for [`kubojs`](https://www.npmjs.com/package/kubojs).
 
 ## Usage
 
@@ -18,6 +18,6 @@ For full documentation, please visit [better-t-stack.dev](https://better-t-stack
 
 ## About
 
-`create-bts` is a shorter alias for the full `create-better-t-stack` command. Both packages provide the same functionality - a modern CLI tool for scaffolding end-to-end type-safe TypeScript projects.
+`create-bts` is a shorter alias for the full `kubojs` command. Both packages provide the same functionality - a modern CLI tool for scaffolding end-to-end type-safe TypeScript projects.
 
-All functionality is provided by the main [`create-better-t-stack`](https://www.npmjs.com/package/create-better-t-stack) package.
+All functionality is provided by the main [`kubojs`](https://www.npmjs.com/package/kubojs) package.

@@ -180,7 +180,7 @@ function getStackGuidance() {
 export function createBtsMcpServer() {
   const server = new McpServer(
     {
-      name: "create-better-t-stack",
+      name: "kubojs",
       version: getLatestCLIVersion(),
     },
     {

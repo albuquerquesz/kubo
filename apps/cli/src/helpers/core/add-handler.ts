@@ -1,5 +1,6 @@
 import path from "node:path";
 
+import { intro, log, outro } from "@clack/prompts";
 import {
   EMBEDDED_TEMPLATES,
   processAddonTemplates,
@@ -10,9 +11,8 @@ import {
   processVitePlusConfig,
   processTemplateString,
   VirtualFileSystem,
-} from "@better-t-stack/template-generator";
-import { writeTree } from "@better-t-stack/template-generator/fs-writer";
-import { intro, log, outro } from "@clack/prompts";
+} from "@kubo/template-generator";
+import { writeTree } from "@kubo/template-generator/fs-writer";
 import { Result } from "better-result";
 import fs from "fs-extra";
 import pc from "picocolors";

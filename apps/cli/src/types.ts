@@ -1,1 +1,1 @@
-export * from "@better-t-stack/types";
+export * from "@kubo/types";

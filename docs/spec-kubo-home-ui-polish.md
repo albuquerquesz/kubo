@@ -45,7 +45,7 @@ This is a polish + rebrand pass on the existing editorial system (`spec-home-edi
 
 ### Out of scope
 
-- Renaming CLI package (`create-better-t-stack`), npm package, monorepo package names, or GitHub repo URL.
+- Renaming CLI package (`kubojs`), npm package, monorepo package names, or GitHub repo URL.
 - Changing domains (`better-t-stack.dev`), OG image hosts, Convex package imports, or `ICON_BASE_URL`.
 - Redesigning mosaic asymmetric grid placement or adding new mosaic items.
 - Removing `ui-rule-grid` from **non-hero** modules (command, stats, footer structural cells, mosaic idle cells) unless a follow-up explicitly expands scope.
@@ -237,7 +237,7 @@ Keep meaning; trim only if layout still fails after height fix.
 
 Do **not** change in this pass (unless already part of a separate product decision):
 
-- Package names: `create-better-t-stack`, `@better-t-stack/*`
+- Package names: `kubojs`, `@kubo/*`
 - CLI commands shown in docs/examples (`bun create better-t-stack@latest`) — product still generates via that CLI until a package rename ships
 - External URLs: GitHub org/repo, Discord, npm, `better-t-stack.dev`, R2 icon host
 - Content docs that describe the CLI package (`content/docs/...`) beyond pure display branding if they refer to the package name

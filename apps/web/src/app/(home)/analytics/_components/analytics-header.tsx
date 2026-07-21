@@ -84,9 +84,7 @@ export function AnalyticsHeader({
           <Terminal className="h-5 w-5 shrink-0 text-primary" />
           <div className="min-w-0">
             <h1 className="font-bold font-mono text-lg sm:text-xl">ANALYTICS.SH</h1>
-            <p className="text-muted-foreground text-sm">
-              Aggregate CLI telemetry for create-better-t-stack.
-            </p>
+            <p className="text-muted-foreground text-sm">Aggregate CLI telemetry for kubojs.</p>
           </div>
         </div>
         <div className="hidden h-px flex-1 bg-border sm:block" />

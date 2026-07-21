@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     "convex",
     "monorepo",
     "Better-T-Stack",
-    "create-better-t-stack",
+    "kubojs",
   ],
   authors: [{ name: "Better-T-Stack Team" }],
   creator: "Better-T-Stack",

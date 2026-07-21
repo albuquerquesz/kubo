@@ -33,7 +33,7 @@ const PAGES: Record<
     path: "~/analytics",
     section: "analytics",
     title: "Analytics",
-    description: "Live usage insights from the create-better-t-stack CLI",
+    description: "Live usage insights from the kubojs CLI",
   },
   sponsors: {
     path: "~/sponsors",

@@ -8,7 +8,7 @@ Thank you for your interest in contributing to Better-T-Stack! This document pro
 
 This repository is organized as a monorepo containing:
 
-- **CLI**: [`apps/cli`](apps/cli) - The scaffolding CLI tool (`create-better-t-stack`)
+- **CLI**: [`apps/cli`](apps/cli) - The scaffolding CLI tool (`kubojs`)
 - **Documentation**: [`apps/web`](apps/web) - Official website and documentation
 
 ## Development Setup
@@ -24,8 +24,8 @@ This repository is organized as a monorepo containing:
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/AmanVarshney01/create-better-t-stack.git
-   cd create-better-t-stack
+   git clone https://github.com/albuquerquesz/kubo.git
+   cd kubojs
    ```
 
 2. **Install dependencies**
@@ -47,7 +47,7 @@ This repository is organized as a monorepo containing:
    bun link
    ```
 
-   Now you can use `create-better-t-stack` from anywhere in your system.
+   Now you can use `kubojs` from anywhere in your system.
 
 3. **Start development server**
 
@@ -60,7 +60,7 @@ This repository is organized as a monorepo containing:
 4. **Test the CLI**
    Now go to anywhere else in your system (maybe like a test folder) and run:
    ```bash
-   create-better-t-stack
+   kubojs
    ```
    This will run the locally installed CLI.
 

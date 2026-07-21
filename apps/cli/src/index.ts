@@ -1,4 +1,4 @@
-import { getAllJsonSchemas } from "@better-t-stack/types/json-schema";
+import { getAllJsonSchemas } from "@kubo/types/json-schema";
 import { initTRPC } from "@trpc/server";
 import { Result } from "better-result";
 import { createCli, type TrpcCliMeta } from "trpc-cli";
@@ -98,7 +98,7 @@ const t = initTRPC.meta<TrpcCliMeta>().create();
 function getCliSchemaJson(): unknown {
   return createCli({
     router,
-    name: "create-better-t-stack",
+    name: "kubojs",
     version: getLatestCLIVersion(),
   }).toJSON();
 }
@@ -275,7 +275,7 @@ export const router = t.router({
 export function createBtsCli(): ReturnType<typeof createCli> {
   return createCli({
     router,
-    name: "create-better-t-stack",
+    name: "kubojs",
     version: getLatestCLIVersion(),
   });
 }
@@ -294,7 +294,7 @@ export type CreateError = UserCancelledError | CLIError | ProjectCreationError;
  *
  * @example
  * ```typescript
- * import { create, Result } from "create-better-t-stack";
+ * import { create, Result } from "kubojs";
  *
  * const result = await create("my-app", {
  *   frontend: ["tanstack-router"],
@@ -376,7 +376,7 @@ export {
   generate,
   EMBEDDED_TEMPLATES,
   TEMPLATE_COUNT,
-} from "@better-t-stack/template-generator";
+} from "@kubo/template-generator";
 
 // Import for createVirtual
 import {
@@ -384,7 +384,7 @@ import {
   GeneratorError,
   type VirtualFileTree,
   EMBEDDED_TEMPLATES,
-} from "@better-t-stack/template-generator";
+} from "@kubo/template-generator";
 
 /**
  * Programmatic API to generate a project in-memory (virtual filesystem).
@@ -393,7 +393,7 @@ import {
  *
  * @example
  * ```typescript
- * import { createVirtual, EMBEDDED_TEMPLATES, Result } from "create-better-t-stack";
+ * import { createVirtual, EMBEDDED_TEMPLATES, Result } from "kubojs";
  *
  * const result = await createVirtual({
  *   frontend: ["tanstack-router"],
@@ -506,7 +506,7 @@ export type { AddResult };
  *
  * @example
  * ```typescript
- * import { add } from "create-better-t-stack";
+ * import { add } from "kubojs";
  *
  * const result = await add({
  *   addons: ["biome", "husky"],

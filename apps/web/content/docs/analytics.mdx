@@ -20,7 +20,7 @@ Not collected:
 Telemetry is enabled by default. To disable:
 
 ```bash
-BTS_TELEMETRY_DISABLED=1 npx create-better-t-stack@latest
+BTS_TELEMETRY_DISABLED=1 npx kubojs@latest
 ```
 
 <Callout title="Note">The above command disables it for a single run.</Callout>
@@ -47,7 +47,7 @@ If in doubt, set `BTS_TELEMETRY_DISABLED=1` and proceed. You can still use all C
 
 ## Source code
 
-- CLI event sender: [`apps/cli/src/utils/analytics.ts`](https://github.com/AmanVarshney01/create-better-t-stack/blob/main/apps/cli/src/utils/analytics.ts)
-- Telemetry toggle logic: [`apps/cli/src/utils/telemetry.ts`](https://github.com/AmanVarshney01/create-better-t-stack/blob/main/apps/cli/src/utils/telemetry.ts)
-- Ingest endpoint: [`packages/backend/convex/http.ts`](https://github.com/AmanVarshney01/create-better-t-stack/blob/main/packages/backend/convex/http.ts)
-- Analytics backend (ingest + aggregation): [`packages/backend/convex/analytics.ts`](https://github.com/AmanVarshney01/create-better-t-stack/blob/main/packages/backend/convex/analytics.ts)
+- CLI event sender: [`apps/cli/src/utils/analytics.ts`](https://github.com/albuquerquesz/kubo/blob/main/apps/cli/src/utils/analytics.ts)
+- Telemetry toggle logic: [`apps/cli/src/utils/telemetry.ts`](https://github.com/albuquerquesz/kubo/blob/main/apps/cli/src/utils/telemetry.ts)
+- Ingest endpoint: [`packages/backend/convex/http.ts`](https://github.com/albuquerquesz/kubo/blob/main/packages/backend/convex/http.ts)
+- Analytics backend (ingest + aggregation): [`packages/backend/convex/analytics.ts`](https://github.com/albuquerquesz/kubo/blob/main/packages/backend/convex/analytics.ts)

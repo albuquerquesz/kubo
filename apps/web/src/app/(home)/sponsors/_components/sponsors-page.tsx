@@ -224,7 +224,7 @@ export function SponsorsPage({
               <h1 className="font-bold font-mono text-xl sm:text-2xl">SPONSORS.SH</h1>
             </div>
             <p className="text-muted-foreground text-sm">
-              The companies and developers funding create-better-t-stack
+              The companies and developers funding kubojs
             </p>
           </div>
           <div className="flex flex-col items-end gap-2">
@@ -364,7 +364,7 @@ export function SponsorsPage({
             <div className="flex items-center gap-2 text-sm">
               <span className="text-primary">$</span>
               <span className="text-muted-foreground">
-                Sponsorship funds development and infrastructure for create-better-t-stack
+                Sponsorship funds development and infrastructure for kubojs
               </span>
             </div>
             {totalProjects > 0 && (

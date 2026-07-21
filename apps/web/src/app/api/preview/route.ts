@@ -1,6 +1,6 @@
-import { generate, type VirtualNode } from "@better-t-stack/template-generator";
-import { EMBEDDED_TEMPLATES } from "@better-t-stack/template-generator";
-import type { ProjectConfig } from "@better-t-stack/types";
+import { generate, type VirtualNode } from "@kubo/template-generator";
+import { EMBEDDED_TEMPLATES } from "@kubo/template-generator";
+import type { ProjectConfig } from "@kubo/types";
 import { NextResponse } from "next/server";
 
 import type { StackState } from "@/lib/constant";

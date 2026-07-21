@@ -1,5 +1,5 @@
 {
-  "name": "create-better-t-stack",
+  "name": "kubojs",
   "version": "3.36.3",
   "description": "A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations",
   "keywords": [
@@ -33,11 +33,11 @@
   "author": "Aman Varshney",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AmanVarshney01/create-better-t-stack.git",
+    "url": "git+https://github.com/albuquerquesz/kubo.git",
     "directory": "apps/cli"
   },
   "bin": {
-    "create-better-t-stack": "dist/cli.mjs"
+    "kubojs": "dist/cli.mjs"
   },
   "files": [
     "dist"
@@ -69,10 +69,10 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@better-t-stack/template-generator": "workspace:*",
-    "@better-t-stack/types": "workspace:*",
     "@clack/core": "^1.4.1",
     "@clack/prompts": "^1.5.1",
+    "@kubo/template-generator": "workspace:*",
+    "@kubo/types": "workspace:*",
     "@modelcontextprotocol/sdk": "1.29.0",
     "@trpc/server": "^11.17.0",
     "better-result": "^2.9.2",

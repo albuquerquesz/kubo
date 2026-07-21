@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@better-t-stack/types";
+import type { ProjectConfig } from "@kubo/types";
 
 function normalizeMultiValues(values: string[] | undefined): string[] {
   if (!values || values.length === 0) return [];
@@ -22,7 +22,7 @@ function getBaseCommand(packageManager: ProjectConfig["packageManager"]): string
     return "pnpm create better-t-stack@latest";
   }
 
-  return "npx create-better-t-stack@latest";
+  return "npx kubojs@latest";
 }
 
 export function generateReproducibleCommand(config: ProjectConfig): string {

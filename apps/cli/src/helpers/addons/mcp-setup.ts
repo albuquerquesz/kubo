@@ -82,7 +82,7 @@ function getAllMcpServers(config: ProjectConfig): McpServerDef[] {
       key: "better-t-stack",
       label: "I dont know",
       name: "better-t-stack",
-      target: getPackageExecutionCommand(config.packageManager, "create-better-t-stack@latest mcp"),
+      target: getPackageExecutionCommand(config.packageManager, "kubojs@latest mcp"),
     },
     {
       key: "context7",

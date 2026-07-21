@@ -16,7 +16,7 @@ const footerGroups = [
     links: [
       { label: "Analytics", href: "/analytics" },
       { label: "Showcase", href: "/showcase" },
-      { label: "NPM package", href: "https://www.npmjs.com/package/create-better-t-stack" },
+      { label: "NPM package", href: "https://www.npmjs.com/package/kubojs" },
     ],
   },
   {
@@ -26,7 +26,7 @@ const footerGroups = [
       { label: "Discord", href: "https://discord.gg/ZYsbjpDaM5" },
       {
         label: "GitHub",
-        href: "https://github.com/AmanVarshney01/create-better-t-stack",
+        href: "https://github.com/albuquerquesz/kubo",
       },
     ],
   },

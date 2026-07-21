@@ -1,5 +1,5 @@
 export default {
-  repo: "AmanVarshney01/create-better-t-stack",
+  repo: "albuquerquesz/kubo",
   emoji: true,
   contributors: true,
 };

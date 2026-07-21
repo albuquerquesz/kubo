@@ -249,7 +249,7 @@ export async function displayPostInstallInstructions(
   }
 
   output += `\n${pc.bold("Like I dont know?")} Please consider giving us a star\n   on GitHub:\n`;
-  output += pc.cyan("https://github.com/AmanVarshney01/create-better-t-stack");
+  output += pc.cyan("https://github.com/albuquerquesz/kubo");
 
   cliConsola.box(output);
 }

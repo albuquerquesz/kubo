@@ -10,7 +10,7 @@ export function AnalyticsSources() {
 
       <div className="mt-4 space-y-3 text-sm">
         <Link
-          href="https://github.com/AmanVarshney01/create-better-t-stack/blob/main/apps/cli/src/utils/analytics.ts"
+          href="https://github.com/albuquerquesz/kubo/blob/main/apps/cli/src/utils/analytics.ts"
           target="_blank"
           rel="noopener noreferrer"
           className="group flex items-center justify-between rounded border border-border px-3 py-2.5 transition-colors hover:border-muted-foreground/30"
@@ -23,7 +23,7 @@ export function AnalyticsSources() {
         </Link>
 
         <Link
-          href="https://github.com/AmanVarshney01/create-better-t-stack/blob/main/packages/backend/convex/analytics.ts"
+          href="https://github.com/albuquerquesz/kubo/blob/main/packages/backend/convex/analytics.ts"
           target="_blank"
           rel="noopener noreferrer"
           className="group flex items-center justify-between rounded border border-border px-3 py-2.5 transition-colors hover:border-muted-foreground/30"

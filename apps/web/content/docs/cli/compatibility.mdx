@@ -27,10 +27,10 @@ The CLI validates option combinations to ensure generated projects work correctl
 
 ```bash
 # ❌ Invalid - MongoDB with Drizzle
-create-better-t-stack --database mongodb --orm drizzle
+kubojs --database mongodb --orm drizzle
 
 # ✅ Valid - MongoDB with Mongoose
-create-better-t-stack --database mongodb --orm mongoose
+kubojs --database mongodb --orm mongoose
 ```
 
 ## Backend & Runtime Compatibility
@@ -48,13 +48,13 @@ Cloudflare Workers has specific compatibility requirements:
 
 ```bash
 # ❌ Invalid - Workers with Express
-create-better-t-stack --runtime workers --backend express
+kubojs --runtime workers --backend express
 
 # ✅ Valid - Workers with Hono
-create-better-t-stack --runtime workers --backend hono --database sqlite --orm drizzle --db-setup d1
+kubojs --runtime workers --backend hono --database sqlite --orm drizzle --db-setup d1
 
 # ✅ Also valid - Workers with Prisma (D1)
-create-better-t-stack --runtime workers --backend hono --database sqlite --orm prisma --db-setup d1
+kubojs --runtime workers --backend hono --database sqlite --orm prisma --db-setup d1
 ```
 
 ### Backend Presets
@@ -105,10 +105,10 @@ When using `--backend none`, the following options are automatically set:
 
 ```bash
 # ❌ Invalid - Nuxt with tRPC
-create-better-t-stack --frontend nuxt --api trpc
+kubojs --frontend nuxt --api trpc
 
 # ✅ Valid - Nuxt with oRPC
-create-better-t-stack --frontend nuxt --api orpc
+kubojs --frontend nuxt --api orpc
 ```
 
 ### Frontend Restrictions
@@ -119,10 +119,10 @@ create-better-t-stack --frontend nuxt --api orpc
 
 ```bash
 # ❌ Invalid - Multiple web frontends
-create-better-t-stack --frontend next tanstack-router
+kubojs --frontend next tanstack-router
 
 # ✅ Valid - Web + native
-create-better-t-stack --frontend next native-uniwind
+kubojs --frontend next native-uniwind
 ```
 
 ## Database Setup Compatibility
@@ -186,10 +186,10 @@ create-better-t-stack --frontend next native-uniwind
 
 ```bash
 # ❌ Invalid - two task runners
-create-better-t-stack --addons turborepo nx
+kubojs --addons turborepo nx
 
 # ✅ Valid - a single task runner
-create-better-t-stack --addons turborepo
+kubojs --addons turborepo
 ```
 
 ### Web Deployment
@@ -243,21 +243,21 @@ Clerk authentication requires:
 
 ```bash
 # Fix by using MongoDB
-create-better-t-stack --database mongodb --orm mongoose
+kubojs --database mongodb --orm mongoose
 ```
 
 ### "Cloudflare Workers runtime is only supported with Hono backend"
 
 ```bash
 # Fix by using Hono
-create-better-t-stack --runtime workers --backend hono
+kubojs --runtime workers --backend hono
 ```
 
 ### "Cannot select multiple web frameworks"
 
 ```bash
 # Fix by choosing one web framework
-create-better-t-stack --frontend tanstack-router
+kubojs --frontend tanstack-router
 ```
 
 ## Validation Strategy

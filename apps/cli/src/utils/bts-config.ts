@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import type { BetterTStackConfig } from "@better-t-stack/types";
+import type { BetterTStackConfig } from "@kubo/types";
 import fs from "fs-extra";
 import { applyEdits, modify, parse } from "jsonc-parser";
 

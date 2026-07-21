@@ -1,5 +1,5 @@
 {
-  "name": "better-t-stack",
+  "name": "kubo",
   "version": "0.0.0",
   "private": true,
   "workspaces": {
@@ -31,7 +31,7 @@
     "cli": "bun run build:cli && ./apps/cli/dist/cli.mjs",
     "smoke:publish": "bun run scripts/publish-smoke.ts",
     "build:web": "turbo run build --filter=web",
-    "build:cli": "turbo run build --filter=create-better-t-stack",
+    "build:cli": "turbo run build --filter=kubojs",
     "test": "bun run check && cd apps/cli && bun test",
     "test:complete": "bun run check && bun run build && cd apps/cli && BTS_MATRIX_MODE=smoke BTS_BUILD_SAMPLES=1 bun test --bail=5",
     "lint": "turbo run lint",
@@ -41,7 +41,7 @@
     "bump": "bun run scripts/bump-version.ts",
     "canary": "bun run scripts/canary-release.ts",
     "cleanup-previews": "bun run scripts/cleanup-previews.ts",
-    "deploy:convex": "turbo run --filter=@better-t-stack/backend deploy",
+    "deploy:convex": "turbo run --filter=@kubo/backend deploy",
     "deploy:web": "turbo run deploy --filter=web",
     "generate": "turbo run generate-schema --filter=web",
     "deploy": "turbo run deploy --filter=web",

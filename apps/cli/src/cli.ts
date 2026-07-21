@@ -5,12 +5,12 @@ const [, , command, ...args] = process.argv;
 
 if (command === "mcp") {
   if (args.includes("--help") || args.includes("-h")) {
-    console.log(`Usage: create-better-t-stack mcp
+    console.log(`Usage: kubojs mcp
 
 Start the I dont know MCP server over stdio.
 
 This command is intended to be launched by an MCP client, for example:
-  create-better-t-stack mcp`);
+  kubojs mcp`);
     process.exit(0);
   }
 

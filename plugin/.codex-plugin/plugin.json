@@ -1,17 +1,17 @@
 {
   "name": "better-t-stack",
   "version": "3.36.3",
-  "description": "Let your AI scaffold and extend projects with Better-T-Stack. Bundles the create-better-t-stack MCP server plus skills so the assistant plans a valid stack and generates it instead of hand-rolling boilerplate.",
+  "description": "Let your AI scaffold and extend projects with Better-T-Stack. Bundles the kubojs MCP server plus skills so the assistant plans a valid stack and generates it instead of hand-rolling boilerplate.",
   "author": {
     "name": "Aman Varshney",
     "url": "https://github.com/AmanVarshney01"
   },
   "homepage": "https://better-t-stack.dev",
-  "repository": "https://github.com/AmanVarshney01/create-better-t-stack",
+  "repository": "https://github.com/albuquerquesz/kubo",
   "license": "MIT",
   "keywords": [
     "better-t-stack",
-    "create-better-t-stack",
+    "kubojs",
     "scaffold",
     "starter",
     "boilerplate",
@@ -35,7 +35,7 @@
   "interface": {
     "displayName": "Better-T-Stack",
     "shortDescription": "Scaffold end-to-end type-safe TypeScript projects",
-    "longDescription": "Bring Better-T-Stack into Codex with skills that plan a valid stack and generate it through the official create-better-t-stack MCP server, plus an add-addons workflow for existing projects. Covers frontends (Next, TanStack, Nuxt, Svelte, Solid, Astro, React Native), backends (Hono, Express, Fastify, Elysia, Convex), databases and ORMs, auth, payments, deployment, and DB provisioning (Neon, Prisma Postgres, Supabase, Turso, PlanetScale, MongoDB Atlas, Cloudflare D1, Docker).",
+    "longDescription": "Bring Better-T-Stack into Codex with skills that plan a valid stack and generate it through the official kubojs MCP server, plus an add-addons workflow for existing projects. Covers frontends (Next, TanStack, Nuxt, Svelte, Solid, Astro, React Native), backends (Hono, Express, Fastify, Elysia, Convex), databases and ORMs, auth, payments, deployment, and DB provisioning (Neon, Prisma Postgres, Supabase, Turso, PlanetScale, MongoDB Atlas, Cloudflare D1, Docker).",
     "developerName": "Aman Varshney",
     "category": "Coding",
     "capabilities": ["Interactive", "Write", "MCP"],
