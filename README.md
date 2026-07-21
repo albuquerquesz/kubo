@@ -2,20 +2,11 @@
 
 A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations.
 
-**Package:** [`kubojs`](https://www.npmjs.com/package/kubojs) · **Repo:** [albuquerquesz/kubo](https://github.com/albuquerquesz/kubo)
-
 <br />
 
 <a href="https://vercel.com/oss">
   <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
 </a>
-
-## Philosophy
-
-- Roll your own stack: you pick only the parts you need, nothing extra.
-- Minimal templates: bare-bones scaffolds with zero bloat.
-- Latest dependencies: always use current, stable versions by default.
-- Free and open source: forever.
 
 ## Quick Start
 
@@ -29,17 +20,6 @@ pnpm create kubojs@latest
 # Using npm
 npx kubojs@latest
 ```
-
-## Claude Code plugin
-
-Want your AI assistant to scaffold and extend projects with Kubo? Install the plugin and it will plan a valid stack and generate it through the bundled MCP server instead of hand-rolling boilerplate.
-
-```bash
-/plugin marketplace add albuquerquesz/kubo
-/plugin install better-t-stack@better-t-stack
-```
-
-Then ask: _"create a fullstack app with Next, Hono, Postgres and Better Auth"_, or run `/better-t-stack:new <description>`. See [`plugin/`](plugin) and the [Agent Workflows docs](apps/web/content/docs/cli/agent-workflows.mdx).
 
 ## Features
 
@@ -64,7 +44,6 @@ This repository is organized as a monorepo containing:
 - **CLI**: [`apps/cli`](apps/cli) — published as [`kubojs`](https://www.npmjs.com/package/kubojs)
 - **Documentation / site**: [`apps/web`](apps/web)
 - **Packages**: [`packages/types`](packages/types), [`packages/template-generator`](packages/template-generator), [`packages/backend`](packages/backend)
-- **Plugin**: [`plugin`](plugin) — Claude Code / Codex plugin (MCP server + skills + commands + agent)
 
 ## Documentation
 
@@ -93,13 +72,3 @@ Please read the Contribution Guide first and open an issue before starting new f
 
 - Docs: [`./apps/web/content/docs/contributing.mdx`](./apps/web/content/docs/contributing.mdx)
 - Repo guide: [`./.github/CONTRIBUTING.md`](./.github/CONTRIBUTING.md)
-
-## Star History
-
-<a href="https://www.star-history.com/#albuquerquesz/kubo&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=albuquerquesz/kubo&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=albuquerquesz/kubo&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=albuquerquesz/kubo&type=Date" />
- </picture>
-</a>
