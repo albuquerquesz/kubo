@@ -2,7 +2,7 @@
 
 ## Status
 
-Gap analysis complete — **implementation not done** (motion curve works; occupancy does not).
+**Implemented** (strategy B — sticky-stage host). Live probe 1440×900: end sticky width share **0.64**, area share **0.281**, painted growth **~4.59×**, host left **1008 → 260** (into stage). Scale scrub unchanged (~0.47→1).
 
 ## Date
 
@@ -159,6 +159,15 @@ At **1440×900**, desktop, after implement:
 3. Re-tune translate end values from sticky metrics; confirm host moves into stage (not further into the margin).
 4. Overflow QA at 1440 / 1920; reduced-motion finals.
 5. Update fixture `occupancy` samples + contract tests.
+
+### Shipped (strategy B)
+
+| Piece                                                                | Location                                                                                               |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Sticky-stage host `lg:w-[64%] lg:h-[44%]`, `left-[70%] bottom-[40%]` | `apps/web/src/app/(home)/_components/hero-section.tsx` (`data-hero-occupancy-strategy="sticky-stage"`) |
+| Stage end translate from sticky metrics                              | `hostEndTranslateForStage` in `hero-sticky-scale.ts`                                                   |
+| Shell `lg:overflow-x-hidden`                                         | sticky-shell (host may extend past right edge at rest)                                                 |
+| Fixture + contract tests                                             | `mistral-motion-probe-sample.json` → `occupancy.kuboLocalAfterFix`                                     |
 
 ---
 
