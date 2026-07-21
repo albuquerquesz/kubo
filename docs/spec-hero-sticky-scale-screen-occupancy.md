@@ -16,7 +16,7 @@ Keep the existing Family B **smooth scale scrub** (already shipping), and make t
 
 **Identical ≠ brand clone.** No ALTMistral, Mistral palette, CMS SVGs, or copy.
 
-**Skill:** [`.agents/skills/mistral-motion-grammar/SKILL.md`](../.agents/skills/mistral-motion-grammar/SKILL.md) (Family B transform axes remain required).  
+**Skill:** [`.agents/skills/kubo-motion-grammar/SKILL.md`](../.agents/skills/kubo-motion-grammar/SKILL.md) (Family B transform axes remain required).
 **Parent motion map:** [`docs/spec-mistral-identical-home-motion.md`](./spec-mistral-identical-home-motion.md)
 
 **Probe:** Playwright Chromium, viewport **1440×900**, localhost `http://localhost:3333/` + `https://mistral.ai/`, 2026-07-20.  
@@ -177,7 +177,7 @@ At **1440×900**, desktop, after implement:
 
 | Doc                                             | Role                                                 |
 | ----------------------------------------------- | ---------------------------------------------------- |
-| `mistral-motion-grammar` skill                  | Axes: scale+translate, pin 200dvh                    |
+| `kubo-motion-grammar` skill                     | Axes: scale+translate, pin 200dvh                    |
 | `spec-mistral-identical-home-motion.md`         | Original A/B/C change map (scale scrub done)         |
 | **This spec**                                   | Remaining **screen occupancy** gap after scale works |
 | `docs/.playwright-cli/probe-hero-occupancy.mjs` | Re-run dual-site occupancy                           |

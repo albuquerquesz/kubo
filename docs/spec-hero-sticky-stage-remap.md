@@ -2,8 +2,8 @@
 
 ## Status
 
-**Remap complete — implement next.**  
-Occupancy-only strategy B (absolute empty `64%×44%` host) is **rejected**. Live dual-site probe 2026-07-21 shows why Kubo’s mission “left the card” while Mistral’s stage clears correctly.
+**Implemented (2026-07-21 polish).**
+In-flow type+pad host, title exit+fade, stage-clear (install/L2), host **centered** at pin end, reverse scrub verified. Absolute empty `%` stage host remains rejected.
 
 ## Date
 
@@ -36,7 +36,7 @@ User frames: `user-rest-*.png`, `user-end-full-stage.png` in that folder.
 | `docs/captures/hero-sticky-remap-2026-07-21/` | Screenshots y0/200/450/700/900 + clean Mistral + `remap-report.json` + `fade-report.json`                               |
 | Probe scratch                                 | `/tmp/hero-remap-probe/` (same frames)                                                                                  |
 | Parent occupancy gap-spec                     | `docs/spec-hero-sticky-scale-screen-occupancy.md` (metrics still useful; **strategy B absolute host is wrong vehicle**) |
-| Skill                                         | `.agents/skills/mistral-motion-grammar/SKILL.md` (Family B + **B2 title exit** updated)                                 |
+| Skill                                         | `.agents/skills/kubo-motion-grammar/SKILL.md` (Family B + **B2 title exit** updated)                                    |
 
 Viewport: **1440×900**. Sites: `https://mistral.ai/` + `http://localhost:3333/`.
 
