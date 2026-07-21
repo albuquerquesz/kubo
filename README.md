@@ -1,20 +1,14 @@
-# Better-T-Stack
+# Kubo
 
-A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations
+A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations.
+
+**Package:** [`kubojs`](https://www.npmjs.com/package/kubojs) · **Repo:** [albuquerquesz/kubo](https://github.com/albuquerquesz/kubo)
 
 <br />
 
 <a href="https://vercel.com/oss">
   <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
 </a>
-
-## Sponsors
-
-<p align="center">
-<img src="https://sponsors.better-t-stack.dev/sponsors.png" alt="Sponsors">
-</p>
-
-https://github.com/user-attachments/assets/87b541ea-9d4d-4734-b383-00784b0b43ff
 
 ## Philosophy
 
@@ -27,25 +21,25 @@ https://github.com/user-attachments/assets/87b541ea-9d4d-4734-b383-00784b0b43ff
 
 ```bash
 # Using bun (recommended)
-bun create better-t-stack@latest
+bun create kubojs@latest
 
 # Using pnpm
-pnpm create better-t-stack@latest
+pnpm create kubojs@latest
 
 # Using npm
-npx create-better-t-stack@latest
+npx kubojs@latest
 ```
 
 ## Claude Code plugin
 
-Want your AI assistant to scaffold and extend projects with Better-T-Stack? Install the plugin and it will plan a valid stack and generate it through the bundled MCP server instead of hand-rolling boilerplate.
+Want your AI assistant to scaffold and extend projects with Kubo? Install the plugin and it will plan a valid stack and generate it through the bundled MCP server instead of hand-rolling boilerplate.
 
 ```bash
-/plugin marketplace add AmanVarshney01/create-better-t-stack
+/plugin marketplace add albuquerquesz/kubo
 /plugin install better-t-stack@better-t-stack
 ```
 
-Then ask: _"create a fullstack app with Next, Hono, Postgres and Better Auth"_, or run `/better-t-stack:new <description>`. See [`plugin/`](plugin) and the [Agent Workflows docs](https://better-t-stack.dev/docs/cli/agent-workflows#claude-code-plugin).
+Then ask: _"create a fullstack app with Next, Hono, Postgres and Better Auth"_, or run `/better-t-stack:new <description>`. See [`plugin/`](plugin) and the [Agent Workflows docs](apps/web/content/docs/cli/agent-workflows.mdx).
 
 ## Features
 
@@ -67,19 +61,21 @@ Type safety end-to-end, clean monorepo layout, and zero lock-in: you choose only
 
 This repository is organized as a monorepo containing:
 
-- **CLI**: [`apps/cli`](apps/cli) - The scaffolding CLI tool
-- **Documentation**: [`apps/web`](apps/web) - Official website and documentation
-- **Plugin**: [`plugin`](plugin) - Claude Code plugin (MCP server + skills + commands + agent)
+- **CLI**: [`apps/cli`](apps/cli) — published as [`kubojs`](https://www.npmjs.com/package/kubojs)
+- **Documentation / site**: [`apps/web`](apps/web)
+- **Packages**: [`packages/types`](packages/types), [`packages/template-generator`](packages/template-generator), [`packages/backend`](packages/backend)
+- **Plugin**: [`plugin`](plugin) — Claude Code / Codex plugin (MCP server + skills + commands + agent)
 
 ## Documentation
 
-Visit [better-t-stack.dev](https://better-t-stack.dev) for full documentation, guides, and examples. You can also use the visual Stack Builder at `https://better-t-stack.dev/new` to generate a command for your stack.
+Run the local docs site with `bun dev` (port 3333). Source lives in [`apps/web/content/docs`](apps/web/content/docs). Use the Stack Builder at `/new` when the site is running.
 
 ## Development
 
 ```bash
 # Clone the repository
-git clone https://github.com/AmanVarshney01/create-better-t-stack.git
+git clone https://github.com/albuquerquesz/kubo.git
+cd kubo
 
 # Install dependencies
 bun install
@@ -100,10 +96,10 @@ Please read the Contribution Guide first and open an issue before starting new f
 
 ## Star History
 
-<a href="https://www.star-history.com/#AmanVarshney01/create-better-t-stack&Date">
+<a href="https://www.star-history.com/#albuquerquesz/kubo&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=AmanVarshney01/create-better-t-stack&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=AmanVarshney01/create-better-t-stack&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=AmanVarshney01/create-better-t-stack&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=albuquerquesz/kubo&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=albuquerquesz/kubo&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=albuquerquesz/kubo&type=Date" />
  </picture>
 </a>
