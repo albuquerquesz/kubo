@@ -9,10 +9,7 @@ import { FaGithub } from "react-icons/fa6";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const primaryLinks = [
-  { href: "/#product", label: "Product" },
-  { href: "/#capabilities", label: "System" },
-] as const;
+const primaryLinks = [{ href: "/#product", label: "Product" }] as const;
 
 const exploreGroups = [
   {

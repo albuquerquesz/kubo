@@ -511,6 +511,130 @@
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/* Home logo marquee — docs/spec-mistral-home-logo-marquee.md                   */
+/* Full-bleed strip; drag loop only (no autoplay). Kubo tokens / logos only.   */
+/* -------------------------------------------------------------------------- */
+
+.logo-marquee {
+  /* Break out of .ui-frame so the strip is viewport-wide. */
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: -50vw;
+  overflow: hidden;
+  overflow-x: clip;
+  /* Hero already draws the shared top rule; only seal the strip bottom. */
+  border-bottom: 1px solid var(--border);
+}
+
+.logo-marquee__viewport {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-x;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.logo-marquee__viewport.is-grabbing {
+  cursor: grabbing;
+}
+
+.logo-marquee__track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  width: max-content;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  will-change: transform;
+}
+
+.logo-marquee__cell {
+  position: relative;
+  display: flex;
+  width: 160px;
+  height: 160px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  background-color: transparent;
+  filter: grayscale(1);
+  transition:
+    filter 500ms ease-in-out,
+    background-color 500ms ease-in-out,
+    opacity 500ms ease-in-out;
+}
+
+.logo-marquee__link {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+
+.logo-marquee__link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+/*
+ * Fixed logo slot for every brand (max-width alone does NOT upscale small SVGs).
+ * All marks share the same painted box; object-fit keeps aspect ratios honest.
+ * Spec ceiling: 80×40 compact / 112×60 desktop.
+ */
+.logo-marquee__logo {
+  display: block;
+  width: 80px;
+  height: 40px;
+  max-width: 80px;
+  max-height: 40px;
+  object-fit: contain;
+  object-position: center;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.logo-marquee__cell:hover,
+.logo-marquee__cell:focus-within {
+  filter: grayscale(0);
+  background-color: var(--secondary);
+}
+
+@media (min-width: 768px) {
+  .logo-marquee__viewport {
+    height: 272px;
+  }
+
+  .logo-marquee__cell {
+    width: 272px;
+    height: 272px;
+    /* Every cell shifts −1px so origins are −1, 270, 541… */
+    margin-left: -1px;
+  }
+
+  .logo-marquee__logo {
+    width: 112px;
+    height: 56px;
+    max-width: 112px;
+    max-height: 60px;
+  }
+}
+
 .terminal-cursor {
   animation: blink 1s infinite;
   border-right: 2px solid currentColor;
