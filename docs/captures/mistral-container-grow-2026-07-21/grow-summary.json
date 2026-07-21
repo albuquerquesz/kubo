@@ -1,0 +1,1278 @@
+{
+  "date": "2026-07-21T13:29:17.654Z",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "thesis": "User: container grows to 100% viewport, icons appear, text centers; reverse on scroll up",
+  "downCompact": [
+    {
+      "y": 0,
+      "scale": 0.4664,
+      "tx": 0,
+      "ty": 0,
+      "hostPainted": {
+        "l": 1008.6,
+        "t": 354.3,
+        "w": 431,
+        "h": 184.7
+      },
+      "hostOffset": {
+        "w": 924,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.29930369059244794,
+        "h": 0.20521599663628473,
+        "area": 0.061421905161847395
+      },
+      "sticky": {
+        "w": 1440,
+        "h": 900,
+        "top": 0
+      },
+      "centerDelta": {
+        "dx": 504.0924072265625,
+        "dy": -3.347198486328125
+      },
+      "titleTop": 308,
+      "titleWrapTy": 0,
+      "rightInner": {
+        "w": 431.4,
+        "h": 540,
+        "bg": "rgb(251, 251, 248)"
+      },
+      "lowerTop": 540,
+      "lowerOp": 1,
+      "centerInfo": {
+        "tag": "p",
+        "cls": "text-display font-mistral block js-title",
+        "inHost": false,
+        "text": "Frontier AI. In your hands."
+      },
+      "fullBleedN": 4,
+      "fullBleed0": {
+        "tag": "main",
+        "cls": "",
+        "w": 1440,
+        "h": 10711,
+        "left": 0,
+        "top": 0,
+        "bg": "rgba(0, 0, 0, 0)",
+        "z": "auto",
+        "op": 1
+      }
+    },
+    {
+      "y": 100,
+      "scale": 0.5784,
+      "tx": 54.15,
+      "ty": -52.89,
+      "hostPainted": {
+        "l": 851.1,
+        "t": 332.6,
+        "w": 534.5,
+        "h": 229
+      },
+      "hostOffset": {
+        "w": 924,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.37117767333984375,
+        "h": 0.25449598524305556,
+        "area": 0.09446322767684857
+      },
+      "sticky": {
+        "w": 1440,
+        "h": 900,
+        "top": 0
+      },
+      "centerDelta": {
+        "dx": 398.39599609375,
+        "dy": -2.865234375
+      },
+      "titleTop": 119.1,
+      "titleWrapTy": -94.44,
+      "rightInner": {
+        "w": 643,
+        "h": 615.5,
+        "bg": "rgb(251, 251, 248)"
+      },
+      "lowerTop": 540,
+      "lowerOp": 1,
+      "centerInfo": {
+        "tag": "canvas",
+        "cls": "w-full h-full",
+        "inHost": false,
+        "text": ""
+      },
+      "fullBleedN": 4,
+      "fullBleed0": {
+        "tag": "main",
+        "cls": "",
+        "w": 1440,
+        "h": 10711,
+        "left": 0,
+        "top": -100,
+        "bg": "rgba(0, 0, 0, 0)",
+        "z": "auto",
+        "op": 1
+      }
+    },
+    {
+      "y": 200,
+      "scale": 0.6772,
+      "tx": 101.93,
+      "ty": -99.56,
+      "hostPainted": {
+        "l": 712.9,
+        "t": 313.5,
+        "w": 625.8,
+        "h": 268.2
+      },
+      "hostOffset": {
+        "w": 924,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.4345807393391927,
+        "h": 0.2979680040147569,
+        "area": 0.1294911554841566
+      },
+      "sticky": {
+        "w": 1440,
+        "h": 900,
+        "top": 0
+      },
+      "centerDelta": {
+        "dx": 305.82403564453125,
+        "dy": -2.422332763671875
+      },
+      "titleTop": -47.6,
+      "titleWrapTy": -177.78,
+      "rightInner": {
+        "w": 830,
+        "h": 682.2,
+        "bg": "rgb(251, 251, 248)"
+      },
+      "lowerTop": 540,
+      "lowerOp": 1,
+      "centerInfo": {
+        "tag": "div",
+        "cls": "js-right-top-content p-4 lg:p-20 origin-bottom-left flex flex-col justify-center lg:justif",
+        "inHost": true,
+        "text": "We help organizations build tailored AI"
+      },
+      "fullBleedN": 4,
+      "fullBleed0": {
+        "tag": "main",
+        "cls": "",
+        "w": 1440,
+        "h": 10711,
+        "left": 0,
+        "top": -200,
+        "bg": "rgba(0, 0, 0, 0)",
+        "z": "auto",
+        "op": 1
+      }
+    },
+    {
+      "y": 300,
+      "scale": 0.7628,
+      "tx": 143.33,
+      "ty": -140,
+      "hostPainted": {
+        "l": 591.3,
+        "t": 297.9,
+        "w": 704.9,
+        "h": 302.1
+      },
+      "hostOffset": {
+        "w": 924,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.48951293097601994,
+        "h": 0.3356319851345486,
+        "area": 0.16429619677251286
+      },
+      "sticky": {
+        "w": 1440,
+        "h": 900,
+        "top": 0
+      },
+      "centerDelta": {
+        "dx": 223.78262329101562,
+        "dy": -1.050018310546875
+      },
+      "titleTop": -192,
+      "titleWrapTy": -250,
+      "rightInner": {
+        "w": 992,
+        "h": 740,
+        "bg": "rgb(251, 251, 248)"
+      },
+      "lowerTop": 540,
+      "lowerOp": 1,
+      "centerInfo": {
+        "tag": "p",
+        "cls": "text-h2 font-mistral block js-right-top-content-sentence lg:text-nowrap will-change-transf",
+        "inHost": true,
+        "text": "tailored AI systems to solve the"
+      },
+      "fullBleedN": 4,
+      "fullBleed0": {
+        "tag": "main",
+        "cls": "",
+        "w": 1440,
+        "h": 10711,
+        "left": 0,
+        "top": -300,
+        "bg": "rgba(0, 0, 0, 0)",
+        "z": "auto",
+        "op": 1
+      }
+    },
+    {
+      "y": 400,
+      "scale": 0.8353,
+      "tx": 178.37,
+      "ty": -174.22,
+      "hostPainted": {
+        "l": 490.4,
+        "t": 283.9,
+        "w": 771.9,
+        "h": 330.8
+      },
+      "hostOffset": {
+        "w": 924,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.5360385047064887,
+        "h": 0.3675320434570313,
+        "area": 0.19701132700642726
+      },
+      "sticky": {
+        "w": 1440,
+        "h": 900,
+        "top": 0
+      },
+      "centerDelta": {
+        "dx": 156.31814575195312,
+        "dy": -0.7365875244140625
+      },
+      "titleTop": -314.2,
+      "titleWrapTy": -311.11,
+      "rightInner": {
+        "w": 1129,
+        "h": 788.9,
+        "bg": "rgb(251, 251, 248)"
+      },
+      "lowerTop": 540,
+      "lowerOp": 1,
+      "centerInfo": {
+        "tag": "p",
+        "cls": "text-h2 font-mistral block js-right-top-content-sentence lg:text-nowrap will-change-transf",
+        "inHost": true,
+        "text": "tailored AI systems to solve the"
+      },
+      "fullBleedN": 4,
+      "fullBleed0": {
+        "tag": "main",
+        "cls": "",
+        "w": 1440,
+        "h": 10711,
+        "left": 0,
+        "top": -400,
+        "bg": "rgba(0, 0, 0, 0)",
+        "z": "auto",
+        "op": 1
+      }
+    },
+    {
+      "y": 500,
+      "scale": 0.8946,
+      "tx": 207.04,
+      "ty": -202.22,
+      "hostPainted": {
+        "l": 407,
+        "t": 272.4,
+        "w": 826.7,
+        "h": 354.3
+      },
+      "hostOffset": {
+        "w": 924,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.5740932888454862,
+        "h": 0.393624030219184,
+        "area": 0.22597691407714637
+      },
+      "sticky": {
+        "w": 1440,
+        "h": 900,
+        "top": 0
+      },
+      "centerDelta": {
+        "dx": 100.3841552734375,
+        "dy": -0.4779815673828125
+      },
+      "titleTop": -414.2,
+      "titleWrapTy": -361.11,
+      "rightInner": {
+        "w": 1241,
+        "h": 828.9,
+        "bg": "rgb(251, 251, 248)"
+      },
+      "lowerTop": 540,
+      "lowerOp": 1,
+      "centerInfo": {
+        "tag": "p",
+        "cls": "text-h2 font-mistral block js-right-top-content-sentence lg:text-nowrap will-change-transf",
+        "inHost": true,
+        "text": "tailored AI systems to solve the"
+      },
+      "fullBleedN": 4,
+      "fullBleed0": {
+        "tag": "main",
+        "cls": "",
+        "w": 1440,
+        "h": 10711,
+        "left": 0,
+        "top": -500,
+        "bg": "rgba(0, 0, 0, 0)",
+        "z": "auto",
+        "op": 1
+      }
+    },
+    {
+      "y": 600,
+      "scale": 0.9407,
+      "tx": 229.33,
+      "ty": -224,
+      "hostPainted": {
+        "l": 342.3,
+        "t": 263.5,
+        "w": 869.3,
+        "h": 372.5
+      },
+      "hostOffset": {
+        "w": 924,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.6036770714653863,
+        "h": 0.4139080132378472,
+        "area": 0.24986677728747994
+      },
+      "sticky": {
+        "w": 1440,
+        "h": 900,
+        "top": 0
+      },
+      "centerDelta": {
+        "dx": 56.980804443359375,
+        "dy": -0.25860595703125
+      },
+      "titleTop": -492,
+      "titleWrapTy": -400,
+      "rightInner": {
+        "w": 1328,
+        "h": 860,
+        "bg": "rgb(251, 251, 248)"
+      },
+      "lowerTop": 540,
+      "lowerOp": 1,
+      "centerInfo": {
+        "tag": "p",
+        "cls": "text-h2 font-mistral block js-right-top-content-sentence lg:text-nowrap will-change-transf",
+        "inHost": true,
+        "text": "tailored AI systems to solve the"
+      },
+      "fullBleedN": 4,
+      "fullBleed0": {
+        "tag": "main",
+        "cls": "",
+        "w": 1440,
+        "h": 10711,
+        "left": 0,
+        "top": -600,
+        "bg": "rgba(0, 0, 0, 0)",
+        "z": "auto",
+        "op": 1
+      }
+    },
+    {
+      "y": 700,
+      "scale": 0.9736,
+      "tx": 245.26,
+      "ty": -239.56,
+      "hostPainted": {
+        "l": 296.3,
+        "t": 257.1,
+        "w": 899.7,
+        "h": 385.5
+      },
+      "hostOffset": {
+        "w": 924,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.6247900221082899,
+        "h": 0.42838399251302084,
+        "area": 0.2676500441530478
+      },
+      "sticky": {
+        "w": 1440,
+        "h": 900,
+        "top": 0
+      },
+      "centerDelta": {
+        "dx": 26.10809326171875,
+        "dy": -0.109649658203125
+      },
+      "titleTop": -547.6,
+      "titleWrapTy": -427.78,
+      "rightInner": {
+        "w": 1390,
+        "h": 882.2,
+        "bg": "rgb(251, 251, 248)"
+      },
+      "lowerTop": 540,
+      "lowerOp": 1,
+      "centerInfo": {
+        "tag": "p",
+        "cls": "text-h2 font-mistral block js-right-top-content-sentence lg:text-nowrap will-change-transf",
+        "inHost": true,
+        "text": "tailored AI systems to solve the"
+      },
+      "fullBleedN": 4,
+      "fullBleed0": {
+        "tag": "main",
+        "cls": "",
+        "w": 1440,
+        "h": 10711,
+        "left": 0,
+        "top": -700,
+        "bg": "rgba(0, 0, 0, 0)",
+        "z": "auto",
+        "op": 1
+      }
+    },
+    {
+      "y": 800,
+      "scale": 0.9934,
+      "tx": 254.81,
+      "ty": -248.89,
+      "hostPainted": {
+        "l": 267.8,
+        "t": 253.3,
+        "w": 918,
+        "h": 393.4
+      },
+      "hostOffset": {
+        "w": 924,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.6374962700737847,
+        "h": 0.437095947265625,
+        "area": 0.27864703604620367
+      },
+      "sticky": {
+        "w": 1440,
+        "h": 900,
+        "top": 0
+      },
+      "centerDelta": {
+        "dx": 6.8121337890625,
+        "dy": -0.0352325439453125
+      },
+      "titleTop": -580.9,
+      "titleWrapTy": -444.44,
+      "rightInner": {
+        "w": 1428,
+        "h": 895.5,
+        "bg": "rgb(251, 251, 248)"
+      },
+      "lowerTop": 540,
+      "lowerOp": 1,
+      "centerInfo": {
+        "tag": "p",
+        "cls": "text-h2 font-mistral block js-right-top-content-sentence lg:text-nowrap will-change-transf",
+        "inHost": true,
+        "text": "tailored AI systems to solve the"
+      },
+      "fullBleedN": 5,
+      "fullBleed0": {
+        "tag": "main",
+        "cls": "",
+        "w": 1440,
+        "h": 10711,
+        "left": 0,
+        "top": -800,
+        "bg": "rgba(0, 0, 0, 0)",
+        "z": "auto",
+        "op": 1
+      }
+    },
+    {
+      "y": 900,
+      "scale": 1,
+      "tx": 258,
+      "ty": -252,
+      "hostPainted": {
+        "l": 259,
+        "t": 252,
+        "w": 924.1,
+        "h": 396
+      },
+      "hostOffset": {
+        "w": 924,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.6417317708333333,
+        "h": 0.44,
+        "area": 0.28236197916666667
+      },
+      "sticky": {
+        "w": 1440,
+        "h": 900,
+        "top": 0
+      },
+      "centerDelta": {
+        "dx": 1.046875,
+        "dy": -0.0001373291015625
+      },
+      "titleTop": -592,
+      "titleWrapTy": -450,
+      "rightInner": {
+        "w": 1440,
+        "h": 900,
+        "bg": "rgb(251, 251, 248)"
+      },
+      "lowerTop": 540,
+      "lowerOp": 1,
+      "centerInfo": {
+        "tag": "p",
+        "cls": "text-h2 font-mistral block js-right-top-content-sentence lg:text-nowrap will-change-transf",
+        "inHost": true,
+        "text": "tailored AI systems to solve the"
+      },
+      "fullBleedN": 5,
+      "fullBleed0": {
+        "tag": "main",
+        "cls": "",
+        "w": 1440,
+        "h": 10711,
+        "left": 0,
+        "top": -900,
+        "bg": "rgba(0, 0, 0, 0)",
+        "z": "auto",
+        "op": 1
+      }
+    },
+    {
+      "y": 1000,
+      "scale": 1,
+      "tx": 258,
+      "ty": -199.11,
+      "hostPainted": {
+        "l": 259,
+        "t": 204.9,
+        "w": 924.1,
+        "h": 396
+      },
+      "hostOffset": {
+        "w": 924,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.6417317708333333,
+        "h": 0.44,
+        "area": 0.28236197916666667
+      },
+      "sticky": {
+        "w": 1440,
+        "h": 900,
+        "top": -100
+      },
+      "centerDelta": {
+        "dx": 1.046875,
+        "dy": -47.1112060546875
+      },
+      "titleTop": -692,
+      "titleWrapTy": -450,
+      "rightInner": {
+        "w": 1440,
+        "h": 900,
+        "bg": "rgb(251, 251, 248)"
+      },
+      "lowerTop": 440,
+      "lowerOp": 1,
+      "centerInfo": {
+        "tag": "p",
+        "cls": "text-h2 font-mistral block js-right-top-content-sentence lg:text-nowrap will-change-transf",
+        "inHost": true,
+        "text": "tailored AI systems to solve the"
+      },
+      "fullBleedN": 5,
+      "fullBleed0": {
+        "tag": "main",
+        "cls": "",
+        "w": 1440,
+        "h": 10711,
+        "left": 0,
+        "top": -1000,
+        "bg": "rgba(0, 0, 0, 0)",
+        "z": "auto",
+        "op": 1
+      }
+    },
+    {
+      "y": 1100,
+      "scale": 1,
+      "tx": 258,
+      "ty": -152.44,
+      "hostPainted": {
+        "l": 259,
+        "t": 151.6,
+        "w": 924.1,
+        "h": 396
+      },
+      "hostOffset": {
+        "w": 924,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.6417317708333333,
+        "h": 0.44,
+        "area": 0.28236197916666667
+      },
+      "sticky": {
+        "w": 1440,
+        "h": 900,
+        "top": -200
+      },
+      "centerDelta": {
+        "dx": 1.046875,
+        "dy": -100.444580078125
+      },
+      "titleTop": -792,
+      "titleWrapTy": -450,
+      "rightInner": {
+        "w": 1440,
+        "h": 900,
+        "bg": "rgb(251, 251, 248)"
+      },
+      "lowerTop": 340,
+      "lowerOp": 1,
+      "centerInfo": {
+        "tag": "p",
+        "cls": "text-h2 font-mistral block js-right-top-content-sentence lg:text-nowrap will-change-transf",
+        "inHost": true,
+        "text": "world’s hardest problems."
+      },
+      "fullBleedN": 5,
+      "fullBleed0": {
+        "tag": "main",
+        "cls": "",
+        "w": 1440,
+        "h": 10711,
+        "left": 0,
+        "top": -1100,
+        "bg": "rgba(0, 0, 0, 0)",
+        "z": "auto",
+        "op": 1
+      }
+    }
+  ],
+  "upCompact": [
+    {
+      "y": 900,
+      "scale": 1,
+      "hostPainted": {
+        "l": 259,
+        "t": 252,
+        "w": 924.1,
+        "h": 396
+      },
+      "hostVpShare": {
+        "w": 0.6417317708333333,
+        "h": 0.44,
+        "area": 0.28236197916666667
+      },
+      "centerDelta": {
+        "dx": 1.046875,
+        "dy": -0.0001373291015625
+      },
+      "titleTop": -592
+    },
+    {
+      "y": 700,
+      "scale": 0.9736,
+      "hostPainted": {
+        "l": 296.3,
+        "t": 257.1,
+        "w": 899.7,
+        "h": 385.5
+      },
+      "hostVpShare": {
+        "w": 0.6247900221082899,
+        "h": 0.42838399251302084,
+        "area": 0.2676500441530478
+      },
+      "centerDelta": {
+        "dx": 26.10809326171875,
+        "dy": -0.109649658203125
+      },
+      "titleTop": -547.6
+    },
+    {
+      "y": 500,
+      "scale": 0.8946,
+      "hostPainted": {
+        "l": 407,
+        "t": 272.4,
+        "w": 826.7,
+        "h": 354.3
+      },
+      "hostVpShare": {
+        "w": 0.5740932888454862,
+        "h": 0.393624030219184,
+        "area": 0.22597691407714637
+      },
+      "centerDelta": {
+        "dx": 100.3841552734375,
+        "dy": -0.4779815673828125
+      },
+      "titleTop": -414.2
+    },
+    {
+      "y": 300,
+      "scale": 0.7628,
+      "hostPainted": {
+        "l": 591.3,
+        "t": 297.9,
+        "w": 704.9,
+        "h": 302.1
+      },
+      "hostVpShare": {
+        "w": 0.48951293097601994,
+        "h": 0.3356319851345486,
+        "area": 0.16429619677251286
+      },
+      "centerDelta": {
+        "dx": 223.78262329101562,
+        "dy": -1.050018310546875
+      },
+      "titleTop": -192
+    },
+    {
+      "y": 100,
+      "scale": 0.5784,
+      "hostPainted": {
+        "l": 851.1,
+        "t": 332.6,
+        "w": 534.5,
+        "h": 229
+      },
+      "hostVpShare": {
+        "w": 0.37117767333984375,
+        "h": 0.25449598524305556,
+        "area": 0.09446322767684857
+      },
+      "centerDelta": {
+        "dx": 398.39599609375,
+        "dy": -2.865234375
+      },
+      "titleTop": 119.1
+    },
+    {
+      "y": 0,
+      "scale": 0.4664,
+      "hostPainted": {
+        "l": 1009,
+        "t": 354.3,
+        "w": 431,
+        "h": 184.7
+      },
+      "hostVpShare": {
+        "w": 0.29930369059244794,
+        "h": 0.20521599663628473,
+        "area": 0.061421905161847395
+      },
+      "centerDelta": {
+        "dx": 504.4986572265625,
+        "dy": -3.347198486328125
+      },
+      "titleTop": 308
+    }
+  ],
+  "scrub": [
+    {
+      "y": 0,
+      "scale": 0.4664,
+      "tx": 0,
+      "ty": 0,
+      "host": {
+        "l": 1009,
+        "t": 354.3,
+        "w": 431,
+        "h": 184.7,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.29930369059244794,
+      "hostVpH": 0.20521599663628473,
+      "hostVpArea": 0.061421905161847395,
+      "centerDx": 504.4986572265625,
+      "centerDy": -3.347198486328125,
+      "titleTop": 308,
+      "titleTy": 0,
+      "icons0y": 214.3,
+      "centerInHost": false
+    },
+    {
+      "y": 50,
+      "scale": 0.524,
+      "tx": 27.87,
+      "ty": -27.22,
+      "host": {
+        "l": 927.9,
+        "t": 343.1,
+        "w": 484.2,
+        "h": 207.5,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.3362673865424262,
+      "hostVpH": 0.2305600314670139,
+      "hostVpArea": 0.07752981922255231,
+      "centerDx": 449.9829406738281,
+      "centerDy": -3.09918212890625,
+      "titleTop": 210.8,
+      "titleTy": -48.61,
+      "icons0y": 190.8,
+      "centerInHost": false
+    },
+    {
+      "y": 100,
+      "scale": 0.5784,
+      "tx": 54.15,
+      "ty": -52.89,
+      "host": {
+        "l": 851.1,
+        "t": 332.6,
+        "w": 534.5,
+        "h": 229,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.37117767333984375,
+      "hostVpH": 0.25449598524305556,
+      "hostVpArea": 0.09446322767684857,
+      "centerDx": 398.39599609375,
+      "centerDy": -2.865234375,
+      "titleTop": 119.1,
+      "titleTy": -94.44,
+      "icons0y": 172.9,
+      "centerInHost": false
+    },
+    {
+      "y": 150,
+      "scale": 0.6294,
+      "tx": 78.83,
+      "ty": -77,
+      "host": {
+        "l": 779.8,
+        "t": 322.7,
+        "w": 581.6,
+        "h": 249.2,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.40390603807237413,
+      "hostVpH": 0.27693600124782985,
+      "hostVpArea": 0.11185612306361702,
+      "centerDx": 350.6456604003906,
+      "centerDy": -2.6368255615234375,
+      "titleTop": 33,
+      "titleTy": -137.5,
+      "icons0y": 158.9,
+      "centerInHost": false
+    },
+    {
+      "y": 200,
+      "scale": 0.6772,
+      "tx": 101.93,
+      "ty": -99.56,
+      "host": {
+        "l": 712.9,
+        "t": 313.5,
+        "w": 625.8,
+        "h": 268.2,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.4345807393391927,
+      "hostVpH": 0.2979680040147569,
+      "hostVpArea": 0.1294911554841566,
+      "centerDx": 305.82403564453125,
+      "centerDy": -2.422332763671875,
+      "titleTop": -47.6,
+      "titleTy": -177.78,
+      "icons0y": 147.7,
+      "centerInHost": true
+    },
+    {
+      "y": 250,
+      "scale": 0.7217,
+      "tx": 123.43,
+      "ty": -120.56,
+      "host": {
+        "l": 650.4,
+        "t": 304.9,
+        "w": 666.9,
+        "h": 285.8,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.4631378173828125,
+      "hostVpH": 0.3175480143229167,
+      "hostVpArea": 0.1470684942677617,
+      "centerDx": 263.8851318359375,
+      "centerDy": -2.23345947265625,
+      "titleTop": -122.6,
+      "titleTy": -215.28,
+      "icons0y": 99,
+      "centerInHost": true
+    },
+    {
+      "y": 300,
+      "scale": 0.7628,
+      "tx": 143.33,
+      "ty": -140,
+      "host": {
+        "l": 591.3,
+        "t": 297.9,
+        "w": 704.9,
+        "h": 302.1,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.48951293097601994,
+      "hostVpH": 0.3356319851345486,
+      "hostVpArea": 0.16429619677251286,
+      "centerDx": 223.78262329101562,
+      "centerDy": -1.050018310546875,
+      "titleTop": -192,
+      "titleTy": -250,
+      "icons0y": 64.6,
+      "centerInHost": true
+    },
+    {
+      "y": 350,
+      "scale": 0.8007,
+      "tx": 161.65,
+      "ty": -157.89,
+      "host": {
+        "l": 538.6,
+        "t": 290.6,
+        "w": 739.9,
+        "h": 317.1,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.5138346354166666,
+      "hostVpH": 0.35230801052517363,
+      "hostVpArea": 0.18102805814257375,
+      "centerDx": 188.609130859375,
+      "centerDy": -0.880645751953125,
+      "titleTop": -255.9,
+      "titleTy": -281.94,
+      "icons0y": 41.2,
+      "centerInHost": true
+    },
+    {
+      "y": 400,
+      "scale": 0.8353,
+      "tx": 178.37,
+      "ty": -174.22,
+      "host": {
+        "l": 490.4,
+        "t": 283.9,
+        "w": 771.9,
+        "h": 330.8,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.5360385047064887,
+      "hostVpH": 0.3675320434570313,
+      "hostVpArea": 0.19701132700642726,
+      "centerDx": 156.31814575195312,
+      "centerDy": -0.7365875244140625,
+      "titleTop": -314.2,
+      "titleTy": -311.11,
+      "icons0y": 22.8,
+      "centerInHost": true
+    },
+    {
+      "y": 450,
+      "scale": 0.8666,
+      "tx": 193.5,
+      "ty": -189,
+      "host": {
+        "l": 446.5,
+        "t": 277.8,
+        "w": 800.8,
+        "h": 343.2,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.5561247083875868,
+      "hostVpH": 0.3813039822048611,
+      "hostVpArea": 0.21205256591070398,
+      "centerDx": 126.9097900390625,
+      "centerDy": -0.5867919921875,
+      "titleTop": -367,
+      "titleTy": -337.5,
+      "icons0y": 13.5,
+      "centerInHost": true
+    },
+    {
+      "y": 500,
+      "scale": 0.8946,
+      "tx": 207.04,
+      "ty": -202.22,
+      "host": {
+        "l": 407,
+        "t": 272.4,
+        "w": 826.7,
+        "h": 354.3,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.5740932888454862,
+      "hostVpH": 0.393624030219184,
+      "hostVpArea": 0.22597691407714637,
+      "centerDx": 100.3841552734375,
+      "centerDy": -0.4779815673828125,
+      "titleTop": -414.2,
+      "titleTy": -361.11,
+      "icons0y": 7.7,
+      "centerInHost": true
+    },
+    {
+      "y": 550,
+      "scale": 0.9193,
+      "tx": 218.98,
+      "ty": -213.89,
+      "host": {
+        "l": 372,
+        "t": 267.6,
+        "w": 849.5,
+        "h": 364,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.5899440765380859,
+      "hostVpH": 0.40449198404947917,
+      "hostVpArea": 0.23862764999712818,
+      "centerDx": 76.74124145507812,
+      "centerDy": -0.363433837890625,
+      "titleTop": -455.9,
+      "titleTy": -381.94,
+      "icons0y": 4.1,
+      "centerInHost": true
+    },
+    {
+      "y": 600,
+      "scale": 0.9407,
+      "tx": 229.33,
+      "ty": -224,
+      "host": {
+        "l": 342.3,
+        "t": 263.5,
+        "w": 869.3,
+        "h": 372.5,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.6036770714653863,
+      "hostVpH": 0.4139080132378472,
+      "hostVpArea": 0.24986677728747994,
+      "centerDx": 56.980804443359375,
+      "centerDy": -0.25860595703125,
+      "titleTop": -492,
+      "titleTy": -400,
+      "icons0y": 1.7,
+      "centerInHost": true
+    },
+    {
+      "y": 650,
+      "scale": 0.9588,
+      "tx": 238.09,
+      "ty": -232.56,
+      "host": {
+        "l": 317.1,
+        "t": 260,
+        "w": 886,
+        "h": 379.7,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.615292485555013,
+      "hostVpH": 0.4218720160590278,
+      "hostVpArea": 0.2595746813470636,
+      "centerDx": 40.103179931640625,
+      "centerDy": -0.17926025390625,
+      "titleTop": -522.6,
+      "titleTy": -415.28,
+      "icons0y": 0.7,
+      "centerInHost": true
+    },
+    {
+      "y": 700,
+      "scale": 0.9736,
+      "tx": 245.26,
+      "ty": -239.56,
+      "host": {
+        "l": 296.3,
+        "t": 257.1,
+        "w": 899.7,
+        "h": 385.5,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.6247900221082899,
+      "hostVpH": 0.42838399251302084,
+      "hostVpArea": 0.2676500441530478,
+      "centerDx": 26.10809326171875,
+      "centerDy": -0.109649658203125,
+      "titleTop": -547.6,
+      "titleTy": -427.78,
+      "icons0y": 0.3,
+      "centerInHost": true
+    },
+    {
+      "y": 750,
+      "scale": 0.9852,
+      "tx": 250.83,
+      "ty": -245,
+      "host": {
+        "l": 279.8,
+        "t": 254.9,
+        "w": 910.4,
+        "h": 390.1,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.632234149509006,
+      "hostVpH": 0.4334879896375868,
+      "hostVpArea": 0.2740659104508885,
+      "centerDx": 15.041900634765625,
+      "centerDy": -0.0695953369140625,
+      "titleTop": -567,
+      "titleTy": -437.5,
+      "icons0y": 0.1,
+      "centerInHost": true
+    },
+    {
+      "y": 800,
+      "scale": 0.9934,
+      "tx": 254.81,
+      "ty": -248.89,
+      "host": {
+        "l": 267.8,
+        "t": 253.3,
+        "w": 918,
+        "h": 393.4,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.6374962700737847,
+      "hostVpH": 0.437095947265625,
+      "hostVpArea": 0.27864703604620367,
+      "centerDx": 6.8121337890625,
+      "centerDy": -0.0352325439453125,
+      "titleTop": -580.9,
+      "titleTy": -444.44,
+      "icons0y": 0,
+      "centerInHost": true
+    },
+    {
+      "y": 850,
+      "scale": 0.9984,
+      "tx": 257.2,
+      "ty": -251.22,
+      "host": {
+        "l": 261.2,
+        "t": 252.3,
+        "w": 922.6,
+        "h": 395.4,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.6407049391004774,
+      "hostVpH": 0.4392960272894965,
+      "hostVpArea": 0.28145913441159853,
+      "centerDx": 2.511260986328125,
+      "centerDy": -0.0303802490234375,
+      "titleTop": -589.2,
+      "titleTy": -448.61,
+      "icons0y": 0,
+      "centerInHost": true
+    },
+    {
+      "y": 900,
+      "scale": 1,
+      "tx": 258,
+      "ty": -252,
+      "host": {
+        "l": 259,
+        "t": 252,
+        "w": 924.1,
+        "h": 396,
+        "ow": 924,
+        "oh": 396
+      },
+      "hostVpW": 0.6417317708333333,
+      "hostVpH": 0.44,
+      "hostVpArea": 0.28236197916666667,
+      "centerDx": 1.046875,
+      "centerDy": -0.0001373291015625,
+      "titleTop": -592,
+      "titleTy": -450,
+      "icons0y": 0,
+      "centerInHost": true
+    }
+  ],
+  "reverseCheck": {
+    "note": "down y0 vs up y0 and down y900 vs up y900 should match if scrub is reversible",
+    "down0": {
+      "scale": 0.4664,
+      "x": 0,
+      "y": 0
+    },
+    "up0": {
+      "scale": 0.4664,
+      "x": 0,
+      "y": 0
+    },
+    "down900": {
+      "scale": 1,
+      "x": 258,
+      "y": -252
+    },
+    "up900": {
+      "scale": 1,
+      "x": 258,
+      "y": -252
+    }
+  }
+}

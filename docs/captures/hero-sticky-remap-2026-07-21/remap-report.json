@@ -1,0 +1,1293 @@
+{
+  "date": "2026-07-21T13:17:45.674Z",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "mistral": {
+    "structure": {
+      "hostChain": [
+        {
+          "tag": "div",
+          "cls": "js-right-top-content p-4 lg:p-20 origin-bottom-left flex flex-col justify-center lg:justify-end items-start will-change-",
+          "id": null,
+          "display": "flex",
+          "position": "relative",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "flex": "column",
+          "w": 431,
+          "h": 185,
+          "left": 1009,
+          "top": 354,
+          "padding": "80px",
+          "gap": "normal",
+          "bg": "rgba(0, 0, 0, 0)",
+          "border": "0px solid rgb(0, 0, 0)",
+          "z": "5",
+          "transform": "matrix(0.4664, 0, 0, 0.4664, 0, 0)",
+          "transformOrigin": "0px 396px"
+        },
+        {
+          "tag": "div",
+          "cls": "size-full border-b border-l border-border-primary js-col-right-top-inner relative z-5 bg-surface-brand-primary flex item",
+          "id": null,
+          "display": "flex",
+          "position": "relative",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "flex": "row",
+          "w": 431,
+          "h": 540,
+          "left": 1008,
+          "top": 0,
+          "padding": "0px",
+          "gap": "normal",
+          "bg": "rgb(251, 251, 248)",
+          "border": "",
+          "z": "5",
+          "transform": "none",
+          "transformOrigin": "215.695px 270px"
+        },
+        {
+          "tag": "div",
+          "cls": "js-col-right-top hidden lg:block w-full max-w-[30%]",
+          "id": null,
+          "display": "block",
+          "position": "static",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "flex": "row",
+          "w": 431,
+          "h": 540,
+          "left": 1008,
+          "top": 0,
+          "padding": "0px",
+          "gap": "normal",
+          "bg": "rgba(0, 0, 0, 0)",
+          "border": "0px solid rgb(0, 0, 0)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "215.695px 270px"
+        },
+        {
+          "tag": "div",
+          "cls": "flex pt-20 lg:pt-0 w-full lg:h-[60dvh]",
+          "id": null,
+          "display": "flex",
+          "position": "static",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "flex": "row",
+          "w": 1438,
+          "h": 540,
+          "left": 1,
+          "top": 0,
+          "padding": "0px",
+          "gap": "normal",
+          "bg": "rgba(0, 0, 0, 0)",
+          "border": "0px solid rgb(0, 0, 0)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "719px 270px"
+        },
+        {
+          "tag": "div",
+          "cls": "max-w-432 w-full mx-auto h-auto sticky top-0 flex pt-nav md:pt-0 flex-wrap lg:min-h-dvh overflow-x-hidden js-sticky tran",
+          "id": null,
+          "display": "flex",
+          "position": "sticky",
+          "overflow": "hidden auto",
+          "overflowX": "hidden",
+          "grid": "none",
+          "gridRows": "none",
+          "flex": "row",
+          "w": 1440,
+          "h": 900,
+          "left": 0,
+          "top": 0,
+          "padding": "0px",
+          "gap": "normal",
+          "bg": "rgba(0, 0, 0, 0)",
+          "border": "",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "720px 450px"
+        },
+        {
+          "tag": "mistral-section-hero-home",
+          "cls": "block w-full lg:min-h-[200dvh]",
+          "id": null,
+          "display": "block",
+          "position": "static",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "flex": "row",
+          "w": 1440,
+          "h": 1800,
+          "left": 0,
+          "top": 0,
+          "padding": "0px",
+          "gap": "normal",
+          "bg": "rgba(0, 0, 0, 0)",
+          "border": "0px solid rgb(0, 0, 0)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "720px 900px"
+        },
+        {
+          "tag": "div",
+          "cls": "",
+          "id": "page-path",
+          "display": "block",
+          "position": "static",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "flex": "row",
+          "w": 1440,
+          "h": 10711,
+          "left": 0,
+          "top": 0,
+          "padding": "0px",
+          "gap": "normal",
+          "bg": "rgba(0, 0, 0, 0)",
+          "border": "0px solid rgb(0, 0, 0)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "720px 5355.25px"
+        },
+        {
+          "tag": "main",
+          "cls": "",
+          "id": "main",
+          "display": "block",
+          "position": "static",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "flex": "row",
+          "w": 1440,
+          "h": 10711,
+          "left": 0,
+          "top": 0,
+          "padding": "0px",
+          "gap": "normal",
+          "bg": "rgba(0, 0, 0, 0)",
+          "border": "0px solid rgb(0, 0, 0)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "720px 5355.25px"
+        },
+        {
+          "tag": "body",
+          "cls": "",
+          "id": null,
+          "display": "block",
+          "position": "static",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "flex": "row",
+          "w": 1440,
+          "h": 11793,
+          "left": 0,
+          "top": 0,
+          "padding": "0px",
+          "gap": "normal",
+          "bg": "rgb(251, 251, 248)",
+          "border": "0px solid rgb(0, 0, 0)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "720px 5896.25px"
+        },
+        {
+          "tag": "html",
+          "cls": "",
+          "id": null,
+          "display": "block",
+          "position": "static",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "flex": "row",
+          "w": 1440,
+          "h": 11793,
+          "left": 0,
+          "top": 0,
+          "padding": "0px",
+          "gap": "normal",
+          "bg": "rgba(0, 0, 0, 0)",
+          "border": "0px solid rgb(0, 0, 0)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "720px 5896.25px"
+        }
+      ],
+      "stickyKids": [
+        {
+          "tag": "div",
+          "cls": "flex pt-20 lg:pt-0 w-full lg:h-[60dvh]",
+          "w": 1438,
+          "h": 540,
+          "left": 1,
+          "top": 0,
+          "text": "Frontier AI. In your hands. We help organizations build ta"
+        },
+        {
+          "tag": "div",
+          "cls": "flex w-full aspect-video lg:aspect-auto lg:h-[40dvh]",
+          "w": 1438,
+          "h": 360,
+          "left": 1,
+          "top": 540,
+          "text": "FEATURED NEWS Introducing Robostral Navigate Introducing M"
+        }
+      ],
+      "hostSiblings": [
+        {
+          "tag": "div",
+          "cls": "js-right-top-content p-4 lg:p-20 origin-bottom-left flex flex-col justify-center lg:justify-end item",
+          "w": 431,
+          "h": 185,
+          "left": 1009,
+          "top": 354,
+          "text": "We help organizations build tailored AI systems to solve the world’s hardest p"
+        },
+        {
+          "tag": "div",
+          "cls": "bg-surface-brand-secondary pointer-events-none js-background size-full absolute top-0 left-0 z-4",
+          "w": 430,
+          "h": 539,
+          "left": 1009,
+          "top": 0,
+          "text": ""
+        }
+      ],
+      "hostOuterHTML": "<div class=\"js-right-top-content p-4 lg:p-20 origin-bottom-left flex flex-col justify-center lg:justify-end items-start will-change-transform relative z-5 antialiased translate-z-0\" style=\"transform: scale(0.4664, 0.4664); translate: none; rotate: none; scale: none;\"><div class=\"w-full justify-center gap-4 hidden lg:flex\"><div class=\"flex overflow-hidden size-14\"><img class=\"block size-full js-right-top-content-icon translate-z-0\" src=\"/cms-media/api/media/file/bag.svg\" alt=\"\" loading=\"lazy\" decoding=\"async\" style=\"transform: translate(0px, 100%); translate: none; rotate: none; scale: none;\"></div><div class=\"flex overflow-hidden size-14\"><img class=\"block size-full js-right-top-content-icon translate-z-0\" src=\"/cms-media/api/media/file/robot.svg\" alt=\"\" loading=\"lazy\" decoding=\"async\" sty",
+      "sentenceCount": 3,
+      "iconCount": 3,
+      "titleText": "Frontier AI.\nIn your hands.",
+      "sectionH": 1800,
+      "stickyH": 900
+    },
+    "htmlSketch": {
+      "tag": "mistral-section-hero-home",
+      "cls": "block w-full lg:min-h-[200dvh]",
+      "data": null,
+      "kids": [
+        {
+          "tag": "div",
+          "cls": "max-w-432 w-full mx-auto h-auto sticky top-0 flex pt-nav md:pt-0 flex-wrap lg:min-h-dvh overflow-x-h",
+          "data": null,
+          "kids": [
+            {
+              "tag": "div",
+              "cls": "flex pt-20 lg:pt-0 w-full lg:h-[60dvh]",
+              "data": null,
+              "kids": [
+                {
+                  "tag": "div",
+                  "cls": "js-col-middle-top w-full lg:w-[70%]",
+                  "data": null,
+                  "kids": [
+                    {
+                      "tag": "div",
+                      "cls": "flex flex-col justify-end size-full",
+                      "data": null,
+                      "kids": [
+                        {
+                          "tag": "mistral-atom-text-hero-title",
+                          "cls": "flex flex-col justify-end pl-4 lg:pl-10 lg:pb-10 js-main-title",
+                          "data": "true",
+                          "kids": [
+                            {
+                              "tag": "h1",
+                              "cls": "hidden",
+                              "data": null
+                            },
+                            {
+                              "tag": "p",
+                              "cls": "text-display font-mistral block js-title",
+                              "data": null
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "cls": "flex lg:hidden flex-col items-start p-4",
+                          "data": null,
+                          "kids": [
+                            {
+                              "tag": "p",
+                              "cls": "text-h4 font-mistral",
+                              "data": null
+                            },
+                            {
+                              "tag": "p",
+                              "cls": "text-h4 font-mistral",
+                              "data": null
+                            },
+                            {
+                              "tag": "p",
+                              "cls": "text-h4 font-mistral",
+                              "data": null
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "mistral-section-carousel-news",
+                          "cls": "flex flex-col gap-2 relative p-4 w-full lg:hidden border-border-primary border-t",
+                          "data": null,
+                          "kids": [
+                            {
+                              "tag": "mistral-atom-progressbar",
+                              "cls": "absolute top-0 left-0 js-progressbar w-0 h-1 will-change-width",
+                              "data": null
+                            },
+                            {
+                              "tag": "p",
+                              "cls": "font-mono text-[13px] uppercase text-text-tertiary",
+                              "data": null
+                            },
+                            {
+                              "tag": "div",
+                              "cls": "w-full bg-surface-brand-secondary lg:bg-surface-brand-primary border border-border-primary rounded-m",
+                              "data": null
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "cls": "js-col-right-top hidden lg:block w-full max-w-[30%]",
+                  "data": null,
+                  "kids": [
+                    {
+                      "tag": "div",
+                      "cls": "size-full border-b border-l border-border-primary js-col-right-top-inner relative z-5 bg-surface-bra",
+                      "data": null,
+                      "kids": [
+                        {
+                          "tag": "div",
+                          "cls": "js-right-top-content p-4 lg:p-20 origin-bottom-left flex flex-col justify-center lg:justify-end item",
+                          "data": null,
+                          "kids": [
+                            {
+                              "tag": "div",
+                              "cls": "w-full justify-center gap-4 hidden lg:flex",
+                              "data": null
+                            },
+                            {
+                              "tag": "div",
+                              "cls": "flex flex-col items-start py-10 lg:py-0",
+                              "data": null
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "cls": "bg-surface-brand-secondary pointer-events-none js-background size-full absolute top-0 left-0 z-4",
+                          "data": null
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "tag": "div",
+              "cls": "flex w-full aspect-video lg:aspect-auto lg:h-[40dvh]",
+              "data": null,
+              "kids": [
+                {
+                  "tag": "div",
+                  "cls": "js-col-middle-middle animate-[fade-in_0.6s_0.3s_ease-in-out_both] h-full w-full lg:w-[70%]",
+                  "data": null,
+                  "kids": [
+                    {
+                      "tag": "div",
+                      "cls": "relative flex items-center justify-center overflow-hidden size-full",
+                      "data": null,
+                      "kids": [
+                        {
+                          "tag": "div",
+                          "cls": "absolute aspect-video w-full lg:size-full top-0 left-0 z-2",
+                          "data": null,
+                          "kids": [
+                            {
+                              "tag": "div",
+                              "cls": "relative w-full h-full overflow-hidden",
+                              "data": null
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "cls": "js-col-right-middle hidden lg:block w-full max-w-[30%]",
+                  "data": null,
+                  "kids": [
+                    {
+                      "tag": "div",
+                      "cls": "js-right-bottom size-full lg:flex hidden relative z-3 overflow-hidden flex-col justify-between",
+                      "data": null,
+                      "kids": [
+                        {
+                          "tag": "div",
+                          "cls": "flex-col gap-2 js-bottom-arrow p-10 hidden lg:flex",
+                          "data": null,
+                          "kids": [
+                            {
+                              "tag": "span",
+                              "cls": "relative size-4 block animate-fading-arrow-scroll-1",
+                              "data": null
+                            },
+                            {
+                              "tag": "span",
+                              "cls": "relative size-4 block animate-fading-arrow-scroll-2",
+                              "data": null
+                            },
+                            {
+                              "tag": "span",
+                              "cls": "relative size-4 block animate-fading-arrow-scroll-3",
+                              "data": null
+                            }
+                          ]
+                        },
+                        {
+                          "tag": "div",
+                          "cls": "flex justify-end w-full",
+                          "data": null,
+                          "kids": [
+                            {
+                              "tag": "mistral-section-carousel-news",
+                              "cls": "flex flex-col gap-2 relative js-bottom-cards p-10 w-full lg:max-w-full",
+                              "data": null
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "samplesCompact": [
+      {
+        "y": 0,
+        "scale": 0.4664,
+        "tx": 0,
+        "ty": 0,
+        "host": {
+          "left": 1008.6,
+          "top": 354.3,
+          "w": 431,
+          "h": 184.7
+        },
+        "offset": {
+          "w": 924,
+          "h": 396
+        },
+        "sentence0": {
+          "text": "We help organizations build",
+          "w": 308,
+          "h": 28,
+          "left": 1046,
+          "top": 418,
+          "fontSize": "56px",
+          "transform": "none",
+          "fontWeight": "500"
+        },
+        "sentenceFont": "56px",
+        "lowerRight": [
+          {
+            "tag": "div",
+            "cls": "flex flex-col items-start py-10 lg:py-0",
+            "w": 356,
+            "h": 84,
+            "left": 1046,
+            "top": 418,
+            "text": "We help organizations build tailored AI systems to solve th"
+          },
+          {
+            "tag": "div",
+            "cls": "js-col-right-middle hidden lg:block w-full max-w-[30%]",
+            "w": 431,
+            "h": 360,
+            "left": 1008,
+            "top": 540,
+            "text": "FEATURED NEWS Introducing Robostral Navigate Introducing M"
+          },
+          {
+            "tag": "div",
+            "cls": "js-right-bottom size-full lg:flex hidden relative z-3 overflow-hidden flex-col justify-bet",
+            "w": 431,
+            "h": 360,
+            "left": 1008,
+            "top": 540,
+            "text": "FEATURED NEWS Introducing Robostral Navigate Introducing M"
+          }
+        ]
+      },
+      {
+        "y": 200,
+        "scale": 0.6772,
+        "tx": 101.93,
+        "ty": -99.56,
+        "host": {
+          "left": 712.9,
+          "top": 313.5,
+          "w": 625.8,
+          "h": 268.2
+        },
+        "offset": {
+          "w": 924,
+          "h": 396
+        },
+        "sentence0": {
+          "text": "We help organizations build",
+          "w": 447,
+          "h": 41,
+          "left": 781,
+          "top": 406,
+          "fontSize": "56px",
+          "transform": "matrix(1, 0, 0, 1, 20.5833, 0)",
+          "fontWeight": "500"
+        },
+        "sentenceFont": "56px",
+        "lowerRight": [
+          {
+            "tag": "div",
+            "cls": "flex flex-col items-start py-10 lg:py-0",
+            "w": 517,
+            "h": 122,
+            "left": 767,
+            "top": 406,
+            "text": "We help organizations build tailored AI systems to solve th"
+          }
+        ]
+      },
+      {
+        "y": 450,
+        "scale": 0.8666,
+        "tx": 193.5,
+        "ty": -189,
+        "host": {
+          "left": 446.5,
+          "top": 277.8,
+          "w": 800.8,
+          "h": 343.2
+        },
+        "offset": {
+          "w": 924,
+          "h": 396
+        },
+        "sentence0": {
+          "text": "We help organizations build",
+          "w": 572,
+          "h": 52,
+          "left": 550,
+          "top": 396,
+          "fontSize": "56px",
+          "transform": "matrix(1, 0, 0, 1, 39.0762, 0)",
+          "fontWeight": "500"
+        },
+        "sentenceFont": "56px",
+        "lowerRight": []
+      },
+      {
+        "y": 700,
+        "scale": 0.9736,
+        "tx": 245.26,
+        "ty": -239.56,
+        "host": {
+          "left": 296.3,
+          "top": 257.1,
+          "w": 899.7,
+          "h": 385.5
+        },
+        "offset": {
+          "w": 924,
+          "h": 396
+        },
+        "sentence0": {
+          "text": "We help organizations build",
+          "w": 642,
+          "h": 58,
+          "left": 422,
+          "top": 390,
+          "fontSize": "56px",
+          "transform": "matrix(1, 0, 0, 1, 49.5286, 0)",
+          "fontWeight": "500"
+        },
+        "sentenceFont": "56px",
+        "lowerRight": []
+      },
+      {
+        "y": 900,
+        "scale": 1,
+        "tx": 258,
+        "ty": -252,
+        "host": {
+          "left": 259,
+          "top": 252,
+          "w": 924.1,
+          "h": 396
+        },
+        "offset": {
+          "w": 924,
+          "h": 396
+        },
+        "sentence0": {
+          "text": "We help organizations build",
+          "w": 660,
+          "h": 60,
+          "left": 391,
+          "top": 388,
+          "fontSize": "56px",
+          "transform": "matrix(1, 0, 0, 1, 52.1016, 0)",
+          "fontWeight": "500"
+        },
+        "sentenceFont": "56px",
+        "lowerRight": []
+      },
+      {
+        "y": 1100,
+        "scale": 1,
+        "tx": 258,
+        "ty": -152.44,
+        "host": {
+          "left": 259,
+          "top": 151.6,
+          "w": 924.1,
+          "h": 396
+        },
+        "offset": {
+          "w": 924,
+          "h": 396
+        },
+        "sentence0": {
+          "text": "We help organizations build",
+          "w": 660,
+          "h": 60,
+          "left": 391,
+          "top": 288,
+          "fontSize": "56px",
+          "transform": "matrix(1, 0, 0, 1, 52.1016, 0)",
+          "fontWeight": "500"
+        },
+        "sentenceFont": "56px",
+        "lowerRight": []
+      }
+    ]
+  },
+  "local": {
+    "structure": {
+      "hostChain": [
+        {
+          "tag": "div",
+          "cls": "origin-bottom-left will-change-transform motion-reduce:transform-none w-full lg:absolute lg:z-[1] lg:flex lg:w-[64%] lg:h-[44%] lg:min-h-[16",
+          "data": "right-top-host",
+          "display": "flex",
+          "position": "absolute",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "w": 430,
+          "h": 175,
+          "left": 1008,
+          "top": 384,
+          "padding": "24px 40px 40px",
+          "bg": "rgba(0, 0, 0, 0)",
+          "z": "1",
+          "transform": "matrix(0.4664, 0, 0, 0.4664, 0, 0)",
+          "transformOrigin": "0px 374.875px"
+        },
+        {
+          "tag": "div",
+          "cls": "flex h-full min-h-[10rem] flex-col justify-end px-4 py-10 sm:min-h-[12rem] sm:px-5 lg:min-h-0 lg:px-10 lg:pt-0 lg:pb-10 border-rule border-t",
+          "data": null,
+          "display": "flex",
+          "position": "static",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "w": 432,
+          "h": 511,
+          "left": 1008,
+          "top": 48,
+          "padding": "0px 40px 40px",
+          "bg": "rgb(17, 17, 13)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "216px 255.594px"
+        },
+        {
+          "tag": "div",
+          "cls": "grid h-full min-h-0 w-full flex-1 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,30%)] lg:grid-rows-[minmax(0,3fr)_minmax(0,2fr)]",
+          "data": null,
+          "display": "grid",
+          "position": "static",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "1008px 432px",
+          "gridRows": "511.188px 340.797px",
+          "w": 1440,
+          "h": 852,
+          "left": 0,
+          "top": 48,
+          "padding": "0px",
+          "bg": "rgba(0, 0, 0, 0)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "720px 426px"
+        },
+        {
+          "tag": "div",
+          "cls": "relative flex w-full flex-col min-h-[calc(100svh-3rem)] lg:sticky lg:top-12 lg:h-[calc(100dvh-3rem)] lg:min-h-[calc(100dvh-3rem)] lg:max-h-[",
+          "data": "sticky-shell",
+          "display": "flex",
+          "position": "sticky",
+          "overflow": "hidden auto",
+          "overflowX": "hidden",
+          "grid": "none",
+          "gridRows": "none",
+          "w": 1440,
+          "h": 852,
+          "left": 0,
+          "top": 48,
+          "padding": "0px",
+          "bg": "rgba(0, 0, 0, 0)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "720px 426px"
+        },
+        {
+          "tag": "section",
+          "cls": "ui-scroll-target relative w-full border-rule border-b min-h-[calc(100svh-3rem)] lg:min-h-[200dvh]",
+          "data": "sticky-pin",
+          "display": "block",
+          "position": "relative",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "w": 1440,
+          "h": 1800,
+          "left": 0,
+          "top": 48,
+          "padding": "0px",
+          "bg": "rgba(0, 0, 0, 0)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "720px 900px"
+        },
+        {
+          "tag": "main",
+          "cls": "ui-frame min-h-svh",
+          "data": null,
+          "display": "block",
+          "position": "static",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "w": 1440,
+          "h": 5754,
+          "left": 0,
+          "top": 48,
+          "padding": "0px",
+          "bg": "rgba(0, 0, 0, 0)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "720px 2877.17px"
+        },
+        {
+          "tag": "div",
+          "cls": "pt-12",
+          "data": null,
+          "display": "block",
+          "position": "static",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "w": 1440,
+          "h": 5802,
+          "left": 0,
+          "top": 0,
+          "padding": "48px 0px 0px",
+          "bg": "rgba(0, 0, 0, 0)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "720px 2901.17px"
+        },
+        {
+          "tag": "body",
+          "cls": "",
+          "data": null,
+          "display": "block",
+          "position": "static",
+          "overflow": "visible",
+          "overflowX": "visible",
+          "grid": "none",
+          "gridRows": "none",
+          "w": 1440,
+          "h": 5802,
+          "left": 0,
+          "top": 0,
+          "padding": "0px",
+          "bg": "rgb(17, 17, 13)",
+          "z": "auto",
+          "transform": "none",
+          "transformOrigin": "720px 2901.17px"
+        }
+      ],
+      "cells": [
+        {
+          "idx": 0,
+          "cls": "flex h-full min-h-[10rem] flex-col justify-end px-4 py-10 sm:min-h-[12rem] sm:px-5 lg:min-h-0 lg:px-",
+          "w": 1008,
+          "h": 511,
+          "left": 0,
+          "top": 48,
+          "text": "One command. Every layer. One command. Every laye",
+          "bg": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "idx": 1,
+          "cls": "flex h-full min-h-[10rem] flex-col justify-end px-4 py-10 sm:min-h-[12rem] sm:px-5 lg:min-h-0 lg:px-",
+          "w": 432,
+          "h": 511,
+          "left": 1008,
+          "top": 48,
+          "text": "A full-stack TypeScript app from one command with ",
+          "bg": "rgb(17, 17, 13)"
+        },
+        {
+          "idx": 2,
+          "cls": "hidden border-rule border-t bg-background lg:block",
+          "w": 1008,
+          "h": 341,
+          "left": 0,
+          "top": 559,
+          "text": "",
+          "bg": "rgb(17, 17, 13)"
+        },
+        {
+          "idx": 3,
+          "cls": "border-rule border-t bg-background lg:border-l",
+          "w": 432,
+          "h": 341,
+          "left": 1008,
+          "top": 559,
+          "text": "INITIALIZE WITH bun bun create kubojs@latest Co",
+          "bg": "rgb(17, 17, 13)"
+        }
+      ],
+      "hostOuter": "<div data-hero-motion=\"right-top-host\" data-hero-occupancy-strategy=\"sticky-stage\" class=\"origin-bottom-left will-change-transform motion-reduce:transform-none w-full lg:absolute lg:z-[1] lg:flex lg:w-[64%] lg:h-[44%] lg:min-h-[16rem] lg:flex-col lg:items-start lg:justify-end lg:left-[70%] lg:bottom-[40%] lg:box-border lg:px-10 lg:pb-10 lg:pt-6\" style=\"translate: none; rotate: none; scale: none; transform-origin: 0% 100%; transform: translate3d(0px, 0px, 0px) scale(0.4664, 0.4664);\"><div data-hero-motion=\"scroll-reveal-icons\" class=\"mb-6 hidden gap-4 lg:flex\" aria-hidden=\"true\"><div class=\"fle",
+      "sentenceCount": 3,
+      "iconCount": 3,
+      "titleText": "One command. Every layer.",
+      "sectionH": 1800,
+      "stickyH": 852,
+      "strategy": "sticky-stage"
+    },
+    "samplesCompact": [
+      {
+        "y": 0,
+        "scale": 0.4664,
+        "tx": 0,
+        "ty": 0,
+        "host": {
+          "left": 1008,
+          "top": 384.4,
+          "w": 429.8,
+          "h": 174.8
+        },
+        "offset": {
+          "w": 922,
+          "h": 375
+        },
+        "sentence0": {
+          "text": "A full-stack TypeScript app",
+          "w": 157,
+          "h": 17,
+          "left": 1027,
+          "top": 490,
+          "fontSize": "28px",
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "fontWeight": "500"
+        },
+        "sentenceFont": "28px",
+        "cells": [
+          {
+            "idx": 0,
+            "w": 1008,
+            "h": 511,
+            "left": 0,
+            "top": 48,
+            "text": "One command. Every layer. One command. "
+          },
+          {
+            "idx": 1,
+            "w": 432,
+            "h": 511,
+            "left": 1008,
+            "top": 48,
+            "text": "A full-stack TypeScript app from one com"
+          },
+          {
+            "idx": 2,
+            "w": 1008,
+            "h": 341,
+            "left": 0,
+            "top": 559,
+            "text": ""
+          },
+          {
+            "idx": 3,
+            "w": 432,
+            "h": 341,
+            "left": 1008,
+            "top": 559,
+            "text": "INITIALIZE WITH bun bun create kubojs@"
+          }
+        ]
+      },
+      {
+        "y": 200,
+        "scale": 0.6653,
+        "tx": -279.17,
+        "ty": 38.13,
+        "host": {
+          "left": 728.8,
+          "top": 347.9,
+          "w": 613.1,
+          "h": 249.4
+        },
+        "offset": {
+          "w": 922,
+          "h": 375
+        },
+        "sentence0": {
+          "text": "A full-stack TypeScript app",
+          "w": 223,
+          "h": 24,
+          "left": 783,
+          "top": 498,
+          "fontSize": "28px",
+          "transform": "matrix(1, 0, 0, 1, 41.5408, 0)",
+          "fontWeight": "500"
+        },
+        "sentenceFont": "28px",
+        "cells": [
+          {
+            "idx": 0,
+            "w": 1008,
+            "h": 511,
+            "left": 0,
+            "top": 48,
+            "text": "One command. Every layer. One command. "
+          },
+          {
+            "idx": 1,
+            "w": 432,
+            "h": 511,
+            "left": 1008,
+            "top": 48,
+            "text": "A full-stack TypeScript app from one com"
+          },
+          {
+            "idx": 2,
+            "w": 1008,
+            "h": 341,
+            "left": 0,
+            "top": 559,
+            "text": ""
+          },
+          {
+            "idx": 3,
+            "w": 432,
+            "h": 341,
+            "left": 1008,
+            "top": 559,
+            "text": "INITIALIZE WITH bun bun create kubojs@"
+          }
+        ]
+      },
+      {
+        "y": 450,
+        "scale": 0.887,
+        "tx": -590.39,
+        "ty": 80.64,
+        "host": {
+          "left": 417.6,
+          "top": 307.3,
+          "w": 817.5,
+          "h": 332.5
+        },
+        "offset": {
+          "w": 922,
+          "h": 375
+        },
+        "sentence0": {
+          "text": "A full-stack TypeScript app",
+          "w": 298,
+          "h": 32,
+          "left": 531,
+          "top": 508,
+          "fontSize": "28px",
+          "transform": "matrix(1, 0, 0, 1, 87.8511, 0)",
+          "fontWeight": "500"
+        },
+        "sentenceFont": "28px",
+        "cells": [
+          {
+            "idx": 0,
+            "w": 1008,
+            "h": 511,
+            "left": 0,
+            "top": 48,
+            "text": "One command. Every layer. One command. "
+          },
+          {
+            "idx": 1,
+            "w": 432,
+            "h": 511,
+            "left": 1008,
+            "top": 48,
+            "text": "A full-stack TypeScript app from one com"
+          },
+          {
+            "idx": 2,
+            "w": 1008,
+            "h": 341,
+            "left": 0,
+            "top": 559,
+            "text": ""
+          },
+          {
+            "idx": 3,
+            "w": 432,
+            "h": 341,
+            "left": 1008,
+            "top": 559,
+            "text": "INITIALIZE WITH bun bun create kubojs@"
+          }
+        ]
+      },
+      {
+        "y": 700,
+        "scale": 0.9808,
+        "tx": -722.08,
+        "ty": 98.62,
+        "host": {
+          "left": 285.9,
+          "top": 290.1,
+          "w": 903.9,
+          "h": 367.7
+        },
+        "offset": {
+          "w": 922,
+          "h": 375
+        },
+        "sentence0": {
+          "text": "A full-stack TypeScript app",
+          "w": 329,
+          "h": 36,
+          "left": 431,
+          "top": 512,
+          "fontSize": "28px",
+          "transform": "matrix(1, 0, 0, 1, 107.447, 0)",
+          "fontWeight": "500"
+        },
+        "sentenceFont": "28px",
+        "cells": [
+          {
+            "idx": 0,
+            "w": 1008,
+            "h": 511,
+            "left": 0,
+            "top": 48,
+            "text": "One command. Every layer. One command. "
+          },
+          {
+            "idx": 1,
+            "w": 432,
+            "h": 511,
+            "left": 1008,
+            "top": 48,
+            "text": "A full-stack TypeScript app from one com"
+          },
+          {
+            "idx": 2,
+            "w": 1008,
+            "h": 341,
+            "left": 0,
+            "top": 559,
+            "text": ""
+          },
+          {
+            "idx": 3,
+            "w": 432,
+            "h": 341,
+            "left": 1008,
+            "top": 559,
+            "text": "INITIALIZE WITH bun bun create kubojs@"
+          }
+        ]
+      },
+      {
+        "y": 900,
+        "scale": 0.9996,
+        "tx": -748.45,
+        "ty": 102.22,
+        "host": {
+          "left": 259.5,
+          "top": 286.7,
+          "w": 921.2,
+          "h": 374.7
+        },
+        "offset": {
+          "w": 922,
+          "h": 375
+        },
+        "sentence0": {
+          "text": "A full-stack TypeScript app",
+          "w": 336,
+          "h": 36,
+          "left": 411,
+          "top": 512,
+          "fontSize": "28px",
+          "transform": "matrix(1, 0, 0, 1, 111.371, 0)",
+          "fontWeight": "500"
+        },
+        "sentenceFont": "28px",
+        "cells": [
+          {
+            "idx": 0,
+            "w": 1008,
+            "h": 511,
+            "left": 0,
+            "top": 48,
+            "text": "One command. Every layer. One command. "
+          },
+          {
+            "idx": 1,
+            "w": 432,
+            "h": 511,
+            "left": 1008,
+            "top": 48,
+            "text": "A full-stack TypeScript app from one com"
+          },
+          {
+            "idx": 2,
+            "w": 1008,
+            "h": 341,
+            "left": 0,
+            "top": 559,
+            "text": ""
+          },
+          {
+            "idx": 3,
+            "w": 432,
+            "h": 341,
+            "left": 1008,
+            "top": 559,
+            "text": "INITIALIZE WITH bun bun create kubojs@"
+          }
+        ]
+      },
+      {
+        "y": 1100,
+        "scale": 1,
+        "tx": -749,
+        "ty": 102.3,
+        "host": {
+          "left": 259,
+          "top": 135.6,
+          "w": 921.6,
+          "h": 374.9
+        },
+        "offset": {
+          "w": 922,
+          "h": 375
+        },
+        "sentence0": {
+          "text": "A full-stack TypeScript app",
+          "w": 336,
+          "h": 36,
+          "left": 410,
+          "top": 361,
+          "fontSize": "28px",
+          "transform": "matrix(1, 0, 0, 1, 111.453, 0)",
+          "fontWeight": "500"
+        },
+        "sentenceFont": "28px",
+        "cells": [
+          {
+            "idx": 0,
+            "w": 1008,
+            "h": 511,
+            "left": 0,
+            "top": -103,
+            "text": "One command. Every layer. One command. "
+          },
+          {
+            "idx": 1,
+            "w": 432,
+            "h": 511,
+            "left": 1008,
+            "top": -103,
+            "text": "A full-stack TypeScript app from one com"
+          },
+          {
+            "idx": 2,
+            "w": 1008,
+            "h": 341,
+            "left": 0,
+            "top": 408,
+            "text": ""
+          },
+          {
+            "idx": 3,
+            "w": 432,
+            "h": 341,
+            "left": 1008,
+            "top": 408,
+            "text": "INITIALIZE WITH bun bun create kubojs@"
+          }
+        ]
+      }
+    ]
+  }
+}
