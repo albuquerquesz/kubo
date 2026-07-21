@@ -33,7 +33,7 @@ const exploreGroups = [
   },
 ] as const;
 
-const githubUrl = "https://github.com/AmanVarshney01/create-better-t-stack";
+const githubUrl = "https://github.com/albuquerquesz/kubo";
 
 /** Shared fixed-bar height — keep mark, nav, utilities, and layout offset in sync. */
 const headerRowClass = "h-12";
@@ -48,13 +48,13 @@ function BrandMark() {
       )}
       aria-label="Kubo home"
     >
-      <span aria-hidden className="relative size-11 shrink-0 overflow-hidden sm:size-12">
+      <span aria-hidden className="relative size-7 shrink-0 overflow-hidden sm:size-8">
         <Image
           src="/assets/kubo-mark.png"
           alt=""
-          width={48}
-          height={48}
-          className="size-11 object-contain sm:size-12"
+          width={32}
+          height={32}
+          className="size-7 object-contain sm:size-8"
         />
       </span>
     </Link>

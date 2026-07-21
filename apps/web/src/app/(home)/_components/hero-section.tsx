@@ -10,7 +10,6 @@ import { useGsapContext } from "@/lib/motion/use-gsap-context";
 import HeroDisplayTitle from "./hero-display-title";
 import HeroRailLower from "./hero-rail-lower";
 import ScrollRevealIcons, { type ScrollRevealIconsHandle } from "./scroll-reveal-icons";
-import SignalField from "./signal-field";
 
 /** Editorial line breaks — three lines only (right-rail sentence strategy). */
 const mission = [
@@ -27,27 +26,26 @@ const upperBandClass =
   "flex h-full min-h-[10rem] flex-col justify-end px-4 py-10 sm:min-h-[12rem] sm:px-5 lg:min-h-0 lg:px-10 lg:pt-0 lg:pb-10";
 
 /**
- * Family B host (strategy B — sticky-stage occupancy).
- * Mobile: in-flow shrink-wrap in the mission cell.
- * Desktop: absolute layer sized ~64%×44% of sticky shell so scale 1 takes the stage
- * (Mistral offset ~924×396 on 1440×900). Bottom-left of the host sits near the
- * right-rail / upper-band corner so rest (scale ~0.47) still reads as a right chip.
+ * Family B host — in-flow inside R1 card (Mistral model).
+ * Large desktop type + padding create the unscaled offset box; GSAP scale
+ * 0.47→1 makes rest look like a rail chip and end like stage type.
+ *
+ * Desktop: `lg:w-max` so nowrap mission lines size the host past the 30% rail
+ * (Mistral flex min-content ≈924px inside a ~431 card). Do NOT use w-full on lg
+ * (that locks offset to the rail and kills stage occupancy). Do NOT absolute
+ * an empty % box over the sticky shell.
  */
 const rightTopHostClass =
-  "origin-bottom-left will-change-transform motion-reduce:transform-none " +
-  // Mobile / <lg: normal flow in R1
-  "w-full " +
-  // Desktop: sticky-stage layer (positioned against sticky-shell)
-  "lg:absolute lg:z-[1] lg:flex lg:w-[64%] lg:h-[44%] lg:min-h-[16rem] " +
-  "lg:flex-col lg:items-start lg:justify-end " +
-  // left 70% + width 64% overflows right (clipped by sticky overflow-x-hidden);
-  // bottom 40% = upper/lower 60/40 split so origin sits on the band seam.
-  "lg:left-[70%] lg:bottom-[40%] " +
-  "lg:box-border lg:px-10 lg:pb-10 lg:pt-6";
+  "relative z-10 origin-bottom-left will-change-transform motion-reduce:transform-none " +
+  "flex w-full flex-col items-start justify-end " +
+  "lg:w-max lg:max-w-none " +
+  // Mistral: lg:p-20 (80px) — pad grows layout host with type
+  "lg:p-16 xl:p-20";
 
 export default function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
+  const titleWrapRef = useRef<HTMLDivElement>(null);
   const scaleTargetRef = useRef<HTMLDivElement>(null);
   const sentenceRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const iconsRef = useRef<ScrollRevealIconsHandle>(null);
@@ -57,6 +55,7 @@ export default function HeroSection() {
       const trigger = sectionRef.current;
       const target = scaleTargetRef.current;
       const sticky = stickyRef.current;
+      const title = titleWrapRef.current;
       if (!trigger || !target) return;
 
       const sentences = sentenceRefs.current.filter((el): el is HTMLSpanElement => el !== null);
@@ -66,6 +65,7 @@ export default function HeroSection() {
         trigger,
         target,
         sticky,
+        title,
         sentences,
       });
 
@@ -104,9 +104,8 @@ export default function HeroSection() {
     >
       {/*
         Sticky shell ≈ one viewport under the fixed header.
-        Critical: fixed height / no flex-1 — shell must be shorter than the 200dvh
-        section so CSS sticky can pin (Mistral: .js-sticky lg:min-h-dvh in 200dvh host).
-        overflow-x-hidden: host may extend past the right edge at rest (stage layer).
+        overflow-x-hidden: scaled host may extend past the right rail (Mistral).
+        overflow-y visible so scaled host can cover lower band.
       */}
       <div
         ref={stickyRef}
@@ -129,8 +128,8 @@ export default function HeroSection() {
             "lg:grid-rows-[minmax(0,3fr)_minmax(0,2fr)]"
           }
         >
-          {/* L1 — title, bottom of upper band */}
-          <div className={upperBandClass}>
+          {/* L1 — title; Family B2 translateY exit targets this wrap */}
+          <div ref={titleWrapRef} data-hero-motion="title-exit" className={upperBandClass}>
             <HeroDisplayTitle
               title="One command. Every layer."
               className={
@@ -146,23 +145,33 @@ export default function HeroSection() {
           </div>
 
           {/*
-            R1 — mission cell.
-            Mobile: Family B host in-flow.
-            Desktop: host is absolute sticky-stage (see host classes); cell keeps rail border.
+            R1 — mission card. Host is in-flow (not absolute stage layer).
+            overflow-visible so scale can paint over R2; z-10 host covers install.
           */}
           <div
             className={
-              upperBandClass + " border-rule border-t bg-background lg:border-t-0 lg:border-l"
+              upperBandClass +
+              " overflow-visible border-rule border-t bg-background lg:border-t-0 lg:border-l"
             }
           >
             <div
               ref={scaleTargetRef}
               data-hero-motion="right-top-host"
-              data-hero-occupancy-strategy="sticky-stage"
+              data-hero-occupancy-strategy="in-flow-type-pad"
               className={rightTopHostClass}
             >
               <ScrollRevealIcons ref={iconsRef} />
-              <p className="text-2xl leading-[1.3] font-medium text-foreground sm:text-[1.65rem] lg:text-[1.75rem]">
+              {/*
+                Large desktop type: rest optical ≈ font×0.47 (~26px at 56px).
+                End optical = full size — this is what “takes the stage”, not an empty box.
+              */}
+              <p
+                className={
+                  "font-medium text-foreground " +
+                  "text-2xl leading-[1.25] sm:text-[1.65rem] " +
+                  "lg:text-[clamp(2.25rem,2.8vw,3.5rem)] lg:leading-[1.15]"
+                }
+              >
                 <span className="sr-only">{mission.join(" ")}</span>
                 <span aria-hidden className="flex flex-col items-start">
                   {mission.map((line, i) => (
@@ -190,8 +199,6 @@ export default function HeroSection() {
             <HeroRailLower scrollTargetId="product" />
           </div>
         </div>
-
-        <SignalField />
       </div>
     </section>
   );

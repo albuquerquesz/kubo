@@ -489,38 +489,6 @@
   animation: fading-arrow-scroll 2s 0.4s linear infinite;
 }
 
-/* SignalField — original decorative pulse (home editorial system) */
-@keyframes signal-cell-pulse {
-  0%,
-  100% {
-    opacity: 0.22;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes signal-glyph-swap {
-  0%,
-  100% {
-    opacity: 0.35;
-  }
-  45%,
-  55% {
-    opacity: 0.95;
-  }
-}
-
-.signal-cell-pulse {
-  animation: signal-cell-pulse var(--signal-duration, 3.2s) ease-in-out infinite;
-  animation-delay: var(--signal-delay, 0s);
-}
-
-.signal-glyph-swap {
-  animation: signal-glyph-swap var(--signal-duration, 3.6s) ease-in-out infinite;
-  animation-delay: var(--signal-delay, 0s);
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -540,19 +508,6 @@
   .animate-fading-arrow-scroll-3 {
     animation: none !important;
     opacity: 0.55;
-  }
-
-  .signal-cell-pulse,
-  .signal-glyph-swap {
-    animation: none !important;
-  }
-
-  .signal-cell-pulse {
-    opacity: 0.55;
-  }
-
-  .signal-glyph-swap {
-    opacity: 0.7;
   }
 }
 
