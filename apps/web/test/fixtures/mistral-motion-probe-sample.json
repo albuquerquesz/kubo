@@ -52,5 +52,53 @@
     "nearDoneUnder5PercentScrollY": 525,
     "doneApproxScrollY": 625,
     "hostScaleLocksApproxScrollY": 900
+  },
+  "occupancy": {
+    "logNote": "Dual-site painted occupancy 1440×900, 2026-07-20 (probe-hero-occupancy.mjs). stickyShare = host bbox area / sticky shell area.",
+    "viewport": { "width": 1440, "height": 900 },
+    "mistral": {
+      "hostOffset": { "w": 924, "h": 396 },
+      "rest": {
+        "scrollY": 0,
+        "scale": 0.4664,
+        "painted": { "w": 431, "h": 184.7, "left": 1008.6, "top": 354.3 },
+        "stickyShareArea": 0.061,
+        "stickyShareW": 0.299,
+        "stickyShareH": 0.205
+      },
+      "endPin": {
+        "scrollY": 900,
+        "scale": 1.0,
+        "painted": { "w": 924.1, "h": 396, "left": 259, "top": 252 },
+        "stickyShareArea": 0.282,
+        "stickyShareW": 0.642,
+        "stickyShareH": 0.44
+      }
+    },
+    "kuboLocalGapSample": {
+      "hostOffset": { "w": 351, "h": 189 },
+      "rest": {
+        "scrollY": 0,
+        "scale": 0.4664,
+        "painted": { "w": 163.7, "h": 88.2, "left": 1049, "top": 344.6 },
+        "stickyShareArea": 0.012,
+        "stickyShareW": 0.114,
+        "stickyShareH": 0.104
+      },
+      "endPin": {
+        "scrollY": 900,
+        "scale": 0.9997,
+        "painted": { "w": 350.9, "h": 189.1, "left": 1259, "top": 123.5 },
+        "stickyShareArea": 0.054,
+        "stickyShareW": 0.244,
+        "stickyShareH": 0.222
+      },
+      "gapNote": "Scale ratio matches Mistral (~4.6× area) but end sticky area share is ~5× smaller because layout host is ~2.6× narrower."
+    },
+    "targetsAfterFix": {
+      "endStickyShareW_min": 0.55,
+      "endStickyShareArea_min": 0.2,
+      "paintedAreaGrowthRatio": { "min": 4.4, "max": 4.8 }
+    }
   }
 }
