@@ -143,9 +143,10 @@ Each row: **surface → current → required identical outcome**. No “make it 
 
 ## Relationship
 
-| Doc                                               | Role                                                       |
-| ------------------------------------------------- | ---------------------------------------------------------- |
-| `.agents/skills/mistral-motion-grammar/SKILL.md`  | Measurable grammar                                         |
-| `.agents/skills/scroll-reveal-icons/SKILL.md`     | Subset of Family C; prefer consolidated skill for full set |
-| `docs/spec-gsap-motion-system-and-hero-title.md`  | Earlier dual-title GSAP adoption                           |
-| `docs/spec-home-community-footer-scroll-icons.md` | Icons + non-motion polish; retune range via this spec      |
+| Doc                                               | Role                                                                  |
+| ------------------------------------------------- | --------------------------------------------------------------------- |
+| `.agents/skills/mistral-motion-grammar/SKILL.md`  | Measurable grammar                                                    |
+| `.agents/skills/scroll-reveal-icons/SKILL.md`     | Subset of Family C; prefer consolidated skill for full set            |
+| `docs/spec-gsap-motion-system-and-hero-title.md`  | Earlier dual-title GSAP adoption                                      |
+| `docs/spec-home-community-footer-scroll-icons.md` | Icons + non-motion polish; retune range via this spec                 |
+| `docs/spec-hero-sticky-scale-screen-occupancy.md` | **Remaining gap:** host must take sticky-stage space (not only scale) |
