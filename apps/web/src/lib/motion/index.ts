@@ -20,6 +20,8 @@ export {
   pinTravelPx,
   hostEaseProgress,
   hostTransformAtPinProgress,
+  hostEndTranslateForStage,
+  hostLayoutViewportOrigin,
   lineTranslateXAtPinProgress,
   HERO_STICKY_SCALE_FROM,
   HERO_STICKY_SCALE_TO,
@@ -29,6 +31,10 @@ export {
   HERO_HOST_X_END_RATIO,
   HERO_HOST_Y_END_RATIO,
   HERO_LINE_X_END_RATIOS,
+  HERO_STAGE_HOST_WIDTH_SHARE,
+  HERO_STAGE_HOST_HEIGHT_SHARE,
+  HERO_STAGE_END_LEFT_SHARE,
+  HERO_STAGE_END_TOP_SHARE,
 } from "./timelines/hero-sticky-scale";
 export type { HeroStickyScaleOptions, HeroStickyScaleHandle } from "./timelines/hero-sticky-scale";
 export {
