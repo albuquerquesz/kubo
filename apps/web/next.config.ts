@@ -1,10 +1,18 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 
 const withMDX = createMDX();
+const appDir = path.dirname(fileURLToPath(import.meta.url));
+// Pin monorepo root so Turbopack does not walk sibling projects under /www.
+const monorepoRoot = path.join(appDir, "../..");
 
 const config: NextConfig = {
-  reactCompiler: true,
+  // React Compiler is expensive during Turbopack compile (workers + AST). Keep it
+  // for production builds; skip in `next dev` so cold compile does not balloon RAM.
+  reactCompiler: process.env.NODE_ENV === "production",
   reactStrictMode: true,
   images: {
     remotePatterns: [
@@ -25,10 +33,22 @@ const config: NextConfig = {
       },
     ];
   },
-  experimental: {
-    turbopackFileSystemCacheForDev: true,
+  // Off by default: the FS cache was growing to ~1.4GB under .next/dev/cache/turbopack
+  // and inflating compile-time RAM after large home/motion changes. Re-enable only if
+  // you need faster warm restarts and can spare the disk/memory.
+  // experimental: { turbopackFileSystemCacheForDev: true },
+  turbopack: {
+    root: monorepoRoot,
   },
-  serverExternalPackages: ["kubojs", "fs-extra", "tinyglobby", "handlebars"],
+  serverExternalPackages: [
+    "kubojs",
+    "@kubo/template-generator",
+    "fs-extra",
+    "tinyglobby",
+    "handlebars",
+    "ts-morph",
+    "memfs",
+  ],
 };
 
 export default withMDX(config);
