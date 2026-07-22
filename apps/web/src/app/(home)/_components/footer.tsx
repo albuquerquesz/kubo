@@ -9,7 +9,6 @@ const footerGroups = [
     links: [
       { label: "Visual builder", href: "/new" },
       { label: "Documentation", href: "/docs" },
-      { label: "Stack display", href: "/stack" },
     ],
   },
   {
