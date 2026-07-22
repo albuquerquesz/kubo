@@ -15,7 +15,6 @@ const footerGroups = [
   {
     label: "Inspect",
     links: [
-      { label: "Analytics", href: "/analytics" },
       { label: "Showcase", href: "/showcase" },
       { label: "NPM package", href: "https://www.npmjs.com/package/kubojs" },
     ],
@@ -23,7 +22,6 @@ const footerGroups = [
   {
     label: "Community",
     links: [
-      { label: "Sponsors", href: "/sponsors" },
       { label: "Discord", href: "https://discord.gg/ZYsbjpDaM5" },
       {
         label: "GitHub",
