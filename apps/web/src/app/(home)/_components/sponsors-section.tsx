@@ -208,9 +208,12 @@ function TechCell({ item, interactive }: { item: EcosystemItem; interactive: boo
     </>
   );
 
+  const cellClass =
+    "tech-marquee__cell group flex min-h-[5.5rem] min-w-[11.5rem] shrink-0 items-center justify-between gap-3 border-rule border-r p-5 no-underline";
+
   if (!interactive) {
     return (
-      <span className="tech-marquee__cell group" aria-hidden="true">
+      <span className={cellClass} aria-hidden="true">
         {body}
       </span>
     );
@@ -221,7 +224,10 @@ function TechCell({ item, interactive }: { item: EcosystemItem; interactive: boo
       href={item.href}
       target="_blank"
       rel="noreferrer"
-      className="tech-marquee__cell group focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+      className={cn(
+        cellClass,
+        "text-inherit transition-colors duration-150 ease-out hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring",
+      )}
     >
       {body}
     </Link>
@@ -246,17 +252,18 @@ function TechMarqueeRow({
   return (
     <div
       className={cn(
-        "tech-marquee__row",
+        // Tailwind layout is intentional: custom CSS animations have flaked under Turbopack HMR.
+        "tech-marquee__row relative overflow-hidden border-rule border-b last:border-b-0",
         direction === "left" ? "tech-marquee__row--left" : "tech-marquee__row--right",
       )}
       data-tech-marquee-row={rowIndex}
       data-direction={direction}
     >
-      <div className="tech-marquee__track">
+      <div className="tech-marquee__track flex w-max will-change-transform">
         {Array.from({ length: TRACK_COPIES }, (_, copyIndex) => (
           <div
             key={copyIndex}
-            className="tech-marquee__sequence"
+            className="tech-marquee__sequence flex shrink-0"
             aria-hidden={copyIndex > 0 ? true : undefined}
           >
             {sequence.map((item, itemIndex) => (
@@ -290,7 +297,7 @@ export default function SponsorsSection() {
         </div>
 
         <div
-          className="tech-marquee lg:col-span-8"
+          className="tech-marquee flex min-w-0 flex-col overflow-hidden lg:col-span-8"
           aria-label="Supported technologies"
           data-tech-marquee
         >
