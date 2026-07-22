@@ -13,7 +13,7 @@ Ready for operators (local + GitHub Actions). Does **not** change product code b
 Define a **safe, repeatable** way to:
 
 1. Create and store an npm **granular access token** (or OTP flow) for the account that owns the packages.
-2. Publish the public packages (`@kubo/types`, `@kubo/template-generator`, `kubojs`, optionally `create-bts`) to `registry.npmjs.org`.
+2. Publish the public packages (`@kubo/types`, `@kubo/template-generator`, `kubojs`) to `registry.npmjs.org`.
 3. Keep all credentials **out of the git history**, PRs, logs, and the open-source tree at `github.com/albuquerquesz/kubo`.
 
 **Scope of packages (publishable):**
@@ -23,11 +23,8 @@ Define a **safe, repeatable** way to:
 | Types              | `packages/types`              | `@kubo/types`              |
 | Template generator | `packages/template-generator` | `@kubo/template-generator` |
 | CLI                | `apps/cli`                    | `kubojs`                   |
-| Alias (optional)   | `packages/create-bts`         | `create-bts`               |
 
-Private monorepo root name is `kubo` — **not** published.
-
----
+## Private monorepo root name is `kubo` — **not** published.
 
 ## Threat model (why this exists)
 
@@ -54,7 +51,7 @@ Private monorepo root name is `kubo` — **not** published.
 3. **Always** use one of:
    - Local: token in **`~/.npmrc`** (home directory, outside the repo), **or** interactive `npm login` + OTP
    - CI: GitHub Actions secret **`NPM_TOKEN`** (or npm Trusted Publishing — see below)
-4. Prefer a **granular** token with **write only on the packages you own** (`kubojs`, `@kubo/*`, `create-bts`), short expiry when possible.
+4. Prefer a **granular** token with **write only on the packages you own** (`kubojs`, `@kubo/*`), short expiry when possible.
 5. Rotate the token if it might have been exposed.
 
 ---
@@ -64,7 +61,7 @@ Private monorepo root name is `kubo` — **not** published.
 1. Log in at [https://www.npmjs.com/](https://www.npmjs.com/) as the publish account (e.g. `albuquerquesz`).
 2. Avatar → **Access Tokens** → **Generate New Token** → **Granular Access Token**.
 3. Configure:
-   - **Packages:** Read and write on `kubojs`, `@kubo/types`, `@kubo/template-generator`, `create-bts` (or “All packages” only if you accept wider risk).
+   - **Packages:** Read and write on `kubojs`, `@kubo/types`, `@kubo/template-generator` (or “All packages” only if you accept wider risk).
    - **Organizations:** none unless required.
    - **Expiration:** set a finite date (e.g. 90 days); calendar a rotation.
    - **2FA / publish:** enable whatever option allows **automation publish** without interactive OTP (wording varies: “Bypass 2FA for automation”, “Publish”, etc.).  
@@ -130,7 +127,7 @@ Ensure `.env`, `.env*.local`, and any file that might hold a real token stay in 
 
 ### B.4 Manual publish order (workspace packages)
 
-Publish order matches the release workflow: **types → template-generator → CLI → create-bts**.
+Publish order matches the release workflow: **types → template-generator → CLI (`kubojs`)**.
 
 From monorepo root (authenticated):
 
@@ -142,11 +139,10 @@ bun run build:cli   # builds deps + CLI via turbo
 # 2) Optional smoke
 bun run smoke:publish   # if available
 
-# 3) Publish (versions already set in package.json)
+# 3) Publish (versions already set in package.json; workspace:* rewritten for CLI)
 cd packages/types && npm publish --access public && cd ../..
 cd packages/template-generator && npm publish --access public && cd ../..
 cd apps/cli && npm publish --access public && cd ../..
-cd packages/create-bts && npm publish --access public && cd ../..
 ```
 
 First-time scoped packages may need:
