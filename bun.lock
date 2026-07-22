@@ -149,16 +149,6 @@
         "typescript": "catalog:",
       },
     },
-    "packages/create-bts": {
-      "name": "create-bts",
-      "version": "3.36.3",
-      "bin": {
-        "create-bts": "cli.js",
-      },
-      "dependencies": {
-        "kubojs": "^3.28.0",
-      },
-    },
     "packages/template-generator": {
       "name": "@kubo/template-generator",
       "version": "3.36.3",
@@ -1227,8 +1217,6 @@
     "cookie-signature": ["cookie-signature@1.2.2", "", {}, "sha512-D76uU73ulSXrD1UXF4KE2TMxVVwhsnCgfAyTg9k8P6KGZjlXKrOLe4dJQKI3Bxi5wjesZoFXJWElNWBjPZMbhg=="],
 
     "cors": ["cors@2.8.6", "", { "dependencies": { "object-assign": "^4", "vary": "^1" } }, "sha512-tJtZBBHA6vjIAaF6EnIaq6laBBP9aq/Y3ouVJjEfoHbRBcHBAHYcMh/w8LDrk2PvIMMq8gmopa5D4V8RmbrxGw=="],
-
-    "create-bts": ["create-bts@workspace:packages/create-bts"],
 
     "cron-parser": ["cron-parser@4.9.0", "", { "dependencies": { "luxon": "^3.2.1" } }, "sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q=="],
 
