@@ -79,7 +79,6 @@
     "consola": "^3.4.2",
     "env-paths": "^4.0.0",
     "execa": "^9.6.1",
-    "figlet": "^1.11.2",
     "fs-extra": "^11.3.5",
     "gradient-string": "^3.0.0",
     "handlebars": "^4.7.9",
