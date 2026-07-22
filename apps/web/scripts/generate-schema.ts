@@ -3,7 +3,7 @@ import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { getBetterTStackConfigFileJsonSchema } from "@kubo/types/json-schema";
+import { getBetterTStackConfigFileJsonSchema } from "@kubojs/types/json-schema";
 
 const schema = getBetterTStackConfigFileJsonSchema();
 const tempPath = join(tmpdir(), "bts-schema.json");

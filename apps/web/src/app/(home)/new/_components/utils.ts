@@ -1,4 +1,4 @@
-import { desktopWebFrontends } from "@kubo/types";
+import { desktopWebFrontends } from "@kubojs/types";
 
 import { DEFAULT_STACK, type StackState, type TECH_OPTIONS } from "@/lib/constant";
 import { CATEGORY_ORDER } from "@/lib/stack-utils";

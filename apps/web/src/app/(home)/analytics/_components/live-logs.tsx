@@ -1,6 +1,6 @@
 "use client";
 
-import { api } from "@kubo/backend/convex/_generated/api";
+import { api } from "@kubojs/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Activity, ChevronRight, Radio } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";

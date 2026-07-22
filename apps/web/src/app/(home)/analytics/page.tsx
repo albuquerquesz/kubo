@@ -1,4 +1,4 @@
-import { api } from "@kubo/backend/convex/_generated/api";
+import { api } from "@kubojs/backend/convex/_generated/api";
 import { preloadQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 

@@ -1,6 +1,6 @@
-import { generate, type VirtualNode } from "@kubo/template-generator";
-import { EMBEDDED_TEMPLATES } from "@kubo/template-generator";
-import type { ProjectConfig } from "@kubo/types";
+import { generate, type VirtualNode } from "@kubojs/template-generator";
+import { EMBEDDED_TEMPLATES } from "@kubojs/template-generator";
+import type { ProjectConfig } from "@kubojs/types";
 import { NextResponse } from "next/server";
 
 import type { StackState } from "@/lib/constant";
