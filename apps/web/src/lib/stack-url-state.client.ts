@@ -11,7 +11,7 @@ const getValidIds = (category: keyof typeof TECH_OPTIONS): string[] => {
 };
 
 export const stackParsers = {
-  projectName: parseAsString.withDefault(DEFAULT_STACK.projectName ?? "my-better-t-app"),
+  projectName: parseAsString.withDefault(DEFAULT_STACK.projectName ?? "my-kubo-app"),
   webFrontend: parseAsArrayOf(parseAsString).withDefault(DEFAULT_STACK.webFrontend),
   nativeFrontend: parseAsArrayOf(parseAsString).withDefault(DEFAULT_STACK.nativeFrontend),
   runtime: parseAsStringEnum<StackState["runtime"]>(getValidIds("runtime")).withDefault(

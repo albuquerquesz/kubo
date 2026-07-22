@@ -16,7 +16,7 @@ const getValidIds = (category: keyof typeof TECH_OPTIONS): string[] => {
 };
 
 const serverStackParsers = {
-  projectName: parseAsStringServer.withDefault(DEFAULT_STACK.projectName || "my-better-t-app"),
+  projectName: parseAsStringServer.withDefault(DEFAULT_STACK.projectName || "my-kubo-app"),
   webFrontend: parseAsArrayOfServer(parseAsStringServer).withDefault(DEFAULT_STACK.webFrontend),
   nativeFrontend: parseAsArrayOfServer(parseAsStringServer).withDefault(
     DEFAULT_STACK.nativeFrontend,

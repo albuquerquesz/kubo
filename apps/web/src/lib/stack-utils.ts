@@ -49,7 +49,7 @@ const selfHostedFullstackBackends = [
 ] as const;
 
 export function formatProjectName(name: string | null | undefined) {
-  return (name || "my-better-t-app").replace(/\s+/g, "-");
+  return (name || "my-kubo-app").replace(/\s+/g, "-");
 }
 
 export type SelectedTech = {
@@ -149,7 +149,7 @@ export function generateStackCommand(stack: StackState) {
     stack.packageManager in CREATE_COMMANDS ? stack.packageManager : DEFAULT_PACKAGE_MANAGER
   ) as PackageManager;
   const base = CREATE_COMMANDS[manager];
-  const projectName = stack.projectName || "my-better-t-app";
+  const projectName = stack.projectName || "my-kubo-app";
 
   const isStackDefaultExceptProjectName = Object.entries(DEFAULT_STACK).every(
     ([key]) =>
