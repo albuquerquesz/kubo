@@ -82,7 +82,7 @@ jobs:
       - name: Update template-generator package version and types dependency
         run: |
           cd packages/template-generator
-          jq --arg v "${{ steps.version.outputs.version }}" '.version = $v | .dependencies["@kubo/types"] = $v' package.json > tmp.json && mv tmp.json package.json
+          jq --arg v "${{ steps.version.outputs.version }}" '.version = $v | .dependencies["@kubojs/types"] = $v' package.json > tmp.json && mv tmp.json package.json
 
       - name: Build template-generator package
         run: cd packages/template-generator && bun run build
@@ -96,7 +96,7 @@ jobs:
       - name: Update CLI package version and dependencies
         run: |
           cd apps/cli
-          jq --arg v "${{ steps.version.outputs.version }}" '.version = $v | .dependencies["@kubo/types"] = $v | .dependencies["@kubo/template-generator"] = $v' package.json > tmp.json && mv tmp.json package.json
+          jq --arg v "${{ steps.version.outputs.version }}" '.version = $v | .dependencies["@kubojs/types"] = $v | .dependencies["@kubojs/template-generator"] = $v' package.json > tmp.json && mv tmp.json package.json
 
       - name: Build CLI
         run: cd apps/cli && bun run build
@@ -130,9 +130,9 @@ jobs:
 
             | Package | Version | NPM Tag |
             |---------|---------|---------|
-            | `kubojs` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
-            | `@kubo/types` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
-            | `@kubo/template-generator` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
+            | `@kubojs/cli` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
+            | `@kubojs/types` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
+            | `@kubojs/template-generator` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
 
             **Commit:** `${{ steps.version.outputs.commit }}`
 
@@ -140,18 +140,18 @@ jobs:
 
             ```bash
             # Using the PR tag (always gets latest for this PR)
-            bunx kubojs@pr${{ steps.version.outputs.pr }}
-            npx kubojs@pr${{ steps.version.outputs.pr }}
+            bunx @kubojs/cli@pr${{ steps.version.outputs.pr }}
+            npx @kubojs/cli@pr${{ steps.version.outputs.pr }}
 
             # Using exact version
-            bunx kubojs@${{ steps.version.outputs.version }}
-            npx kubojs@${{ steps.version.outputs.version }}
+            bunx @kubojs/cli@${{ steps.version.outputs.version }}
+            npx @kubojs/cli@${{ steps.version.outputs.version }}
             ```
 
             ### NPM Links
-            - [kubojs@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/kubojs/v/${{ steps.version.outputs.version }})
-            - [@kubo/types@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/@kubo/types/v/${{ steps.version.outputs.version }})
-            - [@kubo/template-generator@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/@kubo/template-generator/v/${{ steps.version.outputs.version }})
+            - [@kubojs/cli@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/@kubojs/cli/v/${{ steps.version.outputs.version }})
+            - [@kubojs/types@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/@kubojs/types/v/${{ steps.version.outputs.version }})
+            - [@kubojs/template-generator@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/@kubojs/template-generator/v/${{ steps.version.outputs.version }})
 
             ---
             *To publish a new preview after more commits, remove and re-add the `preview` label.*

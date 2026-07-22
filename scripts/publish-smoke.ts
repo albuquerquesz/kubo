@@ -27,12 +27,12 @@ type Publishable = {
 };
 
 const PUBLISHABLES: Publishable[] = [
-  { name: "@kubo/types", dir: "packages/types" },
-  { name: "@kubo/template-generator", dir: "packages/template-generator" },
+  { name: "@kubojs/types", dir: "packages/types" },
+  { name: "@kubojs/template-generator", dir: "packages/template-generator" },
   {
-    name: "kubojs",
+    name: "@kubojs/cli",
     dir: "apps/cli",
-    rewriteWorkspaceDeps: ["@kubo/types", "@kubo/template-generator"],
+    rewriteWorkspaceDeps: ["@kubojs/types", "@kubojs/template-generator"],
   },
 ];
 
@@ -84,14 +84,14 @@ async function installAndRun(
   mkdirSync(dir, { recursive: true });
 
   const overrides: Record<string, string> = {
-    "@kubo/types": `file:${tarballs["@kubo/types"]}`,
-    "@kubo/template-generator": `file:${tarballs["@kubo/template-generator"]}`,
+    "@kubojs/types": `file:${tarballs["@kubojs/types"]}`,
+    "@kubojs/template-generator": `file:${tarballs["@kubojs/template-generator"]}`,
   };
   const fixture: Record<string, unknown> = {
     name: `smoke-${pm}`,
     private: true,
     version: "0.0.0",
-    dependencies: { kubojs: `file:${tarballs["kubojs"]}` },
+    dependencies: { "@kubojs/cli": `file:${tarballs["@kubojs/cli"]}` },
   };
   if (pm === "pnpm") fixture.pnpm = { overrides };
   else fixture.overrides = overrides;
@@ -106,18 +106,18 @@ async function installAndRun(
 module.exports = {
   hooks: {
     readPackage(pkg) {
-      if (pkg.name === "kubojs") {
+      if (pkg.name === "@kubojs/cli") {
         pkg.dependencies = {
           ...pkg.dependencies,
-          "@kubo/types": localDeps["@kubo/types"],
-          "@kubo/template-generator": localDeps["@kubo/template-generator"],
+          "@kubojs/types": localDeps["@kubojs/types"],
+          "@kubojs/template-generator": localDeps["@kubojs/template-generator"],
         };
       }
 
-      if (pkg.name === "@kubo/template-generator") {
+      if (pkg.name === "@kubojs/template-generator") {
         pkg.dependencies = {
           ...pkg.dependencies,
-          "@kubo/types": localDeps["@kubo/types"],
+          "@kubojs/types": localDeps["@kubojs/types"],
         };
       }
 

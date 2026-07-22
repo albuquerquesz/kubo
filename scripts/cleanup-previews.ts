@@ -1,7 +1,7 @@
 import { confirm, isCancel, multiselect, spinner } from "@clack/prompts";
 import { $ } from "bun";
 
-const PACKAGES = ["kubojs", "@kubo/types", "@kubo/template-generator"] as const;
+const PACKAGES = ["@kubojs/cli", "@kubojs/types", "@kubojs/template-generator"] as const;
 
 interface DistTags {
   [tag: string]: string;

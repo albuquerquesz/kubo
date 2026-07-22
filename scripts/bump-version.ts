@@ -116,7 +116,7 @@ async function main(): Promise<void> {
     await readFile(TEMPLATE_GENERATOR_PACKAGE_JSON_PATH, "utf-8"),
   );
   templateGeneratorPackageJson.version = newVersion;
-  templateGeneratorPackageJson.dependencies["@kubo/types"] = `^${newVersion}`;
+  templateGeneratorPackageJson.dependencies["@kubojs/types"] = `^${newVersion}`;
   await writeFile(
     TEMPLATE_GENERATOR_PACKAGE_JSON_PATH,
     `${JSON.stringify(templateGeneratorPackageJson, null, 2)}\n`,
@@ -146,9 +146,9 @@ async function main(): Promise<void> {
 This PR bumps the version to \`${newVersion}\`.
 
 ### Changes
-- Updated \`kubojs\` to v${newVersion}
-- Updated \`@kubo/types\` to v${newVersion}
-- Updated \`@kubo/template-generator\` to v${newVersion}
+- Updated \`@kubojs/cli\` to v${newVersion}
+- Updated \`@kubojs/types\` to v${newVersion}
+- Updated \`@kubojs/template-generator\` to v${newVersion}
 - Updated the agent plugin manifests (Claude Code + Codex) to v${newVersion}
 
 ### Preview Release

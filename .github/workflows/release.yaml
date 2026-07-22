@@ -53,7 +53,7 @@ jobs:
         id: check-version
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          if npm view kubojs@$VERSION version 2>/dev/null; then
+          if npm view @kubojs/cli@$VERSION version 2>/dev/null; then
             echo "Version $VERSION already exists on NPM"
             echo "exists=true" >> $GITHUB_OUTPUT
           else
@@ -87,7 +87,7 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           cd packages/template-generator
-          jq --arg v "$VERSION" --arg dep "^$VERSION" '.version = $v | .dependencies["@kubo/types"] = $dep' package.json > tmp.json && mv tmp.json package.json
+          jq --arg v "$VERSION" --arg dep "^$VERSION" '.version = $v | .dependencies["@kubojs/types"] = $dep' package.json > tmp.json && mv tmp.json package.json
 
       - name: Build template-generator package
         if: steps.check-version.outputs.exists == 'false'
@@ -99,7 +99,7 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
           cd apps/cli
           jq --arg v "$VERSION" --arg dep "^$VERSION" \
-            '.version = $v | .dependencies["@kubo/types"] = $dep | .dependencies["@kubo/template-generator"] = $dep' \
+            '.version = $v | .dependencies["@kubojs/types"] = $dep | .dependencies["@kubojs/template-generator"] = $dep' \
             package.json > tmp.json && mv tmp.json package.json
 
       - name: Build CLI
@@ -172,9 +172,9 @@ jobs:
           echo "## Release v$VERSION Complete!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Published Packages" >> $GITHUB_STEP_SUMMARY
-          echo "- [kubojs@$VERSION](https://www.npmjs.com/package/kubojs/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
-          echo "- [@kubo/types@$VERSION](https://www.npmjs.com/package/@kubo/types/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
-          echo "- [@kubo/template-generator@$VERSION](https://www.npmjs.com/package/@kubo/template-generator/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "- [@kubojs/cli@$VERSION](https://www.npmjs.com/package/@kubojs/cli/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "- [@kubojs/types@$VERSION](https://www.npmjs.com/package/@kubojs/types/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "- [@kubojs/template-generator@$VERSION](https://www.npmjs.com/package/@kubojs/template-generator/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### GitHub Release" >> $GITHUB_STEP_SUMMARY
           echo "[v$VERSION](https://github.com/${{ github.repository }}/releases/tag/v$VERSION)" >> $GITHUB_STEP_SUMMARY

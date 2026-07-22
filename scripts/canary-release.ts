@@ -54,7 +54,7 @@ async function main(): Promise<void> {
 
   const packageJson = JSON.parse(await readFile(CLI_PACKAGE_JSON_PATH, "utf-8"));
   const currentVersion = packageJson.version;
-  const packageName: string = packageJson.name || "kubojs";
+  const packageName: string = packageJson.name || "@kubojs/cli";
   const baseVersion = semver.coerce(currentVersion)?.version ?? currentVersion;
   console.log(`Current version: ${currentVersion}`);
   if (baseVersion !== currentVersion) {
@@ -179,7 +179,7 @@ async function main(): Promise<void> {
     }
 
     const typesPubSpin = spinner();
-    typesPubSpin.start(`Publishing @kubo/types@${canaryVersion} (canary)...`);
+    typesPubSpin.start(`Publishing @kubojs/types@${canaryVersion} (canary)...`);
     try {
       await $`cd packages/types && bun publish --access public --tag canary`;
       typesPubSpin.stop("Types package published");
@@ -190,7 +190,7 @@ async function main(): Promise<void> {
 
     // Update template-generator package version and types dependency, build, and publish
     templateGeneratorPackageJson.version = canaryVersion;
-    templateGeneratorPackageJson.dependencies["@kubo/types"] = canaryVersion;
+    templateGeneratorPackageJson.dependencies["@kubojs/types"] = canaryVersion;
     await writeFile(
       TEMPLATE_GENERATOR_PACKAGE_JSON_PATH,
       `${JSON.stringify(templateGeneratorPackageJson, null, 2)}\n`,
@@ -208,7 +208,7 @@ async function main(): Promise<void> {
 
     const templateGeneratorPubSpin = spinner();
     templateGeneratorPubSpin.start(
-      `Publishing @kubo/template-generator@${canaryVersion} (canary)...`,
+      `Publishing @kubojs/template-generator@${canaryVersion} (canary)...`,
     );
     try {
       await $`cd packages/template-generator && bun publish --access public --tag canary`;
@@ -220,8 +220,8 @@ async function main(): Promise<void> {
 
     // Update CLI package version and dependencies
     packageJson.version = canaryVersion;
-    packageJson.dependencies["@kubo/types"] = canaryVersion;
-    packageJson.dependencies["@kubo/template-generator"] = canaryVersion;
+    packageJson.dependencies["@kubojs/types"] = canaryVersion;
+    packageJson.dependencies["@kubojs/template-generator"] = canaryVersion;
     await writeFile(CLI_PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
 
     const buildSpin = spinner();
@@ -269,9 +269,9 @@ async function main(): Promise<void> {
 
     console.log(`✅ Published canary v${canaryVersion} for all packages`);
     console.log(`📦 NPM: https://www.npmjs.com/package/${packageName}/v/${canaryVersion}`);
-    console.log(`📦 NPM: https://www.npmjs.com/package/@kubo/types/v/${canaryVersion}`);
+    console.log(`📦 NPM: https://www.npmjs.com/package/@kubojs/types/v/${canaryVersion}`);
     console.log(
-      `📦 NPM: https://www.npmjs.com/package/@kubo/template-generator/v/${canaryVersion}`,
+      `📦 NPM: https://www.npmjs.com/package/@kubojs/template-generator/v/${canaryVersion}`,
     );
   } finally {
     if (!restored) {
