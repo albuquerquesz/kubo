@@ -14,7 +14,7 @@ export default function CustomStackPanel() {
     <section
       id="product"
       aria-labelledby="custom-stack-title"
-      className="ui-scroll-target mx-auto w-full max-w-[1240px] border-rule border-x border-y bg-background"
+      className="ui-scroll-target mx-auto mt-12 mb-12 w-full max-w-[1240px] border-rule border-x border-y bg-background sm:mt-16 sm:mb-16 lg:mt-20 lg:mb-20"
     >
       <div className="border-rule border-b px-4 py-6 sm:px-6 sm:py-7 lg:flex lg:min-h-[6.5rem] lg:items-center lg:justify-between lg:px-6 lg:py-6">
         <h2
