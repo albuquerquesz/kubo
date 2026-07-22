@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mistral Feature Panel"
+  short_description: "Mistral-inspired Kubo feature panels"
+  default_prompt: "Create a bordered Kubo feature panel with the Mistral-inspired layout rhythm."
