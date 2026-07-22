@@ -39,7 +39,7 @@ export const links: LinkItemType[] = [
   },
   {
     text: "Demo",
-    url: "https://my-better-t-app.amanv.cloud/",
+    url: "https://my-kubo-app.amanv.cloud/",
     external: true,
   },
   {

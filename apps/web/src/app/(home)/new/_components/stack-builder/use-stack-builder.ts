@@ -224,7 +224,7 @@ export function useStackBuilder() {
     startTransition(() => {
       setStack({
         ...(randomStack as StackState),
-        projectName: stack.projectName || "my-better-t-app",
+        projectName: stack.projectName || "my-kubo-app",
       });
     });
 

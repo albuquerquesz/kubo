@@ -141,7 +141,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                             ? "border-destructive bg-destructive/10 text-destructive-foreground"
                             : "border-border/60 focus:border-primary",
                         )}
-                        placeholder="my-better-t-app"
+                        placeholder="my-kubo-app"
                       />
                       {projectNameError && (
                         <p id="project-name-error" className="mt-1 text-destructive text-xs">
@@ -376,7 +376,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                             ? "border-destructive bg-destructive/10 text-destructive-foreground"
                             : "border-border/60 focus:border-primary",
                         )}
-                        placeholder="my-better-t-app"
+                        placeholder="my-kubo-app"
                       />
                       {projectNameError && (
                         <p id="project-name-error-mobile" className="mt-1 text-destructive text-xs">

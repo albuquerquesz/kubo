@@ -99,7 +99,7 @@ function stackStateToConfig(state: StackState): ProjectConfig {
   const git = normalizeBoolean(state.git, false);
 
   return {
-    projectName: state.projectName || "my-better-t-app",
+    projectName: state.projectName || "my-kubo-app",
     projectDir: "/virtual",
     relativePath: "./virtual",
     database: (state.database || "none") as ProjectConfig["database"],

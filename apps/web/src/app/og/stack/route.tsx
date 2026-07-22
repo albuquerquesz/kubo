@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
   const stack = await loadStackParams(
     Promise.resolve(Object.fromEntries(req.nextUrl.searchParams)),
   );
-  const projectName = (stack.projectName || "my-better-t-app").slice(0, 40);
+  const projectName = (stack.projectName || "my-kubo-app").slice(0, 40);
   const techs = getSelectedTechs(stack);
   const visible = techs.slice(0, MAX_CHIPS);
   const overflow = techs.length - visible.length;
