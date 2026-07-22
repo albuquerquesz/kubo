@@ -118,8 +118,8 @@ describe("stack builder D1 compatibility", () => {
     );
     const displayCommand = formatStackCommandForDisplay(command);
 
-    expect(command).toContain("my-better-t-app --frontend");
-    expect(displayCommand).toContain(`my-better-t-app ${"\\"}\n  --frontend`);
+    expect(command).toContain("my-kubo-app --frontend");
+    expect(displayCommand).toContain(`my-kubo-app ${"\\"}\n  --frontend`);
     expect(displayCommand).toContain(`tanstack-router ${"\\"}\n  --backend`);
   });
 
