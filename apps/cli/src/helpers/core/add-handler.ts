@@ -11,8 +11,8 @@ import {
   processVitePlusConfig,
   processTemplateString,
   VirtualFileSystem,
-} from "@kubo/template-generator";
-import { writeTree } from "@kubo/template-generator/fs-writer";
+} from "@kubojs/template-generator";
+import { writeTree } from "@kubojs/template-generator/fs-writer";
 import { Result } from "better-result";
 import fs from "fs-extra";
 import pc from "picocolors";

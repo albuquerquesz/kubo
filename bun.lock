@@ -21,7 +21,7 @@
       },
     },
     "apps/cli": {
-      "name": "kubojs",
+      "name": "@kubojs/cli",
       "version": "3.36.3",
       "bin": {
         "kubojs": "dist/cli.mjs",
@@ -29,8 +29,8 @@
       "dependencies": {
         "@clack/core": "^1.4.1",
         "@clack/prompts": "^1.5.1",
-        "@kubo/template-generator": "workspace:*",
-        "@kubo/types": "workspace:*",
+        "@kubojs/template-generator": "workspace:*",
+        "@kubojs/types": "workspace:*",
         "@modelcontextprotocol/sdk": "1.29.0",
         "@trpc/server": "^11.17.0",
         "better-result": "^2.9.2",
@@ -67,9 +67,10 @@
         "@base-ui/utils": "^0.2.8",
         "@erquhart/convex-oss-stats": "catalog:",
         "@gsap/react": "^2.1.2",
-        "@kubo/backend": "workspace:*",
-        "@kubo/template-generator": "workspace:*",
-        "@kubo/types": "workspace:*",
+        "@kubojs/backend": "workspace:*",
+        "@kubojs/cli": "workspace:*",
+        "@kubojs/template-generator": "workspace:*",
+        "@kubojs/types": "workspace:*",
         "@number-flow/react": "^0.6.0",
         "@orama/orama": "^3.1.18",
         "@react-three/fiber": "^9.6.1",
@@ -94,7 +95,6 @@
         "fumadocs-mdx": "15.0.4",
         "fumadocs-ui": "npm:@fumadocs/base-ui@16.8.10",
         "gsap": "^3.15.0",
-        "kubojs": "workspace:*",
         "lucide-react": "^1.14.0",
         "motion": "^12.38.0",
         "next": "^16.2.6",
@@ -137,7 +137,7 @@
       },
     },
     "packages/backend": {
-      "name": "@kubo/backend",
+      "name": "@kubojs/backend",
       "version": "1.0.0",
       "dependencies": {
         "@convex-dev/crons": "^0.2.0",
@@ -150,10 +150,10 @@
       },
     },
     "packages/template-generator": {
-      "name": "@kubo/template-generator",
+      "name": "@kubojs/template-generator",
       "version": "3.36.3",
       "dependencies": {
-        "@kubo/types": "^3.36.3",
+        "@kubojs/types": "^3.36.3",
         "better-result": "^2.9.2",
         "handlebars": "^4.7.9",
         "memfs": "^4.57.2",
@@ -172,7 +172,7 @@
       },
     },
     "packages/types": {
-      "name": "@kubo/types",
+      "name": "@kubojs/types",
       "version": "3.36.3",
       "dependencies": {
         "zod": "^4.4.3",
@@ -436,11 +436,13 @@
 
     "@jsonjoy.com/util": ["@jsonjoy.com/util@1.9.0", "", { "dependencies": { "@jsonjoy.com/buffers": "^1.0.0", "@jsonjoy.com/codegen": "^1.0.0" }, "peerDependencies": { "tslib": "2" } }, "sha512-pLuQo+VPRnN8hfPqUTLTHk126wuYdXVxE6aDmjSeV4NCAgyxWbiOIeNJVtID3h1Vzpoi9m4jXezf73I6LgabgQ=="],
 
-    "@kubo/backend": ["@kubo/backend@workspace:packages/backend"],
+    "@kubojs/backend": ["@kubojs/backend@workspace:packages/backend"],
 
-    "@kubo/template-generator": ["@kubo/template-generator@workspace:packages/template-generator"],
+    "@kubojs/cli": ["@kubojs/cli@workspace:apps/cli"],
 
-    "@kubo/types": ["@kubo/types@workspace:packages/types"],
+    "@kubojs/template-generator": ["@kubojs/template-generator@workspace:packages/template-generator"],
+
+    "@kubojs/types": ["@kubojs/types@workspace:packages/types"],
 
     "@mdx-js/mdx": ["@mdx-js/mdx@3.1.1", "", { "dependencies": { "@types/estree": "^1.0.0", "@types/estree-jsx": "^1.0.0", "@types/hast": "^3.0.0", "@types/mdx": "^2.0.0", "acorn": "^8.0.0", "collapse-white-space": "^2.0.0", "devlop": "^1.0.0", "estree-util-is-identifier-name": "^3.0.0", "estree-util-scope": "^1.0.0", "estree-walker": "^3.0.0", "hast-util-to-jsx-runtime": "^2.0.0", "markdown-extensions": "^2.0.0", "recma-build-jsx": "^1.0.0", "recma-jsx": "^1.0.0", "recma-stringify": "^1.0.0", "rehype-recma": "^1.0.0", "remark-mdx": "^3.0.0", "remark-parse": "^11.0.0", "remark-rehype": "^11.0.0", "source-map": "^0.7.0", "unified": "^11.0.0", "unist-util-position-from-estree": "^2.0.0", "unist-util-stringify-position": "^4.0.0", "unist-util-visit": "^5.0.0", "vfile": "^6.0.0" } }, "sha512-f6ZO2ifpwAQIpzGWaBQT2TXxPv6z3RBzQKpVftEWN78Vl/YweF1uwussDx8ECAXVtr3Rs89fKyG9YlzUs9DyGQ=="],
 
@@ -1759,8 +1761,6 @@
     "keyv": ["keyv@4.5.4", "", { "dependencies": { "json-buffer": "3.0.1" } }, "sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw=="],
 
     "kind-of": ["kind-of@6.0.3", "", {}, "sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw=="],
-
-    "kubojs": ["kubojs@workspace:apps/cli"],
 
     "language-subtag-registry": ["language-subtag-registry@0.3.23", "", {}, "sha512-0K65Lea881pHotoGEa5gDlMxt3pctLi2RplBb7Ezh4rRdLEOtgi7n4EwK9lamnUCkKBqaeKRVebTq6BAxSkpXQ=="],
 

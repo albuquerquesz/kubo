@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { intro, log, outro } from "@clack/prompts";
-import { generateReproducibleCommand } from "@kubo/template-generator";
+import { generateReproducibleCommand } from "@kubojs/template-generator";
 import { Result, UnhandledException } from "better-result";
 import fs from "fs-extra";
 import pc from "picocolors";

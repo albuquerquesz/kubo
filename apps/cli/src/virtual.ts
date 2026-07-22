@@ -1,6 +1,6 @@
 /**
  * Virtual filesystem export for web preview
- * Re-exports from @kubo/template-generator for browser-compatible usage
+ * Re-exports from @kubojs/template-generator for browser-compatible usage
  */
 
 // Re-export everything from template-generator for web/programmatic usage
@@ -20,7 +20,7 @@ export {
   // Embedded templates for browser usage
   EMBEDDED_TEMPLATES,
   TEMPLATE_COUNT,
-} from "@kubo/template-generator";
+} from "@kubojs/template-generator";
 
 export { Result } from "better-result";
 
@@ -41,4 +41,4 @@ export type {
   WebDeploy,
   ServerDeploy,
   ProjectConfig,
-} from "@kubo/types";
+} from "@kubojs/types";

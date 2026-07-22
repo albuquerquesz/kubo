@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 
-import type { ProjectConfig } from "@kubo/types";
+import type { ProjectConfig } from "@kubojs/types";
 
 import { generateNxConfig } from "../../../packages/template-generator/src/processors/nx-generator";
 

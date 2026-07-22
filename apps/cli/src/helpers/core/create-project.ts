@@ -2,8 +2,8 @@ import os from "node:os";
 import path from "node:path";
 
 import { log } from "@clack/prompts";
-import { generate, EMBEDDED_TEMPLATES } from "@kubo/template-generator";
-import { writeTree } from "@kubo/template-generator/fs-writer";
+import { generate, EMBEDDED_TEMPLATES } from "@kubojs/template-generator";
+import { writeTree } from "@kubojs/template-generator/fs-writer";
 import { Result } from "better-result";
 import { $ } from "execa";
 import fs from "fs-extra";

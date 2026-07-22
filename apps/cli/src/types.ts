@@ -1,1 +1,1 @@
-export * from "@kubo/types";
+export * from "@kubojs/types";

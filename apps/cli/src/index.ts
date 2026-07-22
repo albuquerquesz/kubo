@@ -1,4 +1,4 @@
-import { getAllJsonSchemas } from "@kubo/types/json-schema";
+import { getAllJsonSchemas } from "@kubojs/types/json-schema";
 import { initTRPC } from "@trpc/server";
 import { Result } from "better-result";
 import { createCli, type TrpcCliMeta } from "trpc-cli";
@@ -376,7 +376,7 @@ export {
   generate,
   EMBEDDED_TEMPLATES,
   TEMPLATE_COUNT,
-} from "@kubo/template-generator";
+} from "@kubojs/template-generator";
 
 // Import for createVirtual
 import {
@@ -384,7 +384,7 @@ import {
   GeneratorError,
   type VirtualFileTree,
   EMBEDDED_TEMPLATES,
-} from "@kubo/template-generator";
+} from "@kubojs/template-generator";
 
 /**
  * Programmatic API to generate a project in-memory (virtual filesystem).
