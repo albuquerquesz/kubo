@@ -197,7 +197,7 @@ export default function HeroSection() {
           <div
             ref={stageClearL2Ref}
             data-hero-motion="stage-clear"
-            className="hidden border-rule border-t bg-background lg:block"
+            className="hidden bg-background lg:block"
             aria-hidden
           />
 
@@ -205,7 +205,7 @@ export default function HeroSection() {
           <div
             ref={stageClearLowerRef}
             data-hero-motion="stage-clear"
-            className="border-rule border-t bg-background lg:border-l"
+            className="bg-background lg:border-l"
           >
             <HeroRailLower scrollTargetId="product" />
           </div>
