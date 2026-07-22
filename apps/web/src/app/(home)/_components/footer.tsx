@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
-import FinalCtaListWave from "./final-cta-list-wave";
+import FinalCtaDotMatrix from "./final-cta-dot-matrix";
 
 const footerGroups = [
   {
@@ -36,7 +36,7 @@ const footerGroups = [
 export default function Footer() {
   return (
     <footer>
-      <FinalCtaListWave />
+      <FinalCtaDotMatrix />
 
       <nav aria-label="Footer navigation" className="grid border-rule sm:grid-cols-3">
         {footerGroups.map((group) => (
