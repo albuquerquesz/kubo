@@ -1,6 +1,13 @@
 import gradient from "gradient-string";
 
-import { renderAsciiTitle } from "./ascii-handler";
+export const TITLE_TEXT = `
+██╗  ██╗██╗   ██╗██████╗  ██████╗
+██║ ██╔╝██║   ██║██╔══██╗██╔═══██╗
+█████╔╝ ██║   ██║██████╔╝██║   ██║
+██╔═██╗ ██║   ██║██╔══██╗██║   ██║
+██║  ██╗╚██████╔╝██████╔╝╚██████╔╝
+╚═╝  ╚═╝ ╚═════╝ ╚═════╝  ╚═════╝
+`;
 
 const catppuccinTheme = {
   pink: "#F5C2E7",
@@ -18,14 +25,13 @@ const catppuccinTheme = {
 
 export const renderTitle = () => {
   const terminalWidth = process.stdout.columns || 80;
-  const title = renderAsciiTitle();
-  const titleLines = title.split("\n");
+  const titleLines = TITLE_TEXT.split("\n");
   const titleWidth = Math.max(...titleLines.map((line) => line.length));
 
   if (terminalWidth < titleWidth) {
-    const simplifiedTitle = `I dont know`;
+    const simplifiedTitle = `Kubo`;
     console.log(gradient(Object.values(catppuccinTheme)).multiline(simplifiedTitle));
   } else {
-    console.log(gradient(Object.values(catppuccinTheme)).multiline(title));
+    console.log(gradient(Object.values(catppuccinTheme)).multiline(TITLE_TEXT));
   }
 };
