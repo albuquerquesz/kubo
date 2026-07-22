@@ -98,11 +98,6 @@ jobs:
           cd apps/cli
           jq --arg v "${{ steps.version.outputs.version }}" '.version = $v | .dependencies["@kubo/types"] = $v | .dependencies["@kubo/template-generator"] = $v' package.json > tmp.json && mv tmp.json package.json
 
-      - name: Update create-bts alias package version
-        run: |
-          cd packages/create-bts
-          jq --arg v "${{ steps.version.outputs.version }}" '.version = $v | .dependencies["kubojs"] = $v' package.json > tmp.json && mv tmp.json package.json
-
       - name: Build CLI
         run: cd apps/cli && bun run build
         env:
@@ -110,12 +105,6 @@ jobs:
 
       - name: Publish CLI to NPM
         run: cd apps/cli && npm publish --access public --provenance --tag ${{ steps.version.outputs.tag }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          BTS_TELEMETRY: 0
-
-      - name: Publish create-bts to NPM
-        run: cd packages/create-bts && npm publish --access public --provenance --tag ${{ steps.version.outputs.tag }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           BTS_TELEMETRY: 0
@@ -142,7 +131,6 @@ jobs:
             | Package | Version | NPM Tag |
             |---------|---------|---------|
             | `kubojs` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
-            | `create-bts` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
             | `@kubo/types` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
             | `@kubo/template-generator` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
 
@@ -158,15 +146,10 @@ jobs:
             # Using exact version
             bunx kubojs@${{ steps.version.outputs.version }}
             npx kubojs@${{ steps.version.outputs.version }}
-
-            # Using the alias
-            bunx create-bts@pr${{ steps.version.outputs.pr }}
-            npx create-bts@pr${{ steps.version.outputs.pr }}
             ```
 
             ### NPM Links
             - [kubojs@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/kubojs/v/${{ steps.version.outputs.version }})
-            - [create-bts@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/create-bts/v/${{ steps.version.outputs.version }})
             - [@kubo/types@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/@kubo/types/v/${{ steps.version.outputs.version }})
             - [@kubo/template-generator@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/@kubo/template-generator/v/${{ steps.version.outputs.version }})
 

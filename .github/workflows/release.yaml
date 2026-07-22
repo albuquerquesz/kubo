@@ -93,12 +93,14 @@ jobs:
         if: steps.check-version.outputs.exists == 'false'
         run: cd packages/template-generator && bun run build
 
-      - name: Update CLI types and template-generator dependencies and version
+      - name: Update CLI version and workspace dependencies
         if: steps.check-version.outputs.exists == 'false'
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           cd apps/cli
-          jq --arg v "^$VERSION" '.dependencies["@kubo/types"] = $v | .dependencies["@kubo/template-generator"] = $v' package.json > tmp.json && mv tmp.json package.json
+          jq --arg v "$VERSION" --arg dep "^$VERSION" \
+            '.version = $v | .dependencies["@kubo/types"] = $dep | .dependencies["@kubo/template-generator"] = $dep' \
+            package.json > tmp.json && mv tmp.json package.json
 
       - name: Build CLI
         if: steps.check-version.outputs.exists == 'false'
@@ -106,13 +108,6 @@ jobs:
         env:
           BTS_TELEMETRY: 1
           CONVEX_INGEST_URL: ${{ secrets.CONVEX_INGEST_URL }}
-
-      - name: Update create-bts alias package version
-        if: steps.check-version.outputs.exists == 'false'
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          cd packages/create-bts
-          jq --arg v "$VERSION" --arg dep "^$VERSION" '.version = $v | .dependencies["kubojs"] = $dep' package.json > tmp.json && mv tmp.json package.json
 
       - name: Setup pnpm
         if: steps.check-version.outputs.exists == 'false'
@@ -142,12 +137,6 @@ jobs:
       - name: Publish CLI to NPM
         if: steps.check-version.outputs.exists == 'false'
         run: cd apps/cli && npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish create-bts alias to NPM
-        if: steps.check-version.outputs.exists == 'false'
-        run: cd packages/create-bts && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -184,7 +173,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Published Packages" >> $GITHUB_STEP_SUMMARY
           echo "- [kubojs@$VERSION](https://www.npmjs.com/package/kubojs/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
-          echo "- [create-bts@$VERSION](https://www.npmjs.com/package/create-bts/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
           echo "- [@kubo/types@$VERSION](https://www.npmjs.com/package/@kubo/types/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
           echo "- [@kubo/template-generator@$VERSION](https://www.npmjs.com/package/@kubo/template-generator/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
