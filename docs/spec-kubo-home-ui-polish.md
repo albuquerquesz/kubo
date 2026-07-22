@@ -237,7 +237,7 @@ Keep meaning; trim only if layout still fails after height fix.
 
 Do **not** change in this pass (unless already part of a separate product decision):
 
-- Package names: `kubojs`, `@kubo/*`
+- Package names: `kubojs`, `@kubojs/*`
 - CLI commands shown in docs/examples (`bun create better-t-stack@latest`) — product still generates via that CLI until a package rename ships
 - External URLs: GitHub org/repo, Discord, npm, `better-t-stack.dev`, R2 icon host
 - Content docs that describe the CLI package (`content/docs/...`) beyond pure display branding if they refer to the package name

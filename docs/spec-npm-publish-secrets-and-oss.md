@@ -13,16 +13,16 @@ Ready for operators (local + GitHub Actions). Does **not** change product code b
 Define a **safe, repeatable** way to:
 
 1. Create and store an npm **granular access token** (or OTP flow) for the account that owns the packages.
-2. Publish the public packages (`@kubo/types`, `@kubo/template-generator`, `kubojs`) to `registry.npmjs.org`.
+2. Publish the public packages (`@kubojs/types`, `@kubojs/template-generator`, `@kubojs/cli`) to `registry.npmjs.org`.
 3. Keep all credentials **out of the git history**, PRs, logs, and the open-source tree at `github.com/albuquerquesz/kubo`.
 
 **Scope of packages (publishable):**
 
-| Package            | Path                          | Registry name              |
-| ------------------ | ----------------------------- | -------------------------- |
-| Types              | `packages/types`              | `@kubo/types`              |
-| Template generator | `packages/template-generator` | `@kubo/template-generator` |
-| CLI                | `apps/cli`                    | `kubojs`                   |
+| Package            | Path                          | Registry name                 |
+| ------------------ | ----------------------------- | ----------------------------- |
+| Types              | `packages/types`              | `@kubojs/types`               |
+| Template generator | `packages/template-generator` | `@kubojs/template-generator`  |
+| CLI                | `apps/cli`                    | `@kubojs/cli` (bin: `kubojs`) |
 
 ## Private monorepo root name is `kubo` — **not** published.
 
@@ -51,7 +51,7 @@ Define a **safe, repeatable** way to:
 3. **Always** use one of:
    - Local: token in **`~/.npmrc`** (home directory, outside the repo), **or** interactive `npm login` + OTP
    - CI: GitHub Actions secret **`NPM_TOKEN`** (or npm Trusted Publishing — see below)
-4. Prefer a **granular** token with **write only on the packages you own** (`kubojs`, `@kubo/*`), short expiry when possible.
+4. Prefer a **granular** token with **write only on the packages you own** (`@kubojs/*`), short expiry when possible.
 5. Rotate the token if it might have been exposed.
 
 ---
@@ -61,7 +61,7 @@ Define a **safe, repeatable** way to:
 1. Log in at [https://www.npmjs.com/](https://www.npmjs.com/) as the publish account (e.g. `albuquerquesz`).
 2. Avatar → **Access Tokens** → **Generate New Token** → **Granular Access Token**.
 3. Configure:
-   - **Packages:** Read and write on `kubojs`, `@kubo/types`, `@kubo/template-generator` (or “All packages” only if you accept wider risk).
+   - **Packages:** Read and write on `@kubojs/cli`, `@kubojs/types`, `@kubojs/template-generator` (or org `@kubojs` / “All packages”).
    - **Organizations:** none unless required.
    - **Expiration:** set a finite date (e.g. 90 days); calendar a rotation.
    - **2FA / publish:** enable whatever option allows **automation publish** without interactive OTP (wording varies: “Bypass 2FA for automation”, “Publish”, etc.).  
@@ -127,7 +127,7 @@ Ensure `.env`, `.env*.local`, and any file that might hold a real token stay in 
 
 ### B.4 Manual publish order (workspace packages)
 
-Publish order matches the release workflow: **types → template-generator → CLI (`kubojs`)**.
+Publish order matches the release workflow: **types → template-generator → CLI (`@kubojs/cli`)**.
 
 From monorepo root (authenticated):
 
@@ -245,7 +245,7 @@ npm supports **Trusted Publishing** (OIDC from GitHub Actions) so CI does not ne
 | `npm publish --dry-run` in `apps/cli` succeeds                            | tarball ok                    |
 | GitHub secret `NPM_TOKEN` exists for maintainers                          | set in UI                     |
 | Public Actions logs show no token string                                  | spot-check latest release run |
-| First real publish: `npm view kubojs version` matches expected            | after publish                 |
+| First real publish: `npm view @kubojs/cli version` matches expected       | after publish                 |
 
 ---
 
@@ -264,7 +264,7 @@ npm supports **Trusted Publishing** (OIDC from GitHub Actions) so CI does not ne
 **Local, one-off (you own the laptop):**
 
 ```text
-npmjs.com → Granular token (write on kubojs + @kubo/*)
+npmjs.com → Granular token (write on @kubojs/*)
   → npm config set //registry.npmjs.org/:_authToken=…
   → npm whoami
   → build + npm publish --access public (from package dirs)
