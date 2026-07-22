@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubo/types";
+import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";

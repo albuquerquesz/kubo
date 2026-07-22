@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubo/types";
+import type { ProjectConfig } from "@kubojs/types";
 
 const FRONTEND_GENERATED_PATTERNS = {
   "tanstack-router": ["apps/web/dist/**", "apps/web/.tanstack/**", "apps/web/src/routeTree.gen.ts"],

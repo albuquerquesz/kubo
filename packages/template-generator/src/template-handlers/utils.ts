@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubo/types";
+import type { ProjectConfig } from "@kubojs/types";
 
 import { processTemplateString, transformFilename, isBinaryFile } from "../core/template-processor";
 import type { VirtualFileSystem } from "../core/virtual-fs";

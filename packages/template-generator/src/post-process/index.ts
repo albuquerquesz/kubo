@@ -3,7 +3,7 @@
  * Modifies virtual files after template generation
  */
 
-import type { ProjectConfig } from "@kubo/types";
+import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { processCatalogs } from "./catalogs";

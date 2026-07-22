@@ -3,7 +3,7 @@
  * Replaces the previous Handlebars template with type-safe TypeScript generation
  */
 
-import type { ProjectConfig } from "@kubo/types";
+import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { getDbScriptSupport, type DbScriptSupport } from "../utils/db-scripts";

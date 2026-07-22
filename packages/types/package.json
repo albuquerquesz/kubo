@@ -1,5 +1,5 @@
 {
-  "name": "@kubo/types",
+  "name": "@kubojs/types",
   "version": "3.36.3",
   "description": "TypeScript types and schemas for kubojs CLI",
   "keywords": [

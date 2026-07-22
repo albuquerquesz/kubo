@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubo/types";
+import type { ProjectConfig } from "@kubojs/types";
 import { Node, Project, SyntaxKind } from "ts-morph";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";

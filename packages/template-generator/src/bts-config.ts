@@ -1,4 +1,4 @@
-import type { BetterTStackConfig, ProjectConfig } from "@kubo/types";
+import type { BetterTStackConfig, ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "./core/virtual-fs";
 

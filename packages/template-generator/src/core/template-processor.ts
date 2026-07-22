@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubo/types";
+import type { ProjectConfig } from "@kubojs/types";
 import Handlebars from "handlebars";
 import isBinaryPath from "is-binary-path";
 

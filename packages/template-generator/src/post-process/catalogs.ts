@@ -3,7 +3,7 @@
  * Deduplicates dependencies across packages using pnpm/bun catalogs
  */
 
-import type { ProjectConfig } from "@kubo/types";
+import type { ProjectConfig } from "@kubojs/types";
 import yaml from "yaml";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";

@@ -3,7 +3,7 @@
  * Builds vercel.json programmatically (Vercel Services: web + server in one project)
  */
 
-import type { ProjectConfig } from "@kubo/types";
+import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 

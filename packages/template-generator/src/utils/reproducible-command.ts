@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubo/types";
+import type { ProjectConfig } from "@kubojs/types";
 
 function normalizeMultiValues(values: string[] | undefined): string[] {
   if (!values || values.length === 0) return [];
