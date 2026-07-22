@@ -5,7 +5,6 @@ import { confirm, select, text } from "@clack/prompts";
 import { $ } from "bun";
 
 const CLI_PACKAGE_JSON_PATH = join(process.cwd(), "apps/cli/package.json");
-const ALIAS_PACKAGE_JSON_PATH = join(process.cwd(), "packages/create-bts/package.json");
 const TYPES_PACKAGE_JSON_PATH = join(process.cwd(), "packages/types/package.json");
 const TEMPLATE_GENERATOR_PACKAGE_JSON_PATH = join(
   process.cwd(),
@@ -107,12 +106,6 @@ async function main(): Promise<void> {
   packageJson.version = newVersion;
   await writeFile(CLI_PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
 
-  // Update alias package version
-  const aliasPackageJson = JSON.parse(await readFile(ALIAS_PACKAGE_JSON_PATH, "utf-8"));
-  aliasPackageJson.version = newVersion;
-  aliasPackageJson.dependencies["kubojs"] = `^${newVersion}`;
-  await writeFile(ALIAS_PACKAGE_JSON_PATH, `${JSON.stringify(aliasPackageJson, null, 2)}\n`);
-
   // Update types package version
   const typesPackageJson = JSON.parse(await readFile(TYPES_PACKAGE_JSON_PATH, "utf-8"));
   typesPackageJson.version = newVersion;
@@ -138,7 +131,7 @@ async function main(): Promise<void> {
 
   await $`bun install`;
   await $`bun run build:cli`;
-  await $`git add apps/cli/package.json packages/create-bts/package.json packages/types/package.json packages/template-generator/package.json plugin/.claude-plugin/plugin.json plugin/.codex-plugin/plugin.json bun.lock`;
+  await $`git add apps/cli/package.json packages/types/package.json packages/template-generator/package.json plugin/.claude-plugin/plugin.json plugin/.codex-plugin/plugin.json bun.lock`;
   await $`git commit -m "chore(release): ${newVersion}"`;
 
   // Push the release branch
@@ -154,7 +147,6 @@ This PR bumps the version to \`${newVersion}\`.
 
 ### Changes
 - Updated \`kubojs\` to v${newVersion}
-- Updated \`create-bts\` to v${newVersion}
 - Updated \`@kubo/types\` to v${newVersion}
 - Updated \`@kubo/template-generator\` to v${newVersion}
 - Updated the agent plugin manifests (Claude Code + Codex) to v${newVersion}

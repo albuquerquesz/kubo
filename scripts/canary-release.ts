@@ -6,7 +6,6 @@ import { $ } from "bun";
 import semver from "semver";
 
 const CLI_PACKAGE_JSON_PATH = join(process.cwd(), "apps/cli/package.json");
-const ALIAS_PACKAGE_JSON_PATH = join(process.cwd(), "packages/create-bts/package.json");
 const TYPES_PACKAGE_JSON_PATH = join(process.cwd(), "packages/types/package.json");
 const TEMPLATE_GENERATOR_PACKAGE_JSON_PATH = join(
   process.cwd(),
@@ -153,8 +152,6 @@ async function main(): Promise<void> {
   }
 
   const originalPackageJsonString = await readFile(CLI_PACKAGE_JSON_PATH, "utf-8");
-  const aliasPackageJson = JSON.parse(await readFile(ALIAS_PACKAGE_JSON_PATH, "utf-8"));
-  const originalAliasPackageJsonString = await readFile(ALIAS_PACKAGE_JSON_PATH, "utf-8");
   const typesPackageJson = JSON.parse(await readFile(TYPES_PACKAGE_JSON_PATH, "utf-8"));
   const originalTypesPackageJsonString = await readFile(TYPES_PACKAGE_JSON_PATH, "utf-8");
   const templateGeneratorPackageJson = JSON.parse(
@@ -227,11 +224,6 @@ async function main(): Promise<void> {
     packageJson.dependencies["@kubo/template-generator"] = canaryVersion;
     await writeFile(CLI_PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
 
-    // Update alias package version
-    aliasPackageJson.version = canaryVersion;
-    aliasPackageJson.dependencies["kubojs"] = canaryVersion;
-    await writeFile(ALIAS_PACKAGE_JSON_PATH, `${JSON.stringify(aliasPackageJson, null, 2)}\n`);
-
     const buildSpin = spinner();
     buildSpin.start("Building CLI...");
     try {
@@ -243,12 +235,9 @@ async function main(): Promise<void> {
     }
 
     const pubSpin = spinner();
-    pubSpin.start(
-      `Publishing ${packageName}@${canaryVersion} and create-bts@${canaryVersion} (canary)...`,
-    );
+    pubSpin.start(`Publishing ${packageName}@${canaryVersion} (canary)...`);
     try {
       await $`cd apps/cli && bun publish --access public --tag canary`;
-      await $`cd packages/create-bts && bun publish --access public --tag canary`;
       pubSpin.stop("Publish complete for all packages");
     } catch (err) {
       pubSpin.stop("Publish failed");
@@ -271,7 +260,6 @@ async function main(): Promise<void> {
     }
 
     await writeFile(CLI_PACKAGE_JSON_PATH, originalPackageJsonString);
-    await writeFile(ALIAS_PACKAGE_JSON_PATH, originalAliasPackageJsonString);
     await writeFile(TYPES_PACKAGE_JSON_PATH, originalTypesPackageJsonString);
     await writeFile(
       TEMPLATE_GENERATOR_PACKAGE_JSON_PATH,
@@ -281,7 +269,6 @@ async function main(): Promise<void> {
 
     console.log(`✅ Published canary v${canaryVersion} for all packages`);
     console.log(`📦 NPM: https://www.npmjs.com/package/${packageName}/v/${canaryVersion}`);
-    console.log(`📦 NPM: https://www.npmjs.com/package/create-bts/v/${canaryVersion}`);
     console.log(`📦 NPM: https://www.npmjs.com/package/@kubo/types/v/${canaryVersion}`);
     console.log(
       `📦 NPM: https://www.npmjs.com/package/@kubo/template-generator/v/${canaryVersion}`,
@@ -289,7 +276,6 @@ async function main(): Promise<void> {
   } finally {
     if (!restored) {
       await writeFile(CLI_PACKAGE_JSON_PATH, originalPackageJsonString);
-      await writeFile(ALIAS_PACKAGE_JSON_PATH, originalAliasPackageJsonString);
       await writeFile(TYPES_PACKAGE_JSON_PATH, originalTypesPackageJsonString);
       await writeFile(
         TEMPLATE_GENERATOR_PACKAGE_JSON_PATH,
