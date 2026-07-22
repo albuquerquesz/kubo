@@ -1,6 +1,8 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
+import FinalCtaListWave from "./final-cta-list-wave";
+
 const footerGroups = [
   {
     label: "Build",
@@ -34,40 +36,7 @@ const footerGroups = [
 export default function Footer() {
   return (
     <footer>
-      <section
-        aria-labelledby="final-cta-title"
-        className="grid border-rule border-b lg:grid-cols-12"
-      >
-        <div className="ui-rule-grid min-h-[32rem] p-6 sm:p-8 lg:col-span-8 lg:min-h-[40rem] lg:border-r lg:p-12">
-          <div className="flex h-full flex-col justify-end">
-            <h2
-              id="final-cta-title"
-              className="ui-display max-w-5xl text-[clamp(3.4rem,7.5vw,8rem)] leading-[0.84] text-foreground"
-            >
-              Stop assembling.
-              <br />
-              <span>Start shipping.</span>
-            </h2>
-          </div>
-        </div>
-
-        <div className="grid lg:col-span-4">
-          <Link
-            href="/new"
-            className="group flex min-h-72 flex-col justify-end bg-primary p-6 text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:p-8 lg:min-h-80 lg:p-10"
-          >
-            <span className="flex items-end justify-between gap-6 text-3xl font-semibold tracking-tight">
-              Build your stack
-              <ArrowUpRight className="size-6 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1" />
-            </span>
-          </Link>
-          <div className="flex min-h-52 flex-col justify-center border-rule border-t bg-card p-6 sm:p-8 lg:min-h-56 lg:p-10">
-            <code className="break-all font-mono text-sm leading-relaxed">
-              bun create kubojs@latest
-            </code>
-          </div>
-        </div>
-      </section>
+      <FinalCtaListWave />
 
       <nav aria-label="Footer navigation" className="grid border-rule sm:grid-cols-3">
         {footerGroups.map((group) => (
