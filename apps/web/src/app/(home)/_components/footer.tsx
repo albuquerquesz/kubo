@@ -1,5 +1,4 @@
 import { ArrowUpRight } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 const footerGroups = [
@@ -70,63 +69,35 @@ export default function Footer() {
         </div>
       </section>
 
-      <div className="grid lg:grid-cols-12">
-        <div className="border-rule p-6 sm:p-8 lg:col-span-3 lg:min-h-[22rem] lg:border-r lg:p-12 lg:py-20">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-            aria-label="Kubo home"
+      <nav aria-label="Footer navigation" className="grid border-rule sm:grid-cols-3">
+        {footerGroups.map((group) => (
+          <div
+            key={group.label}
+            className="border-rule p-6 not-last:border-b sm:p-8 sm:not-last:border-r sm:not-last:border-b-0 lg:p-12 lg:py-20"
           >
-            <span aria-hidden className="relative size-14 shrink-0 sm:size-16">
-              <Image
-                src="/assets/kubo-mark.png"
-                alt=""
-                width={64}
-                height={57}
-                className="size-full object-contain object-center"
-                priority
-              />
-            </span>
-            <span className="text-lg font-semibold leading-none tracking-tight">Kubo</span>
-          </Link>
-          <p className="mt-8 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            A source-first generator for end-to-end TypeScript projects.
-          </p>
-        </div>
+            <p className="ui-kicker text-primary">{group.label}</p>
+            <ul className="mt-8 space-y-4">
+              {group.links.map((link) => {
+                const isExternal = link.href.startsWith("http");
 
-        <nav
-          aria-label="Footer navigation"
-          className="grid border-rule sm:grid-cols-3 lg:col-span-9"
-        >
-          {footerGroups.map((group) => (
-            <div
-              key={group.label}
-              className="border-rule p-6 not-last:border-b sm:p-8 sm:not-last:border-r sm:not-last:border-b-0 lg:p-12 lg:py-20"
-            >
-              <p className="ui-kicker text-primary">{group.label}</p>
-              <ul className="mt-8 space-y-4">
-                {group.links.map((link) => {
-                  const isExternal = link.href.startsWith("http");
-
-                  return (
-                    <li key={link.href}>
-                      <Link
-                        href={link.href}
-                        target={isExternal ? "_blank" : undefined}
-                        rel={isExternal ? "noreferrer" : undefined}
-                        className="group flex items-center justify-between gap-4 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                      >
-                        {link.label}
-                        <ArrowUpRight className="size-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
-        </nav>
-      </div>
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      target={isExternal ? "_blank" : undefined}
+                      rel={isExternal ? "noreferrer" : undefined}
+                      className="group flex items-center justify-between gap-4 text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                    >
+                      {link.label}
+                      <ArrowUpRight className="size-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </nav>
 
       <div className="grid border-rule border-t sm:grid-cols-2">
         <p className="ui-kicker flex min-h-16 items-center px-5 text-muted-foreground sm:px-8">
