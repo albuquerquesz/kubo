@@ -68,10 +68,6 @@ const TECH_HREFS: Record<string, string> = {
   ultracite: "https://www.ultracite.ai",
 };
 
-/**
- * Categories shown in the ecosystem grid (stack-facing choices).
- * Skips git/install/examples and pure “none” scaffolding flags.
- */
 const SHOW_CATEGORIES = [
   "webFrontend",
   "nativeFrontend",
@@ -89,24 +85,19 @@ const SHOW_CATEGORIES = [
   "addons",
 ] as const;
 
-/** CLI ids that only restate another product already listed. */
 const SKIP_IDS = new Set([
   "none",
-  // Fullstack self-* backends restate the frontend product
   "self-next",
   "self-tanstack-start",
   "self-nuxt",
   "self-svelte",
   "self-astro",
-  // Managed variants that reuse base product logos
   "prisma-postgres",
   "mongodb-atlas",
-  // Extra Expo styling modes — one Expo tile is enough
   "native-uniwind",
   "native-unistyles",
 ]);
 
-/** Extra first-class BR integrations (icons local / optional CDN). */
 const BR_INTEGRATIONS: EcosystemItem[] = [
   {
     id: "abacatepay",
@@ -128,6 +119,10 @@ const BR_INTEGRATIONS: EcosystemItem[] = [
   },
 ];
 
+const ROW_COUNT = 4;
+/** Duplicates per track so short rows still fill the viewport for a seamless loop. */
+const TRACK_COPIES = 2;
+
 function buildEcosystem(): EcosystemItem[] {
   const seenIds = new Set<string>();
   const seenNames = new Set<string>();
@@ -137,7 +132,6 @@ function buildEcosystem(): EcosystemItem[] {
     for (const option of TECH_OPTIONS[category]) {
       if (SKIP_IDS.has(option.id) || seenIds.has(option.id)) continue;
       if (!option.icon) continue;
-      // Collapse Expo + Bare → Expo; normalize case for id-level dedupe (Bun vs bun)
       const name = option.id === "native-bare" ? "Expo" : option.name;
       const nameKey = name.toLowerCase();
       if (seenNames.has(nameKey)) continue;
@@ -158,7 +152,6 @@ function buildEcosystem(): EcosystemItem[] {
     }
   }
 
-  // BR stack options may have empty icons in TECH_OPTIONS — append curated assets.
   for (const br of BR_INTEGRATIONS) {
     const key = br.name.toLowerCase();
     if (seenNames.has(key) || seenIds.has(br.id)) continue;
@@ -170,7 +163,23 @@ function buildEcosystem(): EcosystemItem[] {
   return items;
 }
 
+/** Split into 4 balanced rows (4×N “grid” of marquees). */
+function splitIntoRows(items: EcosystemItem[], rows: number): EcosystemItem[][] {
+  if (items.length === 0) return Array.from({ length: rows }, () => []);
+  const size = Math.ceil(items.length / rows);
+  return Array.from({ length: rows }, (_, i) => items.slice(i * size, (i + 1) * size));
+}
+
+/**
+ * Row 0,2 → right (content drifts right).
+ * Row 1,3 → left (content drifts left).
+ */
+function rowDirection(index: number): "right" | "left" {
+  return index % 2 === 0 ? "right" : "left";
+}
+
 const ecosystem = buildEcosystem();
+const rows = splitIntoRows(ecosystem, ROW_COUNT);
 
 function TechIcon({ item }: { item: EcosystemItem }) {
   return (
@@ -182,6 +191,85 @@ function TechIcon({ item }: { item: EcosystemItem }) {
       className={cn("size-4 shrink-0 object-contain", item.className)}
       aria-hidden
     />
+  );
+}
+
+function TechCell({ item, interactive }: { item: EcosystemItem; interactive: boolean }) {
+  const body = (
+    <>
+      <span className="flex min-w-0 items-center gap-2.5">
+        <TechIcon item={item} />
+        <span className="truncate font-semibold">{item.name}</span>
+      </span>
+      <ArrowUpRight
+        className="size-3.5 shrink-0 text-muted-foreground transition-colors duration-150 ease-out group-hover:text-foreground motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1"
+        aria-hidden
+      />
+    </>
+  );
+
+  if (!interactive) {
+    return (
+      <span className="tech-marquee__cell group" aria-hidden="true">
+        {body}
+      </span>
+    );
+  }
+
+  return (
+    <Link
+      href={item.href}
+      target="_blank"
+      rel="noreferrer"
+      className="tech-marquee__cell group focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+    >
+      {body}
+    </Link>
+  );
+}
+
+function TechMarqueeRow({
+  items,
+  direction,
+  rowIndex,
+}: {
+  items: EcosystemItem[];
+  direction: "left" | "right";
+  rowIndex: number;
+}) {
+  if (items.length === 0) return null;
+
+  // Ensure enough cells for a continuous strip (at least ~8 visual slots).
+  const sequence =
+    items.length >= 4 ? items : Array.from({ length: 8 }, (_, i) => items[i % items.length]!);
+
+  return (
+    <div
+      className={cn(
+        "tech-marquee__row",
+        direction === "left" ? "tech-marquee__row--left" : "tech-marquee__row--right",
+      )}
+      data-tech-marquee-row={rowIndex}
+      data-direction={direction}
+    >
+      <div className="tech-marquee__track">
+        {Array.from({ length: TRACK_COPIES }, (_, copyIndex) => (
+          <div
+            key={copyIndex}
+            className="tech-marquee__sequence"
+            aria-hidden={copyIndex > 0 ? true : undefined}
+          >
+            {sequence.map((item, itemIndex) => (
+              <TechCell
+                key={`${copyIndex}-${item.id}-${itemIndex}`}
+                item={item}
+                interactive={copyIndex === 0}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -201,28 +289,18 @@ export default function SponsorsSection() {
           </p>
         </div>
 
-        {/*
-          Uniform 1px grid: outer edges come from the section/column; each cell draws
-          right + bottom so N items stay correct without nth-child border hacks.
-        */}
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:col-span-8 lg:grid-cols-4">
-          {ecosystem.map((item) => (
-            <Link
-              key={item.id}
-              href={item.href}
-              target="_blank"
-              rel="noreferrer"
-              className="group flex min-h-24 items-center justify-between border-rule border-b border-r p-5 transition-colors duration-150 ease-out hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
-            >
-              <span className="flex min-w-0 items-center gap-2.5">
-                <TechIcon item={item} />
-                <span className="truncate font-semibold">{item.name}</span>
-              </span>
-              <ArrowUpRight
-                className="size-3.5 shrink-0 text-muted-foreground transition-colors duration-150 ease-out group-hover:text-foreground motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1"
-                aria-hidden
-              />
-            </Link>
+        <div
+          className="tech-marquee lg:col-span-8"
+          aria-label="Supported technologies"
+          data-tech-marquee
+        >
+          {rows.map((rowItems, index) => (
+            <TechMarqueeRow
+              key={index}
+              items={rowItems}
+              direction={rowDirection(index)}
+              rowIndex={index}
+            />
           ))}
         </div>
       </div>
