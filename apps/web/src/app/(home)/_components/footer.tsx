@@ -104,15 +104,6 @@ export default function Footer() {
           © {new Date().getFullYear()} Kubo
         </p>
       </div>
-
-      <div className="overflow-hidden border-rule border-t px-5 py-12 sm:px-8 sm:py-14 lg:py-16">
-        <p
-          aria-hidden
-          className="ui-display text-center whitespace-nowrap text-[clamp(4rem,12.7vw,12rem)] leading-[0.75] text-foreground"
-        >
-          KUBO_
-        </p>
-      </div>
     </footer>
   );
 }
