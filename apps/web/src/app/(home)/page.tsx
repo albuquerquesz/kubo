@@ -3,7 +3,7 @@ export const dynamic = "force-static";
 import { api } from "@kubojs/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 
-import CommandSection from "./_components/command-section";
+import CustomStackPanel from "./_components/custom-stack-panel";
 import Footer from "./_components/footer";
 import HeroSection from "./_components/hero-section";
 import LogoMarquee from "./_components/logo-marquee";
@@ -27,8 +27,8 @@ export default async function HomePage() {
     <main className="ui-frame min-h-svh">
       <HeroSection />
       <LogoMarquee />
+      <CustomStackPanel />
       <SponsorsSection />
-      <CommandSection />
       <Testimonials tweets={tweets} videos={videos} />
       <Footer />
     </main>
