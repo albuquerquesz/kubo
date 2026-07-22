@@ -13,8 +13,8 @@ const distPath = path.dirname(__filename);
 export const PKG_ROOT = path.join(distPath, "../");
 
 export const DEFAULT_CONFIG_BASE = {
-  projectName: "my-better-t-app",
-  relativePath: "my-better-t-app",
+  projectName: "my-kubo-app",
+  relativePath: "my-kubo-app",
   frontend: ["tanstack-router"],
   database: "sqlite",
   orm: "drizzle",

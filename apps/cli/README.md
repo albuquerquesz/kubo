@@ -259,7 +259,7 @@ npx kubojs --frontend none --backend hono --api trpc --database none --addons no
 The created project follows a clean monorepo structure:
 
 ```
-my-better-t-app/
+my-kubo-app/
 ├── apps/
 │   ├── web/          # Frontend application
 │   ├── server/       # Backend API
