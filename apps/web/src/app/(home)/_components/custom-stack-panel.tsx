@@ -37,7 +37,7 @@ export default function CustomStackPanel({
           title: "Construa com o Kubo.",
           description:
             "Consulte guias práticos para entender cada camada, configurar seu projeto e colocá-lo em produção.",
-          cta: "Leia a documentação",
+          cta: "Ler documentação",
           href: "/docs",
           imageAlt: "Exemplo de código gerado pelo Kubo",
         }
@@ -63,7 +63,7 @@ export default function CustomStackPanel({
       )}
     >
       <div className="border-rule border-b px-4 py-6 sm:px-6 sm:py-7 lg:flex lg:min-h-[6.5rem] lg:items-center lg:justify-between lg:px-6 lg:py-6">
-        <h2 id={titleId} className="ui-display text-[clamp(1.5rem,3vw,2.25rem)] leading-[0.95]">
+        <h2 id={titleId} className="ui-display text-[clamp(1.75rem,3.5vw,2.75rem)] leading-[0.95]">
           {content.title}
         </h2>
         <Link
@@ -98,7 +98,7 @@ export default function CustomStackPanel({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 border-rule border-t px-4 py-4 sm:px-6 lg:px-6">
+      <div className="flex flex-wrap gap-2 px-4 py-4 sm:px-6 lg:px-6">
         {stackFeatures.map((feature) => (
           <span
             key={feature}
