@@ -27,11 +27,11 @@ export default function DeploymentSection() {
   return (
     <section
       aria-labelledby="deployment-title"
-      className="deployment-section border-rule border-t bg-background"
+      className="deployment-section bg-primary text-primary-foreground"
     >
       {/* Intro */}
       <div className="deployment-intro">
-        <p className="ui-kicker text-muted-foreground">
+        <p className="ui-kicker text-primary-foreground/72">
           Deployments de IA projetados para privacidade.
         </p>
 
@@ -41,21 +41,23 @@ export default function DeploymentSection() {
           <IconMountain className="deployment-icon" />
         </div>
 
-        <h2 id="deployment-title" className="ui-display text-foreground">
+        <h2 id="deployment-title" className="ui-display text-primary-foreground">
           Implante IA de fronteira no seu ambiente, ou consuma como servio ou de um de nossos
           parceiros de nuvem.
         </h2>
       </div>
 
       {/* Cards grid */}
-      <div className="deployment-grid">
+      <div className="deployment-grid border-primary-foreground/14">
         {deploymentCards.map((card) => (
-          <article key={card.title} className="deployment-card">
+          <article key={card.title} className="deployment-card border-primary-foreground/14">
             <div className="deployment-card__header">
               <card.icon aria-hidden className="deployment-card__icon" />
               <h3 className="deployment-card__title">{card.title}</h3>
             </div>
-            <p className="deployment-card__description">{card.description}</p>
+            <p className="deployment-card__description text-primary-foreground/72">
+              {card.description}
+            </p>
           </article>
         ))}
       </div>
