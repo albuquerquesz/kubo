@@ -59,7 +59,7 @@ export default function HeroDisplayTitle({
   );
 
   return (
-    <div ref={rootRef} className="relative max-w-5xl min-[1440px]:max-w-none">
+    <div ref={rootRef} className="relative max-w-5xl lg:max-w-none">
       <h1 className="sr-only">{title}</h1>
       <p
         ref={titleRef}
