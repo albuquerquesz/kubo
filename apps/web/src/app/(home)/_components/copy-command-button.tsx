@@ -3,6 +3,9 @@
 import { Check, Copy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
 type CopyCommandButtonProps = {
   command: string;
   className?: string;
@@ -55,10 +58,11 @@ export default function CopyCommandButton({
     <button
       type="button"
       onClick={copyCommand}
-      className={
-        className ??
-        "flex h-11 min-w-11 shrink-0 items-center justify-center rounded-[8px] border border-primary bg-primary px-0 text-primary-foreground transition-colors duration-150 ease-out hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:px-3"
-      }
+      className={cn(
+        buttonVariants({ variant: "cta" }),
+        "h-11 min-w-11 rounded-[8px] px-0 sm:px-3",
+        className,
+      )}
       aria-label={copied ? "Comando copiado" : "Copiar comando"}
     >
       <span className="sr-only" aria-live="polite">

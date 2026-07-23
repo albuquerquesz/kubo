@@ -1,6 +1,9 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
 import DotMatrixBackdrop from "./dot-matrix-backdrop";
 
 /** Final conversion CTA; its canvas backdrop is purely decorative. */
@@ -25,12 +28,16 @@ export default function FinalCtaDotMatrix() {
         <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
           <Link
             href="/new"
-            className="group inline-flex min-h-12 items-center justify-center gap-2 bg-primary px-5 py-3 text-[0.9375rem] font-semibold tracking-[-0.02em] text-primary-foreground no-underline transition-colors duration-150 ease-out hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+            className={cn(
+              buttonVariants({ variant: "cta" }),
+              "min-h-12 px-5 py-3 text-[0.9375rem] no-underline",
+            )}
           >
             Monte sua stack
             <ArrowUpRight
               aria-hidden
-              className="size-4 shrink-0 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:translate-x-0.5"
+              data-icon="inline-end"
+              className="size-4 shrink-0 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
             />
           </Link>
           <code className="select-text break-all font-mono text-[0.8125rem] leading-6 text-[#f5f5f5]/55">

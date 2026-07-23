@@ -2,6 +2,9 @@ import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
 const stackFeatures = [
   "FRONTEND + BACKEND",
   "CONFIGURAÇÃO DE DATABASE",
@@ -25,10 +28,17 @@ export default function CustomStackPanel() {
         </h2>
         <Link
           href="/new"
-          className="mt-5 inline-flex min-h-12 items-center gap-3 rounded-md bg-muted px-4 py-3 text-sm font-medium text-foreground transition-colors duration-150 ease-out hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring lg:mt-0"
+          className={cn(
+            buttonVariants({ variant: "cta" }),
+            "mt-5 min-h-12 px-4 py-3 text-sm lg:mt-0",
+          )}
         >
           Monte sua stack
-          <ArrowUpRight aria-hidden className="size-4" />
+          <ArrowUpRight
+            aria-hidden
+            data-icon="inline-end"
+            className="size-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
+          />
         </Link>
       </div>
 

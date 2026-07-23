@@ -216,10 +216,16 @@ function MobileNavigation() {
             <Link
               href="/new"
               onClick={closeNavigation}
-              className="flex min-h-16 items-center justify-between border-rule border-b bg-primary px-5 font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+              className={cn(
+                buttonVariants({ variant: "cta" }),
+                "min-h-16 w-full justify-between rounded-none border-0 border-rule border-b px-5",
+              )}
             >
               Monte sua stack
-              <ArrowUpRight />
+              <ArrowUpRight
+                data-icon="inline-end"
+                className="motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
+              />
             </Link>
 
             <div className="grid gap-px bg-rule p-px sm:grid-cols-2">
@@ -268,13 +274,16 @@ export function SiteHeader() {
         <Link
           href="/new"
           className={cn(
-            buttonVariants({ size: "lg" }),
-            "hidden min-w-36 border-0 px-4 text-base font-semibold sm:inline-flex sm:px-5",
+            buttonVariants({ variant: "cta", size: "lg" }),
+            "hidden min-w-36 border-0 px-4 text-base sm:inline-flex sm:px-5",
             headerRowClass,
           )}
         >
           Monte uma stack
-          <ArrowUpRight data-icon="inline-end" className="size-5" />
+          <ArrowUpRight
+            data-icon="inline-end"
+            className="size-5 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
+          />
         </Link>
         <MobileNavigation />
       </div>
