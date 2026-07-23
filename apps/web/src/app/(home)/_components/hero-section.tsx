@@ -1,16 +1,9 @@
 "use client";
 
-import { ArrowDown, ArrowUpRight } from "lucide-react";
-import Link from "next/link";
+import { ArrowDown } from "lucide-react";
 import { useCallback, useState } from "react";
 
-import CopyCommandButton from "@/app/(home)/_components/copy-command-button";
-import { buttonVariants } from "@/components/ui/button";
-import {
-  DEFAULT_PACKAGE_MANAGER,
-  getCreateCommand,
-  type PackageManager,
-} from "@/lib/create-commands";
+import { DEFAULT_PACKAGE_MANAGER, type PackageManager } from "@/lib/create-commands";
 import { cn } from "@/lib/utils";
 
 import EtherealBeamsCanvas from "./ethereal-beams-canvas";
@@ -22,7 +15,6 @@ const mission =
 
 export default function HeroSection() {
   const [selectedManager, setSelectedManager] = useState<PackageManager>(DEFAULT_PACKAGE_MANAGER);
-  const command = getCreateCommand(selectedManager);
 
   const scrollToNextSection = useCallback(() => {
     const target = document.getElementById("product");
@@ -64,29 +56,14 @@ export default function HeroSection() {
             </span>
           </p>
 
-          <div className="mt-8 flex w-full max-w-[34rem] flex-col items-stretch gap-6 sm:mt-10 lg:mt-11">
-            <div className="flex flex-row items-stretch justify-center gap-3">
-              <Link
-                href="/new"
-                className={cn(
-                  buttonVariants({ variant: "cta", size: "lg" }),
-                  "min-h-12 min-w-0 flex-1 justify-center gap-3 rounded-[6px] px-4 text-base shadow-[0_0_0_1px_color-mix(in_srgb,var(--primary)_28%,transparent),0_14px_36px_color-mix(in_srgb,var(--primary)_16%,transparent)] sm:w-auto sm:flex-none sm:self-center sm:px-8",
-                )}
-              >
-                Monte sua stack
-                <ArrowUpRight data-icon="inline-end" className="size-5" aria-hidden />
-              </Link>
-
-              <CopyCommandButton
-                command={command}
-                className="h-12 min-w-12 rounded-[6px] border border-primary bg-primary px-0 text-primary-foreground shadow-[0_0_0_1px_color-mix(in_srgb,var(--primary)_28%,transparent),0_14px_36px_color-mix(in_srgb,var(--primary)_16%,transparent)] transition-colors duration-150 ease-out hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:w-12"
+          <div className="mt-8 flex w-full max-w-[34rem] flex-col items-stretch sm:mt-10 lg:mt-11">
+            <div className="w-full rounded-[8px] border border-rule bg-card/60 p-3 text-left shadow-[0_16px_42px_color-mix(in_srgb,var(--background)_24%,transparent)] backdrop-blur-md sm:p-4">
+              <HeroRailLower
+                selectedManager={selectedManager}
+                onSelectedManagerChange={setSelectedManager}
+                showCopyButton
               />
             </div>
-
-            <HeroRailLower
-              selectedManager={selectedManager}
-              onSelectedManagerChange={setSelectedManager}
-            />
           </div>
         </div>
       </div>
