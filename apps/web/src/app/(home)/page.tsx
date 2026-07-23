@@ -4,6 +4,7 @@ import { api } from "@kubojs/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 
 import CustomStackPanel from "./_components/custom-stack-panel";
+import DeploymentSection from "./_components/deployment-section";
 import Footer from "./_components/footer";
 import HeroSection from "./_components/hero-section";
 import LogoMarquee from "./_components/logo-marquee";
@@ -27,6 +28,7 @@ export default async function HomePage() {
       <HeroSection />
       <LogoMarquee />
       <CustomStackPanel />
+      <DeploymentSection />
       <Testimonials tweets={tweets} videos={videos} />
       <Footer />
     </main>

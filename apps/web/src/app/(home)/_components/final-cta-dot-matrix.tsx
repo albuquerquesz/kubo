@@ -11,7 +11,7 @@ export default function FinalCtaDotMatrix() {
   return (
     <section
       aria-labelledby="final-cta-title"
-      className="relative isolate min-h-[20.375rem] overflow-hidden border-b border-rule bg-[#050505] text-[#f5f5f5]"
+      className="final-cta relative isolate min-h-[20.375rem] overflow-hidden border-b border-rule bg-[#050505] text-[#f5f5f5]"
     >
       <DotMatrixBackdrop />
 
