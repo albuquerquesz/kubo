@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import {
   LOGO_MARQUEE_AUTOPLAY_PX_PER_SEC,
   LOGO_MARQUEE_CELL_COUNT,
   LOGO_MARQUEE_CLICK_SLOP_PX,
+  LOGO_MARQUEE_INITIAL_TRACK_COPIES,
   logoMarqueeMetrics,
+  logoMarqueeTrackCopies,
   normalizeMarqueeOffset,
 } from "@/lib/logo-marquee";
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
@@ -45,8 +47,6 @@ if (LOGOS.length !== LOGO_MARQUEE_CELL_COUNT) {
     `Logo marquee requires exactly ${LOGO_MARQUEE_CELL_COUNT} logos, got ${LOGOS.length}`,
   );
 }
-
-const TRACK_COPIES = 3;
 
 type DragState = {
   pointerId: number;
@@ -120,9 +120,10 @@ export default function LogoMarquee() {
   const reducedMotionRef = useRef(false);
   const rafRef = useRef<number | null>(null);
   const lastTsRef = useRef<number | null>(null);
+  const [trackCopies, setTrackCopies] = useState(LOGO_MARQUEE_INITIAL_TRACK_COPIES);
   const [grabbing, setGrabbing] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
 
@@ -143,10 +144,19 @@ export default function LogoMarquee() {
     };
 
     const syncMetrics = () => {
-      const fallback = logoMarqueeMetrics(window.innerWidth).sequenceWidth;
+      const viewportWidth = viewport.clientWidth || window.innerWidth;
+      const fallback = logoMarqueeMetrics(viewportWidth).sequenceWidth;
       const track = viewport.querySelector<HTMLElement>('[data-marquee-track="0"]');
       const measured = track?.offsetWidth ?? 0;
-      sequenceWidthRef.current = measured > 0 ? measured : fallback;
+      const sequenceWidth = measured > 0 ? measured : fallback;
+      const requiredCopies = logoMarqueeTrackCopies(viewportWidth, sequenceWidth);
+
+      sequenceWidthRef.current = sequenceWidth;
+
+      if (requiredCopies !== trackCopies) {
+        setTrackCopies(requiredCopies);
+      }
+
       setOffset(offsetRef.current);
     };
 
@@ -273,7 +283,7 @@ export default function LogoMarquee() {
       viewport.removeEventListener("pointerleave", onPointerLeave);
       window.removeEventListener("resize", syncMetrics);
     };
-  }, []);
+  }, [trackCopies]);
 
   return (
     <section className="logo-marquee" aria-label="Integrações brasileiras" data-logo-marquee>
@@ -282,7 +292,7 @@ export default function LogoMarquee() {
         className={cn("logo-marquee__viewport", grabbing && "is-grabbing")}
         data-logo-marquee-viewport
       >
-        {Array.from({ length: TRACK_COPIES }, (_, copyIndex) => (
+        {Array.from({ length: trackCopies }, (_, copyIndex) => (
           <Track
             key={copyIndex}
             logos={LOGOS}

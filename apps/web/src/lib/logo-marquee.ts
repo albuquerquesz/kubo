@@ -39,6 +39,8 @@ export const LOGO_MARQUEE_CLICK_SLOP_PX = 6;
  * ~one cell every ~6–7s on desktop (271px / 40 ≈ 6.8s).
  */
 export const LOGO_MARQUEE_AUTOPLAY_PX_PER_SEC = 40;
+export const LOGO_MARQUEE_MIN_TRACK_COPIES = 3;
+export const LOGO_MARQUEE_INITIAL_TRACK_COPIES = 8;
 
 export type LogoMarqueeMetrics = {
   cell: number;
@@ -53,8 +55,8 @@ export function logoMarqueeMetrics(viewportWidth: number): LogoMarqueeMetrics {
 }
 
 /**
- * Keep drag offset in (−sequenceWidth, 0] so three absolute tracks
- * at offset, offset+W, offset+2W always cover the viewport without a gap.
+ * Keep drag offset in (−sequenceWidth, 0] so repeated absolute tracks spaced by
+ * sequenceWidth can wrap seamlessly without changing the painted position.
  */
 export function normalizeMarqueeOffset(offset: number, sequenceWidth: number): number {
   if (sequenceWidth <= 0) return 0;
@@ -64,6 +66,17 @@ export function normalizeMarqueeOffset(offset: number, sequenceWidth: number): n
   // Map 0 remainder already handled; force (−W, 0]
   if (x <= -sequenceWidth) x += sequenceWidth;
   return x;
+}
+
+/**
+ * Minimum copies needed to cover the viewport for any normalized offset in
+ * (−sequenceWidth, 0]. Example: viewport 1830px with 813px sequence needs 4
+ * copies because 3 only cover 1626px to the right of the leftmost origin.
+ */
+export function logoMarqueeTrackCopies(viewportWidth: number, sequenceWidth: number): number {
+  if (sequenceWidth <= 0) return LOGO_MARQUEE_MIN_TRACK_COPIES;
+
+  return Math.max(LOGO_MARQUEE_MIN_TRACK_COPIES, Math.ceil(viewportWidth / sequenceWidth) + 1);
 }
 
 /** Expected cell origin X (viewport-local) for index i when track is at rest (offset 0). */
