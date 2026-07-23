@@ -249,9 +249,14 @@ function MobileNavigation() {
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({ className }: { className?: string }) {
   return (
-    <header className="fixed inset-x-0 top-0 z-40 bg-background/95 transition-colors duration-150">
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-40 bg-background/95 transition-colors duration-150",
+        className,
+      )}
+    >
       <div className="flex w-full items-stretch">
         <BrandMark />
         <DesktopNavigation />

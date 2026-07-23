@@ -30,10 +30,6 @@
   overflow-wrap: break-word !important;
 }
 
-.docs-shell > header {
-  border-bottom: 1px solid var(--rule);
-}
-
 .shiny-text {
   background: linear-gradient(
     120deg,

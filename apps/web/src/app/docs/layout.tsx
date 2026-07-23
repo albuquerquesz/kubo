@@ -17,8 +17,8 @@ const docsOptions: DocsLayoutProps = {
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <div className="docs-shell">
-      <SiteHeader />
+    <>
+      <SiteHeader className="border-rule border-b" />
       <div className="pt-12">
         <DocsLayout
           {...docsOptions}
@@ -28,6 +28,6 @@ export default function Layout({ children }: { children: ReactNode }) {
           {children}
         </DocsLayout>
       </div>
-    </div>
+    </>
   );
 }
