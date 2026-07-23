@@ -1,10 +1,10 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 import type { IconType } from "react-icons";
 import { SiBun, SiNpm, SiPnpm } from "react-icons/si";
 
+import CopyCommandButton from "@/app/(home)/_components/copy-command-button";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import {
   DEFAULT_PACKAGE_MANAGER,
@@ -37,37 +37,25 @@ export default function HeroInstallCard({
   defaultManager = DEFAULT_PACKAGE_MANAGER,
 }: HeroInstallCardProps) {
   const [selectedManager, setSelectedManager] = useState<PackageManager>(defaultManager);
-  const [copied, setCopied] = useState(false);
   const command = getCreateCommand(selectedManager);
   const SelectedIcon = PM_ICONS[selectedManager];
-
-  const copyCommand = async () => {
-    try {
-      await navigator.clipboard.writeText(command);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      setCopied(false);
-    }
-  };
 
   return (
     <div className={cn("flex w-full flex-col gap-1.5", className)}>
       {/* Meta row — outside the script shell */}
       <div className="flex items-center justify-between gap-3">
-        <p className="ui-kicker text-muted-foreground">Initialize with</p>
+        <p className="ui-kicker text-muted-foreground">Iniciar com</p>
         <Select
           value={selectedManager}
           onValueChange={(value) => {
             if (value == null) return;
             setSelectedManager(value as PackageManager);
-            setCopied(false);
           }}
         >
           <SelectTrigger
             id="hero-install-pm"
             size="sm"
-            aria-label={`Package manager: ${selectedManager}`}
+            aria-label={`Gerenciador de pacotes: ${selectedManager}`}
             className={cn(
               "h-9 min-h-9 w-auto min-w-0 gap-1.5 border-0 bg-transparent px-1.5 py-1.5",
               "text-foreground shadow-none ring-0",
@@ -101,24 +89,10 @@ export default function HeroInstallCard({
           <code className="font-mono">{command}</code>
         </p>
 
-        <button
-          type="button"
-          onClick={copyCommand}
+        <CopyCommandButton
+          command={command}
           className="flex h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-[8px] border border-primary bg-primary px-0 text-primary-foreground transition-colors duration-150 ease-out hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:px-3"
-          aria-label={copied ? "Command copied" : "Copy command"}
-        >
-          <span className="sr-only" aria-live="polite">
-            {copied ? "Command copied" : "Copy command"}
-          </span>
-          <span className="hidden font-mono text-xs tracking-[0.02em] sm:inline" aria-hidden>
-            {copied ? "Copied" : "Copy"}
-          </span>
-          {copied ? (
-            <Check className="size-4" aria-hidden />
-          ) : (
-            <Copy className="size-4" aria-hidden />
-          )}
-        </button>
+        />
       </div>
     </div>
   );

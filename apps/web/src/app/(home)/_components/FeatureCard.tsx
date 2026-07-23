@@ -48,7 +48,7 @@ function TechIcon({ icon, name, className }: { icon: string; name: string; class
   return (
     <Image
       src={iconSrc}
-      alt={`${name} icon`}
+      alt={`Ícone de ${name}`}
       width={24}
       height={24}
       className={cn("h-6 w-6 object-contain", className)}

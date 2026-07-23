@@ -276,7 +276,7 @@ export default function LogoMarquee() {
   }, []);
 
   return (
-    <section className="logo-marquee" aria-label="Brazilian integrations" data-logo-marquee>
+    <section className="logo-marquee" aria-label="Integrações brasileiras" data-logo-marquee>
       <div
         ref={viewportRef}
         className={cn("logo-marquee__viewport", grabbing && "is-grabbing")}

@@ -30,7 +30,7 @@ const CodeContainer = () => {
     <div className="mx-auto mt-6 w-full max-w-3xl px-2 md:px-0">
       <div className="overflow-hidden rounded-lg border border-border bg-muted/30 shadow-sm">
         <div className="flex items-center justify-between border-border border-b bg-muted/50 px-4 py-2">
-          <span className="text-muted-foreground text-xs">Package manager:</span>
+          <span className="text-muted-foreground text-xs">Gerenciador de pacotes:</span>
           <div className="flex items-center rounded-md border border-border p-0.5">
             {packageManagers.map((pm) => (
               <button
@@ -65,7 +65,7 @@ const CodeContainer = () => {
                 "flex h-7 w-7 items-center justify-center rounded border text-muted-foreground transition-all duration-150 hover:border-border hover:bg-muted hover:text-foreground",
                 copied ? "border-chart-4/50 bg-chart-4/10 text-chart-4" : "border-border",
               )}
-              aria-label={copied ? "Copied" : "Copy command"}
+              aria-label={copied ? "Copiado" : "Copiar comando"}
               whileTap={{ scale: 0.9 }}
             >
               <AnimatePresence mode="wait" initial={false}>

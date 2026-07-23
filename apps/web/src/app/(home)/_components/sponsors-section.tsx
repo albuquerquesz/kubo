@@ -286,19 +286,19 @@ export default function SponsorsSection() {
       <div className="grid lg:grid-cols-12">
         <div className="border-rule p-5 sm:p-8 lg:col-span-4 lg:border-r lg:p-10">
           <h2 id="ecosystem-title" className="text-3xl font-semibold tracking-tight">
-            One generator.
+            Um gerador.
             <br />
-            Real choices.
+            Escolhas reais.
           </h2>
           <p className="mt-4 max-w-sm text-sm text-muted-foreground leading-relaxed">
-            Every stack option the CLI can scaffold — frontends, backends, data, auth, deploy, and
-            Brazilian integrations.
+            Todas as opções de stack que a CLI pode gerar — frontends, backends, dados, auth, deploy
+            e integrações brasileiras.
           </p>
         </div>
 
         <div
           className="tech-marquee flex min-w-0 flex-col overflow-hidden lg:col-span-8"
-          aria-label="Supported technologies"
+          aria-label="Tecnologias suportadas"
           data-tech-marquee
         >
           {rows.map((rowItems, index) => (

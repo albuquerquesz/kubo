@@ -5,21 +5,18 @@ import FinalCtaDotMatrix from "./final-cta-dot-matrix";
 
 const footerGroups = [
   {
-    label: "Build",
+    label: "Criar",
     links: [
-      { label: "Visual builder", href: "/new" },
-      { label: "Documentation", href: "/docs" },
+      { label: "Builder", href: "/new" },
+      { label: "Docs", href: "/docs" },
     ],
   },
   {
-    label: "Inspect",
-    links: [
-      { label: "Showcase", href: "/showcase" },
-      { label: "NPM package", href: "https://www.npmjs.com/package/kubojs" },
-    ],
+    label: "Explorar",
+    links: [{ label: "Pacote NPM", href: "https://www.npmjs.com/package/kubojs" }],
   },
   {
-    label: "Community",
+    label: "Comunidade",
     links: [
       { label: "Discord", href: "https://discord.gg/ZYsbjpDaM5" },
       {
@@ -35,7 +32,7 @@ export default function Footer() {
     <footer>
       <FinalCtaDotMatrix />
 
-      <nav aria-label="Footer navigation" className="grid border-rule sm:grid-cols-3">
+      <nav aria-label="Navegação do rodapé" className="grid border-rule sm:grid-cols-3">
         {footerGroups.map((group) => (
           <div
             key={group.label}

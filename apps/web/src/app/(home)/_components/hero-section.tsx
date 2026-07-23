@@ -13,9 +13,9 @@ import ScrollRevealIcons, { type ScrollRevealIconsHandle } from "./scroll-reveal
 
 /** Editorial line breaks — three lines only (right-rail sentence strategy). */
 const mission = [
-  "A full-stack TypeScript app",
-  "from one command",
-  "with every layer typed.",
+  "Um app TypeScript full-stack",
+  "a partir de um comando",
+  "com cada camada tipada.",
 ] as const;
 
 /**
@@ -104,7 +104,7 @@ export default function HeroSection() {
         "ui-scroll-target relative w-full border-rule border-b " +
         "min-h-[calc(100svh-3rem)] lg:min-h-[200dvh]"
       }
-      aria-label="Hero"
+      aria-label="Seção principal"
     >
       {/*
         Sticky shell ≈ one viewport under the fixed header = full stage.
@@ -134,16 +134,16 @@ export default function HeroSection() {
           {/* L1 — title; Family B2 translateY + opacity exit */}
           <div ref={titleWrapRef} data-hero-motion="title-exit" className={upperBandClass}>
             <HeroDisplayTitle
-              title="One command. Every layer."
+              title="Um comando. Todas as camadas."
               className={
                 "text-foreground text-[clamp(2rem,8vw,2.75rem)] leading-[1.02] " +
                 "lg:text-[clamp(2.5rem,4.5vw,4.5rem)] lg:leading-[0.95] " +
                 "[&_*]:text-foreground"
               }
             >
-              One command.
+              Um comando.
               <br />
-              Every layer.
+              Todas as camadas.
             </HeroDisplayTitle>
           </div>
 
@@ -154,7 +154,7 @@ export default function HeroSection() {
           <div
             className={
               upperBandClass +
-              " overflow-visible border-rule border-t bg-background lg:border-t-0 lg:border-l"
+              " overflow-visible border-rule border-t border-b bg-muted/10 lg:border-t-0 lg:border-l"
             }
           >
             <div

@@ -4,9 +4,9 @@ import Link from "next/link";
 
 const stackFeatures = [
   "FRONTEND + BACKEND",
-  "DATABASE CONFIGURATION",
-  "AUTH AND PAYMENTS",
-  "DEPLOYMENT READY",
+  "CONFIGURAÇÃO DE DATABASE",
+  "AUTH E PAGAMENTOS",
+  "PRODUCTION-READY",
 ] as const;
 
 export default function CustomStackPanel() {
@@ -21,26 +21,26 @@ export default function CustomStackPanel() {
           id="custom-stack-title"
           className="ui-display text-[clamp(2rem,4vw,3rem)] leading-[0.95]"
         >
-          Custom stack development.
+          Desenvolvimento de stack personalizada.
         </h2>
         <Link
           href="/new"
           className="mt-5 inline-flex min-h-12 items-center gap-3 rounded-md bg-muted px-4 py-3 text-sm font-medium text-foreground transition-colors duration-150 ease-out hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring lg:mt-0"
         >
-          Build your stack
+          Monte sua stack
           <ArrowUpRight aria-hidden className="size-4" />
         </Link>
       </div>
 
       <p className="border-rule border-b px-4 py-6 text-lg leading-snug text-muted-foreground sm:px-6 lg:px-6 lg:py-6 lg:text-xl">
-        Turn your architecture choices into a production-ready TypeScript app.
+        Transforme suas escolhas de arquitetura em um app TypeScript pronto para produção.
       </p>
 
       <div className="px-4 py-6 sm:px-6 lg:px-6 lg:py-6">
         <div className="relative aspect-[1.9] min-h-[16rem] overflow-hidden bg-muted sm:min-h-0">
           <Image
             src="/assets/kubo-bg.png"
-            alt="Kubo stack builder interface"
+            alt="Interface do stack builder do Kubo"
             fill
             sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(100vw - 3rem), 100vw"
             className="object-cover object-center"

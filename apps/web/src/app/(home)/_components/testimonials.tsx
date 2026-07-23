@@ -21,29 +21,29 @@ type CommunityEntry = {
 
 const fallbackEntries: CommunityEntry[] = [
   {
-    title: "See what shipped.",
-    description: "Browse real stacks shipped by the community.",
+    title: "Veja o que foi publicado.",
+    description: "Explore stacks reais publicadas pela comunidade.",
     href: "/showcase",
     kind: "project",
     icon: LayoutGrid,
   },
   {
-    title: "Watch the ecosystem.",
-    description: "See which technologies developers combine.",
+    title: "Acompanhe o ecossistema.",
+    description: "Veja quais tecnologias os desenvolvedores combinam.",
     href: "/analytics",
     kind: "project",
     icon: ChartNoAxesColumn,
   },
   {
-    title: "Bring your stack.",
-    description: "Compare choices and unblock your next stack.",
+    title: "Traga sua stack.",
+    description: "Compare escolhas e desbloqueie sua próxima stack.",
     href: "https://discord.gg/ZYsbjpDaM5",
     kind: "note",
     icon: MessagesSquare,
   },
   {
-    title: "Read the layers.",
-    description: "Follow each layer from generator to app.",
+    title: "Leia as camadas.",
+    description: "Acompanhe cada camada do gerador ao app.",
     href: "/docs",
     kind: "project",
     icon: BookOpen,
@@ -86,14 +86,14 @@ export default function Testimonials({
   const liveEntries: CommunityEntry[] = [
     ...videos.map((video) => ({
       title: video.title,
-      description: "Watch a community member ship a TypeScript stack.",
+      description: "Assista um membro da comunidade publicar uma stack TypeScript.",
       href: `https://www.youtube.com/watch?v=${video.embedId}`,
       kind: "video" as const,
       icon: Play,
     })),
     ...tweets.map((tweet, index) => ({
-      title: `Dispatch ${String(index + 1).padStart(2, "0")} from the community.`,
-      description: "See the stack, context, and implementation notes.",
+      title: `Despacho ${String(index + 1).padStart(2, "0")} da comunidade.`,
+      description: "Veja a stack, o contexto e as notas de implementação.",
       href: `https://x.com/i/status/${tweet.tweetId}`,
       kind: "note" as const,
       icon: Quote,
@@ -103,12 +103,12 @@ export default function Testimonials({
   const entries = liveEntries.length > 0 ? [...liveEntries, ...fallbackEntries] : fallbackEntries;
 
   return (
-    <section aria-label="Community" className="border-rule border-b">
+    <section aria-label="Comunidade" className="border-rule border-b">
       <div className="p-5 sm:p-8 lg:p-10">
         <div
           className="no-scrollbar flex snap-x snap-mandatory gap-px overflow-x-auto border border-rule bg-rule"
           tabIndex={0}
-          aria-label="Community stories"
+          aria-label="Histórias da comunidade"
         >
           {entries.map((entry, index) => (
             <CommunityCard key={`${entry.href}-${index}`} entry={entry} />

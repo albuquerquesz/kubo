@@ -40,7 +40,7 @@ export default function HeroRailLower({
         type="button"
         onClick={scrollToNextSection}
         className="flex w-fit flex-col gap-2 text-foreground transition-colors duration-150 ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        aria-label="Scroll to next section"
+        aria-label="Rolar para a próxima seção"
       >
         <ArrowDown
           aria-hidden
