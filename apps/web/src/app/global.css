@@ -567,6 +567,14 @@
   bottom: -1px;
 }
 
+.custom-stack-panel--no-top-rule::before {
+  content: none;
+}
+
+.custom-stack-panel--no-bottom-rule::after {
+  content: none;
+}
+
 .tech-marquee__row {
   position: relative;
   overflow: hidden;

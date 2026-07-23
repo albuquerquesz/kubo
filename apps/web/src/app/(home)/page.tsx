@@ -27,7 +27,13 @@ export default async function HomePage() {
     <main className="ui-frame min-h-svh">
       <HeroSection />
       <LogoMarquee />
-      <CustomStackPanel />
+      <CustomStackPanel className="mb-0 sm:mb-0 lg:mb-0" showViewportBottomRule={false} />
+      <CustomStackPanel
+        sectionId="product-secondary"
+        titleId="custom-stack-title-secondary"
+        className="mt-0 sm:mt-0 lg:mt-0"
+        showViewportBottomRule={false}
+      />
       <DeploymentSection />
       <Testimonials tweets={tweets} videos={videos} />
       <Footer />
