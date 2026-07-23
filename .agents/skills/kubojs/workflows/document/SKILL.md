@@ -1,9 +1,9 @@
 ---
-name: better-t-stack-document
+name: kubojs-document
 description: Create or update repository documentation from current implementation evidence.
 ---
 
-# id: better-t-stack.workflow.document
+# id: kubojs.workflow.document
 
 ## Goal
 

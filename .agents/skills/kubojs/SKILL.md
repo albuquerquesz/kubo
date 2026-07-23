@@ -1,9 +1,9 @@
 ---
-name: better-t-stack
-description: Project workflow router for documented changes and evidence-based reviews in the Better T Stack monorepo.
+name: kubojs
+description: Project workflow router for documented changes and evidence-based reviews in the kubojs monorepo.
 ---
 
-# Better T Stack workflows
+# kubojs workflows
 
 Use this entrypoint to select one repository workflow. It is router-only: it does not replace the repository rules in [`AGENTS.md`](../../../AGENTS.md).
 
@@ -16,7 +16,7 @@ Use this entrypoint to select one repository workflow. It is router-only: it doe
 
 ## Command routing
 
-Invoke `/<skillName> <command>` as `/better-t-stack document` or `/better-t-stack review`.
+Invoke `/<skillName> <command>` as `/kubojs document` or `/kubojs review`.
 
 - `document` → [`workflows/document/SKILL.md`](workflows/document/SKILL.md)
 - `review` → [`workflows/review/SKILL.md`](workflows/review/SKILL.md)

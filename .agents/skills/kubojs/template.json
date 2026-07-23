@@ -1,5 +1,5 @@
 {
-  "name": "better-t-stack",
+  "name": "kubojs",
   "version": "1.0.0",
   "entry": "SKILL.md",
   "routing": "router-only",

@@ -1,9 +1,9 @@
 ---
-name: better-t-stack-review
+name: kubojs-review
 description: Review scoped changes for correctness, regressions, and verification gaps.
 ---
 
-# id: better-t-stack.workflow.review
+# id: kubojs.workflow.review
 
 ## Goal
 
