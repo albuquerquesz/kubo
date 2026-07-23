@@ -13,6 +13,7 @@ const stackFeatures = [
 ] as const;
 
 type CustomStackPanelProps = {
+  variant?: "stack-builder" | "documentation";
   sectionId?: string;
   titleId?: string;
   className?: string;
@@ -22,6 +23,7 @@ type CustomStackPanelProps = {
 };
 
 export default function CustomStackPanel({
+  variant = "stack-builder",
   sectionId = "product",
   titleId = "custom-stack-title",
   className,
@@ -29,6 +31,25 @@ export default function CustomStackPanel({
   showViewportTopRule = true,
   showViewportBottomRule = true,
 }: CustomStackPanelProps) {
+  const content =
+    variant === "documentation"
+      ? {
+          title: "Construa com o Kubo.",
+          description:
+            "Consulte guias práticos para entender cada camada, configurar seu projeto e colocá-lo em produção.",
+          cta: "Leia a documentação",
+          href: "/docs",
+          imageAlt: "Exemplo de código gerado pelo Kubo",
+        }
+      : {
+          title: "Monte sua stack.",
+          description:
+            "Escolha cada camada no Stack Builder e gere uma base TypeScript pronta para evoluir com o seu projeto.",
+          cta: "Abra o Stack Builder",
+          href: "/new",
+          imageAlt: "Interface do Stack Builder do Kubo",
+        };
+
   return (
     <section
       id={sectionId}
@@ -42,17 +63,17 @@ export default function CustomStackPanel({
       )}
     >
       <div className="border-rule border-b px-4 py-6 sm:px-6 sm:py-7 lg:flex lg:min-h-[6.5rem] lg:items-center lg:justify-between lg:px-6 lg:py-6">
-        <h2 id={titleId} className="ui-display text-[clamp(2rem,4vw,3rem)] leading-[0.95]">
-          Desenvolvimento de stack personalizada.
+        <h2 id={titleId} className="ui-display text-[clamp(1.5rem,3vw,2.25rem)] leading-[0.95]">
+          {content.title}
         </h2>
         <Link
-          href="/new"
+          href={content.href}
           className={cn(
             buttonVariants({ variant: "cta" }),
             "mt-5 min-h-12 px-4 py-3 text-sm lg:mt-0",
           )}
         >
-          Monte sua stack
+          {content.cta}
           <ArrowUpRight
             aria-hidden
             data-icon="inline-end"
@@ -62,14 +83,14 @@ export default function CustomStackPanel({
       </div>
 
       <p className="border-rule border-b px-4 py-6 text-lg leading-snug text-muted-foreground sm:px-6 lg:px-6 lg:py-6 lg:text-xl">
-        Transforme suas escolhas de arquitetura em um app TypeScript pronto para produção.
+        {content.description}
       </p>
 
       <div className="px-4 py-6 sm:px-6 lg:px-6 lg:py-6">
         <div className="relative aspect-[1.9] min-h-[16rem] overflow-hidden bg-muted sm:min-h-0">
           <Image
             src="/assets/kubo-bg.png"
-            alt="Interface do stack builder do Kubo"
+            alt={content.imageAlt}
             fill
             sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(100vw - 3rem), 100vw"
             className="object-cover object-center"
