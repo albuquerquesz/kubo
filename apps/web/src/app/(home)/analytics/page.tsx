@@ -5,26 +5,26 @@ import type { Metadata } from "next";
 import { AnalyticsClient } from "./analytics-client";
 
 export const metadata: Metadata = {
-  title: "Analytics - Better-T-Stack",
-  description: "Convex-backed project creation analytics for Better-T-Stack.",
+  title: "Analytics - kubojs",
+  description: "Convex-backed project creation analytics for kubojs.",
   openGraph: {
-    title: "Analytics - Better-T-Stack",
-    description: "Convex-backed project creation analytics for Better-T-Stack.",
-    url: "https://better-t-stack.dev/analytics",
+    title: "Analytics - kubojs",
+    description: "Convex-backed project creation analytics for kubojs.",
+    url: "https://kubojs.dev/analytics",
     images: [
       {
-        url: "https://better-t-stack.dev/og/site/analytics.png",
+        url: "https://kubojs.dev/og/site/analytics.png",
         width: 1200,
         height: 630,
-        alt: "Better-T-Stack Convex Analytics",
+        alt: "kubojs Convex Analytics",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Analytics - Better-T-Stack",
-    description: "Convex-backed project creation analytics for Better-T-Stack.",
-    images: ["https://better-t-stack.dev/og/site/analytics.png"],
+    title: "Analytics - kubojs",
+    description: "Convex-backed project creation analytics for kubojs.",
+    images: ["https://kubojs.dev/og/site/analytics.png"],
   },
 };
 

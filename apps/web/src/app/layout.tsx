@@ -20,10 +20,10 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
 });
 
-const ogImage = "https://better-t-stack.dev/og/site/home.png";
+const ogImage = "https://kubojs.dev/og/site/home.png";
 
 export const metadata: Metadata = {
-  title: "Better-T-Stack",
+  title: "kubojs",
   description:
     "A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations",
   keywords: [
@@ -43,32 +43,32 @@ export const metadata: Metadata = {
     "Better-Auth",
     "convex",
     "monorepo",
-    "Better-T-Stack",
+    "kubojs",
     "kubojs",
   ],
-  authors: [{ name: "Better-T-Stack Team" }],
-  creator: "Better-T-Stack",
-  publisher: "Better-T-Stack",
+  authors: [{ name: "kubojs Team" }],
+  creator: "kubojs",
+  publisher: "kubojs",
   formatDetection: {
     email: false,
     telephone: false,
   },
-  metadataBase: new URL("https://better-t-stack.dev"),
+  metadataBase: new URL("https://kubojs.dev"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Better-T-Stack",
+    title: "kubojs",
     description:
       "A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations",
-    url: "https://better-t-stack.dev",
-    siteName: "Better-T-Stack",
+    url: "https://kubojs.dev",
+    siteName: "kubojs",
     images: [
       {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: "Better-T-Stack",
+        alt: "kubojs",
       },
     ],
     locale: "en_US",
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Better-T-Stack",
+    title: "kubojs",
     description:
       "A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations",
     images: [ogImage],

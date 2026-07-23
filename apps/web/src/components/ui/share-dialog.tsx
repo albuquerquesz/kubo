@@ -113,7 +113,7 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
     const techNames = selectedTechs.map((tech) => tech.name);
     const summary = techNames.slice(0, 6).join(" · ");
     const rest = techNames.length > 6 ? ` +${techNames.length - 6} more` : "";
-    return `${projectName} — my Better-T-Stack\n\n${summary}${rest}\n\n`;
+    return `${projectName} — my kubojs\n\n${summary}${rest}\n\n`;
   };
 
   const shareToTwitter = () => {

@@ -18,7 +18,7 @@ const config: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "pbs.twimg.com" },
       { protocol: "https", hostname: "abs.twimg.com" },
-      { protocol: "https", hostname: "r2.better-t-stack.dev" },
+      { protocol: "https", hostname: "r2.kubojs.dev" },
       { protocol: "https", hostname: "avatars.githubusercontent.com" },
     ],
   },

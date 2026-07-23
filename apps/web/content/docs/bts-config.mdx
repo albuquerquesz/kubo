@@ -25,13 +25,13 @@ It’s safe to delete for normal development; the generated code in `apps/*` and
 The file is JSONC with comments enabled and includes a `$schema` URL for tooling.
 
 ```jsonc
-// Better-T-Stack configuration file
+// kubojs configuration file
 // safe to delete
 {
-  "$schema": "https://r2.better-t-stack.dev/schema.json",
+  "$schema": "https://r2.kubojs.dev/schema.json",
   "version": "x.y.z",
   "createdAt": "2025-01-01T00:00:00.000Z",
-  "reproducibleCommand": "bun create better-t-stack@latest create-json --input '{...}'",
+  "reproducibleCommand": "bun create kubojs@latest create-json --input '{...}'",
   "frontend": ["tanstack-router"],
   "backend": "hono",
   "runtime": "bun",

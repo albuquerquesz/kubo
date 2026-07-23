@@ -7,26 +7,26 @@ import type { Metadata } from "next";
 import { ShowcasePage } from "./_components/showcase-page";
 
 export const metadata: Metadata = {
-  title: "Showcase - Better-T-Stack",
-  description: "Projects created with Better-T-Stack",
+  title: "Showcase - kubojs",
+  description: "Projects created with kubojs",
   openGraph: {
-    title: "Showcase - Better-T-Stack",
-    description: "Projects created with Better-T-Stack",
-    url: "https://better-t-stack.dev/showcase",
+    title: "Showcase - kubojs",
+    description: "Projects created with kubojs",
+    url: "https://kubojs.dev/showcase",
     images: [
       {
-        url: "https://better-t-stack.dev/og/site/showcase.png",
+        url: "https://kubojs.dev/og/site/showcase.png",
         width: 1200,
         height: 630,
-        alt: "Better-T-Stack Showcase",
+        alt: "kubojs Showcase",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Showcase - Better-T-Stack",
-    description: "Projects created with Better-T-Stack",
-    images: ["https://better-t-stack.dev/og/site/showcase.png"],
+    title: "Showcase - kubojs",
+    description: "Projects created with kubojs",
+    images: ["https://kubojs.dev/og/site/showcase.png"],
   },
 };
 

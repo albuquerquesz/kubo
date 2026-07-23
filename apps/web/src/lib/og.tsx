@@ -20,7 +20,7 @@ export const ogColors = {
 export function OgShell({
   path,
   section,
-  footerRight = "better-t-stack.dev",
+  footerRight = "kubojs.dev",
   children,
 }: {
   path: string;

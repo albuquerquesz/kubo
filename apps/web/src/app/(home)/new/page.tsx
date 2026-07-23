@@ -4,26 +4,26 @@ import { Suspense } from "react";
 import { StackBuilder } from "./_components/stack-builder";
 
 export const metadata: Metadata = {
-  title: "Stack Builder - Better-T-Stack",
+  title: "Stack Builder - kubojs",
   description: "Interactive Ui to roll your own stack",
   openGraph: {
-    title: "Stack Builder - Better-T-Stack",
+    title: "Stack Builder - kubojs",
     description: "Interactive Ui to roll your own stack",
-    url: "https://better-t-stack.dev/new",
+    url: "https://kubojs.dev/new",
     images: [
       {
-        url: "https://better-t-stack.dev/og/site/new.png",
+        url: "https://kubojs.dev/og/site/new.png",
         width: 1200,
         height: 630,
-        alt: "Better-T-Stack Stack Builder",
+        alt: "kubojs Stack Builder",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Stack Builder - Better-T-Stack",
+    title: "Stack Builder - kubojs",
     description: "Interactive Ui to roll your own stack",
-    images: ["https://better-t-stack.dev/og/site/new.png"],
+    images: ["https://kubojs.dev/og/site/new.png"],
   },
 };
 

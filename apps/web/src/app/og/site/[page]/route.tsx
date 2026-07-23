@@ -27,7 +27,7 @@ const PAGES: Record<
     path: "~/showcase",
     section: "showcase",
     title: "Showcase",
-    description: "Projects built with Better-T-Stack",
+    description: "Projects built with kubojs",
   },
   analytics: {
     path: "~/analytics",
@@ -39,7 +39,7 @@ const PAGES: Record<
     path: "~/sponsors",
     section: "sponsors",
     title: "Sponsors",
-    description: "The companies and developers funding Better-T-Stack development",
+    description: "The companies and developers funding kubojs development",
   },
 };
 

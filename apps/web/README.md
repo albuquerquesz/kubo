@@ -1,6 +1,6 @@
-# Better-T-Stack Website
+# kubojs Website
 
-This is the official documentation website for Better-T-Stack, built with Next.js and Fumadocs.
+This is the official documentation website for kubojs, built with Next.js and Fumadocs.
 
 ## Getting Started
 
@@ -44,4 +44,4 @@ To learn more about the technologies used in this website:
 
 - [Next.js Documentation](https://nextjs.org/docs) - Next.js features and API
 - [Fumadocs](https://fumadocs.vercel.app) - The documentation framework used
-- [Better-T-Stack](https://better-t-stack.dev) - Main project site
+- [kubojs](https://kubojs.dev) - Main project site

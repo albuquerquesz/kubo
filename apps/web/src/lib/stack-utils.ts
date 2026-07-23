@@ -238,7 +238,7 @@ export function formatStackCommandForDisplay(command: string) {
 }
 
 export function generateStackUrlFromState(stack: StackState, baseUrl?: string) {
-  const origin = baseUrl || "https://better-t-stack.dev";
+  const origin = baseUrl || "https://kubojs.dev";
   const searchString = serializeStackToSearchString(stack);
   return `${origin}/new${searchString ? `?${searchString}` : ""}`;
 }
@@ -255,7 +255,7 @@ function serializeStackToSearchString(stack: StackState) {
 }
 
 export function generateStackSharingUrl(stack: StackState, baseUrl?: string) {
-  const origin = baseUrl || "https://better-t-stack.dev";
+  const origin = baseUrl || "https://kubojs.dev";
   const searchString = serializeStackToSearchString(stack);
   return `${origin}/stack${searchString ? `?${searchString}` : ""}`;
 }

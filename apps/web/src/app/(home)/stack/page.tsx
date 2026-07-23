@@ -17,9 +17,9 @@ interface StackPageProps {
 export async function generateMetadata({ searchParams }: StackPageProps): Promise<Metadata> {
   const params = await loadStackParams(searchParams);
   const projectName = params.projectName || "my-kubo-app";
-  const title = `${projectName} – Better-T-Stack`;
+  const title = `${projectName} – kubojs`;
   const description = generateStackSummary(params);
-  const ogImage = generateStackOgImageUrl(params, "https://better-t-stack.dev");
+  const ogImage = generateStackOgImageUrl(params, "https://kubojs.dev");
   return {
     title,
     description,

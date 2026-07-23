@@ -1,6 +1,6 @@
 ---
 title: Deploying with Docker Compose
-description: Learn how to self-host your Better-T-Stack app with the generated Dockerfiles and docker-compose.yml
+description: Learn how to self-host your kubojs app with the generated Dockerfiles and docker-compose.yml
 author:
   name: Aman Varshney
   url: https://github.com/AmanVarshney01
@@ -9,7 +9,7 @@ date: Jul 2, 2026
 
 ## Overview
 
-This guide explains how Better-T-Stack packages your applications for self-hosting with [Docker Compose](https://docs.docker.com/compose/). You'll learn:
+This guide explains how kubojs packages your applications for self-hosting with [Docker Compose](https://docs.docker.com/compose/). You'll learn:
 
 - What gets generated and how the compose stack is wired
 - How to build, run, and monitor the containers
@@ -46,7 +46,7 @@ Choosing `docker` as a deploy target generates:
 **Combined deployment (web + server + database):**
 
 ```npm
-npm create better-t-stack@latest my-app \
+npm create kubojs@latest my-app \
   --frontend tanstack-router \
   --backend hono \
   --runtime bun \
@@ -59,7 +59,7 @@ npm create better-t-stack@latest my-app \
 **Web-only (fullstack `self` backend):**
 
 ```npm
-npm create better-t-stack@latest my-app \
+npm create kubojs@latest my-app \
   --frontend next \
   --backend self \
   --web-deploy docker
@@ -68,7 +68,7 @@ npm create better-t-stack@latest my-app \
 **Server-only:**
 
 ```npm
-npm create better-t-stack@latest my-app \
+npm create kubojs@latest my-app \
   --frontend none \
   --backend fastify \
   --runtime node \

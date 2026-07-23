@@ -5,7 +5,7 @@ description: JSON-first and schema-driven workflows for agents, scripts, and aut
 
 ## Overview
 
-Better-T-Stack now supports a fully JSON-first workflow for agents and automation:
+kubojs now supports a fully JSON-first workflow for agents and automation:
 
 - Raw JSON project creation with `create-json`
 - Raw JSON addon installation with `add-json`
@@ -105,7 +105,7 @@ Useful patterns:
 
 ## `mcp`
 
-Run Better-T-Stack itself as a local MCP server over stdio:
+Run kubojs itself as a local MCP server over stdio:
 
 ```bash
 npx kubojs@latest mcp
@@ -126,7 +126,7 @@ Exposed tools:
 - `bts_plan_addons`
 - `bts_add_addons`
 
-This is the best path when an MCP-capable client should scaffold or modify Better-T-Stack projects without shelling out to a prompt-driven CLI flow.
+This is the best path when an MCP-capable client should scaffold or modify kubojs projects without shelling out to a prompt-driven CLI flow.
 
 Recommended MCP workflow:
 
@@ -166,17 +166,17 @@ Important field rules:
 - `install` should usually be `false` for `bts_create_project`, because dependency installation can exceed common MCP client timeouts. Run `npm install`, `pnpm install`, or `bun install` separately after scaffolding.
 - If a request is still ambiguous after reading the guidance, the agent should resolve that ambiguity before calling `bts_plan_project`.
 
-If you scaffold a project with the `mcp` addon, Better-T-Stack itself is now one of the recommended MCP servers. The addon installs it through `add-mcp` with a package runner command so the generated config does not rely on a globally installed CLI:
+If you scaffold a project with the `mcp` addon, kubojs itself is now one of the recommended MCP servers. The addon installs it through `add-mcp` with a package runner command so the generated config does not rely on a globally installed CLI:
 
 ```bash
 npx -y add-mcp@latest "npx -y kubojs@latest mcp"
 ```
 
-For Bun projects, the generated config uses the equivalent `bunx kubojs@latest mcp` server command inside `add-mcp`. That means MCP-capable agents inside the generated project can talk back to Better-T-Stack without any extra global install, alongside other recommended docs, framework, and database MCP servers.
+For Bun projects, the generated config uses the equivalent `bunx kubojs@latest mcp` server command inside `add-mcp`. That means MCP-capable agents inside the generated project can talk back to kubojs without any extra global install, alongside other recommended docs, framework, and database MCP servers.
 
 ## Use it inside your AI agent
 
-Install the Better-T-Stack plugin and your assistant will scaffold and extend projects for you — just ask in plain English, like _"create a fullstack app with Next, Hono, Postgres and Better Auth"_, and it builds a valid stack instead of hand-writing boilerplate.
+Install the kubojs plugin and your assistant will scaffold and extend projects for you — just ask in plain English, like _"create a fullstack app with Next, Hono, Postgres and Better Auth"_, and it builds a valid stack instead of hand-writing boilerplate.
 
 ### Claude Code
 
@@ -184,17 +184,17 @@ Add the marketplace and install the plugin:
 
 ```bash
 /plugin marketplace add albuquerquesz/kubo
-/plugin install better-t-stack@better-t-stack
+/plugin install kubojs@kubojs
 ```
 
 Then ask for a project in chat, or use the shortcuts:
 
-- `/better-t-stack:new <description>` — scaffold a new project
-- `/better-t-stack:add <addons>` — add addons to an existing one
+- `/kubojs:new <description>` — scaffold a new project
+- `/kubojs:add <addons>` — add addons to an existing one
 
 ### Codex
 
-Add the same marketplace from the Codex plugins screen and install **Better-T-Stack**, then ask for a project in chat.
+Add the same marketplace from the Codex plugins screen and install **kubojs**, then ask for a project in chat.
 
 Prefer just the tools without the plugin? Wire the MCP server into Codex with `add-mcp`:
 
@@ -205,7 +205,7 @@ npx -y add-mcp@latest "npx -y kubojs@latest mcp"   # choose "codex"
 Or add it to `~/.codex/config.toml` directly:
 
 ```toml
-[mcp_servers.better-t-stack]
+[mcp_servers.kubojs]
 command = "npx"
 args = ["-y", "kubojs@latest", "mcp"]
 ```
@@ -220,10 +220,10 @@ npx -y add-mcp@latest "npx -y kubojs@latest mcp"   # choose "opencode"
 
 ### Other agents
 
-Any other agent works too, because Better-T-Stack is a CLI underneath:
+Any other agent works too, because kubojs is a CLI underneath:
 
 - **MCP-capable agents** (Cursor, VS Code, Gemini CLI, Zed, and more) — wire the server with `npx -y add-mcp@latest "npx -y kubojs@latest mcp"` and pick your agent.
-- **CLI-first agents** like [pi](https://pi.dev) — just ask it to scaffold with Better-T-Stack and it runs the `kubojs` CLI directly.
+- **CLI-first agents** like [pi](https://pi.dev) — just ask it to scaffold with kubojs and it runs the `kubojs` CLI directly.
 
 ## Structured Addon Options
 
@@ -238,7 +238,7 @@ Supported structured addon surfaces include:
 - `skills`
 - `ultracite`
 
-When `skills` is used with the `evlog` addon, Better-T-Stack recommends Evlog's agent skills from `https://www.evlog.dev`: `review-logging-patterns` and `analyze-logs`.
+When `skills` is used with the `evlog` addon, kubojs recommends Evlog's agent skills from `https://www.evlog.dev`: `review-logging-patterns` and `analyze-logs`.
 
 Example:
 
@@ -323,7 +323,7 @@ See [Programmatic API](/docs/cli/programmatic-api) for TypeScript examples.
 
 ## Stored in `bts.jsonc`
 
-Better-T-Stack persists structured configuration in `bts.jsonc`, including:
+kubojs persists structured configuration in `bts.jsonc`, including:
 
 - `reproducibleCommand`
 - `addonOptions`

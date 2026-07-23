@@ -305,7 +305,7 @@ export function SponsorsPage({
             <div className="min-w-0">
               <h3 className="font-semibold text-foreground text-sm">Vercel OSS Program</h3>
               <p className="text-muted-foreground text-xs">
-                Hosting and infrastructure for better-t-stack.dev
+                Hosting and infrastructure for kubojs.dev
               </p>
             </div>
             <span className="ml-auto hidden font-mono text-muted-foreground text-xs sm:block">

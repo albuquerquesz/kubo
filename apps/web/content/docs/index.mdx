@@ -1,6 +1,6 @@
 ---
 title: Quick Start
-description: Create your first Better-T-Stack project in minutes
+description: Create your first kubojs project in minutes
 ---
 
 ## Philosophy
@@ -21,7 +21,7 @@ description: Create your first Better-T-Stack project in minutes
 ### CLI (prompts)
 
 ```npm
-npm create better-t-stack@latest
+npm create kubojs@latest
 ```
 
 Follow the interactive prompts to choose your frontend, backend, database, ORM, API layer, and addons.
@@ -29,7 +29,7 @@ Follow the interactive prompts to choose your frontend, backend, database, ORM, 
 Skip prompts and use the default stack:
 
 ```npm
-npm create better-t-stack@latest --yes
+npm create kubojs@latest --yes
 ```
 
 ### Stack Builder (UI)
@@ -38,17 +38,17 @@ npm create better-t-stack@latest --yes
 - Or open it via:
 
 ```npm
-npm create better-t-stack@latest builder
+npm create kubojs@latest builder
 ```
 
 ### AI agent (plugin)
 
-Let your AI assistant build the stack for you. Install the Better-T-Stack plugin, then describe what you want in plain English — it plans a valid stack and scaffolds it for you.
+Let your AI assistant build the stack for you. Install the kubojs plugin, then describe what you want in plain English — it plans a valid stack and scaffolds it for you.
 
 ```bash
 # Claude Code
 /plugin marketplace add albuquerquesz/kubo
-/plugin install better-t-stack@better-t-stack
+/plugin install kubojs@kubojs
 ```
 
 Then ask: _"create a fullstack app with Next, Hono, Postgres and Better Auth"_. Also works in Codex, opencode, and any MCP-capable agent — see [Use it inside your AI agent](/docs/cli/agent-workflows#use-it-inside-your-ai-agent).
@@ -58,7 +58,7 @@ Then ask: _"create a fullstack app with Next, Hono, Postgres and Better Auth"_. 
 ### Default Stack
 
 ```npm
-npm create better-t-stack@latest my-webapp \
+npm create kubojs@latest my-webapp \
   --frontend tanstack-router \
   --backend hono \
   --database sqlite \
@@ -70,7 +70,7 @@ npm create better-t-stack@latest my-webapp \
 ### Convex + React + Clerk
 
 ```npm
-npm create better-t-stack@latest my-api \
+npm create kubojs@latest my-api \
   --frontend tanstack-router \
   --backend convex \
   --auth clerk
@@ -79,7 +79,7 @@ npm create better-t-stack@latest my-api \
 ### Mobile App (Expo)
 
 ```npm
-npm create better-t-stack@latest my-native \
+npm create kubojs@latest my-native \
   --frontend native-uniwind \
   --backend hono \
   --database sqlite \
@@ -90,7 +90,7 @@ npm create better-t-stack@latest my-native \
 ### Empty Monorepo
 
 ```npm
-npm create better-t-stack@latest my-workspace \
+npm create kubojs@latest my-workspace \
   --frontend none \
   --backend none
 ```

@@ -1,6 +1,6 @@
 ---
 title: Deploying to Vercel
-description: Learn how to deploy your Better-T-Stack app to Vercel using Vercel Services
+description: Learn how to deploy your kubojs app to Vercel using Vercel Services
 author:
   name: Aman Varshney
   url: https://github.com/AmanVarshney01
@@ -9,7 +9,7 @@ date: Jul 2, 2026
 
 ## Overview
 
-This guide explains how Better-T-Stack deploys your applications to [Vercel](https://vercel.com) using [Vercel Services](https://vercel.com/blog/vercel-services-run-full-stack-on-vercel). You'll learn:
+This guide explains how kubojs deploys your applications to [Vercel](https://vercel.com) using [Vercel Services](https://vercel.com/blog/vercel-services-run-full-stack-on-vercel). You'll learn:
 
 - What Vercel Services are and how the generated `vercel.json` works
 - How to deploy web apps, server apps, or both from one monorepo
@@ -21,7 +21,7 @@ This guide explains how Better-T-Stack deploys your applications to [Vercel](htt
 
 **Vercel Services** let you run multiple apps — a frontend and one or more backends — as services inside a single Vercel project. Each service gets its own build and its own [Fluid Compute](https://vercel.com/docs/fluid-compute) functions, while sharing one domain, one set of environment variables, and one deployment lifecycle.
 
-Better-T-Stack uses this to deploy your monorepo's `apps/web` and `apps/server` together: the web service serves your frontend, the server service runs your Hono/Express/Fastify/Elysia backend, and rewrites route `/api/*` requests between them on the same domain. No CORS configuration, no separate projects to keep in sync.
+kubojs uses this to deploy your monorepo's `apps/web` and `apps/server` together: the web service serves your frontend, the server service runs your Hono/Express/Fastify/Elysia backend, and rewrites route `/api/*` requests between them on the same domain. No CORS configuration, no separate projects to keep in sync.
 
 ## Enabling Vercel Deployment
 
@@ -30,7 +30,7 @@ When creating a project:
 **Combined deployment (web + server):**
 
 ```npm
-npm create better-t-stack@latest my-app \
+npm create kubojs@latest my-app \
   --frontend tanstack-router \
   --backend hono \
   --runtime bun \
@@ -41,7 +41,7 @@ npm create better-t-stack@latest my-app \
 **Web-only (fullstack `self` backend):**
 
 ```npm
-npm create better-t-stack@latest my-app \
+npm create kubojs@latest my-app \
   --frontend next \
   --backend self \
   --web-deploy vercel
@@ -50,7 +50,7 @@ npm create better-t-stack@latest my-app \
 **Server-only:**
 
 ```npm
-npm create better-t-stack@latest my-app \
+npm create kubojs@latest my-app \
   --frontend none \
   --backend hono \
   --runtime bun \
@@ -168,7 +168,7 @@ There are three layers. Local `.env` files stay the source of truth, and one com
 
 ### 1. Local .env files
 
-Nothing changes from a standard Better-T-Stack app: `apps/web/.env` holds public client vars, `apps/server/.env` holds secrets, and `packages/env` validates both with zod so missing values fail loudly.
+Nothing changes from a standard kubojs app: `apps/web/.env` holds public client vars, `apps/server/.env` holds secrets, and `packages/env` validates both with zod so missing values fail loudly.
 
 ### 2. Syncing to Vercel
 
