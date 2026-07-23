@@ -50,7 +50,7 @@ function CopyRow({
     <button
       type="button"
       onClick={onCopy}
-      title={`Copy ${label.toLowerCase()}`}
+      title={`Copiar ${label.toLowerCase()}`}
       className="builder-focus-ring group flex w-full min-w-0 items-center gap-2 rounded border border-border bg-muted/10 px-3 py-2 text-left transition-colors hover:border-muted-foreground/30 hover:bg-muted/25"
     >
       <span className="shrink-0 text-primary">{icon}</span>
@@ -66,7 +66,7 @@ function CopyRow({
         )}
       >
         {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-        {copied ? "copied" : "copy"}
+        {copied ? "copiado" : "copiar"}
       </span>
     </button>
   );
@@ -100,20 +100,22 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
       await navigator.clipboard.writeText(value);
       setCopiedTarget(target);
       toast.success(
-        target === "url" ? "Link copied to clipboard!" : "Command copied to clipboard!",
+        target === "url"
+          ? "Link copiado para a área de transferência!"
+          : "Comando copiado para a área de transferência!",
       );
       if (copyResetTimer.current) clearTimeout(copyResetTimer.current);
       copyResetTimer.current = setTimeout(() => setCopiedTarget(null), 2000);
     } catch {
-      toast.error("Failed to copy");
+      toast.error("Falha ao copiar");
     }
   };
 
   const shareText = () => {
     const techNames = selectedTechs.map((tech) => tech.name);
     const summary = techNames.slice(0, 6).join(" · ");
-    const rest = techNames.length > 6 ? ` +${techNames.length - 6} more` : "";
-    return `${projectName} — my kubojs\n\n${summary}${rest}\n\n`;
+    const rest = techNames.length > 6 ? ` +${techNames.length - 6} mais` : "";
+    return `${projectName} — minha stack kubojs\n\n${summary}${rest}\n\n`;
   };
 
   const shareToTwitter = () => {
@@ -127,7 +129,7 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
       await navigator.share({ title: projectName, text: shareText(), url: stackUrl });
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
-      toast.error("Failed to open share sheet");
+      toast.error("Falha ao abrir o compartilhamento");
     }
   };
 
@@ -177,19 +179,19 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
               SOCIAL_PREVIEW.PNG
             </span>
             <span className="ml-auto font-mono text-[10px] text-muted-foreground uppercase">
-              {selectedTechs.length} techs
+              {selectedTechs.length} tecnologias
             </span>
           </div>
           <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted/10">
             {!previewLoaded && (
               <div className="absolute inset-0 flex items-center justify-center gap-2 font-mono text-muted-foreground text-xs">
                 <span className="text-primary">$</span>
-                <span className="animate-pulse">rendering preview...</span>
+                <span className="animate-pulse">renderizando prévia...</span>
               </div>
             )}
             <Image
               src={ogImageUrl}
-              alt={`Social preview card for ${projectName}`}
+              alt={`Cartão de prévia social de ${projectName}`}
               width={1200}
               height={630}
               unoptimized
@@ -212,7 +214,7 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
           />
           <CopyRow
             icon={<SquareTerminal className="h-3.5 w-3.5" />}
-            label="Command"
+            label="Comando"
             value={command}
             copied={copiedTarget === "command"}
             onCopy={() => copyValue("command", command)}
@@ -226,7 +228,7 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
             className="builder-focus-ring flex items-center justify-center gap-1.5 rounded border border-border bg-muted/10 px-2 py-2 font-mono text-muted-foreground text-xs transition-colors hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground"
           >
             <FaXTwitter className="h-3 w-3" />
-            Post
+            Postar
           </button>
           {canNativeShare && (
             <button
@@ -235,7 +237,7 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
               className="builder-focus-ring flex items-center justify-center gap-1.5 rounded border border-border bg-muted/10 px-2 py-2 font-mono text-muted-foreground text-xs transition-colors hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground"
             >
               <Share2 className="h-3 w-3" />
-              Share
+              Compartilhar
             </button>
           )}
           <button
@@ -260,16 +262,16 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
                 src={qrCodeDataUrl}
                 width={160}
                 height={160}
-                alt="QR code linking to this stack"
+                alt="QR code com link para esta stack"
                 className="h-40 w-40 rounded"
               />
             ) : qrFailed ? (
               <div className="flex h-40 w-40 items-center justify-center font-mono text-destructive text-xs">
-                qr generation failed
+                falha ao gerar qr
               </div>
             ) : (
               <div className="flex h-40 w-40 items-center justify-center font-mono text-muted-foreground text-xs">
-                <span className="animate-pulse">generating...</span>
+                <span className="animate-pulse">gerando...</span>
               </div>
             )}
             <span className="font-mono text-[10px] text-muted-foreground">$ scan --open stack</span>

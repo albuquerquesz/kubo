@@ -9,22 +9,22 @@ import { FaDiscord, FaGithub, FaXTwitter } from "react-icons/fa6";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const primaryLinks = [{ href: "/#product", label: "Product" }] as const;
+const primaryLinks = [{ href: "/#product", label: "Produto" }] as const;
 
 const exploreGroups = [
   {
-    label: "Understand",
+    label: "Entenda",
     links: [
-      { href: "/docs", label: "Documentation" },
-      { href: "/analytics", label: "Usage analytics" },
-      { href: "/stack", label: "Stack display" },
+      { href: "/docs", label: "Docs" },
+      { href: "/analytics", label: "Análise de uso" },
+      { href: "/stack", label: "Exibição da stack" },
     ],
   },
   {
-    label: "Community",
+    label: "Comunidade",
     links: [
-      { href: "/showcase", label: "Project showcase" },
-      { href: "/sponsors", label: "Sponsors" },
+      { href: "/showcase", label: "Exibição de projetos" },
+      { href: "/sponsors", label: "Patrocinadores" },
       { href: "https://discord.gg/ZYsbjpDaM5", label: "Discord" },
       { href: "https://x.com/byalbuquerquesz", label: "X" },
     ],
@@ -34,17 +34,17 @@ const exploreGroups = [
 const socialLinks = [
   {
     href: "https://x.com/byalbuquerquesz",
-    label: "Kubo on X",
+    label: "Kubo no X",
     icon: FaXTwitter,
   },
   {
     href: "https://discord.gg/ZYsbjpDaM5",
-    label: "Kubo on Discord",
+    label: "Kubo no Discord",
     icon: FaDiscord,
   },
   {
     href: "https://github.com/albuquerquesz/kubo",
-    label: "Kubo on GitHub",
+    label: "Kubo no GitHub",
     icon: FaGithub,
   },
 ] as const;
@@ -63,7 +63,7 @@ function BrandMark() {
         "flex shrink-0 items-center gap-1.5 overflow-hidden border-rule border-r px-2 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:gap-2 sm:px-2.5",
         headerRowClass,
       )}
-      aria-label="Kubo home"
+      aria-label="Início Kubo"
     >
       <span aria-hidden className="relative size-7 shrink-0 overflow-hidden sm:size-8">
         <Image
@@ -82,7 +82,7 @@ function DesktopNavigation() {
   return (
     <nav
       className={cn("hidden items-stretch lg:flex", headerRowClass)}
-      aria-label="Primary navigation"
+      aria-label="Navegação principal"
     >
       {primaryLinks.map((link) => (
         <Link
@@ -157,7 +157,7 @@ function MobileNavigation() {
         variant="ghost"
         size="icon-lg"
         className={cn("w-12 border-rule border-l lg:hidden", headerRowClass)}
-        aria-label="Open navigation"
+        aria-label="Abrir navegação"
         aria-controls="mobile-navigation"
         aria-expanded={isOpen}
         onClick={() => setIsOpen(true)}
@@ -170,14 +170,14 @@ function MobileNavigation() {
           id="mobile-navigation"
           role="dialog"
           aria-modal="true"
-          aria-label="Mobile navigation"
+          aria-label="Navegação mobile"
           className="fixed inset-0 z-50 flex min-h-svh flex-col overflow-hidden bg-background"
         >
           <div className="flex min-h-14 shrink-0 items-center justify-between border-rule border-b px-5 py-3">
             <div>
-              <p className="text-base font-semibold">Navigate Kubo</p>
+              <p className="text-base font-semibold">Navegar no Kubo</p>
               <p className="text-muted-foreground text-xs">
-                Build, inspect, and share a TypeScript stack.
+                Crie, inspecione e compartilhe uma stack TypeScript.
               </p>
             </div>
             <Button
@@ -187,12 +187,15 @@ function MobileNavigation() {
               className="min-h-10 gap-2 font-mono text-xs uppercase tracking-[0.08em]"
               onClick={closeNavigation}
             >
-              Close
+              Fechar
               <X />
             </Button>
           </div>
 
-          <nav aria-label="Mobile navigation links" className="grid min-h-0 flex-1 overflow-y-auto">
+          <nav
+            aria-label="Links de navegação mobile"
+            className="grid min-h-0 flex-1 overflow-y-auto"
+          >
             {[...primaryLinks, { href: "/docs", label: "Docs" }].map((link, index) => (
               <Link
                 key={link.href}
@@ -215,7 +218,7 @@ function MobileNavigation() {
               onClick={closeNavigation}
               className="flex min-h-16 items-center justify-between border-rule border-b bg-primary px-5 font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
             >
-              Build your stack
+              Monte sua stack
               <ArrowUpRight />
             </Link>
 
@@ -270,7 +273,7 @@ export function SiteHeader() {
             headerRowClass,
           )}
         >
-          Build a stack
+          Monte uma stack
           <ArrowUpRight data-icon="inline-end" className="size-5" />
         </Link>
         <MobileNavigation />

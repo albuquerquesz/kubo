@@ -23,14 +23,15 @@ const ibmPlexMono = IBM_Plex_Mono({
 const ogImage = "https://kubojs.dev/og/site/home.png";
 
 export const metadata: Metadata = {
-  title: "kubojs",
+  title: "kubojs — crie projetos TypeScript type-safe",
   description:
-    "A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations",
+    "CLI moderna para criar projetos TypeScript end-to-end com type safety, boas práticas e configurações personalizáveis",
   keywords: [
     "TypeScript",
-    "project scaffolding",
+    "scaffolding de projetos",
     "boilerplate",
     "type safety",
+    "criar projetos",
     "Drizzle",
     "Prisma",
     "hono",
@@ -43,10 +44,10 @@ export const metadata: Metadata = {
     "Better-Auth",
     "convex",
     "monorepo",
-    "kubojs",
+    "CLI",
     "kubojs",
   ],
-  authors: [{ name: "kubojs Team" }],
+  authors: [{ name: "Equipe kubojs" }],
   creator: "kubojs",
   publisher: "kubojs",
   formatDetection: {
@@ -58,9 +59,9 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "kubojs",
+    title: "kubojs — crie projetos TypeScript type-safe",
     description:
-      "A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations",
+      "CLI moderna para criar projetos TypeScript end-to-end com type safety, boas práticas e configurações personalizáveis",
     url: "https://kubojs.dev",
     siteName: "kubojs",
     images: [
@@ -68,17 +69,17 @@ export const metadata: Metadata = {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: "kubojs",
+        alt: "kubojs — CLI para projetos TypeScript type-safe",
       },
     ],
-    locale: "en_US",
+    locale: "pt_BR",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "kubojs",
+    title: "kubojs — crie projetos TypeScript type-safe",
     description:
-      "A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations",
+      "CLI moderna para criar projetos TypeScript end-to-end com type safety, boas práticas e configurações personalizáveis",
     images: [ogImage],
   },
   robots: {
@@ -92,7 +93,7 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  category: "Technology",
+  category: "Tecnologia",
   icons: {
     icon: [{ url: "/favicon/favicon-96x96.png", sizes: "96x96", type: "image/png" }],
     shortcut: "/favicon/favicon-96x96.png",
@@ -108,7 +109,7 @@ export const viewport: Viewport = {
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html
-      lang="en"
+      lang="pt-BR"
       className={cn(archivo.variable, ibmPlexMono.variable, "dark font-sans")}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
@@ -123,6 +124,21 @@ export default function Layout({ children }: { children: ReactNode }) {
           search={{
             options: {
               type: "static",
+            },
+          }}
+          i18n={{
+            locale: "pt-BR",
+            translations: {
+              search: "Buscar",
+              searchNoResult: "Nenhum resultado encontrado",
+              toc: "Nesta página",
+              tocNoHeadings: "Sem cabeçalhos",
+              lastUpdate: "Última atualização em",
+              chooseLanguage: "Escolher idioma",
+              nextPage: "Próxima página",
+              previousPage: "Página anterior",
+              chooseTheme: "Tema",
+              editOnGithub: "Editar no GitHub",
             },
           }}
           theme={{

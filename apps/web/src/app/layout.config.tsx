@@ -26,15 +26,15 @@ export const links: LinkItemType[] = [
     url: "/new",
   },
   {
-    text: "Analytics",
+    text: "Análise",
     url: "/analytics",
   },
   {
-    text: "Showcase",
+    text: "Exibição",
     url: "/showcase",
   },
   {
-    text: "Sponsors",
+    text: "Patrocinadores",
     url: "/sponsors",
   },
   {

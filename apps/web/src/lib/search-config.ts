@@ -7,46 +7,46 @@ export interface CustomSearchItem {
 
 export const customSearchItems: CustomSearchItem[] = [
   {
-    title: "Analytics",
+    title: "Análise",
     url: "/analytics",
-    content: "Analytics",
-    tags: ["analytics", "insights", "statistics", "data", "metrics"],
+    content: "Análise de criação de projetos e telemetria do CLI",
+    tags: ["analise", "analytics", "insights", "estatisticas", "dados", "metricas"],
   },
   {
-    title: "Showcase",
+    title: "Exibição",
     url: "/showcase",
-    content: "Showcase",
-    tags: ["showcase", "projects", "examples", "demos", "portfolio"],
+    content: "Projetos criados com o kubojs",
+    tags: ["exibicao", "showcase", "projetos", "exemplos", "demos", "portfolio"],
   },
   {
     title: "Builder",
     url: "/new",
-    content: "Builder",
-    tags: ["builder", "create", "new", "project", "setup"],
+    content: "Construtor visual de stack",
+    tags: ["builder", "criar", "novo", "projeto", "setup", "stack"],
   },
   {
-    title: "GitHub Repository",
+    title: "Repositório no GitHub",
     url: "https://github.com/albuquerquesz/kubo",
-    content: "GitHub",
-    tags: ["github", "source", "code", "repository", "contribute", "star"],
+    content: "Código-fonte no GitHub",
+    tags: ["github", "codigo", "repositorio", "contribuir", "star"],
   },
   {
-    title: "NPM Package",
+    title: "Pacote NPM",
     url: "https://www.npmjs.com/package/kubojs",
-    content: "NPM",
-    tags: ["npm", "package", "install", "cli", "tool"],
+    content: "Pacote NPM do kubojs",
+    tags: ["npm", "pacote", "instalar", "cli", "ferramenta"],
   },
   {
     title: "X (Twitter)",
     url: "https://x.com/byalbuquerquesz",
     content: "X",
-    tags: ["twitter", "x", "social", "updates", "announcements", "follow"],
+    tags: ["twitter", "x", "social", "atualizacoes", "anuncios", "seguir"],
   },
   {
-    title: "Discord Community",
+    title: "Comunidade no Discord",
     url: "https://discord.gg/ZYsbjpDaM5",
     content: "Discord",
-    tags: ["discord", "community", "chat", "help", "support", "discussions"],
+    tags: ["discord", "comunidade", "chat", "ajuda", "suporte", "discussoes"],
   },
 ];
 

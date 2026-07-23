@@ -55,7 +55,7 @@ export function LLMCopyButton({
       onClick={onClick}
     >
       {checked ? <Check /> : <Copy />}
-      Copy Markdown
+      Copiar Markdown
     </button>
   );
 }
@@ -81,11 +81,11 @@ export function ViewOptions({
   const items = useMemo(() => {
     const fullMarkdownUrl =
       typeof window !== "undefined" ? new URL(markdownUrl, window.location.origin) : "loading";
-    const q = `Read ${fullMarkdownUrl}, I want to ask questions about it.`;
+    const q = `Leia ${fullMarkdownUrl}, quero fazer perguntas sobre o conteúdo.`;
 
     return [
       {
-        title: "Open in GitHub",
+        title: "Abrir no GitHub",
         href: githubUrl,
         icon: (
           <svg fill="currentColor" role="img" viewBox="0 0 24 24">
@@ -95,7 +95,7 @@ export function ViewOptions({
         ),
       },
       {
-        title: "Open in Scira AI",
+        title: "Abrir no Scira AI",
         href: `https://scira.ai/?${new URLSearchParams({
           q,
         })}`,
@@ -159,7 +159,7 @@ export function ViewOptions({
         ),
       },
       {
-        title: "Open in ChatGPT",
+        title: "Abrir no ChatGPT",
         href: `https://chatgpt.com/?${new URLSearchParams({
           hints: "search",
           q,
@@ -177,7 +177,7 @@ export function ViewOptions({
         ),
       },
       {
-        title: "Open in Claude",
+        title: "Abrir no Claude",
         href: `https://claude.ai/new?${new URLSearchParams({
           q,
         })}`,
@@ -194,7 +194,7 @@ export function ViewOptions({
         ),
       },
       {
-        title: "Open in T3 Chat",
+        title: "Abrir no T3 Chat",
         href: `https://t3.chat/new?${new URLSearchParams({
           q,
         })}`,
@@ -214,7 +214,7 @@ export function ViewOptions({
           }),
         )}
       >
-        Open
+        Abrir
         <ChevronDown className="size-3.5 text-fd-muted-foreground" />
       </PopoverTrigger>
       <PopoverContent className="flex flex-col overflow-auto">

@@ -14,7 +14,7 @@ export default function NotFound() {
               <span className="font-bold font-mono text-lg sm:text-xl">ERROR_404.TXT</span>
             </div>
             <div className="h-px flex-1 bg-border" />
-            <span className="text-muted-foreground text-xs">[PAGE NOT FOUND]</span>
+            <span className="text-muted-foreground text-xs">[PÁGINA NÃO ENCONTRADA]</span>
           </div>
         </div>
 
@@ -32,10 +32,10 @@ export default function NotFound() {
               <div className="flex items-center justify-between rounded border border-border bg-fd-background p-3">
                 <div className="flex items-center gap-2 font-mono text-sm">
                   <span className="text-primary">$</span>
-                  <span className="text-foreground">Page not found in directory</span>
+                  <span className="text-foreground">Página não encontrada no diretório</span>
                 </div>
                 <div className="rounded border border-border bg-destructive/10 px-2 py-1 text-destructive text-xs">
-                  ERROR
+                  ERRO
                 </div>
               </div>
             </div>
@@ -49,7 +49,7 @@ export default function NotFound() {
                   <span className="font-semibold font-mono text-sm">GO_HOME</span>
                 </div>
                 <div className="rounded border border-border bg-muted/30 px-2 py-1 text-xs">
-                  SAFE
+                  SEGURO
                 </div>
               </div>
 
@@ -57,10 +57,10 @@ export default function NotFound() {
                 <div className="flex items-center justify-between rounded border border-border bg-fd-background p-3">
                   <div className="flex items-center gap-2 text-sm">
                     <Home className="h-4 w-4 text-primary" />
-                    <span className="text-foreground">Return to homepage</span>
+                    <span className="text-foreground">Voltar à página inicial</span>
                   </div>
                   <div className="rounded border border-border bg-muted/30 px-2 py-1 text-xs">
-                    NAVIGATE
+                    NAVEGAR
                   </div>
                 </div>
               </div>

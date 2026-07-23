@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Kubo",
     short_name: "Kubo",
     description:
-      "A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations",
+      "CLI moderna para criar projetos TypeScript end-to-end com type safety, boas práticas e configurações personalizáveis",
     start_url: "/new",
     display: "standalone",
     background_color: "#ffffff",
