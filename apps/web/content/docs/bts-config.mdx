@@ -1,28 +1,28 @@
 ---
 title: bts.jsonc
-description: What bts.jsonc does and why it matters
+description: O que o bts.jsonc faz e por que importa
 ---
 
-## What is it?
+## O que é?
 
-`bts.jsonc` is a small config file written to your project root when you create a project. It captures the stack choices you selected (frontend, backend, API, DB/ORM, auth, addons, etc.). The file uses JSONC (JSON with comments) and includes a schema for editor hints.
+`bts.jsonc` é um pequeno arquivo de configuração gravado na raiz do projeto quando você o cria. Ele registra as escolhas de stack (frontend, backend, API, DB/ORM, auth, addons etc.). O arquivo usa JSONC (JSON com comentários) e inclui um schema para dicas no editor.
 
-Where: `./bts.jsonc`
+Onde: `./bts.jsonc`
 
-## Why it exists
+## Por que existe
 
-- Required for the `add` command to detect your current stack
-- Helps validate compatibility and pre‑fill sensible defaults
+- Necessário para o comando `add` detectar a stack atual
+- Ajuda a validar compatibilidade e pré-preencher padrões sensatos
 
-If `bts.jsonc` is missing, the `add` command cannot run because the project cannot be detected.
+Se `bts.jsonc` estiver ausente, o comando `add` não consegue rodar porque o projeto não pode ser detectado.
 
-## Safe to delete (with a caveat)
+## Seguro apagar (com ressalva)
 
-It’s safe to delete for normal development; the generated code in `apps/*` and `packages/*` remains the source of truth. However, if you plan to use the `add` command later, you must keep `bts.jsonc` (or recreate it) so the CLI can detect your project.
+É seguro apagar no desenvolvimento normal; o código gerado em `apps/*` e `packages/*` continua sendo a fonte da verdade. Porém, se planejar usar o comando `add` depois, você deve manter o `bts.jsonc` (ou recriá-lo) para a CLI detectar o projeto.
 
-## Format
+## Formato
 
-The file is JSONC with comments enabled and includes a `$schema` URL for tooling.
+O arquivo é JSONC com comentários habilitados e inclui uma URL `$schema` para tooling.
 
 ```jsonc
 // kubojs configuration file
@@ -56,13 +56,13 @@ The file is JSONC with comments enabled and includes a `$schema` URL for tooling
 }
 ```
 
-Notes:
+Observações:
 
-- Values mirror what you selected during project creation
-- `reproducibleCommand` contains the exact command to recreate this project
-- When structured options are present, the reproducible command uses `create-json`
-- `addonOptions` stores nested configuration for prompt-driven addons
-- `dbSetupOptions` stores structured database setup behavior for automation
-- The file may be updated when you run `add` (addons and addon-specific config)
+- Os valores espelham o que você selecionou na criação do projeto
+- `reproducibleCommand` contém o comando exato para recriar este projeto
+- Quando há opções estruturadas, o comando reproduzível usa `create-json`
+- `addonOptions` guarda configuração aninhada de addons orientados por prompts
+- `dbSetupOptions` guarda o comportamento estruturado de setup de banco para automação
+- O arquivo pode ser atualizado ao rodar `add` (addons e config específica de addon)
 
-See also: [`add` command](/docs/cli#add)
+Veja também: [comando `add`](/docs/cli#add)

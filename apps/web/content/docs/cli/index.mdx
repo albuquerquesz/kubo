@@ -1,40 +1,40 @@
 ---
-title: Commands
-description: Complete reference for all CLI commands
+title: Comandos
+description: Referência completa de todos os comandos da CLI
 ---
 
-## Overview
+## Visão geral
 
-The kubojs CLI provides several commands to manage your TypeScript projects.
+A CLI kubojs oferece vários comandos para gerenciar seus projetos TypeScript.
 
-## `create` (Default Command)
+## `create` (comando padrão)
 
-Creates a new kubojs project.
+Cria um novo projeto kubojs.
 
 ```bash
 kubojs [project-directory] [options]
 ```
 
-### Parameters
+### Parâmetros
 
-- `project-directory` (optional): Name or path for your project directory
+- `project-directory` (opcional): Nome ou caminho do diretório do projeto
 
-### Key Options
+### Opções principais
 
-- `--yes, -y`: Use default configuration (skips prompts)
-- `--dry-run`: Validate configuration and target directory without writing files
-- `--verbose`: Show detailed result information as JSON
-- `--yolo`: Bypass validations and compatibility checks
+- `--yes, -y`: Usa a configuração padrão (pula prompts)
+- `--dry-run`: Valida a configuração e o diretório de destino sem gravar arquivos
+- `--verbose`: Mostra informações detalhadas do resultado em JSON
+- `--yolo`: Ignora validações e checagens de compatibilidade
 - `--package-manager <pm>`: `npm`, `pnpm`, `bun`
-- `--install / --no-install`: Install dependencies after creation
-- `--git / --no-git`: Initialize Git repository
-- `--frontend <types...>`: Web and/or native frameworks (see [Options](/docs/cli/options#frontend))
+- `--install / --no-install`: Instala dependências após a criação
+- `--git / --no-git`: Inicializa repositório Git
+- `--frontend <types...>`: Frameworks web e/ou native (veja [Opções](/docs/cli/options#frontend))
 - `--backend <framework>`: `hono`, `express`, `fastify`, `elysia`, `convex`, `self`, `none`
-- `--runtime <runtime>`: `bun`, `node`, `workers` (`none` only with `--backend convex`, `--backend none`, or `--backend self`)
+- `--runtime <runtime>`: `bun`, `node`, `workers` (`none` apenas com `--backend convex`, `--backend none` ou `--backend self`)
 - `--database <type>`: `none`, `sqlite`, `postgres`, `mysql`, `mongodb`
 - `--orm <type>`: `none`, `drizzle`, `prisma`, `mongoose`
 - `--api <type>`: `none`, `trpc`, `orpc`
-- `--auth <provider>`: `better-auth`, `clerk`, `none` (see [Options](/docs/cli/options#authentication))
+- `--auth <provider>`: `better-auth`, `clerk`, `none` (veja [Opções](/docs/cli/options#authentication))
 - `--payments <provider>`: `none`
 - `--db-setup <setup>`: `none`, `turso`, `d1`, `neon`, `supabase`, `prisma-postgres`, `planetscale`, `mongodb-atlas`, `docker`
 - `--examples <types...>`: `none`, `todo`, `ai`
@@ -42,15 +42,15 @@ kubojs [project-directory] [options]
 - `--server-deploy <setup>`: `none`, `cloudflare`
 - `--template <type>`: `none`, `mern`, `pern`, `t3`, `uniwind`
 - `--directory-conflict <strategy>`: `merge`, `overwrite`, `increment`, `error`
-- `--render-title / --no-render-title`: Show/hide ASCII art title
-- `--disable-analytics / --no-disable-analytics`: Control analytics collection
-- `--manual-db`: Skip automatic database setup prompts
+- `--render-title / --no-render-title`: Mostra/oculta o título em ASCII art
+- `--disable-analytics / --no-disable-analytics`: Controla a coleta de analytics
+- `--manual-db`: Pula prompts de setup automático de banco de dados
 
-See the full reference in [Options](/docs/cli/options).
+Veja a referência completa em [Opções](/docs/cli/options).
 
-For JSON-first automation and agent usage, see [Agent Workflows](/docs/cli/agent-workflows).
+Para automação JSON-first e uso por agentes, veja [Fluxos de agente](/docs/cli/agent-workflows).
 
-### Examples
+### Exemplos
 
 ```bash
 # Default setup with prompts
@@ -68,20 +68,20 @@ kubojs my-app --yes --dry-run
 
 ## `add`
 
-Adds addons to an existing kubojs project.
+Adiciona addons a um projeto kubojs existente.
 
 ```bash
 kubojs add [options]
 ```
 
-### Options
+### Opções
 
-- `--addons <types...>`: Addons to add (see [Addons](/docs/cli/options#addons))
-- `--project-dir <path>`: Project directory (defaults to current directory)
-- `--install / --no-install`: Install dependencies after adding
-- `--package-manager <pm>`: Package manager to use (`npm`, `pnpm`, `bun`)
+- `--addons <types...>`: Addons a adicionar (veja [Addons](/docs/cli/options#addons))
+- `--project-dir <path>`: Diretório do projeto (padrão: diretório atual)
+- `--install / --no-install`: Instala dependências após adicionar
+- `--package-manager <pm>`: Gerenciador de pacotes a usar (`npm`, `pnpm`, `bun`)
 
-### Examples
+### Exemplos
 
 ```bash
 # Add addons interactively
@@ -96,17 +96,17 @@ kubojs add --project-dir ./my-app --addons mcp skills
 
 ## `create-json`
 
-Create a project from a raw JSON payload.
+Cria um projeto a partir de um payload JSON bruto.
 
 ```bash
 kubojs create-json --input '{"projectName":"my-app","yes":true,"dryRun":true}'
 ```
 
-Use this when you want a single machine-readable input object instead of many flags.
+Use quando quiser um único objeto de entrada legível por máquina em vez de muitas flags.
 
 ## `add-json`
 
-Add addons from a raw JSON payload.
+Adiciona addons a partir de um payload JSON bruto.
 
 ```bash
 kubojs add-json --input '{"projectDir":"./my-app","addons":["wxt"],"addonOptions":{"wxt":{"template":"react"}}}'
@@ -114,7 +114,7 @@ kubojs add-json --input '{"projectDir":"./my-app","addons":["wxt"],"addonOptions
 
 ## `schema`
 
-Print runtime CLI and input schemas as JSON.
+Imprime schemas de runtime da CLI e de input como JSON.
 
 ```bash
 kubojs schema --name all
@@ -123,63 +123,63 @@ kubojs schema --name addonOptions
 kubojs schema --name dbSetupOptions
 ```
 
-This is the best way for scripts and agents to discover the current input contract at runtime.
+Esta é a melhor forma de scripts e agentes descobrirem o contrato de input atual em runtime.
 
 ## `mcp`
 
-Start the kubojs MCP server over stdio. It is launched by an MCP client (Claude Code, Codex, Cursor, opencode, and others), not run directly.
+Inicia o servidor MCP do kubojs via stdio. É lançado por um cliente MCP (Claude Code, Codex, Cursor, opencode e outros), não executado diretamente.
 
 ```bash
 kubojs mcp
 ```
 
-It exposes tools for planning and creating projects (`bts_plan_project`, `bts_create_project`) and managing addons (`bts_plan_addons`, `bts_add_addons`), plus schema and guidance helpers. See [Agent Workflows](/docs/cli/agent-workflows#use-it-inside-your-ai-agent) for setup and the full tool list.
+Expõe tools para planejar e criar projetos (`bts_plan_project`, `bts_create_project`) e gerenciar addons (`bts_plan_addons`, `bts_add_addons`), além de helpers de schema e orientação. Veja [Fluxos de agente](/docs/cli/agent-workflows#use-it-inside-your-ai-agent) para setup e a lista completa de tools.
 
 ## `sponsors`
 
-Displays kubojs sponsors.
+Exibe os sponsors do kubojs.
 
 ```bash
 kubojs sponsors
 ```
 
-Shows a list of project sponsors and supporters.
+Mostra uma lista de sponsors e apoiadores do projeto.
 
 ## `docs`
 
-Opens the kubojs documentation in your default browser.
+Abre a documentação do kubojs no navegador padrão.
 
 ```bash
 kubojs docs
 ```
 
-Opens `https://kubojs.dev/docs` in your browser.
+Abre `https://kubojs.dev/docs` no navegador.
 
 ## `builder`
 
-Opens the web-based stack builder in your default browser.
+Abre o stack builder web no navegador padrão.
 
 ```bash
 kubojs builder
 ```
 
-Opens `https://kubojs.dev/new` where you can configure your stack visually.
+Abre `https://kubojs.dev/new`, onde você configura a stack visualmente.
 
 ## `history`
 
-Shows project creation history stored on your local machine.
+Mostra o histórico de criação de projetos armazenado localmente na máquina.
 
 ```bash
 kubojs history [options]
 ```
 
-### Options
+### Opções
 
-- `--limit <number>`: Number of entries to show (default: 10)
-- `--json`: Output history as JSON
-- `--clear`: Clear all history entries
+- `--limit <number>`: Número de entradas a mostrar (padrão: 10)
+- `--json`: Saída do histórico em JSON
+- `--clear`: Limpa todas as entradas do histórico
 
-### Examples
+### Exemplos
 
 ```bash
 # Show latest entries
@@ -195,16 +195,16 @@ kubojs history --json
 kubojs history --clear
 ```
 
-## Global Options
+## Opções globais
 
-These options work with any command:
+Estas opções funcionam com qualquer comando:
 
-- `--help, -h`: Display help information
-- `--version, -V`: Display CLI version
+- `--help, -h`: Exibe informações de ajuda
+- `--version, -V`: Exibe a versão da CLI
 
-## Command Examples
+## Exemplos de comandos
 
-### Create a Full-Stack App
+### Criar um app full-stack
 
 ```bash
 kubojs \
@@ -216,7 +216,7 @@ kubojs \
   --addons pwa biome
 ```
 
-### Create a Backend-Only Project
+### Criar um projeto só de backend
 
 ```bash
 kubojs api-server \
@@ -227,22 +227,22 @@ kubojs api-server \
   --api trpc
 ```
 
-### Add Features to Existing Project
+### Adicionar recursos a um projeto existente
 
 ```bash
 cd my-existing-project
 kubojs add --addons tauri starlight --install
 ```
 
-### Show Local History
+### Mostrar histórico local
 
 ```bash
 kubojs history --limit 20
 ```
 
-## Programmatic Usage
+## Uso programático
 
-For advanced use cases, automation, or integration with other tools, you can use the [Programmatic API](/docs/cli/programmatic-api) to create projects from Node.js code:
+Para casos avançados, automação ou integração com outras ferramentas, você pode usar a [API programática](/docs/cli/programmatic-api) para criar projetos a partir de código Node.js:
 
 ```typescript
 import { create } from "kubojs";
@@ -260,11 +260,11 @@ result.match({
 });
 ```
 
-This is useful for:
+Isso é útil para:
 
-- **Build tools and generators** - Create projects from templates
-- **CI/CD pipelines** - Generate test projects automatically
-- **Development workflows** - Batch create related projects
-- **Custom tooling** - Integrate with your existing development setup
+- **Ferramentas de build e geradores** — criar projetos a partir de templates
+- **Pipelines de CI/CD** — gerar projetos de teste automaticamente
+- **Fluxos de desenvolvimento** — criar em lote projetos relacionados
+- **Tooling customizado** — integrar com seu setup de desenvolvimento existente
 
-See the [Programmatic API documentation](/docs/cli/programmatic-api) for complete examples and API reference.
+Veja a [documentação da API programática](/docs/cli/programmatic-api) para exemplos completos e referência da API.

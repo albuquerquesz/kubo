@@ -1,57 +1,57 @@
 ---
-title: Using the interactive prompts
-description: How to navigate and answer the CLI's interactive questions
+title: Usando os prompts interativos
+description: Como navegar e responder às perguntas interativas da CLI
 ---
 
-## Overview
+## Visão geral
 
-The CLI uses `@clack/prompts` for interactive questions. These prompts work well in most terminals and are fully keyboard-driven.
+A CLI usa `@clack/prompts` para perguntas interativas. Esses prompts funcionam bem na maioria dos terminais e são totalmente orientados por teclado.
 
-## Core keys
+## Teclas principais
 
-- **Navigate**: Up/Down arrow keys
-- **Confirm/continue**: Enter
-- **Cancel**: Ctrl+C
+- **Navegar**: setas para cima/baixo
+- **Confirmar/continuar**: Enter
+- **Cancelar**: Ctrl+C
 
-## Prompt types you’ll see
+## Tipos de prompt que você verá
 
-### Single select (choose one)
+### Seleção única (escolha um)
 
-- **Move** with Up/Down, **Enter** to choose the highlighted option.
+- **Mova** com cima/baixo, **Enter** para escolher a opção destacada.
 
-Typical places: choosing a web or native framework, picking a runtime or API.
+Lugares típicos: escolher um framework web ou native, runtime ou API.
 
-### Multi-select (choose many)
+### Multi-seleção (escolha vários)
 
-- **Move** with Up/Down.
-- **Space** toggles the highlighted option on/off.
-- **Enter** confirms your selection(s).
-- Some prompts allow selecting none (you can press Enter without toggling anything).
+- **Mova** com cima/baixo.
+- **Espaço** liga/desliga a opção destacada.
+- **Enter** confirma a(s) seleção(ões).
+- Alguns prompts permitem não selecionar nada (você pode pressionar Enter sem marcar nada).
 
-Typical places: selecting project types (web/native), choosing example apps.
+Lugares típicos: selecionar tipos de projeto (web/native), escolher apps de exemplo.
 
-### Grouped multi-select (addons)
+### Multi-seleção agrupada (addons)
 
-- Options are organized under group headings.
-- **Move** with Up/Down, **Space** to toggle an option, **Enter** to confirm.
-- Group headings are informational; toggle the items within groups.
+- As opções ficam organizadas sob cabeçalhos de grupo.
+- **Mova** com cima/baixo, **Espaço** para ligar/desligar uma opção, **Enter** para confirmar.
+- Cabeçalhos de grupo são informativos; ligue/desligue os itens dentro dos grupos.
 
-Used when selecting addons like Biome, PWA, Turborepo, etc.
+Usado ao selecionar addons como Biome, PWA, Turborepo etc.
 
-### Confirm (yes/no)
+### Confirmar (sim/não)
 
-- Use Left/Right or Up/Down to highlight Yes/No, then **Enter**.
+- Use esquerda/direita ou cima/baixo para destacar Sim/Não e depois **Enter**.
 
-Typical places: installing dependencies, initializing Git.
+Lugares típicos: instalar dependências, inicializar Git.
 
-### Text input
+### Entrada de texto
 
-- Type your answer and press **Enter**.
-- If validation fails, a short message will explain what to fix; edit and press **Enter** again.
+- Digite a resposta e pressione **Enter**.
+- Se a validação falhar, uma mensagem curta explica o que corrigir; edite e pressione **Enter** de novo.
 
-Typical places: project name/path, database URLs, provider-specific inputs.
+Lugares típicos: nome/caminho do projeto, URLs de banco, inputs específicos de provider.
 
-## Tips
+## Dicas
 
-- You can skip all prompts with `--yes` if you want the defaults. See the [Options](/docs/cli/options#yes--y) page.
-- If you accidentally start the wrong flow, press **Ctrl+C** to cancel safely.
+- Você pode pular todos os prompts com `--yes` se quiser os padrões. Veja a página de [Opções](/docs/cli/options#yes--y).
+- Se começar o fluxo errado por engano, pressione **Ctrl+C** para cancelar com segurança.

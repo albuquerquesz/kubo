@@ -1,13 +1,13 @@
 ---
-title: Options Reference
-description: Complete reference for all CLI options and flags
+title: Referência de opções
+description: Referência completa de todas as opções e flags da CLI
 ---
 
-## General Options
+## Opções gerais
 
 ### `--yes, -y`
 
-Use default configuration and skip interactive prompts.
+Usa a configuração padrão e pula os prompts interativos.
 
 ```bash
 kubojs --yes
@@ -15,13 +15,13 @@ kubojs --yes
 
 ### `--template <type>`
 
-Use a predefined project template:
+Usa um template de projeto predefinido:
 
-- `none`: No template (default)
-- `mern`: MongoDB, Express, React, Node.js stack
-- `pern`: PostgreSQL, Express, React, Node.js stack
-- `t3`: T3 stack configuration
-- `uniwind`: UniWind React Native template
+- `none`: Sem template (padrão)
+- `mern`: Stack MongoDB, Express, React, Node.js
+- `pern`: Stack PostgreSQL, Express, React, Node.js
+- `t3`: Configuração da stack T3
+- `uniwind`: Template UniWind React Native
 
 ```bash
 kubojs --template t3
@@ -29,7 +29,7 @@ kubojs --template t3
 
 ### `--manual-db`
 
-Skip automatic database setup prompts and use manual database configuration.
+Pula prompts de setup automático de banco e usa configuração manual de banco de dados.
 
 ```bash
 kubojs --manual-db
@@ -37,7 +37,7 @@ kubojs --manual-db
 
 ### `--dry-run`
 
-Validate configuration, compatibility, and directory handling without writing files.
+Valida configuração, compatibilidade e tratamento de diretório sem gravar arquivos.
 
 ```bash
 kubojs my-app --yes --dry-run
@@ -45,7 +45,7 @@ kubojs my-app --yes --dry-run
 
 ### `--package-manager <pm>`
 
-Choose package manager: `npm`, `pnpm`, or `bun`.
+Escolhe o gerenciador de pacotes: `npm`, `pnpm` ou `bun`.
 
 ```bash
 kubojs --package-manager bun
@@ -53,7 +53,7 @@ kubojs --package-manager bun
 
 ### `--install / --no-install`
 
-Control dependency installation after project creation.
+Controla a instalação de dependências após a criação do projeto.
 
 ```bash
 kubojs --no-install
@@ -61,7 +61,7 @@ kubojs --no-install
 
 ### `--git / --no-git`
 
-Control Git repository initialization.
+Controla a inicialização do repositório Git.
 
 ```bash
 kubojs --no-git
@@ -69,7 +69,7 @@ kubojs --no-git
 
 ### `--yolo`
 
-Bypass validations and compatibility checks. Not recommended for normal use.
+Ignora validações e checagens de compatibilidade. Não recomendado para uso normal.
 
 ```bash
 kubojs --yolo
@@ -77,7 +77,7 @@ kubojs --yolo
 
 ### `--verbose`
 
-Show detailed result information in JSON format after project creation.
+Mostra informações detalhadas do resultado em formato JSON após a criação do projeto.
 
 ```bash
 kubojs --verbose
@@ -85,7 +85,7 @@ kubojs --verbose
 
 ### `--render-title / --no-render-title`
 
-Control whether the ASCII art title is shown. Enabled by default.
+Controla se o título em ASCII art é mostrado. Habilitado por padrão.
 
 ```bash
 # Hide the title (useful in CI)
@@ -94,12 +94,12 @@ kubojs --no-render-title
 
 ### `--directory-conflict <strategy>`
 
-How to handle existing, non-empty target directories:
+Como lidar com diretórios de destino existentes e não vazios:
 
-- `merge`: Keep existing files and merge new ones
-- `overwrite`: Clear the directory before scaffolding
-- `increment`: Create a suffixed directory (e.g., `my-app-1`)
-- `error`: Fail instead of prompting
+- `merge`: Mantém arquivos existentes e mescla os novos
+- `overwrite`: Limpa o diretório antes do scaffold
+- `increment`: Cria um diretório com sufixo (ex.: `my-app-1`)
+- `error`: Falha em vez de perguntar
 
 ```bash
 # Overwrite an existing directory without prompting
@@ -111,7 +111,7 @@ kubojs my-app --yes --directory-conflict increment
 
 ### `--disable-analytics / --no-disable-analytics`
 
-Control whether analytics and telemetry data is collected.
+Controla se dados de analytics e telemetria são coletados.
 
 ```bash
 # Disable analytics collection
@@ -121,21 +121,21 @@ kubojs --disable-analytics
 kubojs --no-disable-analytics
 ```
 
-Analytics help improve kubojs by providing insights into usage patterns. When disabled, no data is collected or transmitted.
+Analytics ajudam a melhorar o kubojs com insights de padrões de uso. Quando desabilitado, nenhum dado é coletado ou transmitido.
 
-For JSON-first automation, runtime schemas, and nested structured options, see [Agent Workflows](/docs/cli/agent-workflows).
+Para automação JSON-first, schemas em runtime e opções estruturadas aninhadas, veja [Fluxos de agente](/docs/cli/agent-workflows).
 
-## Database Options
+## Opções de banco de dados
 
 ### `--database <type>`
 
-Database type to use:
+Tipo de banco de dados a usar:
 
-- `none`: No database
-- `sqlite`: SQLite database
-- `postgres`: PostgreSQL database
-- `mysql`: MySQL database
-- `mongodb`: MongoDB database
+- `none`: Sem banco de dados
+- `sqlite`: Banco SQLite
+- `postgres`: Banco PostgreSQL
+- `mysql`: Banco MySQL
+- `mongodb`: Banco MongoDB
 
 ```bash
 kubojs --database postgres
@@ -143,12 +143,12 @@ kubojs --database postgres
 
 ### `--orm <type>`
 
-ORM to use with your database:
+ORM a usar com o banco:
 
-- `none`: No ORM
+- `none`: Sem ORM
 - `drizzle`: Drizzle ORM (TypeScript-first)
-- `prisma`: Prisma ORM (feature-rich)
-- `mongoose`: Mongoose ODM (for MongoDB)
+- `prisma`: Prisma ORM (rico em recursos)
+- `mongoose`: Mongoose ODM (para MongoDB)
 
 ```bash
 kubojs --database postgres --orm drizzle
@@ -156,37 +156,37 @@ kubojs --database postgres --orm drizzle
 
 ### `--db-setup <setup>`
 
-Database hosting/setup provider:
+Provider de hospedagem/setup de banco:
 
-- `none`: Manual setup
+- `none`: Setup manual
 - `turso`: Turso (SQLite)
-- `d1`: Cloudflare D1 (SQLite; requires either Cloudflare Workers server deployment or `backend self` with Cloudflare web deployment)
+- `d1`: Cloudflare D1 (SQLite; exige deploy de server em Cloudflare Workers ou `backend self` com deploy web Cloudflare)
 - `neon`: Neon (PostgreSQL)
 - `supabase`: Supabase (PostgreSQL)
 - `prisma-postgres`: Prisma Postgres
 - `planetscale`: PlanetScale (MySQL/PostgreSQL)
 - `mongodb-atlas`: MongoDB Atlas
-- `docker`: Local Docker containers
+- `docker`: Containers Docker locais
 
 ```bash
 kubojs --database postgres --db-setup neon
 ```
 
-If you need structured control over database provisioning behavior, use `dbSetupOptions` with `create-json` or the programmatic API. See [Agent Workflows](/docs/cli/agent-workflows).
+Se precisar de controle estruturado sobre o comportamento de provisionamento de banco, use `dbSetupOptions` com `create-json` ou a API programática. Veja [Fluxos de agente](/docs/cli/agent-workflows).
 
-## Backend Options
+## Opções de backend
 
 ### `--backend <framework>`
 
-Backend framework to use:
+Framework de backend a usar:
 
-- `none`: No backend
-- `hono`: Hono (fast, lightweight)
-- `express`: Express.js (popular, mature)
-- `fastify`: Fastify (fast, plugin-based)
-- `elysia`: Elysia (Bun-native)
-- `convex`: Convex backend
-- `self`: Self-hosted/custom backend
+- `none`: Sem backend
+- `hono`: Hono (rápido, leve)
+- `express`: Express.js (popular, maduro)
+- `fastify`: Fastify (rápido, baseado em plugins)
+- `elysia`: Elysia (nativo de Bun)
+- `convex`: Backend Convex
+- `self`: Backend self-hosted/custom
 
 ```bash
 kubojs --backend hono
@@ -194,11 +194,11 @@ kubojs --backend hono
 
 ### `--runtime <runtime>`
 
-Runtime environment:
+Ambiente de runtime:
 
-- `none`: No specific runtime (only with `convex`, `none`, or `self` backend)
-- `bun`: Bun runtime
-- `node`: Node.js runtime
+- `none`: Sem runtime específico (somente com backend `convex`, `none` ou `self`)
+- `bun`: Runtime Bun
+- `node`: Runtime Node.js
 - `workers`: Cloudflare Workers
 
 ```bash
@@ -207,42 +207,42 @@ kubojs --backend hono --runtime bun
 
 ### `--api <type>`
 
-API layer type:
+Tipo de camada de API:
 
-- `none`: No API layer
+- `none`: Sem camada de API
 - `trpc`: tRPC (type-safe)
-- `orpc`: oRPC (OpenAPI-compatible)
+- `orpc`: oRPC (compatível com OpenAPI)
 
 ```bash
 kubojs --api trpc
 ```
 
-## Frontend Options
+## Opções de frontend
 
 ### `--frontend <types...>`
 
-Frontend frameworks (can specify multiple):
+Frameworks de frontend (pode especificar vários):
 
-**Web Frameworks:**
+**Frameworks web:**
 
-- `tanstack-router`: React with TanStack Router
-- `react-router`: React with React Router
-- `tanstack-start`: React with TanStack Start (SSR)
+- `tanstack-router`: React com TanStack Router
+- `react-router`: React com React Router
+- `tanstack-start`: React com TanStack Start (SSR)
 - `next`: Next.js
 - `nuxt`: Nuxt (Vue)
 - `svelte`: SvelteKit
 - `solid`: SolidJS
 - `astro`: Astro
 
-**Native Frameworks:**
+**Frameworks native:**
 
-- `native-bare`: React Native (bare setup)
-- `native-uniwind`: React Native with UniWind (NativeWind alternative)
-- `native-unistyles`: React Native with Unistyles
+- `native-bare`: React Native (setup bare)
+- `native-uniwind`: React Native com UniWind (alternativa ao NativeWind)
+- `native-unistyles`: React Native com Unistyles
 
-**No Frontend:**
+**Sem frontend:**
 
-- `none`: Backend-only project
+- `none`: Projeto só de backend
 
 ```bash
 # Single web frontend
@@ -255,15 +255,15 @@ kubojs --frontend next native-uniwind
 kubojs --frontend none
 ```
 
-## Authentication
+## Autenticação
 
 ### `--auth <provider>`
 
-Choose authentication provider:
+Escolhe o provider de autenticação:
 
-- `better-auth`: Better-Auth authentication (default)
-- `clerk`: Clerk authentication
-- `none`: No authentication
+- `better-auth`: Autenticação Better-Auth (padrão)
+- `clerk`: Autenticação Clerk
+- `none`: Sem autenticação
 
 ```bash
 kubojs --auth better-auth
@@ -271,87 +271,87 @@ kubojs --auth clerk
 kubojs --auth none
 ```
 
-**Note:**
+**Nota:**
 
-- `better-auth` requires a backend framework (cannot be `none`)
-- if you choose a database, you should also choose an ORM
-- with `--backend convex`, `better-auth` supports `react-router`, `tanstack-router`, `tanstack-start`, `next`, and native Expo frontends
-- `clerk` requires a compatible frontend
-- Supported Clerk backends: `convex`, `hono`, `express`, `fastify`, `elysia`, and `self` with Next.js or TanStack Start
-- Authentication is automatically set to `none` when using `--backend none`
+- `better-auth` exige um framework de backend (não pode ser `none`)
+- se você escolher um banco, também deve escolher um ORM
+- com `--backend convex`, `better-auth` suporta frontends `react-router`, `tanstack-router`, `tanstack-start`, `next` e native Expo
+- `clerk` exige um frontend compatível
+- Backends suportados com Clerk: `convex`, `hono`, `express`, `fastify`, `elysia` e `self` com Next.js ou TanStack Start
+- A autenticação é definida automaticamente como `none` ao usar `--backend none`
 
-## Payments
+## Pagamentos
 
 ### `--payments <provider>`
 
-Payments provider:
+Provider de pagamentos:
 
-- `none`: No payments integration
+- `none`: Sem integração de pagamentos
 
 ## Addons
 
 ### `--addons <types...>`
 
-Additional features to include:
+Recursos adicionais a incluir:
 
-- `none`: No addons
-- `pwa`: Progressive Web App support
-- `tauri`: Desktop app support for static web output (not compatible with `--backend self`)
-- `electrobun`: Lightweight desktop shell for static web output (not compatible with `--backend self`)
-- `starlight`: Starlight documentation site
-- `fumadocs`: Fumadocs documentation site
-- `biome`: Biome linting and formatting
-- `lefthook`: Git hooks with Lefthook
-- `husky`: Git hooks with Husky
-- `turborepo`: Turborepo monorepo setup
-- `nx`: Nx monorepo setup
-- `vite-plus`: Vite+ unified toolchain, workspace task runner, linting, formatting, and optional native Git hooks
-- `ultracite`: Ultracite configuration
-- `oxlint`: Oxlint + Oxfmt (linting & formatting)
-- `mcp`: Install MCP servers, including kubojs itself, with add-mcp
-- `opentui`: OpenTUI components
-- `wxt`: WXT browser extension framework
-- `skills`: Install AI agent skills for coding assistants (Cursor, Claude Code, GitHub Copilot, etc.)
-- `evlog`: Structured request logging for Hono, Express, Fastify, Elysia, or fullstack web backends
+- `none`: Sem addons
+- `pwa`: Suporte a Progressive Web App
+- `tauri`: Suporte a app desktop para saída web estática (não compatível com `--backend self`)
+- `electrobun`: Shell desktop leve para saída web estática (não compatível com `--backend self`)
+- `starlight`: Site de documentação Starlight
+- `fumadocs`: Site de documentação Fumadocs
+- `biome`: Linting e formatação com Biome
+- `lefthook`: Git hooks com Lefthook
+- `husky`: Git hooks com Husky
+- `turborepo`: Setup de monorepo com Turborepo
+- `nx`: Setup de monorepo com Nx
+- `vite-plus`: Toolchain unificada Vite+, task runner de workspace, linting, formatação e hooks Git nativos opcionais
+- `ultracite`: Configuração Ultracite
+- `oxlint`: Oxlint + Oxfmt (linting e formatação)
+- `mcp`: Instala servidores MCP, incluindo o próprio kubojs, com add-mcp
+- `opentui`: Componentes OpenTUI
+- `wxt`: Framework de extensão de browser WXT
+- `skills`: Instala AI agent skills para assistentes de código (Cursor, Claude Code, GitHub Copilot etc.)
+- `evlog`: Logging estruturado de requests para backends Hono, Express, Fastify, Elysia ou web fullstack
 
 ```bash
 kubojs --addons pwa biome husky
 ```
 
-## Examples
+## Exemplos
 
 ### `--examples <types...>`
 
-Example implementations to include:
+Implementações de exemplo a incluir:
 
-- `none`: No examples
-- `todo`: Todo app example
-- `ai`: AI chat interface example
+- `none`: Sem exemplos
+- `todo`: Exemplo de app todo
+- `ai`: Exemplo de interface de chat com IA
 
 ```bash
 kubojs --examples todo ai
 ```
 
-## Deployment
+## Deploy
 
 ### `--web-deploy <setup>`
 
-Web deployment configuration:
+Configuração de deploy web:
 
-- `none`: No deployment setup
-- `cloudflare`: Cloudflare Workers deployment (via Alchemy infrastructure as code)
-- `docker`: Self-hosted deployment with a Dockerfile and a root `docker-compose.yml`
-- `vercel`: Vercel Services deployment with a root `vercel.json`
+- `none`: Sem setup de deploy
+- `cloudflare`: Deploy em Cloudflare Workers (via Alchemy infrastructure as code)
+- `docker`: Deploy self-hosted com Dockerfile e `docker-compose.yml` na raiz
+- `vercel`: Deploy com Vercel Services e `vercel.json` na raiz
 
 ```bash
 kubojs --web-deploy docker
 ```
 
-**Note:** Alchemy uses TypeScript to define infrastructure programmatically. See the [Deploying to Cloudflare with Alchemy Guide](/docs/guides/cloudflare-alchemy) for details.
+**Nota:** O Alchemy usa TypeScript para definir infraestrutura de forma programática. Veja o [Guia de deploy na Cloudflare com Alchemy](/docs/guides/cloudflare-alchemy) para detalhes.
 
-## Automation Surfaces
+## Superfícies de automação
 
-These are part of the CLI contract for agents and scripts even though they are commands or JSON fields instead of traditional flags:
+Fazem parte do contrato da CLI para agentes e scripts, mesmo sendo comandos ou campos JSON em vez de flags tradicionais:
 
 - `create-json`
 - `add-json`
@@ -360,28 +360,28 @@ These are part of the CLI contract for agents and scripts even though they are c
 - `addonOptions`
 - `dbSetupOptions`
 
-See [Agent Workflows](/docs/cli/agent-workflows) for examples.
+Veja [Fluxos de agente](/docs/cli/agent-workflows) para exemplos.
 
 ### `--server-deploy <setup>`
 
-Server deployment configuration:
+Configuração de deploy do server:
 
-- `none`: No deployment setup
-- `cloudflare`: Cloudflare Workers deployment (when runtime is workers, via Alchemy infrastructure as code)
-- `docker`: Self-hosted deployment with a Dockerfile and a root `docker-compose.yml` (requires the bun or node runtime)
-- `vercel`: Vercel Services deployment (requires the bun or node runtime)
+- `none`: Sem setup de deploy
+- `cloudflare`: Deploy em Cloudflare Workers (quando o runtime é workers, via Alchemy infrastructure as code)
+- `docker`: Deploy self-hosted com Dockerfile e `docker-compose.yml` na raiz (exige runtime bun ou node)
+- `vercel`: Deploy com Vercel Services (exige runtime bun ou node)
 
 ```bash
 kubojs --server-deploy docker
 ```
 
-**Note:** Alchemy uses TypeScript to define infrastructure programmatically. See the [Deploying to Cloudflare with Alchemy Guide](/docs/guides/cloudflare-alchemy) for details.
+**Nota:** O Alchemy usa TypeScript para definir infraestrutura de forma programática. Veja o [Guia de deploy na Cloudflare com Alchemy](/docs/guides/cloudflare-alchemy) para detalhes.
 
-## History
+## Histórico
 
 ### `history`
 
-View your project creation history. Projects are tracked locally using platform-specific directories:
+Visualiza o histórico de criação de projetos. Os projetos são rastreados localmente em diretórios específicos da plataforma:
 
 - **macOS**: `~/Library/Application Support/kubojs/history.json`
 - **Linux**: `~/.local/share/kubojs/history.json`
@@ -401,19 +401,19 @@ kubojs history --json
 kubojs history --clear
 ```
 
-**Options:**
+**Opções:**
 
-- `--limit <number>`: Number of entries to show (default: 10)
-- `--clear`: Clear all project history
-- `--json`: Output history as JSON
+- `--limit <number>`: Número de entradas a mostrar (padrão: 10)
+- `--clear`: Limpa todo o histórico de projetos
+- `--json`: Saída do histórico em JSON
 
-## Option Validation
+## Validação de opções
 
-The CLI validates option combinations and will show errors for incompatible selections. See the [Compatibility](/docs/cli/compatibility) page for detailed rules.
+A CLI valida combinações de opções e mostra erros para seleções incompatíveis. Veja a página de [Compatibilidade](/docs/cli/compatibility) para regras detalhadas.
 
-## Examples
+## Exemplos
 
-### Full Configuration
+### Configuração completa
 
 ```bash
 kubojs \
@@ -432,7 +432,7 @@ kubojs \
   --install
 ```
 
-### Minimal Setup
+### Setup mínimo
 
 ```bash
 kubojs \

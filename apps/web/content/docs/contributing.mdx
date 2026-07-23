@@ -1,30 +1,30 @@
 ---
-title: Contributing
-description: How to set up your environment and contribute changes
+title: Contribuindo
+description: Como configurar o ambiente e contribuir com mudanças
 ---
 
-<Callout title="Important" type="warn">
-  Before starting work on any new features or major changes, **please open an issue first to discuss
-  your proposal and get approval.** We don't want you to **waste time** on work that might not align
-  with the project's direction or get merged.
+<Callout title="Importante" type="warn">
+  Antes de começar a trabalhar em novos recursos ou mudanças grandes, **abra uma issue primeiro para
+  discutir a proposta e obter aprovação.** Não queremos que você **perca tempo** em trabalho que
+  pode não alinhar com a direção do projeto ou não ser mesclado.
 </Callout>
 
-## Overview
+## Visão geral
 
-This project is a monorepo with two main apps:
+Este projeto é um monorepo com dois apps principais:
 
 - CLI: `apps/cli`
-- Documentation site: `apps/web`
+- Site de documentação: `apps/web`
 
 ## Setup
 
-### Prerequisites
+### Pré-requisitos
 
 - Node.js (lts)
-- Bun (recommended)
+- Bun (recomendado)
 - Git
 
-### Install
+### Instalação
 
 ```bash
 git clone https://github.com/albuquerquesz/kubo.git
@@ -32,7 +32,7 @@ cd kubojs
 bun install
 ```
 
-## Develop the CLI
+## Desenvolver a CLI
 
 ```bash
 cd apps/cli
@@ -42,15 +42,15 @@ bun link
 bun dev
 ```
 
-Now go to anywhere else in your system (maybe like a test folder) and run:
+Agora vá para qualquer outro lugar no sistema (por exemplo uma pasta de teste) e rode:
 
 ```bash
 kubojs
 ```
 
-This will run the locally installed CLI.
+Isso executa a CLI instalada localmente.
 
-## Develop the Docs
+## Desenvolver a documentação
 
 ```bash
 # from repo root
@@ -59,27 +59,27 @@ cd packages/backend
 bun dev:setup  # you can choose local development too in prompts
 ```
 
-Copy the Convex URL from `packages/backend/.env.local` to `apps/web/.env`:
+Copie a URL do Convex de `packages/backend/.env.local` para `apps/web/.env`:
 
 ```
 NEXT_PUBLIC_CONVEX_URL=http://127.0.0.1:3210/
 ```
 
-Now run `bun dev` in the root. It will complain about GitHub token, so run this in `packages/backend`:
+Agora rode `bun dev` na raiz. Ele vai reclamar do token do GitHub, então rode isto em `packages/backend`:
 
 ```bash
 npx convex env set GITHUB_ACCESS_TOKEN=xxxxx
 npx convex env set GITHUB_WEBHOOK_SECRET=xxxxx
 ```
 
-## Contribution Flow
+## Fluxo de contribuição
 
-1. Open an issue/discussion before starting major work
-2. Fork the repository
-3. Create a feature branch
-4. Make changes following existing code style
-5. Update docs as needed
-6. Test and format
+1. Abra uma issue/discussão antes de começar trabalho grande
+2. Faça fork do repositório
+3. Crie uma branch de feature
+4. Faça mudanças seguindo o estilo de código existente
+5. Atualize a documentação conforme necessário
+6. Teste e formate
 
 ```bash
 # CLI
@@ -93,7 +93,7 @@ bun dev
 bun check
 ```
 
-7. Commit and push
+7. Commit e push
 
 ```bash
 git add .
@@ -101,11 +101,11 @@ git commit -m "feat(web): ..." # or fix(cli): ...
 git push origin <your-branch>
 ```
 
-8. Open a Pull Request and link any related issues
+8. Abra um Pull Request e vincule issues relacionadas
 
-## Commit Conventions
+## Convenções de commit
 
-Use conventional commit messages with the appropriate scope:
+Use mensagens de commit convencionais com o escopo apropriado:
 
 - `feat(cli): add new CLI feature`
 - `fix(cli): fix CLI bug`
@@ -114,9 +114,9 @@ Use conventional commit messages with the appropriate scope:
 - `chore(web): update dependencies`
 - `docs: update documentation`
 
-## Help
+## Ajuda
 
-- Issues and Discussions on GitHub
+- Issues e Discussions no GitHub
 - Discord: https://discord.gg/ZYsbjpDaM5
 
-See full contributor guide in the repository: `.github/CONTRIBUTING.md`.
+Veja o guia completo de contribuição no repositório: `.github/CONTRIBUTING.md`.

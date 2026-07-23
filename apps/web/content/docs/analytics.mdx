@@ -1,53 +1,53 @@
 ---
-title: Analytics & Telemetry
-description: What we collect, how to disable it, and where to view aggregated insights
+title: Analytics e telemetria
+description: O que coletamos, como desativar e onde ver insights agregados
 ---
 
-## What is collected
+## O que é coletado
 
-On successful project creation, the CLI sends a single event (`project_created`) with:
+Na criação bem-sucedida de um projeto, a CLI envia um único evento (`project_created`) com:
 
-- Selected options (stack choices), including: `frontend`, `backend`, `runtime`, `database`, `orm`, `api`, `auth`, `payments`, `addons`, `examples`, `dbSetup`, `webDeploy`, `serverDeploy`, `packageManager`, `git`, `install`
-- Environment data: `cli_version`, `node_version`, `platform`
+- Opções selecionadas (escolhas da stack), incluindo: `frontend`, `backend`, `runtime`, `database`, `orm`, `api`, `auth`, `payments`, `addons`, `examples`, `dbSetup`, `webDeploy`, `serverDeploy`, `packageManager`, `git`, `install`
+- Dados de ambiente: `cli_version`, `node_version`, `platform`
 
-Not collected:
+Não é coletado:
 
-- Project name, path, or file contents (explicitly omitted)
-- Secrets or environment variables from your machine
+- Nome do projeto, caminho ou conteúdo de arquivos (explicitamente omitidos)
+- Segredos ou variáveis de ambiente da sua máquina
 
-## Disable telemetry
+## Desativar telemetria
 
-Telemetry is enabled by default. To disable:
+A telemetria fica habilitada por padrão. Para desativar:
 
 ```bash
 BTS_TELEMETRY_DISABLED=1 npx kubojs@latest
 ```
 
-<Callout title="Note">The above command disables it for a single run.</Callout>
+<Callout title="Nota">O comando acima desativa apenas para uma execução.</Callout>
 
-Add `export BTS_TELEMETRY_DISABLED=1` to your shell profile to make it permanent.
+Adicione `export BTS_TELEMETRY_DISABLED=1` ao perfil do shell para tornar permanente.
 
-## Where to view analytics
+## Onde ver analytics
 
-- Charts: [`/analytics`](/analytics)
-- Shared website analytics: [Umami dashboard](https://umami.amanv.cloud/share/pHvqHleyOl9PBfaK) (self-hosted on a Hostinger VPS)
-- Raw JSON snapshot: `https://r2.kubojs.dev/analytics-data.json`
-- CSV export: `https://r2.kubojs.dev/export.csv`
+- Gráficos: [`/analytics`](/analytics)
+- Analytics compartilhados do site: [dashboard Umami](https://umami.amanv.cloud/share/pHvqHleyOl9PBfaK) (self-hosted em uma VPS Hostinger)
+- Snapshot JSON bruto: `https://r2.kubojs.dev/analytics-data.json`
+- Export CSV: `https://r2.kubojs.dev/export.csv`
 
-Notes:
+Observações:
 
-- Aggregates are periodically regenerated from incoming events
-- Raw data is not publicly exposed; the `/analytics` page presents only summary statistics
+- Agregados são regenerados periodicamente a partir dos eventos recebidos
+- Dados brutos não são expostos publicamente; a página `/analytics` apresenta apenas estatísticas resumidas
 
-## Full transparency
+## Transparência total
 
-Single event per scaffold; no IP or project identifiers. See source code below.
+Um único evento por scaffold; sem IP nem identificadores de projeto. Veja o código-fonte abaixo.
 
-If in doubt, set `BTS_TELEMETRY_DISABLED=1` and proceed. You can still use all CLI features.
+Em caso de dúvida, defina `BTS_TELEMETRY_DISABLED=1` e siga em frente. Você continua podendo usar todos os recursos da CLI.
 
-## Source code
+## Código-fonte
 
-- CLI event sender: [`apps/cli/src/utils/analytics.ts`](https://github.com/albuquerquesz/kubo/blob/main/apps/cli/src/utils/analytics.ts)
-- Telemetry toggle logic: [`apps/cli/src/utils/telemetry.ts`](https://github.com/albuquerquesz/kubo/blob/main/apps/cli/src/utils/telemetry.ts)
-- Ingest endpoint: [`packages/backend/convex/http.ts`](https://github.com/albuquerquesz/kubo/blob/main/packages/backend/convex/http.ts)
-- Analytics backend (ingest + aggregation): [`packages/backend/convex/analytics.ts`](https://github.com/albuquerquesz/kubo/blob/main/packages/backend/convex/analytics.ts)
+- Envio de eventos da CLI: [`apps/cli/src/utils/analytics.ts`](https://github.com/albuquerquesz/kubo/blob/main/apps/cli/src/utils/analytics.ts)
+- Lógica de toggle de telemetria: [`apps/cli/src/utils/telemetry.ts`](https://github.com/albuquerquesz/kubo/blob/main/apps/cli/src/utils/telemetry.ts)
+- Endpoint de ingestão: [`packages/backend/convex/http.ts`](https://github.com/albuquerquesz/kubo/blob/main/packages/backend/convex/http.ts)
+- Backend de analytics (ingestão + agregação): [`packages/backend/convex/analytics.ts`](https://github.com/albuquerquesz/kubo/blob/main/packages/backend/convex/analytics.ts)

@@ -1,29 +1,29 @@
 ---
-title: Compatibility Rules
-description: Understanding compatibility rules and restrictions between different CLI options
+title: Regras de compatibilidade
+description: Entendendo regras e restrições de compatibilidade entre as diferentes opções da CLI
 ---
 
-## Overview
+## Visão geral
 
-The CLI validates option combinations to ensure generated projects work correctly. Here are the key compatibility rules and restrictions.
+A CLI valida combinações de opções para garantir que os projetos gerados funcionem corretamente. Aqui estão as principais regras e restrições de compatibilidade.
 
-## Database & ORM Compatibility
+## Compatibilidade de banco e ORM
 
-### Required Combinations
+### Combinações obrigatórias
 
-| Database   | Compatible ORMs      | Notes                                     |
-| ---------- | -------------------- | ----------------------------------------- |
-| `sqlite`   | `drizzle`, `prisma`  | Lightweight, file-based database          |
-| `postgres` | `drizzle`, `prisma`  | Advanced relational database              |
-| `mysql`    | `drizzle`, `prisma`  | Traditional relational database           |
-| `mongodb`  | `mongoose`, `prisma` | Document database, requires specific ORMs |
-| `none`     | `none`               | No database setup                         |
+| Database   | ORMs compatíveis     | Notas                                       |
+| ---------- | -------------------- | ------------------------------------------- |
+| `sqlite`   | `drizzle`, `prisma`  | Banco leve, baseado em arquivo              |
+| `postgres` | `drizzle`, `prisma`  | Banco relacional avançado                   |
+| `mysql`    | `drizzle`, `prisma`  | Banco relacional tradicional                |
+| `mongodb`  | `mongoose`, `prisma` | Banco de documentos, exige ORMs específicos |
+| `none`     | `none`               | Sem setup de banco                          |
 
-### Restrictions
+### Restrições
 
-- **MongoDB + Drizzle**: ❌ Not supported - Drizzle doesn't support MongoDB
-- **Database without ORM**: ❌ Not supported - Database requires an ORM for code generation
-- **ORM without Database**: ❌ Not supported - ORM requires a database target
+- **MongoDB + Drizzle**: ❌ Não suportado — o Drizzle não suporta MongoDB
+- **Banco sem ORM**: ❌ Não suportado — o banco exige um ORM para geração de código
+- **ORM sem banco**: ❌ Não suportado — o ORM exige um banco de destino
 
 ```bash
 # ❌ Invalid - MongoDB with Drizzle
@@ -33,18 +33,18 @@ kubojs --database mongodb --orm drizzle
 kubojs --database mongodb --orm mongoose
 ```
 
-## Backend & Runtime Compatibility
+## Compatibilidade de backend e runtime
 
-### Cloudflare Workers Restrictions
+### Restrições do Cloudflare Workers
 
-Cloudflare Workers has specific compatibility requirements:
+O Cloudflare Workers tem requisitos específicos de compatibilidade:
 
-| Component      | Requirement                              | Reason                                                         |
-| -------------- | ---------------------------------------- | -------------------------------------------------------------- |
-| Backend        | Must be `hono`                           | Only Hono supports Workers runtime                             |
-| ORM            | If DB is used, use `drizzle` or `prisma` | Mongoose is MongoDB-only and MongoDB is not workers-compatible |
-| Database       | Cannot be `mongodb`                      | MongoDB is not compatible with Workers runtime                 |
-| Database Setup | Cannot be `docker`                       | Workers is serverless, no Docker support                       |
+| Componente     | Requisito                               | Motivo                                                       |
+| -------------- | --------------------------------------- | ------------------------------------------------------------ |
+| Backend        | Deve ser `hono`                         | Só o Hono suporta o runtime Workers                          |
+| ORM            | Se houver DB, use `drizzle` ou `prisma` | Mongoose é só MongoDB e MongoDB não é compatível com workers |
+| Database       | Não pode ser `mongodb`                  | MongoDB não é compatível com o runtime Workers               |
+| Database Setup | Não pode ser `docker`                   | Workers é serverless, sem suporte a Docker                   |
 
 ```bash
 # ❌ Invalid - Workers with Express
@@ -57,51 +57,51 @@ kubojs --runtime workers --backend hono --database sqlite --orm drizzle --db-set
 kubojs --runtime workers --backend hono --database sqlite --orm prisma --db-setup d1
 ```
 
-### Backend Presets
+### Presets de backend
 
-#### Convex Backend
+#### Backend Convex
 
-When using `--backend convex`, these constraints apply:
+Ao usar `--backend convex`, estas restrições se aplicam:
 
 - `--runtime none`
-- `--database none` (Convex provides database)
-- `--orm none` (Convex provides data layer)
-- `--api none` (Convex provides API)
-- `--db-setup none` (Convex manages hosting)
+- `--database none` (o Convex fornece o banco)
+- `--orm none` (o Convex fornece a camada de dados)
+- `--api none` (o Convex fornece a API)
+- `--db-setup none` (o Convex gerencia a hospedagem)
 - `--server-deploy none`
-- Auth can be `better-auth`, `clerk`, or `none` depending frontend compatibility
+- Auth pode ser `better-auth`, `clerk` ou `none` conforme a compatibilidade do frontend
 
-**Note:** Convex supports Clerk authentication with compatible frontends (React frameworks, Next.js, TanStack Start, and native frameworks). Nuxt, Svelte, Solid, and Astro are not compatible with Clerk.
+**Nota:** O Convex suporta autenticação Clerk com frontends compatíveis (frameworks React, Next.js, TanStack Start e frameworks native). Nuxt, Svelte, Solid e Astro não são compatíveis com Clerk.
 
-**Better Auth with Convex:** supported frontends are `react-router`, `tanstack-router`, `tanstack-start`, `next`, `native-bare`, `native-uniwind`, and `native-unistyles`. Nuxt, Svelte, Solid, and Astro are not supported with Convex Better Auth.
+**Better Auth com Convex:** frontends suportados são `react-router`, `tanstack-router`, `tanstack-start`, `next`, `native-bare`, `native-uniwind` e `native-unistyles`. Nuxt, Svelte, Solid e Astro não são suportados com Convex Better Auth.
 
-#### No Backend
+#### Sem backend
 
-When using `--backend none`, the following options are automatically set:
+Ao usar `--backend none`, as opções a seguir são definidas automaticamente:
 
-- `--auth none` (No backend for auth)
-- `--database none` (No backend for database)
-- `--orm none` (No database)
-- `--api none` (No backend for API)
-- `--runtime none` (No backend to run)
-- `--db-setup none` (No database to host)
-- `--examples none` (Examples require backend)
+- `--auth none` (sem backend para auth)
+- `--database none` (sem backend para banco)
+- `--orm none` (sem banco)
+- `--api none` (sem backend para API)
+- `--runtime none` (sem backend para rodar)
+- `--db-setup none` (sem banco para hospedar)
+- `--examples none` (exemplos exigem backend)
 
-## Frontend & API Compatibility
+## Compatibilidade de frontend e API
 
-### API Framework Support
+### Suporte a frameworks de API
 
-| Frontend          | tRPC Support | oRPC Support | Notes              |
+| Frontend          | Suporte tRPC | Suporte oRPC | Notas              |
 | ----------------- | ------------ | ------------ | ------------------ |
-| `tanstack-router` | ✅           | ✅           | Full support       |
-| `react-router`    | ✅           | ✅           | Full support       |
-| `tanstack-start`  | ✅           | ✅           | Full support       |
-| `next`            | ✅           | ✅           | Full support       |
-| `nuxt`            | ❌           | ✅           | tRPC not supported |
-| `svelte`          | ❌           | ✅           | tRPC not supported |
-| `solid`           | ❌           | ✅           | tRPC not supported |
-| `astro`           | ❌           | ✅           | tRPC not supported |
-| Native frameworks | ✅           | ✅           | Full support       |
+| `tanstack-router` | ✅           | ✅           | Suporte completo   |
+| `react-router`    | ✅           | ✅           | Suporte completo   |
+| `tanstack-start`  | ✅           | ✅           | Suporte completo   |
+| `next`            | ✅           | ✅           | Suporte completo   |
+| `nuxt`            | ❌           | ✅           | tRPC não suportado |
+| `svelte`          | ❌           | ✅           | tRPC não suportado |
+| `solid`           | ❌           | ✅           | tRPC não suportado |
+| `astro`           | ❌           | ✅           | tRPC não suportado |
+| Frameworks native | ✅           | ✅           | Suporte completo   |
 
 ```bash
 # ❌ Invalid - Nuxt with tRPC
@@ -111,11 +111,11 @@ kubojs --frontend nuxt --api trpc
 kubojs --frontend nuxt --api orpc
 ```
 
-### Frontend Restrictions
+### Restrições de frontend
 
-- **Multiple Web Frontends**: ❌ Only one web framework allowed
-- **Multiple Native Frontends**: ❌ Only one native framework allowed
-- **Web + Native**: ✅ One web and one native framework allowed
+- **Vários frontends web**: ❌ Apenas um framework web permitido
+- **Vários frontends native**: ❌ Apenas um framework native permitido
+- **Web + native**: ✅ Um web e um native permitidos
 
 ```bash
 # ❌ Invalid - Multiple web frontends
@@ -125,64 +125,64 @@ kubojs --frontend next tanstack-router
 kubojs --frontend next native-uniwind
 ```
 
-## Database Setup Compatibility
+## Compatibilidade de setup de banco
 
-### Provider Requirements
+### Requisitos por provider
 
-| Setup Provider    | Required Database              | Notes                                                                                                            |
-| ----------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| `turso`           | `sqlite`                       | Distributed SQLite; works with Drizzle and Prisma                                                                |
-| `d1`              | `sqlite`                       | Cloudflare D1; works with Drizzle and Prisma on Cloudflare Workers or supported self-hosted Cloudflare frontends |
-| `neon`            | `postgres`                     | Serverless PostgreSQL                                                                                            |
-| `supabase`        | `postgres`                     | PostgreSQL with additional features                                                                              |
-| `prisma-postgres` | `postgres`                     | Managed PostgreSQL via Prisma                                                                                    |
-| `planetscale`     | `mysql`, `postgres`            | PlanetScale serverless database                                                                                  |
-| `mongodb-atlas`   | `mongodb`                      | Managed MongoDB                                                                                                  |
-| `docker`          | `postgres`, `mysql`, `mongodb` | Not compatible with `sqlite` or Workers                                                                          |
+| Provider de setup | Database obrigatório           | Notas                                                                                                             |
+| ----------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `turso`           | `sqlite`                       | SQLite distribuído; funciona com Drizzle e Prisma                                                                 |
+| `d1`              | `sqlite`                       | Cloudflare D1; funciona com Drizzle e Prisma em Cloudflare Workers ou frontends self-hosted Cloudflare suportados |
+| `neon`            | `postgres`                     | PostgreSQL serverless                                                                                             |
+| `supabase`        | `postgres`                     | PostgreSQL com recursos adicionais                                                                                |
+| `prisma-postgres` | `postgres`                     | PostgreSQL gerenciado via Prisma                                                                                  |
+| `planetscale`     | `mysql`, `postgres`            | Banco serverless PlanetScale                                                                                      |
+| `mongodb-atlas`   | `mongodb`                      | MongoDB gerenciado                                                                                                |
+| `docker`          | `postgres`, `mysql`, `mongodb` | Não compatível com `sqlite` ou Workers                                                                            |
 
-### Special Cases
+### Casos especiais
 
 #### Cloudflare D1
 
-- Requires `--database sqlite`
-- Requires one of these Cloudflare deployment targets:
+- Exige `--database sqlite`
+- Exige um destes alvos de deploy Cloudflare:
   - `--backend hono --runtime workers --server-deploy cloudflare`
   - `--backend self --web-deploy cloudflare`
-- With `--backend self`, D1 is supported on `next`, `tanstack-start`, `nuxt`, `svelte`, and `astro`
-- With `--backend self`, frontend API compatibility still applies: `nuxt`, `svelte`, and `astro` require `--api orpc` or `--api none`
+- Com `--backend self`, D1 é suportado em `next`, `tanstack-start`, `nuxt`, `svelte` e `astro`
+- Com `--backend self`, a compatibilidade de API do frontend ainda se aplica: `nuxt`, `svelte` e `astro` exigem `--api orpc` ou `--api none`
 
-#### Docker Setup
+#### Setup Docker
 
-- Cannot be used with `sqlite` (file-based database)
-- Cannot be used with `workers` runtime (serverless environment)
+- Não pode ser usado com `sqlite` (banco baseado em arquivo)
+- Não pode ser usado com runtime `workers` (ambiente serverless)
 
-## Addon Compatibility
+## Compatibilidade de addons
 
-### PWA Support
+### Suporte a PWA
 
-- Requires web frontend
-- Compatible frontends: `tanstack-router`, `react-router`, `next`, `solid`
-- Not compatible with native-only projects
+- Exige frontend web
+- Frontends compatíveis: `tanstack-router`, `react-router`, `next`, `solid`
+- Não compatível com projetos só native
 
-### Tauri (Desktop Apps)
+### Tauri (apps desktop)
 
-- Requires web frontend
-- Compatible frontends: `tanstack-router`, `react-router`, `tanstack-start`, `next`, `nuxt`, `svelte`, `solid`, `astro`
-- Desktop builds package static web output, so `tanstack-start`, `next`, `nuxt`, `svelte`, and `astro` need static/export configuration before packaging
-- Not compatible with `--backend self`, because fullstack self backends emit server routes inside `apps/web`
-- Cannot be combined with native frameworks
+- Exige frontend web
+- Frontends compatíveis: `tanstack-router`, `react-router`, `tanstack-start`, `next`, `nuxt`, `svelte`, `solid`, `astro`
+- Builds desktop empacotam saída web estática, então `tanstack-start`, `next`, `nuxt`, `svelte` e `astro` precisam de configuração static/export antes do empacotamento
+- Não compatível com `--backend self`, porque backends fullstack self emitem rotas de server dentro de `apps/web`
+- Não pode ser combinado com frameworks native
 
-### Electrobun (Desktop Apps)
+### Electrobun (apps desktop)
 
-- Requires web frontend
-- Compatible frontends: `tanstack-router`, `react-router`, `tanstack-start`, `next`, `nuxt`, `svelte`, `solid`, `astro`
-- Uses a generated `apps/desktop` shell that loads `apps/web` during development and bundles its static build output for distribution
-- Desktop builds package static web output, so `tanstack-start`, `next`, `nuxt`, `svelte`, and `astro` need static/export configuration before packaging
-- Not compatible with `--backend self`, because fullstack self backends emit server routes inside `apps/web`
+- Exige frontend web
+- Frontends compatíveis: `tanstack-router`, `react-router`, `tanstack-start`, `next`, `nuxt`, `svelte`, `solid`, `astro`
+- Usa um shell gerado em `apps/desktop` que carrega `apps/web` no desenvolvimento e empacota a saída de build estática para distribuição
+- Builds desktop empacotam saída web estática, então `tanstack-start`, `next`, `nuxt`, `svelte` e `astro` precisam de configuração static/export antes do empacotamento
+- Não compatível com `--backend self`, porque backends fullstack self emitem rotas de server dentro de `apps/web`
 
-### Task Runners
+### Task runners
 
-- `nx`, `turborepo`, and `vite-plus` are mutually exclusive — only one can be selected per project
+- `nx`, `turborepo` e `vite-plus` são mutuamente exclusivos — só um pode ser selecionado por projeto
 
 ```bash
 # ❌ Invalid - two task runners
@@ -192,52 +192,52 @@ kubojs --addons turborepo nx
 kubojs --addons turborepo
 ```
 
-### Web Deployment
+### Deploy web
 
-- `--web-deploy cloudflare`, `--web-deploy docker`, and `--web-deploy vercel` require a web frontend
-- Cannot be used with native-only projects
+- `--web-deploy cloudflare`, `--web-deploy docker` e `--web-deploy vercel` exigem um frontend web
+- Não podem ser usados com projetos só native
 
-### Server Deployment
+### Deploy de server
 
-- `--server-deploy cloudflare` requires `--runtime workers` with `--backend hono`
-- `--server-deploy docker` and `--server-deploy vercel` require `--runtime bun` or `--runtime node`
-- `--server-deploy` is not used for `--backend self`, because fullstack backends deploy with the web app
+- `--server-deploy cloudflare` exige `--runtime workers` com `--backend hono`
+- `--server-deploy docker` e `--server-deploy vercel` exigem `--runtime bun` ou `--runtime node`
+- `--server-deploy` não é usado com `--backend self`, porque backends fullstack fazem deploy junto com o app web
 
-## Authentication Requirements
+## Requisitos de autenticação
 
-### Better-Auth Requirements
+### Requisitos do Better-Auth
 
-Better-Auth authentication requires:
+A autenticação Better-Auth exige:
 
-- A backend framework (cannot be `none`)
-- With database: Requires an ORM
-- Without database: Works with Convex backend or custom configuration
-- With `--backend convex`: requires `react-router`, `tanstack-router`, `tanstack-start`, `next`, or a native Expo frontend
+- Um framework de backend (não pode ser `none`)
+- Com banco: exige um ORM
+- Sem banco: funciona com backend Convex ou configuração custom
+- Com `--backend convex`: exige `react-router`, `tanstack-router`, `tanstack-start`, `next` ou um frontend native Expo
 
-### Clerk Requirements
+### Requisitos do Clerk
 
-Clerk authentication requires:
+A autenticação Clerk exige:
 
-- Compatible frontends (React frameworks, Next.js, TanStack Start, native frameworks)
-- Supported backends: Convex, Hono, Express, Fastify, and Elysia
-- Fullstack (`--backend self`) support with Next.js or TanStack Start
-- Not compatible with Nuxt, Svelte, Solid, or Astro
+- Frontends compatíveis (frameworks React, Next.js, TanStack Start, frameworks native)
+- Backends suportados: Convex, Hono, Express, Fastify e Elysia
+- Suporte fullstack (`--backend self`) com Next.js ou TanStack Start
+- Não compatível com Nuxt, Svelte, Solid ou Astro
 
-## Example Compatibility
+## Compatibilidade de exemplos
 
-### Todo Example
+### Exemplo Todo
 
-- Requires a database when backend is present (except Convex)
-- Requires an API layer (`trpc` or `orpc`) for non-Convex backends
-- Cannot be used with `--backend none`
+- Exige um banco quando o backend está presente (exceto Convex)
+- Exige uma camada de API (`trpc` ou `orpc`) para backends não-Convex
+- Não pode ser usado com `--backend none`
 
-### AI Example
+### Exemplo AI
 
-- Not compatible with `--frontend solid`
-- Not compatible with `--frontend astro`
-- With `--backend convex`, Nuxt and Svelte frontends are not supported
+- Não compatível com `--frontend solid`
+- Não compatível com `--frontend astro`
+- Com `--backend convex`, frontends Nuxt e Svelte não são suportados
 
-## Common Error Messages
+## Mensagens de erro comuns
 
 ### "Mongoose ORM requires MongoDB database"
 
@@ -260,13 +260,13 @@ kubojs --runtime workers --backend hono
 kubojs --frontend tanstack-router
 ```
 
-## Validation Strategy
+## Estratégia de validação
 
-The CLI validates compatibility in this order:
+A CLI valida a compatibilidade nesta ordem:
 
-1. **Basic validation**: Required parameters, valid enum values
-2. **Combination validation**: Database + ORM, Backend + Runtime compatibility
-3. **Feature validation**: Auth requirements, addon compatibility
-4. **Example validation**: Example + stack compatibility
+1. **Validação básica**: parâmetros obrigatórios, valores de enum válidos
+2. **Validação de combinação**: compatibilidade Database + ORM, Backend + Runtime
+3. **Validação de recursos**: requisitos de auth, compatibilidade de addons
+4. **Validação de exemplos**: compatibilidade de exemplo + stack
 
-Understanding these rules helps you create valid configurations and troubleshoot issues when the CLI reports compatibility errors.
+Entender essas regras ajuda a criar configurações válidas e a diagnosticar problemas quando a CLI reporta erros de compatibilidade.

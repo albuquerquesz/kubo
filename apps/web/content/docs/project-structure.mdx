@@ -1,15 +1,15 @@
 ---
-title: Project Structure
-description: Understanding the structure of projects created by kubojs CLI
+title: Estrutura do projeto
+description: Entendendo a estrutura dos projetos criados pela CLI kubojs
 ---
 
-## Overview
+## Visão geral
 
-kubojs CLI scaffolds a monorepo with `apps/*` and `packages/*`. `packages/config` is always present; other packages and apps appear based on your choices (frontend, backend, API, database/ORM, auth, addons, runtime, deploy). This page mirrors what the CLI actually writes.
+A CLI kubojs gera um monorepo com `apps/*` e `packages/*`. `packages/config` está sempre presente; outros packages e apps aparecem conforme suas escolhas (frontend, backend, API, database/ORM, auth, addons, runtime, deploy). Esta página espelha o que a CLI realmente grava.
 
-## Root layout
+## Layout da raiz
 
-At the repository root you will see:
+Na raiz do repositório você verá:
 
 <Files>
   <Folder name="/" defaultOpen>
@@ -30,17 +30,17 @@ At the repository root you will see:
   </Folder>
 </Files>
 
-Notes:
+Observações:
 
-- `bts.jsonc` lets the CLI detect and enhance your project later; keep it if you plan to use `kubojs add`.
-- `turbo.json` exists only if you picked the Turborepo addon.
-- `nx.json` exists only if you picked the Nx addon.
-- `pnpm-workspace.yaml`, `bunfig.toml`, and `.npmrc` are added based on the package manager you choose.
-- `packages/infra` is created only when Cloudflare deployment is enabled.
+- `bts.jsonc` permite que a CLI detecte e aprimore o projeto depois; mantenha-o se planejar usar `kubojs add`.
+- `turbo.json` existe apenas se você escolheu o addon Turborepo.
+- `nx.json` existe apenas se você escolheu o addon Nx.
+- `pnpm-workspace.yaml`, `bunfig.toml` e `.npmrc` são adicionados conforme o gerenciador de pacotes escolhido.
+- `packages/infra` é criado somente quando o deploy Cloudflare está habilitado.
 
-## Monorepo structure by backend
+## Estrutura do monorepo por backend
 
-### Server backends (hono, express, fastify, elysia)
+### Backends de server (hono, express, fastify, elysia)
 
 <Files>
   <Folder name="my-app" defaultOpen>
@@ -67,15 +67,15 @@ Notes:
   </Folder>
 </Files>
 
-Notes:
+Observações:
 
-- `apps/desktop` is created only with the Electrobun addon.
-- `apps/docs` is created only with the Starlight addon.
-- `apps/fumadocs` is created only with the Fumadocs addon.
+- `apps/desktop` é criado apenas com o addon Electrobun.
+- `apps/docs` é criado apenas com o addon Starlight.
+- `apps/fumadocs` é criado apenas com o addon Fumadocs.
 
-### Self backend (fullstack)
+### Backend self (fullstack)
 
-When `--backend self` is used, API routes live inside `apps/web` (no `apps/server`).
+Quando `--backend self` é usado, as rotas de API ficam dentro de `apps/web` (sem `apps/server`).
 
 <Files>
   <Folder name="my-app" defaultOpen>
@@ -99,7 +99,7 @@ When `--backend self` is used, API routes live inside `apps/web` (no `apps/serve
   </Folder>
 </Files>
 
-### Convex backend
+### Backend Convex
 
 <Files>
   <Folder name="my-app" defaultOpen>
@@ -128,11 +128,11 @@ When `--backend self` is used, API routes live inside `apps/web` (no `apps/serve
   </Folder>
 </Files>
 
-## Frontend Structure (apps/web)
+## Estrutura do frontend (apps/web)
 
-The structure varies by framework. Items marked "(auth)" or "(API)" appear only when those options are enabled.
+A estrutura varia conforme o framework. Itens marcados com "(auth)" ou "(API)" aparecem somente quando essas opções estão habilitadas.
 
-### React with TanStack Router
+### React com TanStack Router
 
 <Files>
   <Folder name="apps/web" defaultOpen>
@@ -230,42 +230,42 @@ The structure varies by framework. Items marked "(auth)" or "(API)" appear only 
   </Folder>
 </Files>
 
-Notes:
+Observações:
 
-- If you choose `--backend self` with Next.js, TanStack Start, Nuxt, SvelteKit, or Astro, API routes live inside `apps/web` (no `apps/server`).
-- (auth) adds `src/app/login/*` and `src/app/dashboard/*` plus sign-in components.
+- Se você escolher `--backend self` com Next.js, TanStack Start, Nuxt, SvelteKit ou Astro, as rotas de API ficam dentro de `apps/web` (sem `apps/server`).
+- (auth) adiciona `src/app/login/*` e `src/app/dashboard/*` mais componentes de sign-in.
 
-## React UI Customization
+## Customização da UI React
 
-React web apps (`tanstack-router`, `react-router`, `tanstack-start`, and `next`) share shadcn/ui primitives through `packages/ui`.
+Apps web React (`tanstack-router`, `react-router`, `tanstack-start` e `next`) compartilham primitivos shadcn/ui via `packages/ui`.
 
-- Change design tokens and global styles in `packages/ui/src/styles/globals.css`
-- Update shared primitives in `packages/ui/src/components/*`
-- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
+- Altere design tokens e estilos globais em `packages/ui/src/styles/globals.css`
+- Atualize primitivos compartilhados em `packages/ui/src/components/*`
+- Ajuste aliases ou config de estilo do shadcn em `packages/ui/components.json` e `apps/web/components.json`
 
-### Add more shared components
+### Adicionar mais componentes compartilhados
 
-Run this from the project root to add more primitives to the shared UI package:
+Rode isto na raiz do projeto para adicionar mais primitivos ao package de UI compartilhado:
 
 ```bash
 npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
 ```
 
-Import shared components like this:
+Importe componentes compartilhados assim:
 
 ```tsx
 import { Button } from "@your-project/ui/components/button";
 ```
 
-### Add app-specific blocks
+### Adicionar blocks específicos do app
 
-If you want to add app-specific shadcn blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
+Se quiser adicionar blocks shadcn específicos do app em vez de primitivos compartilhados, rode a CLI do shadcn a partir de `apps/web`.
 
-## Backend Structure (apps/server)
+## Estrutura do backend (apps/server)
 
-The server structure depends on your backend choice:
+A estrutura do server depende da escolha de backend:
 
-### Hono backend
+### Backend Hono
 
 <Files>
   <Folder name="apps/server" defaultOpen>
@@ -292,19 +292,19 @@ The server structure depends on your backend choice:
   </Folder>
 </Files>
 
-### Workers runtime (optional)
+### Runtime workers (opcional)
 
-When `runtime=workers`, the server targets Cloudflare Workers. If you also choose Cloudflare deployment, you'll get `packages/infra/alchemy.run.ts` and related infra files.
+Quando `runtime=workers`, o server mira Cloudflare Workers. Se também escolher deploy Cloudflare, você terá `packages/infra/alchemy.run.ts` e arquivos de infra relacionados.
 
-API and auth scaffolding (conditional):
+Scaffold de API e auth (condicional):
 
 - API=trpc: `src/lib/trpc.ts`, `src/lib/context.ts`
 - API=orpc: `src/lib/orpc.ts`, `src/lib/context.ts`
 - Auth: `src/lib/auth.ts`
 
-## Database Configuration
+## Configuração de banco de dados
 
-Added only when you selected a database and ORM:
+Adicionada somente quando você selecionou um banco e um ORM:
 
 ### Drizzle ORM
 
@@ -349,19 +349,19 @@ Added only when you selected a database and ORM:
 
 ### Auth + DB
 
-If you selected auth, additional files are added for your ORM:
+Se você selecionou auth, arquivos adicionais são incluídos para o seu ORM:
 
 - Drizzle: `src/db/schema/auth.ts`
 - Prisma: `prisma/schema/auth.prisma`
 - Mongoose: `src/db/models/auth.model.ts`
 
-### Docker compose (optional)
+### Docker compose (opcional)
 
-If `dbSetup=docker`, a `docker-compose.yml` is added in `apps/server/` for your database.
+Se `dbSetup=docker`, um `docker-compose.yml` é adicionado em `apps/server/` para o seu banco.
 
-## Native App Structure (apps/native)
+## Estrutura do app native (apps/native)
 
-Created only when you include React Native (NativeWind or Unistyles):
+Criado somente quando você inclui React Native (NativeWind ou Unistyles):
 
 <Files>
   <Folder name="apps/native" defaultOpen>
@@ -387,12 +387,12 @@ Created only when you include React Native (NativeWind or Unistyles):
   </Folder>
 </Files>
 
-If an API is selected, a client utility is added:
+Se uma API for selecionada, um utilitário de cliente é adicionado:
 
 - API=trpc: `utils/trpc.ts`
 - API=orpc: `utils/orpc.ts`
 
-## Documentation Structure
+## Estrutura da documentação
 
 ### Starlight (apps/docs)
 
@@ -416,15 +416,15 @@ If an API is selected, a client utility is added:
 
 ### Fumadocs (apps/fumadocs)
 
-Fumadocs is generated by `create-fumadocs-app` inside `apps/fumadocs`. The exact structure depends on the template you choose (MDX vs static).
+O Fumadocs é gerado por `create-fumadocs-app` dentro de `apps/fumadocs`. A estrutura exata depende do template escolhido (MDX vs static).
 
 ### Electrobun (apps/desktop)
 
-Electrobun adds an `apps/desktop` workspace with its own `package.json`, `electrobun.config.ts`, and `src/bun/index.ts`. The desktop shell reuses `apps/web` during development and bundles its built static output for release builds. Use a separate backend or no backend for desktop apps; `--backend self` emits server routes inside `apps/web` and cannot be bundled as static desktop assets.
+O Electrobun adiciona um workspace `apps/desktop` com seu próprio `package.json`, `electrobun.config.ts` e `src/bun/index.ts`. O shell desktop reutiliza `apps/web` no desenvolvimento e empacota a saída estática buildada para releases. Use um backend separado ou nenhum backend para apps desktop; `--backend self` emite rotas de server dentro de `apps/web` e não pode ser empacotado como assets estáticos de desktop.
 
-## Configuration Files
+## Arquivos de configuração
 
-### kubojs Config (bts.jsonc)
+### Config kubojs (bts.jsonc)
 
 ```json
 {
@@ -447,9 +447,9 @@ Electrobun adds an `apps/desktop` workspace with its own `package.json`, `electr
 }
 ```
 
-### Turborepo Config (turbo.json)
+### Config Turborepo (turbo.json)
 
-Generated only if you chose the Turborepo addon.
+Gerado somente se você escolheu o addon Turborepo.
 
 ```json
 {
@@ -467,15 +467,15 @@ Generated only if you chose the Turborepo addon.
 }
 ```
 
-### Nx Config (nx.json)
+### Config Nx (nx.json)
 
-Generated only if you chose the Nx addon.
+Gerado somente se você escolheu o addon Nx.
 
-### Vite+ Config
+### Config Vite+
 
-Generated Vite frontends import `defineConfig` from `vite-plus` when you choose the Vite+ addon. A root `vite.config.ts` centralizes Vite+ lint, format, and staged-file checks, while root workspace scripts use `vp run` for task orchestration.
+Frontends Vite gerados importam `defineConfig` de `vite-plus` quando você escolhe o addon Vite+. Um `vite.config.ts` na raiz centraliza lint, format e checks de arquivos staged do Vite+, enquanto os scripts do workspace na raiz usam `vp run` para orquestração de tasks.
 
-When Vite+ is selected without Husky or Lefthook, generated projects also include `hooks:setup` for optional native Vite+ Git hooks. Run it if you want `vp config` to install hooks into `.vite-hooks` and use `vp staged` from `vite.config.ts`; see the [Vite+ commit hooks guide](https://viteplus.dev/guide/commit-hooks).
+Quando o Vite+ é selecionado sem Husky ou Lefthook, os projetos gerados também incluem `hooks:setup` para hooks Git nativos opcionais do Vite+. Rode-o se quiser que `vp config` instale hooks em `.vite-hooks` e use `vp staged` a partir de `vite.config.ts`; veja o [guia de commit hooks do Vite+](https://viteplus.dev/guide/commit-hooks).
 
 ```ts
 import { defineConfig } from "vite-plus";
@@ -496,22 +496,22 @@ export default defineConfig({
 });
 ```
 
-## Shared packages
+## Packages compartilhados
 
-kubojs always creates `packages/config`. Other packages are added based on your selections:
+O kubojs sempre cria `packages/config`. Outros packages são adicionados conforme suas seleções:
 
-- `packages/env`: when any frontend is selected or the backend is not `none`
-- `packages/api`: when `--api` is not `none` (non-Convex)
-- `packages/auth`: when `--auth` is not `none` (non-Convex)
-- `packages/db`: when both `--database` and `--orm` are selected (non-Convex)
-- `packages/backend`: Convex backend only
-- `packages/infra`: Cloudflare deployment only
+- `packages/env`: quando qualquer frontend é selecionado ou o backend não é `none`
+- `packages/api`: quando `--api` não é `none` (não-Convex)
+- `packages/auth`: quando `--auth` não é `none` (não-Convex)
+- `packages/db`: quando `--database` e `--orm` são selecionados (não-Convex)
+- `packages/backend`: somente backend Convex
+- `packages/infra`: somente deploy Cloudflare
 
-## Development Scripts
+## Scripts de desenvolvimento
 
-Scripts are adjusted based on your package manager and whether the Turborepo, Nx, or Vite+ addon is selected.
+Os scripts são ajustados conforme o gerenciador de pacotes e se o addon Turborepo, Nx ou Vite+ está selecionado.
 
-With Turborepo:
+Com Turborepo:
 
 ```json
 {
@@ -527,7 +527,7 @@ With Turborepo:
 }
 ```
 
-With Nx:
+Com Nx:
 
 ```json
 {
@@ -541,7 +541,7 @@ With Nx:
 }
 ```
 
-With Vite+:
+Com Vite+:
 
 ```json
 {
@@ -559,7 +559,7 @@ With Vite+:
 }
 ```
 
-Without Turborepo, Nx, or Vite+ (example for Bun):
+Sem Turborepo, Nx ou Vite+ (exemplo para Bun):
 
 ```json
 {
@@ -573,21 +573,21 @@ Without Turborepo, Nx, or Vite+ (example for Bun):
 }
 ```
 
-Notes:
+Observações:
 
-- Convex adds `dev:setup` for initial backend configuration.
-- Database scripts (`db:*`) are added only when a database + ORM are selected (Drizzle/Prisma). D1 + Cloudflare omits `db:push` and `db:studio`.
+- Convex adiciona `dev:setup` para a configuração inicial do backend.
+- Scripts de banco (`db:*`) são adicionados somente quando database + ORM estão selecionados (Drizzle/Prisma). D1 + Cloudflare omite `db:push` e `db:studio`.
 
-## Key Details
+## Detalhes importantes
 
-- **Monorepo**: `apps/*` and `packages/*` are created only when relevant (except `packages/config`, which is always present)
-- **React web base**: app-specific files stay in `apps/web`, while shared shadcn/ui primitives live in `packages/ui`
-- **API clients**: `src/utils/trpc.ts` or `src/utils/orpc.ts` added to web/native when selected
-- **Auth**: Adds authentication setup based on provider:
-  - `better-auth`: `src/lib/auth.ts` on server and login/dashboard pages on web app
-  - `clerk`: Clerk provider setup and authentication components
-- **ORM/DB**: Drizzle/Prisma/Mongoose files added only when selected
-- **Extras**: `pnpm-workspace.yaml`, `bunfig.toml`, or `.npmrc` added based on package manager and choices
-- **Deploy**: Cloudflare deployment adds `packages/infra/alchemy.run.ts` and related infra files
+- **Monorepo**: `apps/*` e `packages/*` são criados somente quando relevantes (exceto `packages/config`, que está sempre presente)
+- **Base web React**: arquivos específicos do app ficam em `apps/web`, enquanto primitivos shadcn/ui compartilhados vivem em `packages/ui`
+- **Clientes de API**: `src/utils/trpc.ts` ou `src/utils/orpc.ts` adicionados a web/native quando selecionados
+- **Auth**: adiciona setup de autenticação conforme o provider:
+  - `better-auth`: `src/lib/auth.ts` no server e páginas de login/dashboard no app web
+  - `clerk`: setup do provider Clerk e componentes de autenticação
+- **ORM/DB**: arquivos Drizzle/Prisma/Mongoose adicionados somente quando selecionados
+- **Extras**: `pnpm-workspace.yaml`, `bunfig.toml` ou `.npmrc` adicionados conforme o gerenciador de pacotes e as escolhas
+- **Deploy**: deploy Cloudflare adiciona `packages/infra/alchemy.run.ts` e arquivos de infra relacionados
 
-This reflects the actual files written by the CLI so new projects match what's documented here.
+Isto reflete os arquivos realmente gravados pela CLI, para que novos projetos batam com o que está documentado aqui.

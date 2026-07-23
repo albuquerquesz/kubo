@@ -1,78 +1,84 @@
 ---
-title: Frequently Asked Questions
-description: Short answers to common beginner questions
+title: Perguntas frequentes
+description: Respostas curtas a dúvidas comuns de iniciantes
 ---
 
 import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
 
-## General
+## Geral
 
 <Accordions type="single">
   <Accordion
     id="faq-1"
-    title="What is Better‑T‑Stack?">
-    An opinionated CLI that scaffolds full‑stack TypeScript projects (frontend, backend, API, DB/ORM, auth, addons) with a clean monorepo. See the Quick Start on the docs home.
+    title="O que é o Kubo?">
+    Uma CLI opinativa que gera scaffolds de projetos TypeScript full-stack (frontend, backend, API,
+    DB/ORM, auth, addons) com monorepo limpo. Veja o Início rápido na home da documentação.
   </Accordion>
 
-<Accordion id="faq-2" title="Do I need to install anything globally?">
-  No. Run the CLI directly with your package manager. See Quick Start and the per‑command pages
-  under CLI.
+<Accordion id="faq-2" title="Preciso instalar algo globalmente?">
+  Não. Rode a CLI diretamente com seu gerenciador de pacotes. Veja o Início rápido e as páginas por
+  comando em CLI.
 </Accordion>
 
-<Accordion id="faq-3" title="Which package manager can I use?">
-  `npm`, `pnpm`, or `bun` (all supported).
+<Accordion id="faq-3" title="Qual gerenciador de pacotes posso usar?">
+  `npm`, `pnpm` ou `bun` (todos suportados).
 </Accordion>
 
-<Accordion id="faq-4" title="What Node.js version is required?">
-  Node.js 20+ (LTS recommended).
+<Accordion id="faq-4" title="Qual versão do Node.js é necessária?">
+  Node.js 20+ (LTS recomendado).
 </Accordion>
 
-<Accordion id="faq-5" title="Can I use this with an existing project?">
-  The CLI is for new projects. You can migrate gradually or use `add` to extend a Better‑T‑Stack
-  project.
+<Accordion id="faq-5" title="Posso usar com um projeto existente?">
+  A CLI é para projetos novos. Você pode migrar aos poucos ou usar `add` para estender um projeto
+  Kubo.
 </Accordion>
 
  <Accordion 
     id="faq-6"
-    title="Where do generated files live?">
-    See Project Structure for high‑level layouts (server‑based vs. Convex, optional web/native)..
+    title="Onde ficam os arquivos gerados?">
+    Veja Estrutura do projeto para layouts de alto nível (baseado em server vs. Convex, web/native
+    opcionais).
  </Accordion>
 </Accordions>
 
-## Choosing options
+## Escolhendo opções
 
 <Accordions type="single">
  <Accordion 
     id="faq-7"
-    title="Does the CLI recommend a stack?">
-    No. Pick what fits your needs. The CLI validates compatibility. See CLI (per command) and Compatibility for rules.
+    title="A CLI recomenda uma stack?">
+    Não. Escolha o que combina com suas necessidades. A CLI valida a compatibilidade. Veja CLI (por
+    comando) e Compatibilidade para as regras.
  </Accordion>
 
  <Accordion 
     id="faq-8"
-    title="I’m unsure between tRPC and oRPC / Drizzle and Prisma">
-    See Compatibility for guidance and constraints. Both pairs work well; choose based on team and hosting needs.
+    title="Estou em dúvida entre tRPC e oRPC / Drizzle e Prisma">
+    Veja Compatibilidade para orientação e restrições. Ambos os pares funcionam bem; escolha com base
+    no time e nas necessidades de hospedagem.
  </Accordion>
 </Accordions>
 
-## Common issues
+## Problemas comuns
 
 <Accordions type="single">
  <Accordion 
     id="faq-9"
-    title="My mobile app can’t connect to the backend (Expo)">
-    Set `EXPO_PUBLIC_SERVER_URL` in `apps/native/.env` to your machine IP (not `localhost`), check firewall, or try `npx expo start --tunnel`.
+    title="Meu app mobile não conecta ao backend (Expo)">
+    Defina `EXPO_PUBLIC_SERVER_URL` em `apps/native/.env` com o IP da sua máquina (não `localhost`),
+    verifique o firewall ou tente `npx expo start --tunnel`.
  </Accordion>
 
  <Accordion 
     id="faq-10"
-    title="How do I disable telemetry?">
-    Set `BTS_TELEMETRY_DISABLED=1` (shell env). For one run, prefix the command; to make it permanent, export it in your shell profile.
+    title="Como desativo a telemetria?">
+    Defina `BTS_TELEMETRY_DISABLED=1` (variável de ambiente do shell). Para uma execução, prefixe o
+    comando; para tornar permanente, exporte no perfil do shell.
  </Accordion>
 </Accordions>
 
-## Getting help
+## Obtendo ajuda
 
-- Docs: Quick Start, CLI, Project Structure, Compatibility
-- Ask/Report: GitHub Issues & Discussions
-- Community: Discord
+- Docs: Início rápido, CLI, Estrutura do projeto, Compatibilidade
+- Perguntar/Reportar: GitHub Issues & Discussions
+- Comunidade: Discord

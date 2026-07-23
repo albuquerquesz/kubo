@@ -1,23 +1,23 @@
 ---
-title: Programmatic API
-description: Use kubojs programmatically in your Node.js applications
+title: API programática
+description: Use o kubojs de forma programática em aplicações Node.js
 ---
 
-## Overview
+## Visão geral
 
-You can call kubojs directly from TypeScript/JavaScript without shelling out to the CLI.
+Você pode chamar o kubojs diretamente de TypeScript/JavaScript sem invocar a CLI via shell.
 
-The programmatic API is exported from `kubojs` and is designed for automation tools, internal generators, and scripted workflows.
+A API programática é exportada de `kubojs` e foi pensada para ferramentas de automação, geradores internos e fluxos scriptados.
 
-Because it runs in silent mode by default, it also benefits from the same agent-safe behavior as `create-json`, including structured addon and database setup options.
+Como roda em modo silencioso por padrão, também se beneficia do mesmo comportamento agent-safe do `create-json`, incluindo opções estruturadas de addon e de setup de banco.
 
-## Installation
+## Instalação
 
 ```npm
 npm i kubojs
 ```
 
-## Quick Start
+## Início rápido
 
 ```typescript
 import { create } from "kubojs";
@@ -44,11 +44,11 @@ result.match({
 });
 ```
 
-## API Reference
+## Referência da API
 
 ### `create(projectName?, options?)`
 
-Create a new project.
+Cria um novo projeto.
 
 ```typescript
 function create(
@@ -57,17 +57,17 @@ function create(
 ): Promise<Result<InitResult, CreateError>>;
 ```
 
-Notes:
+Observações:
 
-- Uses the same option model as the CLI `create` command (`frontend`, `backend`, `database`, `orm`, `api`, `auth`, `addons`, etc.).
-- Supports structured `addonOptions` and `dbSetupOptions`.
-- Supports `dryRun` for validation-only automation.
-- Runs in silent mode (no interactive prompts / no CLI UI output).
-- Returns a `Result` (`ok`/`err`) instead of exiting the process.
+- Usa o mesmo modelo de opções do comando `create` da CLI (`frontend`, `backend`, `database`, `orm`, `api`, `auth`, `addons` etc.).
+- Suporta `addonOptions` e `dbSetupOptions` estruturados.
+- Suporta `dryRun` para automação só de validação.
+- Roda em modo silencioso (sem prompts interativos / sem saída de UI da CLI).
+- Retorna um `Result` (`ok`/`err`) em vez de encerrar o processo.
 
 ### `add(options?)`
 
-Add addons to an existing kubojs project.
+Adiciona addons a um projeto kubojs existente.
 
 ```typescript
 function add(options?: {
@@ -80,7 +80,7 @@ function add(options?: {
 }): Promise<AddResult | undefined>;
 ```
 
-Example:
+Exemplo:
 
 ```typescript
 import { add } from "kubojs";
@@ -107,7 +107,7 @@ if (result?.success) {
 
 ### `createVirtual(options)`
 
-Generate a project in memory without writing to disk.
+Gera um projeto em memória sem gravar em disco.
 
 ```typescript
 import { createVirtual } from "kubojs";
@@ -125,23 +125,23 @@ const result = await createVirtual({
 });
 ```
 
-This is useful for previews, tests, and web-based builders.
+Isso é útil para previews, testes e builders web.
 
 ### `sponsors()`
 
-Show sponsors (same behavior as CLI command).
+Mostra sponsors (mesmo comportamento do comando da CLI).
 
 ### `docs()`
 
-Open docs URL (same behavior as CLI command).
+Abre a URL da documentação (mesmo comportamento do comando da CLI).
 
 ### `builder()`
 
-Open the web stack builder (same behavior as CLI command).
+Abre o stack builder web (mesmo comportamento do comando da CLI).
 
-## Result Types
+## Tipos de resultado
 
-### `InitResult` (from `create` on `ok`)
+### `InitResult` (de `create` em `ok`)
 
 ```typescript
 type InitResult = {
@@ -156,7 +156,7 @@ type InitResult = {
 };
 ```
 
-### `AddResult` (from `add`)
+### `AddResult` (de `add`)
 
 ```typescript
 type AddResult = {
@@ -171,13 +171,13 @@ type AddResult = {
 
 ### `CreateError`
 
-`create()` can return these error types in `Result.err(...)`:
+`create()` pode retornar estes tipos de erro em `Result.err(...)`:
 
 - `UserCancelledError`
 - `CLIError`
 - `ProjectCreationError`
 
-## Error Handling Pattern
+## Padrão de tratamento de erros
 
 ```typescript
 import { create } from "kubojs";
@@ -194,7 +194,7 @@ if (result.isErr()) {
 console.log(result.value.projectDirectory);
 ```
 
-## Mapping CLI to Programmatic
+## Mapeando CLI para programático
 
 CLI:
 
@@ -207,7 +207,7 @@ kubojs my-app \
   --auth better-auth
 ```
 
-Programmatic:
+Programático:
 
 ```typescript
 const result = await create("my-app", {
@@ -225,4 +225,4 @@ const result = await create("my-app", {
 });
 ```
 
-For the CLI-side JSON equivalents, see [Agent Workflows](/docs/cli/agent-workflows).
+Para os equivalentes JSON no lado da CLI, veja [Fluxos de agente](/docs/cli/agent-workflows).

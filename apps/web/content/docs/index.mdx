@@ -1,22 +1,22 @@
 ---
-title: Quick Start
-description: Create your first kubojs project in minutes
+title: Início rápido
+description: Crie seu primeiro projeto kubojs em minutos
 ---
 
-## Philosophy
+## Filosofia
 
-- Roll your own stack: pick only what you need, nothing extra.
-- Minimal templates: bare-bones scaffolds with zero bloat.
-- Latest dependencies: always current and stable by default.
-- Free and open source: forever.
+- Monte sua própria stack: escolha só o que precisa, nada a mais.
+- Templates mínimos: scaffolds enxutos, sem inchaço.
+- Dependências atualizadas: sempre atuais e estáveis por padrão.
+- Gratuito e open source: para sempre.
 
-## Get Started
+## Comece agora
 
-### Prerequisites
+### Pré-requisitos
 
-- **Node.js LTS** - [Download from nodejs.org](https://nodejs.org/)
-- **Git** (optional) - [Download from git-scm.com](https://git-scm.com/) - if you want to initialize a git repository
-- **Bun** (optional) - [Download from bun.com](https://bun.com/) - if you want to use Bun as your package manager
+- **Node.js LTS** - [Baixe em nodejs.org](https://nodejs.org/)
+- **Git** (opcional) - [Baixe em git-scm.com](https://git-scm.com/) - se quiser inicializar um repositório git
+- **Bun** (opcional) - [Baixe em bun.com](https://bun.com/) - se quiser usar o Bun como gerenciador de pacotes
 
 ### CLI (prompts)
 
@@ -24,9 +24,9 @@ description: Create your first kubojs project in minutes
 npm create kubojs@latest
 ```
 
-Follow the interactive prompts to choose your frontend, backend, database, ORM, API layer, and addons.
+Siga os prompts interativos para escolher frontend, backend, banco de dados, ORM, camada de API e addons.
 
-Skip prompts and use the default stack:
+Pule os prompts e use a stack padrão:
 
 ```npm
 npm create kubojs@latest --yes
@@ -34,16 +34,16 @@ npm create kubojs@latest --yes
 
 ### Stack Builder (UI)
 
-- Visit [/new](/new) to pick your stack and copy the generated command
-- Or open it via:
+- Acesse [/new](/new) para montar sua stack e copiar o comando gerado
+- Ou abra via:
 
 ```npm
 npm create kubojs@latest builder
 ```
 
-### AI agent (plugin)
+### Agente de IA (plugin)
 
-Let your AI assistant build the stack for you. Install the kubojs plugin, then describe what you want in plain English — it plans a valid stack and scaffolds it for you.
+Deixe seu assistente de IA montar a stack por você. Instale o plugin kubojs e descreva o que quer em português (ou inglês) — ele planeja uma stack válida e gera o scaffold.
 
 ```bash
 # Claude Code
@@ -51,11 +51,11 @@ Let your AI assistant build the stack for you. Install the kubojs plugin, then d
 /plugin install kubojs@kubojs
 ```
 
-Then ask: _"create a fullstack app with Next, Hono, Postgres and Better Auth"_. Also works in Codex, opencode, and any MCP-capable agent — see [Use it inside your AI agent](/docs/cli/agent-workflows#use-it-inside-your-ai-agent).
+Depois peça: _"create a fullstack app with Next, Hono, Postgres and Better Auth"_. Também funciona no Codex, opencode e em qualquer agente com MCP — veja [Usar dentro do seu agente de IA](/docs/cli/agent-workflows#use-it-inside-your-ai-agent).
 
-## Common Setups
+## Configurações comuns
 
-### Default Stack
+### Stack padrão
 
 ```npm
 npm create kubojs@latest my-webapp \
@@ -76,7 +76,7 @@ npm create kubojs@latest my-api \
   --auth clerk
 ```
 
-### Mobile App (Expo)
+### App mobile (Expo)
 
 ```npm
 npm create kubojs@latest my-native \
@@ -87,7 +87,7 @@ npm create kubojs@latest my-native \
   --auth better-auth
 ```
 
-### Empty Monorepo
+### Monorepo vazio
 
 ```npm
 npm create kubojs@latest my-workspace \
@@ -95,9 +95,9 @@ npm create kubojs@latest my-workspace \
   --backend none
 ```
 
-## Flags Cheat Sheet
+## Cola de flags
 
-See the full list in the [CLI Reference](/docs/cli). Key flags:
+Veja a lista completa na [Referência da CLI](/docs/cli). Flags principais:
 
 - `--frontend`: tanstack-router, react-router, tanstack-start, next, nuxt, svelte, solid, astro, native-bare, native-uniwind, native-unistyles, none
 - `--backend`: hono, express, fastify, elysia, convex, self, none
@@ -110,25 +110,25 @@ See the full list in the [CLI Reference](/docs/cli). Key flags:
 - `--addons`: turborepo, nx, vite-plus, pwa, tauri, electrobun, biome, lefthook, husky, starlight, fumadocs, ultracite, oxlint, mcp, opentui, wxt, skills, evlog, none
 - `--examples`: todo, ai, none
 
-## Next Steps
+## Próximos passos
 
 <Cards>
-  <Card href="/docs/cli" title="CLI (per-command)">
-    Flags, usage, and examples for each command
+  <Card href="/docs/cli" title="CLI (por comando)">
+    Flags, uso e exemplos de cada comando
   </Card>
-  <Card href="/docs/cli/agent-workflows#use-it-inside-your-ai-agent" title="AI agent plugin">
-    Scaffold from Claude Code, Codex, opencode, and other MCP agents
+  <Card href="/docs/cli/agent-workflows#use-it-inside-your-ai-agent" title="Plugin de agente de IA">
+    Scaffold a partir do Claude Code, Codex, opencode e outros agentes MCP
   </Card>
-  <Card href="/docs/project-structure" title="Project Structure">
-    See how web/server/native and Convex layouts are generated
+  <Card href="/docs/project-structure" title="Estrutura do projeto">
+    Veja como layouts web/server/native e Convex são gerados
   </Card>
-  <Card href="/docs/cli/compatibility" title="Compatibility">
-    Valid combinations for backend, runtime, database, ORM, API
+  <Card href="/docs/cli/compatibility" title="Compatibilidade">
+    Combinações válidas de backend, runtime, banco, ORM e API
   </Card>
   <Card href="/docs/bts-config" title="bts.jsonc">
-    Required for the add command; safe to delete if you don't use add
+    Necessário para o comando add; pode apagar se não for usar o add
   </Card>
-  <Card href="/docs/contributing" title="Contributing">
-    Dev setup and contribution flow
+  <Card href="/docs/contributing" title="Contribuindo">
+    Setup de desenvolvimento e fluxo de contribuição
   </Card>
 </Cards>

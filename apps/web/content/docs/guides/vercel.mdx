@@ -1,33 +1,33 @@
 ---
-title: Deploying to Vercel
-description: Learn how to deploy your kubojs app to Vercel using Vercel Services
+title: Deploy na Vercel
+description: Aprenda a fazer deploy do app kubojs na Vercel usando Vercel Services
 author:
   name: Aman Varshney
   url: https://github.com/AmanVarshney01
 date: Jul 2, 2026
 ---
 
-## Overview
+## Visão geral
 
-This guide explains how kubojs deploys your applications to [Vercel](https://vercel.com) using [Vercel Services](https://vercel.com/blog/vercel-services-run-full-stack-on-vercel). You'll learn:
+Este guia explica como o kubojs faz deploy das suas aplicações na [Vercel](https://vercel.com) usando [Vercel Services](https://vercel.com/blog/vercel-services-run-full-stack-on-vercel). Você vai aprender:
 
-- What Vercel Services are and how the generated `vercel.json` works
-- How to deploy web apps, server apps, or both from one monorepo
-- How environment variables are synced and derived
-- How same-origin `/api` routing connects the web and server services
-- How to verify a deployment before uploading anything
+- O que são Vercel Services e como o `vercel.json` gerado funciona
+- Como fazer deploy de apps web, server ou ambos a partir de um monorepo
+- Como variáveis de ambiente são sincronizadas e derivadas
+- Como o roteamento same-origin `/api` conecta os serviços web e server
+- Como verificar um deploy antes de enviar qualquer coisa
 
-## What are Vercel Services?
+## O que são Vercel Services?
 
-**Vercel Services** let you run multiple apps — a frontend and one or more backends — as services inside a single Vercel project. Each service gets its own build and its own [Fluid Compute](https://vercel.com/docs/fluid-compute) functions, while sharing one domain, one set of environment variables, and one deployment lifecycle.
+**Vercel Services** permitem rodar vários apps — um frontend e um ou mais backends — como serviços dentro de um único projeto Vercel. Cada serviço tem seu próprio build e suas próprias functions [Fluid Compute](https://vercel.com/docs/fluid-compute), compartilhando um domínio, um conjunto de variáveis de ambiente e um ciclo de vida de deploy.
 
-kubojs uses this to deploy your monorepo's `apps/web` and `apps/server` together: the web service serves your frontend, the server service runs your Hono/Express/Fastify/Elysia backend, and rewrites route `/api/*` requests between them on the same domain. No CORS configuration, no separate projects to keep in sync.
+O kubojs usa isso para fazer deploy de `apps/web` e `apps/server` do monorepo juntos: o serviço web serve o frontend, o serviço server roda o backend Hono/Express/Fastify/Elysia, e rewrites roteiam requests `/api/*` entre eles no mesmo domínio. Sem configuração de CORS, sem projetos separados para manter em sincronia.
 
-## Enabling Vercel Deployment
+## Habilitando deploy na Vercel
 
-When creating a project:
+Ao criar um projeto:
 
-**Combined deployment (web + server):**
+**Deploy combinado (web + server):**
 
 ```npm
 npm create kubojs@latest my-app \
@@ -38,7 +38,7 @@ npm create kubojs@latest my-app \
   --server-deploy vercel
 ```
 
-**Web-only (fullstack `self` backend):**
+**Só web (backend fullstack `self`):**
 
 ```npm
 npm create kubojs@latest my-app \
@@ -47,7 +47,7 @@ npm create kubojs@latest my-app \
   --web-deploy vercel
 ```
 
-**Server-only:**
+**Só server:**
 
 ```npm
 npm create kubojs@latest my-app \
@@ -57,11 +57,11 @@ npm create kubojs@latest my-app \
   --server-deploy vercel
 ```
 
-Server deployment requires the `bun` or `node` runtime and a separate backend (hono, express, fastify, elysia). For the Cloudflare `workers` runtime, use `--server-deploy cloudflare` instead.
+O deploy de server exige runtime `bun` ou `node` e um backend separado (hono, express, fastify, elysia). Para o runtime Cloudflare `workers`, use `--server-deploy cloudflare` em vez disso.
 
-## Understanding vercel.json
+## Entendendo o vercel.json
 
-The generated `vercel.json` defines your services and routing. A combined web + server deployment looks like this:
+O `vercel.json` gerado define seus serviços e o roteamento. Um deploy combinado web + server fica assim:
 
 ```json
 {
@@ -95,31 +95,31 @@ The generated `vercel.json` defines your services and routing. A combined web + 
 }
 ```
 
-How the pieces fit together:
+Como as peças se encaixam:
 
-- **Rewrites** send `/api/*` to the server service and everything else to the web service. Order matters — the more specific rule wins.
-- **The route transform** strips the `/api` prefix before the request reaches your backend, so a browser call to `/api/rpc/healthCheck` arrives at the server as `/rpc/healthCheck` — exactly where your tRPC/oRPC handlers are mounted. Better-auth routes are the one exception: `/api/auth/*` passes through unstripped, because better-auth requires its public URL path to match the server-side mount exactly. Your backend code needs no Vercel-specific paths.
-- **The web buildCommand** inlines your public server URL as `/api`, so the client calls the same domain it was served from. The generated oRPC/tRPC clients normalize this relative path to an absolute URL at runtime (browsers use `window.location.origin`; SSR uses the deployment's own URL).
-- **installCommand** runs the package manager from the monorepo root so workspace dependencies resolve.
+- **Rewrites** enviam `/api/*` para o serviço server e todo o resto para o serviço web. A ordem importa — a regra mais específica ganha.
+- **O route transform** remove o prefixo `/api` antes do request chegar ao backend, então uma chamada do browser para `/api/rpc/healthCheck` chega ao server como `/rpc/healthCheck` — exatamente onde os handlers tRPC/oRPC estão montados. Rotas better-auth são a exceção: `/api/auth/*` passa sem strip, porque better-auth exige que o path público da URL bata exatamente com o mount no server. Seu código de backend não precisa de paths específicos da Vercel.
+- **O buildCommand do web** embute a URL pública do server como `/api`, para o client chamar o mesmo domínio de onde foi servido. Os clients oRPC/tRPC gerados normalizam esse path relativo para uma URL absoluta em runtime (browsers usam `window.location.origin`; SSR usa a URL do próprio deployment).
+- **installCommand** roda o gerenciador de pacotes na raiz do monorepo para as dependências do workspace resolverem.
 
-### Framework Support
+### Suporte a frameworks
 
-| Frontend        | Service framework | Backend | Notes                                    |
-| --------------- | ----------------- | ------- | ---------------------------------------- |
-| Next.js         | `nextjs`          | hono    | Entrypoint exports the app for functions |
-| Nuxt            | `nuxtjs`          | express | Runs unmodified (listen is intercepted)  |
-| SvelteKit       | `sveltekit`       | fastify | Runs unmodified (listen is intercepted)  |
-| Astro           | `astro`           | elysia  | Entrypoint exports the app for functions |
-| React Router    | `react-router`    |         | SSR via the framework preset             |
-| TanStack Start  | `tanstack-start`  |         |                                          |
-| TanStack Router | `vite`            |         |                                          |
-| SolidJS         | `vite`            |         |                                          |
+| Frontend        | Framework do service | Backend | Notas                                      |
+| --------------- | -------------------- | ------- | ------------------------------------------ |
+| Next.js         | `nextjs`             | hono    | Entrypoint exporta o app para functions    |
+| Nuxt            | `nuxtjs`             | express | Roda sem alteração (listen é interceptado) |
+| SvelteKit       | `sveltekit`          | fastify | Roda sem alteração (listen é interceptado) |
+| Astro           | `astro`              | elysia  | Entrypoint exporta o app para functions    |
+| React Router    | `react-router`       |         | SSR via preset do framework                |
+| TanStack Start  | `tanstack-start`     |         |                                            |
+| TanStack Router | `vite`               |         |                                            |
+| SolidJS         | `vite`               |         |                                            |
 
-Astro projects automatically use the [`@astrojs/vercel`](https://docs.astro.build/en/guides/integrations-guide/vercel/) adapter instead of the Node standalone adapter.
+Projetos Astro usam automaticamente o adapter [`@astrojs/vercel`](https://docs.astro.build/en/guides/integrations-guide/vercel/) em vez do adapter Node standalone.
 
-### Choosing a region
+### Escolhendo uma região
 
-Functions deploy to Washington, D.C. (`iad1`) by default. If your database lives elsewhere, every query pays a cross-region round trip — an SSR page making a few queries can spend hundreds of milliseconds on network alone. Set the region where your database lives (static assets are served from Vercel's CDN close to users either way):
+Functions fazem deploy em Washington, D.C. (`iad1`) por padrão. Se o banco estiver em outro lugar, cada query paga ida e volta entre regiões — uma página SSR com algumas queries pode gastar centenas de milissegundos só de rede. Defina a região onde o banco fica (assets estáticos são servidos do CDN da Vercel perto dos usuários de qualquer forma):
 
 ```json
 {
@@ -127,11 +127,11 @@ Functions deploy to Washington, D.C. (`iad1`) by default. If your database lives
 }
 ```
 
-`regions` is top-level in `vercel.json` and applies to all services. Common IDs: `iad1` (Washington), `sfo1` (San Francisco), `fra1` (Frankfurt), `sin1` (Singapore), `bom1` (Mumbai), `syd1` (Sydney) — [full list](https://vercel.com/docs/regions#region-list). Pick the same region you chose during database setup (Neon, Prisma Postgres, Turso, etc.).
+`regions` é top-level em `vercel.json` e se aplica a todos os serviços. IDs comuns: `iad1` (Washington), `sfo1` (San Francisco), `fra1` (Frankfurt), `sin1` (Singapore), `bom1` (Mumbai), `syd1` (Sydney) — [lista completa](https://vercel.com/docs/regions#region-list). Escolha a mesma região do setup de banco (Neon, Prisma Postgres, Turso etc.).
 
-## Deploying
+## Fazendo deploy
 
-The full flow from a fresh scaffold to production:
+O fluxo completo de um scaffold novo até produção:
 
 ```bash
 cd my-app
@@ -152,109 +152,109 @@ bun env:production && bun deploy:prod    # production
 ```
 
 <Callout type="warn">
-  Sync your environment variables **before** the first deploy to each environment — preview and
-  production are separate stores. Vercel never uploads local `.env` files, so a deploy without
-  synced envs fails environment validation at runtime.
+  Sincronize as variáveis de ambiente **antes** do primeiro deploy em cada ambiente — preview e
+  production são stores separados. A Vercel nunca envia arquivos `.env` locais, então um deploy sem
+  envs sincronizadas falha na validação de ambiente em runtime.
 </Callout>
 
 <Callout type="info">
-  If your Vercel account belongs to multiple teams, `vercel link --yes` needs an explicit scope:
+  Se sua conta Vercel pertence a vários times, `vercel link --yes` precisa de um scope explícito:
   `bunx vercel link --yes --scope your-team`.
 </Callout>
 
-## Environment Variables
+## Variáveis de ambiente
 
-There are three layers. Local `.env` files stay the source of truth, and one command projects them into Vercel.
+Há três camadas. Os arquivos `.env` locais continuam sendo a fonte da verdade, e um comando os projeta na Vercel.
 
-### 1. Local .env files
+### 1. Arquivos .env locais
 
-Nothing changes from a standard kubojs app: `apps/web/.env` holds public client vars, `apps/server/.env` holds secrets, and `packages/env` validates both with zod so missing values fail loudly.
+Nada muda em relação a um app kubojs padrão: `apps/web/.env` guarda vars públicas do client, `apps/server/.env` guarda secrets, e `packages/env` valida ambos com zod para valores ausentes falharem de forma ruidosa.
 
-### 2. Syncing to Vercel
+### 2. Sincronizando com a Vercel
 
 ```bash
 bun env:preview      # sync to the preview environment
 bun env:production   # sync to the production environment
 ```
 
-The generated `scripts/sync-vercel-env.ts` parses your `.env` files and pushes each key with the Vercel CLI. Because web and server are services in **one project, they share one environment store** — a single sync covers both. Extra CLI flags pass straight through:
+O script gerado `scripts/sync-vercel-env.ts` faz parse dos seus arquivos `.env` e envia cada chave com a CLI da Vercel. Como web e server são serviços em **um projeto, eles compartilham um store de ambiente** — um único sync cobre os dois. Flags extras da CLI passam direto:
 
 ```bash
 bun env:production --scope your-team
 ```
 
-When the app that owns these keys runs on Vercel (combined web + server deployments, or a fullstack `self` backend), the sync is not a blind copy:
+Quando o app dono dessas chaves roda na Vercel (deploys combinados web + server, ou backend fullstack `self`), o sync não é uma cópia cega:
 
-| Key                                                                                           | Behavior             | Why                                                            |
-| --------------------------------------------------------------------------------------------- | -------------------- | -------------------------------------------------------------- |
-| `VITE_SERVER_URL` / `NEXT_PUBLIC_SERVER_URL` / `PUBLIC_SERVER_URL` / `NUXT_PUBLIC_SERVER_URL` | Overridden to `/api` | The browser must call the same origin; rewrites do the routing |
-| `CORS_ORIGIN`, `BETTER_AUTH_URL`, `NODE_ENV`                                                  | Skipped              | Derived at runtime from the deployment URL (see below)         |
-| Everything else (`DATABASE_URL`, secrets, …)                                                  | Copied as-is         |                                                                |
+| Chave                                                                                         | Comportamento           | Por quê                                                           |
+| --------------------------------------------------------------------------------------------- | ----------------------- | ----------------------------------------------------------------- |
+| `VITE_SERVER_URL` / `NEXT_PUBLIC_SERVER_URL` / `PUBLIC_SERVER_URL` / `NUXT_PUBLIC_SERVER_URL` | Sobrescrita para `/api` | O browser deve chamar a mesma origem; rewrites fazem o roteamento |
+| `CORS_ORIGIN`, `BETTER_AUTH_URL`, `NODE_ENV`                                                  | Ignoradas               | Derivadas em runtime a partir da URL do deployment (veja abaixo)  |
+| Todo o resto (`DATABASE_URL`, secrets, …)                                                     | Copiado como está       |                                                                   |
 
-### 3. Runtime derivation
+### 3. Derivação em runtime
 
-The generated server env derives `CORS_ORIGIN` and `BETTER_AUTH_URL` from Vercel's own variables when they aren't set: production deployments use `VERCEL_PROJECT_PRODUCTION_URL`, previews use `VERCEL_URL`. This is why the sync skips them — every deployment, including previews, self-configures with the right origin and zero per-environment setup.
+O env gerado do server deriva `CORS_ORIGIN` e `BETTER_AUTH_URL` das variáveis da própria Vercel quando não estão definidas: deploys de production usam `VERCEL_PROJECT_PRODUCTION_URL`, previews usam `VERCEL_URL`. É por isso que o sync as ignora — cada deployment, inclusive previews, se configura sozinho com a origem certa e zero setup por ambiente.
 
 <Callout type="info">
-  Synced values are stored as **Sensitive** by default, which means `vercel env pull` shows them as
-  empty strings. They are still available to builds and functions — this is expected Vercel
-  behavior, not a sync failure.
+  Valores sincronizados são armazenados como **Sensitive** por padrão, o que significa que `vercel
+  env pull` os mostra como strings vazias. Eles ainda ficam disponíveis para builds e functions —
+  isso é comportamento esperado da Vercel, não falha de sync.
 </Callout>
 
-After changing envs, re-run the sync **and redeploy** — environment changes only take effect on the next deployment.
+Depois de mudar envs, rode o sync de novo **e faça redeploy** — mudanças de ambiente só valem no próximo deployment.
 
-## Local Development
+## Desenvolvimento local
 
-`bun dev` remains your primary loop — native hot reload, no Vercel involvement. Two Vercel-specific commands complement it:
+`bun dev` continua sendo seu loop principal — hot reload nativo, sem envolvimento da Vercel. Dois comandos específicos da Vercel complementam:
 
-- `bun dev:vercel` runs `vercel dev` for validating rewrites, route transforms, and env parity against the platform's routing layer. It is slower than `bun dev`; use it as a checking tool, not a daily driver.
-- `bun deploy:check` runs `vercel deploy --dry` — it prints the detected framework presets and the exact files a deployment would include, without uploading anything. Useful before a first deploy or after changing `vercel.json`.
+- `bun dev:vercel` roda `vercel dev` para validar rewrites, route transforms e paridade de env contra a camada de roteamento da plataforma. É mais lento que `bun dev`; use como ferramenta de checagem, não no dia a dia.
+- `bun deploy:check` roda `vercel deploy --dry` — imprime os presets de framework detectados e os arquivos exatos que um deployment incluiria, sem enviar nada. Útil antes do primeiro deploy ou depois de mudar `vercel.json`.
 
-## Command Reference
+## Referência de comandos
 
-| Command              | What it does                                          |
-| -------------------- | ----------------------------------------------------- |
-| `bun dev:vercel`     | Run the Vercel Services dev environment locally       |
-| `bun env:preview`    | Sync local `.env` files to the preview environment    |
-| `bun env:production` | Sync local `.env` files to the production environment |
-| `bun deploy:check`   | Dry-run a deploy (no upload)                          |
-| `bun deploy`         | Create a preview deployment                           |
-| `bun deploy:prod`    | Deploy to production                                  |
+| Comando              | O que faz                                                   |
+| -------------------- | ----------------------------------------------------------- |
+| `bun dev:vercel`     | Roda o ambiente dev de Vercel Services localmente           |
+| `bun env:preview`    | Sincroniza arquivos `.env` locais com o ambiente preview    |
+| `bun env:production` | Sincroniza arquivos `.env` locais com o ambiente production |
+| `bun deploy:check`   | Dry-run de deploy (sem upload)                              |
+| `bun deploy`         | Cria um deployment de preview                               |
+| `bun deploy:prod`    | Deploy em production                                        |
 
 <Callout type="info">
-  If a project deploys web and server to different platforms (Vercel + Cloudflare), the deploy
-  scripts are named by target instead: `deploy:web` / `deploy:web:prod` for one side and
-  `deploy:server` for the other. Setup, env sync, and dry-run scripts keep the same names.
+  Se um projeto faz deploy de web e server em plataformas diferentes (Vercel + Cloudflare), os
+  scripts de deploy são nomeados por alvo: `deploy:web` / `deploy:web:prod` para um lado e
+  `deploy:server` para o outro. Scripts de setup, sync de env e dry-run mantêm os mesmos nomes.
 </Callout>
 
 ## Troubleshooting
 
-### "Environment variable X is undefined" after deploying
+### "Environment variable X is undefined" depois do deploy
 
-You deployed before syncing envs. Run `bun env:production` (or `:preview`), then redeploy.
+Você fez deploy antes de sincronizar as envs. Rode `bun env:production` (ou `:preview`) e faça redeploy.
 
-### `vercel link --yes` fails with "Provide --team or --scope"
+### `vercel link --yes` falha com "Provide --team or --scope"
 
-Your account belongs to multiple teams. Pass the scope explicitly: `bunx vercel link --yes --scope your-team`.
+Sua conta pertence a vários times. Passe o scope explicitamente: `bunx vercel link --yes --scope your-team`.
 
-### `vercel env pull` returns empty values
+### `vercel env pull` retorna valores vazios
 
-Synced variables are stored as Sensitive and cannot be read back. They still work in builds and at runtime. Check `vercel env ls production` to confirm they exist.
+Variáveis sincronizadas são armazenadas como Sensitive e não podem ser lidas de volta. Elas ainda funcionam em builds e em runtime. Confira com `vercel env ls production` para confirmar que existem.
 
-### API calls fail with CORS errors (server-only deployment)
+### Chamadas de API falham com erros de CORS (deploy só server)
 
-With a server-only deployment your web app lives on a different domain, so the runtime-derived `CORS_ORIGIN` (the server's own origin) is wrong. Set `CORS_ORIGIN` to your web app's URL in `apps/server/.env` and re-sync.
+Com deploy só de server, o app web vive em outro domínio, então o `CORS_ORIGIN` derivado em runtime (a própria origem do server) fica errado. Defina `CORS_ORIGIN` com a URL do app web em `apps/server/.env` e sincronize de novo.
 
-### SSR RPC calls return 401 on preview deployments
+### Chamadas RPC de SSR retornam 401 em deployments de preview
 
-Browser-side RPC always works — it calls the same origin the page was served from. But **server-side** RPC (SSR frameworks like Next.js or TanStack Start) reconstructs an absolute URL from `VERCEL_URL`, which routes through the public deployment URL. With [Deployment Protection](https://vercel.com/docs/deployment-protection) enabled (Standard Protection is Vercel's default), preview deployment URLs require authentication, so those server-to-server fetches get a 401. Production is unaffected — the production domain is not protected.
+RPC no browser sempre funciona — chama a mesma origem de onde a página foi servida. Mas RPC **no server** (frameworks SSR como Next.js ou TanStack Start) reconstrói uma URL absoluta a partir de `VERCEL_URL`, que passa pela URL pública do deployment. Com [Deployment Protection](https://vercel.com/docs/deployment-protection) habilitado (Standard Protection é o padrão da Vercel), URLs de preview exigem autenticação, então esses fetches server-to-server recebem 401. Production não é afetada — o domínio de production não é protegido.
 
-Workarounds: set a [Protection Bypass for Automation](https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation) secret and send it from server-side fetches, relax protection for previews in the project settings, or avoid server-side RPC on preview deployments. [Service bindings](https://vercel.com/docs/services/bindings) (private service-to-service URLs) are the long-term fix and are on the roadmap for this template.
+Workarounds: defina um secret de [Protection Bypass for Automation](https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation) e envie-o em fetches do server, relaxe a proteção de previews nas configurações do projeto, ou evite RPC no server em deployments de preview. [Service bindings](https://vercel.com/docs/services/bindings) (URLs privadas service-to-service) são o fix de longo prazo e estão no roadmap deste template.
 
-### The browser calls `/api` but gets the web app's 404
+### O browser chama `/api` mas recebe o 404 do app web
 
-Check that `vercel.json` still contains both rewrites in order — `/api/(.*)` to the server service must come before the catch-all. The dry-run (`bun deploy:check`) shows what Vercel detected.
+Confira se o `vercel.json` ainda contém os dois rewrites na ordem — `/api/(.*)` para o serviço server deve vir antes do catch-all. O dry-run (`bun deploy:check`) mostra o que a Vercel detectou.
 
-### Changed an env var but the app still sees the old value
+### Mudei uma env mas o app ainda vê o valor antigo
 
-Envs are read at build/boot time. Re-run the env sync, then redeploy.
+Envs são lidas no build/boot. Rode o sync de env de novo e faça redeploy.

@@ -1,25 +1,25 @@
 ---
-title: Agent Workflows
-description: JSON-first and schema-driven workflows for agents, scripts, and automation
+title: Fluxos de agente
+description: Fluxos JSON-first e orientados a schema para agentes, scripts e automação
 ---
 
-## Overview
+## Visão geral
 
-kubojs now supports a fully JSON-first workflow for agents and automation:
+O kubojs agora suporta um fluxo totalmente JSON-first para agentes e automação:
 
-- Raw JSON project creation with `create-json`
-- Raw JSON addon installation with `add-json`
-- Runtime schema introspection with `schema`
-- Local stdio MCP server with `mcp`
-- Structured addon configuration with `addonOptions`
-- Structured database setup configuration with `dbSetupOptions`
-- Safe planning with `--dry-run`
+- Criação de projeto via JSON bruto com `create-json`
+- Instalação de addons via JSON bruto com `add-json`
+- Introspecção de schema em runtime com `schema`
+- Servidor MCP local via stdio com `mcp`
+- Configuração estruturada de addons com `addonOptions`
+- Configuração estruturada de setup de banco com `dbSetupOptions`
+- Planejamento seguro com `--dry-run`
 
-If you are automating the CLI from an LLM, CI job, or another tool, start here instead of the interactive prompt flow.
+Se você está automatizando a CLI a partir de um LLM, job de CI ou outra ferramenta, comece por aqui em vez do fluxo interativo de prompts.
 
 ## `create-json`
 
-Create a project from a single JSON payload instead of many flags.
+Cria um projeto a partir de um único payload JSON em vez de muitas flags.
 
 ```bash
 kubojs create-json --input '{
@@ -44,15 +44,15 @@ kubojs create-json --input '{
 }'
 ```
 
-This is the best path when:
+Este é o melhor caminho quando:
 
-- Your input already exists as structured data
-- You want to avoid shell flag expansion issues
-- You need nested addon or database setup options
+- Sua entrada já existe como dados estruturados
+- Você quer evitar problemas de expansão de flags no shell
+- Precisa de opções aninhadas de addon ou de setup de banco
 
 ## `add-json`
 
-Add addons to an existing project with a single JSON payload.
+Adiciona addons a um projeto existente com um único payload JSON.
 
 ```bash
 kubojs add-json --input '{
@@ -83,9 +83,9 @@ kubojs add-json --input '{
 }'
 ```
 
-## Runtime Schema Introspection
+## Introspecção de schema em runtime
 
-Use the CLI itself as the source of truth for current input shapes.
+Use a própria CLI como fonte da verdade para os shapes de input atuais.
 
 ```bash
 kubojs schema --name all
@@ -96,28 +96,28 @@ kubojs schema --name addonOptions
 kubojs schema --name dbSetupOptions
 ```
 
-Useful patterns:
+Padrões úteis:
 
-- `schema --name cli`: inspect available commands
-- `schema --name createInput`: inspect the full create payload
-- `schema --name addonOptions`: inspect nested addon configuration
-- `schema --name dbSetupOptions`: inspect structured database setup behavior
+- `schema --name cli`: inspeciona os comandos disponíveis
+- `schema --name createInput`: inspeciona o payload completo de create
+- `schema --name addonOptions`: inspeciona a configuração aninhada de addons
+- `schema --name dbSetupOptions`: inspeciona o comportamento estruturado de setup de banco
 
 ## `mcp`
 
-Run kubojs itself as a local MCP server over stdio:
+Rode o próprio kubojs como servidor MCP local via stdio:
 
 ```bash
 npx kubojs@latest mcp
 ```
 
-Install it into supported agent configs with `add-mcp`:
+Instale-o nas configs de agente suportadas com `add-mcp`:
 
 ```bash
 npx -y add-mcp@latest "npx -y kubojs@latest mcp"
 ```
 
-Exposed tools:
+Tools expostas:
 
 - `bts_get_stack_guidance`
 - `bts_get_schema`
@@ -126,18 +126,18 @@ Exposed tools:
 - `bts_plan_addons`
 - `bts_add_addons`
 
-This is the best path when an MCP-capable client should scaffold or modify kubojs projects without shelling out to a prompt-driven CLI flow.
+Este é o melhor caminho quando um cliente com MCP deve gerar scaffold ou modificar projetos kubojs sem recorrer a um fluxo de CLI orientado por prompts.
 
-Recommended MCP workflow:
+Fluxo MCP recomendado:
 
-1. Call `bts_get_stack_guidance` if the user's request is ambiguous.
-2. Call `bts_get_schema` for the exact input shape you need.
-3. Build a full explicit stack config.
-4. Call `bts_plan_project` before `bts_create_project`.
-5. For MCP execution, use `install: false` when creating projects.
-6. Call `bts_plan_addons` before `bts_add_addons`.
+1. Chame `bts_get_stack_guidance` se o pedido do usuário for ambíguo.
+2. Chame `bts_get_schema` para o shape de input exato de que precisa.
+3. Monte uma config de stack completa e explícita.
+4. Chame `bts_plan_project` antes de `bts_create_project`.
+5. Na execução via MCP, use `install: false` ao criar projetos.
+6. Chame `bts_plan_addons` antes de `bts_add_addons`.
 
-For project creation, the MCP tools now expect a full explicit config, not a partial payload. That means the agent should provide all major stack choices such as:
+Para criação de projeto, as tools MCP agora esperam uma config completa e explícita, não um payload parcial. Isso significa que o agente deve fornecer todas as escolhas principais da stack, como:
 
 - `frontend`
 - `backend`
@@ -156,53 +156,53 @@ For project creation, the MCP tools now expect a full explicit config, not a par
 - `packageManager`
 - `install`
 
-Important field rules:
+Regras importantes de campos:
 
-- `frontend` means app surfaces, not styling choices.
-- `addons` must be an explicit array. Use `[]` when none are requested.
-- `examples` must be an explicit array. Use `[]` when none are requested.
-- `dbSetup`, `webDeploy`, and `serverDeploy` should be explicit even when the answer is `none`.
-- `git`, `install`, and `packageManager` should always be set explicitly.
-- `install` should usually be `false` for `bts_create_project`, because dependency installation can exceed common MCP client timeouts. Run `npm install`, `pnpm install`, or `bun install` separately after scaffolding.
-- If a request is still ambiguous after reading the guidance, the agent should resolve that ambiguity before calling `bts_plan_project`.
+- `frontend` significa superfícies de app, não escolhas de estilo.
+- `addons` deve ser um array explícito. Use `[]` quando nenhum for pedido.
+- `examples` deve ser um array explícito. Use `[]` quando nenhum for pedido.
+- `dbSetup`, `webDeploy` e `serverDeploy` devem ser explícitos mesmo quando a resposta for `none`.
+- `git`, `install` e `packageManager` devem sempre ser definidos explicitamente.
+- `install` costuma ser `false` em `bts_create_project`, porque a instalação de dependências pode ultrapassar timeouts comuns de clientes MCP. Rode `npm install`, `pnpm install` ou `bun install` separadamente após o scaffold.
+- Se o pedido ainda for ambíguo depois de ler a orientação, o agente deve resolver essa ambiguidade antes de chamar `bts_plan_project`.
 
-If you scaffold a project with the `mcp` addon, kubojs itself is now one of the recommended MCP servers. The addon installs it through `add-mcp` with a package runner command so the generated config does not rely on a globally installed CLI:
+Se você gerar um projeto com o addon `mcp`, o próprio kubojs passa a ser um dos servidores MCP recomendados. O addon o instala via `add-mcp` com um comando de package runner, para que a config gerada não dependa de uma CLI instalada globalmente:
 
 ```bash
 npx -y add-mcp@latest "npx -y kubojs@latest mcp"
 ```
 
-For Bun projects, the generated config uses the equivalent `bunx kubojs@latest mcp` server command inside `add-mcp`. That means MCP-capable agents inside the generated project can talk back to kubojs without any extra global install, alongside other recommended docs, framework, and database MCP servers.
+Em projetos Bun, a config gerada usa o comando de servidor equivalente `bunx kubojs@latest mcp` dentro do `add-mcp`. Assim, agentes com MCP dentro do projeto gerado podem falar de volta com o kubojs sem instalação global extra, junto com outros servidores MCP recomendados de docs, frameworks e banco de dados.
 
-## Use it inside your AI agent
+## Usar dentro do seu agente de IA
 
-Install the kubojs plugin and your assistant will scaffold and extend projects for you — just ask in plain English, like _"create a fullstack app with Next, Hono, Postgres and Better Auth"_, and it builds a valid stack instead of hand-writing boilerplate.
+Instale o plugin kubojs e seu assistente gera scaffold e estende projetos por você — basta pedir em linguagem natural, como _"create a fullstack app with Next, Hono, Postgres and Better Auth"_, e ele monta uma stack válida em vez de escrever boilerplate na mão.
 
 ### Claude Code
 
-Add the marketplace and install the plugin:
+Adicione o marketplace e instale o plugin:
 
 ```bash
 /plugin marketplace add albuquerquesz/kubo
 /plugin install kubojs@kubojs
 ```
 
-Then ask for a project in chat, or use the shortcuts:
+Depois peça um projeto no chat, ou use os atalhos:
 
-- `/kubojs:new <description>` — scaffold a new project
-- `/kubojs:add <addons>` — add addons to an existing one
+- `/kubojs:new <description>` — scaffold de um novo projeto
+- `/kubojs:add <addons>` — adiciona addons a um existente
 
 ### Codex
 
-Add the same marketplace from the Codex plugins screen and install **kubojs**, then ask for a project in chat.
+Adicione o mesmo marketplace na tela de plugins do Codex e instale **kubojs**, depois peça um projeto no chat.
 
-Prefer just the tools without the plugin? Wire the MCP server into Codex with `add-mcp`:
+Prefere só as tools sem o plugin? Conecte o servidor MCP no Codex com `add-mcp`:
 
 ```bash
 npx -y add-mcp@latest "npx -y kubojs@latest mcp"   # choose "codex"
 ```
 
-Or add it to `~/.codex/config.toml` directly:
+Ou adicione em `~/.codex/config.toml` diretamente:
 
 ```toml
 [mcp_servers.kubojs]
@@ -212,24 +212,24 @@ args = ["-y", "kubojs@latest", "mcp"]
 
 ### opencode
 
-Add the MCP server, then ask for a project in chat:
+Adicione o servidor MCP e peça um projeto no chat:
 
 ```bash
 npx -y add-mcp@latest "npx -y kubojs@latest mcp"   # choose "opencode"
 ```
 
-### Other agents
+### Outros agentes
 
-Any other agent works too, because kubojs is a CLI underneath:
+Qualquer outro agente também funciona, porque por baixo o kubojs é uma CLI:
 
-- **MCP-capable agents** (Cursor, VS Code, Gemini CLI, Zed, and more) — wire the server with `npx -y add-mcp@latest "npx -y kubojs@latest mcp"` and pick your agent.
-- **CLI-first agents** like [pi](https://pi.dev) — just ask it to scaffold with kubojs and it runs the `kubojs` CLI directly.
+- **Agentes com MCP** (Cursor, VS Code, Gemini CLI, Zed e mais) — conecte o servidor com `npx -y add-mcp@latest "npx -y kubojs@latest mcp"` e escolha seu agente.
+- **Agentes CLI-first** como [pi](https://pi.dev) — peça para gerar scaffold com kubojs e ele roda a CLI `kubojs` diretamente.
 
-## Structured Addon Options
+## Opções estruturadas de addon
 
-Prompt-driven addons can be configured up front through `addonOptions`.
+Addons orientados por prompts podem ser configurados de antemão via `addonOptions`.
 
-Supported structured addon surfaces include:
+Superfícies estruturadas de addon suportadas incluem:
 
 - `wxt`
 - `fumadocs`
@@ -238,9 +238,9 @@ Supported structured addon surfaces include:
 - `skills`
 - `ultracite`
 
-When `skills` is used with the `evlog` addon, kubojs recommends Evlog's agent skills from `https://www.evlog.dev`: `review-logging-patterns` and `analyze-logs`.
+Quando `skills` é usado com o addon `evlog`, o kubojs recomenda as agent skills do Evlog em `https://www.evlog.dev`: `review-logging-patterns` e `analyze-logs`.
 
-Example:
+Exemplo:
 
 ```json
 {
@@ -254,13 +254,13 @@ Example:
 }
 ```
 
-Structured addon options are still persisted in `bts.jsonc`, but the printed reproducible command now stays on normal CLI flags for consistency. That means deeply nested addon or provider-specific setup options are not fully encoded in the one-line replay command.
+Opções estruturadas de addon ainda são persistidas em `bts.jsonc`, mas o comando reproduzível impresso agora fica em flags normais da CLI por consistência. Isso significa que opções profundamente aninhadas de addon ou de setup específico de provider não ficam totalmente codificadas no comando de replay de uma linha.
 
-## Structured Database Setup Options
+## Opções estruturadas de setup de banco
 
-`dbSetupOptions` controls how database provisioning behaves in automation.
+`dbSetupOptions` controla como o provisionamento de banco se comporta na automação.
 
-Example:
+Exemplo:
 
 ```bash
 kubojs create-json --input '{
@@ -278,30 +278,30 @@ kubojs create-json --input '{
 }'
 ```
 
-Current behavior:
+Comportamento atual:
 
-- Providers with automatic cloud provisioning default to `manual` in silent/agent flows:
+- Providers com provisionamento automático na nuvem usam `manual` por padrão em fluxos silenciosos/agente:
   - `turso`
   - `neon`
   - `prisma-postgres`
   - `supabase`
   - `mongodb-atlas`
-- Providers that only write local/manual config today are not forced to `manual`:
+- Providers que hoje só gravam config local/manual não são forçados a `manual`:
   - `d1`
   - `docker`
   - `planetscale`
 
-This keeps agents from accidentally creating cloud resources unless automation explicitly opts into `auto`, while leaving local or manual-only setups unchanged.
+Isso evita que agentes criem recursos na nuvem por acidente, a menos que a automação opte explicitamente por `auto`, deixando setups locais ou só manuais inalterados.
 
-Provider-specific options are intentionally small today:
+Opções específicas de provider são intencionalmente pequenas hoje:
 
 - `neon.method`, `neon.projectName`, `neon.regionId`
 - `prismaPostgres.regionId`
 - `turso.databaseName`, `turso.groupName`, `turso.installCli`
 
-## Dry Runs
+## Dry runs
 
-Use `--dry-run` to validate inputs and target directories without writing files.
+Use `--dry-run` para validar inputs e diretórios de destino sem gravar arquivos.
 
 ```bash
 kubojs --yes --dry-run
@@ -309,24 +309,24 @@ kubojs create-json --input '{"projectName":"my-app","yes":true,"dryRun":true}'
 kubojs add-json --input '{"projectDir":"./my-app","addons":["mcp"],"dryRun":true}'
 ```
 
-This is especially useful for:
+Isso é especialmente útil para:
 
-- Planning actions before mutation
-- CI validation
-- Agent reasoning loops
+- Planejar ações antes de mutar
+- Validação em CI
+- Loops de raciocínio de agentes
 
-## Programmatic API
+## API programática
 
-The exported `create()` and `add()` APIs run in silent mode by default, so they benefit from the same agent-safe behavior as the JSON commands.
+As APIs exportadas `create()` e `add()` rodam em modo silencioso por padrão, então se beneficiam do mesmo comportamento agent-safe dos comandos JSON.
 
-See [Programmatic API](/docs/cli/programmatic-api) for TypeScript examples.
+Veja [API programática](/docs/cli/programmatic-api) para exemplos em TypeScript.
 
-## Stored in `bts.jsonc`
+## Armazenado em `bts.jsonc`
 
-kubojs persists structured configuration in `bts.jsonc`, including:
+O kubojs persiste configuração estruturada em `bts.jsonc`, incluindo:
 
 - `reproducibleCommand`
 - `addonOptions`
 - `dbSetupOptions`
 
-See [`bts.jsonc`](/docs/bts-config) for the file format.
+Veja [`bts.jsonc`](/docs/bts-config) para o formato do arquivo.
