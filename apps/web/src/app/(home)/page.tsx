@@ -3,6 +3,7 @@ export const dynamic = "force-static";
 import { api } from "@kubojs/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 
+import CommunityGridSection from "./_components/community-grid-section";
 import CustomStackPanel from "./_components/custom-stack-panel";
 import DeploymentSection from "./_components/deployment-section";
 import Footer from "./_components/footer";
@@ -34,8 +35,8 @@ export default async function HomePage() {
         className="mt-0 border-t sm:mt-0 lg:mt-0"
         showSideBorders
         showViewportTopRule={false}
-        showViewportBottomRule={false}
       />
+      <CommunityGridSection />
       <DeploymentSection />
       <Testimonials tweets={tweets} videos={videos} />
       <Footer />
