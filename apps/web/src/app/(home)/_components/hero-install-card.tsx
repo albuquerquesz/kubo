@@ -57,7 +57,7 @@ export default function HeroInstallCard({
             size="sm"
             aria-label={`Gerenciador de pacotes: ${selectedManager}`}
             className={cn(
-              "h-9 min-h-9 w-auto min-w-0 gap-1.5 border-0 bg-transparent px-1.5 py-1.5",
+              "h-11 min-h-11 w-auto min-w-0 gap-1.5 border-0 bg-transparent px-1.5 py-1.5",
               "text-foreground shadow-none ring-0",
               "hover:bg-transparent hover:text-primary dark:bg-transparent dark:hover:bg-transparent",
               "focus-visible:border-0 focus-visible:ring-1 focus-visible:ring-ring",

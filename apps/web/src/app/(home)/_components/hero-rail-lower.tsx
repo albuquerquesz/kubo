@@ -13,10 +13,7 @@ export type HeroRailLowerProps = {
   className?: string;
 };
 
-/**
- * Lower-right hero band: scroll cue + install card.
- * Vertical measure is owned by the parent 2×2 grid (not local flex %).
- */
+/** Compact hero utility rail: functional scroll cue followed by the installer. */
 export default function HeroRailLower({
   scrollTargetId = "product",
   className,
@@ -30,12 +27,7 @@ export default function HeroRailLower({
   }, [scrollTargetId]);
 
   return (
-    <div
-      className={cn(
-        "flex h-full min-h-[12rem] flex-col px-4 pt-10 pb-8 sm:px-5 min-[1440px]:px-10 min-[1440px]:pb-12",
-        className,
-      )}
-    >
+    <div className={cn("flex w-full flex-col gap-6", className)}>
       <button
         type="button"
         onClick={scrollToNextSection}
@@ -59,9 +51,7 @@ export default function HeroRailLower({
         />
       </button>
 
-      <div className="mt-auto pt-10">
-        <HeroInstallCard />
-      </div>
+      <HeroInstallCard />
     </div>
   );
 }

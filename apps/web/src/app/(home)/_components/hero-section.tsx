@@ -17,7 +17,7 @@ export default function HeroSection() {
     <section
       id="top"
       aria-label="Seção principal"
-      className="relative isolate min-h-[calc(100svh-3rem)] overflow-hidden border-rule border-b bg-background"
+      className="relative isolate min-h-[calc(100svh-3rem)] overflow-hidden bg-background"
     >
       <EtherealBeamsCanvas />
       <div className="ethereal-beams-veil" aria-hidden="true" />
