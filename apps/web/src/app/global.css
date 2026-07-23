@@ -523,6 +523,32 @@
   border-left: 0;
 }
 
+/* Custom stack panel — keep the panel framed while its horizontal rules
+   extend to the viewport edges. */
+.custom-stack-panel {
+  position: relative;
+}
+
+.custom-stack-panel::before,
+.custom-stack-panel::after {
+  position: absolute;
+  left: 50%;
+  z-index: 1;
+  width: 100vw;
+  border-top: 1px solid var(--border);
+  content: "";
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.custom-stack-panel::before {
+  top: -1px;
+}
+
+.custom-stack-panel::after {
+  bottom: -1px;
+}
+
 .tech-marquee__row {
   position: relative;
   overflow: hidden;
