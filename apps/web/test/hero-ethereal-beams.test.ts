@@ -28,9 +28,9 @@ describe("ethereal beams hero contract", () => {
     const hero = readRepo("apps/web/src/app/(home)/_components/hero-section.tsx");
 
     expect(hero).toContain('id="top"');
-    expect(hero).toContain('title="Um comando. Todas as camadas."');
+    expect(hero).toContain('title="Construa sem começar do zero."');
     expect(hero).toContain(
-      "Um app TypeScript full-stack a partir de um comando com cada camada tipada.",
+      "Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.",
     );
     expect(hero).toContain('href="/new"');
     expect(hero).toContain("HeroRailLower");
