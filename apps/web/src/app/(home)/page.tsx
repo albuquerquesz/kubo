@@ -31,7 +31,9 @@ export default async function HomePage() {
       <CustomStackPanel
         sectionId="product-secondary"
         titleId="custom-stack-title-secondary"
-        className="mt-0 sm:mt-0 lg:mt-0"
+        className="mt-0 border-t sm:mt-0 lg:mt-0"
+        showSideBorders
+        showViewportTopRule={false}
         showViewportBottomRule={false}
       />
       <DeploymentSection />
