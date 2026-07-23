@@ -60,9 +60,9 @@ function LogoMark({ logo }: { logo: LogoItem }) {
     <img
       src={logo.src}
       alt=""
-      // Fixed slot (80×40 / 112×56) so wordmarks and square marks share painted size.
+      // Fixed slot (112×56 / 190×84) so wordmarks and square marks share painted size.
       // Do not rely on max-* alone — small SVG intrinsics would stay tiny.
-      className="logo-marquee__logo h-10 w-20 object-contain object-center md:h-14 md:w-28"
+      className="logo-marquee__logo h-14 w-28 object-contain object-center md:h-[84px] md:w-[190px]"
       draggable={false}
     />
   );
