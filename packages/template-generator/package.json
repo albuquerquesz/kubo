@@ -1,15 +1,15 @@
 {
   "name": "@kubojs/template-generator",
   "version": "3.36.3",
-  "description": "Virtual file system generator for Better-T-Stack templates - works in browsers and Node.js",
+  "description": "Virtual file system generator for kubojs templates - works in browsers and Node.js",
   "keywords": [
-    "better-t-stack",
     "cli",
+    "kubojs",
     "template-generator",
     "typescript",
     "virtual-fs"
   ],
-  "homepage": "https://better-t-stack.dev/",
+  "homepage": "https://kubojs.dev/",
   "license": "MIT",
   "author": "Aman Varshney",
   "repository": {

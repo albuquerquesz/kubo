@@ -40,7 +40,7 @@ lerna-debug.log*
 .turbo
 .nx
 
-# Better-T-Stack
+# kubojs
 .alchemy
 .vercel
 

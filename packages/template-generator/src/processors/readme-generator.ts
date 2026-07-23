@@ -183,7 +183,7 @@ function generateReadmeContent(options: ProjectConfig): string {
 
   return `# ${projectName}
 
-This project was created with [Better-T-Stack](https://github.com/albuquerquesz/kubo), a modern TypeScript stack${
+This project was created with [kubojs](https://github.com/albuquerquesz/kubo), a modern TypeScript stack${
     stackDescription ? ` that combines ${stackDescription}` : ""
   }.
 
@@ -926,7 +926,7 @@ function generateDeploymentCommands(
       `- Deploy: ${packageManagerRunCmd} ${cfDeployScript}`,
       `- Destroy: ${packageManagerRunCmd} destroy`,
       "",
-      "For more details, see the guide on [Deploying to Cloudflare with Alchemy](https://www.better-t-stack.dev/docs/guides/cloudflare-alchemy).",
+      "For more details, see the guide on [Deploying to Cloudflare with Alchemy](https://www.kubojs.dev/docs/guides/cloudflare-alchemy).",
     );
   }
 
@@ -951,7 +951,7 @@ function generateDeploymentCommands(
       "",
       "Environment variables are read from each app's `.env` file (baked into web builds for public variables) and overridden in `docker-compose.yml` for container networking.",
       "",
-      "For more details, see the guide on [Deploying with Docker Compose](https://www.better-t-stack.dev/docs/guides/docker).",
+      "For more details, see the guide on [Deploying with Docker Compose](https://www.kubojs.dev/docs/guides/docker).",
     );
   }
 
@@ -989,7 +989,7 @@ function generateDeploymentCommands(
       "Vercel Services share project environment variables, but deploys do not upload local `.env` files automatically. Link the project with `vercel link`, then run the env sync command before your first deploy (otherwise the deployment starts with no env vars), or pass one-off envs with `vercel deploy -e KEY=value`.",
       `Pass Vercel CLI flags to the env sync command directly, for example: \`${packageManagerRunCmd} ${vercelNames.envProduction} --scope your-team\`.`,
       "",
-      "For more details, see the guide on [Deploying to Vercel](https://www.better-t-stack.dev/docs/guides/vercel).",
+      "For more details, see the guide on [Deploying to Vercel](https://www.kubojs.dev/docs/guides/vercel).",
     );
   }
 

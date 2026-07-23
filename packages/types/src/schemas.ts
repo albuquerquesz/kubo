@@ -147,7 +147,7 @@ export const InstallScopeSchema = z.enum(["project", "global"]).describe("Instal
 
 export const McpServerSchema = z
   .enum([
-    "better-t-stack",
+    "kubojs",
     "context7",
     "nx",
     "cloudflare-docs",
@@ -531,9 +531,9 @@ export const BetterTStackConfigFileSchema = z
   .extend(BetterTStackConfigSchema.shape)
   .strict()
   .meta({
-    id: "https://r2.better-t-stack.dev/schema.json",
-    title: "Better-T-Stack Configuration",
-    description: "Configuration file for Better-T-Stack projects",
+    id: "https://r2.kubojs.dev/schema.json",
+    title: "kubojs Configuration",
+    description: "Configuration file for kubojs projects",
   });
 
 export const InitResultSchema = z.object({

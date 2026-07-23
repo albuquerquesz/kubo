@@ -3,13 +3,13 @@
   "version": "3.36.3",
   "description": "TypeScript types and schemas for kubojs CLI",
   "keywords": [
-    "better-t-stack",
     "cli",
+    "kubojs",
     "schemas",
     "types",
     "typescript"
   ],
-  "homepage": "https://better-t-stack.dev/",
+  "homepage": "https://kubojs.dev/",
   "license": "MIT",
   "author": "Aman Varshney",
   "repository": {

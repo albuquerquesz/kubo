@@ -38,7 +38,7 @@ export function writeBtsConfigToVfs(
   };
 
   const baseContent = {
-    $schema: "https://r2.better-t-stack.dev/schema.json",
+    $schema: "https://r2.kubojs.dev/schema.json",
     ...btsConfig,
   };
 
@@ -49,14 +49,14 @@ export function writeBtsConfigToVfs(
       ? "npx kubojs add"
       : projectConfig.packageManager === "pnpm"
         ? "pnpm dlx kubojs add"
-        : "bun create better-t-stack add";
+        : "bun create kubojs add";
 
-  const finalContent = `// Better-T-Stack
+  const finalContent = `// kubojs
 //
-// Website: https://www.better-t-stack.dev/
-// Stack Builder: https://www.better-t-stack.dev/new
-// Analytics: https://www.better-t-stack.dev/analytics
-// Showcase: https://www.better-t-stack.dev/showcase
+// Website: https://www.kubojs.dev/
+// Stack Builder: https://www.kubojs.dev/new
+// Analytics: https://www.kubojs.dev/analytics
+// Showcase: https://www.kubojs.dev/showcase
 // Sponsor: https://github.com/sponsors/AmanVarshney01
 //
 // Add new addons with: ${addCommand}
