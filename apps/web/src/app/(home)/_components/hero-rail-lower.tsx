@@ -32,7 +32,7 @@ export default function HeroRailLower({
   return (
     <div
       className={cn(
-        "flex h-full min-h-[12rem] flex-col px-4 pt-10 pb-8 sm:px-5 lg:px-10 lg:pb-12",
+        "flex h-full min-h-[12rem] flex-col px-4 pt-10 pb-8 sm:px-5 min-[1440px]:px-10 min-[1440px]:pb-12",
         className,
       )}
     >
