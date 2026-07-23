@@ -405,68 +405,70 @@
 .ethereal-beams-fallback {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(
-      ellipse at 50% 22%,
-      color-mix(in srgb, var(--accent) 11%, transparent),
-      transparent 48%
+  overflow: hidden;
+  background-color: #020202;
+  background-image:
+    radial-gradient(ellipse at 50% 43%, rgb(255 255 255 / 0.16), transparent 31%),
+    linear-gradient(
+      132deg,
+      transparent 0 13%,
+      rgb(255 255 255 / 0.14) 13.1% 28%,
+      transparent 28.1% 46%
     ),
     linear-gradient(
-      112deg,
-      transparent 14%,
-      color-mix(in srgb, var(--foreground) 16%, transparent) 24%,
-      color-mix(in srgb, var(--accent) 11%, transparent) 31%,
-      transparent 39%,
-      transparent 67%,
-      color-mix(in srgb, var(--primary) 15%, transparent) 73%,
-      transparent 79%
+      132deg,
+      transparent 0 37%,
+      rgb(255 255 255 / 0.08) 37.1% 48%,
+      transparent 48.1% 68%
     ),
+    linear-gradient(132deg, transparent 0 60%, rgb(255 255 255 / 0.1) 60.1% 74%, transparent 74.1%),
     linear-gradient(
-      72deg,
-      transparent 25%,
-      color-mix(in srgb, var(--foreground) 13%, transparent) 34%,
-      color-mix(in srgb, var(--accent) 9%, transparent) 41%,
-      transparent 48%,
-      transparent 72%,
-      color-mix(in srgb, var(--accent) 12%, transparent) 78%,
-      transparent 81%
-    );
-  opacity: 0.92;
+      48deg,
+      transparent 0 22%,
+      rgb(0 0 0 / 0.72) 22.1% 39%,
+      transparent 39.1% 61%,
+      rgb(255 255 255 / 0.06) 61.1% 73%,
+      transparent 73.1%
+    ),
+    linear-gradient(180deg, #050505 0%, #111 52%, #030303 100%);
+  opacity: 0.98;
 }
 
 .ethereal-beams-fallback::before {
   position: absolute;
-  inset: -18%;
+  inset: -10%;
   background:
     linear-gradient(
-      108deg,
-      transparent 24%,
-      color-mix(in srgb, var(--foreground) 27%, transparent) 32%,
-      color-mix(in srgb, var(--accent) 19%, transparent) 39%,
-      transparent 49%
+      132deg,
+      transparent 20%,
+      rgb(255 255 255 / 0.18) 20.2% 28%,
+      transparent 28.2% 52%
     ),
     linear-gradient(
-      76deg,
-      transparent 49%,
-      color-mix(in srgb, var(--foreground) 18%, transparent) 57%,
-      color-mix(in srgb, var(--primary) 17%, transparent) 63%,
-      transparent 72%
-    );
+      132deg,
+      transparent 47%,
+      rgb(255 255 255 / 0.12) 47.2% 54%,
+      transparent 54.2% 80%
+    ),
+    radial-gradient(ellipse at 50% 53%, rgb(255 255 255 / 0.2), transparent 28%);
   content: "";
-  filter: blur(14px);
-  transform: rotate(-3deg) scale(1.08);
+  filter: blur(18px);
+  opacity: 0.72;
+  transform: rotate(-4deg) scale(1.1);
 }
 
 .ethereal-beams-fallback::after {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    ellipse at 50% 46%,
-    transparent 18%,
-    color-mix(in srgb, var(--background) 26%, transparent) 68%,
-    var(--background) 100%
-  );
+  background-image:
+    radial-gradient(ellipse at 50% 46%, transparent 12%, rgb(0 0 0 / 0.28) 74%, #020202 100%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
+  background-size:
+    auto,
+    180px 180px;
   content: "";
+  mix-blend-mode: screen;
+  opacity: 0.62;
 }
 
 .ethereal-beams-canvas canvas {
