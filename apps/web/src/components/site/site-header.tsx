@@ -253,7 +253,7 @@ export function SiteHeader({ className }: { className?: string }) {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-40 bg-background/95 transition-colors duration-150",
+        "fixed inset-x-0 top-0 z-40 border-rule border-b bg-background/95 transition-colors duration-150",
         className,
       )}
     >
