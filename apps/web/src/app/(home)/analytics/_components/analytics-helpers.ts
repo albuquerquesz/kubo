@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 import type {
   ComboMatrix,
@@ -9,19 +10,19 @@ import type {
   WeekdayPoint,
 } from "./types";
 
-const compactNumberFormatter = new Intl.NumberFormat("en", {
+const compactNumberFormatter = new Intl.NumberFormat("pt-BR", {
   notation: "compact",
   maximumFractionDigits: 1,
 });
 
-const countFormatter = new Intl.NumberFormat("en");
+const countFormatter = new Intl.NumberFormat("pt-BR");
 
-const percentFormatter = new Intl.NumberFormat("en", {
+const percentFormatter = new Intl.NumberFormat("pt-BR", {
   style: "percent",
   maximumFractionDigits: 0,
 });
 
-const precisePercentFormatter = new Intl.NumberFormat("en", {
+const precisePercentFormatter = new Intl.NumberFormat("pt-BR", {
   style: "percent",
   maximumFractionDigits: 1,
 });
@@ -41,18 +42,18 @@ export function formatPercent(value: number, precise = value > 0 && value < 0.1)
 }
 
 export function formatDelta(value: number | null): string {
-  if (value === null) return "new";
+  if (value === null) return "novo";
   const formatted = `${Math.abs(value * 100).toFixed(Math.abs(value) >= 0.1 ? 0 : 1)}%`;
   if (value === 0) return "0%";
   return `${value > 0 ? "+" : "-"}${formatted}`;
 }
 
 export function formatDateLabel(date: string): string {
-  return format(new Date(`${date}T00:00:00`), "MMM d");
+  return format(new Date(`${date}T00:00:00`), "d MMM", { locale: ptBR });
 }
 
 export function formatMonthLabel(month: string, pattern = "MMM yyyy"): string {
-  return format(new Date(`${month}-01T00:00:00`), pattern);
+  return format(new Date(`${month}-01T00:00:00`), pattern, { locale: ptBR });
 }
 
 export function formatHourLabel(hour: string): string {
@@ -134,13 +135,13 @@ export function versionWithShare(
 
 export function buildWeekdayDistribution(timeSeries: TimeSeriesPoint[]): WeekdayPoint[] {
   const seed = [
-    { weekday: "Monday", shortLabel: "Mon", dayIndex: 1 },
-    { weekday: "Tuesday", shortLabel: "Tue", dayIndex: 2 },
-    { weekday: "Wednesday", shortLabel: "Wed", dayIndex: 3 },
-    { weekday: "Thursday", shortLabel: "Thu", dayIndex: 4 },
-    { weekday: "Friday", shortLabel: "Fri", dayIndex: 5 },
-    { weekday: "Saturday", shortLabel: "Sat", dayIndex: 6 },
-    { weekday: "Sunday", shortLabel: "Sun", dayIndex: 0 },
+    { weekday: "Segunda-feira", shortLabel: "Seg", dayIndex: 1 },
+    { weekday: "Terça-feira", shortLabel: "Ter", dayIndex: 2 },
+    { weekday: "Quarta-feira", shortLabel: "Qua", dayIndex: 3 },
+    { weekday: "Quinta-feira", shortLabel: "Qui", dayIndex: 4 },
+    { weekday: "Sexta-feira", shortLabel: "Sex", dayIndex: 5 },
+    { weekday: "Sábado", shortLabel: "Sáb", dayIndex: 6 },
+    { weekday: "Domingo", shortLabel: "Dom", dayIndex: 0 },
   ].map((day) => ({ ...day, count: 0, dayCount: 0 }));
 
   if (timeSeries.length === 0) {

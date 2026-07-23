@@ -8,7 +8,7 @@ import { formatCompactNumber } from "./analytics-helpers";
 // tracked era's projects-per-download ratio (~0.64)
 const UNTRACKED_ERA_PROJECT_ESTIMATE = 59_000;
 
-const utcDateTimeFormatter = new Intl.DateTimeFormat("en-US", {
+const utcDateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
   month: "short",
   day: "numeric",
   year: "numeric",
@@ -56,17 +56,17 @@ export function AnalyticsHeader({
   const formattedDate = lastUpdated ? formatUtcDateTime(lastUpdated) : null;
   const statusMeta = {
     online: {
-      label: "Streaming",
+      label: "Transmitindo",
       textClass: "text-primary",
       dotClass: "bg-primary",
     },
     connecting: {
-      label: "Connecting",
+      label: "Conectando",
       textClass: "text-muted-foreground",
       dotClass: "bg-muted-foreground",
     },
     reconnecting: {
-      label: "Reconnecting",
+      label: "Reconectando",
       textClass: "text-chart-3",
       dotClass: "bg-chart-3",
     },
@@ -83,8 +83,8 @@ export function AnalyticsHeader({
         <div className="flex min-w-0 items-center gap-2">
           <Terminal className="h-5 w-5 shrink-0 text-primary" />
           <div className="min-w-0">
-            <h1 className="font-bold font-mono text-lg sm:text-xl">ANALYTICS.SH</h1>
-            <p className="text-muted-foreground text-sm">Aggregate CLI telemetry for kubojs.</p>
+            <h1 className="font-bold font-mono text-lg sm:text-xl">ANALISE.SH</h1>
+            <p className="text-muted-foreground text-sm">Telemetria agregada da CLI do kubojs.</p>
           </div>
         </div>
         <div className="hidden h-px flex-1 bg-border sm:block" />
@@ -97,14 +97,14 @@ export function AnalyticsHeader({
 
       <div className="grid gap-4 md:grid-cols-2">
         <HeaderStat
-          label="Live projects"
+          label="Projetos ao vivo"
           value={formatCompactNumber(liveTotal)}
-          detail="Project creations tracked in the current Convex stream."
+          detail="Criações de projetos rastreadas no stream atual do Convex."
         />
         <HeaderStat
-          label="Tracked span"
+          label="Período rastreado"
           value={trackingDays}
-          detail="Calendar days represented in the live telemetry dataset."
+          detail="Dias de calendário representados no conjunto de telemetria ao vivo."
         />
       </div>
 
@@ -112,10 +112,11 @@ export function AnalyticsHeader({
         <div className="flex items-start gap-2 text-sm">
           <span className="text-primary">$</span>
           <span className="text-muted-foreground">
-            These numbers undercount real usage. The CLI shipped in Feb 2025, but this dataset only
-            goes back to Dec 2025. Earlier telemetry lived in PostHog and isn't included. Counting
-            that period via npm download volume, estimated all-time usage is around{" "}
-            {formatCompactNumber(liveTotal + UNTRACKED_ERA_PROJECT_ESTIMATE)} projects.
+            Esses números subestimam o uso real. A CLI foi lançada em fev. 2025, mas este conjunto
+            de dados só começa em dez. 2025. A telemetria anterior ficava no PostHog e não está
+            incluída. Contando aquele período pelo volume de downloads no npm, o uso estimado de
+            todos os tempos fica em torno de{" "}
+            {formatCompactNumber(liveTotal + UNTRACKED_ERA_PROJECT_ESTIMATE)} projetos.
           </span>
         </div>
       </div>
@@ -124,11 +125,11 @@ export function AnalyticsHeader({
         <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
           <div className="flex items-center gap-2">
             <DatabaseZap className="h-4 w-4 text-primary" />
-            <span className="font-mono text-xs text-muted-foreground uppercase">Telemetry</span>
+            <span className="font-mono text-xs text-muted-foreground uppercase">Telemetria</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground">Latest event</span>
-            <span className="font-medium">{formattedDate ?? "Waiting"}</span>
+            <span className="text-muted-foreground">Último evento</span>
+            <span className="font-medium">{formattedDate ?? "Aguardando"}</span>
           </div>
         </div>
       </div>

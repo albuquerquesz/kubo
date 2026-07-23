@@ -15,7 +15,7 @@ import { XAxis } from "@/components/charts/x-axis";
 const ACCENT = "var(--chart-line-primary)";
 const MUTED = "var(--chart-line-secondary)";
 
-const compactNumber = new Intl.NumberFormat("en", {
+const compactNumber = new Intl.NumberFormat("pt-BR", {
   notation: "compact",
   maximumFractionDigits: 1,
 }).format;

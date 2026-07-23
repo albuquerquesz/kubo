@@ -9,25 +9,25 @@ import { emptySponsorsData } from "@/lib/sponsors";
 import { SponsorsPage } from "./_components/sponsors-page";
 
 export const metadata: Metadata = {
-  title: "Sponsors - kubojs",
-  description: "The companies and developers funding kubojs development",
+  title: "Patrocinadores - kubojs",
+  description: "Empresas e desenvolvedores que financiam o desenvolvimento do kubojs",
   openGraph: {
-    title: "Sponsors - kubojs",
-    description: "The companies and developers funding kubojs development",
+    title: "Patrocinadores - kubojs",
+    description: "Empresas e desenvolvedores que financiam o desenvolvimento do kubojs",
     url: "https://kubojs.dev/sponsors",
     images: [
       {
         url: "https://kubojs.dev/og/site/sponsors.png",
         width: 1200,
         height: 630,
-        alt: "kubojs Sponsors",
+        alt: "Patrocinadores do kubojs",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sponsors - kubojs",
-    description: "The companies and developers funding kubojs development",
+    title: "Patrocinadores - kubojs",
+    description: "Empresas e desenvolvedores que financiam o desenvolvimento do kubojs",
     images: ["https://kubojs.dev/og/site/sponsors.png"],
   },
 };

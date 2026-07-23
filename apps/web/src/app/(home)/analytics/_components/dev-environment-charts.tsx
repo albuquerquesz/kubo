@@ -23,7 +23,7 @@ function SplitMeterCard({
   const yesCount = data.find((item) => item.name === "Yes")?.value ?? 0;
   const noCount = data.find((item) => item.name === "No")?.value ?? 0;
   const chartData = data.map((item) => ({
-    label: item.name,
+    label: item.name === "Yes" ? "Sim" : item.name === "No" ? "Não" : item.name,
     value: item.value,
   }));
 
@@ -33,14 +33,14 @@ function SplitMeterCard({
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded border border-primary/25 bg-fd-background p-4">
             <div className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-              Yes
+              Sim
             </div>
             <div className="mt-2 font-semibold text-2xl">{formatCount(yesCount)}</div>
             <div className="mt-1 text-muted-foreground text-xs">{formatPercent(yesShare)}</div>
           </div>
           <div className="rounded border border-border bg-fd-background p-4">
             <div className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-              No
+              Não
             </div>
             <div className="mt-2 font-semibold text-2xl">{formatCount(noCount)}</div>
             <div className="mt-1 text-muted-foreground text-xs">{formatPercent(noShare)}</div>
@@ -52,7 +52,7 @@ function SplitMeterCard({
           orientation="horizontal"
           height={210}
           labelWidth={52}
-          series={[{ key: "value", label: "Tracked setups", color: "var(--chart-2)" }]}
+          series={[{ key: "value", label: "Configurações rastreadas", color: "var(--chart-2)" }]}
         />
       </div>
     </ChartCard>
@@ -77,12 +77,12 @@ export function DevToolsSection({ data }: { data: AggregatedAnalyticsData }) {
   return (
     <div className="space-y-6">
       <SectionHeader
-        label="Environment"
-        title="Package manager, setup, deployment, and addon choices"
-        description="The environment choices that shape generated projects after the stack options are selected."
+        label="Ambiente"
+        title="Gerenciador de pacotes, configuração, deploy e addons"
+        description="As escolhas de ambiente que moldam os projetos gerados depois das opções de stack."
         aside={
           <div className="rounded border border-border bg-fd-background px-3 py-1.5 font-mono text-muted-foreground text-xs">
-            packages {data.summary.mostPopularPackageManager} • runtime{" "}
+            pacotes {data.summary.mostPopularPackageManager} • runtime{" "}
             {data.summary.mostPopularRuntime}
           </div>
         }
@@ -90,14 +90,14 @@ export function DevToolsSection({ data }: { data: AggregatedAnalyticsData }) {
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)]">
         <PreferenceChartCard
-          title="Database setup"
-          description="How often each database setup option was selected."
+          title="Configuração de database"
+          description="Com que frequência cada opção de configuração de database foi selecionada."
           data={data.dbSetupDistribution}
           colorKey="chart4"
         />
         <PreferenceChartCard
-          title="Package manager"
-          description="How often each package manager was selected."
+          title="Gerenciador de pacotes"
+          description="Com que frequência cada gerenciador de pacotes foi selecionado."
           data={data.packageManagerDistribution}
           colorKey="chart1"
         />
@@ -110,15 +110,15 @@ export function DevToolsSection({ data }: { data: AggregatedAnalyticsData }) {
         )}
       >
         <PreferenceChartCard
-          title="Platform"
-          description="How many tracked CLI runs came from each platform."
+          title="Plataforma"
+          description="Quantas execuções rastreadas da CLI vieram de cada plataforma."
           data={data.platformDistribution}
           colorKey="chart2"
         />
         {data.paymentsDistribution.length > 0 ? (
           <PreferenceChartCard
-            title="Payments"
-            description="How often each payments option was selected, including none."
+            title="Pagamentos"
+            description="Com que frequência cada opção de pagamentos foi selecionada, incluindo none."
             data={data.paymentsDistribution}
             colorKey="chart3"
           />
@@ -129,8 +129,8 @@ export function DevToolsSection({ data }: { data: AggregatedAnalyticsData }) {
         <div className="grid gap-4 xl:grid-cols-2">
           {webDeployOptions.length > 0 ? (
             <PreferenceChartCard
-              title="Web deployment"
-              description="How often each web deployment option was selected, including none."
+              title="Deploy web"
+              description="Com que frequência cada opção de deploy web foi selecionada, incluindo none."
               data={webDeployOptions}
               colorKey="chart3"
             />
@@ -138,8 +138,8 @@ export function DevToolsSection({ data }: { data: AggregatedAnalyticsData }) {
 
           {serverDeployOptions.length > 0 ? (
             <PreferenceChartCard
-              title="Server deployment"
-              description="How often each server deployment option was selected, including none."
+              title="Deploy de servidor"
+              description="Com que frequência cada opção de deploy de servidor foi selecionada, incluindo none."
               data={serverDeployOptions}
               colorKey="chart2"
             />
@@ -149,13 +149,13 @@ export function DevToolsSection({ data }: { data: AggregatedAnalyticsData }) {
 
       <div className="grid gap-4 xl:grid-cols-2">
         <SplitMeterCard
-          title="Git initialization"
-          description="Share of tracked setups where Git was initialized during project creation."
+          title="Inicialização do Git"
+          description="Parcela das configurações rastreadas em que o Git foi inicializado na criação do projeto."
           data={data.gitDistribution}
         />
         <SplitMeterCard
-          title="Install dependencies"
-          description="Share of tracked setups where dependencies were installed during project creation."
+          title="Instalar dependências"
+          description="Parcela das configurações rastreadas em que as dependências foram instaladas na criação do projeto."
           data={data.installDistribution}
         />
       </div>
@@ -167,8 +167,8 @@ export function DevToolsSection({ data }: { data: AggregatedAnalyticsData }) {
         )}
       >
         <PreferenceChartCard
-          title="Node versions"
-          description="How many tracked CLI runs reported each Node major version."
+          title="Versões do Node"
+          description="Quantas execuções rastreadas da CLI reportaram cada versão major do Node."
           data={nodeVersionPreferences}
           colorKey="chart5"
           layout="vertical"
@@ -176,8 +176,8 @@ export function DevToolsSection({ data }: { data: AggregatedAnalyticsData }) {
 
         {data.examplesDistribution.length > 0 ? (
           <PreferenceChartCard
-            title="Examples"
-            description="How often each example was included."
+            title="Exemplos"
+            description="Com que frequência cada exemplo foi incluído."
             data={data.examplesDistribution}
             colorKey="chart4"
             layout="vertical"
@@ -188,7 +188,7 @@ export function DevToolsSection({ data }: { data: AggregatedAnalyticsData }) {
       {data.addonsDistribution.length > 0 ? (
         <PreferenceChartCard
           title="Addons"
-          description="How often each addon was selected."
+          description="Com que frequência cada addon foi selecionado."
           data={data.addonsDistribution}
           colorKey="chart1"
           columnCount={2}
@@ -197,8 +197,8 @@ export function DevToolsSection({ data }: { data: AggregatedAnalyticsData }) {
 
       {cliVersionPreferences.length > 0 ? (
         <PreferenceChartCard
-          title="CLI versions"
-          description="How many tracked setups were created with each CLI version."
+          title="Versões da CLI"
+          description="Quantas configurações rastreadas foram criadas com cada versão da CLI."
           data={cliVersionPreferences}
           colorKey="chart4"
           columnCount={4}

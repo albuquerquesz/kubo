@@ -101,7 +101,7 @@ export function PreferenceChartCard({
               orientation={layout}
               height={height}
               labelWidth={labelWidth}
-              series={[{ key: "value", label: "Tracked setups", color }]}
+              series={[{ key: "value", label: "Configurações rastreadas", color }]}
               tooltipLabelKey="fullName"
               tooltipValueKey="formatted"
             />

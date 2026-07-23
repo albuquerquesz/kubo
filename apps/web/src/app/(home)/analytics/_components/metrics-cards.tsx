@@ -75,16 +75,16 @@ export function MetricsCards({ data }: { data: AggregatedAnalyticsData }) {
     { category: "ORM", item: data.ormDistribution[0] },
     { category: "Runtime", item: data.runtimeDistribution[0] },
     {
-      category: "Packages",
+      category: "Pacotes",
       item: data.packageManagerDistribution[0],
     },
   ].map(({ category, item }) => ({
-    choice: `${category} · ${shortenLabel(item?.name ?? "n/a", 18)}`,
+    choice: `${category} · ${shortenLabel(item?.name ?? "n/d", 18)}`,
     setups: item?.value ?? 0,
   }));
   const momentumComparison = [
-    { window: "Last 7 days", projects: data.momentum.last7Days },
-    { window: "Previous 7 days", projects: data.momentum.previous7Days },
+    { window: "Últimos 7 dias", projects: data.momentum.last7Days },
+    { window: "7 dias anteriores", projects: data.momentum.previous7Days },
   ];
 
   return (
@@ -95,7 +95,7 @@ export function MetricsCards({ data }: { data: AggregatedAnalyticsData }) {
             <div className="min-w-0 space-y-5">
               <div className="space-y-2">
                 <div className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-                  Convex total
+                  Total Convex
                 </div>
                 <NumberFlow
                   value={data.totalProjects}
@@ -105,14 +105,14 @@ export function MetricsCards({ data }: { data: AggregatedAnalyticsData }) {
                   isolate
                 />
                 <p className="max-w-md text-muted-foreground text-sm leading-6">
-                  Live project starts in the current telemetry dataset.
+                  Inícios de projetos ao vivo no conjunto atual de telemetria.
                 </p>
               </div>
 
               <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
                 <div className="min-w-0 rounded border border-border p-3">
                   <div className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-                    Average per day
+                    Média por dia
                   </div>
                   <div className="mt-2 font-semibold text-2xl">
                     {data.avgProjectsPerDay.toFixed(1)}
@@ -120,7 +120,7 @@ export function MetricsCards({ data }: { data: AggregatedAnalyticsData }) {
                 </div>
                 <div className="min-w-0 rounded border border-border p-3">
                   <div className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-                    Leading pair
+                    Par líder
                   </div>
                   <div className="mt-2 font-medium text-base">
                     {shortenLabel(data.summary.topStack, 24)}
@@ -133,8 +133,8 @@ export function MetricsCards({ data }: { data: AggregatedAnalyticsData }) {
               data={sparklineData}
               height={310}
               series={[
-                { key: "projects", label: "Projects" },
-                { key: "average", label: "7 day average", line: true },
+                { key: "projects", label: "Projetos" },
+                { key: "average", label: "Média de 7 dias", line: true },
               ]}
             />
           </div>
@@ -142,9 +142,9 @@ export function MetricsCards({ data }: { data: AggregatedAnalyticsData }) {
 
         <div className="grid min-w-0 gap-4 md:grid-cols-2">
           <MetricTile
-            label="7 day momentum"
+            label="Momentum de 7 dias"
             value={formatDelta(data.momentum.deltaPercentage)}
-            detail={`${formatCompactNumber(data.momentum.last7Days)} projects in the last 7 days versus ${formatCompactNumber(data.momentum.previous7Days)} in the previous window.`}
+            detail={`${formatCompactNumber(data.momentum.last7Days)} projetos nos últimos 7 dias versus ${formatCompactNumber(data.momentum.previous7Days)} na janela anterior.`}
             icon={<Gauge className="h-4 w-4" />}
             tone={
               momentumTone === "up" ? "success" : momentumTone === "down" ? "warning" : "default"
@@ -152,52 +152,52 @@ export function MetricsCards({ data }: { data: AggregatedAnalyticsData }) {
           />
 
           <MetricTile
-            label="Active days"
+            label="Dias ativos"
             value={`${data.momentum.activeDaysLast30}/30`}
-            detail="Days in the last month with at least one tracked project creation."
+            detail="Dias no último mês com pelo menos uma criação de projeto rastreada."
             icon={<AreaChart className="h-4 w-4" />}
           />
 
           <MetricTile
-            label="Peak day"
+            label="Dia de pico"
             value={data.momentum.peakDay ? formatCompactNumber(data.momentum.peakDay.count) : "0"}
             detail={
               data.momentum.peakDay
-                ? `Highest daily volume landed on ${formatDateLabel(data.momentum.peakDay.date)}.`
-                : "Waiting for enough activity to identify a peak."
+                ? `Maior volume diário em ${formatDateLabel(data.momentum.peakDay.date)}.`
+                : "Aguardando atividade suficiente para identificar um pico."
             }
             icon={<Flame className="h-4 w-4" />}
             tone="warning"
           />
 
           <MetricTile
-            label="Busiest hour"
+            label="Hora mais movimentada"
             value={data.momentum.busiestHour?.hour.replace(":00", "") ?? "--"}
             detail={
               data.momentum.busiestHour
-                ? `${formatCompactNumber(data.momentum.busiestHour.count)} projects kicked off during this UTC hour.`
-                : "Hour-of-day activity appears once events begin arriving."
+                ? `${formatCompactNumber(data.momentum.busiestHour.count)} projetos iniciados nesta hora UTC.`
+                : "A atividade por hora do dia aparece quando os eventos começam a chegar."
             }
             icon={<Sunrise className="h-4 w-4" />}
           />
 
           <MetricTile
-            label="Leading choices"
+            label="Escolhas líderes"
             value={shortenLabel(
               `${data.summary.mostPopularFrontend} / ${data.summary.mostPopularBackend}`,
               24,
             )}
-            detail={`${data.summary.mostPopularDatabase} leads database choices, and ${data.summary.mostPopularORM} leads ORM picks.`}
+            detail={`${data.summary.mostPopularDatabase} lidera as escolhas de database, e ${data.summary.mostPopularORM} lidera as de ORM.`}
             icon={<Sparkles className="h-4 w-4" />}
           />
 
           <MetricTile
-            label="Runtime + package"
+            label="Runtime + pacotes"
             value={shortenLabel(
               `${data.summary.mostPopularRuntime} / ${data.summary.mostPopularPackageManager}`,
               24,
             )}
-            detail="Top runtime and package-manager choices across tracked project setups."
+            detail="Principais escolhas de runtime e gerenciador de pacotes nas configurações rastreadas."
             icon={<Radar className="h-4 w-4" />}
           />
         </div>
@@ -206,9 +206,10 @@ export function MetricsCards({ data }: { data: AggregatedAnalyticsData }) {
       <div className="grid min-w-0 gap-4">
         <section className="min-w-0 overflow-hidden rounded border border-border bg-fd-background p-4 sm:p-5">
           <div className="space-y-1.5">
-            <h3 className="font-semibold text-sm sm:text-base">Leading choices</h3>
+            <h3 className="font-semibold text-sm sm:text-base">Escolhas líderes</h3>
             <p className="text-muted-foreground text-sm leading-6">
-              The top selected option in each major category, shown by tracked setup count.
+              A opção mais selecionada em cada categoria principal, por contagem de configurações
+              rastreadas.
             </p>
           </div>
           <div className="mt-3">
@@ -218,16 +219,16 @@ export function MetricsCards({ data }: { data: AggregatedAnalyticsData }) {
               orientation="horizontal"
               height={290}
               labelWidth={140}
-              series={[{ key: "setups", label: "Tracked setups" }]}
+              series={[{ key: "setups", label: "Configurações rastreadas" }]}
             />
           </div>
         </section>
 
         <section className="min-w-0 overflow-hidden rounded border border-border bg-fd-background p-4 sm:p-5">
           <div className="space-y-1.5">
-            <h3 className="font-semibold text-sm sm:text-base">7 day comparison</h3>
+            <h3 className="font-semibold text-sm sm:text-base">Comparação de 7 dias</h3>
             <p className="text-muted-foreground text-sm leading-6">
-              Recent project starts compared with the previous 7 day window.
+              Inícios recentes de projetos comparados com a janela anterior de 7 dias.
             </p>
           </div>
           <div className="mt-3">
@@ -235,7 +236,7 @@ export function MetricsCards({ data }: { data: AggregatedAnalyticsData }) {
               data={momentumComparison}
               xKey="window"
               height={220}
-              series={[{ key: "projects", label: "Projects" }]}
+              series={[{ key: "projects", label: "Projetos" }]}
             />
           </div>
         </section>

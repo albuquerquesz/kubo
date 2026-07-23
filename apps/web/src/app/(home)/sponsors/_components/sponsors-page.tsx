@@ -13,7 +13,7 @@ import type { Sponsor, SponsorsData } from "@/lib/types";
 
 import Footer from "../../_components/footer";
 
-const currency = new Intl.NumberFormat("en-US", {
+const currency = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "USD",
   maximumFractionDigits: 0,
@@ -41,7 +41,7 @@ function SectionHeader({
       {icon}
       <h2 className="font-mono font-semibold text-sm sm:text-base">{title}</h2>
       <div className="mx-2 h-px flex-1 bg-border" />
-      <span className="font-mono text-muted-foreground text-xs">[{count} RECORDS]</span>
+      <span className="font-mono text-muted-foreground text-xs">[{count} REGISTROS]</span>
     </div>
   );
 }
@@ -86,7 +86,7 @@ function SpecialSponsorCard({ sponsor }: { sponsor: Sponsor }) {
       <div className="flex items-center gap-2 border-border border-b px-3 py-2">
         <Star className="h-4 w-4 text-yellow-500/90" />
         <div className="ml-auto flex items-center gap-2 font-mono text-muted-foreground text-xs">
-          <span>SPECIAL</span>
+          <span>ESPECIAL</span>
           <span>•</span>
           <span>{sponsor.sinceWhen.toUpperCase()}</span>
         </div>
@@ -110,7 +110,7 @@ function SpecialSponsorCard({ sponsor }: { sponsor: Sponsor }) {
       </div>
       <div className="flex items-center justify-between gap-2 border-border border-t px-3 py-2">
         <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wide">
-          Lifetime support
+          Apoio vitalício
         </span>
         <span className="font-mono font-semibold text-foreground text-sm">
           {sponsor.formattedAmount}
@@ -221,14 +221,14 @@ export function SponsorsPage({
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2 text-primary">
               <Heart className="h-5 w-5" />
-              <h1 className="font-bold font-mono text-xl sm:text-2xl">SPONSORS.SH</h1>
+              <h1 className="font-bold font-mono text-xl sm:text-2xl">PATROCINADORES.SH</h1>
             </div>
             <p className="text-muted-foreground text-sm">
-              The companies and developers funding kubojs
+              Empresas e desenvolvedores que financiam o kubojs
             </p>
           </div>
           <div className="flex flex-col items-end gap-2">
-            <span className="font-mono text-muted-foreground text-xs">LAST_SYNC: {lastSync}</span>
+            <span className="font-mono text-muted-foreground text-xs">ULTIMA_SYNC: {lastSync}</span>
             <a
               href="https://github.com/sponsors/albuquerquesz"
               target="_blank"
@@ -236,40 +236,40 @@ export function SponsorsPage({
               className="flex items-center gap-2 rounded border border-primary/40 px-3 py-1.5 font-mono text-primary text-xs transition-colors hover:bg-primary/10"
             >
               <Heart className="h-3.5 w-3.5" />
-              <span>BECOME_SPONSOR.SH</span>
+              <span>SEJA_PATROCINADOR.SH</span>
             </a>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <LedgerTile
-            label="Lifetime funding"
+            label="Financiamento vitalício"
             value={currency.format(summary.total_lifetime_amount)}
-            detail="All-time processed"
+            detail="Processado em todos os tempos"
           />
           <LedgerTile
-            label="Monthly recurring"
+            label="Recorrente mensal"
             value={currency.format(summary.total_current_monthly)}
-            detail="Per month right now"
+            detail="Por mês no momento"
           />
           <LedgerTile
-            label="Active sponsors"
+            label="Patrocinadores ativos"
             value={String(activeCount)}
-            detail={`${specialSponsors.length} special`}
+            detail={`${specialSponsors.length} especiais`}
           />
           <LedgerTile
-            label="All-time sponsors"
+            label="Patrocinadores de todos os tempos"
             value={String(summary.total_sponsors)}
-            detail={`Including ${pastSponsors.length} past`}
+            detail={`Incluindo ${pastSponsors.length} anteriores`}
           />
         </div>
 
         {activeCount === 0 && (
           <div className="rounded border border-border p-8 text-center">
-            <p className="mb-4 font-mono text-muted-foreground">NO_ACTIVE_SPONSORS.NULL</p>
+            <p className="mb-4 font-mono text-muted-foreground">NENHUM_PATROCINADOR_ATIVO.NULL</p>
             <div className="flex items-center justify-center gap-2 text-sm">
               <span className="text-primary">$</span>
-              <span className="text-muted-foreground">Be the first to support this project!</span>
+              <span className="text-muted-foreground">Seja o primeiro a apoiar este projeto!</span>
             </div>
           </div>
         )}
@@ -278,7 +278,7 @@ export function SponsorsPage({
           <section className="space-y-4">
             <SectionHeader
               icon={<Star className="h-4 w-4 text-yellow-500/90" />}
-              title="SPECIAL_SPONSORS"
+              title="PATROCINADORES_ESPECIAIS"
               count={specialSponsors.length}
             />
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -292,7 +292,7 @@ export function SponsorsPage({
         <section className="space-y-4">
           <SectionHeader
             icon={<VercelLogo className="h-4 w-4 text-foreground" />}
-            title="SUPPORTED_BY"
+            title="APOIADO_POR"
             count={1}
           />
           <a
@@ -303,9 +303,9 @@ export function SponsorsPage({
           >
             <VercelLogo className="h-9 w-9 shrink-0 text-foreground" />
             <div className="min-w-0">
-              <h3 className="font-semibold text-foreground text-sm">Vercel OSS Program</h3>
+              <h3 className="font-semibold text-foreground text-sm">Programa Vercel OSS</h3>
               <p className="text-muted-foreground text-xs">
-                Hosting and infrastructure for kubojs.dev
+                Hospedagem e infraestrutura para o kubojs.dev
               </p>
             </div>
             <span className="ml-auto hidden font-mono text-muted-foreground text-xs sm:block">
@@ -318,7 +318,7 @@ export function SponsorsPage({
           <section className="space-y-4">
             <SectionHeader
               icon={<Heart className="h-4 w-4 text-primary" />}
-              title="ACTIVE_SPONSORS"
+              title="PATROCINADORES_ATIVOS"
               count={sponsors.length}
             />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -333,7 +333,7 @@ export function SponsorsPage({
           <section className="space-y-4">
             <SectionHeader
               icon={<Users className="h-4 w-4 text-muted-foreground" />}
-              title="BACKERS"
+              title="APOIADORES"
               count={backers.length}
             />
             <div className="flex flex-wrap gap-3">
@@ -348,7 +348,7 @@ export function SponsorsPage({
           <section className="space-y-4">
             <SectionHeader
               icon={<Archive className="h-4 w-4 text-muted-foreground" />}
-              title="PAST_SPONSORS.ARCHIVE"
+              title="PATROCINADORES_ANTERIORES.ARQUIVO"
               count={pastSponsors.length}
             />
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -364,30 +364,30 @@ export function SponsorsPage({
             <div className="flex items-center gap-2 text-sm">
               <span className="text-primary">$</span>
               <span className="text-muted-foreground">
-                Sponsorship funds development and infrastructure for kubojs
+                O patrocínio financia o desenvolvimento e a infraestrutura do kubojs
               </span>
             </div>
             {totalProjects > 0 && (
               <p className="text-muted-foreground text-sm">
-                Sponsors are featured in a CLI used to scaffold{" "}
+                Os patrocinadores aparecem em uma CLI usada para gerar{" "}
                 <span className="font-mono text-foreground">
-                  {totalProjects.toLocaleString("en-US")}
+                  {totalProjects.toLocaleString("pt-BR")}
                 </span>{" "}
-                projects since Dec 2025 alone. See{" "}
+                projetos só desde dez. 2025. Veja a{" "}
                 <Link
                   href="/analytics"
                   className="underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
                 >
-                  CLI analytics
+                  análise da CLI
                 </Link>{" "}
-                and{" "}
+                e o{" "}
                 <a
                   href="https://umami.amanv.cloud/share/pHvqHleyOl9PBfaK"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
                 >
-                  website traffic
+                  tráfego do site
                 </a>
               </p>
             )}
@@ -398,11 +398,11 @@ export function SponsorsPage({
               className="flex items-center gap-2 rounded border border-primary/40 px-4 py-2 font-mono text-primary text-sm transition-colors hover:bg-primary/10"
             >
               <Heart className="h-4 w-4" />
-              <span>BECOME_SPONSOR.SH</span>
+              <span>SEJA_PATROCINADOR.SH</span>
             </a>
             <p className="text-muted-foreground text-xs">
-              One-time sponsorships count too: every $100 one-time equals a month of special
-              placement
+              Patrocínios únicos também contam: cada US$ 100 únicos equivalem a um mês de destaque
+              especial
             </p>
           </div>
         </div>

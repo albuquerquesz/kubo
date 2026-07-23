@@ -32,7 +32,7 @@ const LOG_FIELD_ORDER = [
   "install",
 ] as const;
 
-const eventTimeFormatter = new Intl.DateTimeFormat("en-US", {
+const eventTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
   month: "short",
   day: "numeric",
   hour: "2-digit",
@@ -61,7 +61,9 @@ function formatStackSummary(event: Record<string, unknown>) {
   const database = typeof event.database === "string" ? event.database : "none";
   const orm = typeof event.orm === "string" ? event.orm : "none";
   const packageManager =
-    typeof event.packageManager === "string" ? event.packageManager : "unknown package manager";
+    typeof event.packageManager === "string"
+      ? event.packageManager
+      : "gerenciador de pacotes desconhecido";
 
   return `${frontend || "none"} / ${backend} -> ${database} + ${orm} via ${packageManager}`;
 }
@@ -87,11 +89,11 @@ export function LiveLogs() {
             />
             <Activity className="h-3.5 w-3.5 text-primary" />
             <span className="font-mono font-medium text-[12px] text-foreground/90 uppercase tracking-wide">
-              Recent project starts
+              Inícios recentes de projetos
             </span>
           </div>
           <span className="font-medium text-muted-foreground text-xs transition-colors group-hover:text-foreground/80">
-            {isOpen ? "Hide feed" : "Show feed"}
+            {isOpen ? "Ocultar feed" : "Mostrar feed"}
           </span>
         </div>
       </Button>
@@ -109,7 +111,7 @@ export function LiveLogs() {
               <div className="flex h-[220px] flex-col items-center justify-center border-border/10 border-t">
                 <div className="flex items-center gap-2 font-mono text-muted-foreground text-xs">
                   <Activity className="h-3.5 w-3.5 animate-pulse text-primary" />
-                  Loading latest starts
+                  Carregando inícios mais recentes
                 </div>
               </div>
             ) : events.length === 0 ? (
@@ -119,9 +121,11 @@ export function LiveLogs() {
                     <Radio className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div className="space-y-1 text-center">
-                    <p className="font-medium text-muted-foreground text-sm">No recent activity</p>
+                    <p className="font-medium text-muted-foreground text-sm">
+                      Nenhuma atividade recente
+                    </p>
                     <p className="text-muted-foreground/70 text-xs">
-                      The feed will populate as new anonymous CLI events arrive.
+                      O feed será preenchido conforme novos eventos anônimos da CLI chegarem.
                     </p>
                   </div>
                 </div>
@@ -133,7 +137,7 @@ export function LiveLogs() {
                     <span className="text-muted-foreground uppercase tracking-wide">
                       stream: project.starts
                     </span>
-                    <span className="text-muted-foreground">{events.length} events</span>
+                    <span className="text-muted-foreground">{events.length} eventos</span>
                   </div>
                 </div>
                 <div className="divide-y divide-border/35">

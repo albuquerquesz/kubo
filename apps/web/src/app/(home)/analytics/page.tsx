@@ -5,25 +5,25 @@ import type { Metadata } from "next";
 import { AnalyticsClient } from "./analytics-client";
 
 export const metadata: Metadata = {
-  title: "Analytics - kubojs",
-  description: "Convex-backed project creation analytics for kubojs.",
+  title: "Análise - kubojs",
+  description: "Análise de criação de projetos com Convex para o kubojs.",
   openGraph: {
-    title: "Analytics - kubojs",
-    description: "Convex-backed project creation analytics for kubojs.",
+    title: "Análise - kubojs",
+    description: "Análise de criação de projetos com Convex para o kubojs.",
     url: "https://kubojs.dev/analytics",
     images: [
       {
         url: "https://kubojs.dev/og/site/analytics.png",
         width: 1200,
         height: 630,
-        alt: "kubojs Convex Analytics",
+        alt: "Análise Convex do kubojs",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Analytics - kubojs",
-    description: "Convex-backed project creation analytics for kubojs.",
+    title: "Análise - kubojs",
+    description: "Análise de criação de projetos com Convex para o kubojs.",
     images: ["https://kubojs.dev/og/site/analytics.png"],
   },
 };

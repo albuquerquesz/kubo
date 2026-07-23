@@ -12,10 +12,10 @@ import { SectionHeader } from "./section-header";
 import type { AggregatedAnalyticsData } from "./types";
 
 export function TimelineSection({ data }: { data: AggregatedAnalyticsData }) {
-  const peakDayLabel = data.momentum.peakDay ? formatDateLabel(data.momentum.peakDay.date) : "n/a";
+  const peakDayLabel = data.momentum.peakDay ? formatDateLabel(data.momentum.peakDay.date) : "n/d";
   const busiestHourLabel = data.momentum.busiestHour
     ? `${formatHourLabel(data.momentum.busiestHour.hour)} UTC`
-    : "n/a";
+    : "n/d";
   const dailyData = data.timeSeries.map((point) => ({
     date: point.dateValue,
     projects: point.count,
@@ -37,28 +37,27 @@ export function TimelineSection({ data }: { data: AggregatedAnalyticsData }) {
   return (
     <div className="space-y-6">
       <SectionHeader
-        label="Activity"
-        title="Project creation volume over time"
-        description="Recent momentum, monthly totals, weekday averages, and UTC-hour concentration from live CLI telemetry."
+        label="Atividade"
+        title="Volume de criação de projetos ao longo do tempo"
+        description="Momentum recente, totais mensais, médias por dia da semana e concentração por hora UTC da telemetria ao vivo da CLI."
         aside={
           <div className="rounded border border-border bg-fd-background px-3 py-1.5 font-mono text-muted-foreground text-xs">
-            peak {peakDayLabel} · hot hour {busiestHourLabel}
+            pico {peakDayLabel} · hora quente {busiestHourLabel}
           </div>
         }
       />
 
       <div className="grid gap-4 xl:grid-cols-[1.35fr_0.95fr]">
         <ChartCard
-          title="Daily project starts"
-          description="Raw daily activity with the rolling average layered on top."
+          title="Inícios diários de projetos"
+          description="Atividade diária bruta com a média móvel sobreposta."
           footer={
             <>
-              Last 7 days:{" "}
+              Últimos 7 dias:{" "}
               <span className="text-foreground">
                 {formatCompactNumber(data.momentum.last7Days)}
               </span>
-              {" · "}
-              Previous 7 days:{" "}
+              {" · "}7 dias anteriores:{" "}
               <span className="text-foreground">
                 {formatCompactNumber(data.momentum.previous7Days)}
               </span>
@@ -69,19 +68,19 @@ export function TimelineSection({ data }: { data: AggregatedAnalyticsData }) {
             data={dailyData}
             height={340}
             series={[
-              { key: "projects", label: "Daily starts" },
-              { key: "average", label: "7 day average", line: true },
+              { key: "projects", label: "Inícios diários" },
+              { key: "average", label: "Média de 7 dias", line: true },
             ]}
           />
         </ChartCard>
 
         <ChartCard
-          title="Monthly starts"
-          description="The longer view of when the tracked history accumulated; the latest month may still be in progress."
+          title="Inícios mensais"
+          description="A visão mais longa de quando o histórico rastreado se acumulou; o mês mais recente ainda pode estar em andamento."
           footer={
             <>
-              Live total:{" "}
-              <span className="text-foreground">{data.totalProjects.toLocaleString()}</span>
+              Total ao vivo:{" "}
+              <span className="text-foreground">{data.totalProjects.toLocaleString("pt-BR")}</span>
             </>
           }
         >
@@ -89,18 +88,18 @@ export function TimelineSection({ data }: { data: AggregatedAnalyticsData }) {
             data={monthlyData}
             xKey="month"
             height={340}
-            series={[{ key: "projects", label: "Monthly starts" }]}
+            series={[{ key: "projects", label: "Inícios mensais" }]}
           />
         </ChartCard>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <ChartCard
-          title="Weekday average"
-          description="Average project starts for each weekday across the last month."
+          title="Média por dia da semana"
+          description="Média de inícios de projetos para cada dia da semana no último mês."
           footer={
             <>
-              Active days in the last 30:{" "}
+              Dias ativos nos últimos 30:{" "}
               <span className="text-foreground">{data.momentum.activeDaysLast30}</span>
             </>
           }
@@ -109,20 +108,20 @@ export function TimelineSection({ data }: { data: AggregatedAnalyticsData }) {
             data={weekdayData}
             xKey="weekday"
             height={260}
-            series={[{ key: "average", label: "Average starts" }]}
+            series={[{ key: "average", label: "Inícios médios" }]}
           />
         </ChartCard>
 
         <ChartCard
-          title="UTC hour distribution"
-          description="When project starts cluster during the day."
+          title="Distribuição por hora UTC"
+          description="Quando os inícios de projetos se concentram ao longo do dia."
           footer={
             <>
-              Busiest hour:{" "}
+              Hora mais movimentada:{" "}
               <span className="text-foreground">
                 {data.momentum.busiestHour
                   ? `${formatHourLabel(data.momentum.busiestHour.hour)} UTC`
-                  : "n/a"}
+                  : "n/d"}
               </span>
             </>
           }
@@ -132,7 +131,7 @@ export function TimelineSection({ data }: { data: AggregatedAnalyticsData }) {
             xKey="hour"
             height={260}
             maxLabels={12}
-            series={[{ key: "projects", label: "Project starts" }]}
+            series={[{ key: "projects", label: "Inícios de projetos" }]}
           />
         </ChartCard>
       </div>

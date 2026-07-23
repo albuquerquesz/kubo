@@ -9,27 +9,27 @@ export function StackSection({ data }: { data: AggregatedAnalyticsData }) {
   return (
     <div className="space-y-6">
       <SectionHeader
-        label="Stack choices"
-        title="Frameworks, runtimes, data layers, and auth"
-        description="The most common stack decisions and pairings selected during project creation."
+        label="Escolhas de stack"
+        title="Frameworks, runtimes, camadas de dados e auth"
+        description="As decisões de stack e combinações mais comuns selecionadas na criação de projetos."
         aside={
           <div className="rounded border border-border bg-fd-background px-3 py-1.5 font-mono text-muted-foreground text-xs">
-            top stack {shortenLabel(data.summary.topStack, 28)}
+            stack líder {shortenLabel(data.summary.topStack, 28)}
           </div>
         }
       />
 
       <div className="grid gap-4 xl:grid-cols-2">
         <PreferenceChartCard
-          title="Frontend and backend pairings"
-          description="The combinations that appear most often across tracked setups."
+          title="Combinações de frontend e backend"
+          description="As combinações que mais aparecem nas configurações rastreadas."
           data={data.stackCombinationDistribution}
           colorKey="chart1"
           maxItems={10}
         />
         <PreferenceChartCard
-          title="Database and ORM pairings"
-          description="Which persistence choices tend to be selected together."
+          title="Combinações de database e ORM"
+          description="Quais escolhas de persistência costumam ser selecionadas juntas."
           data={data.databaseORMCombinationDistribution}
           colorKey="chart4"
           maxItems={10}
@@ -39,13 +39,13 @@ export function StackSection({ data }: { data: AggregatedAnalyticsData }) {
       <div className="grid gap-4 xl:grid-cols-2">
         <PreferenceChartCard
           title="Frontend"
-          description="How often each frontend was selected."
+          description="Com que frequência cada frontend foi selecionado."
           data={data.frontendDistribution}
           colorKey="chart1"
         />
         <PreferenceChartCard
           title="Backend"
-          description="How often each backend was selected."
+          description="Com que frequência cada backend foi selecionado."
           data={data.backendDistribution}
           colorKey="chart2"
         />
@@ -54,13 +54,13 @@ export function StackSection({ data }: { data: AggregatedAnalyticsData }) {
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
         <PreferenceChartCard
           title="Database"
-          description="How often each database was selected."
+          description="Com que frequência cada database foi selecionada."
           data={data.databaseDistribution}
           colorKey="chart4"
         />
         <PreferenceChartCard
           title="ORM"
-          description="How often each ORM was selected."
+          description="Com que frequência cada ORM foi selecionado."
           data={data.ormDistribution}
           colorKey="chart5"
         />
@@ -69,19 +69,19 @@ export function StackSection({ data }: { data: AggregatedAnalyticsData }) {
       <div className="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
         <PreferenceChartCard
           title="API"
-          description="How often each API type was selected."
+          description="Com que frequência cada tipo de API foi selecionado."
           data={data.apiDistribution}
           colorKey="chart3"
         />
         <PreferenceChartCard
-          title="Authentication provider"
-          description="How often each authentication provider was selected."
+          title="Provedor de autenticação"
+          description="Com que frequência cada provedor de autenticação foi selecionado."
           data={data.authDistribution}
           colorKey="chart1"
         />
         <PreferenceChartCard
           title="Runtime"
-          description="How often each runtime was selected."
+          description="Com que frequência cada runtime foi selecionado."
           data={data.runtimeDistribution}
           colorKey="chart2"
         />
