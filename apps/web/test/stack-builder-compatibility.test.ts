@@ -91,7 +91,7 @@ describe("stack builder D1 compatibility", () => {
     });
 
     expect(getDisabledReason(stack, "webDeploy", "none")).toBe(
-      "D1 with a self fullstack backend requires Cloudflare web deployment",
+      "D1 com backend fullstack self exige deploy web na Cloudflare",
     );
   });
 
@@ -243,7 +243,7 @@ describe("stack builder D1 compatibility", () => {
     });
 
     expect(getDisabledReason(stack, "examples", "ai")).toBe(
-      "AI example not compatible with Solid or Astro frontend",
+      "Exemplo de IA incompatível com frontend Solid ou Astro",
     );
 
     const result = analyzeStackCompatibility({
@@ -264,7 +264,7 @@ describe("stack builder D1 compatibility", () => {
     });
 
     expect(getDisabledReason(stack, "addons", "evlog")).toBe(
-      "evlog requires Hono, Express, Fastify, Elysia, or a fullstack backend",
+      "evlog exige Hono, Express, Fastify, Elysia ou um backend fullstack",
     );
   });
 
@@ -282,7 +282,7 @@ describe("stack builder D1 compatibility", () => {
     expect(result.adjustedStack?.addons).toEqual(["turborepo"]);
     expect(result.changes).toContainEqual({
       category: "addons",
-      message: "evlog removed (requires a server or fullstack backend)",
+      message: "evlog removido (exige um servidor ou backend fullstack)",
     });
   });
 
@@ -335,7 +335,7 @@ describe("stack builder Docker deployment compatibility", () => {
 
     expect(getDisabledReason(bunStack, "serverDeploy", "docker")).toBeNull();
     expect(getDisabledReason(workersStack, "serverDeploy", "docker")).toBe(
-      "Docker server deployment requires the Bun or Node runtime",
+      "Deploy de servidor com Docker exige runtime Bun ou Node",
     );
   });
 
@@ -405,7 +405,7 @@ describe("stack builder Vercel deployment compatibility", () => {
 
     expect(getDisabledReason(bunStack, "serverDeploy", "vercel")).toBeNull();
     expect(getDisabledReason(workersStack, "serverDeploy", "vercel")).toBe(
-      "Vercel server deployment requires the Bun or Node runtime",
+      "Deploy de servidor na Vercel exige runtime Bun ou Node",
     );
   });
 

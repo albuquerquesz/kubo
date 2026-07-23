@@ -116,7 +116,7 @@ export function useStackBuilder() {
       }
 
       if (compatibilityAnalysis.changes.length > 1) {
-        const message = `${compatibilityAnalysis.changes.length} compatibility adjustments made:\n${compatibilityAnalysis.changes
+        const message = `${compatibilityAnalysis.changes.length} ajustes de compatibilidade feitos:\n${compatibilityAnalysis.changes
           .map((change) => `• ${change.message}`)
           .join("\n")}`;
 
@@ -339,7 +339,7 @@ export function useStackBuilder() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Unable to copy command. Please copy it manually.");
+      toast.error("Não foi possível copiar o comando. Copie manualmente.");
     }
   }
 
@@ -354,7 +354,7 @@ export function useStackBuilder() {
     const stackToSave = withFormattedProjectName(compatibilityAnalysis.adjustedStack || stack);
     localStorage.setItem("betterTStackPreference", JSON.stringify(stackToSave));
     setLastSavedStack(stackToSave);
-    toast.success("Your stack configuration has been saved");
+    toast.success("A configuração da sua stack foi salva");
   }
 
   function loadSavedStack() {
@@ -367,7 +367,7 @@ export function useStackBuilder() {
     });
 
     contentRef.current?.scrollTo(0, 0);
-    toast.success("Saved configuration loaded");
+    toast.success("Configuração salva carregada");
   }
 
   function applyPreset(presetId: string) {
@@ -381,7 +381,7 @@ export function useStackBuilder() {
     });
 
     contentRef.current?.scrollTo(0, 0);
-    toast.success(`Applied preset: ${preset.name}`);
+    toast.success(`Modelo aplicado: ${preset.name}`);
   }
 
   return {

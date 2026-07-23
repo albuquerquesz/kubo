@@ -26,7 +26,7 @@ export function SpecialSponsorsPanel({ sponsors, compact = false }: SpecialSpons
       <div className="flex items-center justify-between gap-2">
         <p className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
           <Star className="h-3.5 w-3.5 text-yellow-500/90" />
-          Special sponsors
+          Patrocinadores especiais
         </p>
         <span className="rounded-md bg-muted/20 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground uppercase">
           {sponsors.length}
@@ -126,7 +126,7 @@ export function SpecialSponsorsPanel({ sponsors, compact = false }: SpecialSpons
                 href={SPONSOR_ME_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Become a sponsor"
+                aria-label="Seja um patrocinador"
                 className={cn(
                   "builder-focus-ring inline-flex items-center justify-center rounded-md border border-dashed border-primary/40 bg-primary/10 text-primary transition-colors hover:border-primary/60 hover:bg-primary/16",
                   compact ? "h-9 w-9" : "h-10 w-10",
@@ -138,9 +138,9 @@ export function SpecialSponsorsPanel({ sponsors, compact = false }: SpecialSpons
           </HoverCardTrigger>
           <HoverCardContent align="start" sideOffset={8} className="bg-fd-background">
             <div className="space-y-1.5">
-              <p className="font-semibold text-sm">Become a sponsor</p>
+              <p className="font-semibold text-sm">Seja um patrocinador</p>
               <p className="text-muted-foreground text-xs">
-                Support the project and get featured in this special sponsors list.
+                Apoie o projeto e apareça nesta lista de patrocinadores especiais.
               </p>
             </div>
           </HoverCardContent>

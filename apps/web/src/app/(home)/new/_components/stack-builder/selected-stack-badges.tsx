@@ -37,7 +37,7 @@ export function SelectedStackBadges({ stack, onRemove, onJump }: SelectedStackBa
   });
 
   if (selections.length === 0) {
-    return <p className="font-mono text-muted-foreground text-xs">No selections yet</p>;
+    return <p className="font-mono text-muted-foreground text-xs">Nenhuma seleção ainda</p>;
   }
 
   return (
@@ -70,7 +70,7 @@ export function SelectedStackBadges({ stack, onRemove, onJump }: SelectedStackBa
               <button
                 type="button"
                 onClick={() => onJump(category)}
-                title={`Go to ${categoryLabel}`}
+                title={`Ir para ${categoryLabel}`}
                 className="builder-focus-ring flex items-center gap-1.5 py-0.5"
               >
                 {chipContent}
@@ -82,7 +82,7 @@ export function SelectedStackBadges({ stack, onRemove, onJump }: SelectedStackBa
               <button
                 type="button"
                 onClick={() => onRemove(category, tech.id)}
-                aria-label={`Remove ${tech.name} from ${categoryLabel}`}
+                aria-label={`Remover ${tech.name} de ${categoryLabel}`}
                 className="builder-focus-ring rounded-full p-0.5 hover:bg-black/10 dark:hover:bg-white/10"
               >
                 <X className="h-2.5 w-2.5" />

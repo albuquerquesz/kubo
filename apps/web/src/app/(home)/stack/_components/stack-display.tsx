@@ -54,10 +54,10 @@ export function StackDisplay({ stackState }: StackDisplayProps) {
     try {
       await navigator.clipboard.writeText(command);
       setCopied(true);
-      toast.success("Command copied to clipboard!");
+      toast.success("Comando copiado!");
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Failed to copy command");
+      toast.error("Falha ao copiar o comando");
     }
   };
 
@@ -71,7 +71,7 @@ export function StackDisplay({ stackState }: StackDisplayProps) {
           </div>
           <div className="hidden h-px flex-1 bg-border sm:block" />
           <span className="w-full text-right text-muted-foreground text-xs sm:w-auto sm:text-left">
-            [{techBadges.length} DEPENDENCIES]
+            [{techBadges.length} DEPENDÊNCIAS]
           </span>
         </div>
 
@@ -86,7 +86,7 @@ export function StackDisplay({ stackState }: StackDisplayProps) {
           </div>
           <div className="flex items-center gap-2 text-sm">
             <span className="text-primary">$</span>
-            <span className="text-muted-foreground">Stack loaded successfully</span>
+            <span className="text-muted-foreground">Stack carregada com sucesso</span>
           </div>
         </div>
 
@@ -115,9 +115,7 @@ export function StackDisplay({ stackState }: StackDisplayProps) {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <span className="text-primary text-xs">▶</span>
-            <span className="font-mono font-semibold text-foreground text-sm">
-              GENERATE_COMMAND
-            </span>
+            <span className="font-mono font-semibold text-foreground text-sm">GERAR_COMANDO</span>
           </div>
 
           <div
@@ -131,8 +129,8 @@ export function StackDisplay({ stackState }: StackDisplayProps) {
                 copyCommand();
               }
             }}
-            aria-label="Copy generated command"
-            title="Click to copy command"
+            aria-label="Copiar comando gerado"
+            title="Clique para copiar o comando"
           >
             <div className="flex items-center gap-2 font-mono text-sm">
               <span className="text-primary">$</span>
@@ -146,7 +144,7 @@ export function StackDisplay({ stackState }: StackDisplayProps) {
               }
             >
               {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-              {copied ? "COPIED!" : "COPY"}
+              {copied ? "COPIADO!" : "COPIAR"}
             </span>
           </div>
         </div>
@@ -155,7 +153,7 @@ export function StackDisplay({ stackState }: StackDisplayProps) {
           <div className="flex items-center gap-2">
             <span className="text-primary text-xs">▶</span>
             <span className="font-mono font-semibold text-foreground text-sm">
-              DEPENDENCIES ({techBadges.length})
+              DEPENDÊNCIAS ({techBadges.length})
             </span>
           </div>
 
@@ -164,7 +162,7 @@ export function StackDisplay({ stackState }: StackDisplayProps) {
           ) : (
             <div className="flex items-center gap-2 text-muted-foreground">
               <span className="text-primary">$</span>
-              <span>No technologies selected</span>
+              <span>Nenhuma tecnologia selecionada</span>
             </div>
           )}
         </div>

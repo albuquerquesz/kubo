@@ -116,7 +116,7 @@ interface EmptyStateProps {
 }
 
 export function CodeViewerEmpty({
-  message = "Select a file to view its content",
+  message = "Selecione um arquivo para ver o conteúdo",
 }: EmptyStateProps) {
   return (
     <div className="flex h-full items-center justify-center text-muted-foreground">

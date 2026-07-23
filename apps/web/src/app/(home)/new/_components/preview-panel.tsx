@@ -94,12 +94,12 @@ export function PreviewPanel({ stack, selectedFilePath, onSelectFile }: PreviewP
           setMobileView("tree");
         }
       } else {
-        setError(data.error || "Failed to generate preview");
+        setError(data.error || "Falha ao gerar a prévia");
       }
     } catch (err) {
       if (controller.signal.aborted) return;
       if (requestId !== requestIdRef.current) return;
-      setError(err instanceof Error ? err.message : "Failed to fetch preview");
+      setError(err instanceof Error ? err.message : "Falha ao buscar a prévia");
     } finally {
       if (requestId === requestIdRef.current) {
         setIsLoading(false);
@@ -145,7 +145,7 @@ export function PreviewPanel({ stack, selectedFilePath, onSelectFile }: PreviewP
       <div className="flex h-full items-center justify-center rounded-lg border border-border bg-fd-background">
         <div className="flex items-center gap-2 rounded border border-border bg-muted/20 px-3 py-2 font-mono text-muted-foreground text-xs">
           <Loader2 className="h-4 w-4 animate-spin" />
-          Rendering file tree
+          Renderizando árvore de arquivos
         </div>
       </div>
     );
@@ -164,7 +164,7 @@ export function PreviewPanel({ stack, selectedFilePath, onSelectFile }: PreviewP
   if (!tree) {
     return (
       <div className="flex h-full items-center justify-center rounded-lg border border-border bg-fd-background text-muted-foreground">
-        <p className="font-mono text-sm">Generating preview...</p>
+        <p className="font-mono text-sm">Gerando prévia...</p>
       </div>
     );
   }
@@ -181,7 +181,7 @@ export function PreviewPanel({ stack, selectedFilePath, onSelectFile }: PreviewP
             className="builder-focus-ring flex items-center gap-1 rounded px-1 py-0.5 font-mono text-xs text-muted-foreground hover:text-foreground sm:hidden"
           >
             <ChevronLeft className="h-4 w-4" />
-            <span>Files</span>
+            <span>Arquivos</span>
           </button>
         )}
         <div
@@ -191,7 +191,7 @@ export function PreviewPanel({ stack, selectedFilePath, onSelectFile }: PreviewP
           )}
         >
           <FolderTree className="h-3.5 w-3.5" />
-          <span>{directoryCount} folders</span>
+          <span>{directoryCount} pastas</span>
         </div>
         <div
           className={cn(
@@ -200,14 +200,14 @@ export function PreviewPanel({ stack, selectedFilePath, onSelectFile }: PreviewP
           )}
         >
           <FileCode2 className="h-3.5 w-3.5" />
-          <span>{fileCount} files</span>
+          <span>{fileCount} arquivos</span>
         </div>
         <span
           className={cn(
             "hidden rounded border border-border/70 bg-fd-background px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground uppercase tracking-wide sm:inline-flex",
           )}
         >
-          {mobileView === "code" ? "Code view" : "Tree view"}
+          {mobileView === "code" ? "Visão de código" : "Visão em árvore"}
         </span>
         {/* Show current file name on mobile */}
         {mobileView === "code" && selectedFile && (
@@ -219,13 +219,14 @@ export function PreviewPanel({ stack, selectedFilePath, onSelectFile }: PreviewP
           <Tooltip>
             <TooltipTrigger className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
               <Info className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Preview info</span>
+              <span className="hidden sm:inline">Info da prévia</span>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="max-w-xs">
               <p>
-                This is a static template preview. Files are not formatted. Some features like
-                database provider setup (Turso, Neon, Supabase, etc.) and certain addons (Fumadocs,
-                Starlight, Tauri, etc.) require CLI execution and are not shown here.
+                Esta é uma prévia estática do template. Os arquivos não estão formatados. Alguns
+                recursos como configuração de provedores de banco (Turso, Neon, Supabase etc.) e
+                certos complementos (Fumadocs, Starlight, Tauri etc.) exigem execução da CLI e não
+                aparecem aqui.
               </p>
             </TooltipContent>
           </Tooltip>

@@ -27,7 +27,7 @@ export function PresetDropdown({ onApplyPreset }: PresetDropdownProps) {
         }
       >
         <Zap className="h-3 w-3" />
-        Presets
+        Modelos
         <ChevronDown className="ml-auto h-3 w-3" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-72 bg-fd-background">
@@ -40,7 +40,7 @@ export function PresetDropdown({ onApplyPreset }: PresetDropdownProps) {
             <div className="flex w-full items-center justify-between gap-2">
               <div className="font-medium text-sm">{preset.name}</div>
               <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground uppercase">
-                Preset
+                Modelo
               </span>
             </div>
             <div className="line-clamp-2 text-xs text-muted-foreground">{preset.description}</div>

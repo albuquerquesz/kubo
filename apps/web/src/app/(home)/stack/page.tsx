@@ -35,7 +35,7 @@ export async function generateMetadata({ searchParams }: StackPageProps): Promis
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: `${projectName} tech stack`,
+          alt: `Stack de tecnologias de ${projectName}`,
         },
       ],
     },

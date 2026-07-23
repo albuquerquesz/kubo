@@ -126,7 +126,7 @@ describe("compatibility adjustment invariants", () => {
     expect(converged).toBe(true);
     expect(adjusted.addons).not.toContain("tauri");
     expect(getDisabledReason(adjusted, "addons", "tauri")).toBe(
-      "Tauri isn't compatible with Convex Better Auth on Next.js or TanStack Start",
+      "Tauri não é compatível com Convex Better Auth no Next.js ou TanStack Start",
     );
   });
 });

@@ -99,7 +99,7 @@ export function CategoryNav({ progress, idPrefix }: CategoryNavProps) {
             type="button"
             data-category={category}
             onClick={() => scrollToCategorySection(idPrefix, category)}
-            title={`Jump to ${getCategoryDisplayName(category)}`}
+            title={`Ir para ${getCategoryDisplayName(category)}`}
             className={cn(
               "builder-focus-ring flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide transition-colors",
               done

@@ -107,7 +107,7 @@ export function generateStackSummary(stack: StackState) {
     return selectedValue ? getTechNames(selectedValue) : [];
   });
 
-  return selectedTechs.length > 0 ? selectedTechs.join(" • ") : "Custom stack";
+  return selectedTechs.length > 0 ? selectedTechs.join(" • ") : "Stack personalizada";
 }
 
 export function getDesktopBuildNote(stack: Pick<StackState, "addons" | "backend" | "webFrontend">) {
@@ -130,18 +130,18 @@ export function getDesktopBuildNote(stack: Pick<StackState, "addons" | "backend"
 
   const addonLabel =
     selectedDesktopAddons.length === 2
-      ? "Tauri and Electrobun desktop builds"
-      : `${desktopAddonNames[selectedDesktopAddons[0]]} desktop builds`;
+      ? "Os builds desktop Tauri e Electrobun"
+      : `Os builds desktop ${desktopAddonNames[selectedDesktopAddons[0]]}`;
 
   if (
     selfHostedFullstackBackends.includes(
       stack.backend as (typeof selfHostedFullstackBackends)[number],
     )
   ) {
-    return `${addonLabel} package static web assets and require a separate backend or no backend. Fullstack self backends emit server routes inside the web app, so they cannot be bundled for desktop packaging.`;
+    return `${addonLabel} empacotam assets web estáticos e exigem um backend separado ou nenhum backend. Backends fullstack self emitem rotas de servidor dentro do app web, então não podem ser empacotados para desktop.`;
   }
 
-  return `${addonLabel} package static web assets. ${staticDesktopFrontendNames[staticFrontend]} needs a static/export build configuration before desktop packaging will work.`;
+  return `${addonLabel} empacotam assets web estáticos. ${staticDesktopFrontendNames[staticFrontend]} precisa de uma configuração de build static/export antes do empacotamento desktop funcionar.`;
 }
 
 export function generateStackCommand(stack: StackState) {

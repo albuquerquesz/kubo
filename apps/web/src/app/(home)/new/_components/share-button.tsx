@@ -16,10 +16,10 @@ export function ShareButton({ stackUrl, stackState }: ShareButtonProps) {
       <button
         type="button"
         className="builder-focus-ring flex flex-1 items-center justify-center gap-1.5 rounded-md bg-primary/15 px-2 py-1.5 font-mono font-medium text-primary text-xs transition-colors hover:bg-primary/22"
-        title="Share your stack"
+        title="Compartilhar sua stack"
       >
         <Share2 className="h-3 w-3" />
-        Share
+        Compartilhar
       </button>
     </ShareDialog>
   );

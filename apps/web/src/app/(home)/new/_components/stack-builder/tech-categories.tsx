@@ -180,7 +180,7 @@ export function TechCategories({
                     </div>
                     {tech.default && !isSelected && (
                       <span className="absolute top-1 right-1 ml-2 shrink-0 rounded bg-muted px-1 py-0.5 text-[10px] text-muted-foreground">
-                        Default
+                        Padrão
                       </span>
                     )}
                   </motion.button>

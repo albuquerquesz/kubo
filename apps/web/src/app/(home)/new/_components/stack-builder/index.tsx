@@ -94,7 +94,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     : "text-muted-foreground hover:bg-muted/30",
                 )}
               >
-                Build
+                Montar
               </button>
               <button
                 type="button"
@@ -106,7 +106,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     : "text-muted-foreground hover:bg-muted/30",
                 )}
               >
-                Preview
+                Prévia
               </button>
             </div>
           </div>
@@ -125,7 +125,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   <section className="space-y-2 border-b border-border/20 px-3 py-3">
                     <label className="flex flex-col">
                       <span className="mb-1 font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-                        Project Name
+                        Nome do projeto
                       </span>
                       <Input
                         type="text"
@@ -154,7 +154,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   <section className="space-y-2 border-border/20 border-b px-3 py-3">
                     <div className="flex items-center justify-between">
                       <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-                        CLI Command
+                        Comando CLI
                       </p>
                       <div className="flex items-center gap-1">
                         {isCommandMultiline && (
@@ -162,7 +162,9 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                             type="button"
                             onClick={() => setCommandExpanded((prev) => !prev)}
                             className="builder-focus-ring flex items-center gap-1 rounded-md bg-muted/20 px-2 py-1 font-mono text-[11px] text-muted-foreground uppercase transition-colors hover:bg-muted/35 hover:text-foreground"
-                            title={commandExpanded ? "Collapse command" : "Show full command"}
+                            title={
+                              commandExpanded ? "Recolher comando" : "Mostrar comando completo"
+                            }
                           >
                             <ChevronDown
                               className={cn(
@@ -170,7 +172,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                                 commandExpanded && "rotate-180",
                               )}
                             />
-                            {commandExpanded ? "Less" : "Flags"}
+                            {commandExpanded ? "Menos" : "Flags"}
                           </button>
                         )}
                         <button
@@ -182,14 +184,14 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                               ? "bg-primary/14 text-primary"
                               : "bg-muted/20 text-muted-foreground hover:bg-muted/35 hover:text-foreground",
                           )}
-                          title={copied ? "Copied!" : "Copy command"}
+                          title={copied ? "Copiado!" : "Copiar comando"}
                         >
                           {copied ? (
                             <Check className="h-3 w-3 shrink-0" />
                           ) : (
                             <ClipboardCopy className="h-3 w-3 shrink-0" />
                           )}
-                          {copied ? "Copied" : "Copy"}
+                          {copied ? "Copiado" : "Copiar"}
                         </button>
                       </div>
                     </div>
@@ -203,8 +205,8 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                           copyToClipboard();
                         }
                       }}
-                      aria-label="Copy CLI command"
-                      title="Click to copy command"
+                      aria-label="Copiar comando CLI"
+                      title="Clique para copiar o comando"
                       className="builder-focus-ring cursor-pointer rounded-lg bg-muted/20 px-2.5 py-2"
                     >
                       <code
@@ -221,10 +223,10 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   <section className="space-y-2 px-3 py-3">
                     <div className="flex items-center justify-between">
                       <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-                        Selected stack
+                        Stack selecionada
                       </p>
                       <span className="font-mono text-[11px] text-muted-foreground uppercase">
-                        {selectedCount} picks
+                        {selectedCount} escolhas
                       </span>
                     </div>
                     <SelectedStackBadges
@@ -244,7 +246,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   {compatibilityAnalysis.changes.length > 0 && (
                     <section className="space-y-2 border-border/20 border-t px-3 py-3">
                       <p className="font-mono text-[11px] text-primary uppercase tracking-wide">
-                        Compatibility Log
+                        Log de compatibilidade
                       </p>
                       <ul className="space-y-1 rounded-lg bg-primary/7 px-2.5 py-2">
                         {compatibilityAnalysis.changes.slice(0, 4).map((change, index) => (
@@ -263,7 +265,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     <section className="space-y-2 border-border/20 border-t px-3 py-3">
                       <div className="flex items-center gap-1.5 font-mono text-[11px] text-amber-600 uppercase tracking-wide dark:text-amber-400">
                         <AlertTriangle className="h-3.5 w-3.5" />
-                        Desktop Build Note
+                        Nota de build desktop
                       </div>
                       <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-2 text-muted-foreground text-xs">
                         {desktopBuildNote}
@@ -301,7 +303,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   )}
                 >
                   <Terminal className="h-3 w-3" />
-                  Configure
+                  Configurar
                 </button>
                 <button
                   type="button"
@@ -318,7 +320,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   )}
                 >
                   <FolderTree className="h-3 w-3" />
-                  Preview
+                  Prévia
                 </button>
               </div>
               {viewMode === "command" && (
@@ -358,7 +360,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   <div className="mb-4 space-y-2 rounded-xl bg-muted/10 p-2">
                     <label className="flex flex-col">
                       <span className="mb-1 font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-                        Project Name
+                        Nome do projeto
                       </span>
                       <Input
                         type="text"
@@ -388,7 +390,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     <div className="space-y-1">
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wide">
-                          CLI Command
+                          Comando CLI
                         </span>
                         <div className="flex items-center gap-1">
                           {isCommandMultiline && (
@@ -396,7 +398,9 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                               type="button"
                               onClick={() => setCommandExpanded((prev) => !prev)}
                               className="builder-focus-ring flex items-center gap-1 rounded-md bg-muted/20 px-2 py-1 font-mono text-[11px] text-muted-foreground uppercase"
-                              title={commandExpanded ? "Collapse command" : "Show full command"}
+                              title={
+                                commandExpanded ? "Recolher comando" : "Mostrar comando completo"
+                              }
                             >
                               <ChevronDown
                                 className={cn(
@@ -404,7 +408,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                                   commandExpanded && "rotate-180",
                                 )}
                               />
-                              {commandExpanded ? "Less" : "Flags"}
+                              {commandExpanded ? "Menos" : "Flags"}
                             </button>
                           )}
                           <span
@@ -420,7 +424,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                             ) : (
                               <ClipboardCopy className="h-3 w-3 shrink-0" />
                             )}
-                            {copied ? "Copied" : "Tap to copy"}
+                            {copied ? "Copiado" : "Toque para copiar"}
                           </span>
                         </div>
                       </div>
@@ -438,8 +442,8 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                           "builder-focus-ring rounded-lg bg-background/75 px-2.5 py-2 font-mono text-xs text-muted-foreground ring-1",
                           copied ? "ring-primary/40" : "ring-border/45",
                         )}
-                        aria-label="Copy command"
-                        title="Click to copy command"
+                        aria-label="Copiar comando"
+                        title="Clique para copiar o comando"
                       >
                         <div className="flex min-w-0 items-start gap-1.5">
                           <span className="mt-0.5 text-chart-4">$</span>
@@ -459,7 +463,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                       <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-2">
                         <div className="mb-1 flex items-center gap-1.5 font-mono text-[10px] text-amber-600 uppercase tracking-wide dark:text-amber-400">
                           <AlertTriangle className="h-3 w-3" />
-                          Desktop Build Note
+                          Nota de build desktop
                         </div>
                         <p className="text-muted-foreground text-xs">{desktopBuildNote}</p>
                       </div>

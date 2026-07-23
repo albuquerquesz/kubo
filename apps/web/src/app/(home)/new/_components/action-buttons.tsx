@@ -39,44 +39,44 @@ export function ActionButtons({
 }: ActionButtonsProps) {
   return (
     <div className="space-y-1.5">
-      <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">Actions</p>
+      <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">Ações</p>
       <div className="grid grid-cols-2 gap-1.5">
         <button
           type="button"
           onClick={onRandom}
           className="builder-focus-ring flex items-center justify-center gap-1.5 rounded-md bg-primary/15 px-2 py-1.5 font-mono font-medium text-primary text-xs transition-colors hover:bg-primary/22"
-          title="Generate a random stack"
+          title="Gerar uma stack aleatória"
         >
           <Shuffle className="h-3 w-3" />
-          Randomize
+          Aleatorizar
         </button>
         <button
           type="button"
           onClick={onSave}
           className={mutedActionClasses}
-          title="Save current preferences"
+          title="Salvar preferências atuais"
         >
           <Star className="h-3 w-3" />
-          Save
+          Salvar
         </button>
         <button
           type="button"
           onClick={onReset}
           className={cn(mutedActionClasses, !hasSavedStack && "col-span-2")}
-          title="Reset to defaults"
+          title="Restaurar padrões"
         >
           <RefreshCw className="h-3 w-3" />
-          Reset
+          Redefinir
         </button>
         {hasSavedStack && (
           <button
             type="button"
             onClick={onLoad}
             className={mutedActionClasses}
-            title="Load saved preferences"
+            title="Carregar preferências salvas"
           >
             <Settings className="h-3 w-3" />
-            Load
+            Carregar
           </button>
         )}
       </div>
@@ -104,8 +104,8 @@ export function ActionButtons({
           </TooltipTrigger>
           <TooltipContent side="top" align="end" className="max-w-xs">
             <p className="text-xs">
-              {yolo ? "YOLO mode on — " : ""}Disables all validation and adds --yolo to the command.
-              Use at your own risk!
+              {yolo ? "Modo YOLO ativo — " : ""}Desativa toda a validação e adiciona --yolo ao
+              comando. Use por sua conta e risco!
             </p>
           </TooltipContent>
         </Tooltip>
