@@ -1,4 +1,0 @@
-interface:
-  display_name: "Base List Wave Animation"
-  short_description: "Animated yellow lists with a Base-like rhythm"
-  default_prompt: "Use $base-list-wave-animation to build an original yellow list-wave card."
