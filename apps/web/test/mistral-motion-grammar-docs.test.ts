@@ -202,7 +202,8 @@ describe("shipped motion tokens match skill Family A", () => {
     expect(component).toContain("getIcons");
 
     const hero = readRepo("apps/web/src/app/(home)/_components/hero-section.tsx");
-    expect(hero).toContain("playHeroScrollRevealIcons");
+    expect(hero).toContain("EtherealBeamsCanvas");
+    expect(hero).not.toContain("playHeroScrollRevealIcons");
   });
 
   test("hero-sticky-scale ships Family B compound scale+translate tokens", () => {
@@ -225,17 +226,11 @@ describe("shipped motion tokens match skill Family A", () => {
     expect(src).toContain("hostTransformAtPinProgress");
 
     const hero = readRepo("apps/web/src/app/(home)/_components/hero-section.tsx");
-    expect(hero).toContain("lg:min-h-[200dvh]");
-    expect(hero).toContain("lg:sticky");
-    expect(hero).toContain("playHeroStickyScale");
-    expect(hero).toContain("origin-bottom-left");
-    expect(hero).toContain("sentences");
-    expect(hero).toContain("mission-line");
-    // Sticky shell must be ~1 viewport — not flex-1 into the 200dvh track
-    expect(hero).toContain('data-hero-motion="sticky-shell"');
-    expect(hero).toContain("lg:h-[calc(100dvh-3rem)]");
-    expect(hero).toContain("lg:max-h-[calc(100dvh-3rem)]");
-    expect(hero).not.toMatch(/sticky-shell[\s\S]{0,200}flex-1/);
+    expect(hero).toContain("EtherealBeamsCanvas");
+    expect(hero).toContain("min-h-[calc(100svh-3rem)]");
+    expect(hero).not.toContain("lg:min-h-[200dvh]");
+    expect(hero).not.toContain("playHeroStickyScale");
+    expect(hero).not.toContain('data-hero-motion="sticky-shell"');
   });
 
   test("motion index exports sticky scale + scroll icons helpers", () => {

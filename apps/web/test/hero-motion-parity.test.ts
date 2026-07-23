@@ -146,14 +146,14 @@ describe("shipped Family B hostTransformAtPinProgress", () => {
     expect(titleExitYAtPinProgress(0.5, PROBE_STICKY_H)).toBeLessThan(0);
   });
 
-  test("hero wires stage-clear targets for install / L2 fade", () => {
+  test("hero no longer wires the retired stage-clear motion", () => {
     const hero = readFileSync(
       join(import.meta.dir, "../src/app/(home)/_components/hero-section.tsx"),
       "utf8",
     );
-    expect(hero).toContain('data-hero-motion="stage-clear"');
-    expect(hero).toContain("stageClear");
-    expect(hero).toContain("lg:text-[3.5rem]");
+    expect(hero).not.toContain('data-hero-motion="stage-clear"');
+    expect(hero).not.toContain("stageClear");
+    expect(hero).toContain("EtherealBeamsCanvas");
   });
 
   test("sentence translateX: outer lines move, middle stays 0", () => {
@@ -218,40 +218,44 @@ describe("shipped Family C pin window", () => {
   });
 });
 
-describe("hero sticky shell layout (shipped markup)", () => {
-  test("shell is fixed ~1 viewport under header; section is 200dvh track", () => {
+describe("hero ethereal stage layout (shipped markup)", () => {
+  test("hero is a single viewport stage without the retired pin track", () => {
     const hero = readFileSync(
       join(import.meta.dir, "../src/app/(home)/_components/hero-section.tsx"),
       "utf8",
     );
-    // Tall pin distance on the SECTION only
-    expect(hero).toContain("lg:min-h-[200dvh]");
-    // Shell: sticky + capped height (no flex-1 growth into 200dvh)
-    expect(hero).toContain('data-hero-motion="sticky-shell"');
-    expect(hero).toContain("lg:sticky");
-    expect(hero).toContain("lg:top-12");
-    expect(hero).toContain("lg:h-[calc(100dvh-3rem)]");
-    expect(hero).toContain("lg:max-h-[calc(100dvh-3rem)]");
-    // Guard regression: sticky-shell className must not include flex-1
-    const shellMatch = hero.match(
-      /data-hero-motion="sticky-shell"[\s\S]*?className=\{([\s\S]*?)\}/,
-    );
-    expect(shellMatch).toBeTruthy();
-    expect(shellMatch![1]).not.toContain("flex-1");
+    expect(hero).toContain('id="top"');
+    expect(hero).toContain("min-h-[calc(100svh-3rem)]");
+    expect(hero).toContain("EtherealBeamsCanvas");
+    expect(hero).toContain("ethereal-beams-veil");
+    expect(hero).not.toContain("lg:min-h-[200dvh]");
+    expect(hero).not.toContain('data-hero-motion="sticky-shell"');
+    expect(hero).not.toContain("border-rule border-b bg-background");
   });
 
-  test("Family B host is in-flow type+pad (remap); title exit wired", () => {
+  test("hero does not retain Family B host or title-exit wiring", () => {
     const hero = readFileSync(
       join(import.meta.dir, "../src/app/(home)/_components/hero-section.tsx"),
       "utf8",
     );
-    expect(hero).toContain('data-hero-occupancy-strategy="in-flow-type-pad"');
-    expect(hero).toContain('data-hero-motion="title-exit"');
-    expect(hero).toContain("titleWrapRef");
-    expect(hero).toContain("lg:overflow-x-hidden");
-    // Reject absolute empty stage host regression
-    expect(hero).not.toContain("lg:w-[64%]");
-    expect(hero).not.toContain("lg:left-[70%]");
-    expect(hero).not.toContain('sticky-stage"');
+    expect(hero).not.toContain('data-hero-occupancy-strategy="in-flow-type-pad"');
+    expect(hero).not.toContain('data-hero-motion="title-exit"');
+    expect(hero).not.toContain("titleWrapRef");
+    expect(hero).not.toContain("playHeroStickyScale");
+    expect(hero).not.toContain("playHeroScrollRevealIcons");
+  });
+
+  test("home shell no longer uses the responsive frame wrapper", () => {
+    const header = readFileSync(
+      join(import.meta.dir, "../src/components/site/site-header.tsx"),
+      "utf8",
+    );
+    const page = readFileSync(join(import.meta.dir, "../src/app/(home)/page.tsx"), "utf8");
+    const css = readFileSync(join(import.meta.dir, "../src/app/global.css"), "utf8");
+
+    expect(header).not.toContain("ui-frame flex items-stretch border-b border-rule");
+    expect(page).not.toContain("ui-frame min-h-svh");
+    expect(css).not.toContain(".ui-frame");
+    expect(css).not.toContain(".hero-shell");
   });
 });
