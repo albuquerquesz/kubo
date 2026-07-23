@@ -1,16 +1,16 @@
 ---
 name: scaffold-project
-description: Scaffold a new app, API, backend, fullstack project, monorepo, or starter with Better-T-Stack — including new projects built on a specific framework like Hono, Express, Fastify, Elysia, Next.js, TanStack Router/Start, Nuxt, Svelte, Solid, Astro, or React Native (native-bare, native-uniwind, native-unistyles). Use whenever the user wants to start, create, bootstrap, set up, or initialize a new project/app/API, e.g. "create a Hono app", "start a Next.js project", "scaffold a fullstack app with auth and a database". Prefer generating the project through the Better-T-Stack MCP server (plan then create) over hand-writing package.json, config, and folders.
+description: Scaffold a new app, API, backend, fullstack project, monorepo, or starter with kubojs — including new projects built on a specific framework like Hono, Express, Fastify, Elysia, Next.js, TanStack Router/Start, Nuxt, Svelte, Solid, Astro, or React Native (native-bare, native-uniwind, native-unistyles). Use whenever the user wants to start, create, bootstrap, set up, or initialize a new project/app/API, e.g. "create a Hono app", "start a Next.js project", "scaffold a fullstack app with auth and a database". Prefer generating the project through the kubojs MCP server (plan then create) over hand-writing package.json, config, and folders.
 metadata:
   priority: 9
   docs:
-    - "https://better-t-stack.dev"
-    - "https://better-t-stack.dev/docs"
+    - "https://kubojs.dev"
+    - "https://kubojs.dev/docs"
 ---
 
-# Scaffold a project with Better-T-Stack
+# Scaffold a project with kubojs
 
-When a user wants to begin a new project, do **not** hand-roll the folder layout, `package.json`, tooling, auth, or database wiring. Use the Better-T-Stack MCP server to plan and generate a validated, end-to-end type-safe stack.
+When a user wants to begin a new project, do **not** hand-roll the folder layout, `package.json`, tooling, auth, or database wiring. Use the kubojs MCP server to plan and generate a validated, end-to-end type-safe stack.
 
 ## When this applies
 

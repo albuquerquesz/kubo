@@ -1,11 +1,11 @@
 ---
 name: getmonitor-observability
-description: Configure GetMonitor uptime monitoring, alerts, incidents, maintenance, and status pages for Better-T-Stack generated applications.
+description: Configure GetMonitor uptime monitoring, alerts, incidents, maintenance, and status pages for kubojs generated applications.
 ---
 
 # GetMonitor observability
 
-Use this skill when a Better-T-Stack project selects `observability: "getmonitor"`, or when setting up GetMonitor for a deployed application.
+Use this skill when a kubojs project selects `observability: "getmonitor"`, or when setting up GetMonitor for a deployed application.
 
 ## Product model
 

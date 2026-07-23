@@ -1,12 +1,12 @@
 ---
 name: guaracloud-deploy
-description: Use when integrating Guara Cloud deployment into Better-T-Stack projects, scaffolds, or generated repos.
+description: Use when integrating Guara Cloud deployment into kubojs projects, scaffolds, or generated repos.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [deploy, guaracloud, docker, monorepo, better-t-stack]
+    tags: [deploy, guaracloud, docker, monorepo, kubojs]
     related_skills: [scaffold-project]
 ---
 
@@ -14,7 +14,7 @@ metadata:
 
 ## Overview
 
-Guara Cloud is a container-oriented deploy target that works well with Better-T-Stack monorepos when each deployable app is treated as its own Guara service.
+Guara Cloud is a container-oriented deploy target that works well with kubojs monorepos when each deployable app is treated as its own Guara service.
 
 In this repo, the correct integration pattern is:
 

@@ -1,16 +1,16 @@
 {
-  "name": "better-t-stack",
+  "name": "kubojs",
   "version": "3.36.3",
-  "description": "Let your AI scaffold and extend projects with Better-T-Stack. Bundles the kubojs MCP server plus skills so the assistant plans a valid stack and generates it instead of hand-rolling boilerplate.",
+  "description": "Let your AI scaffold and extend projects with kubojs. Bundles the kubojs MCP server plus skills so the assistant plans a valid stack and generates it instead of hand-rolling boilerplate.",
   "author": {
     "name": "Aman Varshney",
     "url": "https://github.com/AmanVarshney01"
   },
-  "homepage": "https://better-t-stack.dev",
+  "homepage": "https://kubojs.dev",
   "repository": "https://github.com/albuquerquesz/kubo",
   "license": "MIT",
   "keywords": [
-    "better-t-stack",
+    "kubojs",
     "kubojs",
     "scaffold",
     "starter",
@@ -33,20 +33,20 @@
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
-    "displayName": "Better-T-Stack",
+    "displayName": "kubojs",
     "shortDescription": "Scaffold end-to-end type-safe TypeScript projects",
-    "longDescription": "Bring Better-T-Stack into Codex with skills that plan a valid stack and generate it through the official kubojs MCP server, plus an add-addons workflow for existing projects. Covers frontends (Next, TanStack, Nuxt, Svelte, Solid, Astro, React Native), backends (Hono, Express, Fastify, Elysia, Convex), databases and ORMs, auth, payments, deployment, and DB provisioning (Neon, Prisma Postgres, Supabase, Turso, PlanetScale, MongoDB Atlas, Cloudflare D1, Docker).",
+    "longDescription": "Bring kubojs into Codex with skills that plan a valid stack and generate it through the official kubojs MCP server, plus an add-addons workflow for existing projects. Covers frontends (Next, TanStack, Nuxt, Svelte, Solid, Astro, React Native), backends (Hono, Express, Fastify, Elysia, Convex), databases and ORMs, auth, payments, deployment, and DB provisioning (Neon, Prisma Postgres, Supabase, Turso, PlanetScale, MongoDB Atlas, Cloudflare D1, Docker).",
     "developerName": "Aman Varshney",
     "category": "Coding",
     "capabilities": ["Interactive", "Write", "MCP"],
-    "websiteURL": "https://better-t-stack.dev",
+    "websiteURL": "https://kubojs.dev",
     "brandColor": "#8839EF",
     "composerIcon": "./assets/icon.svg",
     "logo": "./assets/icon.svg",
     "defaultPrompt": [
       "Create a fullstack app with Next, Hono, Postgres + Drizzle, and Better Auth",
       "Scaffold a TanStack Start project with a Neon database",
-      "Add PWA, Biome, and Turborepo to my Better-T-Stack project"
+      "Add PWA, Biome, and Turborepo to my kubojs project"
     ]
   }
 }

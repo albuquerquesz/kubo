@@ -7,7 +7,7 @@ Primary implementation facts pulled from Guara Cloud docs during this integratio
 - Build/runtime configuration includes environment variables, health checks, storage volumes, and scaling.
 - CLI workflow centers on `guara login`, `guara link`, `guara deploy`, `guara logs`, `guara build-logs`, `guara rollback`, `guara env ...`, and domain management commands.
 - Custom domains are attached after service creation/deploy.
-- Supported technologies include Node/Bun-style containerized apps, which fits Better-T-Stack Dockerfile output.
+- Supported technologies include Node/Bun-style containerized apps, which fits kubojs Dockerfile output.
 
 Repo-specific guidance:
 

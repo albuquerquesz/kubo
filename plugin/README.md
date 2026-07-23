@@ -1,12 +1,12 @@
-# Better-T-Stack plugin
+# kubojs plugin
 
-Make your AI assistant scaffold and extend projects with [Better-T-Stack](https://better-t-stack.dev) instead of hand-rolling boilerplate.
+Make your AI assistant scaffold and extend projects with [kubojs](https://kubojs.dev) instead of hand-rolling boilerplate.
 
 The plugin bundles:
 
 - **MCP server** — the official `kubojs mcp` server (stdio, no auth/key). Exposes `bts_get_stack_guidance`, `bts_get_schema`, `bts_plan_project`, `bts_create_project`, `bts_plan_addons`, `bts_add_addons`.
 - **Skills** — `scaffold-project` (start a new project) and `add-to-project` (add addons). These steer the assistant to plan a valid stack and generate it through the MCP rather than writing config by hand.
-- **Commands** — `/better-t-stack:new` and `/better-t-stack:add`.
+- **Commands** — `/kubojs:new` and `/kubojs:add`.
 - **Agent** — `stack-architect`, which designs a coherent stack from a product description and generates it.
 
 ## Requirements
@@ -20,10 +20,10 @@ The plugin bundles:
 /plugin marketplace add albuquerquesz/kubo
 
 # Install the plugin
-/plugin install better-t-stack@better-t-stack
+/plugin install kubojs@kubojs
 ```
 
-Then just ask: _"create a fullstack app with Next, Hono, Postgres and Better Auth"_ — the `scaffold-project` skill activates and the assistant plans the stack with the MCP before generating it. Or run `/better-t-stack:new <description>`.
+Then just ask: _"create a fullstack app with Next, Hono, Postgres and Better Auth"_ — the `scaffold-project` skill activates and the assistant plans the stack with the MCP before generating it. Or run `/kubojs:new <description>`.
 
 ## Install in Codex
 
@@ -31,7 +31,7 @@ This plugin is dual-target: the same `skills/` and `.mcp.json` are reused by a C
 
 Add the marketplace and install via Codex's plugins screen, or point Codex at the local source. Codex discovers marketplaces from `$REPO_ROOT/.agents/plugins/marketplace.json` or `~/.agents/plugins/marketplace.json`.
 
-> Note: Codex has no slash-command concept, so `/better-t-stack:new` and `/better-t-stack:add` (and the `stack-architect` subagent) are Claude Code only. The skills cover the same workflows in Codex.
+> Note: Codex has no slash-command concept, so `/kubojs:new` and `/kubojs:add` (and the `stack-architect` subagent) are Claude Code only. The skills cover the same workflows in Codex.
 
 ### Just the MCP server (any MCP client)
 
@@ -44,7 +44,7 @@ npx -y add-mcp@latest "npx -y kubojs@latest mcp"
 …and choose `codex` (or your client) when prompted. Or add it to `~/.codex/config.toml` manually:
 
 ```toml
-[mcp_servers.better-t-stack]
+[mcp_servers.kubojs]
 command = "npx"
 args = ["-y", "kubojs@latest", "mcp"]
 ```
