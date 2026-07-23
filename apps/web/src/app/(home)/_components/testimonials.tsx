@@ -1,14 +1,7 @@
 "use client";
 
-import {
-  BookOpen,
-  ChartNoAxesColumn,
-  LayoutGrid,
-  MessagesSquare,
-  type LucideIcon,
-  Play,
-  Quote,
-} from "lucide-react";
+import { type LucideIcon, Play, Quote } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 type CommunityEntry = {
@@ -16,7 +9,8 @@ type CommunityEntry = {
   description: string;
   href: string;
   kind: "video" | "note" | "project";
-  icon: LucideIcon;
+  icon?: LucideIcon;
+  image?: string;
 };
 
 const fallbackEntries: CommunityEntry[] = [
@@ -25,28 +19,28 @@ const fallbackEntries: CommunityEntry[] = [
     description: "Explore stacks reais publicadas pela comunidade.",
     href: "/showcase",
     kind: "project",
-    icon: LayoutGrid,
+    image: "/assets/gold-apps-grid.png?v=transparent",
   },
   {
     title: "Acompanhe o ecossistema.",
     description: "Veja quais tecnologias os desenvolvedores combinam.",
     href: "/analytics",
     kind: "project",
-    icon: ChartNoAxesColumn,
+    image: "/assets/gold-bar-chart.png?v=transparent",
   },
   {
     title: "Traga sua stack.",
     description: "Compare escolhas e desbloqueie sua próxima stack.",
     href: "https://discord.gg/ZYsbjpDaM5",
     kind: "note",
-    icon: MessagesSquare,
+    image: "/assets/gold-chat-bubbles.png?v=transparent",
   },
   {
     title: "Leia as camadas.",
     description: "Acompanhe cada camada do gerador ao app.",
     href: "/docs",
     kind: "project",
-    icon: BookOpen,
+    image: "/assets/gold-open-book.png?v=transparent",
   },
 ];
 
@@ -62,7 +56,19 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
       className="group flex w-[86%] shrink-0 snap-start flex-col bg-card transition-colors duration-150 ease-out hover:bg-[#2d2b20] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:w-[58%] lg:w-auto lg:min-w-0 lg:flex-1 lg:shrink"
     >
       <article className="flex min-h-96 flex-col p-6 sm:min-h-[28rem] sm:p-8">
-        <Icon className="size-6 text-primary" aria-hidden />
+        {entry.image ? (
+          <Image
+            src={entry.image}
+            alt=""
+            width={96}
+            height={96}
+            className="size-16 object-contain object-left-top sm:size-20"
+            aria-hidden
+            unoptimized
+          />
+        ) : Icon ? (
+          <Icon className="size-6 text-primary" aria-hidden />
+        ) : null}
         <div className="mt-auto">
           <h3 className="max-w-md text-3xl font-semibold leading-tight tracking-tight transition-transform duration-300 ease-out lg:group-hover:duration-700 lg:group-hover:-translate-y-1 lg:group-focus-within:duration-700 lg:group-focus-within:-translate-y-1">
             {entry.title}
