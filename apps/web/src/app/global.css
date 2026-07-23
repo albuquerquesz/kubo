@@ -972,14 +972,18 @@
 /* Full-bleed dark section with 3-column card grid (desktop) / stacked (mob)  */
 /* -------------------------------------------------------------------------- */
 
-/* Full-bleed section so the deployment band fills the viewport width. */
+/* Full-bleed section so the deployment band fills the viewport width and height. */
 .deployment-section {
   --deployment-rule: color-mix(in srgb, var(--primary-foreground) 14%, var(--primary));
   --deployment-muted: color-mix(in srgb, var(--primary-foreground) 68%, var(--primary));
   position: relative;
   left: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100vw;
   max-width: 100vw;
+  min-height: 100vh;
   margin-left: -50vw;
   background-color: var(--primary);
   color: var(--primary-foreground);
@@ -1072,7 +1076,7 @@
 /* Desktop: ≥768px */
 @media (min-width: 768px) {
   .deployment-intro {
-    padding-top: 10rem; /* 160px */
+    padding-top: 0;
   }
 
   .deployment-intro .ui-kicker {
@@ -1094,6 +1098,7 @@
   .deployment-grid {
     grid-template-columns: repeat(3, 1fr);
     border-width: 1px;
+    margin-top: 3rem; /* 48px */
   }
 
   .deployment-card {
