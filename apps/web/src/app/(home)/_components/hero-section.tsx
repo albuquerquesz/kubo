@@ -101,7 +101,7 @@ export default function HeroSection() {
       className={
         // Mobile: one viewport. Desktop: tall scroll track (~200dvh) for Family B pin travel.
         // Children must NOT flex-grow into this height or sticky never pins.
-        "ui-scroll-target relative left-1/2 w-screen max-w-none -translate-x-1/2 border-rule border-b " +
+        "ui-scroll-target relative w-full border-rule border-b " +
         "min-h-[calc(100svh-3rem)] lg:min-h-[200dvh]"
       }
       aria-label="Seção principal"
@@ -114,7 +114,7 @@ export default function HeroSection() {
         ref={stickyRef}
         data-hero-motion="sticky-shell"
         className={
-          "relative flex w-full flex-col border-rule border-x border-t bg-background min-h-[calc(100svh-3rem)] " +
+          "hero-shell relative flex w-full flex-col border-rule border-t bg-background min-h-[calc(100svh-3rem)] " +
           "lg:sticky lg:top-12 " +
           "lg:h-[calc(100dvh-3rem)] lg:min-h-[calc(100dvh-3rem)] lg:max-h-[calc(100dvh-3rem)] " +
           "lg:overflow-x-hidden"
