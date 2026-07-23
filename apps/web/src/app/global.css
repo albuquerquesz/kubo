@@ -410,6 +410,24 @@
   border-inline-color: transparent;
 }
 
+/* Hero shell rails follow the frame: edge-to-edge desktop has no extra rail,
+   while guttered/mobile and max-width desktop frames keep their boundary. */
+.hero-shell {
+  border-inline: 1px solid var(--rule);
+}
+
+@media (min-width: 1024px) and (max-width: 1600px) {
+  .hero-shell {
+    border-inline-width: 0;
+  }
+}
+
+@media (min-width: 1601px) {
+  .hero-shell {
+    border-inline-width: 1px;
+  }
+}
+
 @media (max-width: 1023px) {
   .ui-frame {
     width: min(calc(100% - (var(--page-gutter) * 2)), 1600px);
