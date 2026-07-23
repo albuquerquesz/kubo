@@ -1,6 +1,6 @@
-# Contributing to Better-T-Stack
+# Contributing to kubojs
 
-Thank you for your interest in contributing to Better-T-Stack! This document provides guidelines and setup instructions for contributors.
+Thank you for your interest in contributing to kubojs! This document provides guidelines and setup instructions for contributors.
 
 > **⚠️ Important**: Before starting work on any new features or major changes, please open an issue first to discuss your proposal and get approval. We don't want you to waste time on work that might not align with the project's direction or get merged.
 
@@ -184,4 +184,4 @@ Use conventional commit messages with the appropriate scope:
 
 ## License
 
-By contributing to Better-T-Stack, you agree that your contributions will be licensed under the MIT License.
+By contributing to kubojs, you agree that your contributions will be licensed under the MIT License.

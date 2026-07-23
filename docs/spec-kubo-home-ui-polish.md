@@ -10,11 +10,11 @@ July 19, 2026
 
 ## Goal
 
-Resolve four concurrent home/shell UI defects and rebrand the marketing surface from **Better T Stack** to **Kubo**, using visual evidence from the current rendered homepage:
+Resolve four concurrent home/shell UI defects and rebrand the marketing surface from **kubojs** to **Kubo**, using visual evidence from the current rendered homepage:
 
 1. **Hero grid noise** — remove the square grid (`ui-rule-grid`) from the entire hero section.
 2. **Product mosaic overflow** — remove the horizontal rule above mosaic titles; keep all title + description content fully inside each tile at every breakpoint.
-3. **Brand rename** — replace every user-facing **"Better T Stack"** string with **"Kubo"**.
+3. **Brand rename** — replace every user-facing **"kubojs"** string with **"Kubo"**.
 4. **Brand mark** — rename `apps/web/public/assets/idk.png` → `kubo.png` and use it as the primary logo mark in place of the monogram `B_`.
 
 This is a polish + rebrand pass on the existing editorial system (`spec-home-editorial-system.md`, `spec-home-product-mosaic.md`). It does **not** redesign layout grammar, routes, or the page frame.
@@ -25,7 +25,7 @@ This is a polish + rebrand pass on the existing editorial system (`spec-home-edi
 | --------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Image #1        | Hero headline          | Dark field with faint square grid behind `One command. / Every layer. / Yours.` — grid must disappear across the **whole** hero module               |
 | Image #2        | Product mosaic         | Cards show a thin `border-t` rule above each title; descriptions on Analytics (`05`) and Catalog (`04`) clip or spill into adjacent structural cells |
-| Image #3        | Site header brand mark | Gold square with monogram `B_` + wordmark `Better T Stack` — replace mark with `kubo.png` and wordmark with `Kubo`                                   |
+| Image #3        | Site header brand mark | Gold square with monogram `B_` + wordmark `kubojs` — replace mark with `kubo.png` and wordmark with `Kubo`                                           |
 | Asset `idk.png` | Brand art              | Yellow pixel-style character (Space Invader–like) on black, 1402×1122 PNG — becomes the official Kubo mark after rename                              |
 
 ## Scope
@@ -46,7 +46,7 @@ This is a polish + rebrand pass on the existing editorial system (`spec-home-edi
 ### Out of scope
 
 - Renaming CLI package (`kubojs`), npm package, monorepo package names, or GitHub repo URL.
-- Changing domains (`better-t-stack.dev`), OG image hosts, Convex package imports, or `ICON_BASE_URL`.
+- Changing domains (`kubojs.dev`), OG image hosts, Convex package imports, or `ICON_BASE_URL`.
 - Redesigning mosaic asymmetric grid placement or adding new mosaic items.
 - Removing `ui-rule-grid` from **non-hero** modules (command, stats, footer structural cells, mosaic idle cells) unless a follow-up explicitly expands scope.
 - New design tokens, fonts, or color palette changes.
@@ -187,7 +187,7 @@ For tiles that occupy a single auto-row at `lg`:
 
 If current Analytics description overflows after row-height bump, rewrite in place (and swap brand name — Issue 3):
 
-- Before: `See public adoption and ecosystem activity around Better T Stack.`
+- Before: `See public adoption and ecosystem activity around kubojs.`
 - After: `See public adoption and ecosystem activity around Kubo.`
 
 Keep meaning; trim only if layout still fails after height fix.
@@ -206,20 +206,20 @@ Keep meaning; trim only if layout still fails after height fix.
 
 ---
 
-## Issue 3 — Rename brand: Better T Stack → Kubo
+## Issue 3 — Rename brand: kubojs → Kubo
 
 ### Product language
 
-| Context                   | Old                                              | New                                  |
-| ------------------------- | ------------------------------------------------ | ------------------------------------ |
-| Display name              | Better T Stack                                   | **Kubo**                             |
-| Short / wordmark          | Better T Stack                                   | **Kubo**                             |
-| Possessive / “around …”   | around Better T Stack                            | around **Kubo**                      |
-| Navigate / Explore labels | Navigate Better T Stack / Explore Better T Stack | Navigate **Kubo** / Explore **Kubo** |
-| Copyright                 | © {year} Better T Stack / MIT                    | © {year} **Kubo** / MIT              |
-| Aria home                 | Better T Stack home                              | **Kubo** home                        |
-| Aria GitHub               | Better T Stack on GitHub                         | **Kubo** on GitHub                   |
-| PWA `name` / `short_name` | Better T Stack                                   | **Kubo**                             |
+| Context                   | Old                              | New                                  |
+| ------------------------- | -------------------------------- | ------------------------------------ |
+| Display name              | kubojs                           | **Kubo**                             |
+| Short / wordmark          | kubojs                           | **Kubo**                             |
+| Possessive / “around …”   | around kubojs                    | around **Kubo**                      |
+| Navigate / Explore labels | Navigate kubojs / Explore kubojs | Navigate **Kubo** / Explore **Kubo** |
+| Copyright                 | © {year} kubojs / MIT            | © {year} **Kubo** / MIT              |
+| Aria home                 | kubojs home                      | **Kubo** home                        |
+| Aria GitHub               | kubojs on GitHub                 | **Kubo** on GitHub                   |
+| PWA `name` / `short_name` | kubojs                           | **Kubo**                             |
 
 ### Inventory (apps/web — must update)
 
@@ -231,15 +231,15 @@ Keep meaning; trim only if layout still fails after height fix.
 | `src/app/(home)/_components/command-section.tsx`        | Body sentence starting with product name                              |
 | `src/app/manifest.ts`                                   | `name`, `short_name`                                                  |
 | `apps/web/public/favicon/site.webmanifest`              | `name`, `short_name`                                                  |
-| `src/app/layout.config.tsx`                             | Visible “Better T Stack” span in docs chrome                          |
+| `src/app/layout.config.tsx`                             | Visible “kubojs” span in docs chrome                                  |
 
 ### Explicit non-goals for this rename
 
 Do **not** change in this pass (unless already part of a separate product decision):
 
 - Package names: `kubojs`, `@kubojs/*`
-- CLI commands shown in docs/examples (`bun create better-t-stack@latest`) — product still generates via that CLI until a package rename ships
-- External URLs: GitHub org/repo, Discord, npm, `better-t-stack.dev`, R2 icon host
+- CLI commands shown in docs/examples (`bun create kubojs@latest`) — product still generates via that CLI until a package rename ships
+- External URLs: GitHub org/repo, Discord, npm, `kubojs.dev`, R2 icon host
 - Content docs that describe the CLI package (`content/docs/...`) beyond pure display branding if they refer to the package name
 - Code comments, git history, AGENTS.md monorepo identity
 
@@ -256,7 +256,7 @@ If a string is a **package/URL identifier** → leave as-is.
 
 ### Acceptance
 
-- Grep for `Better T Stack` under `apps/web/src` and user-facing manifests returns **zero** matches (package/CLI identifiers may still contain `better-t-stack`).
+- Grep for `kubojs` under `apps/web/src` and user-facing manifests returns **zero** matches (package/CLI identifiers may still contain `kubojs`).
 - Header, footer, mosaic aria labels, command blurb, and PWA names show **Kubo**.
 
 ---
@@ -286,7 +286,7 @@ If a string is a **package/URL identifier** → leave as-is.
 **Before (Image #3):**
 
 ```text
-┌──────┐  Better T Stack
+┌──────┐  kubojs
 │  B_  │
 └──────┘
   32×32 gold square, mono “B_”
@@ -314,7 +314,7 @@ Same swap: replace the `B_` monogram cell with `kubo.png` at `size-10` (footer c
 
 #### Docs layout (`layout.config.tsx`)
 
-If the docs chrome still shows the old dual light/dark logos or a “Better T Stack” string, align the **visible product name** to Kubo. Prefer reusing `/assets/kubo.png` when practical; do not invent a second mark.
+If the docs chrome still shows the old dual light/dark logos or a “kubojs” string, align the **visible product name** to Kubo. Prefer reusing `/assets/kubo.png` when practical; do not invent a second mark.
 
 ### Do not
 
@@ -392,7 +392,7 @@ No changes required to `global.css` `.ui-rule-grid` utility for this pass.
 
 ## Verification plan
 
-1. `rg "Better T Stack" apps/web` → zero intentional UI hits (document any remaining package/docs exceptions).
+1. `rg "kubojs" apps/web` → zero intentional UI hits (document any remaining package/docs exceptions).
 2. `rg "idk\\.png|B_" apps/web/src` → no brand monogram / old asset refs in shell.
 3. `ls apps/web/public/assets/kubo.png` exists; `idk.png` gone.
 4. `bun run check` from repo root.
@@ -408,7 +408,7 @@ No changes required to `global.css` `.ui-rule-grid` utility for this pass.
 - [ ] Hero section has **no** `ui-rule-grid` square background anywhere (main column + aside).
 - [ ] Mosaic tiles have **no** horizontal rule above titles.
 - [ ] Mosaic title + description never render outside their tile at 1440 / 1280 / 768 / 390.
-- [ ] All user-facing **Better T Stack** brand strings in the web app shell → **Kubo**.
+- [ ] All user-facing **kubojs** brand strings in the web app shell → **Kubo**.
 - [ ] `kubo.png` is the only brand asset under `public/assets` for this mark; used in header (and footer).
 - [ ] `B_` monogram removed from marketing brand components.
 - [ ] Package/CLI identifiers and external URLs left intact.
