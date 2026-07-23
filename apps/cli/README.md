@@ -1,12 +1,6 @@
-# Create Better-T-Stack CLI
+# Create kubojs CLI
 
 A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations
-
-## Sponsors
-
-<p align="center">
-<img src="https://sponsors.better-t-stack.dev/sponsors.png" alt="Sponsors">
-</p>
 
 ![demo](https://cdn.jsdelivr.net/gh/amanvarshney01/kubojs@master/demo.gif)
 
@@ -16,10 +10,10 @@ Run without installing globally:
 
 ```bash
 # Using bun (recommended)
-bun create better-t-stack@latest
+bun create kubojs@latest
 
 # Using pnpm
-pnpm create better-t-stack@latest
+pnpm create kubojs@latest
 
 # Using npm
 npx kubojs@latest
@@ -98,13 +92,13 @@ kubojs schema --name cli
 npx kubojs@latest mcp
 ```
 
-To install Better T Stack into supported agent configs with `add-mcp` and avoid relying on a global CLI install:
+To install kubojs into supported agent configs with `add-mcp` and avoid relying on a global CLI install:
 
 ```bash
 npx -y add-mcp@latest "npx -y kubojs@latest mcp"
 ```
 
-When you scaffold with the `mcp` addon, Better T Stack itself can also be installed into supported agent configs through `add-mcp` using a package runner command instead of assuming a global CLI install. For Bun projects, the generated config uses the equivalent `bunx kubojs@latest mcp` server command inside `add-mcp`.
+When you scaffold with the `mcp` addon, kubojs itself can also be installed into supported agent configs through `add-mcp` using a package runner command instead of assuming a global CLI install. For Bun projects, the generated config uses the equivalent `bunx kubojs@latest mcp` server command inside `add-mcp`.
 
 For MCP project creation, prefer `install: false`. Long dependency installs can exceed common MCP client request timeouts, so the safest flow is to scaffold first and run your package manager install command afterward in the project directory.
 

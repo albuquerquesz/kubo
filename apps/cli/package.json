@@ -4,7 +4,6 @@
   "description": "A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations",
   "keywords": [
     "better-auth",
-    "better-t-stack",
     "biome",
     "boilerplate",
     "cli",
@@ -13,6 +12,7 @@
     "expo",
     "fullstack",
     "hono",
+    "kubojs",
     "monorepo",
     "prisma",
     "pwa",
@@ -28,7 +28,7 @@
     "type-safety",
     "typescript"
   ],
-  "homepage": "https://better-t-stack.dev/",
+  "homepage": "https://kubojs.dev/",
   "license": "MIT",
   "author": "Aman Varshney",
   "repository": {

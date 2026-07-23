@@ -7,8 +7,8 @@ import { openUrl } from "../utils/open-url";
 import { renderTitle } from "../utils/render-title";
 import { displaySponsors, fetchSponsors } from "../utils/sponsors";
 
-const DOCS_URL = "https://better-t-stack.dev/docs";
-const BUILDER_URL = "https://better-t-stack.dev/new";
+const DOCS_URL = "https://kubojs.dev/docs";
+const BUILDER_URL = "https://kubojs.dev/new";
 
 async function openExternalUrl(url: string, successMessage: string) {
   const result = await Result.tryPromise({
