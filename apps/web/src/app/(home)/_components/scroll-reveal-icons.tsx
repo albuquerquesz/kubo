@@ -41,7 +41,7 @@ const ScrollRevealIcons = forwardRef<ScrollRevealIconsHandle, ScrollRevealIconsP
       <div
         ref={rowRef}
         data-hero-motion="scroll-reveal-icons"
-        className={cn("mb-6 hidden gap-4 lg:flex", className)}
+        className={cn("mb-6 hidden gap-4 min-[1440px]:flex", className)}
         aria-hidden
       >
         {icons.map((Icon, i) => (
