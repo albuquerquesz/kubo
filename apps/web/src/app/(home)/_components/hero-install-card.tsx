@@ -24,6 +24,9 @@ export type HeroInstallCardProps = {
   className?: string;
   /** Default package manager. Default "bun". */
   defaultManager?: PackageManager;
+  selectedManager?: PackageManager;
+  onSelectedManagerChange?: (manager: PackageManager) => void;
+  showCopyButton?: boolean;
 };
 
 /**
@@ -35,8 +38,12 @@ export type HeroInstallCardProps = {
 export default function HeroInstallCard({
   className,
   defaultManager = DEFAULT_PACKAGE_MANAGER,
+  selectedManager: controlledManager,
+  onSelectedManagerChange,
+  showCopyButton = true,
 }: HeroInstallCardProps) {
-  const [selectedManager, setSelectedManager] = useState<PackageManager>(defaultManager);
+  const [internalManager, setInternalManager] = useState<PackageManager>(defaultManager);
+  const selectedManager = controlledManager ?? internalManager;
   const command = getCreateCommand(selectedManager);
   const SelectedIcon = PM_ICONS[selectedManager];
 
@@ -49,7 +56,9 @@ export default function HeroInstallCard({
           value={selectedManager}
           onValueChange={(value) => {
             if (value == null) return;
-            setSelectedManager(value as PackageManager);
+            const manager = value as PackageManager;
+            setInternalManager(manager);
+            onSelectedManagerChange?.(manager);
           }}
         >
           <SelectTrigger
@@ -89,10 +98,12 @@ export default function HeroInstallCard({
           <code className="font-mono">{command}</code>
         </p>
 
-        <CopyCommandButton
-          command={command}
-          className="flex h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-[8px] border border-primary bg-primary px-0 text-primary-foreground transition-colors duration-150 ease-out hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:px-3"
-        />
+        {showCopyButton ? (
+          <CopyCommandButton
+            command={command}
+            className="flex h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-[8px] border border-primary bg-primary px-0 text-primary-foreground transition-colors duration-150 ease-out hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:px-3"
+          />
+        ) : null}
       </div>
     </div>
   );
