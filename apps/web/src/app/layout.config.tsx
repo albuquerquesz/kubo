@@ -56,7 +56,7 @@ export const links: LinkItemType[] = [
     icon: <Image src={xLogo} alt="x" className="size-4 invert dark:invert-0" />,
     label: "X",
     type: "icon",
-    url: "https://x.com/amanvarshney01",
+    url: "https://x.com/byalbuquerquesz",
     external: true,
     secondary: true,
   },

@@ -38,7 +38,7 @@ export const customSearchItems: CustomSearchItem[] = [
   },
   {
     title: "X (Twitter)",
-    url: "https://x.com/amanvarshney01",
+    url: "https://x.com/byalbuquerquesz",
     content: "X",
     tags: ["twitter", "x", "social", "updates", "announcements", "follow"],
   },

@@ -4,7 +4,7 @@ import { ArrowUpRight, Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { FaGithub } from "react-icons/fa6";
+import { FaDiscord, FaGithub, FaXTwitter } from "react-icons/fa6";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -26,14 +26,34 @@ const exploreGroups = [
       { href: "/showcase", label: "Project showcase" },
       { href: "/sponsors", label: "Sponsors" },
       { href: "https://discord.gg/ZYsbjpDaM5", label: "Discord" },
+      { href: "https://x.com/byalbuquerquesz", label: "X" },
     ],
   },
 ] as const;
 
-const githubUrl = "https://github.com/albuquerquesz/kubo";
+const socialLinks = [
+  {
+    href: "https://x.com/byalbuquerquesz",
+    label: "Kubo on X",
+    icon: FaXTwitter,
+  },
+  {
+    href: "https://discord.gg/ZYsbjpDaM5",
+    label: "Kubo on Discord",
+    icon: FaDiscord,
+  },
+  {
+    href: "https://github.com/albuquerquesz/kubo",
+    label: "Kubo on GitHub",
+    icon: FaGithub,
+  },
+] as const;
 
 /** Shared fixed-bar height — keep mark, nav, utilities, and layout offset in sync. */
 const headerRowClass = "h-12";
+
+const utilityLinkClass =
+  "flex items-center justify-center border-rule border-l px-3 font-mono text-sm text-muted-foreground tracking-[0.04em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:px-3.5";
 
 function BrandMark() {
   return (
@@ -227,19 +247,21 @@ export function SiteHeader() {
         <BrandMark />
         <DesktopNavigation />
         <div className="min-w-0 flex-1" />
-        <a
-          href={githubUrl}
-          target="_blank"
-          rel="noreferrer"
-          className={cn(
-            "flex items-center gap-2 border-rule border-l px-3 font-mono text-sm text-muted-foreground tracking-[0.04em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:px-4",
-            headerRowClass,
-          )}
-          aria-label="Kubo on GitHub"
-        >
-          <FaGithub className="size-5" />
-          <span className="hidden md:inline">GitHub</span>
-        </a>
+        {socialLinks.map((link) => {
+          const Icon = link.icon;
+          return (
+            <a
+              key={link.href}
+              href={link.href}
+              target="_blank"
+              rel="noreferrer"
+              className={cn(utilityLinkClass, headerRowClass)}
+              aria-label={link.label}
+            >
+              <Icon className="size-5" />
+            </a>
+          );
+        })}
         <Link
           href="/new"
           className={cn(
