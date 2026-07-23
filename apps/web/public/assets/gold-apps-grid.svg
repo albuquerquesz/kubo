@@ -1,0 +1,35 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold-apps" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE566"/>
+      <stop offset="28%" stop-color="#F5C518"/>
+      <stop offset="55%" stop-color="#E0A800"/>
+      <stop offset="78%" stop-color="#C48900"/>
+      <stop offset="100%" stop-color="#A87000"/>
+    </linearGradient>
+    <linearGradient id="gold-apps-hi" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFF6A8" stop-opacity="0.9"/>
+      <stop offset="45%" stop-color="#FFE566" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#8B5A00" stop-opacity="0.35"/>
+    </linearGradient>
+    <filter id="gold-apps-soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#8B5A00" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <g filter="url(#gold-apps-soft)" fill="url(#gold-apps)">
+    <!-- top-left -->
+    <path fill-rule="evenodd" d="M14 14h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12H14c-6.627 0-12-5.373-12-12V26c0-6.627 5.373-12 12-12zm4 16c0-2.21 1.79-4 4-4h24c2.21 0 4 1.79 4 4v24c0 2.21-1.79 4-4 4H22c-2.21 0-4-1.79-4-4V30z"/>
+    <!-- top-right -->
+    <path fill-rule="evenodd" d="M74 14h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12H74c-6.627 0-12-5.373-12-12V26c0-6.627 5.373-12 12-12zm4 16c0-2.21 1.79-4 4-4h24c2.21 0 4 1.79 4 4v24c0 2.21-1.79 4-4 4H82c-2.21 0-4-1.79-4-4V30z"/>
+    <!-- bottom-left -->
+    <path fill-rule="evenodd" d="M14 74h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12H14c-6.627 0-12-5.373-12-12V86c0-6.627 5.373-12 12-12zm4 16c0-2.21 1.79-4 4-4h24c2.21 0 4 1.79 4 4v24c0 2.21-1.79 4-4 4H22c-2.21 0-4-1.79-4-4V90z"/>
+    <!-- bottom-right -->
+    <path fill-rule="evenodd" d="M74 74h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12H74c-6.627 0-12-5.373-12-12V86c0-6.627 5.373-12 12-12zm4 16c0-2.21 1.79-4 4-4h24c2.21 0 4 1.79 4 4v24c0 2.21-1.79 4-4 4H82c-2.21 0-4-1.79-4-4V90z"/>
+  </g>
+  <g fill="url(#gold-apps-hi)" pointer-events="none">
+    <path fill-rule="evenodd" d="M14 14h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12H14c-6.627 0-12-5.373-12-12V26c0-6.627 5.373-12 12-12zm4 16c0-2.21 1.79-4 4-4h24c2.21 0 4 1.79 4 4v24c0 2.21-1.79 4-4 4H22c-2.21 0-4-1.79-4-4V30z"/>
+    <path fill-rule="evenodd" d="M74 14h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12H74c-6.627 0-12-5.373-12-12V26c0-6.627 5.373-12 12-12zm4 16c0-2.21 1.79-4 4-4h24c2.21 0 4 1.79 4 4v24c0 2.21-1.79 4-4 4H82c-2.21 0-4-1.79-4-4V30z"/>
+    <path fill-rule="evenodd" d="M14 74h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12H14c-6.627 0-12-5.373-12-12V86c0-6.627 5.373-12 12-12zm4 16c0-2.21 1.79-4 4-4h24c2.21 0 4 1.79 4 4v24c0 2.21-1.79 4-4 4H22c-2.21 0-4-1.79-4-4V90z"/>
+    <path fill-rule="evenodd" d="M74 74h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12H74c-6.627 0-12-5.373-12-12V86c0-6.627 5.373-12 12-12zm4 16c0-2.21 1.79-4 4-4h24c2.21 0 4 1.79 4 4v24c0 2.21-1.79 4-4 4H82c-2.21 0-4-1.79-4-4V90z"/>
+  </g>
+</svg>

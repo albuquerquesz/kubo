@@ -1,0 +1,30 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold-bar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE566"/>
+      <stop offset="28%" stop-color="#F5C518"/>
+      <stop offset="55%" stop-color="#E0A800"/>
+      <stop offset="78%" stop-color="#C48900"/>
+      <stop offset="100%" stop-color="#A87000"/>
+    </linearGradient>
+    <linearGradient id="gold-bar-hi" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFF6A8" stop-opacity="0.85"/>
+      <stop offset="40%" stop-color="#FFE566" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#8B5A00" stop-opacity="0.3"/>
+    </linearGradient>
+    <filter id="gold-bar-soft" x="-30%" y="-10%" width="160%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#8B5A00" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <g filter="url(#gold-bar-soft)">
+    <!-- left short -->
+    <rect x="18" y="72" width="22" height="42" rx="11" fill="url(#gold-bar)"/>
+    <rect x="18" y="72" width="22" height="42" rx="11" fill="url(#gold-bar-hi)"/>
+    <!-- middle tall -->
+    <rect x="53" y="14" width="22" height="100" rx="11" fill="url(#gold-bar)"/>
+    <rect x="53" y="14" width="22" height="100" rx="11" fill="url(#gold-bar-hi)"/>
+    <!-- right medium -->
+    <rect x="88" y="44" width="22" height="70" rx="11" fill="url(#gold-bar)"/>
+    <rect x="88" y="44" width="22" height="70" rx="11" fill="url(#gold-bar-hi)"/>
+  </g>
+</svg>

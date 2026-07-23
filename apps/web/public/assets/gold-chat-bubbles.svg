@@ -1,0 +1,155 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold-chat" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE566"/>
+      <stop offset="28%" stop-color="#F5C518"/>
+      <stop offset="55%" stop-color="#E0A800"/>
+      <stop offset="78%" stop-color="#C48900"/>
+      <stop offset="100%" stop-color="#A87000"/>
+    </linearGradient>
+    <linearGradient id="gold-chat-hi" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFF6A8" stop-opacity="0.9"/>
+      <stop offset="45%" stop-color="#FFE566" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#8B5A00" stop-opacity="0.35"/>
+    </linearGradient>
+    <filter id="gold-chat-soft" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#8B5A00" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <g filter="url(#gold-chat-soft)">
+    <!-- Large bubble: rounded rect + tail, hollow ring -->
+    <path
+      fill="url(#gold-chat)"
+      fill-rule="evenodd"
+      d="
+        M22 8
+        H86
+        C99.255 8 110 18.745 110 32
+        V62
+        C110 75.255 99.255 86 86 86
+        H52
+        L30 108
+        V86
+        H22
+        C8.745 86 -2 75.255 -2 62
+        V32
+        C-2 18.745 8.745 8 22 8
+        Z
+        M22 24
+        C17.582 24 14 27.582 14 32
+        V62
+        C14 66.418 17.582 70 22 70
+        H42
+        V82
+        L56 70
+        H86
+        C90.418 70 94 66.418 94 62
+        V32
+        C94 27.582 90.418 24 86 24
+        H22
+        Z
+      "
+      transform="translate(6 2)"
+    />
+    <!-- Small bubble overlapping lower-right -->
+    <path
+      fill="url(#gold-chat)"
+      fill-rule="evenodd"
+      d="
+        M68 56
+        H106
+        C115.941 56 124 64.059 124 74
+        V94
+        C124 103.941 115.941 112 106 112
+        H96
+        V122
+        L82 112
+        H68
+        C58.059 112 50 103.941 50 94
+        V74
+        C50 64.059 58.059 56 68 56
+        Z
+        M68 68
+        C64.686 68 62 70.686 62 74
+        V94
+        C62 97.314 64.686 100 68 100
+        H86
+        V108
+        L94 100
+        H106
+        C109.314 100 112 97.314 112 94
+        V74
+        C112 70.686 109.314 68 106 68
+        H68
+        Z
+      "
+    />
+    <path
+      fill="url(#gold-chat-hi)"
+      fill-rule="evenodd"
+      pointer-events="none"
+      d="
+        M22 8
+        H86
+        C99.255 8 110 18.745 110 32
+        V62
+        C110 75.255 99.255 86 86 86
+        H52
+        L30 108
+        V86
+        H22
+        C8.745 86 -2 75.255 -2 62
+        V32
+        C-2 18.745 8.745 8 22 8
+        Z
+        M22 24
+        C17.582 24 14 27.582 14 32
+        V62
+        C14 66.418 17.582 70 22 70
+        H42
+        V82
+        L56 70
+        H86
+        C90.418 70 94 66.418 94 62
+        V32
+        C94 27.582 90.418 24 86 24
+        H22
+        Z
+      "
+      transform="translate(6 2)"
+    />
+    <path
+      fill="url(#gold-chat-hi)"
+      fill-rule="evenodd"
+      pointer-events="none"
+      d="
+        M68 56
+        H106
+        C115.941 56 124 64.059 124 74
+        V94
+        C124 103.941 115.941 112 106 112
+        H96
+        V122
+        L82 112
+        H68
+        C58.059 112 50 103.941 50 94
+        V74
+        C50 64.059 58.059 56 68 56
+        Z
+        M68 68
+        C64.686 68 62 70.686 62 74
+        V94
+        C62 97.314 64.686 100 68 100
+        H86
+        V108
+        L94 100
+        H106
+        C109.314 100 112 97.314 112 94
+        V74
+        C112 70.686 109.314 68 106 68
+        H68
+        Z
+      "
+    />
+  </g>
+</svg>

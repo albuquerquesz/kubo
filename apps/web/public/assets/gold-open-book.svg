@@ -1,0 +1,107 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold-book" x1="8%" y1="0%" x2="92%" y2="100%">
+      <stop offset="0%" stop-color="#FFE566"/>
+      <stop offset="28%" stop-color="#F5C518"/>
+      <stop offset="55%" stop-color="#E0A800"/>
+      <stop offset="78%" stop-color="#C48900"/>
+      <stop offset="100%" stop-color="#A87000"/>
+    </linearGradient>
+    <linearGradient id="gold-book-hi" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFF6A8" stop-opacity="0.9"/>
+      <stop offset="45%" stop-color="#FFE566" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#8B5A00" stop-opacity="0.35"/>
+    </linearGradient>
+    <filter id="gold-book-soft" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#8B5A00" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <!-- Hollow open-book frame: outer silhouette minus inner page openings -->
+  <g filter="url(#gold-book-soft)">
+    <path
+      fill="url(#gold-book)"
+      fill-rule="evenodd"
+      d="
+        M64 22
+        C56 12 42 8 28 8
+        C18 8 10 10 7 14
+        C4 18 4 24 4 30
+        V88
+        C4 98 10 104 20 108
+        C28 111 40 112 50 108
+        C56 105 60 100 64 94
+        C68 100 72 105 78 108
+        C88 112 100 111 108 108
+        C118 104 124 98 124 88
+        V30
+        C124 24 124 18 121 14
+        C118 10 110 8 100 8
+        C86 8 72 12 64 22
+        Z
+
+        M64 40
+        C58 32 48 28 36 28
+        H28
+        C22 28 18 30 18 36
+        V84
+        C18 90 22 94 30 96
+        C40 98 50 96 58 88
+        L64 80
+        Z
+
+        M64 40
+        C70 32 80 28 92 28
+        H100
+        C106 28 110 30 110 36
+        V84
+        C110 90 106 94 98 96
+        C88 98 78 96 70 88
+        L64 80
+        Z
+      "
+    />
+    <path
+      fill="url(#gold-book-hi)"
+      fill-rule="evenodd"
+      pointer-events="none"
+      d="
+        M64 22
+        C56 12 42 8 28 8
+        C18 8 10 10 7 14
+        C4 18 4 24 4 30
+        V88
+        C4 98 10 104 20 108
+        C28 111 40 112 50 108
+        C56 105 60 100 64 94
+        C68 100 72 105 78 108
+        C88 112 100 111 108 108
+        C118 104 124 98 124 88
+        V30
+        C124 24 124 18 121 14
+        C118 10 110 8 100 8
+        C86 8 72 12 64 22
+        Z
+
+        M64 40
+        C58 32 48 28 36 28
+        H28
+        C22 28 18 30 18 36
+        V84
+        C18 90 22 94 30 96
+        C40 98 50 96 58 88
+        L64 80
+        Z
+
+        M64 40
+        C70 32 80 28 92 28
+        H100
+        C106 28 110 30 110 36
+        V84
+        C110 90 106 94 98 96
+        C88 98 78 96 70 88
+        L64 80
+        Z
+      "
+    />
+  </g>
+</svg>
