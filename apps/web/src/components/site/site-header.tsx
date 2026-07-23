@@ -252,7 +252,7 @@ function MobileNavigation() {
 export function SiteHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-40 bg-background/95 transition-colors duration-150">
-      <div className={cn("ui-frame flex items-stretch border-b border-rule", headerRowClass)}>
+      <div className="flex w-full items-stretch">
         <BrandMark />
         <DesktopNavigation />
         <div className="min-w-0 flex-1" />
