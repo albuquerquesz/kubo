@@ -5,14 +5,10 @@ A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with 
 <br />
 
 <p align="center">
-  <img alt="Kubo" src="apps/web/public/assets/kubo-bg-3.png" width="900" />
+  <img alt="Kubo" src="apps/web/public/assets/kubo-bg.png" width="900" />
 </p>
 
 <br />
-
-<a href="https://vercel.com/oss">
-  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
-</a>
 
 ## Quick Start
 
