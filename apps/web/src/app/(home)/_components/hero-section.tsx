@@ -23,22 +23,22 @@ const mission = [
  * of the upper grid row (pb matches across columns).
  */
 const upperBandClass =
-  "flex h-full min-h-[10rem] flex-col justify-end px-4 py-10 sm:min-h-[12rem] sm:px-5 lg:min-h-0 lg:px-10 lg:pt-0 lg:pb-10";
+  "flex h-full min-h-[10rem] flex-col justify-end px-4 py-10 sm:min-h-[12rem] sm:px-5 min-[1440px]:min-h-0 min-[1440px]:px-6 min-[1440px]:pt-0 min-[1440px]:pb-10 min-[1680px]:px-8 min-[1920px]:px-10";
 
 /**
  * Family B host — in-flow inside R1 card (Mistral model).
  * Large desktop type + padding create the unscaled offset box; GSAP scale
  * 0.47→1 makes rest look like a rail chip and end like stage type.
  *
- * Desktop: `lg:w-max` so nowrap mission lines size the host past the 30% rail.
+ * Desktop: `min-[1440px]:w-max` so nowrap mission lines size the host past the 30% rail.
  * End pose centers the host in the sticky shell (stage takeover).
  */
 const rightTopHostClass =
   "relative z-20 origin-bottom-left will-change-transform motion-reduce:transform-none " +
   "flex w-full flex-col items-start justify-end " +
-  "lg:w-max lg:max-w-none " +
-  // Mistral: lg:p-20 (80px)
-  "lg:p-16 xl:p-20";
+  "min-[1440px]:w-max min-[1440px]:max-w-none " +
+  // Desktop intermediario: menos inset para a rail preservar massa visual.
+  "min-[1440px]:p-10 min-[1680px]:p-14 min-[1920px]:p-18";
 
 export default function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -102,7 +102,8 @@ export default function HeroSection() {
         // Mobile: one viewport. Desktop: tall scroll track (~200dvh) for Family B pin travel.
         // Children must NOT flex-grow into this height or sticky never pins.
         "ui-scroll-target relative w-full border-rule border-b " +
-        "min-h-[calc(100svh-3rem)] lg:min-h-[200dvh]"
+        "min-[1440px]:left-1/2 min-[1440px]:w-screen min-[1440px]:max-w-none min-[1440px]:-translate-x-1/2 " +
+        "min-h-[calc(100svh-3rem)] min-[1440px]:min-h-[200dvh]"
       }
       aria-label="Seção principal"
     >
@@ -115,9 +116,9 @@ export default function HeroSection() {
         data-hero-motion="sticky-shell"
         className={
           "hero-shell relative flex w-full flex-col border-rule border-t bg-background min-h-[calc(100svh-3rem)] " +
-          "lg:sticky lg:top-12 " +
-          "lg:h-[calc(100dvh-3rem)] lg:min-h-[calc(100dvh-3rem)] lg:max-h-[calc(100dvh-3rem)] " +
-          "lg:overflow-x-hidden"
+          "min-[1440px]:sticky min-[1440px]:top-12 " +
+          "min-[1440px]:h-[calc(100dvh-3rem)] min-[1440px]:min-h-[calc(100dvh-3rem)] min-[1440px]:max-h-[calc(100dvh-3rem)] " +
+          "min-[1440px]:overflow-x-hidden"
         }
       >
         {/*
@@ -127,8 +128,8 @@ export default function HeroSection() {
         <div
           className={
             "grid h-full min-h-0 w-full flex-1 grid-cols-1 " +
-            "lg:grid-cols-[minmax(0,1fr)_minmax(0,30%)] " +
-            "lg:grid-rows-[minmax(0,3fr)_minmax(0,2fr)]"
+            "min-[1440px]:grid-cols-[minmax(58rem,1.2fr)_minmax(34rem,0.8fr)] " +
+            "min-[1440px]:grid-rows-[minmax(0,3fr)_minmax(0,2fr)]"
           }
         >
           {/* L1 — title; Family B2 translateY + opacity exit */}
@@ -136,8 +137,10 @@ export default function HeroSection() {
             <HeroDisplayTitle
               title="Um comando. Todas as camadas."
               className={
-                "text-foreground text-[clamp(2rem,8vw,2.75rem)] leading-[1.02] " +
-                "lg:text-[clamp(2.5rem,4.5vw,4.5rem)] lg:leading-[0.95] " +
+                "text-foreground text-[clamp(2.5rem,9vw,3.25rem)] leading-[1.02] " +
+                "sm:text-[clamp(3rem,8vw,4rem)] sm:leading-[0.98] " +
+                "lg:text-[clamp(3.5rem,7vw,5rem)] lg:leading-[0.95] " +
+                "min-[1440px]:text-[clamp(3.4rem,5.2vw,5.75rem)] min-[1440px]:leading-[0.93] " +
                 "[&_*]:text-foreground"
               }
             >
@@ -154,7 +157,7 @@ export default function HeroSection() {
           <div
             className={
               upperBandClass +
-              " overflow-visible border-rule border-t border-b bg-muted/10 lg:border-t-0 lg:border-l"
+              " overflow-visible border-rule border-t border-b bg-muted/10 min-[1440px]:border-t-0 min-[1440px]:border-l"
             }
           >
             <div
@@ -170,8 +173,9 @@ export default function HeroSection() {
               <p
                 className={
                   "font-medium text-foreground " +
-                  "text-2xl leading-[1.25] sm:text-[1.65rem] " +
-                  "lg:text-[3.5rem] lg:leading-[1.12]"
+                  "text-2xl leading-[1.25] sm:text-[2rem] sm:leading-[1.18] " +
+                  "lg:text-[2.75rem] lg:leading-[1.08] " +
+                  "min-[1440px]:text-[4rem] min-[1440px]:leading-[1.08]"
                 }
               >
                 <span className="sr-only">{mission.join(" ")}</span>
@@ -183,7 +187,7 @@ export default function HeroSection() {
                         sentenceRefs.current[i] = el;
                       }}
                       data-hero-motion="mission-line"
-                      className="block will-change-transform lg:text-nowrap"
+                      className="block will-change-transform min-[1440px]:text-nowrap"
                     >
                       {line}
                     </span>
@@ -197,7 +201,7 @@ export default function HeroSection() {
           <div
             ref={stageClearL2Ref}
             data-hero-motion="stage-clear"
-            className="hidden bg-background lg:block"
+            className="hidden bg-background min-[1440px]:block"
             aria-hidden
           />
 
@@ -205,7 +209,7 @@ export default function HeroSection() {
           <div
             ref={stageClearLowerRef}
             data-hero-motion="stage-clear"
-            className="bg-background lg:border-l"
+            className="bg-background min-[1440px]:border-l"
           >
             <HeroRailLower scrollTargetId="product" />
           </div>
