@@ -12,18 +12,37 @@ const stackFeatures = [
   "PRODUCTION-READY",
 ] as const;
 
-export default function CustomStackPanel() {
+type CustomStackPanelProps = {
+  sectionId?: string;
+  titleId?: string;
+  className?: string;
+  showSideBorders?: boolean;
+  showViewportTopRule?: boolean;
+  showViewportBottomRule?: boolean;
+};
+
+export default function CustomStackPanel({
+  sectionId = "product",
+  titleId = "custom-stack-title",
+  className,
+  showSideBorders = true,
+  showViewportTopRule = true,
+  showViewportBottomRule = true,
+}: CustomStackPanelProps) {
   return (
     <section
-      id="product"
-      aria-labelledby="custom-stack-title"
-      className="custom-stack-panel ui-scroll-target mx-auto mt-12 mb-12 w-full max-w-[1240px] border-rule border-x bg-background sm:mt-16 sm:mb-16 lg:mt-20 lg:mb-20"
+      id={sectionId}
+      aria-labelledby={titleId}
+      className={cn(
+        "custom-stack-panel ui-scroll-target mx-auto mt-12 mb-12 w-full max-w-[1240px] border-rule bg-background sm:mt-16 sm:mb-16 lg:mt-20 lg:mb-20",
+        showSideBorders && "border-x",
+        !showViewportTopRule && "custom-stack-panel--no-top-rule",
+        !showViewportBottomRule && "custom-stack-panel--no-bottom-rule",
+        className,
+      )}
     >
       <div className="border-rule border-b px-4 py-6 sm:px-6 sm:py-7 lg:flex lg:min-h-[6.5rem] lg:items-center lg:justify-between lg:px-6 lg:py-6">
-        <h2
-          id="custom-stack-title"
-          className="ui-display text-[clamp(2rem,4vw,3rem)] leading-[0.95]"
-        >
+        <h2 id={titleId} className="ui-display text-[clamp(2rem,4vw,3rem)] leading-[0.95]">
           Desenvolvimento de stack personalizada.
         </h2>
         <Link
