@@ -51,11 +51,11 @@ export default function DeploymentSection() {
       </div>
 
       {/* Cards grid */}
-      <div className="grid w-full grid-cols-1 px-4 sm:mt-[48px] sm:grid-cols-3 sm:px-[64px] border border-primary-foreground/14">
+      <div className="grid w-full grid-cols-1 px-[64px] sm:mt-[48px] sm:grid-cols-3 border border-primary-foreground/14">
         {deploymentCards.map((card, i) => (
           <article
             key={card.title}
-            className={`flex flex-col justify-between px-8 py-6 sm:px-8 sm:py-8 sm:min-h-[364px] ${
+            className={`flex flex-col justify-between px-8 py-6 sm:py-8 sm:min-h-[364px] ${
               i === 0 ? "" : "border-t sm:border-t-0 sm:border-l"
             } border-primary-foreground/14`}
           >
