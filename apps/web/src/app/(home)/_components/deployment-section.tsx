@@ -69,7 +69,7 @@ export default function DeploymentSection() {
           {deploymentCards.map((card) => (
             <article
               key={card.title}
-              className="flex flex-col justify-between border-b border-r border-primary-foreground/28 px-2 py-6 last:border-b-0 sm:min-h-[320px] sm:border-b-0 sm:px-3 sm:py-8"
+              className="flex flex-col justify-between border-b border-r border-primary-foreground/28 px-2 pt-4 pb-6 last:border-b-0 sm:min-h-[320px] sm:border-b-0 sm:px-3 sm:pt-5 sm:pb-8"
             >
               <span className="relative -left-0.5 flex h-16 w-16 shrink-0 items-center justify-center sm:h-20 sm:w-20">
                 <Image
