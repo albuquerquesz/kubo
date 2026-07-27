@@ -10,28 +10,28 @@ type CommunityEntry = {
 
 const communityEntries: CommunityEntry[] = [
   {
-    title: "Veja o que foi publicado.",
-    description: "Explore stacks reais publicadas pela comunidade.",
-    href: "/showcase",
-    image: "/assets/gold-apps-grid.png?v=transparent",
-  },
-  {
-    title: "Acompanhe o ecossistema.",
-    description: "Veja quais tecnologias os desenvolvedores combinam.",
-    href: "/analytics",
-    image: "/assets/gold-bar-chart.png?v=transparent",
-  },
-  {
-    title: "Traga sua stack.",
-    description: "Compare escolhas e desbloqueie sua próxima stack.",
-    href: "https://discord.gg/ZYsbjpDaM5",
-    image: "/assets/gold-chat-bubbles.png?v=transparent",
-  },
-  {
-    title: "Leia as camadas.",
-    description: "Acompanhe cada camada do gerador ao app.",
+    title: "Comece pela visão geral.",
+    description: "Entenda o fluxo do projeto antes de explorar as peças menores.",
     href: "/docs",
-    image: "/assets/gold-open-book.png?v=transparent",
+    image: "/assets/gold-open-book.png",
+  },
+  {
+    title: "Leia a referência da CLI.",
+    description: "Veja flags, comandos e o caminho mais curto até a geração.",
+    href: "/docs/cli",
+    image: "/assets/gold-chat-bubbles.png",
+  },
+  {
+    title: "Explore a estrutura do projeto.",
+    description: "Veja como o template se organiza depois da criação.",
+    href: "/docs/project-structure",
+    image: "/assets/gold-apps-grid.png",
+  },
+  {
+    title: "Confira a compatibilidade.",
+    description: "Revise combinações válidas antes de montar sua stack.",
+    href: "/docs/cli/compatibility",
+    image: "/assets/gold-bar-chart.png",
   },
 ];
 
@@ -43,7 +43,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
       href={entry.href}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noreferrer" : undefined}
-      className="group flex flex-col bg-card transition-colors duration-150 ease-out hover:bg-[#2d2b20] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+      className="group flex flex-col bg-background transition-colors duration-150 ease-out hover:bg-[#2d2b20] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
     >
       <article className="flex min-h-96 flex-col p-6 sm:min-h-[28rem] sm:p-8">
         {entry.image ? (
@@ -73,12 +73,27 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
 export default function CommunityLinksSection() {
   return (
     <section aria-label="Comunidade" className="border-rule border-b">
-      <div className="p-5 sm:p-8 lg:p-10">
-        <div className="grid grid-cols-1 gap-px border border-rule bg-rule sm:grid-cols-2 lg:grid-cols-4">
-          {communityEntries.map((entry, index) => (
-            <CommunityCard key={`${entry.href}-${index}`} entry={entry} />
-          ))}
+      <div className="flex flex-col gap-6 p-5 sm:p-8 lg:flex-row lg:items-end lg:justify-between lg:p-10">
+        <div className="max-w-2xl">
+          <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            Antes da comunidade, leia o mapa.
+          </h2>
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+            Ainda sem prova social de comunidade. O melhor caminho agora é a documentação, do Stack
+            Builder à estrutura final do projeto.
+          </p>
         </div>
+        <Link
+          href="/docs"
+          className="inline-flex h-11 shrink-0 items-center justify-center rounded-full border border-rule bg-foreground px-5 text-sm font-medium text-background transition-colors hover:bg-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+          Ler documentação
+        </Link>
+      </div>
+      <div className="grid grid-cols-1 gap-px border-rule border-t bg-rule sm:grid-cols-2 lg:grid-cols-4">
+        {communityEntries.map((entry, index) => (
+          <CommunityCard key={`${entry.href}-${index}`} entry={entry} />
+        ))}
       </div>
     </section>
   );
