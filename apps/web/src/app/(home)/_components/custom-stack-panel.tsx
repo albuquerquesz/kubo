@@ -39,10 +39,12 @@ export default function CustomStackPanel({
             "Consulte guias práticos para entender cada camada, configurar seu projeto e colocá-lo em produção.",
           cta: "Ler documentação",
           href: "/docs",
+          imageSrc: "/assets/kubo-bg-3.png",
           imageAlt: "Exemplo de código gerado pelo Kubo",
         }
       : {
           title: "Monte sua stack.",
+          imageSrc: "/assets/kubo-bg.png",
           description:
             "Escolha cada camada no Stack Builder e gere uma base TypeScript pronta para evoluir com o seu projeto.",
           cta: "Abra o Stack Builder",
@@ -89,7 +91,7 @@ export default function CustomStackPanel({
       <div className="px-4 py-6 sm:px-6 lg:px-6 lg:py-6">
         <div className="relative aspect-[1.9] min-h-[16rem] overflow-hidden bg-muted sm:min-h-0">
           <Image
-            src="/assets/kubo-bg.png"
+            src={content.imageSrc}
             alt={content.imageAlt}
             fill
             sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(100vw - 3rem), 100vw"
