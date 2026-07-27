@@ -1,0 +1,336 @@
+{
+  "expected": {
+    "outer": {
+      "t": 1,
+      "b": 1,
+      "l": 0,
+      "r": 0,
+      "fullBleed": true,
+      "width": 1440
+    },
+    "grid": {
+      "t": 0,
+      "b": 0,
+      "l": 1,
+      "r": 0,
+      "width": 1360,
+      "left": 40
+    },
+    "cards": {
+      "count": 3,
+      "each": {
+        "t": 0,
+        "b": 0,
+        "l": 0,
+        "r": 1
+      }
+    }
+  },
+  "kubo": {
+    "outer": {
+      "tag": "DIV",
+      "className": "w-full border-y border-primary-foreground/14 px-10 sm:mt-[48px]",
+      "w": 1440,
+      "h": 366,
+      "left": 0,
+      "right": 1440,
+      "top": 795,
+      "bottom": 1161,
+      "borderTop": "1px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+      "borderRight": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+      "borderBottom": "1px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+      "borderLeft": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+      "padding": "0px 40px",
+      "vw": 1440,
+      "vh": 900
+    },
+    "grid": {
+      "tag": "DIV",
+      "className": "grid w-full grid-cols-1 border-l border-primary-foreground/14 sm:grid-cols-3",
+      "w": 1360,
+      "h": 364,
+      "left": 40,
+      "right": 1400,
+      "top": 796,
+      "bottom": 1160,
+      "borderTop": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+      "borderRight": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+      "borderBottom": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+      "borderLeft": "1px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+      "padding": "0px",
+      "vw": 1440,
+      "vh": 900
+    },
+    "articles": [
+      {
+        "tag": "ARTICLE",
+        "className": "flex flex-col justify-between border-b border-r border-primary-foreground/14 px-8 py-6 last:border-b-0 sm:min-h-[364px] sm:border-b-0 sm:py-8",
+        "w": 453,
+        "h": 364,
+        "left": 41,
+        "right": 494,
+        "top": 796,
+        "bottom": 1160,
+        "borderTop": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+        "borderRight": "1px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+        "borderBottom": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+        "borderLeft": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+        "padding": "32px",
+        "vw": 1440,
+        "vh": 900
+      },
+      {
+        "tag": "ARTICLE",
+        "className": "flex flex-col justify-between border-b border-r border-primary-foreground/14 px-8 py-6 last:border-b-0 sm:min-h-[364px] sm:border-b-0 sm:py-8",
+        "w": 453,
+        "h": 364,
+        "left": 494,
+        "right": 947,
+        "top": 796,
+        "bottom": 1160,
+        "borderTop": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+        "borderRight": "1px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+        "borderBottom": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+        "borderLeft": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+        "padding": "32px",
+        "vw": 1440,
+        "vh": 900
+      },
+      {
+        "tag": "ARTICLE",
+        "className": "flex flex-col justify-between border-b border-r border-primary-foreground/14 px-8 py-6 last:border-b-0 sm:min-h-[364px] sm:border-b-0 sm:py-8",
+        "w": 453,
+        "h": 364,
+        "left": 947,
+        "right": 1400,
+        "top": 796,
+        "bottom": 1160,
+        "borderTop": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+        "borderRight": "1px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+        "borderBottom": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+        "borderLeft": "0px solid oklab(0.176063 -0.00235142 0.00762944 / 0.14)",
+        "padding": "32px",
+        "vw": 1440,
+        "vh": 900
+      }
+    ]
+  },
+  "checks": [
+    {
+      "name": "outer has border-top 1px",
+      "pass": true,
+      "detail": {
+        "w": 1,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "outer has border-bottom 1px",
+      "pass": true,
+      "detail": {
+        "w": 1,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "outer has no left border",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "outer has no right border",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "outer is full-bleed (~1440)",
+      "pass": true,
+      "detail": {
+        "w": 1440,
+        "left": 0
+      }
+    },
+    {
+      "name": "grid has border-left 1px",
+      "pass": true,
+      "detail": {
+        "w": 1,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "grid has no top border",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "grid has no bottom border",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "grid has no right border",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "grid inset ~40px",
+      "pass": true,
+      "detail": {
+        "left": 40,
+        "w": 1360
+      }
+    },
+    {
+      "name": "card[0] border-right 1px",
+      "pass": true,
+      "detail": {
+        "w": 1,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "card[0] no border-left",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "card[0] no border-top",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "card[0] no border-bottom (desktop)",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "card[1] border-right 1px",
+      "pass": true,
+      "detail": {
+        "w": 1,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "card[1] no border-left",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "card[1] no border-top",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "card[1] no border-bottom (desktop)",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "card[2] border-right 1px",
+      "pass": true,
+      "detail": {
+        "w": 1,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "card[2] no border-left",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "card[2] no border-top",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "card[2] no border-bottom (desktop)",
+      "pass": true,
+      "detail": {
+        "w": 0,
+        "style": "solid",
+        "color": "oklab(0.176063 -0.00235142 0.00762944 / 0.14)"
+      }
+    },
+    {
+      "name": "last card right edge ~1400 (outer right vertical)",
+      "pass": true,
+      "detail": {
+        "right": 1400
+      }
+    },
+    {
+      "name": "four vertical border positions (closed frame)",
+      "pass": true,
+      "detail": {
+        "verticalXs": [40, 494, 947, 1400]
+      }
+    }
+  ],
+  "summary": {
+    "total": 24,
+    "passed": 24,
+    "failed": 0,
+    "failedNames": []
+  }
+}
