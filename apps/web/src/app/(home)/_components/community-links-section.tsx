@@ -1,6 +1,3 @@
-"use client";
-
-import { type LucideIcon, Play, Quote } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -8,21 +5,45 @@ type CommunityEntry = {
   title: string;
   description: string;
   href: string;
-  kind: "video" | "note" | "project";
-  icon?: LucideIcon;
   image?: string;
 };
 
+const communityEntries: CommunityEntry[] = [
+  {
+    title: "Veja o que foi publicado.",
+    description: "Explore stacks reais publicadas pela comunidade.",
+    href: "/showcase",
+    image: "/assets/gold-apps-grid.png?v=transparent",
+  },
+  {
+    title: "Acompanhe o ecossistema.",
+    description: "Veja quais tecnologias os desenvolvedores combinam.",
+    href: "/analytics",
+    image: "/assets/gold-bar-chart.png?v=transparent",
+  },
+  {
+    title: "Traga sua stack.",
+    description: "Compare escolhas e desbloqueie sua próxima stack.",
+    href: "https://discord.gg/ZYsbjpDaM5",
+    image: "/assets/gold-chat-bubbles.png?v=transparent",
+  },
+  {
+    title: "Leia as camadas.",
+    description: "Acompanhe cada camada do gerador ao app.",
+    href: "/docs",
+    image: "/assets/gold-open-book.png?v=transparent",
+  },
+];
+
 function CommunityCard({ entry }: { entry: CommunityEntry }) {
   const isExternal = entry.href.startsWith("http");
-  const Icon = entry.icon;
 
   return (
     <Link
       href={entry.href}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noreferrer" : undefined}
-      className="group flex w-[86%] shrink-0 snap-start flex-col bg-card transition-colors duration-150 ease-out hover:bg-[#2d2b20] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:w-[58%] lg:w-auto lg:min-w-0 lg:flex-1 lg:shrink"
+      className="group flex flex-col bg-card transition-colors duration-150 ease-out hover:bg-[#2d2b20] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
     >
       <article className="flex min-h-96 flex-col p-6 sm:min-h-[28rem] sm:p-8">
         {entry.image ? (
@@ -35,8 +56,6 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
             aria-hidden
             unoptimized
           />
-        ) : Icon ? (
-          <Icon className="size-6 text-primary" aria-hidden />
         ) : null}
         <div className="mt-auto">
           <h3 className="max-w-md text-3xl font-semibold leading-tight tracking-tight transition-transform duration-300 ease-out lg:group-hover:duration-700 lg:group-hover:-translate-y-1 lg:group-focus-within:duration-700 lg:group-focus-within:-translate-y-1">
@@ -51,43 +70,12 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
   );
 }
 
-export default function Testimonials({
-  videos,
-  tweets,
-}: {
-  videos: Array<{ embedId: string; title: string }>;
-  tweets: Array<{ tweetId: string }>;
-}) {
-  const liveEntries: CommunityEntry[] = [
-    ...videos.map((video) => ({
-      title: video.title,
-      description: "Assista um membro da comunidade publicar uma stack TypeScript.",
-      href: `https://www.youtube.com/watch?v=${video.embedId}`,
-      kind: "video" as const,
-      icon: Play,
-    })),
-    ...tweets.map((tweet, index) => ({
-      title: `Despacho ${String(index + 1).padStart(2, "0")} da comunidade.`,
-      description: "Veja a stack, o contexto e as notas de implementação.",
-      href: `https://x.com/i/status/${tweet.tweetId}`,
-      kind: "note" as const,
-      icon: Quote,
-    })),
-  ];
-
-  if (liveEntries.length === 0) {
-    return null;
-  }
-
+export default function CommunityLinksSection() {
   return (
     <section aria-label="Comunidade" className="border-rule border-b">
       <div className="p-5 sm:p-8 lg:p-10">
-        <div
-          className="no-scrollbar flex snap-x snap-mandatory gap-px overflow-x-auto border border-rule bg-rule"
-          tabIndex={0}
-          aria-label="Histórias da comunidade"
-        >
-          {liveEntries.map((entry, index) => (
+        <div className="grid grid-cols-1 gap-px border border-rule bg-rule sm:grid-cols-2 lg:grid-cols-4">
+          {communityEntries.map((entry, index) => (
             <CommunityCard key={`${entry.href}-${index}`} entry={entry} />
           ))}
         </div>
