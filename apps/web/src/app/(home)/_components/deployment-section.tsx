@@ -1,11 +1,10 @@
 import { Cloud, Globe, Server } from "lucide-react";
-
-import { IconCodeWindow, IconLightbulb, IconMountain } from "./deployment-icons";
+import Image from "next/image";
 
 const deploymentCards = [
   {
     icon: Server,
-    title: "Crie com o CLI.",
+    title: "Crie com a CLI.",
     description:
       "Rode o Kubo no terminal e escolha as camadas. Em minutos você tem monorepo TypeScript na sua máquina, sem colar boilerplate de repositório em repositório.",
   },
@@ -27,17 +26,35 @@ export default function DeploymentSection() {
   return (
     <section
       aria-labelledby="deployment-title"
-      className="relative left-1/2 flex w-screen flex-col bg-primary py-12 text-primary-foreground -ml-[50vw] sm:py-16"
+      className="relative left-1/2 flex w-screen flex-col bg-primary py-16 text-primary-foreground -ml-[50vw] sm:py-24"
     >
       <div className="flex flex-col items-center text-center">
         <p className="font-mono text-xs font-semibold uppercase tracking-[0.08em] leading-none text-primary-foreground/80">
-          Gerador de stacks TypeScript
+          Gerador de stacks TypeScript.
         </p>
 
-        <div className="mt-6 flex gap-4 sm:mt-8" aria-hidden="true">
-          <IconCodeWindow className="block w-14 h-14 text-primary-foreground" />
-          <IconLightbulb className="block w-14 h-14 text-primary-foreground" />
-          <IconMountain className="block w-14 h-14 text-primary-foreground" />
+        <div className="mt-3 flex items-center gap-0 sm:mt-4" aria-hidden="true">
+          <Image
+            src="/assets/glossy-document-card-icon.png"
+            alt=""
+            width={144}
+            height={96}
+            className="h-32 w-32 object-contain sm:h-36 sm:w-36"
+          />
+          <Image
+            src="/assets/glossy-idea-lightbulb-icon.png"
+            alt=""
+            width={144}
+            height={96}
+            className="h-32 w-32 object-contain sm:h-36 sm:w-36"
+          />
+          <Image
+            src="/assets/glossy-mountain-landscape-icon.png"
+            alt=""
+            width={144}
+            height={96}
+            className="h-32 w-32 object-contain sm:h-36 sm:w-36"
+          />
         </div>
 
         <h2
@@ -55,7 +72,7 @@ export default function DeploymentSection() {
               key={card.title}
               className="flex flex-col justify-between border-b border-r border-primary-foreground/28 px-8 py-6 last:border-b-0 sm:min-h-[360px] sm:border-b-0 sm:py-8"
             >
-              <card.icon aria-hidden className="w-5 h-5 shrink-0 text-primary-foreground" />
+              <card.icon aria-hidden className="w-8 h-8 shrink-0 text-primary-foreground" />
               <h3 className="font-archivo font-semibold text-lg leading-6 tracking-[-0.065em] mt-3 text-primary-foreground sm:text-2xl sm:leading-10">
                 {card.title}
               </h3>
