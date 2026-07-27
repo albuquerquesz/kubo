@@ -23,12 +23,6 @@ const PAGES: Record<
     description: "Escolha sua stack e receba um comando pronto para rodar",
     command: "bun create kubojs@latest my-app --yes",
   },
-  showcase: {
-    path: "~/showcase",
-    section: "exibição",
-    title: "Exibição",
-    description: "Projetos criados com kubojs",
-  },
   analytics: {
     path: "~/analytics",
     section: "análise",

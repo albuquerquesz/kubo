@@ -30,10 +30,6 @@ export const links: LinkItemType[] = [
     url: "/analytics",
   },
   {
-    text: "Exibição",
-    url: "/showcase",
-  },
-  {
     text: "Patrocinadores",
     url: "/sponsors",
   },

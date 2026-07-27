@@ -23,7 +23,6 @@ const exploreGroups = [
   {
     label: "Comunidade",
     links: [
-      { href: "/showcase", label: "Exibição de projetos" },
       { href: "/sponsors", label: "Patrocinadores" },
       { href: "https://discord.gg/ZYsbjpDaM5", label: "Discord" },
       { href: "https://x.com/byalbuquerquesz", label: "X" },
