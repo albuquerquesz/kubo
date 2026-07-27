@@ -1,21 +1,20 @@
-import { Cloud, Globe, Server } from "lucide-react";
 import Image from "next/image";
 
 const deploymentCards = [
   {
-    icon: Server,
+    iconSrc: "/assets/glossy-stacked-server-icon.png",
     title: "Crie com a CLI.",
     description:
       "Rode o Kubo no terminal e escolha as camadas. Em minutos você tem monorepo TypeScript na sua máquina, sem colar boilerplate de repositório em repositório.",
   },
   {
-    icon: Cloud,
+    iconSrc: "/assets/glossy-cloud-icon.png",
     title: "Monte no Stack Builder.",
     description:
       "Prefere ver antes de gerar? Abra o Stack Builder, teste combinações e saia com a mesma base pronta. Menos chute, mais projeto de verdade.",
   },
   {
-    icon: Globe,
+    iconSrc: "/assets/glossy-globe-icon.png",
     title: "Já pense no deploy.",
     description:
       "Inclua Cloudflare, Docker ou Vercel na geração. Você para de configurar publish depois e começa a publicar com o que o scaffold já trouxe.",
@@ -33,46 +32,55 @@ export default function DeploymentSection() {
           Gerador de stacks TypeScript.
         </p>
 
-        <div className="mt-3 flex items-center gap-0 sm:mt-4" aria-hidden="true">
+        <div className="mt-0 flex items-center gap-0" aria-hidden="true">
           <Image
             src="/assets/glossy-document-card-icon.png"
             alt=""
-            width={144}
-            height={96}
-            className="h-32 w-32 object-contain sm:h-36 sm:w-36"
+            width={176}
+            height={120}
+            className="h-40 w-40 object-contain -mx-4 sm:h-44 sm:w-44 sm:-mx-5"
           />
           <Image
             src="/assets/glossy-idea-lightbulb-icon.png"
             alt=""
-            width={144}
-            height={96}
-            className="h-32 w-32 object-contain sm:h-36 sm:w-36"
+            width={176}
+            height={120}
+            className="h-40 w-40 object-contain -mx-4 sm:h-44 sm:w-44 sm:-mx-5"
           />
           <Image
             src="/assets/glossy-mountain-landscape-icon.png"
             alt=""
-            width={144}
-            height={96}
-            className="h-32 w-32 object-contain sm:h-36 sm:w-36"
+            width={176}
+            height={120}
+            className="h-40 w-40 object-contain -mx-4 sm:h-44 sm:w-44 sm:-mx-5"
           />
         </div>
 
         <h2
           id="deployment-title"
-          className="mt-6 max-w-5xl text-lg leading-10 text-primary-foreground sm:mt-8 sm:text-[56px] sm:leading-[60px] sm:tracking-[-0.035em]"
+          className="mt-0 max-w-5xl text-lg leading-10 text-primary-foreground sm:text-[56px] sm:leading-[60px] sm:tracking-[-0.035em]"
         >
           Pare de montar monorepo na mão.
         </h2>
       </div>
 
-      <div className="mt-8 w-full border-y border-primary-foreground/28 px-10 sm:mt-10">
+      <div className="mt-8 w-full border-y border-primary-foreground/28 px-4 sm:mt-10 sm:pl-12 sm:pr-[38px]">
         <div className="grid w-full grid-cols-1 border-l border-primary-foreground/28 sm:grid-cols-3">
           {deploymentCards.map((card) => (
             <article
               key={card.title}
-              className="flex flex-col justify-between border-b border-r border-primary-foreground/28 px-8 py-6 last:border-b-0 sm:min-h-[360px] sm:border-b-0 sm:py-8"
+              className="flex flex-col justify-between border-b border-r border-primary-foreground/28 px-2 py-6 last:border-b-0 sm:min-h-[320px] sm:border-b-0 sm:px-3 sm:py-8"
             >
-              <card.icon aria-hidden className="w-8 h-8 shrink-0 text-primary-foreground" />
+              <span className="relative -left-0.5 flex h-16 w-16 shrink-0 items-center justify-center sm:h-20 sm:w-20">
+                <Image
+                  src={card.iconSrc}
+                  alt=""
+                  width={96}
+                  height={96}
+                  aria-hidden="true"
+                  className="h-full w-full object-contain"
+                />
+              </span>
               <h3 className="font-archivo font-semibold text-lg leading-6 tracking-[-0.065em] mt-3 text-primary-foreground sm:text-2xl sm:leading-10">
                 {card.title}
               </h3>
