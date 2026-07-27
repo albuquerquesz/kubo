@@ -13,12 +13,6 @@ export const customSearchItems: CustomSearchItem[] = [
     tags: ["analise", "analytics", "insights", "estatisticas", "dados", "metricas"],
   },
   {
-    title: "Exibição",
-    url: "/showcase",
-    content: "Projetos criados com o kubojs",
-    tags: ["exibicao", "showcase", "projetos", "exemplos", "demos", "portfolio"],
-  },
-  {
     title: "Builder",
     url: "/new",
     content: "Construtor visual de stack",
