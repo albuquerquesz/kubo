@@ -10,9 +10,8 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const primaryLinks = [
-  { href: "/#product", label: "Produto" },
+  { href: "/#product", label: "Builder" },
   { href: "/#documentation", label: "Docs" },
-  { href: "/#community", label: "Comunidade" },
 ] as const;
 
 const exploreGroups = [
@@ -220,7 +219,7 @@ function MobileNavigation() {
               href="/new"
               onClick={closeNavigation}
               className={cn(
-                buttonVariants({ variant: "cta" }),
+                buttonVariants({ variant: "cta", size: "xl" }),
                 "min-h-16 w-full justify-between rounded-none border-0 border-rule border-b px-5",
               )}
             >
@@ -282,8 +281,8 @@ export function SiteHeader({ className }: { className?: string }) {
         <Link
           href="/new"
           className={cn(
-            buttonVariants({ variant: "cta", size: "lg" }),
-            "hidden min-w-36 border-0 px-4 text-base sm:inline-flex sm:px-5",
+            buttonVariants({ variant: "cta", size: "xl" }),
+            "hidden min-w-36 border-0 text-base sm:inline-flex",
             headerRowClass,
           )}
         >

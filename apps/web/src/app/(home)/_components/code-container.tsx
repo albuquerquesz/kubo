@@ -38,7 +38,7 @@ const CodeContainer = () => {
                 key={pm}
                 onClick={() => setSelectedPM(pm)}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-[5px] px-2.5 py-1 text-xs transition-colors duration-150",
+                  "inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs transition-colors duration-150",
                   selectedPM === pm
                     ? "bg-primary/10 text-primary shadow-sm"
                     : "text-muted-foreground hover:text-foreground",

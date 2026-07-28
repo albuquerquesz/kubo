@@ -59,8 +59,8 @@ export default function CopyCommandButton({
       type="button"
       onClick={copyCommand}
       className={cn(
-        buttonVariants({ variant: "cta" }),
-        "h-11 min-w-11 rounded-[8px] px-0 sm:px-3",
+        buttonVariants({ variant: "cta", size: "lg" }),
+        "min-w-10 px-0 sm:min-w-11 sm:px-3",
         className,
       )}
       aria-label={copied ? "Comando copiado" : "Copiar comando"}

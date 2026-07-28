@@ -70,10 +70,7 @@ export default function CustomStackPanel({
         </h2>
         <Link
           href={content.href}
-          className={cn(
-            buttonVariants({ variant: "cta" }),
-            "mt-5 min-h-12 px-4 py-3 text-sm lg:mt-0",
-          )}
+          className={cn(buttonVariants({ variant: "cta", size: "xl" }), "mt-5 lg:mt-0")}
         >
           {content.cta}
           <ArrowUpRight

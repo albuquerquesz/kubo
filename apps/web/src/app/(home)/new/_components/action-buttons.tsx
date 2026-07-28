@@ -23,7 +23,7 @@ type ActionButtonsProps = {
 };
 
 const mutedActionClasses =
-  "builder-focus-ring flex items-center justify-center gap-1.5 rounded-md bg-muted/20 px-2 py-1.5 font-mono font-medium text-muted-foreground text-xs transition-colors hover:bg-muted/35 hover:text-foreground";
+  "builder-focus-ring inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-muted/20 px-3 font-mono font-medium text-muted-foreground text-xs transition-colors hover:bg-muted/35 hover:text-foreground";
 
 export function ActionButtons({
   onReset,
@@ -44,7 +44,7 @@ export function ActionButtons({
         <button
           type="button"
           onClick={onRandom}
-          className="builder-focus-ring flex items-center justify-center gap-1.5 rounded-md bg-primary/15 px-2 py-1.5 font-mono font-medium text-primary text-xs transition-colors hover:bg-primary/22"
+          className="builder-focus-ring inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-primary/15 px-3 font-mono font-medium text-primary text-xs transition-colors hover:bg-primary/22"
           title="Gerar uma stack aleatória"
         >
           <Shuffle className="h-3 w-3" />
@@ -91,7 +91,7 @@ export function ActionButtons({
                 onClick={() => onYoloToggle(yolo ? "false" : "true")}
                 aria-pressed={yolo}
                 className={cn(
-                  "builder-focus-ring flex items-center justify-center gap-1.5 rounded-md px-2 py-1.5 font-mono font-medium text-xs transition-colors",
+                  "builder-focus-ring inline-flex h-8 items-center justify-center gap-1.5 rounded-md px-3 font-mono font-medium text-xs transition-colors",
                   yolo
                     ? "bg-destructive/15 text-destructive hover:bg-destructive/25"
                     : "bg-muted/20 text-muted-foreground hover:bg-muted/35 hover:text-foreground",

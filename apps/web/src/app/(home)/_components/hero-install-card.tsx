@@ -66,7 +66,7 @@ export default function HeroInstallCard({
             size="sm"
             aria-label={`Gerenciador de pacotes: ${selectedManager}`}
             className={cn(
-              "h-11 min-h-11 w-auto min-w-0 gap-1.5 border-0 bg-transparent px-1.5 py-1.5",
+              "h-10 min-h-10 w-auto min-w-0 gap-1.5 rounded-md border-0 bg-transparent px-1.5 py-1.5",
               "text-foreground shadow-none ring-0",
               "hover:bg-transparent hover:text-primary dark:bg-transparent dark:hover:bg-transparent",
               "focus-visible:border-0 focus-visible:ring-1 focus-visible:ring-ring",
@@ -98,12 +98,7 @@ export default function HeroInstallCard({
           <code className="font-mono">{command}</code>
         </p>
 
-        {showCopyButton ? (
-          <CopyCommandButton
-            command={command}
-            className="flex h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-[8px] border border-primary bg-primary px-0 text-primary-foreground transition-colors duration-150 ease-out hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring sm:px-3"
-          />
-        ) : null}
+        {showCopyButton ? <CopyCommandButton command={command} className="shrink-0" /> : null}
       </div>
     </div>
   );

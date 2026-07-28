@@ -51,7 +51,7 @@ function CopyRow({
       type="button"
       onClick={onCopy}
       title={`Copiar ${label.toLowerCase()}`}
-      className="builder-focus-ring group flex w-full min-w-0 items-center gap-2 rounded border border-border bg-muted/10 px-3 py-2 text-left transition-colors hover:border-muted-foreground/30 hover:bg-muted/25"
+      className="builder-focus-ring group flex h-10 w-full min-w-0 items-center gap-2 rounded-md border border-border bg-muted/10 px-3 text-left transition-colors hover:border-muted-foreground/30 hover:bg-muted/25"
     >
       <span className="shrink-0 text-primary">{icon}</span>
       <span className="min-w-0 flex-1 truncate font-mono text-muted-foreground text-xs group-hover:text-foreground">
@@ -59,7 +59,7 @@ function CopyRow({
       </span>
       <span
         className={cn(
-          "flex shrink-0 items-center gap-1 rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase transition-colors",
+          "flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 font-mono text-[10px] uppercase transition-colors",
           copied
             ? "border-green-500/20 bg-green-500/10 text-green-600 dark:text-green-400"
             : "border-border text-muted-foreground group-hover:text-foreground",
@@ -225,7 +225,7 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
           <button
             type="button"
             onClick={shareToTwitter}
-            className="builder-focus-ring flex items-center justify-center gap-1.5 rounded border border-border bg-muted/10 px-2 py-2 font-mono text-muted-foreground text-xs transition-colors hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground"
+            className="builder-focus-ring inline-flex h-10 items-center justify-center gap-1.5 rounded-md border border-border bg-muted/10 px-3 font-mono text-muted-foreground text-xs transition-colors hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground"
           >
             <FaXTwitter className="h-3 w-3" />
             Postar
@@ -234,7 +234,7 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
             <button
               type="button"
               onClick={nativeShare}
-              className="builder-focus-ring flex items-center justify-center gap-1.5 rounded border border-border bg-muted/10 px-2 py-2 font-mono text-muted-foreground text-xs transition-colors hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground"
+              className="builder-focus-ring inline-flex h-10 items-center justify-center gap-1.5 rounded-md border border-border bg-muted/10 px-3 font-mono text-muted-foreground text-xs transition-colors hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground"
             >
               <Share2 className="h-3 w-3" />
               Compartilhar
@@ -244,7 +244,7 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
             type="button"
             onClick={() => setShowQr((prev) => !prev)}
             className={cn(
-              "builder-focus-ring flex items-center justify-center gap-1.5 rounded border px-2 py-2 font-mono text-xs transition-colors",
+              "builder-focus-ring inline-flex h-10 items-center justify-center gap-1.5 rounded-md border px-3 font-mono text-xs transition-colors",
               showQr
                 ? "border-primary/30 bg-primary/10 text-primary"
                 : "border-border bg-muted/10 text-muted-foreground hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground",

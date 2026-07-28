@@ -30,10 +30,7 @@ export default function FinalCtaDotMatrix() {
         <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
           <Link
             href="/new"
-            className={cn(
-              buttonVariants({ variant: "cta" }),
-              "min-h-12 px-5 py-3 text-[0.9375rem] no-underline",
-            )}
+            className={cn(buttonVariants({ variant: "cta", size: "xl" }), "no-underline")}
           >
             Monte sua stack
             <ArrowUpRight
