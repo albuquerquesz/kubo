@@ -34,21 +34,21 @@ export default function DeploymentSection() {
 
         <div className="mt-0 flex items-center gap-0" aria-hidden="true">
           <Image
-            src="/assets/glossy-document-card-icon.png"
+            src="/assets/glossy-stacked-server-icon.png"
             alt=""
             width={176}
             height={120}
             className="h-40 w-40 object-contain -mx-4 sm:h-44 sm:w-44 sm:-mx-5"
           />
           <Image
-            src="/assets/glossy-idea-lightbulb-icon.png"
+            src="/assets/glossy-cloud-icon.png"
             alt=""
             width={176}
             height={120}
             className="h-40 w-40 object-contain -mx-4 sm:h-44 sm:w-44 sm:-mx-5"
           />
           <Image
-            src="/assets/glossy-mountain-landscape-icon.png"
+            src="/assets/glossy-globe-icon.png"
             alt=""
             width={176}
             height={120}
