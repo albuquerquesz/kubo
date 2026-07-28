@@ -9,10 +9,7 @@ import { FaDiscord, FaGithub, FaXTwitter } from "react-icons/fa6";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const primaryLinks = [
-  { href: "/#builder", label: "Builder" },
-  { href: "/#documentation", label: "Docs" },
-] as const;
+const primaryLinks = [{ href: "/#documentation", label: "Docs" }] as const;
 
 const exploreGroups = [
   {

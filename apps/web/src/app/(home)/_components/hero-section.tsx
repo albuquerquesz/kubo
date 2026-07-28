@@ -17,7 +17,7 @@ export default function HeroSection() {
   const [selectedManager, setSelectedManager] = useState<PackageManager>(DEFAULT_PACKAGE_MANAGER);
 
   const scrollToNextSection = useCallback(() => {
-    const target = document.getElementById("product");
+    const target = document.getElementById("builder");
     if (!target) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

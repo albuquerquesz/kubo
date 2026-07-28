@@ -24,7 +24,7 @@ type CustomStackPanelProps = {
 
 export default function CustomStackPanel({
   variant = "stack-builder",
-  sectionId = "product",
+  sectionId = "builder",
   titleId = "custom-stack-title",
   className,
   showSideBorders = true,
