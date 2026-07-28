@@ -66,7 +66,7 @@ Os feixes devem usar uma variação clara e dessaturada dos tokens de texto ou u
 2. **Véu de legibilidade:** overlay CSS com gradiente discreto baseado em `--background`; deve reduzir a luz atrás do texto sem apagar os feixes.
 3. **Header existente:** o [`SiteHeader`](../apps/web/src/components/site/site-header.tsx) continua fixo, com seus links, menu mobile, sociais e CTA. Se receber tratamento translúcido, ele deve conservar as dimensões, os destinos e os estados de foco atuais.
 4. **Conteúdo do hero:** H1 centralizado, missão abaixo, CTA `Monte sua stack` e card de instalação. A ordem visual deve ser H1 → missão → CTA/instalador.
-5. **Controles auxiliares:** o indicador para rolar pode permanecer, mas não deve competir com o CTA. O destino continua sendo `#product`.
+5. **Controles auxiliares:** o indicador para rolar pode permanecer, mas não deve competir com o CTA. O destino continua sendo `#builder`.
 
 O hero deve continuar usando `id="top"` e a altura deve considerar o header fixo de `3rem` (`100svh - 3rem`), sem criar uma faixa vazia acima ou abaixo do palco.
 
@@ -174,7 +174,7 @@ Com o web app em `:3333`, validar por Playwright pelo menos em `1440 × 900`, `7
 - console sem erro de shader, hydration ou WebGL não tratado;
 - teste com `prefers-reduced-motion: reduce`;
 - teste com WebGL desabilitado ou fallback forçado;
-- click em `Monte sua stack`, rolagem para `#product`, seleção de package manager e cópia do comando.
+- click em `Monte sua stack`, rolagem para `#builder`, seleção de package manager e cópia do comando.
 
 ## Ordem de implementação
 
