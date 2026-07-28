@@ -11,8 +11,9 @@ import DotMatrixBackdrop from "./dot-matrix-backdrop";
 export default function FinalCtaDotMatrix() {
   return (
     <section
+      id="cta"
       aria-labelledby="final-cta-title"
-      className="final-cta relative isolate min-h-[20.375rem] overflow-hidden border-b border-rule bg-[#050505] text-[#f5f5f5]"
+      className="final-cta ui-scroll-target relative isolate min-h-[20.375rem] overflow-hidden border-b border-rule bg-[#050505] text-[#f5f5f5]"
     >
       <DotMatrixBackdrop />
 

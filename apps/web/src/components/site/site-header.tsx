@@ -9,7 +9,11 @@ import { FaDiscord, FaGithub, FaXTwitter } from "react-icons/fa6";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const primaryLinks = [{ href: "/#product", label: "Produto" }] as const;
+const primaryLinks = [
+  { href: "/#product", label: "Produto" },
+  { href: "/#documentation", label: "Docs" },
+  { href: "/#community", label: "Comunidade" },
+] as const;
 
 const exploreGroups = [
   {
@@ -195,7 +199,7 @@ function MobileNavigation() {
             aria-label="Links de navegação mobile"
             className="grid min-h-0 flex-1 overflow-y-auto"
           >
-            {[...primaryLinks, { href: "/docs", label: "Docs" }].map((link, index) => (
+            {primaryLinks.map((link, index) => (
               <Link
                 key={link.href}
                 href={link.href}

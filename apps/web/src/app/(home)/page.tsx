@@ -4,7 +4,6 @@ import { api } from "@kubojs/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 
 import CustomStackPanel from "./_components/custom-stack-panel";
-import DeploymentSection from "./_components/deployment-section";
 import Footer from "./_components/footer";
 import HeroSection from "./_components/hero-section";
 import LogoMarquee from "./_components/logo-marquee";
@@ -30,13 +29,12 @@ export default async function HomePage() {
       <CustomStackPanel className="mb-0 sm:mb-0 lg:mb-0" showViewportBottomRule={false} />
       <CustomStackPanel
         variant="documentation"
-        sectionId="product-secondary"
+        sectionId="documentation"
         titleId="custom-stack-title-secondary"
         className="mt-0 border-t sm:mt-0 lg:mt-0"
         showSideBorders
         showViewportTopRule={false}
       />
-      <DeploymentSection />
       <Testimonials tweets={tweets} videos={videos} />
       <Footer />
     </main>

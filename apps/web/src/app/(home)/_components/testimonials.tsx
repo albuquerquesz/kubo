@@ -80,7 +80,11 @@ export default function Testimonials({
   }
 
   return (
-    <section aria-label="Comunidade" className="border-rule border-b">
+    <section
+      id="community"
+      aria-label="Comunidade"
+      className="ui-scroll-target border-rule border-b"
+    >
       <div className="p-5 sm:p-8 lg:p-10">
         <div
           className="no-scrollbar flex snap-x snap-mandatory gap-px overflow-x-auto border border-rule bg-rule"

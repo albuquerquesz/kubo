@@ -286,7 +286,12 @@ export default function LogoMarquee() {
   }, [trackCopies]);
 
   return (
-    <section className="logo-marquee" aria-label="Integrações brasileiras" data-logo-marquee>
+    <section
+      id="integrations"
+      className="logo-marquee ui-scroll-target"
+      aria-label="Integrações brasileiras"
+      data-logo-marquee
+    >
       <div
         ref={viewportRef}
         className={cn("logo-marquee__viewport", grabbing && "is-grabbing")}
