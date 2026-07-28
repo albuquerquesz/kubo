@@ -4,6 +4,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+import CopyInstallCommandButton from "./copy-install-command-button";
 import DotMatrixBackdrop from "./dot-matrix-backdrop";
 
 /** Final conversion CTA; its canvas backdrop is purely decorative. */
@@ -40,9 +41,7 @@ export default function FinalCtaDotMatrix() {
               className="size-4 shrink-0 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
             />
           </Link>
-          <code className="select-text break-all font-mono text-[0.8125rem] leading-6 text-[#f5f5f5]/55">
-            bun create kubojs@latest
-          </code>
+          <CopyInstallCommandButton />
         </div>
       </div>
     </section>
