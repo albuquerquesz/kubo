@@ -22,13 +22,13 @@ const communityEntries: CommunityEntry[] = [
     image: "/assets/gold-chat-bubbles.png",
   },
   {
-    title: "Explore a estrutura do projeto.",
+    title: "Explore a estrutura.",
     description: "Veja como o template se organiza depois da criação.",
     href: "/docs/project-structure",
     image: "/assets/gold-apps-grid.png",
   },
   {
-    title: "Confira a compatibilidade.",
+    title: "Revise o que combina.",
     description: "Revise combinações válidas antes de montar sua stack.",
     href: "/docs/cli/compatibility",
     image: "/assets/gold-bar-chart.png",
@@ -72,15 +72,17 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
 
 export default function CommunityLinksSection() {
   return (
-    <section aria-label="Comunidade" className="border-rule border-b">
-      <div className="flex flex-col gap-6 p-5 sm:p-8 lg:flex-row lg:items-end lg:justify-between lg:p-10">
+    <section
+      aria-label="Comunidade"
+      className="border-rule border-b pt-6 pb-16 sm:pt-8 sm:pb-20 lg:pt-10 lg:pb-24"
+    >
+      <div className="flex flex-col gap-6 px-5 pb-8 sm:px-8 sm:pb-10 lg:flex-row lg:items-end lg:justify-between lg:px-10 lg:pb-12">
         <div className="max-w-2xl">
           <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             Antes da comunidade, leia o mapa.
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Ainda sem prova social de comunidade. O melhor caminho agora é a documentação, do Stack
-            Builder à estrutura final do projeto.
+            Sem prova social ainda. Comece pela documentação.
           </p>
         </div>
         <Link
