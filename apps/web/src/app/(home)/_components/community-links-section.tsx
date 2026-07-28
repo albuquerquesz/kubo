@@ -87,7 +87,7 @@ export default function CommunityLinksSection() {
         </div>
         <Link
           href="/docs"
-          className="inline-flex h-11 shrink-0 items-center justify-center rounded-full border border-rule bg-foreground px-5 text-sm font-medium text-background transition-colors hover:bg-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="inline-flex h-12 shrink-0 items-center justify-center rounded-md border border-rule bg-foreground px-5 text-sm font-medium text-background transition-colors hover:bg-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           Ler documentação
         </Link>

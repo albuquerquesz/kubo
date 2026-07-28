@@ -94,7 +94,7 @@ export function StackDisplay({ stackState }: StackDisplayProps) {
           <Link href={editUrl}>
             <button
               type="button"
-              className="flex items-center gap-2 rounded border border-border bg-fd-background px-3 py-2 font-mono text-muted-foreground text-xs transition-all hover:border-muted-foreground/30 hover:bg-muted hover:text-foreground"
+              className="inline-flex h-8 items-center gap-2 rounded-md border border-border bg-fd-background px-3 font-mono text-muted-foreground text-xs transition-all hover:border-muted-foreground/30 hover:bg-muted hover:text-foreground"
             >
               <Edit className="h-3 w-3" />
               <span>./edit --stack</span>
@@ -104,7 +104,7 @@ export function StackDisplay({ stackState }: StackDisplayProps) {
           <ShareDialog stackUrl={stackUrl} stackState={stackState}>
             <button
               type="button"
-              className="flex items-center gap-2 rounded border border-border bg-fd-background px-3 py-2 font-mono text-muted-foreground text-xs transition-all hover:border-muted-foreground/30 hover:bg-muted hover:text-foreground"
+              className="inline-flex h-8 items-center gap-2 rounded-md border border-border bg-fd-background px-3 font-mono text-muted-foreground text-xs transition-all hover:border-muted-foreground/30 hover:bg-muted hover:text-foreground"
             >
               <Share2 className="h-3 w-3" />
               <span>./share --config</span>
