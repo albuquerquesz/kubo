@@ -24,8 +24,9 @@ const deploymentCards = [
 export default function DeploymentSection() {
   return (
     <section
+      id="deployment"
       aria-labelledby="deployment-title"
-      className="relative left-1/2 flex w-screen flex-col bg-primary py-16 text-primary-foreground -ml-[50vw] sm:py-24"
+      className="ui-scroll-target relative left-1/2 flex w-screen flex-col bg-primary py-16 text-primary-foreground -ml-[50vw] sm:py-24"
     >
       <div className="flex flex-col items-center text-center">
         <p className="font-mono text-xs font-semibold uppercase tracking-[0.08em] leading-none text-primary-foreground/80">
