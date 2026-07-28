@@ -54,8 +54,8 @@ export default function CopyInstallCommandButton({
       type="button"
       onClick={copyCommand}
       className={cn(
-        "inline-flex max-w-full cursor-pointer items-center gap-2 rounded-md border border-transparent px-2 py-1.5 text-left transition-colors",
-        "hover:border-[#f5f5f5]/20 hover:bg-[#f5f5f5]/5",
+        "inline-flex max-w-full cursor-pointer items-center gap-2 rounded-md border border-[#f5f5f5]/20 bg-[#f5f5f5]/5 px-4 py-2.5 text-left transition-colors",
+        "hover:border-[#f5f5f5]/28 hover:bg-[#f5f5f5]/8",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
         className,
       )}
