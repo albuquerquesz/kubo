@@ -175,7 +175,7 @@ Measured nodes:
 - Exactly **three** chevron-down glyphs, same size, same x.
 - Cascade delay **0 / 200 / 400 ms**, duration **2s**, linear, infinite.
 - Respect `prefers-reduced-motion: reduce` → static opacity ~0.55, no animation.
-- Optional: whole stack is a control that smooth-scrolls to the next section (`#product` / next `ui-scroll-target`). If not interactive, mark decorative (`aria-hidden`).
+- Optional: whole stack is a control that smooth-scrolls to the next section (`#builder` / next `ui-scroll-target`). If not interactive, mark decorative (`aria-hidden`).
 
 ### 3) Featured kicker + card
 

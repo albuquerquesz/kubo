@@ -10,7 +10,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const primaryLinks = [
-  { href: "/#product", label: "Builder" },
+  { href: "/#builder", label: "Builder" },
   { href: "/#documentation", label: "Docs" },
 ] as const;
 
