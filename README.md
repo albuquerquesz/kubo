@@ -20,7 +20,7 @@ bun create kubojs@latest
 pnpm create kubojs@latest
 
 # Using npm
-npx kubojs@latest
+npx create-kubojs@latest
 ```
 
 ## Features
@@ -43,7 +43,7 @@ Type safety end-to-end, clean monorepo layout, and zero lock-in: you choose only
 
 This repository is organized as a monorepo containing:
 
-- **CLI**: [`apps/cli`](apps/cli) — published as [`kubojs`](https://www.npmjs.com/package/kubojs)
+- **CLI**: [`apps/cli`](apps/cli) — published as [`create-kubojs`](https://www.npmjs.com/package/create-kubojs) (bins: `create-kubojs`, `kubojs`; `@kubojs/cli` compat alias)
 - **Documentation / site**: [`apps/web`](apps/web)
 - **Packages**: [`packages/types`](packages/types), [`packages/template-generator`](packages/template-generator), [`packages/backend`](packages/backend)
 

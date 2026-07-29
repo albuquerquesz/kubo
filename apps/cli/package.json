@@ -1,5 +1,5 @@
 {
-  "name": "@kubojs/cli",
+  "name": "create-kubojs",
   "version": "3.36.3",
   "description": "A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations",
   "keywords": [
@@ -7,6 +7,7 @@
     "biome",
     "boilerplate",
     "cli",
+    "create-kubojs",
     "drizzle",
     "elysia",
     "expo",
@@ -37,6 +38,7 @@
     "directory": "apps/cli"
   },
   "bin": {
+    "create-kubojs": "dist/cli.mjs",
     "kubojs": "dist/cli.mjs"
   },
   "files": [

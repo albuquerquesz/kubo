@@ -41,7 +41,7 @@ const config: NextConfig = {
     root: monorepoRoot,
   },
   serverExternalPackages: [
-    "@kubojs/cli",
+    "create-kubojs",
     "@kubojs/template-generator",
     "fs-extra",
     "tinyglobby",

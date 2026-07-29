@@ -16,7 +16,7 @@ bun create kubojs@latest
 pnpm create kubojs@latest
 
 # Using npm
-npx kubojs@latest
+npx create-kubojs@latest
 ```
 
 Follow the prompts to configure your project or use the `--yes` flag for defaults.

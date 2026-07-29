@@ -103,8 +103,19 @@ jobs:
         env:
           BTS_TELEMETRY: 0
 
-      - name: Publish CLI to NPM
+      - name: Publish create-kubojs to NPM
         run: cd apps/cli && npm publish --access public --provenance --tag ${{ steps.version.outputs.tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          BTS_TELEMETRY: 0
+
+      - name: Publish @kubojs/cli alias to NPM
+        run: |
+          cd apps/cli
+          ORIGINAL=$(cat package.json)
+          jq '.name = "@kubojs/cli"' package.json > tmp.json && mv tmp.json package.json
+          npm publish --access public --provenance --tag ${{ steps.version.outputs.tag }}
+          echo "$ORIGINAL" > package.json
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           BTS_TELEMETRY: 0
@@ -130,7 +141,8 @@ jobs:
 
             | Package | Version | NPM Tag |
             |---------|---------|---------|
-            | `@kubojs/cli` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
+            | `create-kubojs` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
+            | `@kubojs/cli` (alias) | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
             | `@kubojs/types` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
             | `@kubojs/template-generator` | `${{ steps.version.outputs.version }}` | `pr${{ steps.version.outputs.pr }}` |
 
@@ -140,16 +152,18 @@ jobs:
 
             ```bash
             # Using the PR tag (always gets latest for this PR)
-            bunx @kubojs/cli@pr${{ steps.version.outputs.pr }}
-            npx @kubojs/cli@pr${{ steps.version.outputs.pr }}
+            bun create kubojs@pr${{ steps.version.outputs.pr }}
+            bunx create-kubojs@pr${{ steps.version.outputs.pr }}
+            npx create-kubojs@pr${{ steps.version.outputs.pr }}
 
             # Using exact version
-            bunx @kubojs/cli@${{ steps.version.outputs.version }}
-            npx @kubojs/cli@${{ steps.version.outputs.version }}
+            bunx create-kubojs@${{ steps.version.outputs.version }}
+            npx create-kubojs@${{ steps.version.outputs.version }}
             ```
 
             ### NPM Links
-            - [@kubojs/cli@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/@kubojs/cli/v/${{ steps.version.outputs.version }})
+            - [create-kubojs@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/create-kubojs/v/${{ steps.version.outputs.version }})
+            - [@kubojs/cli@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/@kubojs/cli/v/${{ steps.version.outputs.version }}) (compat alias)
             - [@kubojs/types@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/@kubojs/types/v/${{ steps.version.outputs.version }})
             - [@kubojs/template-generator@${{ steps.version.outputs.version }}](https://www.npmjs.com/package/@kubojs/template-generator/v/${{ steps.version.outputs.version }})
 

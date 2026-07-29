@@ -146,7 +146,7 @@ async function main(): Promise<void> {
 This PR bumps the version to \`${newVersion}\`.
 
 ### Changes
-- Updated \`@kubojs/cli\` to v${newVersion}
+- Updated \`create-kubojs\` to v${newVersion}
 - Updated \`@kubojs/types\` to v${newVersion}
 - Updated \`@kubojs/template-generator\` to v${newVersion}
 - Updated the agent plugin manifests (Claude Code + Codex) to v${newVersion}

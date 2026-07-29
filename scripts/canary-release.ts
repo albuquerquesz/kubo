@@ -54,7 +54,7 @@ async function main(): Promise<void> {
 
   const packageJson = JSON.parse(await readFile(CLI_PACKAGE_JSON_PATH, "utf-8"));
   const currentVersion = packageJson.version;
-  const packageName: string = packageJson.name || "@kubojs/cli";
+  const packageName: string = packageJson.name || "create-kubojs";
   const baseVersion = semver.coerce(currentVersion)?.version ?? currentVersion;
   console.log(`Current version: ${currentVersion}`);
   if (baseVersion !== currentVersion) {
