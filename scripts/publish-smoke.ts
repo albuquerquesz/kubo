@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Verify kubojs installs and runs under npm, pnpm, and bun.
+// Verify create-kubojs installs and runs under npm, pnpm, and bun.
 // Catches any regression that breaks the published artifact for consumers —
 // unresolved protocol refs, missing files, broken bin entry, import failures
 // from missing transitive deps, etc.
@@ -7,8 +7,8 @@
 // Packs each publishable workspace with `npm pack` (matching the release
 // workflow, which uses `npm publish`), installs the CLI tarball in a temp
 // dir using overrides to redirect sibling workspace deps at their local
-// tarballs, then runs `kubojs --version` to prove the binary
-// actually executes.
+// tarballs, then runs `create-kubojs --version` and `kubojs --version` to
+// prove both binaries actually execute.
 
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -30,7 +30,7 @@ const PUBLISHABLES: Publishable[] = [
   { name: "@kubojs/types", dir: "packages/types" },
   { name: "@kubojs/template-generator", dir: "packages/template-generator" },
   {
-    name: "@kubojs/cli",
+    name: "create-kubojs",
     dir: "apps/cli",
     rewriteWorkspaceDeps: ["@kubojs/types", "@kubojs/template-generator"],
   },
@@ -91,7 +91,7 @@ async function installAndRun(
     name: `smoke-${pm}`,
     private: true,
     version: "0.0.0",
-    dependencies: { "@kubojs/cli": `file:${tarballs["@kubojs/cli"]}` },
+    dependencies: { "create-kubojs": `file:${tarballs["create-kubojs"]}` },
   };
   if (pm === "pnpm") fixture.pnpm = { overrides };
   else fixture.overrides = overrides;
@@ -106,7 +106,7 @@ async function installAndRun(
 module.exports = {
   hooks: {
     readPackage(pkg) {
-      if (pkg.name === "@kubojs/cli") {
+      if (pkg.name === "create-kubojs") {
         pkg.dependencies = {
           ...pkg.dependencies,
           "@kubojs/types": localDeps["@kubojs/types"],
@@ -137,17 +137,17 @@ module.exports = {
     process.exit(1);
   }
 
-  // Execute the CLI via its installed bin path to prove it actually works —
-  // not just that the file got linked into node_modules/.bin.
-  const bin = join(dir, "node_modules", ".bin", "kubojs");
-  const run = await $`${bin} --version`.cwd(dir).quiet().nothrow();
-  if (run.exitCode !== 0) {
-    console.error(red(`✗ ${pm}: kubojs --version failed (exit ${run.exitCode})`));
-    console.error(dim(run.stderr.toString() + run.stdout.toString()));
-    process.exit(1);
+  // Execute both published bins via installed paths — not just that files linked.
+  for (const binName of ["create-kubojs", "kubojs"] as const) {
+    const bin = join(dir, "node_modules", ".bin", binName);
+    const run = await $`${bin} --version`.cwd(dir).quiet().nothrow();
+    if (run.exitCode !== 0) {
+      console.error(red(`✗ ${pm}: ${binName} --version failed (exit ${run.exitCode})`));
+      console.error(dim(run.stderr.toString() + run.stdout.toString()));
+      process.exit(1);
+    }
+    console.log(green(`✓ ${pm}`) + dim(`  ${binName} v${run.stdout.toString().trim()}`));
   }
-
-  console.log(green(`✓ ${pm}`) + dim(`  v${run.stdout.toString().trim()}`));
 }
 
 async function hasPackageManager(pm: string): Promise<boolean> {
@@ -165,7 +165,7 @@ for (const pkg of PUBLISHABLES) {
   console.log(dim(`  ${pkg.name}`));
 }
 
-console.log("\nInstalling and running kubojs under each package manager...");
+console.log("\nInstalling and running create-kubojs under each package manager...");
 for (const pm of ["npm", "pnpm", "bun"] as const) {
   if (!(await hasPackageManager(pm))) {
     console.log(dim(`  - ${pm} not available, skipping`));

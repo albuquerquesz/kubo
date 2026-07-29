@@ -53,7 +53,7 @@ jobs:
         id: check-version
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          if npm view @kubojs/cli@$VERSION version 2>/dev/null; then
+          if npm view create-kubojs@$VERSION version 2>/dev/null; then
             echo "Version $VERSION already exists on NPM"
             echo "exists=true" >> $GITHUB_OUTPUT
           else
@@ -117,7 +117,7 @@ jobs:
 
       # Gate all publishes on the smoke so a failure here doesn't leave a
       # partial release on npm (e.g. types/template-generator published but
-      # kubojs broken).
+      # create-kubojs broken).
       - name: Publish smoke test (npm, pnpm, bun)
         if: steps.check-version.outputs.exists == 'false'
         run: bun run smoke:publish
@@ -134,9 +134,22 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish CLI to NPM
+      - name: Publish create-kubojs to NPM
         if: steps.check-version.outputs.exists == 'false'
         run: cd apps/cli && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # Backward-compat alias: same artifact under @kubojs/cli for older docs/installs.
+      - name: Publish @kubojs/cli alias to NPM
+        if: steps.check-version.outputs.exists == 'false'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          cd apps/cli
+          ORIGINAL=$(cat package.json)
+          jq --arg v "$VERSION" '.name = "@kubojs/cli" | .version = $v' package.json > tmp.json && mv tmp.json package.json
+          npm publish --access public
+          echo "$ORIGINAL" > package.json
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -172,7 +185,8 @@ jobs:
           echo "## Release v$VERSION Complete!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Published Packages" >> $GITHUB_STEP_SUMMARY
-          echo "- [@kubojs/cli@$VERSION](https://www.npmjs.com/package/@kubojs/cli/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "- [create-kubojs@$VERSION](https://www.npmjs.com/package/create-kubojs/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "- [@kubojs/cli@$VERSION](https://www.npmjs.com/package/@kubojs/cli/v/$VERSION) (compat alias)" >> $GITHUB_STEP_SUMMARY
           echo "- [@kubojs/types@$VERSION](https://www.npmjs.com/package/@kubojs/types/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
           echo "- [@kubojs/template-generator@$VERSION](https://www.npmjs.com/package/@kubojs/template-generator/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
