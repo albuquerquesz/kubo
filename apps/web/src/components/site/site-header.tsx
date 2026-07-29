@@ -283,7 +283,7 @@ export function SiteHeader({ className }: { className?: string }) {
             headerRowClass,
           )}
         >
-          Monte uma stack
+          Montar stack
           <ArrowUpRight
             data-icon="inline-end"
             className="size-5 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"

@@ -171,50 +171,54 @@ describe("stack builder D1 compatibility", () => {
     expect(secondAdjustment.shouldApply).toBe(true);
   });
 
-  test("allows Polar when there is no frontend at all", () => {
+  test("blocks AbacatePay when there is no web frontend", () => {
     const stack = createStack({
       webFrontend: ["none"],
       nativeFrontend: ["none"],
       backend: "hono",
-      auth: "better-auth",
+      database: "sqlite",
+      orm: "drizzle",
     });
 
-    expect(getDisabledReason(stack, "payments", "polar")).toBeNull();
+    expect(getDisabledReason(stack, "payments", "abacatepay")).toBe(
+      "AbacatePay exige um frontend web",
+    );
   });
 
-  test("allows Polar for native-only stacks", () => {
+  test("blocks AbacatePay for native-only stacks", () => {
     const stack = createStack({
       webFrontend: ["none"],
       nativeFrontend: ["native-bare"],
       backend: "hono",
-      auth: "better-auth",
+      database: "sqlite",
+      orm: "drizzle",
     });
 
-    expect(getDisabledReason(stack, "payments", "polar")).toBeNull();
+    expect(getDisabledReason(stack, "payments", "abacatepay")).toBe(
+      "AbacatePay exige um frontend web",
+    );
   });
 
-  test("allows Polar for mixed web and native stacks", () => {
+  test("blocks AbacatePay for mixed web and native stacks", () => {
     const stack = createStack({
       webFrontend: ["tanstack-router"],
       nativeFrontend: ["native-bare"],
       backend: "hono",
       runtime: "bun",
-      auth: "better-auth",
-      payments: "polar",
+      database: "sqlite",
+      orm: "drizzle",
+      payments: "abacatepay",
     });
 
-    expect(getDisabledReason(stack, "payments", "polar")).toBeNull();
-    expect(analyzeStackCompatibility(stack).adjustedStack).toBeNull();
-
-    const command = generateStackCommand(stack);
-    expect(command).toContain("--frontend tanstack-router native-bare");
-    expect(command).toContain("--payments polar");
+    expect(getDisabledReason(stack, "payments", "abacatepay")).toBe(
+      "AbacatePay v1 não suporta apps com frontend nativo",
+    );
   });
 
-  test("allows Polar for mixed Convex Better Auth web and native stacks", () => {
+  test("blocks AbacatePay for Convex stacks", () => {
     const stack = createStack({
       webFrontend: ["next"],
-      nativeFrontend: ["native-bare"],
+      nativeFrontend: ["none"],
       backend: "convex",
       runtime: "none",
       database: "none",
@@ -222,17 +226,39 @@ describe("stack builder D1 compatibility", () => {
       api: "none",
       dbSetup: "none",
       auth: "better-auth",
-      payments: "polar",
+      payments: "abacatepay",
     });
 
-    expect(getDisabledReason(stack, "auth", "better-auth")).toBeNull();
-    expect(getDisabledReason(stack, "payments", "polar")).toBeNull();
+    expect(getDisabledReason(stack, "payments", "abacatepay")).toBe(
+      "AbacatePay não é suportado com Convex",
+    );
+  });
+
+  test("allows AbacatePay for web + SQL stacks and emits CLI flags", () => {
+    const stack = createStack({
+      webFrontend: ["tanstack-router"],
+      nativeFrontend: ["none"],
+      backend: "hono",
+      runtime: "bun",
+      database: "sqlite",
+      orm: "drizzle",
+      payments: "abacatepay",
+      observability: "getmonitor",
+      webDeploy: "guaracloud",
+      serverDeploy: "guaracloud",
+    });
+
+    expect(getDisabledReason(stack, "payments", "abacatepay")).toBeNull();
+    expect(getDisabledReason(stack, "observability", "getmonitor")).toBeNull();
+    expect(getDisabledReason(stack, "webDeploy", "guaracloud")).toBeNull();
+    expect(getDisabledReason(stack, "serverDeploy", "guaracloud")).toBeNull();
     expect(analyzeStackCompatibility(stack).adjustedStack).toBeNull();
 
     const command = generateStackCommand(stack);
-    expect(command).toContain("--frontend next native-bare");
-    expect(command).toContain("--backend convex");
-    expect(command).toContain("--payments polar");
+    expect(command).toContain("--payments abacatepay");
+    expect(command).toContain("--observability getmonitor");
+    expect(command).toContain("--web-deploy guaracloud");
+    expect(command).toContain("--server-deploy guaracloud");
   });
 
   test("blocks the AI example for Astro frontends", () => {

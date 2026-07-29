@@ -118,7 +118,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
         </div>
 
         <div className="hidden h-full flex-1 grid-cols-[19rem_minmax(0,1fr)] overflow-hidden border-border sm:grid lg:grid-cols-[24rem_minmax(0,1fr)]">
-          <aside className="flex min-h-0 flex-col overflow-hidden border-border/50 border-r bg-fd-background">
+          <aside className="flex min-h-0 flex-col overflow-hidden border-rule border-r bg-fd-background">
             <ScrollArea className="min-h-0 flex-1">
               <div className="p-2">
                 <div className="overflow-hidden rounded-2xl bg-fd-background/80">
