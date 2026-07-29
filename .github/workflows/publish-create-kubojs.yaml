@@ -1,0 +1,79 @@
+# One-shot bootstrap: first publish of unscoped create-kubojs (+ @kubojs/cli alias).
+# Safe to re-run only when the version is new; existing versions will fail as expected.
+name: Publish create-kubojs
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (must match apps/cli package.json)"
+        required: true
+        default: "3.36.3"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish create-kubojs
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build types
+        run: cd packages/types && bun run build
+
+      - name: Build template-generator
+        run: cd packages/template-generator && bun run build
+
+      - name: Point CLI workspace deps at published versions
+        run: |
+          VERSION="${{ inputs.version }}"
+          cd apps/cli
+          jq --arg v "$VERSION" --arg dep "^$VERSION" \
+            '.version = $v | .dependencies["@kubojs/types"] = $dep | .dependencies["@kubojs/template-generator"] = $dep' \
+            package.json > tmp.json && mv tmp.json package.json
+          cat package.json | jq '{name, version, bin, dependencies}'
+
+      - name: Build CLI
+        run: cd apps/cli && bun run build
+
+      - name: Publish create-kubojs
+        run: cd apps/cli && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @kubojs/cli alias (same version if new)
+        continue-on-error: true
+        run: |
+          cd apps/cli
+          ORIGINAL=$(cat package.json)
+          jq '.name = "@kubojs/cli"' package.json > tmp.json && mv tmp.json package.json
+          npm publish --access public || echo "alias publish skipped/failed (version may already exist)"
+          echo "$ORIGINAL" > package.json
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Verify
+        run: |
+          npm view create-kubojs version
+          npm view create-kubojs bin
+          npm view create-kubojs name
