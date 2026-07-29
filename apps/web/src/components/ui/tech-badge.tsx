@@ -47,27 +47,37 @@ const getBadgeColors = (category: string): string => {
   }
 };
 
+function isImageIconSrc(icon: string) {
+  return icon.startsWith("https://") || icon.startsWith("/");
+}
+
+const LIGHT_VARIANT_REMOTE_ICONS = [
+  "drizzle",
+  "prisma",
+  "express",
+  "clerk",
+  "planetscale",
+  "nx",
+  "astro",
+  "vercel",
+] as const;
+
 function TechIcon({ icon, name, className }: { icon: string; name: string; className?: string }) {
   const { theme } = useTheme();
 
   if (!icon) return null;
 
-  if (!icon.startsWith("https://")) {
+  if (!isImageIconSrc(icon)) {
     return <span className={cn("inline-flex items-center text-lg", className)}>{icon}</span>;
   }
 
+  // Light-mode *-light.svg rewrites are only for remote R2 icons that ship both variants.
+  // Local /integrations assets have a single file and must not be rewritten.
   let iconSrc = icon;
   if (
     theme === "light" &&
-    (icon.includes("drizzle") ||
-      icon.includes("prisma") ||
-      icon.includes("express") ||
-      icon.includes("clerk") ||
-      icon.includes("planetscale") ||
-      icon.includes("nx") ||
-      icon.includes("polar") ||
-      icon.includes("astro") ||
-      icon.includes("vercel"))
+    icon.startsWith("https://") &&
+    LIGHT_VARIANT_REMOTE_ICONS.some((token) => icon.includes(token))
   ) {
     iconSrc = icon.replace(".svg", "-light.svg");
   }

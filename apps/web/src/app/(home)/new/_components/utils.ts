@@ -116,8 +116,8 @@ export const isTauriBlockedByConvexBetterAuth = (
   webFrontend.some((f) => (tauriStaticExportFrontends as readonly string[]).includes(f));
 
 const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
-  webFrontend: "Frontend web",
-  nativeFrontend: "Frontend nativo",
+  webFrontend: "Web",
+  nativeFrontend: "Nativo",
   backend: "Backend",
   runtime: "Runtime",
   api: "API",
@@ -129,8 +129,8 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
   auth: "Auth",
   payments: "Pagamentos",
   observability: "Observabilidade",
-  packageManager: "Gerenciador de pacotes",
-  addons: "Complementos",
+  packageManager: "Package Manager",
+  addons: "Add-ons",
   examples: "Exemplos",
   git: "Git",
   install: "Instalação",
@@ -1167,10 +1167,6 @@ export const getDisabledReason = (
   // PAYMENTS CONSTRAINTS
   // ============================================
   if (category === "payments") {
-    if (optionId === "polar" && currentStack.auth !== "better-auth") {
-      return "Polar exige Better Auth";
-    }
-
     if (optionId === "abacatepay") {
       if (currentStack.backend === "convex") {
         return "AbacatePay não é suportado com Convex";

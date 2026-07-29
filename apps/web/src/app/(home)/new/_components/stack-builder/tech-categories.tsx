@@ -1,4 +1,4 @@
-import { CheckCircle2, InfoIcon, Terminal } from "lucide-react";
+import { CheckCircle2, InfoIcon } from "lucide-react";
 import { motion } from "motion/react";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -59,9 +59,6 @@ export function TechCategories({
             className={cn("mb-6 scroll-mt-4", isDesktop && "sm:mb-8")}
           >
             <div className="mb-3 flex items-center border-border border-b pb-2 text-muted-foreground">
-              <Terminal
-                className={cn("mr-2 h-4 w-4 shrink-0 text-primary", isDesktop && "sm:h-5 sm:w-5")}
-              />
               <h2
                 className={cn(
                   "font-semibold font-mono text-foreground text-sm",
