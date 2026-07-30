@@ -190,89 +190,100 @@ function resolveGrid(cssWidth: number, cssHeight: number): GridGeometry {
 }
 
 /**
- * Directional luminous bands: enter upper-right / right and bend down-left.
- * Paths keep ≥0.12 normalized horizontal separation at the vertical midpoint.
+ * Directional luminous bands: enter lower-right / right and bend up-left.
+ * Paths keep ≥0.12 nx separation at mid height so they never form a mid-field eye/bridge.
  */
 function buildBands(colors: ThemeColors, phase: number): Band[] {
   const driftX = Math.sin(phase * Math.PI * 2) * 0.018;
   const driftY = Math.cos(phase * Math.PI * 2 * 0.7) * 0.012;
 
-  // Primary ribbon — broad primary energy sweeping UR → lower-center/left.
+  // Primary ribbon — reverse sweep: lower-right → upper-center/left.
+  // Spec anchors: p0=(0.92, 1.06), p1=(0.58, 0.52), p2=(0.34, -0.06)
   const primaryBand = sampleQuadratic(
-    { x: 0.82 + driftX, y: -0.08 },
-    { x: 0.62 + driftX * 0.4, y: 0.28 + driftY },
-    { x: 0.38 + driftX * 0.2, y: 1.08 },
+    { x: 0.92 + driftX, y: 1.06 },
+    { x: 0.58 + driftX * 0.4, y: 0.52 + driftY },
+    { x: 0.34 + driftX * 0.2, y: -0.06 },
   );
 
-  // Warm companion — right-side accent/foreground core, separated from primary.
+  // Warm companion — further right, same reverse direction, ≥0.12 mid-gap from primary.
+  // Spec anchors: p0=(1.12, 0.88), p1=(0.86, 0.42), p2=(0.62, -0.04)
   const warmBand = sampleQuadratic(
-    { x: 1.1 + driftX * 0.3, y: 0.02 },
-    { x: 0.9 - driftY, y: 0.38 + driftX },
-    { x: 0.64 + driftX * 0.15, y: 1.08 },
+    { x: 1.12 + driftX * 0.3, y: 0.88 },
+    { x: 0.86 - driftY, y: 0.42 + driftX },
+    { x: 0.62 + driftX * 0.15, y: -0.04 },
   );
 
-  // Weak lower echo — secondary depth across the lower half.
+  // Weak lower echo — ≤~35% of primary opacity, not bridging the primary pair.
+  // Spec anchors: p0=(0.78, 1.10), p1=(0.52, 0.92), p2=(0.22, 0.78)
   const lowerEcho = sampleQuadratic(
-    { x: 0.14 + driftX * 0.2, y: 1.08 },
-    { x: 0.42 + driftY, y: 0.84 },
-    { x: 0.72, y: 0.68 + driftY },
+    { x: 0.78 + driftX * 0.2, y: 1.1 },
+    { x: 0.52 + driftY, y: 0.92 },
+    { x: 0.22, y: 0.78 + driftY },
   );
 
-  // Faint top-left haze so the field is not a sterile dark rectangle.
+  // Faint top-left haze — below the visual weight of either main ribbon.
   const topLeftHaze = sampleQuadratic(
     { x: -0.05, y: -0.04 },
     { x: 0.12 + driftX * 0.3, y: 0.08 },
     { x: 0.22, y: 0.22 + driftY },
   );
 
-  const primaryCore = mix(colors.primary, colors.foreground, 0.5);
-  const warmCore = mix(colors.accent, colors.foreground, 0.88);
+  // Primary: deeper amber/olive-gold. Warm: lighter yellow core temperature.
+  const primaryColor = mix(colors.primary, colors.background, 0.12);
+  const primaryCore = mix(colors.primary, colors.foreground, 0.55);
+  const warmColor = mix(colors.accent, colors.primary, 0.35);
+  const warmCore = mix(colors.accent, colors.foreground, 0.72);
   const hazeColor = mix(colors.primary, colors.card, 0.28);
 
   return [
     {
       points: primaryBand,
-      width: 0.14,
-      coreWidth: 0.045,
-      opacity: 1,
-      coreOpacity: 0.78,
-      color: mix(colors.primary, colors.background, 0.0),
-      coreColor: primaryCore,
-      temperature: 0.48,
-    },
-    {
-      points: warmBand,
       width: 0.13,
       coreWidth: 0.042,
       opacity: 1,
-      coreOpacity: 1,
-      color: mix(colors.accent, colors.primary, 0.1),
+      coreOpacity: 0.72,
+      color: primaryColor,
+      coreColor: primaryCore,
+      temperature: 0.42,
+    },
+    {
+      points: warmBand,
+      width: 0.12,
+      coreWidth: 0.04,
+      opacity: 1,
+      coreOpacity: 0.92,
+      color: warmColor,
       coreColor: warmCore,
       temperature: 1,
     },
     {
       points: lowerEcho,
-      width: 0.12,
-      coreWidth: 0.038,
-      opacity: 0.4,
-      coreOpacity: 0.22,
-      color: mix(colors.primary, colors.muted, 0.22),
+      width: 0.11,
+      coreWidth: 0.035,
+      opacity: 0.32,
+      coreOpacity: 0.16,
+      color: mix(colors.primary, colors.muted, 0.28),
       coreColor: mix(colors.accent, colors.mutedForeground, 0.28),
       temperature: 0.32,
     },
     {
       points: topLeftHaze,
-      width: 0.2,
-      coreWidth: 0.07,
-      opacity: 0.18,
-      coreOpacity: 0.06,
+      width: 0.18,
+      coreWidth: 0.06,
+      opacity: 0.14,
+      coreOpacity: 0.05,
       color: hazeColor,
       coreColor: mix(colors.accent, colors.card, 0.28),
-      temperature: 0.4,
+      temperature: 0.35,
     },
   ];
 }
 
+/**
+ * Per-cell palette: continuous quiet yellow/olive bed + band cores.
+ * Sequence: base → muted lift → olive field → bands → copy pocket → vignette → quantize.
+ * Flat fill only — no radial edge halo or per-cell bevel.
+ */
 function colorForCell(
   col: number,
   row: number,
@@ -284,46 +295,69 @@ function colorForCell(
   const nx = (col + 0.5) / columns;
   const ny = (row + 0.5) / rows;
   const noise = cellNoise(col, row);
+  // Secondary deterministic hash for multi-axis tile variation without extra allocations.
+  const noise2 = cellNoise(col + 17, row + 31);
 
-  // Opaque base cell — flat fill, no per-cell radial halo.
-  let color = mix(colors.background, colors.card, 0.32 + noise * 0.18);
-  color = mix(color, colors.muted, 0.05 + noise * 0.07);
+  // Opaque base cell — card/muted lift so seams read against a real tile bed.
+  let color = mix(colors.background, colors.card, 0.3 + noise * 0.18);
+  color = mix(color, colors.muted, 0.08 + noise * 0.1);
+
+  // Quiet olive-gold field outside ribbons (prevents large black voids).
+  // deep olive-gold ≈ mix(background, primary, .20–.35); mid gold for right shoulders.
+  const deepOlive = mix(colors.background, colors.primary, 0.22 + noise2 * 0.13);
+  const midGold = mix(colors.card, colors.primary, 0.38 + noise * 0.2);
+  // Right 60–70% carries continuous distinguishable tile variation.
+  const rightField = smoothstep(0.28, 0.75, nx);
+  const midY = 1 - Math.min(1, Math.abs(ny - 0.48) * 2);
+  const midLift = smoothstep(0.2, 0.58, nx) * (0.55 + midY * 0.45);
+  color = mix(color, deepOlive, 0.42 + noise * 0.22 + rightField * 0.18);
+  color = mix(color, midGold, rightField * (0.16 + noise2 * 0.14) + midLift * 0.1);
+  // Sparse warm freckles so quiet regions still reveal the grid at 100% zoom.
+  if (noise > 0.72 && rightField > 0.15) {
+    color = mix(color, mix(colors.primary, colors.accent, 0.4), (noise - 0.72) * 0.55);
+  }
 
   for (const band of bands) {
     const d = distanceToPolyline(nx, ny, band.points);
-    const broad = Math.pow(1 - smoothstep(0, band.width, d), 1.1);
-    const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.25);
+    const broad = Math.pow(1 - smoothstep(0, band.width, d), 1.08);
+    const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.22);
     if (broad <= 0.001) continue;
 
-    const intensity = broad * band.opacity * (0.92 + noise * 0.14);
-    const hotness = core * band.coreOpacity * (0.85 + noise * 0.45);
+    const intensity = broad * band.opacity * (0.9 + noise * 0.16);
+    const hotness = core * band.coreOpacity * (0.82 + noise * 0.4);
 
     color = mix(color, band.color, intensity);
     if (hotness > 0.01) {
       color = mix(color, band.coreColor, hotness);
     }
-    if (hotness > 0.12) {
-      color = mix(color, colors.foreground, hotness * band.temperature * 0.28);
+    // Sparse pale hot cores only — not a uniformly bright gold screen.
+    if (hotness > 0.18 && noise > 0.55) {
+      color = mix(color, colors.foreground, hotness * band.temperature * 0.22);
     }
   }
 
-  // Lower-left copy pocket: strong darkening; right third stays hot.
-  const leftQuiet = 1 - smoothstep(0.08, 0.48, nx);
-  const lowerLeftQuiet = (1 - smoothstep(0.05, 0.42, nx)) * (1 - smoothstep(0.35, 0.85, ny)) * 0.85;
-  const quiet = Math.max(leftQuiet * 0.72, lowerLeftQuiet * 0.9);
-  color = mix(color, colors.background, quiet * 0.78);
+  // Copy pocket across ~first 28–34%: dark olive/charcoal tiles, not blank unpainted layer.
+  const copyPocket = 1 - smoothstep(0.28, 0.36, nx);
+  const darkOlive = mix(colors.background, colors.card, 0.38 + noise * 0.16);
+  color = mix(color, darkOlive, copyPocket * 0.58);
+  // Extra crush only on the far-left strip so headline contrast survives.
+  const farLeft = 1 - smoothstep(0, 0.18, nx);
+  color = mix(color, colors.background, farLeft * 0.32);
+  // Mild lower-left tuck under the title block without erasing the bed.
+  const lowerLeftQuiet = (1 - smoothstep(0.08, 0.4, nx)) * (1 - smoothstep(0.42, 0.88, ny)) * 0.42;
+  color = mix(color, colors.background, lowerLeftQuiet);
 
   // Soft edge vignette — right edge less crushed so energy survives.
   const edge =
     Math.max(
-      1 - smoothstep(0, 0.08, nx),
-      (1 - smoothstep(0, 0.06, 1 - nx)) * 0.45,
-      1 - smoothstep(0, 0.07, ny),
-      1 - smoothstep(0, 0.1, 1 - ny),
-    ) * 0.42;
+      1 - smoothstep(0, 0.06, nx),
+      (1 - smoothstep(0, 0.05, 1 - nx)) * 0.32,
+      1 - smoothstep(0, 0.05, ny),
+      1 - smoothstep(0, 0.08, 1 - ny),
+    ) * 0.28;
   color = mix(color, colors.background, edge);
 
-  // Quantize per cell so bands read as tile-level lightning, not smooth blur.
+  // Quantize 8–12 RGB units so bands read as tile-level lightning, not smooth blur.
   const quant = 10;
   return {
     r: Math.round(color.r / quant) * quant,
@@ -396,7 +430,8 @@ function paintMosaic(
     }
   }
 
-  // Light atmospheric veil — CSS mosaic-hero-veil owns copy contrast.
+  // Light atmospheric veil only — CSS .mosaic-hero-veil owns copy contrast.
+  // Keep this weak so the tile bed survives under headline/paragraph.
   const veil = ctx.createRadialGradient(
     cssWidth * 0.28,
     cssHeight * 0.72,
@@ -407,15 +442,15 @@ function paintMosaic(
   );
   veil.addColorStop(
     0,
-    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.22)`,
+    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.12)`,
   );
   veil.addColorStop(
-    0.45,
-    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.04)`,
+    0.5,
+    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.02)`,
   );
   veil.addColorStop(
     1,
-    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.2)`,
+    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.1)`,
   );
   ctx.fillStyle = veil;
   ctx.fillRect(0, 0, cssWidth, cssHeight);
@@ -423,16 +458,16 @@ function paintMosaic(
   const edgeGrad = ctx.createRadialGradient(
     cssWidth * 0.68,
     cssHeight * 0.4,
-    cssHeight * 0.16,
+    cssHeight * 0.18,
     cssWidth * 0.5,
     cssHeight * 0.5,
-    Math.max(cssWidth, cssHeight) * 0.78,
+    Math.max(cssWidth, cssHeight) * 0.8,
   );
   edgeGrad.addColorStop(0, "rgba(0,0,0,0)");
-  edgeGrad.addColorStop(0.75, "rgba(0,0,0,0.06)");
+  edgeGrad.addColorStop(0.78, "rgba(0,0,0,0.04)");
   edgeGrad.addColorStop(
     1,
-    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.52)`,
+    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.36)`,
   );
   ctx.fillStyle = edgeGrad;
   ctx.fillRect(0, 0, cssWidth, cssHeight);
@@ -456,7 +491,8 @@ export default function MosaicHeroCanvas() {
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
 
-    const ctx = canvas.getContext("2d", { alpha: false });
+    // alpha:true so the denser CSS fallback remains visible until first paint.
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     colorsRef.current = readThemeColors();
