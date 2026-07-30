@@ -261,6 +261,36 @@ describe("stack builder D1 compatibility", () => {
     expect(command).toContain("--server-deploy guaracloud");
   });
 
+  test("emits --observability none for backend-less stacks (Stack Builder → CLI)", () => {
+    const stack = createStack({
+      projectName: "atscopilot",
+      webFrontend: ["tanstack-router"],
+      nativeFrontend: ["none"],
+      backend: "none",
+      runtime: "none",
+      api: "none",
+      auth: "none",
+      payments: "none",
+      observability: "none",
+      database: "none",
+      orm: "none",
+      dbSetup: "none",
+      packageManager: "bun",
+      git: "true",
+      webDeploy: "vercel",
+      serverDeploy: "none",
+      install: "true",
+      addons: ["biome"],
+      examples: ["none"],
+    });
+
+    const command = generateStackCommand(stack);
+    expect(command).toContain("--observability none");
+    expect(command).toContain("--payments none");
+    expect(command).toContain("--backend none");
+    expect(command).toContain("--web-deploy vercel");
+  });
+
   test("blocks the AI example for Astro frontends", () => {
     const stack = createStack({
       webFrontend: ["astro"],

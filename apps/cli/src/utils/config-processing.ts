@@ -9,6 +9,7 @@ import type {
   CLIInput,
   Database,
   DatabaseSetup,
+  Observability,
   ORM,
   PackageManager,
   Payments,
@@ -68,6 +69,10 @@ export function processFlags(options: CLIInput, projectName?: string) {
 
   if (options.payments !== undefined) {
     config.payments = options.payments as Payments;
+  }
+
+  if (options.observability !== undefined) {
+    config.observability = options.observability as Observability;
   }
 
   if (options.git !== undefined) {
