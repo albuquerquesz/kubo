@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kubo Mosaic Hero Background"
+  short_description: "Recreate rounded-tile hero backgrounds with Kubo colors"
+  default_prompt: "Use $kubo-mosaic-hero-background to build or tune a dark tiled mosaic hero background with diagonal luminous bands using Kubo theme tokens."

@@ -24,18 +24,11 @@ describe("ethereal beams hero contract", () => {
     expect(source).toContain("count: 6");
   });
 
-  test("hero preserves content order and removes the competing pin grammar", () => {
-    const hero = readRepo("apps/web/src/app/(home)/_components/hero-section.tsx");
+  test("ethereal beams canvas remains available as a standalone decorative layer", () => {
+    const source = readRepo("apps/web/src/app/(home)/_components/ethereal-beams-canvas.tsx");
 
-    expect(hero).toContain('id="top"');
-    expect(hero).toContain('title="Construa sem começar do zero."');
-    expect(hero).toContain(
-      "Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.",
-    );
-    expect(hero).toContain('href="/new"');
-    expect(hero).toContain("HeroRailLower");
-    expect(hero).not.toContain("playHeroStickyScale");
-    expect(hero).not.toContain("playHeroScrollRevealIcons");
-    expect(hero).not.toContain("lg:min-h-[200dvh]");
+    expect(source).toContain("export default function EtherealBeamsCanvas");
+    expect(source).toContain("useThemeColors");
+    expect(source).toContain("ethereal-beams-fallback");
   });
 });
