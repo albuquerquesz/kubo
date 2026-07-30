@@ -28,13 +28,19 @@ describe("mosaic hero background contract", () => {
     // Softer corners (16–18% of pitch), narrow seam.
     expect(source).toContain("CORNER_RATIO = 0.17");
     expect(source).toContain("SEAM_RATIO = 0.09");
-    // Directional bands: upper-right → lower-left (spec path envelope).
-    expect(source).toContain("x: 0.82");
-    expect(source).toContain("x: 1.1");
-    expect(source).toContain("x: 0.14");
+    // Directional bands: lower-right → upper-left, no mid-field eye/bridge.
+    expect(source).toContain("x: 0.92");
+    expect(source).toContain("x: 1.12");
+    expect(source).toContain("x: 0.78");
+    expect(source).toContain("x: 0.86");
     // Flat rounded rects only — no per-cell radial edge treatment in the paint loop.
     expect(source).toContain("ctx.roundRect");
     expect(source).toContain("useLayoutEffect");
+    // Continuous quiet olive field before bands/veil (yellow density contract).
+    expect(source).toContain("deepOlive");
+    expect(source).toContain("midGold");
+    expect(source).toContain("rightField");
+    expect(source).toContain("copyPocket");
     // Canvas mounts without a client-only gate that can leave only the fallback.
     expect(source).toContain('className="mosaic-hero-canvas absolute inset-0 h-full w-full"');
     expect(source).not.toContain("{mounted &&");
@@ -96,5 +102,9 @@ describe("mosaic hero background contract", () => {
     // Fallback tiles via mask: rx ≈ 5.5u / 32u pitch (≈17%), not graph-paper lines.
     expect(css).toContain("rx='5.5'");
     expect(css).toContain("mask-image");
+    // Density: opaque olive base + soft-light bands, not screen-only; hide when ready.
+    expect(css).toContain("soft-light, soft-light, soft-light, soft-light, normal, normal");
+    expect(css).toContain('data-mosaic-ready="true"');
+    expect(css).toContain("Right-side continuous olive field");
   });
 });
