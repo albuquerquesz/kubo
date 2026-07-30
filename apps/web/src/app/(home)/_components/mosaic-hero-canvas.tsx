@@ -166,6 +166,28 @@ function sampleQuadratic(
   return out;
 }
 
+/** Cubic Bezier for S-curve energy lobes (reference dual-ribbon structure). */
+function sampleCubic(
+  p0: { x: number; y: number },
+  p1: { x: number; y: number },
+  p2: { x: number; y: number },
+  p3: { x: number; y: number },
+  segments = 36,
+): Array<{ x: number; y: number }> {
+  const out: Array<{ x: number; y: number }> = [];
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    const u = 1 - t;
+    const uu = u * u;
+    const tt = t * t;
+    out.push({
+      x: uu * u * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + tt * t * p3.x,
+      y: uu * u * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + tt * t * p3.y,
+    });
+  }
+  return out;
+}
+
 /**
  * Height-driven square pitch so cells stay square and the grid reaches the edges.
  * At the reference aspect this resolves near 52×37; wider frames add columns.
@@ -190,92 +212,97 @@ function resolveGrid(cssWidth: number, cssHeight: number): GridGeometry {
 }
 
 /**
- * Directional luminous bands: enter lower-right / right and bend up-left.
- * Paths keep ≥0.14 nx separation at mid height so dark matrix remains between ribbons.
+ * Soft dual-temperature energy mass (reference structure, Kubo tokens).
+ * Cool S-curve + warm outer arc share soft shoulders but keep a darker trough between cores.
+ * Broad fields with dual cores — not a monochrome gold soup or thin knife ribbons.
  */
 function buildBands(colors: ThemeColors, phase: number): Band[] {
   const driftX = Math.sin(phase * Math.PI * 2) * 0.018;
   const driftY = Math.cos(phase * Math.PI * 2 * 0.7) * 0.012;
 
-  // Primary ribbon — reverse sweep: lower-right → upper-center/left.
-  // Spec anchors: p0=(0.92, 1.06), p1=(0.58, 0.52), p2=(0.34, -0.06)
-  const primaryBand = sampleQuadratic(
-    { x: 0.92 + driftX, y: 1.06 },
-    { x: 0.56 + driftX * 0.4, y: 0.52 + driftY },
-    { x: 0.34 + driftX * 0.2, y: -0.06 },
+  // Cool/primary S-curve: top mid-right → rightward bulge (hot core) → lower-mid.
+  // Reference cool ribbon silhouette (cubic for the reverse-C / S).
+  const primaryBand = sampleCubic(
+    { x: 0.58 + driftX * 0.2, y: -0.06 },
+    { x: 0.84 + driftX, y: 0.2 + driftY },
+    { x: 0.7 + driftX * 0.3, y: 0.55 },
+    { x: 0.44 + driftX * 0.1, y: 1.04 },
   );
 
-  // Warm companion — further right, same reverse direction, ≥0.14 mid-gap from primary.
-  // Spec anchors: p0=(1.12, 0.88), p1=(0.86, 0.42), p2=(0.62, -0.04)
-  const warmBand = sampleQuadratic(
-    { x: 1.12 + driftX * 0.3, y: 0.88 },
-    { x: 0.88 - driftY, y: 0.42 + driftX },
-    { x: 0.64 + driftX * 0.15, y: -0.04 },
+  // Warm/accent outer arc — full right-edge vertical, soft shoulder overlap with cool.
+  const warmBand = sampleCubic(
+    { x: 1.08 + driftX * 0.15, y: -0.04 },
+    { x: 1.02 - driftY * 0.25, y: 0.3 + driftX },
+    { x: 0.94 + driftX * 0.1, y: 0.6 },
+    { x: 0.86 + driftX * 0.1, y: 1.04 },
   );
 
-  // Weak lower echo — ≤~22% of primary weight, not bridging the main pair.
-  // Spec anchors: p0=(0.78, 1.10), p1=(0.52, 0.92), p2=(0.22, 0.78)
+  // Lower cool echo — secondary depth under/behind the headline line.
   const lowerEcho = sampleQuadratic(
-    { x: 0.78 + driftX * 0.2, y: 1.1 },
-    { x: 0.52 + driftY, y: 0.92 },
-    { x: 0.22, y: 0.78 + driftY },
+    { x: 0.52 + driftX * 0.15, y: 1.14 },
+    { x: 0.32 + driftY, y: 0.76 },
+    { x: 0.1, y: 0.58 + driftY },
   );
 
-  // Faint top-left haze — almost no primary; below either main ribbon.
+  // Top-left warm haze — visible non-focal cloud (reference top-left bleed).
   const topLeftHaze = sampleQuadratic(
-    { x: -0.05, y: -0.04 },
-    { x: 0.12 + driftX * 0.3, y: 0.08 },
-    { x: 0.22, y: 0.22 + driftY },
+    { x: -0.12, y: -0.1 },
+    { x: 0.08 + driftX * 0.2, y: 0.08 },
+    { x: 0.22, y: 0.28 + driftY },
   );
 
-  // Dual temperature: deep/cooler primary vs hotter accent companion (gold-only).
-  // Cooler ribbon = primary mixed hard toward background/card; warm = accent path.
-  const primaryColor = mix(colors.primary, colors.background, 0.42);
-  const primaryCore = mix(mix(colors.primary, colors.mutedForeground, 0.22), colors.card, 0.18);
-  const warmColor = mix(colors.accent, colors.primary, 0.22);
-  const warmCore = mix(colors.accent, colors.foreground, 0.68);
-  const hazeColor = mix(colors.card, colors.background, 0.35);
+  // Dual temperature (gold-only): deep olive-cool body vs hot cream-warm body.
+  const primaryColor = mix(colors.primary, colors.background, 0.58);
+  const primaryCore = mix(
+    mix(colors.primary, colors.mutedForeground, 0.28),
+    colors.foreground,
+    0.38,
+  );
+  const warmColor = mix(colors.accent, colors.primary, 0.1);
+  const warmCore = mix(colors.accent, colors.foreground, 0.88);
+  // Warm-leaning haze (tiny accent tick) without flooding primary gold.
+  const hazeColor = mix(mix(colors.muted, colors.accent, 0.14), colors.card, 0.28);
 
   return [
     {
       points: primaryBand,
-      width: 0.09,
-      coreWidth: 0.03,
-      opacity: 0.84,
-      coreOpacity: 0.78,
+      width: 0.14,
+      coreWidth: 0.05,
+      opacity: 0.88,
+      coreOpacity: 0.94,
       color: primaryColor,
       coreColor: primaryCore,
-      temperature: 0.38,
+      temperature: 0.45,
     },
     {
       points: warmBand,
-      width: 0.08,
-      coreWidth: 0.028,
-      opacity: 0.78,
-      coreOpacity: 0.94,
+      width: 0.13,
+      coreWidth: 0.048,
+      opacity: 0.9,
+      coreOpacity: 1,
       color: warmColor,
       coreColor: warmCore,
       temperature: 1,
     },
     {
       points: lowerEcho,
-      width: 0.09,
-      coreWidth: 0.028,
-      opacity: 0.2,
-      coreOpacity: 0.1,
-      color: mix(colors.primary, colors.muted, 0.42),
-      coreColor: mix(colors.accent, colors.mutedForeground, 0.22),
-      temperature: 0.28,
+      width: 0.13,
+      coreWidth: 0.04,
+      opacity: 0.32,
+      coreOpacity: 0.14,
+      color: mix(colors.primary, colors.muted, 0.55),
+      coreColor: mix(colors.accent, colors.mutedForeground, 0.16),
+      temperature: 0.3,
     },
     {
       points: topLeftHaze,
-      width: 0.14,
-      coreWidth: 0.045,
-      opacity: 0.08,
-      coreOpacity: 0.03,
+      width: 0.26,
+      coreWidth: 0.1,
+      opacity: 0.4,
+      coreOpacity: 0.16,
       color: hazeColor,
-      coreColor: mix(colors.muted, colors.card, 0.35),
-      temperature: 0.22,
+      coreColor: mix(colors.muted, colors.mutedForeground, 0.32),
+      temperature: 0.34,
     },
   ];
 }
@@ -311,22 +338,23 @@ function colorForCell(
 
   for (const band of bands) {
     const d = distanceToPolyline(nx, ny, band.points);
-    const broad = Math.pow(1 - smoothstep(0, band.width, d), 1.12);
-    const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.28);
+    // Softer falloff exponents → more intermediate cells across the mass (structure match).
+    const broad = Math.pow(1 - smoothstep(0, band.width, d), 0.92);
+    const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.15);
     if (broad <= 0.001) continue;
 
     // Noise modulates intensity inside band influence for smooth cell-by-cell steps.
-    const noiseMod = 0.78 + noise * 0.28 + noise2 * 0.08;
+    const noiseMod = 0.74 + noise * 0.32 + noise2 * 0.1;
     const intensity = broad * band.opacity * noiseMod;
-    const hotness = core * band.coreOpacity * (0.72 + noise * 0.48);
+    const hotness = core * band.coreOpacity * (0.68 + noise * 0.52);
 
     color = mix(color, band.color, intensity);
     if (hotness > 0.01) {
       color = mix(color, band.coreColor, hotness);
     }
     // Sparse pale hot cores only on strong cores — never a uniform gold wall.
-    if (hotness > 0.22 && noise > 0.62 && band.temperature > 0.55) {
-      color = mix(color, colors.foreground, hotness * band.temperature * 0.2);
+    if (hotness > 0.2 && noise > 0.58 && band.temperature > 0.55) {
+      color = mix(color, colors.foreground, hotness * band.temperature * 0.22);
     }
   }
 

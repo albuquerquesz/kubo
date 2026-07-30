@@ -110,6 +110,22 @@
     return out;
   }
 
+  function sampleCubic(p0, p1, p2, p3, segments) {
+    const out = [];
+    const segs = segments || 36;
+    for (let i = 0; i <= segs; i++) {
+      const t = i / segs;
+      const u = 1 - t;
+      const uu = u * u;
+      const tt = t * t;
+      out.push({
+        x: uu * u * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + tt * t * p3.x,
+        y: uu * u * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + tt * t * p3.y,
+      });
+    }
+    return out;
+  }
+
   function readThemeColors() {
     const styles = getComputedStyle(document.documentElement);
     const token = (name, fallback) => parseCssColor(styles.getPropertyValue(name), fallback);
@@ -140,67 +156,70 @@
   }
 
   function buildBands(colors) {
-    const primaryBand = sampleQuadratic(
-      { x: 0.92, y: 1.06 },
-      { x: 0.56, y: 0.52 },
-      { x: 0.34, y: -0.06 },
+    // Cool S-curve + warm outer arc (reference dual-ribbon structure, Kubo tokens).
+    const primaryBand = sampleCubic(
+      { x: 0.58, y: -0.06 },
+      { x: 0.84, y: 0.2 },
+      { x: 0.7, y: 0.55 },
+      { x: 0.44, y: 1.04 },
     );
-    const warmBand = sampleQuadratic(
-      { x: 1.12, y: 0.88 },
-      { x: 0.88, y: 0.42 },
-      { x: 0.64, y: -0.04 },
+    const warmBand = sampleCubic(
+      { x: 1.08, y: -0.04 },
+      { x: 1.02, y: 0.3 },
+      { x: 0.94, y: 0.6 },
+      { x: 0.86, y: 1.04 },
     );
     const lowerEcho = sampleQuadratic(
-      { x: 0.78, y: 1.1 },
-      { x: 0.52, y: 0.92 },
-      { x: 0.22, y: 0.78 },
+      { x: 0.52, y: 1.14 },
+      { x: 0.32, y: 0.76 },
+      { x: 0.1, y: 0.58 },
     );
     const topLeftHaze = sampleQuadratic(
-      { x: -0.05, y: -0.04 },
-      { x: 0.12, y: 0.08 },
-      { x: 0.22, y: 0.22 },
+      { x: -0.12, y: -0.1 },
+      { x: 0.08, y: 0.08 },
+      { x: 0.22, y: 0.28 },
     );
 
     return [
       {
         points: primaryBand,
-        width: 0.09,
-        coreWidth: 0.03,
-        opacity: 0.84,
-        coreOpacity: 0.78,
-        color: mix(colors.primary, colors.background, 0.42),
-        coreColor: mix(mix(colors.primary, colors.mutedForeground, 0.22), colors.card, 0.18),
-        temperature: 0.38,
+        width: 0.14,
+        coreWidth: 0.05,
+        opacity: 0.88,
+        coreOpacity: 0.94,
+        color: mix(colors.primary, colors.background, 0.58),
+        coreColor: mix(mix(colors.primary, colors.mutedForeground, 0.28), colors.foreground, 0.38),
+        temperature: 0.45,
       },
       {
         points: warmBand,
-        width: 0.08,
-        coreWidth: 0.028,
-        opacity: 0.78,
-        coreOpacity: 0.94,
-        color: mix(colors.accent, colors.primary, 0.22),
-        coreColor: mix(colors.accent, colors.foreground, 0.68),
+        width: 0.13,
+        coreWidth: 0.048,
+        opacity: 0.9,
+        coreOpacity: 1,
+        color: mix(colors.accent, colors.primary, 0.1),
+        coreColor: mix(colors.accent, colors.foreground, 0.88),
         temperature: 1,
       },
       {
         points: lowerEcho,
-        width: 0.09,
-        coreWidth: 0.028,
-        opacity: 0.2,
-        coreOpacity: 0.1,
-        color: mix(colors.primary, colors.muted, 0.42),
-        coreColor: mix(colors.accent, colors.mutedForeground, 0.22),
-        temperature: 0.28,
+        width: 0.13,
+        coreWidth: 0.04,
+        opacity: 0.32,
+        coreOpacity: 0.14,
+        color: mix(colors.primary, colors.muted, 0.55),
+        coreColor: mix(colors.accent, colors.mutedForeground, 0.16),
+        temperature: 0.3,
       },
       {
         points: topLeftHaze,
-        width: 0.14,
-        coreWidth: 0.045,
-        opacity: 0.08,
-        coreOpacity: 0.03,
-        color: mix(colors.card, colors.background, 0.35),
-        coreColor: mix(colors.muted, colors.card, 0.35),
-        temperature: 0.22,
+        width: 0.26,
+        coreWidth: 0.1,
+        opacity: 0.4,
+        coreOpacity: 0.16,
+        color: mix(mix(colors.muted, colors.accent, 0.14), colors.card, 0.28),
+        coreColor: mix(colors.muted, colors.mutedForeground, 0.32),
+        temperature: 0.34,
       },
     ];
   }
@@ -222,16 +241,16 @@
     for (let i = 0; i < bands.length; i++) {
       const band = bands[i];
       const d = distanceToPolyline(nx, ny, band.points);
-      const broad = Math.pow(1 - smoothstep(0, band.width, d), 1.12);
-      const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.28);
+      const broad = Math.pow(1 - smoothstep(0, band.width, d), 0.92);
+      const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.15);
       if (broad <= 0.001) continue;
-      const noiseMod = 0.78 + noise * 0.28 + noise2 * 0.08;
+      const noiseMod = 0.74 + noise * 0.32 + noise2 * 0.1;
       const intensity = broad * band.opacity * noiseMod;
-      const hotness = core * band.coreOpacity * (0.72 + noise * 0.48);
+      const hotness = core * band.coreOpacity * (0.68 + noise * 0.52);
       color = mix(color, band.color, intensity);
       if (hotness > 0.01) color = mix(color, band.coreColor, hotness);
-      if (hotness > 0.22 && noise > 0.62 && band.temperature > 0.55) {
-        color = mix(color, colors.foreground, hotness * band.temperature * 0.2);
+      if (hotness > 0.2 && noise > 0.58 && band.temperature > 0.55) {
+        color = mix(color, colors.foreground, hotness * band.temperature * 0.22);
       }
     }
 
@@ -343,7 +362,7 @@
     for (let i = 0; i < nodes.length; i++) {
       try {
         if (paintOne(nodes[i])) any = true;
-      } catch (_) {
+      } catch {
         /* keep fallback */
       }
     }

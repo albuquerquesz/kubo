@@ -422,39 +422,40 @@
   /* Quiet tile bed — almost no primary; dark matrix is the default */
   background-color: color-mix(in srgb, var(--card) 38%, var(--background));
   background-image:
-    /* Warm companion — thinner right ribbon, higher temperature accent */
+    /* Warm lobe — far-right vertical bulk; overlaps cool mid-right */
     linear-gradient(
-      28deg,
+      22deg,
       transparent 0%,
-      transparent 18%,
-      color-mix(in srgb, var(--accent) 48%, transparent) 32%,
-      color-mix(in srgb, var(--accent) 72%, var(--primary)) 44%,
-      color-mix(in srgb, var(--primary) 36%, transparent) 54%,
-      transparent 68%
+      transparent 10%,
+      color-mix(in srgb, var(--accent) 38%, transparent) 22%,
+      color-mix(in srgb, var(--accent) 82%, var(--foreground)) 38%,
+      color-mix(in srgb, var(--primary) 36%, transparent) 52%,
+      transparent 70%
     ),
-    /* Primary ribbon — deeper/cooler gold, reverse diagonal */
+    /* Cool/primary lobe — S-curve through mid-right (deeper body) */
     linear-gradient(
-        38deg,
+        40deg,
         transparent 0%,
-        transparent 20%,
-        color-mix(in srgb, var(--primary) 52%, var(--background)) 36%,
-        color-mix(in srgb, var(--primary) 40%, transparent) 46%,
-        color-mix(in srgb, var(--primary) 18%, transparent) 56%,
-        transparent 70%
+        transparent 16%,
+        color-mix(in srgb, var(--primary) 48%, var(--background)) 32%,
+        color-mix(in srgb, var(--primary) 42%, var(--muted-foreground)) 46%,
+        color-mix(in srgb, var(--primary) 20%, transparent) 60%,
+        transparent 76%
       ),
-    /* Lower echo — weak, no mid-field bridge */
+    /* Lower cool echo — depth under copy line */
     linear-gradient(
-        18deg,
+        14deg,
         transparent 0%,
-        transparent 54%,
-        color-mix(in srgb, var(--primary) 14%, transparent) 66%,
-        color-mix(in srgb, var(--accent) 8%, transparent) 76%,
-        transparent 90%
+        transparent 46%,
+        color-mix(in srgb, var(--primary) 22%, transparent) 60%,
+        color-mix(in srgb, var(--accent) 12%, transparent) 72%,
+        transparent 86%
       ),
-    /* Top-left haze — almost no primary weight */
+    /* Top-left haze — visible non-focal warm cloud, almost no primary */
     radial-gradient(
-        ellipse 28% 22% at 8% 5%,
-        color-mix(in srgb, var(--muted) 18%, transparent) 0%,
+        ellipse 36% 30% at 9% 5%,
+        color-mix(in srgb, var(--muted-foreground) 14%, transparent) 0%,
+        color-mix(in srgb, var(--muted) 22%, transparent) 38%,
         transparent 70%
       ),
     /* Quiet base field — card/muted only (no continuous right-side olive wash) */
