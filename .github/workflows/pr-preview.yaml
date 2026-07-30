@@ -1,3 +1,11 @@
+# PR preview publish (label: preview).
+#
+# Auth strategy (Phase 5 exception): keeps granular NPM_TOKEN for
+# pull_request_target publishes. npm Trusted Publisher is configured for
+# release.yaml first; pr-preview.yaml is not assumed OIDC-capable on this
+# trigger until verified. See docs/spec-npm-trusted-publishing-oidc-migration.md.
+#
+# Do not rename without updating any Trusted Publisher entry that lists this file.
 name: PR Preview
 
 on:
@@ -33,6 +41,31 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
 
+      - name: Ensure npm supports OIDC Trusted Publishing
+        run: |
+          npm install -g npm@latest
+          node -v
+          npm -v
+          npm_version=$(npm -v)
+          major=$(echo "$npm_version" | cut -d. -f1)
+          minor=$(echo "$npm_version" | cut -d. -f2)
+          if [ "$major" -lt 11 ] || { [ "$major" -eq 11 ] && [ "$minor" -lt 5 ]; }; then
+            echo "npm too old for OIDC Trusted Publishing: $npm_version (need >= 11.5.1)"
+            exit 1
+          fi
+
+      - name: Guard repository.url for OIDC provenance
+        run: |
+          EXPECTED='git+https://github.com/albuquerquesz/kubo.git'
+          for pkg in apps/cli/package.json packages/types/package.json packages/template-generator/package.json; do
+            url=$(jq -r '.repository.url // empty' "$pkg")
+            if [ "$url" != "$EXPECTED" ]; then
+              echo "Error: $pkg repository.url is '$url', expected '$EXPECTED'"
+              exit 1
+            fi
+            echo "OK $pkg repository.url"
+          done
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
@@ -43,6 +76,8 @@ jobs:
         env:
           BTS_TELEMETRY: 0
 
+      # Token path (Phase 5 exception for pull_request_target).
+      # When preview moves to OIDC, replace with node/npm version check only.
       - name: Verify NPM auth
         run: npm whoami
         env:

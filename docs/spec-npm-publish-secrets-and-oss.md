@@ -50,7 +50,8 @@ Define a **safe, repeatable** way to:
    - Agent chat that is logged to a shared transcript you treat as public
 3. **Always** use one of:
    - Local: token in **`~/.npmrc`** (home directory, outside the repo), **or** interactive `npm login` + OTP
-   - CI: GitHub Actions secret **`NPM_TOKEN`** (or npm Trusted Publishing — see below)
+   - CI production: **npm Trusted Publishing (OIDC)** from `release.yaml` (no write token on publish steps)
+   - CI preview / break-glass: GitHub Actions secret **`NPM_TOKEN`** (granular, short-lived when possible)
 4. Prefer a **granular** token with **write only on the packages you own** (`@kubojs/*`), short expiry when possible.
 5. Rotate the token if it might have been exposed.
 
@@ -170,17 +171,18 @@ Expect tarball contents under `dist/` + `package.json` + README — no `.env`, n
 
 In the GitHub repo **Settings → Secrets and variables → Actions**:
 
-| Secret name | Value                        | Used by                                                                    |
-| ----------- | ---------------------------- | -------------------------------------------------------------------------- |
-| `NPM_TOKEN` | Granular npm token (publish) | `.github/workflows/pr-preview.yaml` (and should be wired for main release) |
+| Secret name | Value                        | Used by                                                                                          |
+| ----------- | ---------------------------- | ------------------------------------------------------------------------------------------------ |
+| `NPM_TOKEN` | Granular npm token (publish) | **Preview only** (`.github/workflows/pr-preview.yaml`) + break-glass / bootstrap; not production |
 
 **Rules:**
 
 - Secret is encrypted by GitHub; not visible in the public clone.
 - Only maintainers can read/write secrets.
 - Workflows reference `${{ secrets.NPM_TOKEN }}` — **never** print it.
+- Production release does **not** require `NPM_TOKEN` once Trusted Publishing is configured (see C.3–C.4).
 
-### C.2 How setup-node injects auth
+### C.2 How setup-node injects auth (token path)
 
 When a job uses:
 
@@ -199,27 +201,40 @@ env:
 
 `setup-node` writes a **job-local** `.npmrc` in the runner workspace with the token. That file is ephemeral and must not be committed.
 
+**Production path does not set `NODE_AUTH_TOKEN`.** npm CLI uses OIDC from `permissions.id-token: write` + Trusted Publisher config.
+
 ### C.3 Existing workflows in this monorepo
 
-| Workflow          | Auth pattern today                                                                                                                         |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `pr-preview.yaml` | `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}` on publish steps                                                                               |
-| `release.yaml`    | `registry-url` on setup-node; **ensure** every `npm publish` step also passes `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}` (add if missing) |
+| Workflow                     | Auth pattern                                                                                                              |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `release.yaml`               | **OIDC Trusted Publishing** — no `NODE_AUTH_TOKEN` on publish; `id-token: write`; optional canary via `workflow_dispatch` |
+| `pr-preview.yaml`            | **Token exception:** `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}` (pull_request_target; not yet OIDC)                      |
+| `publish-create-kubojs.yaml` | Bootstrap only / retired for routine releases; still token-based                                                          |
 
-**Operator checklist:**
+**Operator checklist (production):**
 
-1. Create granular token (section A).
-2. Add GitHub secret `NPM_TOKEN` with that value (Settings → Secrets).
-3. Confirm `release.yaml` / `pr-preview.yaml` use the secret — never a hard-coded token.
-4. Trigger release only via the documented path (`chore(release): x.y.z` commit message on `main`, per workflow `if`).
+1. Configure Trusted Publisher on npm for all four packages → GitHub `albuquerquesz` / `kubo` / workflow **`release.yaml`** / environment empty. See [`spec-npm-trusted-publishing-oidc-migration.md`](./spec-npm-trusted-publishing-oidc-migration.md).
+2. Run OIDC canary once: Actions → Release → Run workflow → `oidc_canary=true` (dist-tag `oidc-canary`, never `latest`).
+3. Trigger production release only via `chore(release): x.y.z` on `main`.
+4. Keep `NPM_TOKEN` only for preview / emergency rollback until preview is also OIDC.
 
-### C.4 Optional: npm Trusted Publishing (OIDC)
+**Rollback (same day if OIDC fails):**
 
-npm supports **Trusted Publishing** (OIDC from GitHub Actions) so CI does not need a long-lived `NPM_TOKEN` in some setups.
+```yaml
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
 
-- Configure package on npmjs.com → **Trusted Publisher** → GitHub Actions → this repo + workflow.
-- Requires `permissions: id-token: write` (already present on `release.yaml`).
-- Prefer this long-term for OSS; still keep a break-glass granular token offline if needed.
+on production publish steps only; confirm secret still valid; re-run only if version was not partially published.
+
+### C.4 npm Trusted Publishing (OIDC) — production default
+
+Production publish auth is **Trusted Publishing** from GitHub Actions:
+
+- npmjs.com → each package → **Trusted Publisher** → GitHub Actions → owner `albuquerquesz`, repo `kubo`, workflow filename **`release.yaml`**, environment empty, allow npm publish.
+- Workflow requires `permissions: id-token: write` and Node/npm versions that support OIDC (`npm >= 11.5.1`; CI asserts this).
+- Full migration steps, canary, and acceptance: [`spec-npm-trusted-publishing-oidc-migration.md`](./spec-npm-trusted-publishing-oidc-migration.md).
+- Still keep a break-glass granular token offline (password manager) if packages allow tokens; rotate after any leak.
 
 ---
 
@@ -273,30 +288,35 @@ npmjs.com → Granular token (write on @kubojs/*)
 **Open-source CI (team / automation):**
 
 ```text
-Same granular token
-  → GitHub repo secret NPM_TOKEN (never in git)
-  → workflows use NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-  → release only via trusted workflow on main
+Production:
+  npm Trusted Publisher (OIDC) on release.yaml
+  → chore(release): x.y.z on main
+  → npm publish without NODE_AUTH_TOKEN
+
+Preview / break-glass:
+  Granular token → GitHub secret NPM_TOKEN (never in git)
+  → pr-preview.yaml uses NODE_AUTH_TOKEN
 ```
 
 ---
 
 ## Relationship
 
-| Doc / path                          | Role                                              |
-| ----------------------------------- | ------------------------------------------------- |
-| `.github/workflows/release.yaml`    | Automated release on `chore(release): x.y.z`      |
-| `.github/workflows/pr-preview.yaml` | Preview publishes with `NPM_TOKEN`                |
-| `scripts/canary-release.ts`         | Local canary publish helper                       |
-| `scripts/publish-smoke.ts`          | Consumer smoke after pack                         |
-| Vault note `projects/kubo/npm.md`   | Private operator notes / screenshots (not in git) |
+| Doc / path                                      | Role                                                 |
+| ----------------------------------------------- | ---------------------------------------------------- |
+| `.github/workflows/release.yaml`                | Automated release on `chore(release): x.y.z` (OIDC)  |
+| `.github/workflows/pr-preview.yaml`             | Preview publishes with `NPM_TOKEN` (token exception) |
+| `spec-npm-trusted-publishing-oidc-migration.md` | OIDC migration + canary + acceptance                 |
+| `scripts/canary-release.ts`                     | Local canary publish helper                          |
+| `scripts/publish-smoke.ts`                      | Consumer smoke after pack                            |
+| Vault note `projects/kubo/npm.md`               | Private operator notes / screenshots (not in git)    |
 
 ---
 
 ## Out of scope
 
 - Changing package scope or marketing names
-- Migrating fully to Trusted Publishing (recommended follow-up)
+- Enforcing npm v12 consumer install allowlists (optional follow-up in OIDC migration spec)
 - Publishing private packages
 - Sharing the token with agents without a short-lived, revocable token
 
