@@ -1,9 +1,11 @@
 # Spec: yellow mosaic density and tile geometry for the Kubo hero
 
-Status: proposed
+Status: partially superseded (geometry keeps; coverage rules overridden)
 Owner: Web / marketing home
 Date: 2026-07-30
 Scope: background renderer and its visual contract; preserve Kubo copy, controls, tokens, accessibility, and product identity.
+
+> **Supersession notice (2026-07-30):** After this density pass shipped, the hero read as an over-yellow gold wall. The continuous right-side olive coverage rules and `rightField` freckle recipe are **superseded** by [spec-hero-mosaic-color-spread.md](spec-hero-mosaic-color-spread.md). Keep rounded-square geometry, seam, and radius guidance from this document; do **not** keep “no dark spans between bands” or continuous primary lift across the right 60–70%.
 
 ## Objective
 

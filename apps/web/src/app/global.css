@@ -403,9 +403,9 @@
 
 /* Mosaic hero atmosphere: CSS fallback under the Canvas tile field.
    Pitch defaults to ~height/37; Canvas overwrites --mosaic-pitch after paint.
-   ::before carries directional bands masked into opaque rounded squares
+   ::before carries narrow directional bands masked into opaque rounded squares
    (seam ≈ 9%, rx ≈ 17% of 32u pitch). Seams reveal --background.
-   Opaque olive base comes first so density does not depend on screen blend alone. */
+   Quiet near-card base first — energy is ribbon-only, not a continuous gold wall. */
 .mosaic-hero-fallback {
   position: absolute;
   inset: 0;
@@ -419,80 +419,53 @@
   inset: 0;
   pointer-events: none;
   content: "";
-  /* Opaque quiet tile bed — card/muted + primary olive lift before any band blend */
-  background-color: color-mix(
-    in srgb,
-    var(--card) 58%,
-    color-mix(in srgb, var(--primary) 16%, var(--background))
-  );
+  /* Quiet tile bed — almost no primary; dark matrix is the default */
+  background-color: color-mix(in srgb, var(--card) 38%, var(--background));
   background-image:
-    /* Warm companion — right third, reverse diagonal, separated from primary */
+    /* Warm companion — thinner right ribbon, higher temperature accent */
     linear-gradient(
       28deg,
       transparent 0%,
-      transparent 12%,
-      color-mix(in srgb, var(--accent) 42%, transparent) 28%,
-      color-mix(in srgb, var(--accent) 68%, var(--primary)) 44%,
-      color-mix(in srgb, var(--primary) 48%, transparent) 58%,
-      transparent 76%
+      transparent 18%,
+      color-mix(in srgb, var(--accent) 48%, transparent) 32%,
+      color-mix(in srgb, var(--accent) 72%, var(--primary)) 44%,
+      color-mix(in srgb, var(--primary) 36%, transparent) 54%,
+      transparent 68%
     ),
-    /* Primary ribbon — lower-right → upper-center/left, deeper amber */
+    /* Primary ribbon — deeper/cooler gold, reverse diagonal */
     linear-gradient(
         38deg,
         transparent 0%,
-        transparent 16%,
-        color-mix(in srgb, var(--primary) 58%, var(--background)) 34%,
-        color-mix(in srgb, var(--primary) 42%, transparent) 48%,
-        color-mix(in srgb, var(--primary) 18%, transparent) 62%,
-        transparent 78%
+        transparent 20%,
+        color-mix(in srgb, var(--primary) 52%, var(--background)) 36%,
+        color-mix(in srgb, var(--primary) 40%, transparent) 46%,
+        color-mix(in srgb, var(--primary) 18%, transparent) 56%,
+        transparent 70%
       ),
-    /* Lower echo — ≤~35% of primary weight, no mid-field bridge */
+    /* Lower echo — weak, no mid-field bridge */
     linear-gradient(
         18deg,
         transparent 0%,
-        transparent 50%,
-        color-mix(in srgb, var(--primary) 18%, transparent) 64%,
-        color-mix(in srgb, var(--accent) 10%, transparent) 74%,
-        transparent 88%
+        transparent 54%,
+        color-mix(in srgb, var(--primary) 14%, transparent) 66%,
+        color-mix(in srgb, var(--accent) 8%, transparent) 76%,
+        transparent 90%
       ),
-    /* Top-left haze — below main ribbon weight */
+    /* Top-left haze — almost no primary weight */
     radial-gradient(
-        ellipse 32% 26% at 8% 5%,
-        color-mix(in srgb, var(--accent) 16%, transparent) 0%,
-        transparent 72%
+        ellipse 28% 22% at 8% 5%,
+        color-mix(in srgb, var(--muted) 18%, transparent) 0%,
+        transparent 70%
       ),
-    /* Right-side continuous olive field (prevents large black voids) */
-    linear-gradient(
-        to right,
-        color-mix(in srgb, var(--card) 45%, var(--background)) 0%,
-        color-mix(
-            in srgb,
-            var(--muted) 42%,
-            color-mix(in srgb, var(--primary) 14%, var(--background))
-          )
-          34%,
-        color-mix(in srgb, var(--primary) 24%, var(--card)) 72%,
-        color-mix(in srgb, var(--primary) 20%, var(--muted)) 100%
-      ),
-    /* Quiet base field variation with olive freckles */
+    /* Quiet base field — card/muted only (no continuous right-side olive wash) */
     linear-gradient(
         205deg,
-        color-mix(
-            in srgb,
-            var(--muted) 50%,
-            color-mix(in srgb, var(--primary) 12%, var(--background))
-          )
-          0%,
-        color-mix(
-            in srgb,
-            var(--card) 62%,
-            color-mix(in srgb, var(--primary) 16%, var(--background))
-          )
-          42%,
-        color-mix(in srgb, var(--muted) 38%, var(--background)) 100%
+        color-mix(in srgb, var(--muted) 22%, var(--background)) 0%,
+        color-mix(in srgb, var(--card) 40%, var(--background)) 48%,
+        color-mix(in srgb, var(--muted) 14%, var(--background)) 100%
       );
-  /* Soft-light/normal preserve opaque bed; avoid screen-only density */
-  background-blend-mode: soft-light, soft-light, soft-light, soft-light, normal, normal;
+  /* Soft-light bands over a quiet opaque bed; avoid screen-only density */
+  background-blend-mode: soft-light, soft-light, soft-light, soft-light, normal;
   /* White rounded rect = visible tile; transparent seam = dark base
      pitch 32u, fill 29.2u (seam ~8.75%), rx 5.5u (~17% of pitch) */
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='1.4' y='1.4' width='29.2' height='29.2' rx='5.5' fill='white'/%3E%3C/svg%3E");
@@ -502,6 +475,7 @@
   -webkit-mask-repeat: repeat;
   mask-repeat: repeat;
   opacity: 1;
+  transition: opacity 120ms ease-out;
 }
 
 .mosaic-hero-fallback::after {
@@ -510,24 +484,24 @@
   pointer-events: none;
   content: "";
   background:
-    /* Lower-left copy pocket — dark olive, still shows faint tile bed */
+    /* Lower-left copy pocket — charcoal, faint tile bed may remain */
     radial-gradient(
-      ellipse 52% 54% at 24% 74%,
-      color-mix(in srgb, var(--background) 42%, transparent) 0%,
-      color-mix(in srgb, var(--background) 14%, transparent) 50%,
-      transparent 74%
+      ellipse 54% 56% at 22% 74%,
+      color-mix(in srgb, var(--background) 52%, transparent) 0%,
+      color-mix(in srgb, var(--background) 18%, transparent) 52%,
+      transparent 76%
     ),
     linear-gradient(
       to right,
-      color-mix(in srgb, var(--background) 72%, transparent) 0%,
-      color-mix(in srgb, var(--background) 28%, transparent) 30%,
-      transparent 52%
+      color-mix(in srgb, var(--background) 78%, transparent) 0%,
+      color-mix(in srgb, var(--background) 34%, transparent) 28%,
+      transparent 48%
     ),
     /* Soft edge vignette — right energy mostly uncrushed */
     radial-gradient(
-        ellipse 80% 74% at 60% 42%,
-        transparent 48%,
-        color-mix(in srgb, var(--background) 32%, transparent) 100%
+        ellipse 80% 74% at 62% 42%,
+        transparent 50%,
+        color-mix(in srgb, var(--background) 36%, transparent) 100%
       );
 }
 
@@ -552,31 +526,32 @@
   inset: 0;
   pointer-events: none;
   background:
-    /* Lower-left copy pocket — separate from artwork density */
+    /* Lower-left copy pocket — separate from cell math; field is already darker */
     radial-gradient(
-      ellipse 48% 52% at 24% 72%,
-      color-mix(in srgb, var(--background) 40%, transparent) 0%,
-      color-mix(in srgb, var(--background) 16%, transparent) 52%,
+      ellipse 50% 54% at 22% 72%,
+      color-mix(in srgb, var(--background) 34%, transparent) 0%,
+      color-mix(in srgb, var(--background) 12%, transparent) 52%,
       transparent 74%
     ),
     linear-gradient(
       to bottom,
-      color-mix(in srgb, var(--background) 36%, transparent) 0%,
+      color-mix(in srgb, var(--background) 28%, transparent) 0%,
       color-mix(in srgb, var(--background) 4%, transparent) 22%,
-      color-mix(in srgb, var(--background) 8%, transparent) 62%,
-      color-mix(in srgb, var(--background) 44%, transparent) 100%
+      color-mix(in srgb, var(--background) 6%, transparent) 62%,
+      color-mix(in srgb, var(--background) 36%, transparent) 100%
     ),
-    /* Leave the right energy mostly un-veiled; first ~30% stays darkest */
+    /* Leave the right ribbons mostly un-veiled; first ~32–36% stays darkest */
     linear-gradient(
         to right,
-        color-mix(in srgb, var(--background) 40%, transparent) 0%,
-        color-mix(in srgb, var(--background) 12%, transparent) 30%,
-        transparent 52%
+        color-mix(in srgb, var(--background) 36%, transparent) 0%,
+        color-mix(in srgb, var(--background) 10%, transparent) 32%,
+        transparent 50%
       );
 }
 
+/* Reduced motion: same static field. Fallback stays until Canvas marks ready. */
 @media (prefers-reduced-motion: reduce) {
-  .mosaic-hero-fallback {
+  .mosaic-hero-fallback:has(+ .mosaic-hero-canvas[data-mosaic-ready="false"]) {
     opacity: 1;
   }
 }

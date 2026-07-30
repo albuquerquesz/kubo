@@ -191,7 +191,7 @@ function resolveGrid(cssWidth: number, cssHeight: number): GridGeometry {
 
 /**
  * Directional luminous bands: enter lower-right / right and bend up-left.
- * Paths keep ≥0.12 nx separation at mid height so they never form a mid-field eye/bridge.
+ * Paths keep ≥0.14 nx separation at mid height so dark matrix remains between ribbons.
  */
 function buildBands(colors: ThemeColors, phase: number): Band[] {
   const driftX = Math.sin(phase * Math.PI * 2) * 0.018;
@@ -201,19 +201,19 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
   // Spec anchors: p0=(0.92, 1.06), p1=(0.58, 0.52), p2=(0.34, -0.06)
   const primaryBand = sampleQuadratic(
     { x: 0.92 + driftX, y: 1.06 },
-    { x: 0.58 + driftX * 0.4, y: 0.52 + driftY },
+    { x: 0.56 + driftX * 0.4, y: 0.52 + driftY },
     { x: 0.34 + driftX * 0.2, y: -0.06 },
   );
 
-  // Warm companion — further right, same reverse direction, ≥0.12 mid-gap from primary.
+  // Warm companion — further right, same reverse direction, ≥0.14 mid-gap from primary.
   // Spec anchors: p0=(1.12, 0.88), p1=(0.86, 0.42), p2=(0.62, -0.04)
   const warmBand = sampleQuadratic(
     { x: 1.12 + driftX * 0.3, y: 0.88 },
-    { x: 0.86 - driftY, y: 0.42 + driftX },
-    { x: 0.62 + driftX * 0.15, y: -0.04 },
+    { x: 0.88 - driftY, y: 0.42 + driftX },
+    { x: 0.64 + driftX * 0.15, y: -0.04 },
   );
 
-  // Weak lower echo — ≤~35% of primary opacity, not bridging the primary pair.
+  // Weak lower echo — ≤~22% of primary weight, not bridging the main pair.
   // Spec anchors: p0=(0.78, 1.10), p1=(0.52, 0.92), p2=(0.22, 0.78)
   const lowerEcho = sampleQuadratic(
     { x: 0.78 + driftX * 0.2, y: 1.1 },
@@ -221,68 +221,69 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
     { x: 0.22, y: 0.78 + driftY },
   );
 
-  // Faint top-left haze — below the visual weight of either main ribbon.
+  // Faint top-left haze — almost no primary; below either main ribbon.
   const topLeftHaze = sampleQuadratic(
     { x: -0.05, y: -0.04 },
     { x: 0.12 + driftX * 0.3, y: 0.08 },
     { x: 0.22, y: 0.22 + driftY },
   );
 
-  // Primary: deeper amber/olive-gold. Warm: lighter yellow core temperature.
-  const primaryColor = mix(colors.primary, colors.background, 0.12);
-  const primaryCore = mix(colors.primary, colors.foreground, 0.55);
-  const warmColor = mix(colors.accent, colors.primary, 0.35);
-  const warmCore = mix(colors.accent, colors.foreground, 0.72);
-  const hazeColor = mix(colors.primary, colors.card, 0.28);
+  // Dual temperature: deep/cooler primary vs hotter accent companion (gold-only).
+  // Cooler ribbon = primary mixed hard toward background/card; warm = accent path.
+  const primaryColor = mix(colors.primary, colors.background, 0.42);
+  const primaryCore = mix(mix(colors.primary, colors.mutedForeground, 0.22), colors.card, 0.18);
+  const warmColor = mix(colors.accent, colors.primary, 0.22);
+  const warmCore = mix(colors.accent, colors.foreground, 0.68);
+  const hazeColor = mix(colors.card, colors.background, 0.35);
 
   return [
     {
       points: primaryBand,
-      width: 0.13,
-      coreWidth: 0.042,
-      opacity: 1,
-      coreOpacity: 0.72,
+      width: 0.09,
+      coreWidth: 0.03,
+      opacity: 0.84,
+      coreOpacity: 0.78,
       color: primaryColor,
       coreColor: primaryCore,
-      temperature: 0.42,
+      temperature: 0.38,
     },
     {
       points: warmBand,
-      width: 0.12,
-      coreWidth: 0.04,
-      opacity: 1,
-      coreOpacity: 0.92,
+      width: 0.08,
+      coreWidth: 0.028,
+      opacity: 0.78,
+      coreOpacity: 0.94,
       color: warmColor,
       coreColor: warmCore,
       temperature: 1,
     },
     {
       points: lowerEcho,
-      width: 0.11,
-      coreWidth: 0.035,
-      opacity: 0.32,
-      coreOpacity: 0.16,
-      color: mix(colors.primary, colors.muted, 0.28),
-      coreColor: mix(colors.accent, colors.mutedForeground, 0.28),
-      temperature: 0.32,
+      width: 0.09,
+      coreWidth: 0.028,
+      opacity: 0.2,
+      coreOpacity: 0.1,
+      color: mix(colors.primary, colors.muted, 0.42),
+      coreColor: mix(colors.accent, colors.mutedForeground, 0.22),
+      temperature: 0.28,
     },
     {
       points: topLeftHaze,
-      width: 0.18,
-      coreWidth: 0.06,
-      opacity: 0.14,
-      coreOpacity: 0.05,
+      width: 0.14,
+      coreWidth: 0.045,
+      opacity: 0.08,
+      coreOpacity: 0.03,
       color: hazeColor,
-      coreColor: mix(colors.accent, colors.card, 0.28),
-      temperature: 0.35,
+      coreColor: mix(colors.muted, colors.card, 0.35),
+      temperature: 0.22,
     },
   ];
 }
 
 /**
- * Per-cell palette: continuous quiet yellow/olive bed + band cores.
- * Sequence: base → muted lift → olive field → bands → copy pocket → vignette → quantize.
- * Flat fill only — no radial edge halo or per-cell bevel.
+ * Per-cell palette: dark matrix default; luminous cells only under band influence.
+ * Sequence: quiet base → muted tick → bands → copy pocket → vignette → quantize.
+ * Flat fill only — no radial edge halo, continuous right-side olive wash, or per-cell bevel.
  */
 function colorForCell(
   col: number,
@@ -298,63 +299,55 @@ function colorForCell(
   // Secondary deterministic hash for multi-axis tile variation without extra allocations.
   const noise2 = cellNoise(col + 17, row + 31);
 
-  // Opaque base cell — card/muted lift so seams read against a real tile bed.
-  let color = mix(colors.background, colors.card, 0.3 + noise * 0.18);
-  color = mix(color, colors.muted, 0.08 + noise * 0.1);
-
-  // Quiet olive-gold field outside ribbons (prevents large black voids).
-  // deep olive-gold ≈ mix(background, primary, .20–.35); mid gold for right shoulders.
-  const deepOlive = mix(colors.background, colors.primary, 0.22 + noise2 * 0.13);
-  const midGold = mix(colors.card, colors.primary, 0.38 + noise * 0.2);
-  // Right 60–70% carries continuous distinguishable tile variation.
-  const rightField = smoothstep(0.28, 0.75, nx);
-  const midY = 1 - Math.min(1, Math.abs(ny - 0.48) * 2);
-  const midLift = smoothstep(0.2, 0.58, nx) * (0.55 + midY * 0.45);
-  color = mix(color, deepOlive, 0.42 + noise * 0.22 + rightField * 0.18);
-  color = mix(color, midGold, rightField * (0.16 + noise2 * 0.14) + midLift * 0.1);
-  // Sparse warm freckles so quiet regions still reveal the grid at 100% zoom.
-  if (noise > 0.72 && rightField > 0.15) {
-    color = mix(color, mix(colors.primary, colors.accent, 0.4), (noise - 0.72) * 0.55);
+  // Quiet matrix — near background/card with only a tiny luminance tick so seams read.
+  let color = mix(colors.background, colors.card, 0.22 + noise * 0.18);
+  color = mix(color, colors.muted, 0.04 + noise2 * 0.06);
+  // ± tiny global noise outside bands (grid readability without olive wash).
+  if (noise > 0.88) {
+    color = mix(color, colors.muted, 0.05 + (noise - 0.88) * 0.2);
+  } else if (noise < 0.12) {
+    color = mix(color, colors.background, 0.08 + (0.12 - noise) * 0.15);
   }
 
   for (const band of bands) {
     const d = distanceToPolyline(nx, ny, band.points);
-    const broad = Math.pow(1 - smoothstep(0, band.width, d), 1.08);
-    const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.22);
+    const broad = Math.pow(1 - smoothstep(0, band.width, d), 1.12);
+    const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.28);
     if (broad <= 0.001) continue;
 
-    const intensity = broad * band.opacity * (0.9 + noise * 0.16);
-    const hotness = core * band.coreOpacity * (0.82 + noise * 0.4);
+    // Noise modulates intensity inside band influence for smooth cell-by-cell steps.
+    const noiseMod = 0.78 + noise * 0.28 + noise2 * 0.08;
+    const intensity = broad * band.opacity * noiseMod;
+    const hotness = core * band.coreOpacity * (0.72 + noise * 0.48);
 
     color = mix(color, band.color, intensity);
     if (hotness > 0.01) {
       color = mix(color, band.coreColor, hotness);
     }
-    // Sparse pale hot cores only — not a uniformly bright gold screen.
-    if (hotness > 0.18 && noise > 0.55) {
-      color = mix(color, colors.foreground, hotness * band.temperature * 0.22);
+    // Sparse pale hot cores only on strong cores — never a uniform gold wall.
+    if (hotness > 0.22 && noise > 0.62 && band.temperature > 0.55) {
+      color = mix(color, colors.foreground, hotness * band.temperature * 0.2);
     }
   }
 
-  // Copy pocket across ~first 28–34%: dark olive/charcoal tiles, not blank unpainted layer.
-  const copyPocket = 1 - smoothstep(0.28, 0.36, nx);
-  const darkOlive = mix(colors.background, colors.card, 0.38 + noise * 0.16);
-  color = mix(color, darkOlive, copyPocket * 0.58);
-  // Extra crush only on the far-left strip so headline contrast survives.
-  const farLeft = 1 - smoothstep(0, 0.18, nx);
-  color = mix(color, colors.background, farLeft * 0.32);
-  // Mild lower-left tuck under the title block without erasing the bed.
-  const lowerLeftQuiet = (1 - smoothstep(0.08, 0.4, nx)) * (1 - smoothstep(0.42, 0.88, ny)) * 0.42;
+  // Copy pocket ~first 32–40%: charcoal/dark tiles, faint grid only.
+  const copyPocket = 1 - smoothstep(0.3, 0.4, nx);
+  const darkBed = mix(colors.background, colors.card, 0.18 + noise * 0.12);
+  color = mix(color, darkBed, copyPocket * 0.72);
+  const farLeft = 1 - smoothstep(0, 0.2, nx);
+  color = mix(color, colors.background, farLeft * 0.42);
+  // Lower-left tuck under the title block.
+  const lowerLeftQuiet = (1 - smoothstep(0.06, 0.38, nx)) * (1 - smoothstep(0.4, 0.9, ny)) * 0.48;
   color = mix(color, colors.background, lowerLeftQuiet);
 
-  // Soft edge vignette — right edge less crushed so energy survives.
+  // Soft edge vignette — right edge less crushed so ribbon energy survives.
   const edge =
     Math.max(
       1 - smoothstep(0, 0.06, nx),
-      (1 - smoothstep(0, 0.05, 1 - nx)) * 0.32,
+      (1 - smoothstep(0, 0.05, 1 - nx)) * 0.28,
       1 - smoothstep(0, 0.05, ny),
       1 - smoothstep(0, 0.08, 1 - ny),
-    ) * 0.28;
+    ) * 0.32;
   color = mix(color, colors.background, edge);
 
   // Quantize 8–12 RGB units so bands read as tile-level lightning, not smooth blur.
@@ -485,21 +478,47 @@ export default function MosaicHeroCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const colorsRef = useRef<ThemeColors>(readThemeColors());
 
-  // useLayoutEffect: first paint before paint flush so captures rarely see fallback alone.
+  // useLayoutEffect: claim ownership after optional mosaic-hero-boot.js first paint.
   useLayoutEffect(() => {
     const container = containerRef.current;
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
 
-    // alpha:true so the denser CSS fallback remains visible until first paint.
-    const ctx = canvas.getContext("2d", { alpha: true });
+    // Signal the public boot script to stop resizing/painting this canvas.
+    (window as Window & { __kuboMosaicReactActive?: boolean }).__kuboMosaicReactActive = true;
+    canvas.dataset.mosaicReactOwned = "true";
+
+    // alpha:true so the CSS fallback remains visible until first successful paint.
+    // Do not request desynchronized — it returns null in some headless/Playwright Chromium builds.
+    const ctx = canvas.getContext("2d", { alpha: true }) ?? canvas.getContext("2d");
     if (!ctx) return;
+
+    // Polyfill rounded rect when roundRect is unavailable (still square cells with radius).
+    if (typeof ctx.roundRect !== "function") {
+      ctx.roundRect = function roundRectPolyfill(
+        x: number,
+        y: number,
+        w: number,
+        h: number,
+        radii: number | number[] = 0,
+      ) {
+        const r = typeof radii === "number" ? radii : (radii[0] ?? 0);
+        const rr = Math.min(r, w / 2, h / 2);
+        this.moveTo(x + rr, y);
+        this.arcTo(x + w, y, x + w, y + h, rr);
+        this.arcTo(x + w, y + h, x, y + h, rr);
+        this.arcTo(x, y + h, x, y, rr);
+        this.arcTo(x, y, x + w, y, rr);
+        this.closePath();
+      };
+    }
 
     colorsRef.current = readThemeColors();
 
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     let reducedMotion = motionQuery.matches;
     let raf = 0;
+    let bootRaf = 0;
     let running = true;
     let visible = true;
     let lastPaint = 0;
@@ -514,13 +533,18 @@ export default function MosaicHeroCanvas() {
 
     const measure = () => {
       const rect = container.getBoundingClientRect();
+      // Prefer layout box; fall back to viewport so first paint is never 0×0.
       const cssWidth = Math.max(
         1,
-        Math.round(rect.width || container.offsetWidth || window.innerWidth),
+        Math.round(
+          rect.width || container.clientWidth || container.offsetWidth || window.innerWidth,
+        ),
       );
       const cssHeight = Math.max(
         1,
-        Math.round(rect.height || container.offsetHeight || window.innerHeight),
+        Math.round(
+          rect.height || container.clientHeight || container.offsetHeight || window.innerHeight,
+        ),
       );
       return { cssWidth, cssHeight };
     };
@@ -529,8 +553,8 @@ export default function MosaicHeroCanvas() {
       const { cssWidth, cssHeight } = measure();
       const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
 
-      const pixelW = Math.round(cssWidth * dpr);
-      const pixelH = Math.round(cssHeight * dpr);
+      const pixelW = Math.max(1, Math.round(cssWidth * dpr));
+      const pixelH = Math.max(1, Math.round(cssHeight * dpr));
       if (canvas.width !== pixelW || canvas.height !== pixelH) {
         canvas.width = pixelW;
         canvas.height = pixelH;
@@ -544,6 +568,17 @@ export default function MosaicHeroCanvas() {
       canvas.dataset.mosaicReady = "true";
       canvas.dataset.mosaicColumns = String(grid.columns);
       canvas.dataset.mosaicRows = String(grid.rows);
+      canvas.setAttribute("data-mosaic-ready", "true");
+    };
+
+    const safeDraw = (phase: number) => {
+      try {
+        draw(phase);
+      } catch {
+        // Leave fallback visible; ResizeObserver / boot rAF may retry.
+        canvas.dataset.mosaicReady = "false";
+        canvas.setAttribute("data-mosaic-ready", "false");
+      }
     };
 
     const tick = (now: number) => {
@@ -555,7 +590,7 @@ export default function MosaicHeroCanvas() {
       if (!reducedMotion && now - lastPaint < frameIntervalMs) return;
 
       lastPaint = now;
-      draw(currentPhase());
+      safeDraw(currentPhase());
     };
 
     const restartLoop = () => {
@@ -563,7 +598,7 @@ export default function MosaicHeroCanvas() {
       if (!reducedMotion && running) {
         raf = requestAnimationFrame(tick);
       } else {
-        draw(0);
+        safeDraw(0);
       }
     };
 
@@ -574,7 +609,7 @@ export default function MosaicHeroCanvas() {
     motionQuery.addEventListener("change", onMotionChange);
 
     const resizeObserver = new ResizeObserver(() => {
-      draw(currentPhase());
+      safeDraw(currentPhase());
     });
     resizeObserver.observe(container);
 
@@ -584,6 +619,8 @@ export default function MosaicHeroCanvas() {
         if (visible && !reducedMotion && running) {
           cancelAnimationFrame(raf);
           raf = requestAnimationFrame(tick);
+        } else if (visible && reducedMotion) {
+          safeDraw(0);
         }
       },
       { rootMargin: "80px", threshold: 0 },
@@ -592,26 +629,41 @@ export default function MosaicHeroCanvas() {
 
     const themeObserver = new MutationObserver(() => {
       colorsRef.current = readThemeColors();
-      draw(currentPhase());
+      safeDraw(currentPhase());
     });
     themeObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["class", "style", "data-theme"],
     });
 
-    // Immediate first paint; ResizeObserver covers late size resolution.
-    draw(0);
-    if (!reducedMotion) {
-      raf = requestAnimationFrame(tick);
-    }
+    // Immediate first paint + short rAF boot so late layout still marks ready.
+    safeDraw(0);
+    bootRaf = requestAnimationFrame(() => {
+      if (!running) return;
+      if (canvas.dataset.mosaicReady !== "true") {
+        safeDraw(0);
+      }
+      if (!reducedMotion) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        // Second reduced-motion paint after layout settles (Playwright / hydration).
+        bootRaf = requestAnimationFrame(() => {
+          if (running) safeDraw(0);
+        });
+      }
+    });
 
     return () => {
       running = false;
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(bootRaf);
       motionQuery.removeEventListener("change", onMotionChange);
       resizeObserver.disconnect();
       intersection.disconnect();
       themeObserver.disconnect();
+      delete canvas.dataset.mosaicReactOwned;
+      const w = window as Window & { __kuboMosaicReactActive?: boolean };
+      w.__kuboMosaicReactActive = false;
     };
   }, []);
 

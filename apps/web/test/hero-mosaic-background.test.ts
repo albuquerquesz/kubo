@@ -32,15 +32,22 @@ describe("mosaic hero background contract", () => {
     expect(source).toContain("x: 0.92");
     expect(source).toContain("x: 1.12");
     expect(source).toContain("x: 0.78");
-    expect(source).toContain("x: 0.86");
+    expect(source).toContain("x: 0.88");
     // Flat rounded rects only — no per-cell radial edge treatment in the paint loop.
     expect(source).toContain("ctx.roundRect");
     expect(source).toContain("useLayoutEffect");
-    // Continuous quiet olive field before bands/veil (yellow density contract).
-    expect(source).toContain("deepOlive");
-    expect(source).toContain("midGold");
-    expect(source).toContain("rightField");
+    // Color-spread contract: quiet matrix + band-driven energy (no continuous right wash).
     expect(source).toContain("copyPocket");
+    expect(source).toContain("noiseMod");
+    expect(source).toContain("safeDraw");
+    expect(source).not.toContain("rightField");
+    expect(source).not.toContain("deepOlive");
+    expect(source).not.toContain("midGold");
+    // Narrower ribbons / dual temperature (color-spread over-yellow fix).
+    expect(source).toContain("width: 0.09");
+    expect(source).toContain("width: 0.08");
+    expect(source).toContain("opacity: 0.84");
+    expect(source).toContain("opacity: 0.78");
     // Canvas mounts without a client-only gate that can leave only the fallback.
     expect(source).toContain('className="mosaic-hero-canvas absolute inset-0 h-full w-full"');
     expect(source).not.toContain("{mounted &&");
@@ -102,9 +109,23 @@ describe("mosaic hero background contract", () => {
     // Fallback tiles via mask: rx ≈ 5.5u / 32u pitch (≈17%), not graph-paper lines.
     expect(css).toContain("rx='5.5'");
     expect(css).toContain("mask-image");
-    // Density: opaque olive base + soft-light bands, not screen-only; hide when ready.
-    expect(css).toContain("soft-light, soft-light, soft-light, soft-light, normal, normal");
+    // Quiet opaque base + soft-light ribbons; hide fallback when Canvas is ready.
+    expect(css).toContain("soft-light, soft-light, soft-light, soft-light, normal");
     expect(css).toContain('data-mosaic-ready="true"');
-    expect(css).toContain("Right-side continuous olive field");
+    expect(css).toContain("almost no primary");
+    // Over-yellow fix: no continuous right-side primary olive field gradient.
+    expect(css).not.toContain("Right-side continuous olive field");
+    expect(css).not.toContain("var(--primary) 24%, var(--card)");
+
+    // Hydration-independent boot paints Canvas when React effects do not run.
+    const layout = readRepo("apps/web/src/app/layout.tsx");
+    const boot = readRepo("apps/web/public/mosaic-hero-boot.js");
+    expect(layout).toContain('src="/mosaic-hero-boot.js"');
+    expect(layout).toContain("beforeInteractive");
+    expect(boot).toContain("mosaic-hero-canvas");
+    expect(boot).toContain("data-mosaic-ready");
+    expect(boot).toContain("REFERENCE_ROWS");
+    expect(boot).not.toContain("twimg.com");
+    expect(boot).not.toContain("Fluxion");
   });
 });
