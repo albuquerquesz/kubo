@@ -28,26 +28,27 @@ describe("mosaic hero background contract", () => {
     // Softer corners (16–18% of pitch), narrow seam.
     expect(source).toContain("CORNER_RATIO = 0.17");
     expect(source).toContain("SEAM_RATIO = 0.09");
-    // Directional bands: lower-right → upper-left, no mid-field eye/bridge.
-    expect(source).toContain("x: 0.92");
-    expect(source).toContain("x: 1.12");
-    expect(source).toContain("x: 0.78");
-    expect(source).toContain("x: 0.88");
+    // Soft dual-temperature mass: cool S-curve + warm outer arc (structure match).
+    expect(source).toContain("sampleCubic");
+    expect(source).toContain("x: 0.58");
+    expect(source).toContain("x: 1.08");
+    expect(source).toContain("x: 0.84");
+    expect(source).toContain("x: 1.02");
     // Flat rounded rects only — no per-cell radial edge treatment in the paint loop.
     expect(source).toContain("ctx.roundRect");
     expect(source).toContain("useLayoutEffect");
-    // Color-spread contract: quiet matrix + band-driven energy (no continuous right wash).
+    // Quiet matrix + band-driven energy (no continuous right wash).
     expect(source).toContain("copyPocket");
     expect(source).toContain("noiseMod");
     expect(source).toContain("safeDraw");
     expect(source).not.toContain("rightField");
     expect(source).not.toContain("deepOlive");
     expect(source).not.toContain("midGold");
-    // Narrower ribbons / dual temperature (color-spread over-yellow fix).
-    expect(source).toContain("width: 0.09");
-    expect(source).toContain("width: 0.08");
-    expect(source).toContain("opacity: 0.84");
-    expect(source).toContain("opacity: 0.78");
+    // Broad soft fields with dual temperature (not thin knife ribbons).
+    expect(source).toContain("width: 0.14");
+    expect(source).toContain("width: 0.13");
+    expect(source).toContain("opacity: 0.88");
+    expect(source).toContain("opacity: 0.9");
     // Canvas mounts without a client-only gate that can leave only the fallback.
     expect(source).toContain('className="mosaic-hero-canvas absolute inset-0 h-full w-full"');
     expect(source).not.toContain("{mounted &&");
