@@ -6,9 +6,9 @@ import { useCallback, useState } from "react";
 import { DEFAULT_PACKAGE_MANAGER, type PackageManager } from "@/lib/create-commands";
 import { cn } from "@/lib/utils";
 
-import EtherealBeamsCanvas from "./ethereal-beams-canvas";
 import HeroDisplayTitle from "./hero-display-title";
 import HeroRailLower from "./hero-rail-lower";
+import MosaicHeroCanvas from "./mosaic-hero-canvas";
 
 const mission =
   "Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.";
@@ -30,8 +30,8 @@ export default function HeroSection() {
       aria-label="Seção principal"
       className="relative isolate min-h-[calc(100svh-3rem)] overflow-hidden bg-background"
     >
-      <EtherealBeamsCanvas />
-      <div className="ethereal-beams-veil" aria-hidden="true" />
+      <MosaicHeroCanvas />
+      <div className="mosaic-hero-veil" aria-hidden="true" />
 
       <div className="relative z-10 mx-auto flex min-h-[calc(100svh-3rem)] w-full max-w-[1200px] flex-col items-center justify-center px-4 pt-8 pb-10 text-center sm:px-8 sm:pt-10 sm:pb-12 lg:px-12 lg:pt-12 lg:pb-14">
         <div className="flex w-full flex-col items-center">

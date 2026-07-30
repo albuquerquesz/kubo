@@ -401,6 +401,124 @@
   }
 }
 
+/* Mosaic hero atmosphere: CSS fallback under the Canvas tile field. */
+.mosaic-hero-fallback {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: var(--background);
+  background-image:
+    /* Quiet left copy zone */
+    radial-gradient(
+      ellipse 55% 70% at 22% 55%,
+      color-mix(in srgb, var(--background) 92%, transparent) 0%,
+      transparent 70%
+    ),
+    /* Warm right band */
+    radial-gradient(
+        ellipse 48% 72% at 82% 48%,
+        color-mix(in srgb, var(--accent) 38%, transparent) 0%,
+        color-mix(in srgb, var(--primary) 18%, transparent) 38%,
+        transparent 72%
+      ),
+    /* Primary diagonal ribbon */
+    radial-gradient(
+        ellipse 42% 90% at 58% 40%,
+        color-mix(in srgb, var(--primary) 32%, transparent) 0%,
+        color-mix(in srgb, var(--primary) 12%, transparent) 42%,
+        transparent 70%
+      ),
+    /* Lower echo */
+    radial-gradient(
+        ellipse 50% 36% at 32% 82%,
+        color-mix(in srgb, var(--primary) 16%, transparent) 0%,
+        transparent 68%
+      ),
+    /* Top-left haze */
+    radial-gradient(
+        ellipse 40% 34% at 12% 8%,
+        color-mix(in srgb, var(--accent) 14%, transparent) 0%,
+        transparent 70%
+      ),
+    /* Soft tile impression via repeating rounded squares (CSS approximation) */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Crect x='1.2' y='1.2' width='19.6' height='19.6' rx='2.6' fill='%23181814' fill-opacity='0.55'/%3E%3C/svg%3E"),
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--card) 80%, var(--background)) 0%,
+      var(--background) 48%,
+      color-mix(in srgb, var(--muted) 40%, var(--background)) 100%
+    );
+  background-size:
+    auto,
+    auto,
+    auto,
+    auto,
+    auto,
+    22px 22px,
+    auto;
+  background-blend-mode: normal, screen, screen, soft-light, soft-light, multiply, normal;
+  opacity: 0.98;
+}
+
+.mosaic-hero-fallback::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(
+      ellipse 70% 65% at 42% 48%,
+      transparent 0%,
+      color-mix(in srgb, var(--background) 28%, transparent) 58%,
+      color-mix(in srgb, var(--background) 78%, transparent) 100%
+    ),
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--background) 72%, transparent) 0%,
+      color-mix(in srgb, var(--background) 28%, transparent) 38%,
+      transparent 62%
+    );
+}
+
+.mosaic-hero-canvas {
+  display: block;
+}
+
+.mosaic-hero-veil {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    /* Center copy pocket — keep type readable over the mosaic */
+    radial-gradient(
+      ellipse 52% 46% at 50% 44%,
+      color-mix(in srgb, var(--background) 38%, transparent) 0%,
+      color-mix(in srgb, var(--background) 18%, transparent) 48%,
+      transparent 72%
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--background) 55%, transparent) 0%,
+      color-mix(in srgb, var(--background) 8%, transparent) 26%,
+      color-mix(in srgb, var(--background) 14%, transparent) 70%,
+      color-mix(in srgb, var(--background) 72%, transparent) 100%
+    ),
+    /* Leave the right energy mostly un-veiled */
+    linear-gradient(
+        to right,
+        color-mix(in srgb, var(--background) 36%, transparent) 0%,
+        color-mix(in srgb, var(--background) 10%, transparent) 32%,
+        transparent 55%
+      );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mosaic-hero-fallback {
+    opacity: 0.92;
+  }
+}
+
 /* Ethereal hero atmosphere: CSS remains visible beneath the optional WebGL layer. */
 .ethereal-beams-fallback {
   position: absolute;
