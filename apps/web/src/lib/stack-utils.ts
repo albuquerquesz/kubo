@@ -184,9 +184,11 @@ export function generateStackCommand(stack: StackState) {
     `--backend ${mapBackendToCli(stack.backend)}`,
     `--runtime ${stack.runtime}`,
     `--api ${stack.api}`,
-    `--auth ${stack.auth}`,
-    `--payments ${stack.payments}`,
-    `--observability ${stack.observability}`,
+    `--auth ${stack.auth || "none"}`,
+    `--payments ${stack.payments || "none"}`,
+    // Always emit observability so Stack Builder → CLI carries the choice
+    // (including explicit "none"); CLI processFlags must accept this flag.
+    `--observability ${stack.observability || "none"}`,
     `--database ${stack.database}`,
     `--orm ${stack.orm}`,
     `--db-setup ${stack.dbSetup}`,
