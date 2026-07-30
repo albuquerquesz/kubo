@@ -1,5 +1,15 @@
-# One-shot bootstrap: first publish of unscoped create-kubojs (+ @kubojs/cli alias).
-# Safe to re-run only when the version is new; existing versions will fail as expected.
+# Bootstrap only — retired for routine releases.
+#
+# Use when a package name does not yet exist on the registry (first publish).
+# All four packages (create-kubojs, @kubojs/cli, @kubojs/types,
+# @kubojs/template-generator) already exist; production path is release.yaml
+# via OIDC Trusted Publishing.
+#
+# Do NOT configure this workflow as the primary Trusted Publisher.
+# Do not use for day-to-day releases when packages already exist.
+# Safe to re-run only when the version is new; existing versions fail as expected.
+#
+# Auth: still uses NPM_TOKEN (break-glass / bootstrap). Prefer release.yaml OIDC.
 name: Publish create-kubojs
 
 on:

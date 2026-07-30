@@ -1,9 +1,28 @@
+# Production release + OIDC canary (Option B).
+#
+# Trusted Publisher on npm must list this filename exactly: release.yaml
+# (owner albuquerquesz / repo kubo / environment empty).
+# Do not rename without updating npm Trusted Publisher settings.
+#
+# Production auth: npm Trusted Publishing (OIDC) — no NODE_AUTH_TOKEN.
+# Canary auth: same OIDC path, dist-tag oidc-canary only (never latest).
+# Rollback: re-add NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} on publish steps.
 name: Release
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      oidc_canary:
+        description: "If true, publish OIDC canary tag only (no latest, no git tag)"
+        type: boolean
+        default: false
+      canary_version:
+        description: "Pre-release version for OIDC canary (empty = 0.0.0-oidc.<run_id>)"
+        type: string
+        default: ""
 
 permissions:
   contents: write
@@ -15,9 +34,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  release:
-    name: Release to NPM
-    if: startsWith(github.event.head_commit.message, 'chore(release):')
+  # ---------------------------------------------------------------------------
+  # OIDC canary: prove Trusted Publishing without touching latest
+  # ---------------------------------------------------------------------------
+  oidc-canary:
+    name: OIDC publish canary
+    if: github.event_name == 'workflow_dispatch' && inputs.oidc_canary == true
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -33,6 +55,195 @@ jobs:
           check-latest: true
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
+
+      - name: Ensure npm supports OIDC Trusted Publishing
+        run: |
+          npm install -g npm@latest
+          node -v
+          npm -v
+          npm_version=$(npm -v)
+          major=$(echo "$npm_version" | cut -d. -f1)
+          minor=$(echo "$npm_version" | cut -d. -f2)
+          if [ "$major" -lt 11 ] || { [ "$major" -eq 11 ] && [ "$minor" -lt 5 ]; }; then
+            echo "npm too old for OIDC Trusted Publishing: $npm_version (need >= 11.5.1)"
+            exit 1
+          fi
+
+      - name: Guard repository.url for OIDC provenance
+        run: |
+          EXPECTED='git+https://github.com/albuquerquesz/kubo.git'
+          for pkg in apps/cli/package.json packages/types/package.json packages/template-generator/package.json; do
+            url=$(jq -r '.repository.url // empty' "$pkg")
+            if [ "$url" != "$EXPECTED" ]; then
+              echo "Error: $pkg repository.url is '$url', expected '$EXPECTED'"
+              exit 1
+            fi
+            echo "OK $pkg repository.url"
+          done
+
+      - name: Resolve canary version
+        id: version
+        run: |
+          if [ -n "${{ inputs.canary_version }}" ]; then
+            VERSION="${{ inputs.canary_version }}"
+          else
+            VERSION="0.0.0-oidc.${{ github.run_id }}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Canary version: $VERSION"
+
+          if npm view "create-kubojs@$VERSION" version 2>/dev/null; then
+            echo "Error: version $VERSION already exists on npm — pick a new canary version"
+            exit 1
+          fi
+
+      - name: Snapshot latest dist-tags (must stay unchanged)
+        id: pre-latest
+        run: |
+          LATEST=$(npm view create-kubojs dist-tags.latest)
+          echo "latest=$LATEST" >> $GITHUB_OUTPUT
+          echo "Pre-canary create-kubojs@latest = $LATEST"
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Update package versions for canary
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          cd packages/types
+          jq --arg v "$VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
+          cd ../template-generator
+          jq --arg v "$VERSION" --arg dep "$VERSION" \
+            '.version = $v | .dependencies["@kubojs/types"] = $dep' \
+            package.json > tmp.json && mv tmp.json package.json
+          cd ../../apps/cli
+          jq --arg v "$VERSION" --arg dep "$VERSION" \
+            '.version = $v | .dependencies["@kubojs/types"] = $dep | .dependencies["@kubojs/template-generator"] = $dep' \
+            package.json > tmp.json && mv tmp.json package.json
+
+      - name: Build packages
+        run: |
+          cd packages/types && bun run build
+          cd ../template-generator && bun run build
+          cd ../../apps/cli && bun run build
+        env:
+          BTS_TELEMETRY: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: latest
+
+      - name: Publish smoke test (npm, pnpm, bun)
+        run: bun run smoke:publish
+
+      # OIDC only — do NOT set NODE_AUTH_TOKEN on canary publish steps
+      - name: Publish types (OIDC canary)
+        run: cd packages/types && npm publish --access public --provenance --tag oidc-canary
+
+      - name: Publish template-generator (OIDC canary)
+        run: cd packages/template-generator && npm publish --access public --provenance --tag oidc-canary
+
+      - name: Publish create-kubojs (OIDC canary)
+        run: cd apps/cli && npm publish --access public --provenance --tag oidc-canary
+
+      - name: Publish @kubojs/cli alias (OIDC canary)
+        run: |
+          cd apps/cli
+          ORIGINAL=$(cat package.json)
+          jq '.name = "@kubojs/cli"' package.json > tmp.json && mv tmp.json package.json
+          npm publish --access public --provenance --tag oidc-canary
+          echo "$ORIGINAL" > package.json
+
+      - name: Post-publish npm view verify
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          for pkg in create-kubojs @kubojs/cli @kubojs/types @kubojs/template-generator; do
+            got=$(npm view "$pkg@$VERSION" version)
+            if [ "$got" != "$VERSION" ]; then
+              echo "Error: expected $pkg@$VERSION, got $got"
+              exit 1
+            fi
+            echo "OK $pkg@$got"
+          done
+          TAG=$(npm view create-kubojs dist-tags.oidc-canary)
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "Error: oidc-canary tag is '$TAG', expected $VERSION"
+            exit 1
+          fi
+          LATEST_NOW=$(npm view create-kubojs dist-tags.latest)
+          if [ "$LATEST_NOW" != "${{ steps.pre-latest.outputs.latest }}" ]; then
+            echo "Error: latest dist-tag changed from ${{ steps.pre-latest.outputs.latest }} to $LATEST_NOW"
+            exit 1
+          fi
+          echo "latest unchanged: $LATEST_NOW"
+
+      - name: Install smoke from oidc-canary tag
+        run: |
+          npx --yes create-kubojs@oidc-canary --version
+
+      - name: Canary summary
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          echo "## OIDC canary $VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Dist-tag: \`oidc-canary\` (not latest)" >> $GITHUB_STEP_SUMMARY
+          echo "- latest still: \`${{ steps.pre-latest.outputs.latest }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Auth: OIDC Trusted Publishing (no NODE_AUTH_TOKEN)" >> $GITHUB_STEP_SUMMARY
+
+  # ---------------------------------------------------------------------------
+  # Production release on chore(release): x.y.z (OIDC Trusted Publishing)
+  # ---------------------------------------------------------------------------
+  release:
+    name: Release to NPM
+    if: >
+      github.event_name == 'push' &&
+      startsWith(github.event.head_commit.message, 'chore(release):')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          check-latest: true
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Ensure npm supports OIDC Trusted Publishing
+        run: |
+          npm install -g npm@latest
+          node -v
+          npm -v
+          npm_version=$(npm -v)
+          major=$(echo "$npm_version" | cut -d. -f1)
+          minor=$(echo "$npm_version" | cut -d. -f2)
+          if [ "$major" -lt 11 ] || { [ "$major" -eq 11 ] && [ "$minor" -lt 5 ]; }; then
+            echo "npm too old for OIDC Trusted Publishing: $npm_version (need >= 11.5.1)"
+            exit 1
+          fi
+
+      - name: Guard repository.url for OIDC provenance
+        run: |
+          EXPECTED='git+https://github.com/albuquerquesz/kubo.git'
+          for pkg in apps/cli/package.json packages/types/package.json packages/template-generator/package.json; do
+            url=$(jq -r '.repository.url // empty' "$pkg")
+            if [ "$url" != "$EXPECTED" ]; then
+              echo "Error: $pkg repository.url is '$url', expected '$EXPECTED'"
+              exit 1
+            fi
+            echo "OK $pkg repository.url"
+          done
 
       - name: Extract version from commit message
         id: version
@@ -122,23 +333,19 @@ jobs:
         if: steps.check-version.outputs.exists == 'false'
         run: bun run smoke:publish
 
+      # Production publish via OIDC Trusted Publishing — no NODE_AUTH_TOKEN.
+      # Rollback: restore env NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} on these steps.
       - name: Publish types to NPM
         if: steps.check-version.outputs.exists == 'false'
-        run: cd packages/types && npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: cd packages/types && npm publish --access public --provenance
 
       - name: Publish template-generator to NPM
         if: steps.check-version.outputs.exists == 'false'
-        run: cd packages/template-generator && npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: cd packages/template-generator && npm publish --access public --provenance
 
       - name: Publish create-kubojs to NPM
         if: steps.check-version.outputs.exists == 'false'
-        run: cd apps/cli && npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: cd apps/cli && npm publish --access public --provenance
 
       # Backward-compat alias: same artifact under @kubojs/cli for older docs/installs.
       - name: Publish @kubojs/cli alias to NPM
@@ -148,10 +355,21 @@ jobs:
           cd apps/cli
           ORIGINAL=$(cat package.json)
           jq --arg v "$VERSION" '.name = "@kubojs/cli" | .version = $v' package.json > tmp.json && mv tmp.json package.json
-          npm publish --access public
+          npm publish --access public --provenance
           echo "$ORIGINAL" > package.json
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Post-publish npm view verify
+        if: steps.check-version.outputs.exists == 'false'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          for pkg in create-kubojs @kubojs/cli @kubojs/types @kubojs/template-generator; do
+            got=$(npm view "$pkg@$VERSION" version)
+            if [ "$got" != "$VERSION" ]; then
+              echo "Error: expected $pkg@$VERSION, got $got"
+              exit 1
+            fi
+            echo "OK $pkg@$got"
+          done
 
       - name: Create and push tag
         if: steps.check-version.outputs.exists == 'false'
@@ -183,6 +401,9 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           echo "## Release v$VERSION Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Auth" >> $GITHUB_STEP_SUMMARY
+          echo "OIDC Trusted Publishing (no write token on publish steps)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Published Packages" >> $GITHUB_STEP_SUMMARY
           echo "- [create-kubojs@$VERSION](https://www.npmjs.com/package/create-kubojs/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
