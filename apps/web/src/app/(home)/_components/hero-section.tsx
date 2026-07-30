@@ -1,45 +1,48 @@
 "use client";
 
-import { ArrowDown } from "lucide-react";
-import { useCallback, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
-import { DEFAULT_PACKAGE_MANAGER, type PackageManager } from "@/lib/create-commands";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 import HeroDisplayTitle from "./hero-display-title";
-import HeroRailLower from "./hero-rail-lower";
 import MosaicHeroCanvas from "./mosaic-hero-canvas";
 
 const mission =
   "Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.";
 
 export default function HeroSection() {
-  const [selectedManager, setSelectedManager] = useState<PackageManager>(DEFAULT_PACKAGE_MANAGER);
-
-  const scrollToNextSection = useCallback(() => {
-    const target = document.getElementById("builder");
-    if (!target) return;
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
-  }, []);
-
   return (
     <section
       id="top"
       aria-label="Seção principal"
-      className="relative isolate min-h-[calc(100svh-3rem)] overflow-hidden bg-background"
+      /* -mt-12 cancels layout.tsx pt-12 so artwork is full-bleed behind the fixed header */
+      className="relative isolate -mt-12 min-h-svh overflow-hidden bg-background"
     >
       <MosaicHeroCanvas />
       <div className="mosaic-hero-veil" aria-hidden="true" />
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-3rem)] w-full max-w-[1200px] flex-col items-center justify-center px-4 pt-8 pb-10 text-center sm:px-8 sm:pt-10 sm:pb-12 lg:px-12 lg:pt-12 lg:pb-14">
-        <div className="flex w-full flex-col items-center">
+      <div
+        className={cn(
+          "relative z-10 flex min-h-svh w-full flex-col",
+          "items-start justify-end text-left",
+          /* 16 / 32–40 / 64px gutters — shared left edge for title, copy, CTA */
+          "px-4 pb-16 pt-[calc(var(--site-header-height)+1.25rem)]",
+          "sm:px-8 sm:pb-[4.25rem] sm:pt-[calc(var(--site-header-height)+1.5rem)]",
+          "md:px-10 lg:px-16 lg:pb-[4.5rem]",
+        )}
+      >
+        <div className="flex w-full max-w-[40rem] flex-col items-start">
           <HeroDisplayTitle
             title="Construa sem começar do zero."
             className={cn(
-              "max-w-[900px] text-foreground text-[clamp(2.75rem,7vw,7rem)] leading-[0.9]",
-              "sm:text-[clamp(3.5rem,7vw,7rem)] lg:leading-[0.88]",
+              "max-w-[18ch] text-foreground",
+              /* Override .ui-display 600 / −0.065em for a lighter display match */
+              "!font-normal tracking-[-0.03em]",
+              "text-[clamp(2.5rem,5.5vw,5.25rem)] leading-[1.02]",
+              "sm:text-[clamp(2.75rem,5.2vw,5.25rem)]",
+              "lg:text-[clamp(4rem,5.8vw,5.25rem)] lg:leading-[1]",
               "[&_*]:text-foreground",
             )}
           >
@@ -48,7 +51,13 @@ export default function HeroSection() {
             começar do zero.
           </HeroDisplayTitle>
 
-          <p className="mt-7 max-w-[34rem] text-pretty text-base leading-relaxed text-muted-foreground sm:mt-8 sm:text-lg lg:mt-9 lg:text-xl">
+          <p
+            className={cn(
+              "mt-5 max-w-[36rem] text-pretty text-[1.125rem] leading-7 text-muted-foreground",
+              "sm:mt-6 sm:text-[1.25rem] sm:leading-7",
+              "lg:mt-6",
+            )}
+          >
             <span className="sr-only">{mission}</span>
             <span aria-hidden="true">
               Escolha as ferramentas certas para sua ideia e{" "}
@@ -56,26 +65,24 @@ export default function HeroSection() {
             </span>
           </p>
 
-          <div className="mt-8 flex w-full max-w-[34rem] flex-col items-stretch sm:mt-10 lg:mt-11">
-            <div className="w-full rounded-[8px] border border-rule bg-card/60 p-3 text-left shadow-[0_16px_42px_color-mix(in_srgb,var(--background)_24%,transparent)] backdrop-blur-md sm:p-4">
-              <HeroRailLower
-                selectedManager={selectedManager}
-                onSelectedManagerChange={setSelectedManager}
-                showCopyButton
+          <div className="mt-10 sm:mt-12">
+            <Link
+              href="/new"
+              className={cn(
+                buttonVariants({ variant: "cta", size: "xl" }),
+                "h-14 min-w-[11rem] gap-2 px-6 text-sm sm:min-w-[12.5rem] sm:text-base",
+              )}
+            >
+              Montar stack
+              <ArrowUpRight
+                aria-hidden
+                data-icon="inline-end"
+                className="size-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
               />
-            </div>
+            </Link>
           </div>
         </div>
       </div>
-
-      <button
-        type="button"
-        onClick={scrollToNextSection}
-        className="absolute bottom-5 left-1/2 z-20 -translate-x-1/2 text-foreground/75 transition-colors duration-150 ease-out hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-        aria-label="Rolar para a próxima seção"
-      >
-        <ArrowDown aria-hidden className="size-5 animate-fading-arrow-scroll-1" strokeWidth={1.5} />
-      </button>
     </section>
   );
 }

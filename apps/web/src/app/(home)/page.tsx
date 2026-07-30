@@ -5,6 +5,7 @@ import { fetchQuery } from "convex/nextjs";
 
 import CustomStackPanel from "./_components/custom-stack-panel";
 import Footer from "./_components/footer";
+import HeroInstallStrip from "./_components/hero-install-strip";
 import HeroSection from "./_components/hero-section";
 import LogoMarquee from "./_components/logo-marquee";
 import Testimonials from "./_components/testimonials";
@@ -23,8 +24,9 @@ export default async function HomePage() {
   const tweets = fetchedTweets.map((t) => ({ tweetId: t.tweetId }));
 
   return (
-    <main className="min-h-svh">
+    <main className="min-h-svh overflow-x-clip">
       <HeroSection />
+      <HeroInstallStrip />
       <LogoMarquee />
       <CustomStackPanel className="mb-0 sm:mb-0 lg:mb-0" showViewportBottomRule={false} />
       <CustomStackPanel
