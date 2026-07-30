@@ -401,62 +401,75 @@
   }
 }
 
-/* Mosaic hero atmosphere: CSS fallback under the Canvas tile field. */
+/* Mosaic hero atmosphere: CSS fallback under the Canvas tile field.
+   Pitch defaults to ~height/37; Canvas overwrites --mosaic-pitch after paint.
+   ::before carries directional bands masked into opaque rounded squares
+   (seam ≈ 9%, rx ≈ 17% of 32u pitch). Seams reveal --background. */
 .mosaic-hero-fallback {
   position: absolute;
   inset: 0;
   overflow: hidden;
   background-color: var(--background);
+  --mosaic-fallback-pitch: var(--mosaic-pitch, calc(100svh / 37));
+}
+
+.mosaic-hero-fallback::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background-color: color-mix(in srgb, var(--card) 72%, var(--background));
   background-image:
-    /* Quiet left copy zone */
-    radial-gradient(
-      ellipse 55% 70% at 22% 55%,
-      color-mix(in srgb, var(--background) 92%, transparent) 0%,
-      transparent 70%
+    /* Warm companion — right third, separated from primary */
+    linear-gradient(
+      208deg,
+      transparent 0%,
+      transparent 12%,
+      color-mix(in srgb, var(--foreground) 18%, transparent) 28%,
+      color-mix(in srgb, var(--accent) 62%, transparent) 44%,
+      color-mix(in srgb, var(--primary) 36%, transparent) 58%,
+      transparent 76%
     ),
-    /* Warm right band */
-    radial-gradient(
-        ellipse 48% 72% at 82% 48%,
-        color-mix(in srgb, var(--accent) 38%, transparent) 0%,
-        color-mix(in srgb, var(--primary) 18%, transparent) 38%,
-        transparent 72%
+    /* Primary ribbon — upper-right → lower-center/left */
+    linear-gradient(
+        218deg,
+        transparent 0%,
+        transparent 16%,
+        color-mix(in srgb, var(--primary) 54%, transparent) 34%,
+        color-mix(in srgb, var(--primary) 34%, transparent) 48%,
+        color-mix(in srgb, var(--primary) 14%, transparent) 60%,
+        transparent 74%
       ),
-    /* Primary diagonal ribbon */
-    radial-gradient(
-        ellipse 42% 90% at 58% 40%,
-        color-mix(in srgb, var(--primary) 32%, transparent) 0%,
-        color-mix(in srgb, var(--primary) 12%, transparent) 42%,
-        transparent 70%
-      ),
-    /* Lower echo */
-    radial-gradient(
-        ellipse 50% 36% at 32% 82%,
-        color-mix(in srgb, var(--primary) 16%, transparent) 0%,
-        transparent 68%
+    /* Lower echo — weak secondary across lower half */
+    linear-gradient(
+        152deg,
+        transparent 0%,
+        transparent 46%,
+        color-mix(in srgb, var(--primary) 22%, transparent) 60%,
+        color-mix(in srgb, var(--accent) 14%, transparent) 70%,
+        transparent 84%
       ),
     /* Top-left haze */
     radial-gradient(
-        ellipse 40% 34% at 12% 8%,
-        color-mix(in srgb, var(--accent) 14%, transparent) 0%,
+        ellipse 34% 28% at 8% 5%,
+        color-mix(in srgb, var(--accent) 20%, transparent) 0%,
         transparent 70%
       ),
-    /* Soft tile impression via repeating rounded squares (CSS approximation) */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Crect x='1.2' y='1.2' width='19.6' height='19.6' rx='2.6' fill='%23181814' fill-opacity='0.55'/%3E%3C/svg%3E"),
+    /* Quiet base field variation */
     linear-gradient(
-      165deg,
-      color-mix(in srgb, var(--card) 80%, var(--background)) 0%,
-      var(--background) 48%,
-      color-mix(in srgb, var(--muted) 40%, var(--background)) 100%
-    );
-  background-size:
-    auto,
-    auto,
-    auto,
-    auto,
-    auto,
-    22px 22px,
-    auto;
-  background-blend-mode: normal, screen, screen, soft-light, soft-light, multiply, normal;
+        205deg,
+        color-mix(in srgb, var(--muted) 45%, var(--background)) 0%,
+        color-mix(in srgb, var(--card) 60%, var(--background)) 42%,
+        color-mix(in srgb, var(--muted) 30%, var(--background)) 100%
+      );
+  background-blend-mode: screen, screen, soft-light, soft-light, normal;
+  /* White rounded rect = visible tile; transparent seam = dark base */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='1.4' y='1.4' width='29.2' height='29.2' rx='5.5' fill='white'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='1.4' y='1.4' width='29.2' height='29.2' rx='5.5' fill='white'/%3E%3C/svg%3E");
+  -webkit-mask-size: var(--mosaic-fallback-pitch) var(--mosaic-fallback-pitch);
+  mask-size: var(--mosaic-fallback-pitch) var(--mosaic-fallback-pitch);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
   opacity: 0.98;
 }
 
@@ -466,18 +479,25 @@
   pointer-events: none;
   content: "";
   background:
+    /* Lower-left copy pocket */
     radial-gradient(
-      ellipse 70% 65% at 42% 48%,
-      transparent 0%,
-      color-mix(in srgb, var(--background) 28%, transparent) 58%,
-      color-mix(in srgb, var(--background) 78%, transparent) 100%
+      ellipse 55% 58% at 24% 74%,
+      color-mix(in srgb, var(--background) 58%, transparent) 0%,
+      color-mix(in srgb, var(--background) 18%, transparent) 48%,
+      transparent 72%
     ),
     linear-gradient(
       to right,
-      color-mix(in srgb, var(--background) 72%, transparent) 0%,
-      color-mix(in srgb, var(--background) 28%, transparent) 38%,
-      transparent 62%
-    );
+      color-mix(in srgb, var(--background) 86%, transparent) 0%,
+      color-mix(in srgb, var(--background) 40%, transparent) 30%,
+      transparent 54%
+    ),
+    /* Soft edge vignette */
+    radial-gradient(
+        ellipse 78% 72% at 58% 42%,
+        transparent 42%,
+        color-mix(in srgb, var(--background) 42%, transparent) 100%
+      );
 }
 
 .mosaic-hero-canvas {
@@ -490,32 +510,32 @@
   inset: 0;
   pointer-events: none;
   background:
-    /* Center copy pocket — keep type readable over the mosaic */
+    /* Lower-left copy pocket */
     radial-gradient(
-      ellipse 52% 46% at 50% 44%,
-      color-mix(in srgb, var(--background) 38%, transparent) 0%,
-      color-mix(in srgb, var(--background) 18%, transparent) 48%,
-      transparent 72%
+      ellipse 48% 52% at 24% 72%,
+      color-mix(in srgb, var(--background) 52%, transparent) 0%,
+      color-mix(in srgb, var(--background) 22%, transparent) 52%,
+      transparent 74%
     ),
     linear-gradient(
       to bottom,
-      color-mix(in srgb, var(--background) 55%, transparent) 0%,
-      color-mix(in srgb, var(--background) 8%, transparent) 26%,
-      color-mix(in srgb, var(--background) 14%, transparent) 70%,
-      color-mix(in srgb, var(--background) 72%, transparent) 100%
+      color-mix(in srgb, var(--background) 48%, transparent) 0%,
+      color-mix(in srgb, var(--background) 6%, transparent) 22%,
+      color-mix(in srgb, var(--background) 10%, transparent) 62%,
+      color-mix(in srgb, var(--background) 58%, transparent) 100%
     ),
     /* Leave the right energy mostly un-veiled */
     linear-gradient(
         to right,
-        color-mix(in srgb, var(--background) 36%, transparent) 0%,
-        color-mix(in srgb, var(--background) 10%, transparent) 32%,
-        transparent 55%
+        color-mix(in srgb, var(--background) 52%, transparent) 0%,
+        color-mix(in srgb, var(--background) 16%, transparent) 30%,
+        transparent 52%
       );
 }
 
 @media (prefers-reduced-motion: reduce) {
   .mosaic-hero-fallback {
-    opacity: 0.92;
+    opacity: 0.94;
   }
 }
 

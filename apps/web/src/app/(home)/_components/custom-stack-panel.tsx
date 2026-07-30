@@ -57,7 +57,7 @@ export default function CustomStackPanel({
       id={sectionId}
       aria-labelledby={titleId}
       className={cn(
-        "custom-stack-panel ui-scroll-target mx-auto mt-12 mb-12 w-full max-w-[1240px] border-rule bg-background sm:mt-16 sm:mb-16 lg:mt-20 lg:mb-20",
+        "custom-stack-panel ui-scroll-target mx-auto mt-12 mb-12 w-full min-w-0 max-w-[1240px] border-rule bg-background sm:mt-16 sm:mb-16 lg:mt-20 lg:mb-20",
         showSideBorders && "border-x",
         !showViewportTopRule && "custom-stack-panel--no-top-rule",
         !showViewportBottomRule && "custom-stack-panel--no-bottom-rule",
@@ -85,8 +85,8 @@ export default function CustomStackPanel({
         {content.description}
       </p>
 
-      <div className="px-4 py-6 sm:px-6 lg:px-6 lg:py-6">
-        <div className="relative aspect-[1.9] min-h-[16rem] overflow-hidden bg-muted sm:min-h-0">
+      <div className="min-w-0 px-4 py-6 sm:px-6 lg:px-6 lg:py-6">
+        <div className="relative aspect-[1.9] min-h-[16rem] w-full min-w-0 max-w-full overflow-hidden bg-muted sm:min-h-0">
           <Image
             src={content.imageSrc}
             alt={content.imageAlt}

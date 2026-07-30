@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 type Rgb = { r: number; g: number; b: number };
 
@@ -26,10 +26,21 @@ type Band = {
   temperature: number;
 };
 
-const COLUMNS = 52;
-const ROWS = 37;
+type GridGeometry = {
+  columns: number;
+  rows: number;
+  cell: number;
+  seam: number;
+  radius: number;
+  originX: number;
+  originY: number;
+};
+
+const REFERENCE_ROWS = 37;
+/** 7–10% of pitch — narrow dark seam between opaque cells. */
 const SEAM_RATIO = 0.09;
-const CORNER_RATIO = 0.13;
+/** 16–18% of pitch — softer corners than graph-paper squares, still clearly square. */
+const CORNER_RATIO = 0.17;
 const MAX_DPR = 1.5;
 const DRIFT_PERIOD_SEC = 18;
 const SEED = 0x6b75626f; // "kubo"
@@ -155,115 +166,109 @@ function sampleQuadratic(
   return out;
 }
 
+/**
+ * Height-driven square pitch so cells stay square and the grid reaches the edges.
+ * At the reference aspect this resolves near 52×37; wider frames add columns.
+ */
+function resolveGrid(cssWidth: number, cssHeight: number): GridGeometry {
+  const rows = cssHeight < 520 ? 30 : cssHeight < 720 ? 34 : REFERENCE_ROWS;
+  const cell = Math.max(10, cssHeight / rows);
+  const columns = Math.max(1, Math.ceil(cssWidth / cell));
+  const seam = cell * SEAM_RATIO;
+  const radius = cell * CORNER_RATIO;
+  const gridW = columns * cell;
+  const gridH = rows * cell;
+  return {
+    columns,
+    rows,
+    cell,
+    seam,
+    radius,
+    originX: (cssWidth - gridW) / 2,
+    originY: (cssHeight - gridH) / 2,
+  };
+}
+
+/**
+ * Directional luminous bands: enter upper-right / right and bend down-left.
+ * Paths keep ≥0.12 normalized horizontal separation at the vertical midpoint.
+ */
 function buildBands(colors: ThemeColors, phase: number): Band[] {
-  // Slow drift: small normalized offsets so the field breathes without flicker.
-  const driftX = Math.sin(phase * Math.PI * 2) * 0.02;
-  const driftY = Math.cos(phase * Math.PI * 2 * 0.7) * 0.014;
+  const driftX = Math.sin(phase * Math.PI * 2) * 0.018;
+  const driftY = Math.cos(phase * Math.PI * 2 * 0.7) * 0.012;
 
-  // Primary ribbon: enters upper-middle-right, bows through center, exits lower-leftish.
+  // Primary ribbon — broad primary energy sweeping UR → lower-center/left.
   const primaryBand = sampleQuadratic(
-    { x: 0.68 + driftX, y: -0.06 },
-    { x: 0.52 + driftX * 0.5, y: 0.38 + driftY },
-    { x: 0.38 + driftX * 0.3, y: 1.06 },
+    { x: 0.82 + driftX, y: -0.08 },
+    { x: 0.62 + driftX * 0.4, y: 0.28 + driftY },
+    { x: 0.38 + driftX * 0.2, y: 1.08 },
   );
 
-  // Secondary primary arc for ribbon thickness without a single fat blob.
-  const primaryCompanion = sampleQuadratic(
-    { x: 0.78 + driftX * 0.4, y: 0.02 },
-    { x: 0.62 + driftY, y: 0.5 + driftX * 0.3 },
-    { x: 0.48, y: 1.04 },
-  );
-
-  // Warm counter-ribbon: far right, brighter cores.
+  // Warm companion — right-side accent/foreground core, separated from primary.
   const warmBand = sampleQuadratic(
-    { x: 1.08 + driftX * 0.4, y: -0.02 },
-    { x: 0.9 - driftY, y: 0.42 + driftX },
-    { x: 0.74 + driftX * 0.25, y: 1.04 },
+    { x: 1.1 + driftX * 0.3, y: 0.02 },
+    { x: 0.9 - driftY, y: 0.38 + driftX },
+    { x: 0.64 + driftX * 0.15, y: 1.08 },
   );
 
-  const warmCompanion = sampleQuadratic(
-    { x: 1.02, y: 0.18 },
-    { x: 0.86 + driftX * 0.3, y: 0.58 + driftY },
-    { x: 0.78, y: 0.98 },
-  );
-
+  // Weak lower echo — secondary depth across the lower half.
   const lowerEcho = sampleQuadratic(
-    { x: -0.04 + driftX * 0.25, y: 0.94 },
-    { x: 0.3 + driftY, y: 0.8 + driftX * 0.15 },
-    { x: 0.54, y: 0.64 + driftY },
+    { x: 0.14 + driftX * 0.2, y: 1.08 },
+    { x: 0.42 + driftY, y: 0.84 },
+    { x: 0.72, y: 0.68 + driftY },
   );
 
+  // Faint top-left haze so the field is not a sterile dark rectangle.
   const topLeftHaze = sampleQuadratic(
-    { x: -0.06, y: -0.04 },
-    { x: 0.16 + driftX * 0.35, y: 0.1 },
-    { x: 0.3, y: 0.26 + driftY },
+    { x: -0.05, y: -0.04 },
+    { x: 0.12 + driftX * 0.3, y: 0.08 },
+    { x: 0.22, y: 0.22 + driftY },
   );
 
-  // Warm cores lean toward foreground; primary stays slightly dimmer (luminance split).
-  const primaryCore = mix(colors.primary, colors.foreground, 0.42);
-  const warmCore = mix(colors.accent, colors.foreground, 0.78);
-  const hazeColor = mix(colors.primary, colors.card, 0.3);
+  const primaryCore = mix(colors.primary, colors.foreground, 0.5);
+  const warmCore = mix(colors.accent, colors.foreground, 0.88);
+  const hazeColor = mix(colors.primary, colors.card, 0.28);
 
   return [
     {
       points: primaryBand,
       width: 0.14,
       coreWidth: 0.045,
-      opacity: 0.92,
-      coreOpacity: 0.68,
-      color: mix(colors.primary, colors.background, 0.02),
+      opacity: 1,
+      coreOpacity: 0.78,
+      color: mix(colors.primary, colors.background, 0.0),
       coreColor: primaryCore,
-      temperature: 0.38,
-    },
-    {
-      points: primaryCompanion,
-      width: 0.11,
-      coreWidth: 0.035,
-      opacity: 0.72,
-      coreOpacity: 0.48,
-      color: mix(colors.primary, colors.muted, 0.15),
-      coreColor: mix(colors.primary, colors.foreground, 0.3),
-      temperature: 0.32,
+      temperature: 0.48,
     },
     {
       points: warmBand,
       width: 0.13,
-      coreWidth: 0.04,
-      opacity: 0.98,
-      coreOpacity: 0.92,
-      color: mix(colors.accent, colors.primary, 0.12),
+      coreWidth: 0.042,
+      opacity: 1,
+      coreOpacity: 1,
+      color: mix(colors.accent, colors.primary, 0.1),
       coreColor: warmCore,
       temperature: 1,
     },
     {
-      points: warmCompanion,
-      width: 0.1,
-      coreWidth: 0.032,
-      opacity: 0.78,
-      coreOpacity: 0.62,
-      color: mix(colors.accent, colors.background, 0.08),
-      coreColor: mix(colors.accent, colors.foreground, 0.55),
-      temperature: 0.85,
-    },
-    {
       points: lowerEcho,
-      width: 0.16,
-      coreWidth: 0.045,
-      opacity: 0.48,
-      coreOpacity: 0.28,
-      color: mix(colors.primary, colors.muted, 0.18),
-      coreColor: mix(colors.accent, colors.mutedForeground, 0.3),
-      temperature: 0.4,
+      width: 0.12,
+      coreWidth: 0.038,
+      opacity: 0.4,
+      coreOpacity: 0.22,
+      color: mix(colors.primary, colors.muted, 0.22),
+      coreColor: mix(colors.accent, colors.mutedForeground, 0.28),
+      temperature: 0.32,
     },
     {
       points: topLeftHaze,
-      width: 0.26,
-      coreWidth: 0.09,
-      opacity: 0.26,
-      coreOpacity: 0.1,
+      width: 0.2,
+      coreWidth: 0.07,
+      opacity: 0.18,
+      coreOpacity: 0.06,
       color: hazeColor,
-      coreColor: mix(colors.accent, colors.card, 0.3),
-      temperature: 0.5,
+      coreColor: mix(colors.accent, colors.card, 0.28),
+      temperature: 0.4,
     },
   ];
 }
@@ -280,59 +285,51 @@ function colorForCell(
   const ny = (row + 0.5) / rows;
   const noise = cellNoise(col, row);
 
-  // Quiet base: mostly background with faint card lift so seams stay readable.
-  let color = mix(colors.background, colors.card, 0.32 + noise * 0.22);
-
-  // Tiny micro-variation so quiet regions are not flat.
-  color = mix(color, colors.muted, 0.08 + noise * 0.1);
+  // Opaque base cell — flat fill, no per-cell radial halo.
+  let color = mix(colors.background, colors.card, 0.32 + noise * 0.18);
+  color = mix(color, colors.muted, 0.05 + noise * 0.07);
 
   for (const band of bands) {
     const d = distanceToPolyline(nx, ny, band.points);
-    // Sharper falloff near the path keeps ribbons readable as cell energy.
-    const broad = Math.pow(1 - smoothstep(0, band.width, d), 1.15);
-    const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.35);
+    const broad = Math.pow(1 - smoothstep(0, band.width, d), 1.1);
+    const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.25);
     if (broad <= 0.001) continue;
 
-    const intensity = broad * band.opacity * (0.9 + noise * 0.16);
-    const hotness = core * band.coreOpacity * (0.8 + noise * 0.4);
+    const intensity = broad * band.opacity * (0.92 + noise * 0.14);
+    const hotness = core * band.coreOpacity * (0.85 + noise * 0.45);
 
     color = mix(color, band.color, intensity);
     if (hotness > 0.01) {
       color = mix(color, band.coreColor, hotness);
     }
-
-    // Temperature separates gold-only bands via luminance rather than inventing hues.
-    if (hotness > 0.15) {
-      const lift = hotness * band.temperature * 0.22;
-      color = mix(color, colors.foreground, lift);
+    if (hotness > 0.12) {
+      color = mix(color, colors.foreground, hotness * band.temperature * 0.28);
     }
   }
 
-  // Content-safe darkening for the centered Kubo copy zone; leave right half hot.
-  const leftQuiet = 1 - smoothstep(0.12, 0.55, nx);
-  const centerQuiet = 1 - smoothstep(0.12, 0.42, Math.hypot((nx - 0.5) * 1.15, (ny - 0.42) * 0.9));
-  const quiet = Math.max(leftQuiet * 0.48, centerQuiet * 0.55);
-  color = mix(color, colors.background, quiet * 0.62);
+  // Lower-left copy pocket: strong darkening; right third stays hot.
+  const leftQuiet = 1 - smoothstep(0.08, 0.48, nx);
+  const lowerLeftQuiet = (1 - smoothstep(0.05, 0.42, nx)) * (1 - smoothstep(0.35, 0.85, ny)) * 0.85;
+  const quiet = Math.max(leftQuiet * 0.72, lowerLeftQuiet * 0.9);
+  color = mix(color, colors.background, quiet * 0.78);
 
-  // Soft edge vignette (applied per-cell so the grid remains legible).
+  // Soft edge vignette — right edge less crushed so energy survives.
   const edge =
     Math.max(
-      1 - smoothstep(0, 0.1, nx),
-      1 - smoothstep(0, 0.08, 1 - nx),
-      1 - smoothstep(0, 0.08, ny),
-      1 - smoothstep(0, 0.12, 1 - ny),
-    ) * 0.48;
+      1 - smoothstep(0, 0.08, nx),
+      (1 - smoothstep(0, 0.06, 1 - nx)) * 0.45,
+      1 - smoothstep(0, 0.07, ny),
+      1 - smoothstep(0, 0.1, 1 - ny),
+    ) * 0.42;
   color = mix(color, colors.background, edge);
 
-  // Quantize slightly so neighboring cells do not smear into a smooth gradient.
-  const quant = 12;
-  color = {
+  // Quantize per cell so bands read as tile-level lightning, not smooth blur.
+  const quant = 10;
+  return {
     r: Math.round(color.r / quant) * quant,
     g: Math.round(color.g / quant) * quant,
     b: Math.round(color.b / quant) * quant,
   };
-
-  return color;
 }
 
 function readThemeColors(): ThemeColors {
@@ -370,39 +367,28 @@ function paintMosaic(
   dpr: number,
   colors: ThemeColors,
   phase: number,
-  columns: number,
-  rows: number,
 ) {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, cssWidth, cssHeight);
 
-  // Matte near-black canvas.
   ctx.fillStyle = rgbString(colors.background);
   ctx.fillRect(0, 0, cssWidth, cssHeight);
 
-  // Cover the frame with near-square cells (overflow clips at container edges).
-  // Using max() keeps tiles from stretching while ensuring no empty gutters.
-  const cell = Math.max(cssWidth / columns, cssHeight / rows);
-  const seam = cell * SEAM_RATIO;
-  const radius = cell * CORNER_RATIO;
+  const grid = resolveGrid(cssWidth, cssHeight);
+  const { columns, rows, cell, seam, radius, originX, originY } = grid;
   const tile = Math.max(1, cell - seam);
-
-  const gridW = columns * cell;
-  const gridH = rows * cell;
-  const originX = (cssWidth - gridW) / 2;
-  const originY = (cssHeight - gridH) / 2;
-
   const bands = buildBands(colors, phase);
 
-  // Fill seam color once under the tiles for a continuous dark grid.
+  // Dark seam field under opaque rounded-square cells.
   ctx.fillStyle = rgbString(mix(colors.background, colors.muted, 0.35));
-  ctx.fillRect(originX, originY, gridW, gridH);
+  ctx.fillRect(originX, originY, columns * cell, rows * cell);
 
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < columns; col++) {
       const x = originX + col * cell + seam * 0.5;
       const y = originY + row * cell + seam * 0.5;
       const fill = colorForCell(col, row, columns, rows, colors, bands);
+      // Single flat rounded rect per cell — no radial edge treatment.
       ctx.fillStyle = rgbString(fill);
       ctx.beginPath();
       ctx.roundRect(x, y, tile, tile, radius);
@@ -410,68 +396,48 @@ function paintMosaic(
     }
   }
 
-  // Light global veil — CSS mosaic-hero-veil owns most copy contrast.
+  // Light atmospheric veil — CSS mosaic-hero-veil owns copy contrast.
   const veil = ctx.createRadialGradient(
-    cssWidth * 0.5,
-    cssHeight * 0.42,
-    cssWidth * 0.1,
+    cssWidth * 0.28,
+    cssHeight * 0.72,
+    cssWidth * 0.08,
     cssWidth * 0.55,
     cssHeight * 0.5,
-    cssWidth * 0.82,
+    cssWidth * 0.85,
   );
   veil.addColorStop(
     0,
-    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.06)`,
+    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.22)`,
   );
   veil.addColorStop(
-    0.55,
-    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.02)`,
+    0.45,
+    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.04)`,
   );
   veil.addColorStop(
     1,
-    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.28)`,
+    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.2)`,
   );
   ctx.fillStyle = veil;
   ctx.fillRect(0, 0, cssWidth, cssHeight);
 
-  // Edge vignette overlay.
   const edgeGrad = ctx.createRadialGradient(
-    cssWidth * 0.55,
-    cssHeight * 0.45,
-    cssHeight * 0.22,
+    cssWidth * 0.68,
+    cssHeight * 0.4,
+    cssHeight * 0.16,
     cssWidth * 0.5,
     cssHeight * 0.5,
     Math.max(cssWidth, cssHeight) * 0.78,
   );
   edgeGrad.addColorStop(0, "rgba(0,0,0,0)");
-  edgeGrad.addColorStop(0.72, "rgba(0,0,0,0.08)");
+  edgeGrad.addColorStop(0.75, "rgba(0,0,0,0.06)");
   edgeGrad.addColorStop(
     1,
-    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.58)`,
+    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.52)`,
   );
   ctx.fillStyle = edgeGrad;
   ctx.fillRect(0, 0, cssWidth, cssHeight);
-}
 
-function gridForFrame(cssWidth: number): { columns: number; rows: number } {
-  // Keep cell size readable on small screens without dropping the mosaic entirely.
-  if (cssWidth < 420) return { columns: 28, rows: 34 };
-  if (cssWidth < 768) return { columns: 40, rows: 36 };
-  return { columns: COLUMNS, rows: ROWS };
-}
-
-function usePrefersReducedMotion() {
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReducedMotion(mediaQuery.matches);
-    update();
-    mediaQuery.addEventListener("change", update);
-    return () => mediaQuery.removeEventListener("change", update);
-  }, []);
-
-  return reducedMotion;
+  return grid;
 }
 
 /**
@@ -483,17 +449,9 @@ export default function MosaicHeroCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const colorsRef = useRef<ThemeColors>(readThemeColors());
-  const reducedMotion = usePrefersReducedMotion();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-    colorsRef.current = readThemeColors();
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-
+  // useLayoutEffect: first paint before paint flush so captures rarely see fallback alone.
+  useLayoutEffect(() => {
     const container = containerRef.current;
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
@@ -501,31 +459,55 @@ export default function MosaicHeroCanvas() {
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
+    colorsRef.current = readThemeColors();
+
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let reducedMotion = motionQuery.matches;
     let raf = 0;
     let running = true;
     let visible = true;
     let lastPaint = 0;
     const start = performance.now();
-    // Slow field drift does not need 60fps; ~12fps keeps cost low.
     const frameIntervalMs = 1000 / 12;
 
-    const draw = (phase: number) => {
+    const currentPhase = () => {
+      if (reducedMotion) return 0;
+      const elapsed = (performance.now() - start) / 1000;
+      return (elapsed % DRIFT_PERIOD_SEC) / DRIFT_PERIOD_SEC;
+    };
+
+    const measure = () => {
       const rect = container.getBoundingClientRect();
-      const cssWidth = Math.max(1, Math.round(rect.width));
-      const cssHeight = Math.max(1, Math.round(rect.height));
+      const cssWidth = Math.max(
+        1,
+        Math.round(rect.width || container.offsetWidth || window.innerWidth),
+      );
+      const cssHeight = Math.max(
+        1,
+        Math.round(rect.height || container.offsetHeight || window.innerHeight),
+      );
+      return { cssWidth, cssHeight };
+    };
+
+    const draw = (phase: number) => {
+      const { cssWidth, cssHeight } = measure();
       const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
-      const { columns, rows } = gridForFrame(cssWidth);
 
       const pixelW = Math.round(cssWidth * dpr);
       const pixelH = Math.round(cssHeight * dpr);
       if (canvas.width !== pixelW || canvas.height !== pixelH) {
         canvas.width = pixelW;
         canvas.height = pixelH;
-        canvas.style.width = `${cssWidth}px`;
-        canvas.style.height = `${cssHeight}px`;
       }
+      canvas.style.width = `${cssWidth}px`;
+      canvas.style.height = `${cssHeight}px`;
 
-      paintMosaic(ctx, cssWidth, cssHeight, dpr, colorsRef.current, phase, columns, rows);
+      const grid = paintMosaic(ctx, cssWidth, cssHeight, dpr, colorsRef.current, phase);
+
+      container.style.setProperty("--mosaic-pitch", `${grid.cell.toFixed(2)}px`);
+      canvas.dataset.mosaicReady = "true";
+      canvas.dataset.mosaicColumns = String(grid.columns);
+      canvas.dataset.mosaicRows = String(grid.rows);
     };
 
     const tick = (now: number) => {
@@ -537,16 +519,26 @@ export default function MosaicHeroCanvas() {
       if (!reducedMotion && now - lastPaint < frameIntervalMs) return;
 
       lastPaint = now;
-      const elapsed = (now - start) / 1000;
-      const phase = reducedMotion ? 0 : (elapsed % DRIFT_PERIOD_SEC) / DRIFT_PERIOD_SEC;
-      draw(phase);
+      draw(currentPhase());
     };
 
-    // Resize: re-paint immediately; animation loop continues for live drift.
+    const restartLoop = () => {
+      cancelAnimationFrame(raf);
+      if (!reducedMotion && running) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        draw(0);
+      }
+    };
+
+    const onMotionChange = () => {
+      reducedMotion = motionQuery.matches;
+      restartLoop();
+    };
+    motionQuery.addEventListener("change", onMotionChange);
+
     const resizeObserver = new ResizeObserver(() => {
-      const elapsed = (performance.now() - start) / 1000;
-      const phase = reducedMotion ? 0 : (elapsed % DRIFT_PERIOD_SEC) / DRIFT_PERIOD_SEC;
-      draw(phase);
+      draw(currentPhase());
     });
     resizeObserver.observe(container);
 
@@ -562,40 +554,44 @@ export default function MosaicHeroCanvas() {
     );
     intersection.observe(container);
 
-    // Theme token refresh if class/tokens change (e.g. next-themes).
     const themeObserver = new MutationObserver(() => {
       colorsRef.current = readThemeColors();
-      const elapsed = (performance.now() - start) / 1000;
-      const phase = reducedMotion ? 0 : (elapsed % DRIFT_PERIOD_SEC) / DRIFT_PERIOD_SEC;
-      draw(phase);
+      draw(currentPhase());
     });
     themeObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["class", "style", "data-theme"],
     });
 
-    raf = requestAnimationFrame(tick);
+    // Immediate first paint; ResizeObserver covers late size resolution.
+    draw(0);
+    if (!reducedMotion) {
+      raf = requestAnimationFrame(tick);
+    }
 
     return () => {
       running = false;
       cancelAnimationFrame(raf);
+      motionQuery.removeEventListener("change", onMotionChange);
       resizeObserver.disconnect();
       intersection.disconnect();
       themeObserver.disconnect();
     };
-  }, [mounted, reducedMotion]);
+  }, []);
 
   return (
     <div
       ref={containerRef}
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
       aria-hidden="true"
+      style={{ ["--mosaic-pitch" as string]: "calc(100svh / 37)" }}
     >
-      {/* CSS fallback visible before canvas paints and when canvas is unavailable. */}
       <div className="mosaic-hero-fallback" />
-      {mounted && (
-        <canvas ref={canvasRef} className="mosaic-hero-canvas absolute inset-0 h-full w-full" />
-      )}
+      <canvas
+        ref={canvasRef}
+        className="mosaic-hero-canvas absolute inset-0 h-full w-full"
+        data-mosaic-ready="false"
+      />
     </div>
   );
 }
