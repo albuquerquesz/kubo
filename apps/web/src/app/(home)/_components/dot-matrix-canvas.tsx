@@ -4,6 +4,8 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
+import { cn } from "@/lib/utils";
+
 const vertexShader = `
   precision mediump float;
 
@@ -70,14 +72,23 @@ const fragmentShader = `
   }
 `;
 
-function DotMatrixMaterial({ reducedMotion }: { reducedMotion: boolean }) {
+/** Settled field time used for reduced-motion and static first paint. */
+const SETTLED_TIME = 6;
+
+function DotMatrixMaterial({
+  reducedMotion,
+  isInView,
+}: {
+  reducedMotion: boolean;
+  isInView: boolean;
+}) {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const startTimeRef = useRef<number | null>(null);
-  const { gl, size } = useThree();
+  const { gl, size, invalidate } = useThree();
 
   const uniforms = useMemo(
     () => ({
-      u_time: { value: 0 },
+      u_time: { value: reducedMotion ? SETTLED_TIME : 0 },
       u_opacities: { value: [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1] },
       u_colors: {
         value: Array.from({ length: 6 }, () => new THREE.Vector3(214 / 255, 167 / 255, 43 / 255)),
@@ -86,6 +97,7 @@ function DotMatrixMaterial({ reducedMotion }: { reducedMotion: boolean }) {
       u_dot_size: { value: 4 },
       u_resolution: { value: new THREE.Vector2(1, 1) },
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- initial u_time only; effect resets later
     [],
   );
 
@@ -94,15 +106,17 @@ function DotMatrixMaterial({ reducedMotion }: { reducedMotion: boolean }) {
       size.width * gl.getPixelRatio(),
       size.height * gl.getPixelRatio(),
     );
-  }, [gl, size.height, size.width, uniforms]);
+    invalidate();
+  }, [gl, invalidate, size.height, size.width, uniforms]);
 
   useEffect(() => {
     startTimeRef.current = null;
-    uniforms.u_time.value = reducedMotion ? 6 : 0;
-  }, [reducedMotion, uniforms]);
+    uniforms.u_time.value = reducedMotion ? SETTLED_TIME : isInView ? 0 : SETTLED_TIME;
+    invalidate();
+  }, [invalidate, isInView, reducedMotion, uniforms]);
 
   useFrame(({ clock }) => {
-    if (reducedMotion || !materialRef.current) return;
+    if (reducedMotion || !isInView || !materialRef.current) return;
 
     const startTime = startTimeRef.current ?? clock.getElapsedTime();
     startTimeRef.current = startTime;
@@ -131,21 +145,50 @@ function DotMatrixMaterial({ reducedMotion }: { reducedMotion: boolean }) {
   );
 }
 
-export default function DotMatrixCanvas({ reducedMotion }: { reducedMotion: boolean }) {
+export type DotMatrixCanvasProps = {
+  reducedMotion: boolean;
+  isInView: boolean;
+  /** Explicit DPR policy: desktop [1,2], mobile/coarse [1,1]. */
+  dpr: [number, number];
+  onReady?: () => void;
+  className?: string;
+};
+
+export default function DotMatrixCanvas({
+  reducedMotion,
+  isInView,
+  dpr,
+  onReady,
+  className,
+}: DotMatrixCanvasProps) {
+  // Animate only when in view and motion is allowed; otherwise demand-render static frames.
+  const frameloop = !reducedMotion && isInView ? "always" : "never";
+
   return (
     <Canvas
       aria-hidden="true"
-      className="pointer-events-none !absolute !inset-0 !z-[-1] !h-full !w-full"
-      dpr={[1, 2]}
+      className={cn(
+        "pointer-events-none !absolute !inset-0 !z-[-1] !h-full !w-full transition-opacity duration-300",
+        className,
+      )}
+      dpr={dpr}
+      frameloop={frameloop}
       gl={{
         alpha: true,
         antialias: false,
         powerPreference: "low-power",
         premultipliedAlpha: true,
       }}
-      onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
+      onCreated={({ gl, invalidate }) => {
+        gl.setClearColor(0x000000, 0);
+        onReady?.();
+        // Paint one static frame when not in continuous loop.
+        if (frameloop === "never") {
+          invalidate();
+        }
+      }}
     >
-      <DotMatrixMaterial reducedMotion={reducedMotion} />
+      <DotMatrixMaterial reducedMotion={reducedMotion} isInView={isInView} />
     </Canvas>
   );
 }

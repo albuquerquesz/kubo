@@ -170,7 +170,10 @@ function MobileNavigation() {
           role="dialog"
           aria-modal="true"
           aria-label="Navegação mobile"
-          className="fixed inset-0 z-50 flex min-h-svh flex-col overflow-hidden bg-background"
+          className={cn(
+            "fixed inset-0 z-50 flex min-h-svh max-h-svh flex-col overflow-hidden bg-background",
+            "pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]",
+          )}
         >
           <div className="flex min-h-14 shrink-0 items-center justify-between border-rule border-b px-5 py-3">
             <div>
@@ -191,55 +194,56 @@ function MobileNavigation() {
             </Button>
           </div>
 
-          <nav
-            aria-label="Links de navegação mobile"
-            className="grid min-h-0 flex-1 overflow-y-auto"
-          >
-            {primaryLinks.map((link, index) => (
+          {/* Single scroll column so links + bottom CTA remain reachable at short
+              heights, 200% text zoom, and notched safe areas. */}
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
+            <nav aria-label="Links de navegação mobile" className="grid shrink-0">
+              {primaryLinks.map((link, index) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={closeNavigation}
+                  className="group grid min-h-20 grid-cols-[3rem_1fr_auto] items-center border-rule border-b px-5 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+                >
+                  <span className="font-mono text-xs text-muted-foreground">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-xl font-semibold">{link.label}</span>
+                  <ArrowUpRight className="text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </Link>
+              ))}
+            </nav>
+
+            <div className="mt-auto shrink-0">
               <Link
-                key={link.href}
-                href={link.href}
+                href="/new"
                 onClick={closeNavigation}
-                className="group grid min-h-20 grid-cols-[3rem_1fr_auto] items-center border-rule border-b px-5 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+                className={cn(
+                  buttonVariants({ variant: "cta", size: "xl" }),
+                  "min-h-16 w-full justify-between rounded-none border-0 border-rule border-b px-5",
+                )}
               >
-                <span className="font-mono text-xs text-muted-foreground">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span className="text-xl font-semibold">{link.label}</span>
-                <ArrowUpRight className="text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                Monte sua stack
+                <ArrowUpRight
+                  data-icon="inline-end"
+                  className="motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
+                />
               </Link>
-            ))}
-          </nav>
 
-          <div className="mt-auto shrink-0">
-            <Link
-              href="/new"
-              onClick={closeNavigation}
-              className={cn(
-                buttonVariants({ variant: "cta", size: "xl" }),
-                "min-h-16 w-full justify-between rounded-none border-0 border-rule border-b px-5",
-              )}
-            >
-              Monte sua stack
-              <ArrowUpRight
-                data-icon="inline-end"
-                className="motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
-              />
-            </Link>
-
-            <div className="grid gap-px bg-rule p-px sm:grid-cols-2">
-              {exploreGroups.flatMap((group) =>
-                group.links.map((link) => (
-                  <Link
-                    key={`${group.label}-${link.href}`}
-                    href={link.href}
-                    onClick={closeNavigation}
-                    className="min-h-14 bg-background px-5 py-4 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
-                  >
-                    {link.label}
-                  </Link>
-                )),
-              )}
+              <div className="grid gap-px bg-rule p-px sm:grid-cols-2">
+                {exploreGroups.flatMap((group) =>
+                  group.links.map((link) => (
+                    <Link
+                      key={`${group.label}-${link.href}`}
+                      href={link.href}
+                      onClick={closeNavigation}
+                      className="min-h-14 bg-background px-5 py-4 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+                    >
+                      {link.label}
+                    </Link>
+                  )),
+                )}
+              </div>
             </div>
           </div>
         </div>

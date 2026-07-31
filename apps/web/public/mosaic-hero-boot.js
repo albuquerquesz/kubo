@@ -294,8 +294,17 @@
     };
   }
 
+  /**
+   * Paint only the dedicated boot layer (`.mosaic-hero-boot-canvas`).
+   * Never mutate React's `.mosaic-hero-canvas` or its container attributes —
+   * that causes hydration mismatches (data-mosaic-ready, --mosaic-pitch, size).
+   */
   function paintOne(canvas) {
-    if (!canvas || canvas.dataset.mosaicReactOwned === "true") return false;
+    if (!canvas || window.__kuboMosaicReactActive) return false;
+    // React owns the real mosaic canvas; skip it entirely.
+    if (canvas.classList.contains("mosaic-hero-canvas")) return false;
+    if (canvas.dataset.mosaicReactOwned === "true") return false;
+
     const container = canvas.parentElement;
     if (!container) return false;
 
@@ -321,8 +330,8 @@
       canvas.width = pixelW;
       canvas.height = pixelH;
     }
-    canvas.style.width = cssWidth + "px";
-    canvas.style.height = cssHeight + "px";
+    // Do not write inline width/height styles or container CSS variables —
+    // those are React-owned on the host. Canvas bitmap size is enough to paint.
 
     const colors = readThemeColors();
     const grid = resolveGrid(cssWidth, cssHeight);
@@ -349,23 +358,20 @@
       }
     }
 
-    container.style.setProperty("--mosaic-pitch", cell.toFixed(2) + "px");
-    canvas.dataset.mosaicReady = "true";
-    canvas.dataset.mosaicColumns = String(columns);
-    canvas.dataset.mosaicRows = String(rows);
-    canvas.setAttribute("data-mosaic-ready", "true");
     canvas.dataset.mosaicBoot = "true";
+    canvas.dataset.mosaicBootReady = "true";
     return true;
   }
 
   function paintAll() {
-    const nodes = document.querySelectorAll("canvas.mosaic-hero-canvas");
+    if (window.__kuboMosaicReactActive) return false;
+    const nodes = document.querySelectorAll("canvas.mosaic-hero-boot-canvas");
     let any = false;
     for (let i = 0; i < nodes.length; i++) {
       try {
         if (paintOne(nodes[i])) any = true;
       } catch {
-        /* keep fallback */
+        /* keep CSS fallback */
       }
     }
     return any;
@@ -390,12 +396,12 @@
     paintAll();
   });
 
-  // Late-inserted canvas (client navigation) — paint when nodes appear.
+  // Late-inserted boot canvas (client navigation) — paint when nodes appear.
   if (typeof MutationObserver !== "undefined") {
     const mo = new MutationObserver(function () {
       if (window.__kuboMosaicReactActive) return;
       const pending = document.querySelector(
-        'canvas.mosaic-hero-canvas:not([data-mosaic-ready="true"])',
+        "canvas.mosaic-hero-boot-canvas:not([data-mosaic-boot-ready='true'])",
       );
       if (pending) paintAll();
     });

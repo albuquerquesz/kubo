@@ -700,6 +700,16 @@ export default function MosaicHeroCanvas() {
       style={{ ["--mosaic-pitch" as string]: "calc(100svh / 37)" }}
     >
       <div className="mosaic-hero-fallback" />
+      {/*
+        Boot layer: mosaic-hero-boot.js paints here only. Attributes may diverge
+        from SSR before hydration; suppressHydrationWarning is scoped to this
+        explicit pre-React surface (not the React-owned mosaic canvas below).
+      */}
+      <canvas
+        className="mosaic-hero-boot-canvas absolute inset-0 h-full w-full"
+        aria-hidden="true"
+        suppressHydrationWarning
+      />
       <canvas
         ref={canvasRef}
         className="mosaic-hero-canvas absolute inset-0 h-full w-full"
