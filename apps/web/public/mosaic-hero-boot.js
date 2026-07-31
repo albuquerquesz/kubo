@@ -156,67 +156,67 @@
   }
 
   function buildBands(colors) {
-    // Cool S-curve + warm outer arc (reference dual-ribbon structure, Kubo tokens).
+    // Dual diagonal gold ribbons, both descending toward the right.
     const primaryBand = sampleCubic(
-      { x: 0.58, y: -0.06 },
-      { x: 0.84, y: 0.2 },
-      { x: 0.7, y: 0.55 },
-      { x: 0.44, y: 1.04 },
+      { x: 0.43, y: -0.08 },
+      { x: 0.62, y: 0.18 },
+      { x: 0.86, y: 0.48 },
+      { x: 1.08, y: 0.98 },
     );
     const warmBand = sampleCubic(
-      { x: 1.08, y: -0.04 },
-      { x: 1.02, y: 0.3 },
-      { x: 0.94, y: 0.6 },
-      { x: 0.86, y: 1.04 },
+      { x: 0.71, y: -0.02 },
+      { x: 0.9, y: 0.28 },
+      { x: 1.04, y: 0.58 },
+      { x: 1.18, y: 1.06 },
     );
     const lowerEcho = sampleQuadratic(
-      { x: 0.52, y: 1.14 },
-      { x: 0.32, y: 0.76 },
-      { x: 0.1, y: 0.58 },
+      { x: 0.08, y: 1.12 },
+      { x: 0.32, y: 0.78 },
+      { x: 0.68, y: 0.56 },
     );
     const topLeftHaze = sampleQuadratic(
       { x: -0.12, y: -0.1 },
-      { x: 0.08, y: 0.08 },
-      { x: 0.22, y: 0.28 },
+      { x: 0.1, y: 0.1 },
+      { x: 0.24, y: 0.3 },
     );
 
     return [
       {
         points: primaryBand,
-        width: 0.14,
-        coreWidth: 0.05,
-        opacity: 0.88,
-        coreOpacity: 0.94,
-        color: mix(colors.primary, colors.background, 0.58),
-        coreColor: mix(mix(colors.primary, colors.mutedForeground, 0.28), colors.foreground, 0.38),
-        temperature: 0.45,
+        width: 0.15,
+        coreWidth: 0.052,
+        opacity: 0.92,
+        coreOpacity: 0.96,
+        color: mix(colors.primary, colors.background, 0.42),
+        coreColor: mix(mix(colors.primary, colors.accent, 0.35), colors.foreground, 0.42),
+        temperature: 0.52,
       },
       {
         points: warmBand,
-        width: 0.13,
-        coreWidth: 0.048,
-        opacity: 0.9,
+        width: 0.14,
+        coreWidth: 0.05,
+        opacity: 0.94,
         coreOpacity: 1,
-        color: mix(colors.accent, colors.primary, 0.1),
-        coreColor: mix(colors.accent, colors.foreground, 0.88),
+        color: mix(colors.accent, colors.primary, 0.18),
+        coreColor: mix(colors.accent, colors.foreground, 0.92),
         temperature: 1,
       },
       {
         points: lowerEcho,
-        width: 0.13,
-        coreWidth: 0.04,
-        opacity: 0.32,
-        coreOpacity: 0.14,
+        width: 0.12,
+        coreWidth: 0.038,
+        opacity: 0.28,
+        coreOpacity: 0.12,
         color: mix(colors.primary, colors.muted, 0.55),
         coreColor: mix(colors.accent, colors.mutedForeground, 0.16),
         temperature: 0.3,
       },
       {
         points: topLeftHaze,
-        width: 0.26,
-        coreWidth: 0.1,
-        opacity: 0.4,
-        coreOpacity: 0.16,
+        width: 0.24,
+        coreWidth: 0.09,
+        opacity: 0.36,
+        coreOpacity: 0.14,
         color: mix(mix(colors.muted, colors.accent, 0.14), colors.card, 0.28),
         coreColor: mix(colors.muted, colors.mutedForeground, 0.32),
         temperature: 0.34,

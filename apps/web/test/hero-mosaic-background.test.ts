@@ -28,12 +28,12 @@ describe("mosaic hero background contract", () => {
     // Softer corners (16–18% of pitch), narrow seam.
     expect(source).toContain("CORNER_RATIO = 0.17");
     expect(source).toContain("SEAM_RATIO = 0.09");
-    // Soft dual-temperature mass: cool S-curve + warm outer arc (structure match).
+    // Dual diagonal gold ribbons: primary mid-right + warm outer-right (structure match).
     expect(source).toContain("sampleCubic");
-    expect(source).toContain("x: 0.58");
+    expect(source).toContain("x: 0.43");
+    expect(source).toContain("x: 0.71");
     expect(source).toContain("x: 1.08");
-    expect(source).toContain("x: 0.84");
-    expect(source).toContain("x: 1.02");
+    expect(source).toContain("x: 1.18");
     // Flat rounded rects only — no per-cell radial edge treatment in the paint loop.
     expect(source).toContain("ctx.roundRect");
     expect(source).toContain("useLayoutEffect");
@@ -44,11 +44,11 @@ describe("mosaic hero background contract", () => {
     expect(source).not.toContain("rightField");
     expect(source).not.toContain("deepOlive");
     expect(source).not.toContain("midGold");
-    // Broad soft fields with dual temperature (not thin knife ribbons).
+    // Broad dual-ribbon fields (not thin knife ribbons or gold soup).
+    expect(source).toContain("width: 0.15");
     expect(source).toContain("width: 0.14");
-    expect(source).toContain("width: 0.13");
-    expect(source).toContain("opacity: 0.88");
-    expect(source).toContain("opacity: 0.9");
+    expect(source).toContain("opacity: 0.92");
+    expect(source).toContain("opacity: 0.94");
     // Canvas mounts without a client-only gate that can leave only the fallback.
     expect(source).toContain('className="mosaic-hero-canvas absolute inset-0 h-full w-full"');
     expect(source).not.toContain("{mounted &&");
@@ -130,5 +130,21 @@ describe("mosaic hero background contract", () => {
     expect(boot).toContain("REFERENCE_ROWS");
     expect(boot).not.toContain("twimg.com");
     expect(boot).not.toContain("Fluxion");
+    // Boot shares the right-descending dual-ribbon geometry with the React canvas.
+    expect(boot).toContain("x: 0.43");
+    expect(boot).toContain("y: -0.08");
+    expect(boot).toContain("x: 0.71");
+    expect(boot).toContain("x: 1.18");
+    expect(boot).toContain("x: 0.08");
+    expect(boot).toContain("y: 1.12");
+    expect(boot).toContain("SEAM_RATIO = 0.09");
+    expect(boot).toContain("CORNER_RATIO = 0.17");
+    // CSS fallback mirrors right-descending direction with negative-angle bands.
+    expect(css).toContain("-28deg");
+    expect(css).toContain("-48deg");
+    expect(css).toContain("-16deg");
+    // Mobile veil extends the copy-safe area to ~76% of the frame.
+    expect(css).toContain("max-width: 640px");
+    expect(css).toContain("76%");
   });
 });

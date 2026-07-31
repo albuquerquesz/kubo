@@ -422,34 +422,34 @@
   /* Quiet tile bed — almost no primary; dark matrix is the default */
   background-color: color-mix(in srgb, var(--card) 38%, var(--background));
   background-image:
-    /* Warm lobe — far-right vertical bulk; overlaps cool mid-right */
+    /* Warm right-facing ribbon — outer-right cream cores */
     linear-gradient(
-      22deg,
+      -28deg,
       transparent 0%,
-      transparent 10%,
-      color-mix(in srgb, var(--accent) 38%, transparent) 22%,
-      color-mix(in srgb, var(--accent) 82%, var(--foreground)) 38%,
-      color-mix(in srgb, var(--primary) 36%, transparent) 52%,
-      transparent 70%
+      transparent 12%,
+      color-mix(in srgb, var(--accent) 42%, transparent) 24%,
+      color-mix(in srgb, var(--accent) 88%, var(--foreground)) 40%,
+      color-mix(in srgb, var(--primary) 32%, transparent) 54%,
+      transparent 72%
     ),
-    /* Cool/primary lobe — S-curve through mid-right (deeper body) */
+    /* Primary right-facing ribbon — mid-right gold body */
     linear-gradient(
-        40deg,
+        -48deg,
         transparent 0%,
-        transparent 16%,
-        color-mix(in srgb, var(--primary) 48%, var(--background)) 32%,
-        color-mix(in srgb, var(--primary) 42%, var(--muted-foreground)) 46%,
-        color-mix(in srgb, var(--primary) 20%, transparent) 60%,
-        transparent 76%
+        transparent 14%,
+        color-mix(in srgb, var(--primary) 52%, var(--background)) 30%,
+        color-mix(in srgb, var(--primary) 48%, var(--accent)) 44%,
+        color-mix(in srgb, var(--primary) 22%, transparent) 58%,
+        transparent 74%
       ),
-    /* Lower cool echo — depth under copy line */
+    /* Lower rightward echo — depth under copy line */
     linear-gradient(
-        14deg,
+        -16deg,
         transparent 0%,
-        transparent 46%,
-        color-mix(in srgb, var(--primary) 22%, transparent) 60%,
-        color-mix(in srgb, var(--accent) 12%, transparent) 72%,
-        transparent 86%
+        transparent 48%,
+        color-mix(in srgb, var(--primary) 20%, transparent) 62%,
+        color-mix(in srgb, var(--accent) 10%, transparent) 74%,
+        transparent 88%
       ),
     /* Top-left haze — visible non-focal warm cloud, almost no primary */
     radial-gradient(
@@ -548,6 +548,27 @@
         color-mix(in srgb, var(--background) 10%, transparent) 32%,
         transparent 50%
       );
+}
+
+/* On narrow frames the copy occupies more of the width, so extend the
+   content-safe veil to ~76% of the frame before the right-facing ribbons. */
+@media (max-width: 640px) {
+  .mosaic-hero-veil {
+    background:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--background) 68%, transparent) 0%,
+        color-mix(in srgb, var(--background) 64%, transparent) 52%,
+        color-mix(in srgb, var(--background) 42%, transparent) 76%,
+        color-mix(in srgb, var(--background) 12%, transparent) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--background) 34%, transparent) 0%,
+        transparent 42%,
+        color-mix(in srgb, var(--background) 38%, transparent) 100%
+      );
+  }
 }
 
 /* Reduced motion: same static field. Fallback stays until Canvas marks ready. */
