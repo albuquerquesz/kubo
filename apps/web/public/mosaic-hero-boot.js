@@ -156,30 +156,36 @@
   }
 
   function buildBands(colors) {
-    // Four parallel lightning columns — ~0.22 nx gap, centered pack, narrow rails; no counter-direction.
+    // Five parallel lightning columns — ~0.18 nx gap, centered pack, thinner rails; no counter-direction.
     const primaryBand = sampleCubic(
-      { x: 0.26, y: -0.1 },
-      { x: 0.4, y: 0.22 },
-      { x: 0.56, y: 0.55 },
-      { x: 0.74, y: 1.02 },
+      { x: 0.22, y: -0.1 },
+      { x: 0.36, y: 0.22 },
+      { x: 0.52, y: 0.55 },
+      { x: 0.7, y: 1.02 },
     );
     const midBand = sampleCubic(
-      { x: 0.48, y: -0.09 },
-      { x: 0.62, y: 0.23 },
-      { x: 0.78, y: 0.56 },
-      { x: 0.96, y: 1.03 },
+      { x: 0.4, y: -0.09 },
+      { x: 0.54, y: 0.23 },
+      { x: 0.7, y: 0.56 },
+      { x: 0.88, y: 1.03 },
     );
     const amberBand = sampleCubic(
-      { x: 0.7, y: -0.085 },
-      { x: 0.84, y: 0.235 },
-      { x: 1.0, y: 0.565 },
-      { x: 1.18, y: 1.035 },
+      { x: 0.58, y: -0.085 },
+      { x: 0.72, y: 0.235 },
+      { x: 0.88, y: 0.565 },
+      { x: 1.06, y: 1.035 },
+    );
+    const goldBand = sampleCubic(
+      { x: 0.76, y: -0.082 },
+      { x: 0.9, y: 0.238 },
+      { x: 1.06, y: 0.568 },
+      { x: 1.24, y: 1.038 },
     );
     const warmBand = sampleCubic(
-      { x: 0.92, y: -0.08 },
-      { x: 1.06, y: 0.24 },
-      { x: 1.22, y: 0.57 },
-      { x: 1.4, y: 1.04 },
+      { x: 0.94, y: -0.08 },
+      { x: 1.08, y: 0.24 },
+      { x: 1.24, y: 0.57 },
+      { x: 1.42, y: 1.04 },
     );
     const topLeftHaze = sampleQuadratic(
       { x: -0.12, y: -0.1 },
@@ -190,43 +196,53 @@
     return [
       {
         points: primaryBand,
-        width: 0.078,
-        coreWidth: 0.022,
+        width: 0.062,
+        coreWidth: 0.018,
         opacity: 0.86,
         coreOpacity: 0.72,
         color: mix(colors.primary, colors.background, 0.5),
         coreColor: mix(colors.primary, colors.accent, 0.48),
-        hotspot: { x: 0.5, y: 0.48, radiusX: 0.09, radiusY: 0.15 },
+        hotspot: { x: 0.46, y: 0.48, radiusX: 0.08, radiusY: 0.14 },
       },
       {
         points: midBand,
-        width: 0.074,
-        coreWidth: 0.021,
+        width: 0.06,
+        coreWidth: 0.017,
         opacity: 0.87,
         coreOpacity: 0.73,
         color: mix(mix(colors.primary, colors.accent, 0.45), colors.background, 0.28),
         coreColor: mix(colors.accent, colors.primary, 0.4),
-        hotspot: { x: 0.72, y: 0.49, radiusX: 0.09, radiusY: 0.15 },
+        hotspot: { x: 0.64, y: 0.49, radiusX: 0.08, radiusY: 0.14 },
       },
       {
         points: amberBand,
-        width: 0.072,
-        coreWidth: 0.02,
+        width: 0.058,
+        coreWidth: 0.016,
         opacity: 0.88,
-        coreOpacity: 0.75,
+        coreOpacity: 0.74,
         color: mix(mix(colors.accent, colors.primary, 0.32), colors.background, 0.22),
         coreColor: mix(colors.accent, colors.primary, 0.28),
-        hotspot: { x: 0.94, y: 0.5, radiusX: 0.09, radiusY: 0.15 },
+        hotspot: { x: 0.82, y: 0.5, radiusX: 0.08, radiusY: 0.14 },
+      },
+      {
+        points: goldBand,
+        width: 0.056,
+        coreWidth: 0.016,
+        opacity: 0.89,
+        coreOpacity: 0.76,
+        color: mix(mix(colors.accent, colors.primary, 0.25), colors.background, 0.18),
+        coreColor: mix(colors.accent, colors.foreground, 0.22),
+        hotspot: { x: 1.0, y: 0.5, radiusX: 0.08, radiusY: 0.14 },
       },
       {
         points: warmBand,
-        width: 0.07,
-        coreWidth: 0.02,
+        width: 0.055,
+        coreWidth: 0.015,
         opacity: 0.9,
         coreOpacity: 0.78,
         color: mix(mix(colors.accent, colors.primary, 0.2), colors.background, 0.2),
         coreColor: mix(colors.accent, colors.foreground, 0.36),
-        hotspot: { x: 1.16, y: 0.5, radiusX: 0.09, radiusY: 0.15 },
+        hotspot: { x: 1.18, y: 0.5, radiusX: 0.08, radiusY: 0.14 },
       },
       {
         points: topLeftHaze,

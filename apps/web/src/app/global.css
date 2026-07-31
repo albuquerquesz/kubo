@@ -459,50 +459,60 @@
   background-image:
     /* Localized warm highlight — sparse pale tiles, not a continuous white rail. */
     radial-gradient(
-      ellipse 11% 15% at 80% 55%,
-      color-mix(in srgb, var(--foreground) 36%, var(--accent)) 0%,
-      color-mix(in srgb, var(--accent) 36%, transparent) 38%,
+      ellipse 10% 14% at 82% 55%,
+      color-mix(in srgb, var(--foreground) 34%, var(--accent)) 0%,
+      color-mix(in srgb, var(--accent) 34%, transparent) 38%,
       transparent 74%
     ),
-    /* Warm outer column — rightmost of four centered parallel rails. */
+    /* Warm outer column — rightmost of five centered parallel rails. */
     linear-gradient(
-        -24deg,
+        -22deg,
         transparent 0%,
-        transparent 30%,
-        color-mix(in srgb, var(--accent) 18%, transparent) 42%,
-        color-mix(in srgb, var(--accent) 40%, var(--primary)) 52%,
-        color-mix(in srgb, var(--primary) 16%, transparent) 62%,
-        transparent 76%
+        transparent 32%,
+        color-mix(in srgb, var(--accent) 16%, transparent) 44%,
+        color-mix(in srgb, var(--accent) 36%, var(--primary)) 54%,
+        color-mix(in srgb, var(--primary) 14%, transparent) 64%,
+        transparent 78%
       ),
-    /* Amber column — between mid and warm. */
+    /* Gold column — between amber and warm. */
     linear-gradient(
-        -34deg,
+        -30deg,
         transparent 0%,
-        transparent 22%,
-        color-mix(in srgb, var(--accent) 20%, var(--primary)) 34%,
-        color-mix(in srgb, var(--primary) 34%, var(--accent)) 46%,
-        color-mix(in srgb, var(--primary) 14%, transparent) 58%,
-        transparent 72%
+        transparent 26%,
+        color-mix(in srgb, var(--accent) 18%, var(--primary)) 38%,
+        color-mix(in srgb, var(--primary) 30%, var(--accent)) 48%,
+        color-mix(in srgb, var(--primary) 12%, transparent) 58%,
+        transparent 74%
+      ),
+    /* Amber column — mid pack. */
+    linear-gradient(
+        -38deg,
+        transparent 0%,
+        transparent 20%,
+        color-mix(in srgb, var(--accent) 18%, var(--primary)) 32%,
+        color-mix(in srgb, var(--primary) 30%, var(--accent)) 42%,
+        color-mix(in srgb, var(--primary) 12%, transparent) 54%,
+        transparent 70%
       ),
     /* Mid column — fills the gap between primary and amber. */
     linear-gradient(
-        -44deg,
+        -46deg,
         transparent 0%,
-        transparent 14%,
-        color-mix(in srgb, var(--primary) 22%, var(--accent)) 26%,
-        color-mix(in srgb, var(--accent) 32%, var(--primary)) 38%,
-        color-mix(in srgb, var(--primary) 14%, transparent) 50%,
-        transparent 66%
+        transparent 12%,
+        color-mix(in srgb, var(--primary) 20%, var(--accent)) 24%,
+        color-mix(in srgb, var(--accent) 28%, var(--primary)) 36%,
+        color-mix(in srgb, var(--primary) 12%, transparent) 48%,
+        transparent 64%
       ),
     /* Primary left column — bronze body, centered pack. */
     linear-gradient(
         -54deg,
         transparent 0%,
-        transparent 6%,
-        color-mix(in srgb, var(--primary) 26%, var(--background)) 18%,
-        color-mix(in srgb, var(--primary) 36%, var(--accent)) 30%,
-        color-mix(in srgb, var(--primary) 14%, transparent) 44%,
-        transparent 60%
+        transparent 4%,
+        color-mix(in srgb, var(--primary) 24%, var(--background)) 16%,
+        color-mix(in srgb, var(--primary) 32%, var(--accent)) 28%,
+        color-mix(in srgb, var(--primary) 12%, transparent) 42%,
+        transparent 58%
       ),
     /* Top-left haze — visible non-focal warm cloud, almost no primary.
        No counter-direction lightning band. */
@@ -519,9 +529,9 @@
         color-mix(in srgb, var(--card) 36%, var(--background)) 50%,
         color-mix(in srgb, var(--muted) 14%, var(--background)) 100%
       );
-  /* Soft-light quad columns + haze over a quiet opaque bed */
+  /* Soft-light five columns + haze over a quiet opaque bed */
   background-blend-mode:
-    soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, normal;
+    soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, normal;
   /* White rounded rect = visible tile; transparent seam = dark base
      pitch 32u, fill 29.2u (seam ~8.75%), rx 5.5u (~17% of pitch) */
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='1.4' y='1.4' width='29.2' height='29.2' rx='5.5' fill='white'/%3E%3C/svg%3E");
