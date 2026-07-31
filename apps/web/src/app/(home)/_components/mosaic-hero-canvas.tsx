@@ -22,8 +22,6 @@ type Band = {
   coreOpacity: number;
   color: Rgb;
   coreColor: Rgb;
-  /** Luminance bias: cooler bands sit lower; warm cores sit higher. */
-  temperature: number;
 };
 
 type GridGeometry = {
@@ -220,21 +218,21 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
   const driftX = Math.sin(phase * Math.PI * 2) * 0.018;
   const driftY = Math.cos(phase * Math.PI * 2 * 0.7) * 0.012;
 
-  // Upper/primary ribbon: enters above the middle, bows right, and exits right.
-  // Both lightning paths now travel toward the right as they descend.
+  // Center-right primary ribbon: both paths descend toward the right, but cross
+  // through the middle rather than leaving a wide empty central gap.
   const primaryBand = sampleCubic(
-    { x: 0.43 + driftX * 0.2, y: -0.08 },
-    { x: 0.62 + driftX, y: 0.18 + driftY },
-    { x: 0.86 + driftX * 0.3, y: 0.48 },
-    { x: 1.08 + driftX * 0.1, y: 0.98 },
+    { x: 0.36 + driftX * 0.2, y: -0.08 },
+    { x: 0.5 + driftX, y: 0.18 + driftY },
+    { x: 0.68 + driftX * 0.3, y: 0.48 },
+    { x: 0.88 + driftX * 0.1, y: 0.98 },
   );
 
-  // Warm/accent parallel ribbon: a second, brighter right-facing lobe.
+  // Parallel warm ribbon: overlaps the primary in the middle-right, not at the edge.
   const warmBand = sampleCubic(
-    { x: 0.71 + driftX * 0.15, y: -0.02 },
-    { x: 0.9 - driftY * 0.25, y: 0.28 + driftX },
-    { x: 1.04 + driftX * 0.1, y: 0.58 },
-    { x: 1.18 + driftX * 0.1, y: 1.06 },
+    { x: 0.55 + driftX * 0.15, y: -0.02 },
+    { x: 0.68 - driftY * 0.25, y: 0.28 + driftX },
+    { x: 0.82 + driftX * 0.1, y: 0.58 },
+    { x: 0.98 + driftX * 0.1, y: 1.06 },
   );
 
   // Lower echo — a softer rightward sweep under/behind the headline line.
@@ -251,34 +249,32 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
     { x: 0.24, y: 0.3 + driftY },
   );
 
-  // Dual temperature (gold-only): deep bronze body vs hot cream-amber body.
-  const primaryColor = mix(colors.primary, colors.background, 0.42);
-  const primaryCore = mix(mix(colors.primary, colors.accent, 0.35), colors.foreground, 0.42);
-  const warmColor = mix(colors.accent, colors.primary, 0.18);
-  const warmCore = mix(colors.accent, colors.foreground, 0.92);
-  // Warm-leaning haze (tiny accent tick) without flooding primary gold.
+  // Dark-gold-only palette. The middle is muted amber, never foreground cream.
+  const primaryColor = mix(colors.background, colors.primary, 0.32);
+  const primaryCore = mix(colors.primary, colors.accent, 0.3);
+  const warmColor = mix(colors.background, colors.accent, 0.28);
+  const warmCore = mix(colors.primary, colors.accent, 0.66);
+  // Warm-leaning haze (tiny accent tick) without flooding the quiet field.
   const hazeColor = mix(mix(colors.muted, colors.accent, 0.14), colors.card, 0.28);
 
   return [
     {
       points: primaryBand,
-      width: 0.15,
+      width: 0.18,
       coreWidth: 0.052,
-      opacity: 0.92,
-      coreOpacity: 0.96,
+      opacity: 0.78,
+      coreOpacity: 0.66,
       color: primaryColor,
       coreColor: primaryCore,
-      temperature: 0.52,
     },
     {
       points: warmBand,
-      width: 0.14,
+      width: 0.17,
       coreWidth: 0.05,
-      opacity: 0.94,
-      coreOpacity: 1,
+      opacity: 0.82,
+      coreOpacity: 0.7,
       color: warmColor,
       coreColor: warmCore,
-      temperature: 1,
     },
     {
       points: lowerEcho,
@@ -288,7 +284,6 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
       coreOpacity: 0.12,
       color: mix(colors.primary, colors.muted, 0.55),
       coreColor: mix(colors.accent, colors.mutedForeground, 0.16),
-      temperature: 0.3,
     },
     {
       points: topLeftHaze,
@@ -298,9 +293,18 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
       coreOpacity: 0.14,
       color: hazeColor,
       coreColor: mix(colors.muted, colors.mutedForeground, 0.32),
-      temperature: 0.34,
     },
   ];
+}
+
+/**
+ * Reference-like vertical color rhythm: dark olive at the top, muted amber
+ * through the central crossover, then dark bronze again below it.
+ */
+function verticalGoldEnergy(ny: number): number {
+  const rise = smoothstep(0.08, 0.46, ny);
+  const fall = 1 - smoothstep(0.58, 0.96, ny);
+  return rise * fall;
 }
 
 /**
@@ -321,6 +325,7 @@ function colorForCell(
   const noise = cellNoise(col, row);
   // Secondary deterministic hash for multi-axis tile variation without extra allocations.
   const noise2 = cellNoise(col + 17, row + 31);
+  const verticalEnergy = verticalGoldEnergy(ny);
 
   // Quiet matrix — near background/card with only a tiny luminance tick so seams read.
   let color = mix(colors.background, colors.card, 0.22 + noise * 0.18);
@@ -341,16 +346,14 @@ function colorForCell(
 
     // Noise modulates intensity inside band influence for smooth cell-by-cell steps.
     const noiseMod = 0.74 + noise * 0.32 + noise2 * 0.1;
-    const intensity = broad * band.opacity * noiseMod;
-    const hotness = core * band.coreOpacity * (0.68 + noise * 0.52);
+    const intensity = broad * band.opacity * noiseMod * (0.38 + verticalEnergy * 0.62);
+    const hotness = core * band.coreOpacity * (0.38 + verticalEnergy * 0.52);
+    const bodyColor = mix(band.color, band.coreColor, verticalEnergy * 0.62);
+    const coreColor = mix(band.color, band.coreColor, 0.22 + verticalEnergy * 0.58);
 
-    color = mix(color, band.color, intensity);
+    color = mix(color, bodyColor, intensity);
     if (hotness > 0.01) {
-      color = mix(color, band.coreColor, hotness);
-    }
-    // Sparse pale hot cores only on strong cores — never a uniform gold wall.
-    if (hotness > 0.2 && noise > 0.58 && band.temperature > 0.55) {
-      color = mix(color, colors.foreground, hotness * band.temperature * 0.22);
+      color = mix(color, coreColor, hotness);
     }
   }
 
