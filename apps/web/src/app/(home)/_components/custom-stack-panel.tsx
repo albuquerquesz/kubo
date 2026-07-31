@@ -64,13 +64,19 @@ export default function CustomStackPanel({
         className,
       )}
     >
-      <div className="border-rule border-b px-4 py-6 sm:px-6 sm:py-7 lg:flex lg:min-h-[6.5rem] lg:items-center lg:justify-between lg:px-6 lg:py-6">
+      <div className="border-rule border-b px-4 py-6 sm:px-6 sm:py-7 lg:min-h-[6.5rem] lg:px-6 lg:py-6">
         <h2 id={titleId} className="ui-display text-[clamp(1.75rem,3.5vw,2.75rem)] leading-[0.95]">
           {content.title}
         </h2>
+      </div>
+
+      <div className="border-rule border-b px-4 py-6 sm:px-6 lg:px-6 lg:py-6">
+        <p className="text-lg leading-snug text-muted-foreground lg:text-xl">
+          {content.description}
+        </p>
         <Link
           href={content.href}
-          className={cn(buttonVariants({ variant: "cta", size: "xl" }), "mt-5 lg:mt-0")}
+          className={cn(buttonVariants({ variant: "cta", size: "xl" }), "mt-5")}
         >
           {content.cta}
           <ArrowUpRight
@@ -80,10 +86,6 @@ export default function CustomStackPanel({
           />
         </Link>
       </div>
-
-      <p className="border-rule border-b px-4 py-6 text-lg leading-snug text-muted-foreground sm:px-6 lg:px-6 lg:py-6 lg:text-xl">
-        {content.description}
-      </p>
 
       <div className="min-w-0 px-4 py-6 sm:px-6 lg:px-6 lg:py-6">
         <div className="relative aspect-[1.9] min-h-[16rem] w-full min-w-0 max-w-full overflow-hidden bg-muted sm:min-h-0">
