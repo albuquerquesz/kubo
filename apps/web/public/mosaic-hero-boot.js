@@ -156,24 +156,30 @@
   }
 
   function buildBands(colors) {
-    // Three parallel lightning columns — tighter gap, slightly narrow rails; no counter-direction.
+    // Four parallel lightning columns — ~0.22 nx gap, centered pack, narrow rails; no counter-direction.
     const primaryBand = sampleCubic(
-      { x: 0.42, y: -0.1 },
-      { x: 0.56, y: 0.22 },
-      { x: 0.72, y: 0.55 },
-      { x: 0.9, y: 1.02 },
+      { x: 0.26, y: -0.1 },
+      { x: 0.4, y: 0.22 },
+      { x: 0.56, y: 0.55 },
+      { x: 0.74, y: 1.02 },
     );
     const midBand = sampleCubic(
-      { x: 0.62, y: -0.09 },
-      { x: 0.76, y: 0.23 },
-      { x: 0.92, y: 0.56 },
-      { x: 1.1, y: 1.03 },
+      { x: 0.48, y: -0.09 },
+      { x: 0.62, y: 0.23 },
+      { x: 0.78, y: 0.56 },
+      { x: 0.96, y: 1.03 },
+    );
+    const amberBand = sampleCubic(
+      { x: 0.7, y: -0.085 },
+      { x: 0.84, y: 0.235 },
+      { x: 1.0, y: 0.565 },
+      { x: 1.18, y: 1.035 },
     );
     const warmBand = sampleCubic(
-      { x: 0.82, y: -0.08 },
-      { x: 0.96, y: 0.24 },
-      { x: 1.12, y: 0.57 },
-      { x: 1.3, y: 1.04 },
+      { x: 0.92, y: -0.08 },
+      { x: 1.06, y: 0.24 },
+      { x: 1.22, y: 0.57 },
+      { x: 1.4, y: 1.04 },
     );
     const topLeftHaze = sampleQuadratic(
       { x: -0.12, y: -0.1 },
@@ -184,33 +190,43 @@
     return [
       {
         points: primaryBand,
-        width: 0.12,
-        coreWidth: 0.036,
+        width: 0.078,
+        coreWidth: 0.022,
         opacity: 0.86,
         coreOpacity: 0.72,
         color: mix(colors.primary, colors.background, 0.5),
         coreColor: mix(colors.primary, colors.accent, 0.48),
-        hotspot: { x: 0.66, y: 0.48, radiusX: 0.12, radiusY: 0.18 },
+        hotspot: { x: 0.5, y: 0.48, radiusX: 0.09, radiusY: 0.15 },
       },
       {
         points: midBand,
-        width: 0.115,
-        coreWidth: 0.034,
-        opacity: 0.88,
-        coreOpacity: 0.74,
+        width: 0.074,
+        coreWidth: 0.021,
+        opacity: 0.87,
+        coreOpacity: 0.73,
         color: mix(mix(colors.primary, colors.accent, 0.45), colors.background, 0.28),
         coreColor: mix(colors.accent, colors.primary, 0.4),
-        hotspot: { x: 0.86, y: 0.49, radiusX: 0.12, radiusY: 0.18 },
+        hotspot: { x: 0.72, y: 0.49, radiusX: 0.09, radiusY: 0.15 },
+      },
+      {
+        points: amberBand,
+        width: 0.072,
+        coreWidth: 0.02,
+        opacity: 0.88,
+        coreOpacity: 0.75,
+        color: mix(mix(colors.accent, colors.primary, 0.32), colors.background, 0.22),
+        coreColor: mix(colors.accent, colors.primary, 0.28),
+        hotspot: { x: 0.94, y: 0.5, radiusX: 0.09, radiusY: 0.15 },
       },
       {
         points: warmBand,
-        width: 0.11,
-        coreWidth: 0.033,
+        width: 0.07,
+        coreWidth: 0.02,
         opacity: 0.9,
         coreOpacity: 0.78,
         color: mix(mix(colors.accent, colors.primary, 0.2), colors.background, 0.2),
         coreColor: mix(colors.accent, colors.foreground, 0.36),
-        hotspot: { x: 1.06, y: 0.5, radiusX: 0.12, radiusY: 0.18 },
+        hotspot: { x: 1.16, y: 0.5, radiusX: 0.09, radiusY: 0.15 },
       },
       {
         points: topLeftHaze,

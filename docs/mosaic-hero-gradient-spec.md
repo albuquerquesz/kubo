@@ -4,7 +4,7 @@ Updated 2026-07-31 from the supplied Kubo hero and the Fluxion-like reference im
 
 ## Intent
 
-The hero keeps Kubo’s dark, gold-only palette and rounded-square raster field. Three parallel gold lightning columns (bronze leading + mid amber + warmer outer-right) descend toward the right with tighter ~0.20 nx spacing and slightly narrow rails; there is no counter-direction lower-echo rail. The copy-safe left field remains matte and quiet; pale ivory cells are localized at three focal points instead of forming a full-height rail.
+The hero keeps Kubo’s dark, gold-only palette and rounded-square raster field. Four parallel gold lightning columns (bronze leading + mid + amber + warmer outer) descend toward the right in a centered pack with ~0.22 nx spacing and narrow rails; there is no counter-direction lower-echo rail. The copy-safe left field remains matte and quiet; pale ivory cells are localized at four focal points instead of forming a full-height rail.
 
 The reference image was used for structure only. No remote artwork, logo, wording, or reference-brand color is loaded at runtime.
 
@@ -27,15 +27,16 @@ The Canvas fills the hero frame at every measured viewport.
 - Grid: 37 rows, square cells, columns derived from `ceil(frameWidth / cell)`.
 - Seam: 9% of pitch.
 - Corner radius: 17% of pitch.
-- Primary column: normalized path `(0.42,-0.10) → (0.56,0.22) → (0.72,0.55) → (0.90,1.02)`.
-- Mid column: normalized path `(0.62,-0.09) → (0.76,0.23) → (0.92,0.56) → (1.10,1.03)` (parallel offset ~0.20 nx).
-- Warm column: normalized path `(0.82,-0.08) → (0.96,0.24) → (1.12,0.57) → (1.30,1.04)` (parallel offset ~0.20 nx from mid).
-- Band widths: primary `0.12` / mid `0.115` / warm `0.11` (slightly narrower than prior dual rails).
+- Primary column: normalized path `(0.26,-0.10) → (0.40,0.22) → (0.56,0.55) → (0.74,1.02)`.
+- Mid column: normalized path `(0.48,-0.09) → (0.62,0.23) → (0.78,0.56) → (0.96,1.03)` (parallel offset ~0.22 nx).
+- Amber column: normalized path `(0.70,-0.085) → (0.84,0.235) → (1.00,0.565) → (1.18,1.035)` (parallel offset ~0.22 nx).
+- Warm column: normalized path `(0.92,-0.08) → (1.06,0.24) → (1.22,0.57) → (1.40,1.04)` (parallel offset ~0.22 nx).
+- Band widths: primary `0.078` / mid `0.074` / amber `0.072` / warm `0.07` (narrow centered rails).
 - No lower-echo / opposite-direction lightning.
 - Copy pocket: first 30–40% of the frame is darkened in the tile renderer; at ≤640px a stronger CSS veil extends the safe area to 76% of the frame.
-- Pale-core focal points: primary near `(0.66,0.48)`, mid near `(0.86,0.49)`, and warm near `(1.06,0.50)`; broad ribbon bodies stay bronze/amber and resolve through Kubo tokens.
+- Pale-core focal points: primary near `(0.50,0.48)`, mid near `(0.72,0.49)`, amber near `(0.94,0.50)`, and warm near `(1.16,0.50)`; broad ribbon bodies stay bronze/amber and resolve through Kubo tokens.
 
-Both Canvas and the hydration-independent boot renderer use the same path geometry. The CSS fallback mirrors the direction with three negative-angle bands (`-24deg`, `-38deg`, `-52deg`).
+Both Canvas and the hydration-independent boot renderer use the same path geometry. The CSS fallback mirrors the direction with four negative-angle bands (`-24deg`, `-34deg`, `-44deg`, `-54deg`).
 
 ## Validation screenshots
 
