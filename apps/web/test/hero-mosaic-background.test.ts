@@ -127,10 +127,15 @@ describe("mosaic hero background contract", () => {
     // Hydration-independent boot paints Canvas when React effects do not run.
     const layout = readRepo("apps/web/src/app/layout.tsx");
     const boot = readRepo("apps/web/public/mosaic-hero-boot.js");
+    const mosaic = readRepo("apps/web/src/app/(home)/_components/mosaic-hero-canvas.tsx");
     expect(layout).toContain('src="/mosaic-hero-boot.js"');
     expect(layout).toContain("beforeInteractive");
-    expect(boot).toContain("mosaic-hero-canvas");
-    expect(boot).toContain("data-mosaic-ready");
+    // Boot paints a dedicated layer; never mutates React-owned .mosaic-hero-canvas attrs.
+    expect(boot).toContain("mosaic-hero-boot-canvas");
+    expect(boot).toContain("data-mosaic-boot-ready");
+    expect(boot).toContain("Never mutate React");
+    expect(mosaic).toContain("mosaic-hero-boot-canvas");
+    expect(mosaic).toContain("suppressHydrationWarning");
     expect(boot).toContain("REFERENCE_ROWS");
     expect(boot).not.toContain("twimg.com");
     expect(boot).not.toContain("Fluxion");

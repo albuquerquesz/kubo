@@ -401,6 +401,41 @@
   }
 }
 
+/* Hero short-viewport (phone landscape): keep title + install action in the first
+   visual viewport without changing the normal portrait composition. */
+/* hero-short-viewport: max-height phone landscape (e.g. 844×390, 667×375).
+   Portrait phones (320–430px tall enough) keep default spacing.
+   Classes: .hero-section.hero-short-viewport */
+@media (max-height: 430px) and (orientation: landscape) {
+  .hero-section.hero-short-viewport {
+    min-height: 100svh;
+    max-height: 100svh;
+  }
+
+  .hero-section.hero-short-viewport .hero-section-content {
+    min-height: 100svh;
+    max-height: 100svh;
+    /* Header + 8px lower clearance for focus ring of the command control */
+    padding-top: calc(var(--site-header-height) + 0.35rem);
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .hero-section.hero-short-viewport .hero-section-title {
+    font-size: clamp(1.65rem, 6.2vh, 2.35rem) !important;
+    line-height: 1.05 !important;
+  }
+
+  .hero-section.hero-short-viewport .hero-section-copy {
+    margin-top: 0.5rem !important;
+    font-size: 0.95rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .hero-section.hero-short-viewport .hero-section-rail {
+    margin-top: 0.65rem !important;
+  }
+}
+
 /* Mosaic hero atmosphere: CSS fallback under the Canvas tile field.
    Pitch defaults to ~height/37; Canvas overwrites --mosaic-pitch after paint.
    ::before carries narrow directional bands masked into opaque rounded squares
@@ -515,12 +550,23 @@
 
 .mosaic-hero-canvas {
   display: block;
-  /* Stay transparent until first paint so the density-matched fallback is the FOUC art */
+  /* Stay transparent until first paint so the density-matched fallback / boot is FOUC art */
   opacity: 0;
 }
 
 .mosaic-hero-canvas[data-mosaic-ready="true"] {
   opacity: 1;
+}
+
+/* Boot layer stays visible until the React-owned canvas reports ready. */
+.mosaic-hero-boot-canvas {
+  display: block;
+  opacity: 1;
+  pointer-events: none;
+}
+
+:has(> .mosaic-hero-canvas[data-mosaic-ready="true"]) > .mosaic-hero-boot-canvas {
+  opacity: 0;
 }
 
 /* When Canvas has painted, hide the CSS fallback to avoid double atmosphere */
@@ -580,7 +626,7 @@
 
 /* Reduced motion: same static field. Fallback stays until Canvas marks ready. */
 @media (prefers-reduced-motion: reduce) {
-  .mosaic-hero-fallback:has(+ .mosaic-hero-canvas[data-mosaic-ready="false"]) {
+  .mosaic-hero-fallback:has(~ .mosaic-hero-canvas[data-mosaic-ready="false"]) {
     opacity: 1;
   }
 }
@@ -1159,4 +1205,31 @@
   width: 100vw;
   max-width: 100vw;
   margin-left: -50vw;
+}
+
+/* Decorative CSS dot-matrix: present before WebGL hydration / if Canvas never ready.
+   Gold-on-near-black, no layout shift (absolute inset, no intrinsic size). */
+.dot-matrix-fallback {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -2;
+  background-color: #050505;
+  background-image:
+    radial-gradient(circle at 50% 42%, rgb(214 167 43 / 0.22) 0%, transparent 42%),
+    radial-gradient(circle at 28% 68%, rgb(214 167 43 / 0.1) 0%, transparent 36%),
+    radial-gradient(circle at 72% 58%, rgb(214 167 43 / 0.12) 0%, transparent 34%),
+    /* Sparse gold dots via repeating radial — decorative only */
+    radial-gradient(circle, rgb(214 167 43 / 0.55) 0 1.1px, transparent 1.25px);
+  background-size:
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    20px 20px;
+  background-position:
+    center,
+    center,
+    center,
+    0 0;
+  opacity: 0.9;
 }
