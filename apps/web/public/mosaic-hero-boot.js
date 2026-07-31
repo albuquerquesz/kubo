@@ -156,18 +156,18 @@
   }
 
   function buildBands(colors) {
-    // Dual diagonal gold ribbons, both descending toward the right.
+    // Center-right dual ribbons, both descending toward the right.
     const primaryBand = sampleCubic(
-      { x: 0.43, y: -0.08 },
-      { x: 0.62, y: 0.18 },
-      { x: 0.86, y: 0.48 },
-      { x: 1.08, y: 0.98 },
+      { x: 0.36, y: -0.08 },
+      { x: 0.5, y: 0.18 },
+      { x: 0.68, y: 0.48 },
+      { x: 0.88, y: 0.98 },
     );
     const warmBand = sampleCubic(
-      { x: 0.71, y: -0.02 },
-      { x: 0.9, y: 0.28 },
-      { x: 1.04, y: 0.58 },
-      { x: 1.18, y: 1.06 },
+      { x: 0.55, y: -0.02 },
+      { x: 0.68, y: 0.28 },
+      { x: 0.82, y: 0.58 },
+      { x: 0.98, y: 1.06 },
     );
     const lowerEcho = sampleQuadratic(
       { x: 0.08, y: 1.12 },
@@ -183,23 +183,21 @@
     return [
       {
         points: primaryBand,
-        width: 0.15,
+        width: 0.18,
         coreWidth: 0.052,
-        opacity: 0.92,
-        coreOpacity: 0.96,
-        color: mix(colors.primary, colors.background, 0.42),
-        coreColor: mix(mix(colors.primary, colors.accent, 0.35), colors.foreground, 0.42),
-        temperature: 0.52,
+        opacity: 0.78,
+        coreOpacity: 0.66,
+        color: mix(colors.background, colors.primary, 0.32),
+        coreColor: mix(colors.primary, colors.accent, 0.3),
       },
       {
         points: warmBand,
-        width: 0.14,
+        width: 0.17,
         coreWidth: 0.05,
-        opacity: 0.94,
-        coreOpacity: 1,
-        color: mix(colors.accent, colors.primary, 0.18),
-        coreColor: mix(colors.accent, colors.foreground, 0.92),
-        temperature: 1,
+        opacity: 0.82,
+        coreOpacity: 0.7,
+        color: mix(colors.background, colors.accent, 0.28),
+        coreColor: mix(colors.primary, colors.accent, 0.66),
       },
       {
         points: lowerEcho,
@@ -209,7 +207,6 @@
         coreOpacity: 0.12,
         color: mix(colors.primary, colors.muted, 0.55),
         coreColor: mix(colors.accent, colors.mutedForeground, 0.16),
-        temperature: 0.3,
       },
       {
         points: topLeftHaze,
@@ -219,9 +216,14 @@
         coreOpacity: 0.14,
         color: mix(mix(colors.muted, colors.accent, 0.14), colors.card, 0.28),
         coreColor: mix(colors.muted, colors.mutedForeground, 0.32),
-        temperature: 0.34,
       },
     ];
+  }
+
+  function verticalGoldEnergy(ny) {
+    const rise = smoothstep(0.08, 0.46, ny);
+    const fall = 1 - smoothstep(0.58, 0.96, ny);
+    return rise * fall;
   }
 
   function colorForCell(col, row, columns, rows, colors, bands) {
@@ -229,6 +231,7 @@
     const ny = (row + 0.5) / rows;
     const noise = cellNoise(col, row);
     const noise2 = cellNoise(col + 17, row + 31);
+    const verticalEnergy = verticalGoldEnergy(ny);
 
     let color = mix(colors.background, colors.card, 0.22 + noise * 0.18);
     color = mix(color, colors.muted, 0.04 + noise2 * 0.06);
@@ -245,13 +248,12 @@
       const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.15);
       if (broad <= 0.001) continue;
       const noiseMod = 0.74 + noise * 0.32 + noise2 * 0.1;
-      const intensity = broad * band.opacity * noiseMod;
-      const hotness = core * band.coreOpacity * (0.68 + noise * 0.52);
-      color = mix(color, band.color, intensity);
-      if (hotness > 0.01) color = mix(color, band.coreColor, hotness);
-      if (hotness > 0.2 && noise > 0.58 && band.temperature > 0.55) {
-        color = mix(color, colors.foreground, hotness * band.temperature * 0.22);
-      }
+      const intensity = broad * band.opacity * noiseMod * (0.38 + verticalEnergy * 0.62);
+      const hotness = core * band.coreOpacity * (0.38 + verticalEnergy * 0.52);
+      const bodyColor = mix(band.color, band.coreColor, verticalEnergy * 0.62);
+      const coreColor = mix(band.color, band.coreColor, 0.22 + verticalEnergy * 0.58);
+      color = mix(color, bodyColor, intensity);
+      if (hotness > 0.01) color = mix(color, coreColor, hotness);
     }
 
     const copyPocket = 1 - smoothstep(0.3, 0.4, nx);

@@ -30,10 +30,10 @@ describe("mosaic hero background contract", () => {
     expect(source).toContain("SEAM_RATIO = 0.09");
     // Dual diagonal gold ribbons: primary mid-right + warm outer-right (structure match).
     expect(source).toContain("sampleCubic");
-    expect(source).toContain("x: 0.43");
-    expect(source).toContain("x: 0.71");
-    expect(source).toContain("x: 1.08");
-    expect(source).toContain("x: 1.18");
+    expect(source).toContain("x: 0.36");
+    expect(source).toContain("x: 0.55");
+    expect(source).toContain("x: 0.88");
+    expect(source).toContain("x: 0.98");
     // Flat rounded rects only — no per-cell radial edge treatment in the paint loop.
     expect(source).toContain("ctx.roundRect");
     expect(source).toContain("useLayoutEffect");
@@ -45,10 +45,11 @@ describe("mosaic hero background contract", () => {
     expect(source).not.toContain("deepOlive");
     expect(source).not.toContain("midGold");
     // Broad dual-ribbon fields (not thin knife ribbons or gold soup).
-    expect(source).toContain("width: 0.15");
-    expect(source).toContain("width: 0.14");
-    expect(source).toContain("opacity: 0.92");
-    expect(source).toContain("opacity: 0.94");
+    expect(source).toContain("width: 0.18");
+    expect(source).toContain("width: 0.17");
+    expect(source).toContain("verticalGoldEnergy");
+    expect(source).toContain("0.38 + verticalEnergy * 0.62");
+    expect(source).not.toContain("colors.foreground, hotness");
     // Canvas mounts without a client-only gate that can leave only the fallback.
     expect(source).toContain('className="mosaic-hero-canvas absolute inset-0 h-full w-full"');
     expect(source).not.toContain("{mounted &&");
@@ -113,7 +114,9 @@ describe("mosaic hero background contract", () => {
     expect(css).toContain("rx='5.5'");
     expect(css).toContain("mask-image");
     // Quiet opaque base + soft-light ribbons; hide fallback when Canvas is ready.
-    expect(css).toContain("soft-light, soft-light, soft-light, soft-light, normal");
+    expect(css).toContain("soft-light, soft-light, soft-light, soft-light, normal, normal");
+    expect(css).toContain("Vertical dark → muted amber → dark-bronze rhythm");
+    expect(css).not.toContain("var(--accent) 88%, var(--foreground)");
     expect(css).toContain('data-mosaic-ready="true"');
     expect(css).toContain("almost no primary");
     // Over-yellow fix: no continuous right-side primary olive field gradient.
@@ -131,17 +134,18 @@ describe("mosaic hero background contract", () => {
     expect(boot).not.toContain("twimg.com");
     expect(boot).not.toContain("Fluxion");
     // Boot shares the right-descending dual-ribbon geometry with the React canvas.
-    expect(boot).toContain("x: 0.43");
+    expect(boot).toContain("x: 0.36");
     expect(boot).toContain("y: -0.08");
-    expect(boot).toContain("x: 0.71");
-    expect(boot).toContain("x: 1.18");
+    expect(boot).toContain("x: 0.55");
+    expect(boot).toContain("x: 0.98");
     expect(boot).toContain("x: 0.08");
     expect(boot).toContain("y: 1.12");
+    expect(boot).toContain("verticalGoldEnergy");
     expect(boot).toContain("SEAM_RATIO = 0.09");
     expect(boot).toContain("CORNER_RATIO = 0.17");
     // CSS fallback mirrors right-descending direction with negative-angle bands.
-    expect(css).toContain("-28deg");
-    expect(css).toContain("-48deg");
+    expect(css).toContain("-31deg");
+    expect(css).toContain("-45deg");
     expect(css).toContain("-16deg");
     // Mobile veil extends the copy-safe area to ~76% of the frame.
     expect(css).toContain("max-width: 640px");
