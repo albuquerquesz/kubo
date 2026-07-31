@@ -166,7 +166,7 @@ function sampleQuadratic(
   return out;
 }
 
-/** Cubic Bezier for dual right-descending ribbon paths. */
+/** Cubic Bezier for right-descending ribbon paths. */
 function sampleCubic(
   p0: { x: number; y: number },
   p1: { x: number; y: number },
@@ -212,47 +212,51 @@ function resolveGrid(cssWidth: number, cssHeight: number): GridGeometry {
 }
 
 /**
- * Dual diagonal gold ribbons (reference dual-band structure × Kubo tokens).
- * Upper primary ribbon + parallel warm lower ribbon, dark trough between cores.
+ * Triple parallel gold lightning columns (same right-descending curvature × Kubo tokens).
+ * Bronze leading + mid amber + warm outer rail; dark troughs between cores.
  * Gold-only separation via luminance, opacity, and curve — no cyan/red.
  */
 function buildBands(colors: ThemeColors, phase: number): Band[] {
   const driftX = Math.sin(phase * Math.PI * 2) * 0.018;
   const driftY = Math.cos(phase * Math.PI * 2 * 0.7) * 0.012;
 
-  // The broad primary arc enters above the middle and leads into the right half.
+  // Three parallel lightning columns — same curvature, ~0.20 nx spacing, slightly narrow rails.
+  // Primary (left column).
   const primaryBand = sampleCubic(
-    { x: 0.47 + driftX * 0.2, y: -0.08 },
-    { x: 0.63 + driftX, y: 0.18 + driftY },
-    { x: 0.82 + driftX * 0.3, y: 0.49 },
-    { x: 1.06 + driftX * 0.1, y: 0.98 },
+    { x: 0.42 + driftX * 0.2, y: -0.1 },
+    { x: 0.56 + driftX, y: 0.22 + driftY },
+    { x: 0.72 + driftX * 0.25, y: 0.55 },
+    { x: 0.9 + driftX * 0.1, y: 1.02 },
   );
 
-  // The warmer counter-ribbon remains farther right before its central overlap.
+  // Mid column — parallel fill between primary and warm.
+  const midBand = sampleCubic(
+    { x: 0.62 + driftX * 0.18, y: -0.09 },
+    { x: 0.76 + driftX * 0.6, y: 0.23 + driftY * 0.5 },
+    { x: 0.92 + driftX * 0.15, y: 0.56 },
+    { x: 1.1 + driftX * 0.1, y: 1.03 },
+  );
+
+  // Warm (right column) — same shape, outer-right.
   const warmBand = sampleCubic(
-    { x: 0.72 + driftX * 0.15, y: -0.02 },
-    { x: 0.9 - driftY * 0.25, y: 0.28 + driftX },
-    { x: 1.03 + driftX * 0.1, y: 0.58 },
-    { x: 1.18 + driftX * 0.1, y: 1.06 },
+    { x: 0.82 + driftX * 0.15, y: -0.08 },
+    { x: 0.96 - driftY * 0.2, y: 0.24 + driftX },
+    { x: 1.12 + driftX * 0.1, y: 0.57 },
+    { x: 1.3 + driftX * 0.1, y: 1.04 },
   );
 
-  // Lower echo — a softer rightward sweep under/behind the headline line.
-  const lowerEcho = sampleQuadratic(
-    { x: 0.08 + driftX * 0.15, y: 1.12 },
-    { x: 0.32 + driftY, y: 0.78 },
-    { x: 0.68, y: 0.56 + driftY },
-  );
-
-  // Top-left warm haze — visible non-focal cloud (reference top-left bleed).
+  // Top-left warm haze — non-focal cloud only (no counter-direction lightning).
   const topLeftHaze = sampleQuadratic(
     { x: -0.12, y: -0.1 },
     { x: 0.1 + driftX * 0.2, y: 0.1 },
     { x: 0.24, y: 0.3 + driftY },
   );
 
-  // Gold-only dual temperature: an olive-bronze leading arc and a warmer amber arc.
+  // Gold-only triple temperature: bronze leading, mid amber, warmer outer arc.
   const primaryColor = mix(colors.primary, colors.background, 0.5);
   const primaryCore = mix(colors.primary, colors.accent, 0.48);
+  const midColor = mix(mix(colors.primary, colors.accent, 0.45), colors.background, 0.28);
+  const midCore = mix(colors.accent, colors.primary, 0.4);
   const warmColor = mix(mix(colors.accent, colors.primary, 0.2), colors.background, 0.2);
   const warmCore = mix(colors.accent, colors.foreground, 0.36);
   // Warm-leaning haze (tiny accent tick) without flooding primary gold.
@@ -261,32 +265,33 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
   return [
     {
       points: primaryBand,
-      width: 0.16,
-      coreWidth: 0.046,
+      width: 0.12,
+      coreWidth: 0.036,
       opacity: 0.86,
       coreOpacity: 0.72,
       color: primaryColor,
       coreColor: primaryCore,
-      hotspot: { x: 0.73, y: 0.47, radiusX: 0.19, radiusY: 0.22 },
+      hotspot: { x: 0.66, y: 0.48, radiusX: 0.12, radiusY: 0.18 },
+    },
+    {
+      points: midBand,
+      width: 0.115,
+      coreWidth: 0.034,
+      opacity: 0.88,
+      coreOpacity: 0.74,
+      color: midColor,
+      coreColor: midCore,
+      hotspot: { x: 0.86, y: 0.49, radiusX: 0.12, radiusY: 0.18 },
     },
     {
       points: warmBand,
-      width: 0.15,
-      coreWidth: 0.044,
+      width: 0.11,
+      coreWidth: 0.033,
       opacity: 0.9,
       coreOpacity: 0.78,
       color: warmColor,
       coreColor: warmCore,
-      hotspot: { x: 0.9, y: 0.57, radiusX: 0.18, radiusY: 0.2 },
-    },
-    {
-      points: lowerEcho,
-      width: 0.13,
-      coreWidth: 0.038,
-      opacity: 0.34,
-      coreOpacity: 0.16,
-      color: mix(colors.primary, colors.muted, 0.55),
-      coreColor: mix(colors.accent, colors.mutedForeground, 0.16),
+      hotspot: { x: 1.06, y: 0.5, radiusX: 0.12, radiusY: 0.18 },
     },
     {
       points: topLeftHaze,

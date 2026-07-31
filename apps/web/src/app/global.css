@@ -459,55 +459,57 @@
   background-image:
     /* Localized warm highlight — sparse pale tiles, not a continuous white rail. */
     radial-gradient(
-      ellipse 17% 20% at 90% 57%,
+      ellipse 14% 18% at 88% 55%,
       color-mix(in srgb, var(--foreground) 38%, var(--accent)) 0%,
       color-mix(in srgb, var(--accent) 38%, transparent) 38%,
       transparent 74%
     ),
-    /* Warm right-facing ribbon — the outer counter-arc stays distinctly separate. */
+    /* Warm outer column — rightmost of three parallel rails. */
     linear-gradient(
-        -28deg,
+        -24deg,
         transparent 0%,
-        transparent 15%,
-        color-mix(in srgb, var(--accent) 25%, transparent) 29%,
-        color-mix(in srgb, var(--accent) 48%, var(--primary)) 43%,
-        color-mix(in srgb, var(--primary) 24%, transparent) 57%,
-        transparent 75%
+        transparent 28%,
+        color-mix(in srgb, var(--accent) 22%, transparent) 40%,
+        color-mix(in srgb, var(--accent) 46%, var(--primary)) 52%,
+        color-mix(in srgb, var(--primary) 22%, transparent) 64%,
+        transparent 78%
       ),
-    /* Primary leading arc — bronze body with a separate middle-right crossing. */
+    /* Mid column — fills the gap between primary and warm. */
     linear-gradient(
-        -48deg,
+        -38deg,
         transparent 0%,
-        transparent 16%,
-        color-mix(in srgb, var(--primary) 32%, var(--background)) 31%,
-        color-mix(in srgb, var(--primary) 44%, var(--accent)) 45%,
-        color-mix(in srgb, var(--primary) 20%, transparent) 60%,
-        transparent 77%
+        transparent 18%,
+        color-mix(in srgb, var(--primary) 26%, var(--accent)) 32%,
+        color-mix(in srgb, var(--accent) 40%, var(--primary)) 46%,
+        color-mix(in srgb, var(--primary) 18%, transparent) 58%,
+        transparent 74%
       ),
-    /* Lower echo — visible depth behind, never a bright panel under the copy. */
+    /* Primary left column — bronze body, tighter pack with mid/warm. */
     linear-gradient(
-        -16deg,
+        -52deg,
         transparent 0%,
-        transparent 45%,
-        color-mix(in srgb, var(--primary) 25%, transparent) 60%,
-        color-mix(in srgb, var(--accent) 13%, transparent) 73%,
-        transparent 88%
+        transparent 12%,
+        color-mix(in srgb, var(--primary) 30%, var(--background)) 26%,
+        color-mix(in srgb, var(--primary) 42%, var(--accent)) 40%,
+        color-mix(in srgb, var(--primary) 18%, transparent) 54%,
+        transparent 70%
       ),
-    /* Top-left haze — visible non-focal warm cloud, almost no primary */
+    /* Top-left haze — visible non-focal warm cloud, almost no primary.
+       No counter-direction lightning band. */
     radial-gradient(
         ellipse 36% 30% at 9% 5%,
         color-mix(in srgb, var(--muted-foreground) 14%, transparent) 0%,
         color-mix(in srgb, var(--muted) 22%, transparent) 38%,
         transparent 70%
       ),
-    /* Quiet base field — card/muted only (no continuous right-side olive wash) */
+    /* Quiet base field — non-directional bed (no opposite-diagonal wash) */
     linear-gradient(
-        205deg,
-        color-mix(in srgb, var(--muted) 22%, var(--background)) 0%,
-        color-mix(in srgb, var(--card) 40%, var(--background)) 48%,
+        180deg,
+        color-mix(in srgb, var(--muted) 18%, var(--background)) 0%,
+        color-mix(in srgb, var(--card) 36%, var(--background)) 50%,
         color-mix(in srgb, var(--muted) 14%, var(--background)) 100%
       );
-  /* Soft-light bands over a quiet opaque bed; avoid screen-only density */
+  /* Soft-light triple columns + haze over a quiet opaque bed */
   background-blend-mode: soft-light, soft-light, soft-light, soft-light, soft-light, normal;
   /* White rounded rect = visible tile; transparent seam = dark base
      pitch 32u, fill 29.2u (seam ~8.75%), rx 5.5u (~17% of pitch) */
