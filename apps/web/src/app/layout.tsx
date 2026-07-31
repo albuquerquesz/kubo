@@ -1,6 +1,6 @@
 import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata, Viewport } from "next";
-import { Archivo, IBM_Plex_Mono } from "next/font/google";
+import { Archivo, IBM_Plex_Mono, Inter } from "next/font/google";
 import Script from "next/script";
 import type { ReactNode } from "react";
 
@@ -19,6 +19,11 @@ const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-ibm-plex-mono",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 const ogImage = "https://kubojs.dev/og/site/home.png";
@@ -111,7 +116,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="pt-BR"
-      className={cn(archivo.variable, ibmPlexMono.variable, "dark font-sans")}
+      className={cn(archivo.variable, ibmPlexMono.variable, inter.variable, "dark font-sans")}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
