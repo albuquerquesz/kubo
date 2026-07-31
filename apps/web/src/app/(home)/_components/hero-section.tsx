@@ -1,12 +1,9 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
-
-import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 import HeroDisplayTitle from "./hero-display-title";
+import HeroRailLower from "./hero-rail-lower";
 import MosaicHeroCanvas from "./mosaic-hero-canvas";
 
 const mission =
@@ -27,10 +24,10 @@ export default function HeroSection() {
         className={cn(
           "relative z-10 flex min-h-svh w-full flex-col",
           "items-start justify-end text-left",
-          /* 16 / 32–40 / 64px gutters — shared left edge for title, copy, CTA */
+          /* Tighter left gutter so title sits closer to the frame edge */
           "px-4 pb-16 pt-[calc(var(--site-header-height)+1.25rem)]",
-          "sm:px-8 sm:pb-[4.25rem] sm:pt-[calc(var(--site-header-height)+1.5rem)]",
-          "md:px-10 lg:px-16 lg:pb-[4.5rem]",
+          "sm:px-5 sm:pb-[4.25rem] sm:pt-[calc(var(--site-header-height)+1.5rem)]",
+          "md:px-6 lg:px-8 lg:pb-[4.5rem]",
         )}
       >
         <div className="flex w-full max-w-[40rem] flex-col items-start">
@@ -65,21 +62,8 @@ export default function HeroSection() {
             </span>
           </p>
 
-          <div className="mt-10 sm:mt-12">
-            <Link
-              href="/new"
-              className={cn(
-                buttonVariants({ variant: "cta", size: "xl" }),
-                "h-14 min-w-[11rem] gap-2 px-6 text-sm sm:min-w-[12.5rem] sm:text-base",
-              )}
-            >
-              Montar stack
-              <ArrowUpRight
-                aria-hidden
-                data-icon="inline-end"
-                className="size-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
-              />
-            </Link>
+          <div className="mt-8 w-full min-w-0 max-w-md sm:mt-10 sm:max-w-lg">
+            <HeroRailLower showCopyButton />
           </div>
         </div>
       </div>

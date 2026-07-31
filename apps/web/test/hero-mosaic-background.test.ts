@@ -76,27 +76,29 @@ describe("mosaic hero background contract", () => {
     expect(hero).toContain(
       "Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.",
     );
-    expect(hero).toContain('href="/new"');
-    expect(hero).toContain("Montar stack");
+    // CTA replaced by install script (package manager + copyable command).
+    expect(hero).toContain("HeroRailLower");
+    expect(hero).not.toContain("Montar stack");
+    expect(hero).not.toContain('href="/new"');
     // P1: no bottom scroll arrow.
     expect(hero).not.toContain("ArrowDown");
     expect(hero).not.toContain("scrollToNextSection");
     expect(hero).not.toContain("Rolar para a próxima seção");
-    // P1: ~64px desktop gutter (px-16), not xl:px-24.
-    expect(hero).toContain("lg:px-16");
+    // Tighter left gutter (lg ~32px), not the previous 64px rail.
+    expect(hero).toContain("lg:px-8");
+    expect(hero).not.toContain("lg:px-16");
     expect(hero).not.toContain("xl:px-24");
     // P1: lighter title ~84px / normal weight / milder tracking.
     expect(hero).toContain("!font-normal");
     expect(hero).toContain("tracking-[-0.03em]");
     expect(hero).toContain("5.25rem");
-    expect(hero).not.toContain("HeroRailLower");
     expect(hero).not.toContain("EtherealBeamsCanvas");
     expect(hero).not.toContain("playHeroStickyScale");
     expect(hero).not.toContain("playHeroScrollRevealIcons");
     expect(hero).not.toContain("lg:min-h-[200dvh]");
 
-    // Installer relocated, not deleted.
-    expect(page).toContain("HeroInstallStrip");
+    // Installer lives in the hero (not a separate strip below).
+    expect(page).not.toContain("HeroInstallStrip");
     expect(strip).toContain("HeroRailLower");
     expect(strip).toContain("DEFAULT_PACKAGE_MANAGER");
 
