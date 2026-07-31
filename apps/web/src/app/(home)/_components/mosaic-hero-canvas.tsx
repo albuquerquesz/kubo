@@ -212,45 +212,53 @@ function resolveGrid(cssWidth: number, cssHeight: number): GridGeometry {
 }
 
 /**
- * Quad parallel gold lightning columns (same right-descending curvature × Kubo tokens).
- * Bronze leading + two mid ambers + warm outer rail; dark troughs between cores.
+ * Five parallel gold lightning columns (same right-descending curvature × Kubo tokens).
+ * Bronze leading + mid + amber + gold + warm outer; dark troughs between cores.
  * Gold-only separation via luminance, opacity, and curve — no cyan/red.
  */
 function buildBands(colors: ThemeColors, phase: number): Band[] {
   const driftX = Math.sin(phase * Math.PI * 2) * 0.018;
   const driftY = Math.cos(phase * Math.PI * 2 * 0.7) * 0.012;
 
-  // Four parallel lightning columns — ~0.22 nx spacing, centered pack, narrow rails.
+  // Five parallel lightning columns — ~0.18 nx spacing, centered pack, thinner rails.
   // Primary (left column).
   const primaryBand = sampleCubic(
-    { x: 0.26 + driftX * 0.2, y: -0.1 },
-    { x: 0.4 + driftX, y: 0.22 + driftY },
-    { x: 0.56 + driftX * 0.25, y: 0.55 },
-    { x: 0.74 + driftX * 0.1, y: 1.02 },
+    { x: 0.22 + driftX * 0.2, y: -0.1 },
+    { x: 0.36 + driftX, y: 0.22 + driftY },
+    { x: 0.52 + driftX * 0.25, y: 0.55 },
+    { x: 0.7 + driftX * 0.1, y: 1.02 },
   );
 
   // Inner mid column.
   const midBand = sampleCubic(
-    { x: 0.48 + driftX * 0.18, y: -0.09 },
-    { x: 0.62 + driftX * 0.6, y: 0.23 + driftY * 0.5 },
-    { x: 0.78 + driftX * 0.15, y: 0.56 },
-    { x: 0.96 + driftX * 0.1, y: 1.03 },
+    { x: 0.4 + driftX * 0.18, y: -0.09 },
+    { x: 0.54 + driftX * 0.6, y: 0.23 + driftY * 0.5 },
+    { x: 0.7 + driftX * 0.15, y: 0.56 },
+    { x: 0.88 + driftX * 0.1, y: 1.03 },
   );
 
-  // Outer mid column — new fourth rail between mid and warm.
+  // Amber mid column.
   const amberBand = sampleCubic(
-    { x: 0.7 + driftX * 0.16, y: -0.085 },
-    { x: 0.84 + driftX * 0.5, y: 0.235 + driftY * 0.4 },
-    { x: 1.0 + driftX * 0.12, y: 0.565 },
-    { x: 1.18 + driftX * 0.1, y: 1.035 },
+    { x: 0.58 + driftX * 0.16, y: -0.085 },
+    { x: 0.72 + driftX * 0.5, y: 0.235 + driftY * 0.4 },
+    { x: 0.88 + driftX * 0.12, y: 0.565 },
+    { x: 1.06 + driftX * 0.1, y: 1.035 },
   );
 
-  // Warm (right column) — same shape, outer of the centered pack.
+  // Gold column — fifth rail between amber and warm.
+  const goldBand = sampleCubic(
+    { x: 0.76 + driftX * 0.15, y: -0.082 },
+    { x: 0.9 + driftX * 0.45, y: 0.238 + driftY * 0.35 },
+    { x: 1.06 + driftX * 0.11, y: 0.568 },
+    { x: 1.24 + driftX * 0.1, y: 1.038 },
+  );
+
+  // Warm (right column) — outer of the centered pack.
   const warmBand = sampleCubic(
-    { x: 0.92 + driftX * 0.15, y: -0.08 },
-    { x: 1.06 - driftY * 0.2, y: 0.24 + driftX },
-    { x: 1.22 + driftX * 0.1, y: 0.57 },
-    { x: 1.4 + driftX * 0.1, y: 1.04 },
+    { x: 0.94 + driftX * 0.15, y: -0.08 },
+    { x: 1.08 - driftY * 0.2, y: 0.24 + driftX },
+    { x: 1.24 + driftX * 0.1, y: 0.57 },
+    { x: 1.42 + driftX * 0.1, y: 1.04 },
   );
 
   // Top-left warm haze — non-focal cloud only (no counter-direction lightning).
@@ -260,13 +268,15 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
     { x: 0.24, y: 0.3 + driftY },
   );
 
-  // Gold-only quad temperature: bronze → mid → amber → warm outer.
+  // Gold-only five-step temperature: bronze → mid → amber → gold → warm outer.
   const primaryColor = mix(colors.primary, colors.background, 0.5);
   const primaryCore = mix(colors.primary, colors.accent, 0.48);
   const midColor = mix(mix(colors.primary, colors.accent, 0.45), colors.background, 0.28);
   const midCore = mix(colors.accent, colors.primary, 0.4);
   const amberColor = mix(mix(colors.accent, colors.primary, 0.32), colors.background, 0.22);
   const amberCore = mix(colors.accent, colors.primary, 0.28);
+  const goldColor = mix(mix(colors.accent, colors.primary, 0.25), colors.background, 0.18);
+  const goldCore = mix(colors.accent, colors.foreground, 0.22);
   const warmColor = mix(mix(colors.accent, colors.primary, 0.2), colors.background, 0.2);
   const warmCore = mix(colors.accent, colors.foreground, 0.36);
   // Warm-leaning haze (tiny accent tick) without flooding primary gold.
@@ -275,43 +285,53 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
   return [
     {
       points: primaryBand,
-      width: 0.078,
-      coreWidth: 0.022,
+      width: 0.062,
+      coreWidth: 0.018,
       opacity: 0.86,
       coreOpacity: 0.72,
       color: primaryColor,
       coreColor: primaryCore,
-      hotspot: { x: 0.5, y: 0.48, radiusX: 0.09, radiusY: 0.15 },
+      hotspot: { x: 0.46, y: 0.48, radiusX: 0.08, radiusY: 0.14 },
     },
     {
       points: midBand,
-      width: 0.074,
-      coreWidth: 0.021,
+      width: 0.06,
+      coreWidth: 0.017,
       opacity: 0.87,
       coreOpacity: 0.73,
       color: midColor,
       coreColor: midCore,
-      hotspot: { x: 0.72, y: 0.49, radiusX: 0.09, radiusY: 0.15 },
+      hotspot: { x: 0.64, y: 0.49, radiusX: 0.08, radiusY: 0.14 },
     },
     {
       points: amberBand,
-      width: 0.072,
-      coreWidth: 0.02,
+      width: 0.058,
+      coreWidth: 0.016,
       opacity: 0.88,
-      coreOpacity: 0.75,
+      coreOpacity: 0.74,
       color: amberColor,
       coreColor: amberCore,
-      hotspot: { x: 0.94, y: 0.5, radiusX: 0.09, radiusY: 0.15 },
+      hotspot: { x: 0.82, y: 0.5, radiusX: 0.08, radiusY: 0.14 },
+    },
+    {
+      points: goldBand,
+      width: 0.056,
+      coreWidth: 0.016,
+      opacity: 0.89,
+      coreOpacity: 0.76,
+      color: goldColor,
+      coreColor: goldCore,
+      hotspot: { x: 1.0, y: 0.5, radiusX: 0.08, radiusY: 0.14 },
     },
     {
       points: warmBand,
-      width: 0.07,
-      coreWidth: 0.02,
+      width: 0.055,
+      coreWidth: 0.015,
       opacity: 0.9,
       coreOpacity: 0.78,
       color: warmColor,
       coreColor: warmCore,
-      hotspot: { x: 1.16, y: 0.5, radiusX: 0.09, radiusY: 0.15 },
+      hotspot: { x: 1.18, y: 0.5, radiusX: 0.08, radiusY: 0.14 },
     },
     {
       points: topLeftHaze,
