@@ -31,7 +31,6 @@ export default function HeroInstallStrip({ className }: HeroInstallStripProps) {
           <HeroRailLower
             selectedManager={selectedManager}
             onSelectedManagerChange={setSelectedManager}
-            showCopyButton
           />
         </div>
       </div>
