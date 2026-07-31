@@ -422,51 +422,41 @@
   /* Quiet tile bed — almost no primary; dark matrix is the default */
   background-color: color-mix(in srgb, var(--card) 38%, var(--background));
   background-image:
-    /* Middle amber crossover: the strongest point stays dark-gold, never cream. */
+    /* Localized warm highlight — sparse pale tiles, not a continuous white rail. */
     radial-gradient(
-      ellipse 27% 31% at 67% 51%,
-      color-mix(in srgb, var(--accent) 46%, var(--background)) 0%,
-      color-mix(in srgb, var(--primary) 38%, var(--background)) 38%,
-      color-mix(in srgb, var(--primary) 16%, transparent) 66%,
-      transparent 84%
+      ellipse 17% 20% at 90% 57%,
+      color-mix(in srgb, var(--foreground) 38%, var(--accent)) 0%,
+      color-mix(in srgb, var(--accent) 38%, transparent) 38%,
+      transparent 74%
     ),
-    /* Warm center-right ribbon — muted amber body, no foreground-white core. */
+    /* Warm right-facing ribbon — the outer counter-arc stays distinctly separate. */
     linear-gradient(
-        -31deg,
+        -28deg,
+        transparent 0%,
+        transparent 15%,
+        color-mix(in srgb, var(--accent) 25%, transparent) 29%,
+        color-mix(in srgb, var(--accent) 48%, var(--primary)) 43%,
+        color-mix(in srgb, var(--primary) 24%, transparent) 57%,
+        transparent 75%
+      ),
+    /* Primary leading arc — bronze body with a separate middle-right crossing. */
+    linear-gradient(
+        -48deg,
         transparent 0%,
         transparent 16%,
-        color-mix(in srgb, var(--accent) 26%, var(--background)) 31%,
-        color-mix(in srgb, var(--accent) 42%, var(--primary)) 46%,
-        color-mix(in srgb, var(--primary) 20%, transparent) 61%,
-        transparent 76%
+        color-mix(in srgb, var(--primary) 32%, var(--background)) 31%,
+        color-mix(in srgb, var(--primary) 44%, var(--accent)) 45%,
+        color-mix(in srgb, var(--primary) 20%, transparent) 60%,
+        transparent 77%
       ),
-    /* Primary ribbon — shifted into the center-right crossover. */
-    linear-gradient(
-        -45deg,
-        transparent 0%,
-        transparent 18%,
-        color-mix(in srgb, var(--primary) 25%, var(--background)) 34%,
-        color-mix(in srgb, var(--primary) 39%, var(--accent)) 48%,
-        color-mix(in srgb, var(--primary) 18%, transparent) 63%,
-        transparent 79%
-      ),
-    /* Lower rightward echo — depth under copy line */
+    /* Lower echo — visible depth behind, never a bright panel under the copy. */
     linear-gradient(
         -16deg,
         transparent 0%,
-        transparent 48%,
-        color-mix(in srgb, var(--primary) 20%, transparent) 62%,
-        color-mix(in srgb, var(--accent) 10%, transparent) 74%,
+        transparent 45%,
+        color-mix(in srgb, var(--primary) 25%, transparent) 60%,
+        color-mix(in srgb, var(--accent) 13%, transparent) 73%,
         transparent 88%
-      ),
-    /* Vertical dark → muted amber → dark-bronze rhythm. */
-    linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--background) 58%, transparent) 0%,
-        color-mix(in srgb, var(--background) 28%, transparent) 31%,
-        transparent 47%,
-        color-mix(in srgb, var(--background) 14%, transparent) 64%,
-        color-mix(in srgb, var(--background) 48%, transparent) 100%
       ),
     /* Top-left haze — visible non-focal warm cloud, almost no primary */
     radial-gradient(
@@ -483,7 +473,7 @@
         color-mix(in srgb, var(--muted) 14%, var(--background)) 100%
       );
   /* Soft-light bands over a quiet opaque bed; avoid screen-only density */
-  background-blend-mode: soft-light, soft-light, soft-light, soft-light, normal, normal;
+  background-blend-mode: soft-light, soft-light, soft-light, soft-light, soft-light, normal;
   /* White rounded rect = visible tile; transparent seam = dark base
      pitch 32u, fill 29.2u (seam ~8.75%), rx 5.5u (~17% of pitch) */
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='1.4' y='1.4' width='29.2' height='29.2' rx='5.5' fill='white'/%3E%3C/svg%3E");

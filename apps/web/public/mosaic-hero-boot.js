@@ -156,18 +156,18 @@
   }
 
   function buildBands(colors) {
-    // Center-right dual ribbons, both descending toward the right.
+    // Separated reference-like arcs: primary mid-right and warm outer-right.
     const primaryBand = sampleCubic(
-      { x: 0.36, y: -0.08 },
-      { x: 0.5, y: 0.18 },
-      { x: 0.68, y: 0.48 },
-      { x: 0.88, y: 0.98 },
+      { x: 0.47, y: -0.08 },
+      { x: 0.63, y: 0.18 },
+      { x: 0.82, y: 0.49 },
+      { x: 1.06, y: 0.98 },
     );
     const warmBand = sampleCubic(
-      { x: 0.55, y: -0.02 },
-      { x: 0.68, y: 0.28 },
-      { x: 0.82, y: 0.58 },
-      { x: 0.98, y: 1.06 },
+      { x: 0.72, y: -0.02 },
+      { x: 0.9, y: 0.28 },
+      { x: 1.03, y: 0.58 },
+      { x: 1.18, y: 1.06 },
     );
     const lowerEcho = sampleQuadratic(
       { x: 0.08, y: 1.12 },
@@ -183,28 +183,30 @@
     return [
       {
         points: primaryBand,
-        width: 0.18,
-        coreWidth: 0.052,
-        opacity: 0.78,
-        coreOpacity: 0.66,
-        color: mix(colors.background, colors.primary, 0.32),
-        coreColor: mix(colors.primary, colors.accent, 0.3),
+        width: 0.16,
+        coreWidth: 0.046,
+        opacity: 0.86,
+        coreOpacity: 0.72,
+        color: mix(colors.primary, colors.background, 0.5),
+        coreColor: mix(colors.primary, colors.accent, 0.48),
+        hotspot: { x: 0.73, y: 0.47, radiusX: 0.19, radiusY: 0.22 },
       },
       {
         points: warmBand,
-        width: 0.17,
-        coreWidth: 0.05,
-        opacity: 0.82,
-        coreOpacity: 0.7,
-        color: mix(colors.background, colors.accent, 0.28),
-        coreColor: mix(colors.primary, colors.accent, 0.66),
+        width: 0.15,
+        coreWidth: 0.044,
+        opacity: 0.9,
+        coreOpacity: 0.78,
+        color: mix(mix(colors.accent, colors.primary, 0.2), colors.background, 0.2),
+        coreColor: mix(colors.accent, colors.foreground, 0.36),
+        hotspot: { x: 0.9, y: 0.57, radiusX: 0.18, radiusY: 0.2 },
       },
       {
         points: lowerEcho,
-        width: 0.12,
+        width: 0.13,
         coreWidth: 0.038,
-        opacity: 0.28,
-        coreOpacity: 0.12,
+        opacity: 0.34,
+        coreOpacity: 0.16,
         color: mix(colors.primary, colors.muted, 0.55),
         coreColor: mix(colors.accent, colors.mutedForeground, 0.16),
       },
@@ -220,18 +222,11 @@
     ];
   }
 
-  function verticalGoldEnergy(ny) {
-    const rise = smoothstep(0.08, 0.46, ny);
-    const fall = 1 - smoothstep(0.58, 0.96, ny);
-    return rise * fall;
-  }
-
   function colorForCell(col, row, columns, rows, colors, bands) {
     const nx = (col + 0.5) / columns;
     const ny = (row + 0.5) / rows;
     const noise = cellNoise(col, row);
     const noise2 = cellNoise(col + 17, row + 31);
-    const verticalEnergy = verticalGoldEnergy(ny);
 
     let color = mix(colors.background, colors.card, 0.22 + noise * 0.18);
     color = mix(color, colors.muted, 0.04 + noise2 * 0.06);
@@ -248,12 +243,17 @@
       const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.15);
       if (broad <= 0.001) continue;
       const noiseMod = 0.74 + noise * 0.32 + noise2 * 0.1;
-      const intensity = broad * band.opacity * noiseMod * (0.38 + verticalEnergy * 0.62);
-      const hotness = core * band.coreOpacity * (0.38 + verticalEnergy * 0.52);
-      const bodyColor = mix(band.color, band.coreColor, verticalEnergy * 0.62);
-      const coreColor = mix(band.color, band.coreColor, 0.22 + verticalEnergy * 0.58);
-      color = mix(color, bodyColor, intensity);
-      if (hotness > 0.01) color = mix(color, coreColor, hotness);
+      const intensity = broad * band.opacity * noiseMod;
+      const hotness = core * band.coreOpacity * (0.68 + noise * 0.52);
+      color = mix(color, band.color, intensity);
+      if (hotness > 0.01) color = mix(color, band.coreColor, hotness);
+      if (band.hotspot && hotness > 0.08) {
+        const dx = (nx - band.hotspot.x) / band.hotspot.radiusX;
+        const dy = (ny - band.hotspot.y) / band.hotspot.radiusY;
+        const focus = 1 - smoothstep(0.26, 1, Math.hypot(dx, dy));
+        const highlight = hotness * focus * (0.18 + noise * 0.16);
+        if (highlight > 0.01) color = mix(color, colors.foreground, highlight);
+      }
     }
 
     const copyPocket = 1 - smoothstep(0.3, 0.4, nx);
