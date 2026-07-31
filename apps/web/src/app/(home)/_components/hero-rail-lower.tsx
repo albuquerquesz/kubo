@@ -8,7 +8,6 @@ export type HeroRailLowerProps = {
   className?: string;
   selectedManager?: HeroInstallCardProps["selectedManager"];
   onSelectedManagerChange?: HeroInstallCardProps["onSelectedManagerChange"];
-  showCopyButton?: HeroInstallCardProps["showCopyButton"];
 };
 
 /** Compact hero utility rail containing the installer controls. */
@@ -16,14 +15,12 @@ export default function HeroRailLower({
   className,
   selectedManager,
   onSelectedManagerChange,
-  showCopyButton = true,
 }: HeroRailLowerProps) {
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("w-fit max-w-full", className)}>
       <HeroInstallCard
         selectedManager={selectedManager}
         onSelectedManagerChange={onSelectedManagerChange}
-        showCopyButton={showCopyButton}
       />
     </div>
   );

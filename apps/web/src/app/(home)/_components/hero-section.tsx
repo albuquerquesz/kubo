@@ -62,8 +62,8 @@ export default function HeroSection() {
             </span>
           </p>
 
-          <div className="mt-8 w-full min-w-0 max-w-md sm:mt-10 sm:max-w-lg">
-            <HeroRailLower showCopyButton />
+          <div className="mt-8 w-fit max-w-full sm:mt-10">
+            <HeroRailLower />
           </div>
         </div>
       </div>
