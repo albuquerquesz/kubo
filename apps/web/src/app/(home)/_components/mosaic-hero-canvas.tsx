@@ -37,9 +37,9 @@ type GridGeometry = {
 };
 
 const REFERENCE_ROWS = 37;
-/** 7–10% of pitch — narrow dark seam between opaque cells. */
+/** 9% of pitch — narrow dark seam between opaque cells. */
 const SEAM_RATIO = 0.09;
-/** 16–18% of pitch — softer corners than graph-paper squares, still clearly square. */
+/** 17% of pitch — softer corners than graph-paper squares, still clearly square. */
 const CORNER_RATIO = 0.17;
 const MAX_DPR = 1.5;
 const DRIFT_PERIOD_SEC = 18;
@@ -166,7 +166,7 @@ function sampleQuadratic(
   return out;
 }
 
-/** Cubic Bezier for S-curve energy lobes (reference dual-ribbon structure). */
+/** Cubic Bezier for dual right-descending ribbon paths. */
 function sampleCubic(
   p0: { x: number; y: number },
   p1: { x: number; y: number },
@@ -212,73 +212,69 @@ function resolveGrid(cssWidth: number, cssHeight: number): GridGeometry {
 }
 
 /**
- * Soft dual-temperature energy mass (reference structure, Kubo tokens).
- * Cool S-curve + warm outer arc share soft shoulders but keep a darker trough between cores.
- * Broad fields with dual cores — not a monochrome gold soup or thin knife ribbons.
+ * Dual diagonal gold ribbons (reference dual-band structure × Kubo tokens).
+ * Upper primary ribbon + parallel warm lower ribbon, dark trough between cores.
+ * Gold-only separation via luminance, opacity, and curve — no cyan/red.
  */
 function buildBands(colors: ThemeColors, phase: number): Band[] {
   const driftX = Math.sin(phase * Math.PI * 2) * 0.018;
   const driftY = Math.cos(phase * Math.PI * 2 * 0.7) * 0.012;
 
-  // Cool/primary S-curve: top mid-right → rightward bulge (hot core) → lower-mid.
-  // Reference cool ribbon silhouette (cubic for the reverse-C / S).
+  // Upper/primary ribbon: enters above the middle, bows right, and exits right.
+  // Both lightning paths now travel toward the right as they descend.
   const primaryBand = sampleCubic(
-    { x: 0.58 + driftX * 0.2, y: -0.06 },
-    { x: 0.84 + driftX, y: 0.2 + driftY },
-    { x: 0.7 + driftX * 0.3, y: 0.55 },
-    { x: 0.44 + driftX * 0.1, y: 1.04 },
+    { x: 0.43 + driftX * 0.2, y: -0.08 },
+    { x: 0.62 + driftX, y: 0.18 + driftY },
+    { x: 0.86 + driftX * 0.3, y: 0.48 },
+    { x: 1.08 + driftX * 0.1, y: 0.98 },
   );
 
-  // Warm/accent outer arc — full right-edge vertical, soft shoulder overlap with cool.
+  // Warm/accent parallel ribbon: a second, brighter right-facing lobe.
   const warmBand = sampleCubic(
-    { x: 1.08 + driftX * 0.15, y: -0.04 },
-    { x: 1.02 - driftY * 0.25, y: 0.3 + driftX },
-    { x: 0.94 + driftX * 0.1, y: 0.6 },
-    { x: 0.86 + driftX * 0.1, y: 1.04 },
+    { x: 0.71 + driftX * 0.15, y: -0.02 },
+    { x: 0.9 - driftY * 0.25, y: 0.28 + driftX },
+    { x: 1.04 + driftX * 0.1, y: 0.58 },
+    { x: 1.18 + driftX * 0.1, y: 1.06 },
   );
 
-  // Lower cool echo — secondary depth under/behind the headline line.
+  // Lower echo — a softer rightward sweep under/behind the headline line.
   const lowerEcho = sampleQuadratic(
-    { x: 0.52 + driftX * 0.15, y: 1.14 },
-    { x: 0.32 + driftY, y: 0.76 },
-    { x: 0.1, y: 0.58 + driftY },
+    { x: 0.08 + driftX * 0.15, y: 1.12 },
+    { x: 0.32 + driftY, y: 0.78 },
+    { x: 0.68, y: 0.56 + driftY },
   );
 
   // Top-left warm haze — visible non-focal cloud (reference top-left bleed).
   const topLeftHaze = sampleQuadratic(
     { x: -0.12, y: -0.1 },
-    { x: 0.08 + driftX * 0.2, y: 0.08 },
-    { x: 0.22, y: 0.28 + driftY },
+    { x: 0.1 + driftX * 0.2, y: 0.1 },
+    { x: 0.24, y: 0.3 + driftY },
   );
 
-  // Dual temperature (gold-only): deep olive-cool body vs hot cream-warm body.
-  const primaryColor = mix(colors.primary, colors.background, 0.58);
-  const primaryCore = mix(
-    mix(colors.primary, colors.mutedForeground, 0.28),
-    colors.foreground,
-    0.38,
-  );
-  const warmColor = mix(colors.accent, colors.primary, 0.1);
-  const warmCore = mix(colors.accent, colors.foreground, 0.88);
+  // Dual temperature (gold-only): deep bronze body vs hot cream-amber body.
+  const primaryColor = mix(colors.primary, colors.background, 0.42);
+  const primaryCore = mix(mix(colors.primary, colors.accent, 0.35), colors.foreground, 0.42);
+  const warmColor = mix(colors.accent, colors.primary, 0.18);
+  const warmCore = mix(colors.accent, colors.foreground, 0.92);
   // Warm-leaning haze (tiny accent tick) without flooding primary gold.
   const hazeColor = mix(mix(colors.muted, colors.accent, 0.14), colors.card, 0.28);
 
   return [
     {
       points: primaryBand,
-      width: 0.14,
-      coreWidth: 0.05,
-      opacity: 0.88,
-      coreOpacity: 0.94,
+      width: 0.15,
+      coreWidth: 0.052,
+      opacity: 0.92,
+      coreOpacity: 0.96,
       color: primaryColor,
       coreColor: primaryCore,
-      temperature: 0.45,
+      temperature: 0.52,
     },
     {
       points: warmBand,
-      width: 0.13,
-      coreWidth: 0.048,
-      opacity: 0.9,
+      width: 0.14,
+      coreWidth: 0.05,
+      opacity: 0.94,
       coreOpacity: 1,
       color: warmColor,
       coreColor: warmCore,
@@ -286,20 +282,20 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
     },
     {
       points: lowerEcho,
-      width: 0.13,
-      coreWidth: 0.04,
-      opacity: 0.32,
-      coreOpacity: 0.14,
+      width: 0.12,
+      coreWidth: 0.038,
+      opacity: 0.28,
+      coreOpacity: 0.12,
       color: mix(colors.primary, colors.muted, 0.55),
       coreColor: mix(colors.accent, colors.mutedForeground, 0.16),
       temperature: 0.3,
     },
     {
       points: topLeftHaze,
-      width: 0.26,
-      coreWidth: 0.1,
-      opacity: 0.4,
-      coreOpacity: 0.16,
+      width: 0.24,
+      coreWidth: 0.09,
+      opacity: 0.36,
+      coreOpacity: 0.14,
       color: hazeColor,
       coreColor: mix(colors.muted, colors.mutedForeground, 0.32),
       temperature: 0.34,
