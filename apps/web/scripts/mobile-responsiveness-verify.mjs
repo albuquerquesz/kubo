@@ -174,9 +174,10 @@ async function ctaMetrics(page) {
             opacity: getComputedStyle(fallback).opacity,
             display: getComputedStyle(fallback).display,
           }
-        : { present: false },
+        : { present: false, opacity: "0", display: "none" },
       inView: backdrop?.getAttribute("data-dot-matrix-in-view"),
       reduced: backdrop?.getAttribute("data-dot-matrix-reduced"),
+      ready: backdrop?.getAttribute("data-dot-matrix-ready"),
     };
   });
 }
@@ -498,10 +499,26 @@ async function runCtaMotion(browser, { reduced }) {
   const meta = await ctaMetrics(page);
   info(`cta-${reduced ? "reduced" : "motion"}/meta`, JSON.stringify(meta));
 
-  if (meta.fallback?.present) {
+  if (meta.fallback?.present || meta.ready === "true") {
     pass(`cta-${reduced ? "reduced" : "motion"}/fallback`, `opacity=${meta.fallback.opacity}`);
   } else {
     fail(`cta-${reduced ? "reduced" : "motion"}/fallback`, "missing .dot-matrix-fallback");
+  }
+
+  if (meta.ready === "true") {
+    if (meta.canvas?.opacity === "1" && meta.fallback?.opacity === "0") {
+      pass(
+        `cta-${reduced ? "reduced" : "motion"}/single-layer`,
+        "WebGL visible; CSS fallback hidden",
+      );
+    } else {
+      fail(
+        `cta-${reduced ? "reduced" : "motion"}/single-layer`,
+        `ready=${meta.ready} canvasOpacity=${meta.canvas?.opacity} fallbackOpacity=${meta.fallback?.opacity}`,
+      );
+    }
+  } else if (meta.fallback?.opacity !== "0") {
+    pass(`cta-${reduced ? "reduced" : "motion"}/fallback-active`, "WebGL unavailable or not ready");
   }
 
   if (meta.inView === "true") {

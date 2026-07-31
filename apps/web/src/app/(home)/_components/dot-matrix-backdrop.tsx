@@ -88,10 +88,11 @@ export default function DotMatrixBackdrop() {
       aria-hidden="true"
       data-dot-matrix-in-view={isInView ? "true" : "false"}
       data-dot-matrix-reduced={reducedMotion ? "true" : "false"}
+      data-dot-matrix-ready={canvasReady ? "true" : "false"}
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
     >
       {/* CSS field: visible before hydration and if WebGL never reports ready. */}
-      <div className="dot-matrix-fallback" aria-hidden="true" />
+      {!canvasReady && <div className="dot-matrix-fallback" aria-hidden="true" />}
 
       <DotMatrixCanvas
         reducedMotion={reducedMotion}

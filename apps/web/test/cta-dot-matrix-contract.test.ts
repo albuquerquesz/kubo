@@ -27,7 +27,11 @@ describe("CTA dot-matrix mobile/motion contract", () => {
     expect(backdrop).toContain("IntersectionObserver");
     expect(backdrop).toContain("VIEW_ROOT_MARGIN");
     expect(backdrop).toContain("isInView");
-    expect(backdrop).toContain("dot-matrix-fallback");
+    expect(backdrop).toContain(
+      '{!canvasReady && <div className="dot-matrix-fallback" aria-hidden="true" />}',
+    );
+    expect(backdrop).toContain('data-dot-matrix-ready={canvasReady ? "true" : "false"}');
+    expect(backdrop).toContain("onReady={() => setCanvasReady(true)}");
 
     // Reduced motion starts static via useSyncExternalStore server snapshot
     expect(backdrop).toContain("useSyncExternalStore");
@@ -48,6 +52,8 @@ describe("CTA dot-matrix mobile/motion contract", () => {
     // Decorative + CSS fallback present without layout shift
     expect(css).toContain(".dot-matrix-fallback");
     expect(css).toContain("position: absolute");
+    expect(css).toContain('[data-dot-matrix-ready="true"] .dot-matrix-fallback');
+    expect(css).toContain("opacity: 0;");
     expect(backdrop).toContain('aria-hidden="true"');
     expect(backdrop).toContain("pointer-events-none");
     expect(canvas).toContain('aria-hidden="true"');
