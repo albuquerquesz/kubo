@@ -43,7 +43,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
       href={entry.href}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noreferrer" : undefined}
-      className="group flex flex-col bg-background transition-colors duration-150 ease-out hover:bg-[#2d2b20] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+      className="group flex flex-col bg-background transition-colors duration-150 ease-out hover:bg-[#2d2d2d] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
     >
       <article className="flex min-h-96 flex-col p-6 sm:min-h-[28rem] sm:p-8">
         {entry.image ? (

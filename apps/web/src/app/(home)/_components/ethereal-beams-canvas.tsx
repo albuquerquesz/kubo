@@ -17,8 +17,8 @@ type BeamSettings = {
 };
 
 const FALLBACK_COLORS: BeamColors = {
-  background: "#11110d",
-  foreground: "#f2ede0",
+  background: "#101010",
+  foreground: "#f1f1f1",
   primary: "#c49314",
   accent: "#d6a72b",
 };

@@ -39,18 +39,18 @@ type GridGeometry = {
 const REFERENCE_ROWS = 37;
 /** 9% of pitch — narrow dark seam between opaque cells. */
 const SEAM_RATIO = 0.09;
-/** 17% of pitch — softer corners than graph-paper squares, still clearly square. */
-const CORNER_RATIO = 0.17;
+/** 22% of pitch — softer rounded squares, still clearly not circular. */
+const CORNER_RATIO = 0.22;
 const MAX_DPR = 1.5;
 const DRIFT_PERIOD_SEC = 18;
 const SEED = 0x6b75626f; // "kubo"
 
 const FALLBACK_HEX = {
-  background: "#11110d",
-  card: "#181814",
-  muted: "#222118",
-  foreground: "#f2ede0",
-  mutedForeground: "#b0a78d",
+  background: "#101010",
+  card: "#171717",
+  muted: "#242424",
+  foreground: "#f1f1f1",
+  mutedForeground: "#a8a8a8",
   primary: "#c49314",
   accent: "#d6a72b",
 } as const;
@@ -220,54 +220,54 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
   const driftX = Math.sin(phase * Math.PI * 2) * 0.018;
   const driftY = Math.cos(phase * Math.PI * 2 * 0.7) * 0.012;
 
-  // Six parallel lightning columns — ~0.12 nx spacing, frame-centered pack, hairline rails.
+  // Six parallel lightning columns — ~0.09 nx spacing, frame-centered pack, hairline rails.
   // Shallower right-descent (Δx ≈ 0.28 over full height) keeps columns more upright.
   // Primary (left column).
   const primaryBand = sampleCubic(
-    { x: 0.2 + driftX * 0.2, y: -0.1 },
-    { x: 0.28 + driftX, y: 0.22 + driftY },
-    { x: 0.37 + driftX * 0.25, y: 0.55 },
-    { x: 0.48 + driftX * 0.1, y: 1.02 },
+    { x: 0.28 + driftX * 0.2, y: -0.1 },
+    { x: 0.36 + driftX, y: 0.22 + driftY },
+    { x: 0.45 + driftX * 0.25, y: 0.55 },
+    { x: 0.56 + driftX * 0.1, y: 1.02 },
   );
 
   // Inner mid column.
   const midBand = sampleCubic(
-    { x: 0.32 + driftX * 0.18, y: -0.09 },
-    { x: 0.4 + driftX * 0.6, y: 0.23 + driftY * 0.5 },
-    { x: 0.49 + driftX * 0.15, y: 0.56 },
-    { x: 0.6 + driftX * 0.1, y: 1.03 },
+    { x: 0.37 + driftX * 0.18, y: -0.09 },
+    { x: 0.45 + driftX * 0.6, y: 0.23 + driftY * 0.5 },
+    { x: 0.54 + driftX * 0.15, y: 0.56 },
+    { x: 0.65 + driftX * 0.1, y: 1.03 },
   );
 
   // Amber mid column.
   const amberBand = sampleCubic(
-    { x: 0.44 + driftX * 0.16, y: -0.085 },
-    { x: 0.52 + driftX * 0.5, y: 0.235 + driftY * 0.4 },
-    { x: 0.61 + driftX * 0.12, y: 0.565 },
-    { x: 0.72 + driftX * 0.1, y: 1.035 },
+    { x: 0.46 + driftX * 0.16, y: -0.085 },
+    { x: 0.54 + driftX * 0.5, y: 0.235 + driftY * 0.4 },
+    { x: 0.63 + driftX * 0.12, y: 0.565 },
+    { x: 0.74 + driftX * 0.1, y: 1.035 },
   );
 
   // Gold column.
   const goldBand = sampleCubic(
-    { x: 0.56 + driftX * 0.15, y: -0.082 },
-    { x: 0.64 + driftX * 0.45, y: 0.238 + driftY * 0.35 },
-    { x: 0.73 + driftX * 0.11, y: 0.568 },
-    { x: 0.84 + driftX * 0.1, y: 1.038 },
+    { x: 0.55 + driftX * 0.15, y: -0.082 },
+    { x: 0.63 + driftX * 0.45, y: 0.238 + driftY * 0.35 },
+    { x: 0.72 + driftX * 0.11, y: 0.568 },
+    { x: 0.83 + driftX * 0.1, y: 1.038 },
   );
 
   // Copper column — sixth rail between gold and warm.
   const copperBand = sampleCubic(
-    { x: 0.68 + driftX * 0.14, y: -0.081 },
-    { x: 0.76 + driftX * 0.4, y: 0.24 + driftY * 0.3 },
-    { x: 0.85 + driftX * 0.1, y: 0.57 },
-    { x: 0.96 + driftX * 0.1, y: 1.039 },
+    { x: 0.64 + driftX * 0.14, y: -0.081 },
+    { x: 0.72 + driftX * 0.4, y: 0.24 + driftY * 0.3 },
+    { x: 0.81 + driftX * 0.1, y: 0.57 },
+    { x: 0.92 + driftX * 0.1, y: 1.039 },
   );
 
   // Warm (right column) — outer of the centered pack.
   const warmBand = sampleCubic(
-    { x: 0.8 + driftX * 0.15, y: -0.08 },
-    { x: 0.88 - driftY * 0.2, y: 0.24 + driftX },
-    { x: 0.97 + driftX * 0.1, y: 0.57 },
-    { x: 1.08 + driftX * 0.1, y: 1.04 },
+    { x: 0.73 + driftX * 0.15, y: -0.08 },
+    { x: 0.81 - driftY * 0.2, y: 0.24 + driftX },
+    { x: 0.9 + driftX * 0.1, y: 0.57 },
+    { x: 1.01 + driftX * 0.1, y: 1.04 },
   );
 
   // Top-left warm haze — non-focal cloud only (no counter-direction lightning).
@@ -302,7 +302,7 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
       coreOpacity: 0.72,
       color: primaryColor,
       coreColor: primaryCore,
-      hotspot: { x: 0.33, y: 0.48, radiusX: 0.05, radiusY: 0.1 },
+      hotspot: { x: 0.41, y: 0.48, radiusX: 0.05, radiusY: 0.1 },
     },
     {
       points: midBand,
@@ -312,7 +312,7 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
       coreOpacity: 0.73,
       color: midColor,
       coreColor: midCore,
-      hotspot: { x: 0.45, y: 0.49, radiusX: 0.05, radiusY: 0.1 },
+      hotspot: { x: 0.5, y: 0.49, radiusX: 0.05, radiusY: 0.1 },
     },
     {
       points: amberBand,
@@ -322,7 +322,7 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
       coreOpacity: 0.74,
       color: amberColor,
       coreColor: amberCore,
-      hotspot: { x: 0.57, y: 0.5, radiusX: 0.05, radiusY: 0.1 },
+      hotspot: { x: 0.59, y: 0.5, radiusX: 0.05, radiusY: 0.1 },
     },
     {
       points: goldBand,
@@ -332,7 +332,7 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
       coreOpacity: 0.76,
       color: goldColor,
       coreColor: goldCore,
-      hotspot: { x: 0.69, y: 0.5, radiusX: 0.05, radiusY: 0.1 },
+      hotspot: { x: 0.68, y: 0.5, radiusX: 0.05, radiusY: 0.1 },
     },
     {
       points: copperBand,
@@ -342,7 +342,7 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
       coreOpacity: 0.77,
       color: copperColor,
       coreColor: copperCore,
-      hotspot: { x: 0.81, y: 0.5, radiusX: 0.05, radiusY: 0.1 },
+      hotspot: { x: 0.77, y: 0.5, radiusX: 0.05, radiusY: 0.1 },
     },
     {
       points: warmBand,
@@ -352,7 +352,7 @@ function buildBands(colors: ThemeColors, phase: number): Band[] {
       coreOpacity: 0.78,
       color: warmColor,
       coreColor: warmCore,
-      hotspot: { x: 0.93, y: 0.5, radiusX: 0.05, radiusY: 0.1 },
+      hotspot: { x: 0.86, y: 0.5, radiusX: 0.05, radiusY: 0.1 },
     },
     {
       points: topLeftHaze,
