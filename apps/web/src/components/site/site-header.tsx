@@ -151,18 +151,17 @@ function MobileNavigation() {
 
   return (
     <>
-      <Button
+      <button
         ref={triggerRef}
-        variant="ghost"
-        size="icon-lg"
-        className={cn("w-12 border-rule border-l lg:hidden", headerRowClass)}
+        type="button"
+        className={cn(utilityLinkClass, "w-12 lg:hidden", headerRowClass)}
         aria-label="Abrir navegação"
         aria-controls="mobile-navigation"
         aria-expanded={isOpen}
         onClick={() => setIsOpen(true)}
       >
-        <Menu />
-      </Button>
+        <Menu className="size-5" />
+      </button>
       {isOpen && (
         <div
           ref={panelRef}
