@@ -1,12 +1,13 @@
 "use client";
 
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FaDiscord, FaGithub, FaXTwitter } from "react-icons/fa6";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { MobileNavOverlay, type MobileNavLink } from "@/components/site/mobile-nav-overlay";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const primaryLinks = [{ href: "/#documentation", label: "Docs" }] as const;
@@ -29,6 +30,31 @@ const exploreGroups = [
     ],
   },
 ] as const;
+
+function buildMobileNavLinks(): MobileNavLink[] {
+  const seen = new Set<string>();
+  const links: MobileNavLink[] = [];
+
+  const push = (href: string, label: string) => {
+    if (seen.has(href)) return;
+    seen.add(href);
+    links.push({ href, label });
+  };
+
+  for (const link of primaryLinks) {
+    push(link.href, link.label);
+  }
+  // Site pages only — socials stay in the header utility row, not the overlay.
+  for (const link of exploreGroups.find((group) => group.label === "Entenda")?.links ?? []) {
+    push(link.href, link.label);
+  }
+  push("/sponsors", "Patrocinadores");
+  push("/new", "Monte sua stack");
+
+  return links;
+}
+
+const mobileNavLinks = buildMobileNavLinks();
 
 const socialLinks = [
   {
@@ -99,55 +125,6 @@ function DesktopNavigation() {
 function MobileNavigation() {
   const [isOpen, setIsOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-
-  const closeNavigation = () => {
-    setIsOpen(false);
-    requestAnimationFrame(() => triggerRef.current?.focus());
-  };
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const bodyOverflow = document.body.style.overflow;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-        requestAnimationFrame(() => triggerRef.current?.focus());
-        return;
-      }
-
-      if (event.key !== "Tab") return;
-
-      const focusableElements = Array.from(
-        panelRef.current?.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        ) ?? [],
-      ).filter((element) => element.getClientRects().length > 0);
-      const firstElement = focusableElements.at(0);
-      const lastElement = focusableElements.at(-1);
-
-      if (!firstElement || !lastElement) return;
-
-      if (event.shiftKey && document.activeElement === firstElement) {
-        event.preventDefault();
-        lastElement.focus();
-      } else if (!event.shiftKey && document.activeElement === lastElement) {
-        event.preventDefault();
-        firstElement.focus();
-      }
-    };
-
-    document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", onKeyDown);
-    closeButtonRef.current?.focus();
-
-    return () => {
-      document.body.style.overflow = bodyOverflow;
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [isOpen]);
 
   return (
     <>
@@ -162,91 +139,12 @@ function MobileNavigation() {
       >
         <Menu className="size-5" />
       </button>
-      {isOpen && (
-        <div
-          ref={panelRef}
-          id="mobile-navigation"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Navegação mobile"
-          className={cn(
-            "fixed inset-0 z-50 flex min-h-svh max-h-svh flex-col overflow-hidden bg-background",
-            "pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]",
-          )}
-        >
-          <div className="flex min-h-14 shrink-0 items-center justify-between border-rule border-b px-5 py-3">
-            <div>
-              <p className="text-base font-semibold">Navegar no Kubo</p>
-              <p className="text-muted-foreground text-xs">
-                Crie, inspecione e compartilhe uma stack TypeScript.
-              </p>
-            </div>
-            <Button
-              ref={closeButtonRef}
-              variant="ghost"
-              size="sm"
-              className="min-h-10 gap-2 font-mono text-xs uppercase tracking-[0.08em]"
-              onClick={closeNavigation}
-            >
-              Fechar
-              <X />
-            </Button>
-          </div>
-
-          {/* Single scroll column so links + bottom CTA remain reachable at short
-              heights, 200% text zoom, and notched safe areas. */}
-          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
-            <nav aria-label="Links de navegação mobile" className="grid shrink-0">
-              {primaryLinks.map((link, index) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={closeNavigation}
-                  className="group grid min-h-20 grid-cols-[3rem_1fr_auto] items-center border-rule border-b px-5 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
-                >
-                  <span className="font-mono text-xs text-muted-foreground">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className="text-xl font-semibold">{link.label}</span>
-                  <ArrowUpRight className="text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </Link>
-              ))}
-            </nav>
-
-            <div className="mt-auto shrink-0">
-              <Link
-                href="/new"
-                onClick={closeNavigation}
-                className={cn(
-                  buttonVariants({ variant: "cta", size: "xl" }),
-                  "min-h-16 w-full justify-between rounded-none border-0 border-rule border-b px-5",
-                )}
-              >
-                Monte sua stack
-                <ArrowUpRight
-                  data-icon="inline-end"
-                  className="motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
-                />
-              </Link>
-
-              <div className="grid gap-px bg-rule p-px sm:grid-cols-2">
-                {exploreGroups.flatMap((group) =>
-                  group.links.map((link) => (
-                    <Link
-                      key={`${group.label}-${link.href}`}
-                      href={link.href}
-                      onClick={closeNavigation}
-                      className="min-h-14 bg-background px-5 py-4 font-mono text-xs text-muted-foreground uppercase tracking-[0.08em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
-                    >
-                      {link.label}
-                    </Link>
-                  )),
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <MobileNavOverlay
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        links={mobileNavLinks}
+        onCloseComplete={() => triggerRef.current?.focus()}
+      />
     </>
   );
 }

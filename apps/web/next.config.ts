@@ -10,6 +10,10 @@ const appDir = path.dirname(fileURLToPath(import.meta.url));
 const monorepoRoot = path.join(appDir, "../..");
 
 const config: NextConfig = {
+  // Dev-only: allow Tailscale MagicDNS hosts to hit `/_next/*` + HMR websocket.
+  // Without this, Next blocks cross-origin dev resources when the page is opened
+  // as `http://<machine>.*.ts.net:3333` instead of localhost.
+  allowedDevOrigins: ["*.ts.net", "*.tailscale.net"],
   // React Compiler is expensive during Turbopack compile (workers + AST). Keep it
   // for production builds; skip in `next dev` so cold compile does not balloon RAM.
   reactCompiler: process.env.NODE_ENV === "production",
