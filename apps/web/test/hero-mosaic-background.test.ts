@@ -28,18 +28,20 @@ describe("mosaic hero background contract", () => {
     // Softer corners (16–18% of pitch), narrow seam.
     expect(source).toContain("CORNER_RATIO = 0.17");
     expect(source).toContain("SEAM_RATIO = 0.09");
-    // Five parallel lightning columns: primary + mid + amber + gold + warm, centered pack, ~0.18 nx spacing.
+    // Six parallel lightning columns: primary + mid + amber + gold + copper + warm, ~0.12 nx spacing.
     expect(source).toContain("sampleCubic");
-    expect(source).toContain("x: 0.22");
-    expect(source).toContain("x: 0.4");
-    expect(source).toContain("x: 0.58");
-    expect(source).toContain("x: 0.76");
-    expect(source).toContain("x: 0.94");
-    expect(source).toContain("x: 0.7");
-    expect(source).toContain("x: 0.88");
-    expect(source).toContain("x: 1.06");
-    expect(source).toContain("x: 1.24");
-    expect(source).toContain("x: 1.42");
+    expect(source).toContain("x: 0.3");
+    expect(source).toContain("x: 0.42");
+    expect(source).toContain("x: 0.54");
+    expect(source).toContain("x: 0.66");
+    expect(source).toContain("x: 0.78");
+    expect(source).toContain("x: 0.9");
+    expect(source).toContain("x: 0.72");
+    expect(source).toContain("x: 0.84");
+    expect(source).toContain("x: 1.02");
+    expect(source).toContain("x: 1.14");
+    expect(source).toContain("x: 1.26");
+    expect(source).toContain("x: 1.38");
     // No counter-direction lower-echo lightning.
     expect(source).not.toContain("lowerEcho");
     expect(source).not.toContain("y: 1.12");
@@ -53,16 +55,18 @@ describe("mosaic hero background contract", () => {
     expect(source).not.toContain("rightField");
     expect(source).not.toContain("deepOlive");
     expect(source).not.toContain("midGold");
-    // Thinner five-column fields with localized pale cores.
-    expect(source).toContain("width: 0.062");
-    expect(source).toContain("width: 0.06");
-    expect(source).toContain("width: 0.058");
-    expect(source).toContain("width: 0.056");
-    expect(source).toContain("width: 0.055");
+    // Hairline six-column fields with localized pale cores.
+    expect(source).toContain("width: 0.034");
+    expect(source).toContain("width: 0.032");
+    expect(source).toContain("width: 0.031");
+    expect(source).toContain("width: 0.03");
+    expect(source).toContain("width: 0.029");
+    expect(source).toContain("width: 0.028");
     expect(source).toContain("opacity: 0.86");
     expect(source).toContain("opacity: 0.87");
     expect(source).toContain("opacity: 0.88");
     expect(source).toContain("opacity: 0.89");
+    expect(source).toContain("opacity: 0.895");
     expect(source).toContain("opacity: 0.9");
     expect(source).toContain("hotspot");
     expect(source).toContain("colors.foreground, highlight");
@@ -130,9 +134,9 @@ describe("mosaic hero background contract", () => {
     // Fallback tiles via mask: rx ≈ 5.5u / 32u pitch (≈17%), not graph-paper lines.
     expect(css).toContain("rx='5.5'");
     expect(css).toContain("mask-image");
-    // Quiet opaque base + soft-light five columns; hide fallback when Canvas is ready.
+    // Quiet opaque base + soft-light six columns; hide fallback when Canvas is ready.
     expect(css).toContain(
-      "soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, normal",
+      "soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, soft-light,",
     );
     expect(css).toContain("Localized warm highlight");
     expect(css).toContain('data-mosaic-ready="true"');
@@ -159,30 +163,33 @@ describe("mosaic hero background contract", () => {
     expect(boot).toContain("REFERENCE_ROWS");
     expect(boot).not.toContain("twimg.com");
     expect(boot).not.toContain("Fluxion");
-    // Boot shares the five-column geometry with the React canvas.
-    expect(boot).toContain("x: 0.22");
+    // Boot shares the six-column geometry with the React canvas.
+    expect(boot).toContain("x: 0.3");
     expect(boot).toContain("y: -0.1");
-    expect(boot).toContain("x: 0.4");
-    expect(boot).toContain("x: 0.58");
-    expect(boot).toContain("x: 0.76");
-    expect(boot).toContain("x: 0.94");
-    expect(boot).toContain("x: 0.7");
-    expect(boot).toContain("x: 0.88");
-    expect(boot).toContain("x: 1.06");
-    expect(boot).toContain("x: 1.24");
-    expect(boot).toContain("x: 1.42");
+    expect(boot).toContain("x: 0.42");
+    expect(boot).toContain("x: 0.54");
+    expect(boot).toContain("x: 0.66");
+    expect(boot).toContain("x: 0.78");
+    expect(boot).toContain("x: 0.9");
+    expect(boot).toContain("x: 0.72");
+    expect(boot).toContain("x: 0.84");
+    expect(boot).toContain("x: 1.02");
+    expect(boot).toContain("x: 1.14");
+    expect(boot).toContain("x: 1.26");
+    expect(boot).toContain("x: 1.38");
     expect(boot).not.toContain("lowerEcho");
     expect(boot).not.toContain("y: 1.12");
     expect(boot).toContain("hotspot");
     expect(boot).not.toContain("verticalGoldEnergy");
     expect(boot).toContain("SEAM_RATIO = 0.09");
     expect(boot).toContain("CORNER_RATIO = 0.17");
-    // CSS fallback mirrors five right-descending columns (no opposite-direction rail).
+    // CSS fallback mirrors six right-descending columns (no opposite-direction rail).
     expect(css).toContain("-22deg");
-    expect(css).toContain("-30deg");
-    expect(css).toContain("-38deg");
+    expect(css).toContain("-28deg");
+    expect(css).toContain("-34deg");
+    expect(css).toContain("-40deg");
     expect(css).toContain("-46deg");
-    expect(css).toContain("-54deg");
+    expect(css).toContain("-52deg");
     // Mobile veil extends the copy-safe area to ~76% of the frame.
     expect(css).toContain("max-width: 640px");
     expect(css).toContain("76%");
