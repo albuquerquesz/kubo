@@ -41,7 +41,7 @@ function getCoarsePointerServerSnapshot() {
 }
 
 /**
- * Decorative gold dot-matrix for the final CTA.
+ * Decorative black-on-yellow dot-matrix for the final CTA.
  * CSS fallback paints before hydration; WebGL only animates while near view
  * and when reduced motion is off. Mobile/coarse pointer caps DPR at 1.
  */
@@ -89,9 +89,12 @@ export default function DotMatrixBackdrop() {
       data-dot-matrix-in-view={isInView ? "true" : "false"}
       data-dot-matrix-reduced={reducedMotion ? "true" : "false"}
       data-dot-matrix-ready={canvasReady ? "true" : "false"}
-      className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+      className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-[#c49314]"
     >
-      {/* CSS field: visible before hydration and if WebGL never reports ready. */}
+      {/* Flat yellow bed always — never transparent black under WebGL. */}
+      <div className="absolute inset-0 bg-[#c49314]" aria-hidden="true" />
+
+      {/* CSS dots only before Canvas is ready (no vignette / shadow). */}
       {!canvasReady && <div className="dot-matrix-fallback" aria-hidden="true" />}
 
       <DotMatrixCanvas
@@ -100,14 +103,6 @@ export default function DotMatrixBackdrop() {
         dpr={dpr}
         onReady={() => setCanvasReady(true)}
         className={canvasReady ? "opacity-100" : "opacity-0"}
-      />
-
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(circle at center, #050505 0%, transparent 100%), linear-gradient(to top, #050505, transparent)",
-        }}
       />
     </div>
   );

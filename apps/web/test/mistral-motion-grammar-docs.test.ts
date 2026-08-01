@@ -176,12 +176,18 @@ describe("shipped motion tokens match skill Family A", () => {
     expect(mod.duration.lineGrow).toBe(1.3);
   });
 
-  test("hero-display-intro uses y 100% rise and skill eases", () => {
+  test("hero-display-intro uses SplitText y 100% rise and skill eases", () => {
     const src = readRepo("apps/web/src/lib/motion/timelines/hero-display-intro.ts");
+    expect(src).toContain("SplitText");
     expect(src).toContain('y: "100%"');
     expect(src).toContain("duration.intro");
     expect(src).toContain("ease.standard");
     expect(src).toContain("prefersReducedMotion");
+
+    const client = readRepo("apps/web/src/lib/motion/gsap-client.ts");
+    expect(client).toContain("SplitText");
+    expect(client).toContain("ScrollTrigger");
+    expect(client).toContain("registerPlugin");
   });
 
   test("scroll-reveal-icons timeline defaults + hero pin window", () => {
@@ -202,7 +208,7 @@ describe("shipped motion tokens match skill Family A", () => {
     expect(component).toContain("getIcons");
 
     const hero = readRepo("apps/web/src/app/(home)/_components/hero-section.tsx");
-    expect(hero).toContain("EtherealBeamsCanvas");
+    expect(hero).toContain("MosaicHeroCanvas");
     expect(hero).not.toContain("playHeroScrollRevealIcons");
   });
 
@@ -226,8 +232,8 @@ describe("shipped motion tokens match skill Family A", () => {
     expect(src).toContain("hostTransformAtPinProgress");
 
     const hero = readRepo("apps/web/src/app/(home)/_components/hero-section.tsx");
-    expect(hero).toContain("EtherealBeamsCanvas");
-    expect(hero).toContain("min-h-[calc(100svh-3rem)]");
+    expect(hero).toContain("MosaicHeroCanvas");
+    expect(hero).toContain("min-h-svh");
     expect(hero).not.toContain("lg:min-h-[200dvh]");
     expect(hero).not.toContain("playHeroStickyScale");
     expect(hero).not.toContain('data-hero-motion="sticky-shell"');
@@ -241,6 +247,9 @@ describe("shipped motion tokens match skill Family A", () => {
     expect(index).toContain("playHeroScrollRevealIcons");
     expect(index).toContain("hostTransformAtPinProgress");
     expect(index).toContain("ScrollTrigger");
+    expect(index).toContain("SplitText");
+    expect(index).toContain("createSplitTextReveal");
+    expect(index).not.toContain("splitDisplayText");
   });
 });
 

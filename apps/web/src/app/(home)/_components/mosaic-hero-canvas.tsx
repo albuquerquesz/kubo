@@ -47,10 +47,10 @@ const SEED = 0x6b75626f; // "kubo"
 
 const FALLBACK_HEX = {
   background: "#000000",
-  card: "#141414",
-  muted: "#1f1f1f",
+  card: "#0c0c0c",
+  muted: "#161616",
   foreground: "#f1f1f1",
-  mutedForeground: "#a8a8a8",
+  mutedForeground: "#a0a0a0",
   primary: "#c49314",
   accent: "#d6a72b",
 } as const;
@@ -569,15 +569,10 @@ export default function MosaicHeroCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const colorsRef = useRef<ThemeColors>(readThemeColors());
 
-  // useLayoutEffect: claim ownership after optional mosaic-hero-boot.js first paint.
   useLayoutEffect(() => {
     const container = containerRef.current;
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
-
-    // Signal the public boot script to stop resizing/painting this canvas.
-    (window as Window & { __kuboMosaicReactActive?: boolean }).__kuboMosaicReactActive = true;
-    canvas.dataset.mosaicReactOwned = "true";
 
     // alpha:true so the CSS fallback remains visible until first successful paint.
     // Do not request desynchronized — it returns null in some headless/Playwright Chromium builds.
@@ -609,7 +604,7 @@ export default function MosaicHeroCanvas() {
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     let reducedMotion = motionQuery.matches;
     let raf = 0;
-    let bootRaf = 0;
+    let settleRaf = 0;
     let running = true;
     let visible = true;
     let lastPaint = 0;
@@ -666,7 +661,7 @@ export default function MosaicHeroCanvas() {
       try {
         draw(phase);
       } catch {
-        // Leave fallback visible; ResizeObserver / boot rAF may retry.
+        // Leave fallback visible; the resize observer or layout rAF may retry.
         canvas.dataset.mosaicReady = "false";
         canvas.setAttribute("data-mosaic-ready", "false");
       }
@@ -727,9 +722,9 @@ export default function MosaicHeroCanvas() {
       attributeFilter: ["class", "style", "data-theme"],
     });
 
-    // Immediate first paint + short rAF boot so late layout still marks ready.
+    // Immediate first paint + short rAF settle so late layout still marks ready.
     safeDraw(0);
-    bootRaf = requestAnimationFrame(() => {
+    settleRaf = requestAnimationFrame(() => {
       if (!running) return;
       if (canvas.dataset.mosaicReady !== "true") {
         safeDraw(0);
@@ -738,7 +733,7 @@ export default function MosaicHeroCanvas() {
         raf = requestAnimationFrame(tick);
       } else {
         // Second reduced-motion paint after layout settles (Playwright / hydration).
-        bootRaf = requestAnimationFrame(() => {
+        settleRaf = requestAnimationFrame(() => {
           if (running) safeDraw(0);
         });
       }
@@ -747,14 +742,11 @@ export default function MosaicHeroCanvas() {
     return () => {
       running = false;
       cancelAnimationFrame(raf);
-      cancelAnimationFrame(bootRaf);
+      cancelAnimationFrame(settleRaf);
       motionQuery.removeEventListener("change", onMotionChange);
       resizeObserver.disconnect();
       intersection.disconnect();
       themeObserver.disconnect();
-      delete canvas.dataset.mosaicReactOwned;
-      const w = window as Window & { __kuboMosaicReactActive?: boolean };
-      w.__kuboMosaicReactActive = false;
     };
   }, []);
 
@@ -766,16 +758,6 @@ export default function MosaicHeroCanvas() {
       style={{ ["--mosaic-pitch" as string]: "calc(100svh / 37)" }}
     >
       <div className="mosaic-hero-fallback" />
-      {/*
-        Boot layer: mosaic-hero-boot.js paints here only. Attributes may diverge
-        from SSR before hydration; suppressHydrationWarning is scoped to this
-        explicit pre-React surface (not the React-owned mosaic canvas below).
-      */}
-      <canvas
-        className="mosaic-hero-boot-canvas absolute inset-0 h-full w-full"
-        aria-hidden="true"
-        suppressHydrationWarning
-      />
       <canvas
         ref={canvasRef}
         className="mosaic-hero-canvas absolute inset-0 h-full w-full"

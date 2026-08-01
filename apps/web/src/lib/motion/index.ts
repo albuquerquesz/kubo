@@ -1,11 +1,9 @@
-export { gsap, ScrollTrigger } from "./gsap-client";
+export { gsap, ScrollTrigger, SplitText } from "./gsap-client";
 export { ease, duration, stagger } from "./eases";
 export { prefersReducedMotion, onReducedMotionChange } from "./reduced-motion";
 export { occupancyShares, paintedSizeAtScale, areaGrowthRatio } from "./occupancy";
 export type { RectSize, OccupancyShares } from "./occupancy";
 export { useGsapContext } from "./use-gsap-context";
-export { splitDisplayText, isDescenderChar } from "./split-display-text";
-export type { SplitDisplayTextResult, SplitDisplayTextOptions } from "./split-display-text";
 export {
   createHeroDisplayIntro,
   playHeroDisplayIntroWhenVisible,
@@ -14,6 +12,13 @@ export type {
   HeroDisplayIntroOptions,
   HeroDisplayIntroHandle,
 } from "./timelines/hero-display-intro";
+export { createSplitTextReveal, playSplitTextReveal } from "./timelines/split-text-reveal";
+export type {
+  SplitTextRevealOptions,
+  SplitTextRevealHandle,
+  SplitTextRevealPreset,
+  SplitTextRevealTrigger,
+} from "./timelines/split-text-reveal";
 export {
   playHeroStickyScale,
   heroIconScrollRange,

@@ -29,17 +29,17 @@ Each row: **surface → current → required identical outcome**. No “make it 
 
 ### 1. Hero dual-title (Family A)
 
-|                  |                                                                                                                                                                                          |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Skill family** | A — dual-title masked char rise                                                                                                                                                          |
-| **Paths**        | `apps/web/src/app/(home)/_components/hero-display-title.tsx`                                                                                                                             |
-|                  | `apps/web/src/lib/motion/timelines/hero-display-intro.ts`                                                                                                                                |
-|                  | `apps/web/src/lib/motion/split-display-text.ts`                                                                                                                                          |
-|                  | `apps/web/src/lib/motion/eases.ts`                                                                                                                                                       |
-|                  | `apps/web/src/app/(home)/_components/hero-section.tsx` (title props)                                                                                                                     |
-| **Current**      | Dual title present (`h1.sr-only` + decorative `p`). Split + `y: 100%→0%`, duration **1s**, ease **`power4.inOut`**, charFactor **0.005**, line delay **0.7s**. `grow` default **false**. |
-| **Delivered**    | Dual-title + mask + play-once match Family A numbers. Kubo keeps `grow` false as an intentional product delta; reduced motion does not split text.                                       |
-| **Do not**       | Scrub title to scroll; use ALTMistral or 96px brand type.                                                                                                                                |
+|                  |                                                                                                                                                                                                   |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Skill family** | A — dual-title masked char rise                                                                                                                                                                   |
+| **Paths**        | `apps/web/src/app/(home)/_components/hero-display-title.tsx`                                                                                                                                      |
+|                  | `apps/web/src/lib/motion/timelines/hero-display-intro.ts`                                                                                                                                         |
+|                  | `apps/web/src/lib/motion/gsap-client.ts` (SplitText + ScrollTrigger)                                                                                                                              |
+|                  | `apps/web/src/lib/motion/eases.ts`                                                                                                                                                                |
+|                  | `apps/web/src/app/(home)/_components/hero-section.tsx` (title props)                                                                                                                              |
+| **Current**      | Dual title present (`h1.sr-only` + decorative `p`). GSAP SplitText + `y: 100%→0%`, duration **1s**, ease **`power4.inOut`**, charFactor **0.005**, line delay **0.7s**. `grow` default **false**. |
+| **Delivered**    | Dual-title + mask + play-once match Family A numbers. Kubo keeps `grow` false as an intentional product delta; reduced motion does not split text.                                                |
+| **Do not**       | Scrub title to scroll; use ALTMistral or 96px brand type.                                                                                                                                         |
 
 ### 2. Sticky hero scale + mission column (Family B)
 

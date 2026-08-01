@@ -67,8 +67,8 @@ const fragmentShader = `
       1.25
     );
 
+    // Straight alpha over opaque yellow clear — no premultiplied black haze.
     fragColor = vec4(color, opacity);
-    fragColor.rgb *= fragColor.a;
   }
 `;
 
@@ -90,8 +90,9 @@ function DotMatrixMaterial({
     () => ({
       u_time: { value: reducedMotion ? SETTLED_TIME : 0 },
       u_opacities: { value: [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1] },
+      // Black dots on the yellow CTA field.
       u_colors: {
-        value: Array.from({ length: 6 }, () => new THREE.Vector3(214 / 255, 167 / 255, 43 / 255)),
+        value: Array.from({ length: 6 }, () => new THREE.Vector3(0, 0, 0)),
       },
       u_total_size: { value: 20 },
       u_dot_size: { value: 4 },
@@ -131,12 +132,10 @@ function DotMatrixMaterial({
       <planeGeometry args={[2, 2]} />
       <shaderMaterial
         ref={materialRef}
-        blending={THREE.CustomBlending}
-        blendDst={THREE.OneFactor}
-        blendSrc={THREE.SrcAlphaFactor}
+        blending={THREE.NormalBlending}
+        depthWrite={false}
         fragmentShader={fragmentShader}
         glslVersion={THREE.GLSL3}
-        premultipliedAlpha
         transparent
         uniforms={uniforms}
         vertexShader={vertexShader}
@@ -168,19 +167,21 @@ export default function DotMatrixCanvas({
     <Canvas
       aria-hidden="true"
       className={cn(
-        "pointer-events-none !absolute !inset-0 !z-[-1] !h-full !w-full transition-opacity duration-300",
+        // Keep the WebGL dots above the opaque yellow bed, but below CTA content.
+        "pointer-events-none !absolute !inset-0 !z-0 !h-full !w-full transition-opacity duration-300",
         className,
       )}
       dpr={dpr}
       frameloop={frameloop}
       gl={{
-        alpha: true,
+        // Opaque yellow clear — transparent WebGL often composites as black.
+        alpha: false,
         antialias: false,
         powerPreference: "low-power",
         premultipliedAlpha: true,
       }}
       onCreated={({ gl, invalidate }) => {
-        gl.setClearColor(0x000000, 0);
+        gl.setClearColor(0xc49314, 1);
         onReady?.();
         // Paint one static frame when not in continuous loop.
         if (frameloop === "never") {

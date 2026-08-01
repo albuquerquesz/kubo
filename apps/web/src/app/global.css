@@ -318,19 +318,19 @@
   --color-fd-primary: #c49314;
   --color-fd-primary-foreground: #000000;
   --color-fd-background: #000000;
-  /* Pure black canvas; neutral gray surfaces keep gold reserved for accents. */
+  /* Pure black canvas; gold reserved for accents. */
   --background: #000000;
   --foreground: #f1f1f1;
-  --card: #141414;
+  --card: #0c0c0c;
   --card-foreground: #f1f1f1;
-  --popover: #1a1a1a;
+  --popover: #121212;
   --popover-foreground: #f1f1f1;
   --primary: #c49314;
   --primary-foreground: #000000;
-  --secondary: #1a1a1a;
+  --secondary: #121212;
   --secondary-foreground: #f1f1f1;
-  --muted: #1f1f1f;
-  --muted-foreground: #a8a8a8;
+  --muted: #161616;
+  --muted-foreground: #a0a0a0;
   --accent: #d6a72b;
   --accent-foreground: #000000;
   --destructive: #e86f5d;
@@ -343,7 +343,7 @@
    * never loud enough to compete with type or gold actions.
    * See docs/spec-home-editorial-system.md + docs/captures/editorial-soft-rule-border.png
    */
-  --rule: color-mix(in srgb, white 6%, var(--background));
+  --rule: color-mix(in srgb, white 10%, var(--background));
   /* Component chrome uses the same soft language as the page grid */
   --border: var(--rule);
   /* Outer page-frame laterals only — stronger presence on tablet/mobile */
@@ -358,11 +358,11 @@
   --chart-3: #e1c56d;
   --chart-4: #8f741f;
   --chart-5: #f1f1f1;
-  --sidebar: #0a0a0a;
+  --sidebar: #050505;
   --sidebar-foreground: #f1f1f1;
   --sidebar-primary: #c49314;
   --sidebar-primary-foreground: #000000;
-  --sidebar-accent: #1f1f1f;
+  --sidebar-accent: #161616;
   --sidebar-accent-foreground: #f1f1f1;
   --sidebar-border: var(--rule);
   --sidebar-ring: #e0b43e;
@@ -584,23 +584,12 @@
 
 .mosaic-hero-canvas {
   display: block;
-  /* Stay transparent until first paint so the density-matched fallback / boot is FOUC art */
+  /* Stay transparent until first paint so the density-matched fallback prevents FOUC. */
   opacity: 0;
 }
 
 .mosaic-hero-canvas[data-mosaic-ready="true"] {
   opacity: 1;
-}
-
-/* Boot layer stays visible until the React-owned canvas reports ready. */
-.mosaic-hero-boot-canvas {
-  display: block;
-  opacity: 1;
-  pointer-events: none;
-}
-
-:has(> .mosaic-hero-canvas[data-mosaic-ready="true"]) > .mosaic-hero-boot-canvas {
-  opacity: 0;
 }
 
 /* When Canvas has painted, hide the CSS fallback to avoid double atmosphere */
@@ -792,7 +781,7 @@
 }
 
 .ui-rule-grid {
-  /* Use full soft --rule so the pattern stays visible after the 6% token */
+  /* Use full soft --rule so the pattern stays visible across the dark canvas */
   background-image:
     linear-gradient(to right, var(--rule) 1px, transparent 1px),
     linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
@@ -1249,34 +1238,19 @@
   margin-left: -50vw;
 }
 
-/* Decorative CSS dot-matrix: present before WebGL hydration / if Canvas never ready.
-   Gold-on-near-black, no layout shift (absolute inset, no intrinsic size). */
+/* Decorative CSS dots only (pre-WebGL). Yellow bed lives on the section/backdrop. */
 .dot-matrix-fallback {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: -2;
-  background-color: #050505;
-  background-image:
-    radial-gradient(circle at 50% 42%, rgb(214 167 43 / 0.22) 0%, transparent 42%),
-    radial-gradient(circle at 28% 68%, rgb(214 167 43 / 0.1) 0%, transparent 36%),
-    radial-gradient(circle at 72% 58%, rgb(214 167 43 / 0.12) 0%, transparent 34%),
-    /* Sparse gold dots via repeating radial — decorative only */
-    radial-gradient(circle, rgb(214 167 43 / 0.55) 0 1.1px, transparent 1.25px);
-  background-size:
-    100% 100%,
-    100% 100%,
-    100% 100%,
-    20px 20px;
-  background-position:
-    center,
-    center,
-    center,
-    0 0;
-  opacity: 0.9;
+  z-index: 0;
+  background-color: transparent;
+  background-image: radial-gradient(circle, rgb(0 0 0 / 0.55) 0 1.1px, transparent 1.25px);
+  background-size: 20px 20px;
+  background-position: 0 0;
 }
 
-/* WebGL owns the dot field after its first renderer-ready signal. */
+/* WebGL owns the dots after its first renderer-ready signal. */
 [data-dot-matrix-ready="true"] .dot-matrix-fallback {
   opacity: 0;
 }

@@ -66,12 +66,13 @@ describe("shipped Family A tokens", () => {
     expect(stagger.line).toBe(0.7);
   });
 
-  test("hero intro is play-once (not scroll-scrubbed)", () => {
+  test("hero intro is play-once (not scroll-scrubbed) via SplitText", () => {
     const src = readFileSync(
       join(import.meta.dir, "../src/lib/motion/timelines/hero-display-intro.ts"),
       "utf8",
     );
     expect(src).toContain("prefersReducedMotion");
+    expect(src).toContain("SplitText");
     expect(src).toContain('y: "100%"');
     expect(src).not.toContain("scrollTrigger");
     expect(src).not.toContain("scrub");
