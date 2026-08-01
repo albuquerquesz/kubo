@@ -316,26 +316,26 @@
 .dark {
   color-scheme: dark;
   --color-fd-primary: #c49314;
-  --color-fd-primary-foreground: #11110d;
-  --color-fd-background: #11110d;
-  /* Page canvas — one step up from near-black so the shell reads less heavy */
-  --background: #11110d;
-  --foreground: #f2ede0;
-  --card: #181814;
-  --card-foreground: #f2ede0;
-  --popover: #1c1b15;
-  --popover-foreground: #f2ede0;
+  --color-fd-primary-foreground: #101010;
+  --color-fd-background: #101010;
+  /* Neutral charcoal surfaces keep gold reserved for intentional accents. */
+  --background: #101010;
+  --foreground: #f1f1f1;
+  --card: #171717;
+  --card-foreground: #f1f1f1;
+  --popover: #1c1c1c;
+  --popover-foreground: #f1f1f1;
   --primary: #c49314;
-  --primary-foreground: #11110d;
-  --secondary: #211f16;
-  --secondary-foreground: #f2ede0;
-  --muted: #222118;
-  --muted-foreground: #b0a78d;
+  --primary-foreground: #101010;
+  --secondary: #202020;
+  --secondary-foreground: #f1f1f1;
+  --muted: #242424;
+  --muted-foreground: #a8a8a8;
   --accent: #d6a72b;
-  --accent-foreground: #11110d;
+  --accent-foreground: #101010;
   --destructive: #e86f5d;
-  --destructive-foreground: #11110d;
-  --input: #2a2616;
+  --destructive-foreground: #101010;
+  --input: #2b2b2b;
   --ring: #e0b43e;
   /*
    * Soft structural rule (application-wide default).
@@ -349,7 +349,7 @@
   /* Outer page-frame laterals only — stronger presence on tablet/mobile */
   --rule-frame: color-mix(in srgb, white 28%, var(--background));
   --signal: #c49314;
-  --signal-foreground: #11110d;
+  --signal-foreground: #101010;
   --page-gutter: clamp(1rem, 4vw, 3rem);
   /* Fixed site header row — keep layout offsets (pt-*, hero 100svh) in sync */
   --site-header-height: 3rem;
@@ -357,13 +357,13 @@
   --chart-2: #b78012;
   --chart-3: #e1c56d;
   --chart-4: #8f741f;
-  --chart-5: #f2ede0;
-  --sidebar: #141410;
-  --sidebar-foreground: #f2ede0;
+  --chart-5: #f1f1f1;
+  --sidebar: #141414;
+  --sidebar-foreground: #f1f1f1;
   --sidebar-primary: #c49314;
-  --sidebar-primary-foreground: #11110d;
-  --sidebar-accent: #2a2616;
-  --sidebar-accent-foreground: #f2ede0;
+  --sidebar-primary-foreground: #101010;
+  --sidebar-accent: #2b2b2b;
+  --sidebar-accent-foreground: #f1f1f1;
   --sidebar-border: var(--rule);
   --sidebar-ring: #e0b43e;
   --radius: 0;
@@ -439,7 +439,7 @@
 /* Mosaic hero atmosphere: CSS fallback under the Canvas tile field.
    Pitch defaults to ~height/37; Canvas overwrites --mosaic-pitch after paint.
    ::before carries narrow directional bands masked into opaque rounded squares
-   (seam ≈ 9%, rx ≈ 17% of 32u pitch). Seams reveal --background.
+   (seam ≈ 9%, rx ≈ 22% of 32u pitch). Seams reveal --background.
    Quiet near-card base first — energy is ribbon-only, not a continuous gold wall. */
 .mosaic-hero-fallback {
   position: absolute;
@@ -459,7 +459,7 @@
   background-image:
     /* Localized warm highlight — sparse pale tiles, not a continuous white rail. */
     radial-gradient(
-      ellipse 10% 14% at 58% 55%,
+      ellipse 10% 14% at 54% 55%,
       color-mix(in srgb, var(--foreground) 34%, var(--accent)) 0%,
       color-mix(in srgb, var(--accent) 34%, transparent) 38%,
       transparent 74%
@@ -468,31 +468,31 @@
     linear-gradient(
         -14deg,
         transparent 0%,
-        transparent 38%,
-        color-mix(in srgb, var(--accent) 16%, transparent) 46%,
-        color-mix(in srgb, var(--accent) 36%, var(--primary)) 52%,
-        color-mix(in srgb, var(--primary) 14%, transparent) 58%,
-        transparent 68%
+        transparent 32%,
+        color-mix(in srgb, var(--accent) 16%, transparent) 40%,
+        color-mix(in srgb, var(--accent) 36%, var(--primary)) 46%,
+        color-mix(in srgb, var(--primary) 14%, transparent) 52%,
+        transparent 62%
       ),
     /* Copper column — between gold and warm. */
     linear-gradient(
         -18deg,
         transparent 0%,
-        transparent 32%,
-        color-mix(in srgb, var(--accent) 18%, var(--primary)) 40%,
-        color-mix(in srgb, var(--primary) 30%, var(--accent)) 48%,
-        color-mix(in srgb, var(--primary) 12%, transparent) 54%,
-        transparent 66%
+        transparent 28%,
+        color-mix(in srgb, var(--accent) 18%, var(--primary)) 36%,
+        color-mix(in srgb, var(--primary) 30%, var(--accent)) 42%,
+        color-mix(in srgb, var(--primary) 12%, transparent) 48%,
+        transparent 60%
       ),
     /* Gold column. */
     linear-gradient(
         -22deg,
         transparent 0%,
-        transparent 26%,
-        color-mix(in srgb, var(--accent) 18%, var(--primary)) 34%,
-        color-mix(in srgb, var(--primary) 30%, var(--accent)) 42%,
-        color-mix(in srgb, var(--primary) 12%, transparent) 50%,
-        transparent 64%
+        transparent 24%,
+        color-mix(in srgb, var(--accent) 18%, var(--primary)) 32%,
+        color-mix(in srgb, var(--primary) 30%, var(--accent)) 38%,
+        color-mix(in srgb, var(--primary) 12%, transparent) 44%,
+        transparent 58%
       ),
     /* Amber column — mid pack. */
     linear-gradient(
@@ -500,27 +500,27 @@
         transparent 0%,
         transparent 20%,
         color-mix(in srgb, var(--accent) 18%, var(--primary)) 28%,
-        color-mix(in srgb, var(--primary) 30%, var(--accent)) 36%,
-        color-mix(in srgb, var(--primary) 12%, transparent) 44%,
-        transparent 60%
+        color-mix(in srgb, var(--primary) 30%, var(--accent)) 34%,
+        color-mix(in srgb, var(--primary) 12%, transparent) 40%,
+        transparent 56%
       ),
     /* Mid column — fills the gap between primary and amber. */
     linear-gradient(
         -30deg,
         transparent 0%,
-        transparent 14%,
-        color-mix(in srgb, var(--primary) 20%, var(--accent)) 22%,
+        transparent 16%,
+        color-mix(in srgb, var(--primary) 20%, var(--accent)) 24%,
         color-mix(in srgb, var(--accent) 28%, var(--primary)) 30%,
-        color-mix(in srgb, var(--primary) 12%, transparent) 38%,
-        transparent 54%
+        color-mix(in srgb, var(--primary) 12%, transparent) 36%,
+        transparent 52%
       ),
     /* Primary left column — bronze body, frame-centered pack. */
     linear-gradient(
         -34deg,
         transparent 0%,
-        transparent 8%,
-        color-mix(in srgb, var(--primary) 24%, var(--background)) 16%,
-        color-mix(in srgb, var(--primary) 32%, var(--accent)) 24%,
+        transparent 12%,
+        color-mix(in srgb, var(--primary) 24%, var(--background)) 20%,
+        color-mix(in srgb, var(--primary) 32%, var(--accent)) 26%,
         color-mix(in srgb, var(--primary) 12%, transparent) 32%,
         transparent 48%
       ),
@@ -544,9 +544,9 @@
     soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, soft-light,
     normal;
   /* White rounded rect = visible tile; transparent seam = dark base
-     pitch 32u, fill 29.2u (seam ~8.75%), rx 5.5u (~17% of pitch) */
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='1.4' y='1.4' width='29.2' height='29.2' rx='5.5' fill='white'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='1.4' y='1.4' width='29.2' height='29.2' rx='5.5' fill='white'/%3E%3C/svg%3E");
+     pitch 32u, fill 29.2u (seam ~8.75%), rx 7u (~22% of pitch) */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='1.4' y='1.4' width='29.2' height='29.2' rx='7' fill='white'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='1.4' y='1.4' width='29.2' height='29.2' rx='7' fill='white'/%3E%3C/svg%3E");
   -webkit-mask-size: var(--mosaic-fallback-pitch) var(--mosaic-fallback-pitch);
   mask-size: var(--mosaic-fallback-pitch) var(--mosaic-fallback-pitch);
   -webkit-mask-repeat: repeat;
