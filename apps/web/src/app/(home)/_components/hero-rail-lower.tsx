@@ -2,26 +2,17 @@
 
 import { cn } from "@/lib/utils";
 
-import HeroInstallCard, { type HeroInstallCardProps } from "./hero-install-card";
+import HeroInstallCard from "./hero-install-card";
 
 export type HeroRailLowerProps = {
   className?: string;
-  selectedManager?: HeroInstallCardProps["selectedManager"];
-  onSelectedManagerChange?: HeroInstallCardProps["onSelectedManagerChange"];
 };
 
 /** Compact hero utility rail containing the installer controls. */
-export default function HeroRailLower({
-  className,
-  selectedManager,
-  onSelectedManagerChange,
-}: HeroRailLowerProps) {
+export default function HeroRailLower({ className }: HeroRailLowerProps) {
   return (
     <div className={cn("w-fit max-w-full", className)}>
-      <HeroInstallCard
-        selectedManager={selectedManager}
-        onSelectedManagerChange={onSelectedManagerChange}
-      />
+      <HeroInstallCard />
     </div>
   );
 }

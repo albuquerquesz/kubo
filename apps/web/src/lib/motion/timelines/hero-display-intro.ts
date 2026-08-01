@@ -1,13 +1,8 @@
 "use client";
 
 import { duration, ease, stagger } from "@/lib/motion/eases";
-import { gsap } from "@/lib/motion/gsap-client";
+import { gsap, SplitText } from "@/lib/motion/gsap-client";
 import { prefersReducedMotion } from "@/lib/motion/reduced-motion";
-import {
-  isDescenderChar,
-  splitDisplayText,
-  type SplitDisplayTextResult,
-} from "@/lib/motion/split-display-text";
 
 export type HeroDisplayIntroOptions = {
   root: HTMLElement;
@@ -24,18 +19,28 @@ export type HeroDisplayIntroOptions = {
 
 export type HeroDisplayIntroHandle = {
   timeline: gsap.core.Timeline | null;
-  split: SplitDisplayTextResult | null;
+  split: SplitText | null;
   kill: () => void;
 };
 
+const DESCENDERS = new Set(["y", "p", "q", "g", "j"]);
+
+function isDescenderChar(char: string): boolean {
+  return DESCENDERS.has(char.toLowerCase());
+}
+
+function charsInLine(line: Element, chars: Element[]): Element[] {
+  return chars.filter((char) => line.contains(char));
+}
+
 /**
- * Hero display intro: split → masked char rise → revert on complete.
+ * Hero display intro (Family A): GSAP SplitText → masked char rise → revert.
  * Respects prefers-reduced-motion (no split/tween; leaves final HTML intact).
  */
 export function createHeroDisplayIntro(options: HeroDisplayIntroOptions): HeroDisplayIntroHandle {
   const { root, randomness = 1, grow = false, onComplete } = options;
 
-  let split: SplitDisplayTextResult | null = null;
+  let split: SplitText | null = null;
   let timeline: gsap.core.Timeline | null = null;
 
   const kill = () => {
@@ -48,31 +53,36 @@ export function createHeroDisplayIntro(options: HeroDisplayIntroOptions): HeroDi
   };
 
   if (prefersReducedMotion()) {
-    // Ensure fully visible; no animation
     gsap.set(root, { clearProps: "opacity" });
     root.classList.remove("opacity-0");
     return { timeline: null, split: null, kill };
   }
 
-  split = splitDisplayText(root);
+  split = SplitText.create(root, {
+    type: "lines,words,chars",
+    mask: "lines",
+    linesClass: "line",
+    wordsClass: "word",
+    charsClass: "char",
+    // Decorative dual-title host is already aria-hidden.
+    aria: "none",
+    autoSplit: false,
+  });
 
   const charStagger = stagger.charFactor * randomness;
   const lineDelay = stagger.line * 1.05;
+  const chars = split.chars as HTMLElement[];
 
-  // Initial: chars sit below the mask
-  gsap.set(split.chars, { y: "100%" });
+  gsap.set(chars, { y: "100%" });
   root.classList.remove("opacity-0");
 
   if (grow) {
-    // Selective glyph doubling for grow mode (research technique)
-    for (let i = 0; i < split.chars.length; i++) {
-      const charEl = split.chars[i];
+    for (let i = 0; i < chars.length; i++) {
+      const charEl = chars[i];
       const text = charEl.textContent ?? "";
       if (text.length !== 1) continue;
       if (isDescenderChar(text)) continue;
       if (i % 5 !== 0 && i % 8 !== 0) continue;
-
-      // Duplicate glyph visually via data attribute; tween target y -50%
       charEl.dataset.growDup = "true";
     }
   }
@@ -89,10 +99,9 @@ export function createHeroDisplayIntro(options: HeroDisplayIntroOptions): HeroDi
     },
   });
 
-  // Per-line char rise
   for (let lineIndex = 0; lineIndex < split.lines.length; lineIndex++) {
     const line = split.lines[lineIndex];
-    const lineChars = Array.from(line.querySelectorAll<HTMLElement>(".char"));
+    const lineChars = charsInLine(line, chars);
 
     timeline.fromTo(
       lineChars,
@@ -135,7 +144,6 @@ export function playHeroDisplayIntroWhenVisible(
   const handle = createHeroDisplayIntro({ root, ...introOptions });
 
   if (!handle.timeline) {
-    // Reduced motion or no timeline — nothing to play
     return handle.kill;
   }
 
@@ -151,7 +159,6 @@ export function playHeroDisplayIntroWhenVisible(
     handle.timeline.play(0);
   };
 
-  // Already in view?
   const rect = root.getBoundingClientRect();
   const inView =
     rect.top < (typeof window !== "undefined" ? window.innerHeight : 0) && rect.bottom > 0;

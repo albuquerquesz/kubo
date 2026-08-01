@@ -2,11 +2,12 @@
 
 /**
  * Client-only GSAP entry. Import only from "use client" modules.
- * ScrollTrigger is registered once here so timelines share a single plugin setup.
+ * Plugins register once here so timelines share a single setup.
  */
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, SplitText);
 
-export { gsap, ScrollTrigger };
+export { gsap, ScrollTrigger, SplitText };

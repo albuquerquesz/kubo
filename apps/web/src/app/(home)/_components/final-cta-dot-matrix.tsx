@@ -7,20 +7,20 @@ import { cn } from "@/lib/utils";
 import CopyInstallCommandButton from "./copy-install-command-button";
 import DotMatrixBackdrop from "./dot-matrix-backdrop";
 
-/** Final conversion CTA; its canvas backdrop is purely decorative. */
+/** Final conversion CTA; yellow field, black dots, white copy. */
 export default function FinalCtaDotMatrix() {
   return (
     <section
       id="cta"
       aria-labelledby="final-cta-title"
-      className="final-cta ui-scroll-target relative isolate min-h-[20.375rem] overflow-hidden border-b border-rule bg-[#050505] text-[#f5f5f5]"
+      className="final-cta ui-scroll-target relative isolate min-h-[20.375rem] overflow-hidden border-b border-white/20 bg-[#c49314] text-white shadow-none"
     >
       <DotMatrixBackdrop />
 
       <div className="relative z-10 mx-auto flex min-h-[20.375rem] w-full max-w-[1200px] flex-col justify-center gap-6 px-6 py-20 md:px-8">
         <h2
           id="final-cta-title"
-          className="ui-display max-w-[47.5rem] text-balance text-[clamp(2rem,3vw,3.5rem)] leading-[0.93] text-[#f5f5f5]"
+          className="ui-display max-w-[47.5rem] text-balance text-[clamp(2rem,3vw,3.5rem)] leading-[0.93] text-white"
         >
           Pare de montar.
           <br />
@@ -30,7 +30,11 @@ export default function FinalCtaDotMatrix() {
         <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
           <Link
             href="/new"
-            className={cn(buttonVariants({ variant: "cta", size: "xl" }), "no-underline")}
+            className={cn(
+              buttonVariants({ size: "xl" }),
+              "no-underline border-0 bg-black font-semibold tracking-[-0.02em] text-white hover:bg-black/85",
+              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
+            )}
           >
             Monte sua stack
             <ArrowUpRight

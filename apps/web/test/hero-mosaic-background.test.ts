@@ -100,8 +100,12 @@ describe("mosaic hero background contract", () => {
     expect(hero).toContain(
       "Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.",
     );
-    // CTA replaced by install script (package manager + copyable command).
+    // CTA replaced by copyable install command (no PM switcher / "Iniciar com").
     expect(hero).toContain("HeroRailLower");
+    const installCard = readRepo("apps/web/src/app/(home)/_components/hero-install-card.tsx");
+    expect(installCard).not.toContain("Iniciar com");
+    expect(installCard).not.toContain("hero-install-pm");
+    expect(installCard).not.toContain("SelectTrigger");
     expect(hero).not.toContain("Montar stack");
     expect(hero).not.toContain('href="/new"');
     // P1: no bottom scroll arrow.
@@ -124,7 +128,7 @@ describe("mosaic hero background contract", () => {
     // Installer lives in the hero (not a separate strip below).
     expect(page).not.toContain("HeroInstallStrip");
     expect(strip).toContain("HeroRailLower");
-    expect(strip).toContain("DEFAULT_PACKAGE_MANAGER");
+    expect(installCard).toContain("DEFAULT_PACKAGE_MANAGER");
 
     expect(css).toContain(".mosaic-hero-fallback");
     expect(css).toContain(".mosaic-hero-fallback::before");
@@ -150,43 +154,17 @@ describe("mosaic hero background contract", () => {
     expect(css).not.toContain("Right-side continuous olive field");
     expect(css).not.toContain("var(--primary) 24%, var(--card)");
 
-    // Hydration-independent boot paints Canvas when React effects do not run.
     const layout = readRepo("apps/web/src/app/layout.tsx");
-    const boot = readRepo("apps/web/public/mosaic-hero-boot.js");
     const mosaic = readRepo("apps/web/src/app/(home)/_components/mosaic-hero-canvas.tsx");
-    expect(layout).toContain('src="/mosaic-hero-boot.js"');
-    expect(layout).toContain("beforeInteractive");
-    // Boot paints a dedicated layer; never mutates React-owned .mosaic-hero-canvas attrs.
-    expect(boot).toContain("mosaic-hero-boot-canvas");
-    expect(boot).toContain("data-mosaic-boot-ready");
-    expect(boot).toContain("Never mutate React");
-    expect(mosaic).toContain("mosaic-hero-boot-canvas");
-    expect(mosaic).toContain("suppressHydrationWarning");
-    expect(boot).toContain("REFERENCE_ROWS");
-    expect(boot).not.toContain("twimg.com");
-    expect(boot).not.toContain("Fluxion");
-    // Boot shares the six-column geometry with the React canvas.
-    expect(boot).toContain("x: 0.28");
-    expect(boot).toContain("y: -0.1");
-    expect(boot).toContain("x: 0.37");
-    expect(boot).toContain("x: 0.46");
-    expect(boot).toContain("x: 0.55");
-    expect(boot).toContain("x: 0.64");
-    expect(boot).toContain("x: 0.73");
-    expect(boot).toContain("x: 0.36");
-    expect(boot).toContain("x: 0.45");
-    expect(boot).toContain("x: 0.56");
-    expect(boot).toContain("x: 0.65");
-    expect(boot).toContain("x: 0.74");
-    expect(boot).toContain("x: 0.83");
-    expect(boot).toContain("x: 0.92");
-    expect(boot).toContain("x: 1.01");
-    expect(boot).not.toContain("lowerEcho");
-    expect(boot).not.toContain("y: 1.12");
-    expect(boot).toContain("hotspot");
-    expect(boot).not.toContain("verticalGoldEnergy");
-    expect(boot).toContain("SEAM_RATIO = 0.09");
-    expect(boot).toContain("CORNER_RATIO = 0.22");
+    expect(layout).not.toContain("mosaic-hero-boot.js");
+    expect(layout).not.toContain("beforeInteractive");
+    expect(mosaic).not.toContain("mosaic-hero-boot-canvas");
+    expect(mosaic).not.toContain("__kuboMosaic");
+    expect(mosaic).not.toContain("suppressHydrationWarning");
+    expect(css).not.toContain("mosaic-hero-boot-canvas");
+    expect(css).not.toContain("__kuboMosaic");
+    expect(css).toContain('data-mosaic-ready="true"');
+    expect(mosaic).toContain('data-mosaic-ready="false"');
     // CSS fallback mirrors six shallower right-descending columns (no opposite-direction rail).
     expect(css).toContain("-14deg");
     expect(css).toContain("-18deg");

@@ -54,9 +54,9 @@ export default function CopyInstallCommandButton({
       type="button"
       onClick={copyCommand}
       className={cn(
-        "inline-flex h-12 max-w-full cursor-pointer items-center gap-2 rounded-md bg-[#f5f5f5]/5 px-5 text-left transition-colors",
-        "hover:bg-[#f5f5f5]/8",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+        "inline-flex h-12 max-w-full cursor-pointer items-center gap-2 rounded-md bg-white/10 px-5 text-left transition-colors",
+        "hover:bg-white/15",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
         className,
       )}
       aria-label={copied ? "Comando copiado" : `Copiar comando: ${command}`}
@@ -65,10 +65,10 @@ export default function CopyInstallCommandButton({
       <span className="sr-only" aria-live="polite">
         {copied ? "Comando copiado" : "Copiar comando"}
       </span>
-      <code className="break-all font-mono text-[0.8125rem] leading-6 text-[#f5f5f5]/55">
+      <code className="break-all font-mono text-[0.8125rem] leading-6 text-white/90">
         {command}
       </code>
-      {copied ? <Check className="size-3.5 shrink-0 text-[#f5f5f5]/70" aria-hidden /> : null}
+      {copied ? <Check className="size-3.5 shrink-0 text-white" aria-hidden /> : null}
     </button>
   );
 }

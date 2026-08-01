@@ -1,7 +1,6 @@
 import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono, Inter } from "next/font/google";
-import Script from "next/script";
 import type { ReactNode } from "react";
 
 import Providers from "@/components/providers";
@@ -121,8 +120,6 @@ export default function Layout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <body>
-        {/* Paint mosaic hero Canvas before React hydration (Playwright / slow clients). */}
-        <Script src="/mosaic-hero-boot.js" strategy="beforeInteractive" />
         <UmamiScript />
         <RootProvider
           search={{

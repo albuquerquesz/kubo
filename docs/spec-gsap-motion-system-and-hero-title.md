@@ -20,15 +20,15 @@ This continues `spec-home-editorial-system.md`. It is original Kubo / Better T S
 
 Playwright inspection of `https://mistral.ai/` on July 20, 2026 (viewport 1440 and responsive probes):
 
-| Concern        | Observed on Mistral (reference only)                                                               | Kubo target                                                 |
-| -------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Semantic title | `<h1 class="hidden">Frontier AI. In your hands.</h1>`                                              | SEO `h1` with `sr-only`                                     |
-| Visual title   | `<p class="text-display font-mistral … js-title" aria-hidden="true">`                              | Decorative `p` / display layer, `aria-hidden`               |
-| Host           | Custom element `mistral-atom-text-hero-title` with `data-autoplay`, `data-randomness`, `data-grow` | React client component with equivalent props                |
-| Engine         | GSAP **3.15** + SplitText (`lines, words, chars`)                                                  | GSAP 3 + split helper (GSAP SplitText or internal splitter) |
-| Char motion    | `y: 100%` → `0%` (or `-50%` when glyph duplicated), `power4.inOut`, duration `1`                   | Same **grammar**; calmer defaults (grow off)                |
-| Line motion    | Masks `overflow-hidden`; optional height grow from `0`                                             | Optional via `grow` prop                                    |
-| Typography     | ALTMistral Medium 500, desktop `6rem` / lh `1`, tracking `−0.02em`                                 | Keep **Archivo** (`.ui-display`) and existing clamp sizes   |
+| Concern        | Observed on Mistral (reference only)                                                               | Kubo target                                               |
+| -------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Semantic title | `<h1 class="hidden">Frontier AI. In your hands.</h1>`                                              | SEO `h1` with `sr-only`                                   |
+| Visual title   | `<p class="text-display font-mistral … js-title" aria-hidden="true">`                              | Decorative `p` / display layer, `aria-hidden`             |
+| Host           | Custom element `mistral-atom-text-hero-title` with `data-autoplay`, `data-randomness`, `data-grow` | React client component with equivalent props              |
+| Engine         | GSAP **3.15** + SplitText (`lines, words, chars`)                                                  | GSAP 3 + SplitText + ScrollTrigger                        |
+| Char motion    | `y: 100%` → `0%` (or `-50%` when glyph duplicated), `power4.inOut`, duration `1`                   | Same **grammar**; calmer defaults (grow off)              |
+| Line motion    | Masks `overflow-hidden`; optional height grow from `0`                                             | Optional via `grow` prop                                  |
+| Typography     | ALTMistral Medium 500, desktop `6rem` / lh `1`, tracking `−0.02em`                                 | Keep **Archivo** (`.ui-display`) and existing clamp sizes |
 
 Related prior research: `spec-home-editorial-system.md`, `spec-mistral-inspired-ui-skill.md`.
 
@@ -106,29 +106,23 @@ apps/web:
 ```
 
 - Use the current GSAP 3 free/standard license path documented at install time.
-- **Split text**
-  - Prefer GSAP **SplitText** when the install path is clear and legal for this project.
-  - **Fallback:** a small internal splitter in `split-display-text.ts` that produces the same DOM contract (line / word / char spans) and a `revert()` that restores original HTML.
+- **Split text:** GSAP **SplitText** only (`gsap/SplitText`, registered in `gsap-client.ts`). Do not hand-roll line/word/char DOM splitters.
+- **Scroll coupling:** GSAP **ScrollTrigger** for scrub / enter-on-scroll timelines.
 - Do not add a second marketing animation library (e.g. anime.js, another full Motion stack) after GSAP is the standard.
 
 ## A.3 Module layout
 
 ```text
 apps/web/src/lib/motion/
-  gsap-client.ts           # client-only registerPlugin once
+  gsap-client.ts           # client-only registerPlugin once (ScrollTrigger + SplitText)
   eases.ts                 # project ease name constants
   reduced-motion.ts        # prefers-reduced-motion helpers
-  use-gsap-context.ts      # thin useGSAP wrapper + conventions
-  split-display-text.ts    # split + revert contract
+  use-gsap-context.ts      # thin useGSAP wrapper + dependencies
   timelines/
-    hero-display-intro.ts  # reusable hero intro recipe
-```
-
-Optional later:
-
-```text
-  timelines/
-    section-reveal.ts      # shared section enter for home modules
+    hero-display-intro.ts  # Family A masked char rise (SplitText)
+    split-text-reveal.ts   # shared presets: mask-rise | blur-in | word-rise
+    hero-sticky-scale.ts   # Family B ScrollTrigger scrub
+    scroll-reveal-icons.ts # Family C ScrollTrigger scrub
 ```
 
 ## A.4 Engineering contracts
