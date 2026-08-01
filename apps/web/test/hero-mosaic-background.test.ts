@@ -28,20 +28,22 @@ describe("mosaic hero background contract", () => {
     // Softer corners (16–18% of pitch), narrow seam.
     expect(source).toContain("CORNER_RATIO = 0.17");
     expect(source).toContain("SEAM_RATIO = 0.09");
-    // Six parallel lightning columns: primary + mid + amber + gold + copper + warm, ~0.12 nx spacing.
+    // Six parallel lightning columns: frame-centered pack, ~0.12 nx spacing, shallower Δx.
     expect(source).toContain("sampleCubic");
-    expect(source).toContain("x: 0.3");
-    expect(source).toContain("x: 0.42");
-    expect(source).toContain("x: 0.54");
-    expect(source).toContain("x: 0.66");
-    expect(source).toContain("x: 0.78");
-    expect(source).toContain("x: 0.9");
+    expect(source).toContain("x: 0.2");
+    expect(source).toContain("x: 0.32");
+    expect(source).toContain("x: 0.44");
+    expect(source).toContain("x: 0.56");
+    expect(source).toContain("x: 0.68");
+    expect(source).toContain("x: 0.8");
+    expect(source).toContain("x: 0.28");
+    expect(source).toContain("x: 0.37");
+    expect(source).toContain("x: 0.48");
+    expect(source).toContain("x: 0.6");
     expect(source).toContain("x: 0.72");
     expect(source).toContain("x: 0.84");
-    expect(source).toContain("x: 1.02");
-    expect(source).toContain("x: 1.14");
-    expect(source).toContain("x: 1.26");
-    expect(source).toContain("x: 1.38");
+    expect(source).toContain("x: 0.96");
+    expect(source).toContain("x: 1.08");
     // No counter-direction lower-echo lightning.
     expect(source).not.toContain("lowerEcho");
     expect(source).not.toContain("y: 1.12");
@@ -164,32 +166,34 @@ describe("mosaic hero background contract", () => {
     expect(boot).not.toContain("twimg.com");
     expect(boot).not.toContain("Fluxion");
     // Boot shares the six-column geometry with the React canvas.
-    expect(boot).toContain("x: 0.3");
+    expect(boot).toContain("x: 0.2");
     expect(boot).toContain("y: -0.1");
-    expect(boot).toContain("x: 0.42");
-    expect(boot).toContain("x: 0.54");
-    expect(boot).toContain("x: 0.66");
-    expect(boot).toContain("x: 0.78");
-    expect(boot).toContain("x: 0.9");
+    expect(boot).toContain("x: 0.32");
+    expect(boot).toContain("x: 0.44");
+    expect(boot).toContain("x: 0.56");
+    expect(boot).toContain("x: 0.68");
+    expect(boot).toContain("x: 0.8");
+    expect(boot).toContain("x: 0.28");
+    expect(boot).toContain("x: 0.37");
+    expect(boot).toContain("x: 0.48");
+    expect(boot).toContain("x: 0.6");
     expect(boot).toContain("x: 0.72");
     expect(boot).toContain("x: 0.84");
-    expect(boot).toContain("x: 1.02");
-    expect(boot).toContain("x: 1.14");
-    expect(boot).toContain("x: 1.26");
-    expect(boot).toContain("x: 1.38");
+    expect(boot).toContain("x: 0.96");
+    expect(boot).toContain("x: 1.08");
     expect(boot).not.toContain("lowerEcho");
     expect(boot).not.toContain("y: 1.12");
     expect(boot).toContain("hotspot");
     expect(boot).not.toContain("verticalGoldEnergy");
     expect(boot).toContain("SEAM_RATIO = 0.09");
     expect(boot).toContain("CORNER_RATIO = 0.17");
-    // CSS fallback mirrors six right-descending columns (no opposite-direction rail).
+    // CSS fallback mirrors six shallower right-descending columns (no opposite-direction rail).
+    expect(css).toContain("-14deg");
+    expect(css).toContain("-18deg");
     expect(css).toContain("-22deg");
-    expect(css).toContain("-28deg");
+    expect(css).toContain("-26deg");
+    expect(css).toContain("-30deg");
     expect(css).toContain("-34deg");
-    expect(css).toContain("-40deg");
-    expect(css).toContain("-46deg");
-    expect(css).toContain("-52deg");
     // Mobile veil extends the copy-safe area to ~76% of the frame.
     expect(css).toContain("max-width: 640px");
     expect(css).toContain("76%");
