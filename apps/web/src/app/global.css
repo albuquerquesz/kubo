@@ -316,25 +316,25 @@
 .dark {
   color-scheme: dark;
   --color-fd-primary: #c49314;
-  --color-fd-primary-foreground: #101010;
-  --color-fd-background: #101010;
-  /* Neutral charcoal surfaces keep gold reserved for intentional accents. */
-  --background: #101010;
+  --color-fd-primary-foreground: #000000;
+  --color-fd-background: #000000;
+  /* Pure black canvas; neutral gray surfaces keep gold reserved for accents. */
+  --background: #000000;
   --foreground: #f1f1f1;
-  --card: #171717;
+  --card: #141414;
   --card-foreground: #f1f1f1;
-  --popover: #1c1c1c;
+  --popover: #1a1a1a;
   --popover-foreground: #f1f1f1;
   --primary: #c49314;
-  --primary-foreground: #101010;
-  --secondary: #202020;
+  --primary-foreground: #000000;
+  --secondary: #1a1a1a;
   --secondary-foreground: #f1f1f1;
-  --muted: #242424;
+  --muted: #1f1f1f;
   --muted-foreground: #a8a8a8;
   --accent: #d6a72b;
-  --accent-foreground: #101010;
+  --accent-foreground: #000000;
   --destructive: #e86f5d;
-  --destructive-foreground: #101010;
+  --destructive-foreground: #000000;
   --input: #2b2b2b;
   --ring: #e0b43e;
   /*
@@ -349,7 +349,7 @@
   /* Outer page-frame laterals only — stronger presence on tablet/mobile */
   --rule-frame: color-mix(in srgb, white 28%, var(--background));
   --signal: #c49314;
-  --signal-foreground: #101010;
+  --signal-foreground: #000000;
   --page-gutter: clamp(1rem, 4vw, 3rem);
   /* Fixed site header row — keep layout offsets (pt-*, hero 100svh) in sync */
   --site-header-height: 3rem;
@@ -358,11 +358,11 @@
   --chart-3: #e1c56d;
   --chart-4: #8f741f;
   --chart-5: #f1f1f1;
-  --sidebar: #141414;
+  --sidebar: #0a0a0a;
   --sidebar-foreground: #f1f1f1;
   --sidebar-primary: #c49314;
-  --sidebar-primary-foreground: #101010;
-  --sidebar-accent: #2b2b2b;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #1f1f1f;
   --sidebar-accent-foreground: #f1f1f1;
   --sidebar-border: var(--rule);
   --sidebar-ring: #e0b43e;

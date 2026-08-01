@@ -46,9 +46,9 @@ const DRIFT_PERIOD_SEC = 18;
 const SEED = 0x6b75626f; // "kubo"
 
 const FALLBACK_HEX = {
-  background: "#101010",
-  card: "#171717",
-  muted: "#242424",
+  background: "#000000",
+  card: "#141414",
+  muted: "#1f1f1f",
   foreground: "#f1f1f1",
   mutedForeground: "#a8a8a8",
   primary: "#c49314",
