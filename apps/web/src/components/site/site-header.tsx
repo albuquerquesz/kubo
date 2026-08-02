@@ -1,45 +1,13 @@
 "use client";
 
-import { ArrowUpRight, Menu } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
 import { FaDiscord, FaGithub, FaXTwitter } from "react-icons/fa6";
 
-import { MobileNavOverlay, type MobileNavLink } from "@/components/site/mobile-nav-overlay";
 import { cn } from "@/lib/utils";
 
 const primaryLinks = [{ href: "/#documentation", label: "Docs" }] as const;
-
-const exploreGroups = [
-  {
-    label: "Entenda",
-    links: [
-      { href: "/docs", label: "Docs" },
-      { href: "/analytics", label: "Análise de uso" },
-      { href: "/stack", label: "Exibição da stack" },
-    ],
-  },
-  {
-    label: "Comunidade",
-    links: [
-      { href: "/sponsors", label: "Patrocinadores" },
-      { href: "https://discord.gg/ZYsbjpDaM5", label: "Discord" },
-      { href: "https://x.com/byalbuquerquesz", label: "X" },
-    ],
-  },
-] as const;
-
-/** Mobile overlay only — keep this list explicit (no exploreGroups dump). */
-function buildMobileNavLinks(): MobileNavLink[] {
-  return [
-    { href: "/docs", label: "Docs" },
-    { href: "/analytics", label: "Análise de uso" },
-    { href: "/new", label: "Monte sua stack" },
-  ];
-}
-
-const mobileNavLinks = buildMobileNavLinks();
 
 const socialLinks = [
   {
@@ -107,33 +75,6 @@ function DesktopNavigation() {
   );
 }
 
-function MobileNavigation() {
-  const [isOpen, setIsOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-
-  return (
-    <>
-      <button
-        ref={triggerRef}
-        type="button"
-        className={cn(utilityLinkClass, "w-12 lg:hidden", headerRowClass)}
-        aria-label="Abrir navegação"
-        aria-controls="mobile-navigation"
-        aria-expanded={isOpen}
-        onClick={() => setIsOpen(true)}
-      >
-        <Menu className="size-5" />
-      </button>
-      <MobileNavOverlay
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        links={mobileNavLinks}
-        onCloseComplete={() => triggerRef.current?.focus()}
-      />
-    </>
-  );
-}
-
 export function SiteHeader({ className }: { className?: string }) {
   return (
     <header
@@ -168,7 +109,7 @@ export function SiteHeader({ className }: { className?: string }) {
             "group/button inline-flex shrink-0 select-none items-center justify-center gap-2 border-0 bg-primary px-5",
             "rounded-none font-semibold text-base tracking-[-0.02em] text-primary-foreground transition-all",
             "hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring",
-            "hidden min-w-36 sm:inline-flex",
+            "min-w-36",
             headerRowClass,
           )}
         >
@@ -178,7 +119,6 @@ export function SiteHeader({ className }: { className?: string }) {
             className="size-5 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
           />
         </Link>
-        <MobileNavigation />
       </div>
     </header>
   );

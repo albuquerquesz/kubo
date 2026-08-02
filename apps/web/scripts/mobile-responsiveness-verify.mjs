@@ -355,7 +355,7 @@ async function runViewport(browser, { name, width, height, isMobile = true, land
   return { name, overflow, hero, install, consoleErrors, pageErrors };
 }
 
-async function runNav(browser) {
+async function runHeaderCta(browser) {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
     isMobile: true,
@@ -365,119 +365,18 @@ async function runNav(browser) {
   await page.goto(BASE + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
   await page.waitForTimeout(800);
 
-  await page.getByRole("button", { name: "Abrir navegação" }).click();
-  await page.waitForTimeout(300);
+  const cta = page.getByRole("link", { name: /montar stack/i });
+  const menu = page.getByRole("button", { name: "Abrir navegação" });
+  const ctaVisible = await cta.isVisible();
+  const menuCount = await menu.count();
 
-  const close = page.getByRole("button", { name: /fechar|close/i });
-  const focused = await page.evaluate(() => {
-    const el = document.activeElement;
-    return {
-      tag: el?.tagName,
-      text: (el?.textContent || "").trim().slice(0, 40),
-      aria: el?.getAttribute("aria-label"),
-    };
-  });
-  const dialog = page.getByRole("dialog");
-  const dialogBox = await dialog.boundingBox();
-  await page.screenshot({ path: path.join(OUT, "nav-390x844-open.png") });
+  if (ctaVisible) pass("header/montar-stack-visible", "CTA visible at 390x844");
+  else fail("header/montar-stack-visible", "CTA not visible");
 
-  // All links reachable: check scrollHeight vs clientHeight and last link bottom
-  const reach = await page.evaluate(() => {
-    const dialog = document.querySelector("#mobile-navigation, [role='dialog']");
-    const scroller = dialog?.querySelector(".overflow-y-auto, [class*='overflow-y']") || dialog;
-    const links = Array.from(dialog?.querySelectorAll("a") || []);
-    const last = links[links.length - 1];
-    const closeBtn = dialog?.querySelector("button");
-    return {
-      dialogH: dialog?.clientHeight,
-      scrollH: scroller?.scrollHeight,
-      clientH: scroller?.clientHeight,
-      canScroll: (scroller?.scrollHeight || 0) > (scroller?.clientHeight || 0) + 2,
-      lastLinkBottom: last?.getBoundingClientRect().bottom,
-      closeVisible: closeBtn ? closeBtn.getBoundingClientRect().top >= 0 : false,
-      linkCount: links.length,
-      bodyOverflow: document.body.style.overflow,
-    };
-  });
+  if (menuCount === 0) pass("header/no-menu-button", "mobile menu removed");
+  else fail("header/no-menu-button", `menu buttons=${menuCount}`);
 
-  if (reach.bodyOverflow === "hidden") {
-    pass("nav/body-lock", "body overflow hidden");
-  } else {
-    fail("nav/body-lock", `body overflow=${reach.bodyOverflow}`);
-  }
-
-  if (/fechar|close/i.test(focused.text || "") || /fechar|close/i.test(focused.aria || "")) {
-    pass("nav/focus-close", `focused ${focused.text || focused.aria}`);
-  } else {
-    fail("nav/focus-close", JSON.stringify(focused));
-  }
-
-  if (dialogBox && dialogBox.height >= 800) {
-    pass("nav/full-viewport", `dialog h=${dialogBox.height}`);
-  } else {
-    info("nav/full-viewport", `dialog box=${JSON.stringify(dialogBox)}`);
-  }
-
-  info("nav/reachability", JSON.stringify(reach));
-
-  // Escape closes
-  await page.keyboard.press("Escape");
-  await page.waitForTimeout(200);
-  const stillOpen = await page.locator("#mobile-navigation").count();
-  if (stillOpen === 0) pass("nav/escape", "dialog closed");
-  else fail("nav/escape", "dialog still present");
-
-  await context.close();
-}
-
-async function runNavShortLandscape(browser) {
-  const context = await browser.newContext({
-    viewport: { width: 844, height: 390 },
-    isMobile: true,
-    hasTouch: true,
-  });
-  const page = await context.newPage();
-  await page.goto(BASE + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
-  await page.waitForTimeout(800);
-  await page.getByRole("button", { name: "Abrir navegação" }).click();
-  await page.waitForTimeout(300);
-  await page.screenshot({ path: path.join(OUT, "nav-844x390-open.png") });
-
-  const metrics = await page.evaluate(() => {
-    const dialog = document.querySelector("#mobile-navigation, [role='dialog']");
-    const scroller =
-      dialog?.querySelector(".overflow-y-auto") ||
-      dialog?.querySelector("[class*='overflow-y-auto']");
-    const cta = Array.from(dialog?.querySelectorAll("a") || []).find((a) =>
-      /monte sua stack/i.test(a.textContent || ""),
-    );
-    // Scroll to bottom
-    if (scroller) scroller.scrollTop = scroller.scrollHeight;
-    const ctaAfter = cta?.getBoundingClientRect();
-    const closeBtn = Array.from(dialog?.querySelectorAll("button") || []).find((b) =>
-      /fechar/i.test(b.textContent || ""),
-    );
-    return {
-      scrollerScrollH: scroller?.scrollHeight,
-      scrollerClientH: scroller?.clientHeight,
-      ctaBottom: ctaAfter?.bottom,
-      ctaTop: ctaAfter?.top,
-      closeTop: closeBtn?.getBoundingClientRect().top,
-      vh: window.innerHeight,
-    };
-  });
-
-  info("nav-landscape/metrics", JSON.stringify(metrics));
-  if (metrics.ctaBottom != null && metrics.ctaBottom <= metrics.vh + 2) {
-    pass("nav-landscape/cta-reachable", `cta bottom ${metrics.ctaBottom}`);
-  } else if ((metrics.scrollerScrollH || 0) > (metrics.scrollerClientH || 0)) {
-    pass(
-      "nav-landscape/cta-reachable",
-      `scrollable column allows reach (scrollH=${metrics.scrollerScrollH} clientH=${metrics.scrollerClientH})`,
-    );
-  } else {
-    fail("nav-landscape/cta-reachable", JSON.stringify(metrics));
-  }
+  await page.screenshot({ path: path.join(OUT, "header-390x844.png") });
   await context.close();
 }
 
@@ -595,40 +494,6 @@ async function runCtaMotion(browser, { reduced }) {
   await context.close();
 }
 
-async function runTextZoomNav(browser) {
-  const context = await browser.newContext({
-    viewport: { width: 390, height: 844 },
-    isMobile: true,
-    hasTouch: true,
-  });
-  const page = await context.newPage();
-  await page.goto(BASE + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
-  await page.waitForTimeout(800);
-  // Approximate 200% text zoom
-  await page.addStyleTag({
-    content: "html { font-size: 200% !important; }",
-  });
-  await page.getByRole("button", { name: "Abrir navegação" }).click();
-  await page.waitForTimeout(300);
-  await page.screenshot({ path: path.join(OUT, "nav-390-text-zoom-200.png") });
-  const m = await page.evaluate(() => {
-    const dialog = document.querySelector("#mobile-navigation");
-    const scroller = dialog?.querySelector(".overflow-y-auto");
-    return {
-      canScroll: (scroller?.scrollHeight || 0) > (scroller?.clientHeight || 0),
-      scrollH: scroller?.scrollHeight,
-      clientH: scroller?.clientHeight,
-    };
-  });
-  if (m.canScroll || (m.scrollH || 0) <= (m.clientH || 0) + 4) {
-    // either scrolls or everything fits
-    pass("nav/text-zoom-200", JSON.stringify(m));
-  } else {
-    fail("nav/text-zoom-200", JSON.stringify(m));
-  }
-  await context.close();
-}
-
 const browser = await chromium.launch({ headless: true });
 try {
   console.log("=== Portrait phones ===");
@@ -649,10 +514,8 @@ try {
     await runViewport(browser, { ...vp, isMobile: true });
   }
 
-  console.log("=== Mobile nav ===");
-  await runNav(browser);
-  await runNavShortLandscape(browser);
-  await runTextZoomNav(browser);
+  console.log("=== Header CTA (no mobile menu) ===");
+  await runHeaderCta(browser);
 
   console.log("=== CTA motion (this takes ~12s) ===");
   await runCtaMotion(browser, { reduced: false });
