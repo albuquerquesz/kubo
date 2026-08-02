@@ -59,7 +59,7 @@ export default function CopyCommandButton({
       type="button"
       onClick={copyCommand}
       className={cn(
-        buttonVariants({ variant: "cta", size: "lg" }),
+        buttonVariants({ variant: "default", size: "lg" }),
         "min-w-10 px-0 sm:min-w-11 sm:px-3",
         className,
       )}

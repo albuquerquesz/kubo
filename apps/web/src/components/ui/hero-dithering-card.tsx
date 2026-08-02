@@ -1,9 +1,10 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { Check, Copy } from "lucide-react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 
+import { buttonVariants } from "@/components/ui/button";
+import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "@/lib/create-commands";
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
 import { cn } from "@/lib/utils";
 
@@ -52,15 +53,44 @@ export type CTASectionProps = {
 };
 
 /**
- * Centered marketing CTA card with Paper Design dithering atmosphere.
- * Used as the default home hero.
+ * Full-viewport marketing hero with Paper Design dithering atmosphere.
+ * Primary action is a copyable create-command pill (same hover motion as the old CTA).
  */
 export function CTASection({ className }: CTASectionProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const resetTimerRef = useRef<number | null>(null);
   const primary = useThemePrimary();
   const reducedMotion = usePrefersReducedMotion();
+  const command = getCreateCommand(DEFAULT_PACKAGE_MANAGER);
 
   const shaderSpeed = reducedMotion ? 0 : isHovered ? 0.6 : 0.2;
+
+  useEffect(() => {
+    return () => {
+      if (resetTimerRef.current !== null) {
+        window.clearTimeout(resetTimerRef.current);
+      }
+    };
+  }, []);
+
+  const copyCommand = async () => {
+    try {
+      await navigator.clipboard.writeText(command);
+      setCopied(true);
+
+      if (resetTimerRef.current !== null) {
+        window.clearTimeout(resetTimerRef.current);
+      }
+
+      resetTimerRef.current = window.setTimeout(() => {
+        setCopied(false);
+        resetTimerRef.current = null;
+      }, 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
 
   return (
     <section
@@ -118,21 +148,28 @@ export function CTASection({ className }: CTASectionProps) {
           Limpo, preciso e do seu jeito.
         </p>
 
-        <Link
-          href="/new"
-          className={cn(
-            "group relative inline-flex h-14 items-center justify-center gap-3 overflow-hidden rounded-full bg-primary px-12",
-            "text-base font-medium text-primary-foreground transition-all duration-300",
-            "hover:scale-105 hover:bg-primary/90 hover:ring-4 hover:ring-primary/20 active:scale-95",
-            "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-          )}
+        <button
+          type="button"
+          onClick={copyCommand}
+          className={cn(buttonVariants({ variant: "cta", size: "xl" }), "relative")}
+          aria-label={copied ? "Comando copiado" : `Copiar comando: ${command}`}
+          title={copied ? "Copiado" : "Clique para copiar"}
         >
-          <span className="relative z-10">Monte sua stack</span>
-          <ArrowRight
-            aria-hidden
-            className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
-          />
-        </Link>
+          <span className="sr-only" aria-live="polite">
+            {copied ? "Comando copiado" : "Copiar comando"}
+          </span>
+          <code className="max-w-[min(100%,28rem)] truncate font-mono text-sm tracking-[0.04em] sm:text-base">
+            {command}
+          </code>
+          {copied ? (
+            <Check aria-hidden className="size-5 shrink-0" />
+          ) : (
+            <Copy
+              aria-hidden
+              className="size-5 shrink-0 transition-transform duration-300 group-hover/button:scale-110"
+            />
+          )}
+        </button>
       </div>
     </section>
   );
