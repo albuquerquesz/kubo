@@ -6,6 +6,9 @@
  * Content stays CSS-hidden until the host opens the gate. GSAP always runs
  * word-by-word blur-in on title AND description (no late-skip that leaves
  * static full text). Refresh and first visit share the same path.
+ *
+ * Gate defaults are short (fonts only). Atmosphere/WebGL must NOT block copy —
+ * pass no shaderReady unless a surface truly needs it.
  */
 import { duration, ease, stagger } from "@/lib/motion/eases";
 import { gsap, SplitText } from "@/lib/motion/gsap-client";
@@ -185,26 +188,32 @@ export function msSinceNavigationStart(): number {
 /**
  * Wait until fonts are ready / optional shader signal, with min hold + hard ceiling.
  * Never blocks forever — maxWaitMs always releases the intro.
+ *
+ * Defaults are tuned for paint-first heroes: short fonts wait, no artificial hold.
+ * Pass shaderReady only when content must wait on WebGL (prefer not to).
  */
 export async function waitForHeroIntroGate(options: {
-  /** Resolves when WebGL/shader canvas is ready (optional). */
+  /** Resolves when WebGL/shader canvas is ready (optional — avoid for copy). */
   shaderReady?: () => boolean;
   /** Subscribe to shader ready; return unsubscribe. */
   onShaderReady?: (cb: () => void) => () => void;
-  /** Minimum ms to hold before opening (avoids flash on ultra-fast loads). */
+  /** Minimum ms to hold before opening. Default 0 (no artificial delay). */
   minHoldMs?: number;
-  /** Hard ceiling — always open by this time. Default 1100. */
+  /**
+   * Hard ceiling for optional shader wait (from gate start).
+   * Default 250 — only used when shaderReady is provided.
+   */
   maxWaitMs?: number;
-  /** Fonts timeout if document.fonts hangs. Default 400. */
+  /** Fonts timeout if document.fonts hangs. Default 150. */
   fontsTimeoutMs?: number;
   signal?: AbortSignal;
 }): Promise<void> {
   const {
     shaderReady,
     onShaderReady,
-    minHoldMs = 200,
-    maxWaitMs = 1100,
-    fontsTimeoutMs = 400,
+    minHoldMs = 0,
+    maxWaitMs = 250,
+    fontsTimeoutMs = 150,
     signal,
   } = options;
 
@@ -222,10 +231,11 @@ export async function waitForHeroIntroGate(options: {
 
   if (signal?.aborted) return;
 
-  if (!shaderReady?.()) {
+  // Optional atmosphere wait — only when caller wires shaderReady.
+  if (shaderReady && !shaderReady()) {
     const remaining = Math.max(0, maxWaitMs - (performance.now() - started));
     await new Promise<void>((resolve) => {
-      if (shaderReady?.()) {
+      if (shaderReady()) {
         resolve();
         return;
       }
@@ -237,7 +247,7 @@ export async function waitForHeroIntroGate(options: {
         resolve();
       };
       const unsub = onShaderReady?.(done);
-      if (shaderReady?.()) {
+      if (shaderReady()) {
         done();
         return;
       }
