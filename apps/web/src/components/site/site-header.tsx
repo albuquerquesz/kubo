@@ -3,7 +3,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaDiscord, FaGithub, FaXTwitter } from "react-icons/fa6";
+import { FaGithub, FaXTwitter } from "react-icons/fa6";
 
 import { cn } from "@/lib/utils";
 
@@ -14,11 +14,6 @@ const socialLinks = [
     href: "https://x.com/byalbuquerquesz",
     label: "Kubo no X",
     icon: FaXTwitter,
-  },
-  {
-    href: "https://discord.gg/ZYsbjpDaM5",
-    label: "Kubo no Discord",
-    icon: FaDiscord,
   },
   {
     href: "https://github.com/albuquerquesz/kubo",
