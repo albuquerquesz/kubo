@@ -5,7 +5,10 @@
   "scripts": {
     "prebuild": "(cd ../../packages/types && bun run build) && (cd ../../packages/template-generator && bun run build)",
     "build": "next build",
-    "dev": "next dev --port 3333",
+    "dev": "bun scripts/dev-remote.mjs",
+    "dev:local": "next dev --hostname 0.0.0.0 --port 3333",
+    "dev:remote": "bun scripts/dev-remote.mjs",
+    "dev:remote-watch": "bun scripts/remote-reload-watch.mjs",
     "start": "next start",
     "postinstall": "fumadocs-mdx",
     "generate-schema": "(cd ../../packages/types && bun run build) && bun scripts/generate-schema.ts"
@@ -20,6 +23,7 @@
     "@kubojs/types": "workspace:*",
     "@number-flow/react": "^0.6.0",
     "@orama/orama": "^3.1.18",
+    "@paper-design/shaders-react": "^0.0.78",
     "@react-three/fiber": "^9.6.1",
     "@shikijs/transformers": "^4.0.2",
     "@visx/curve": "4.0.1-alpha.0",

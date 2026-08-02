@@ -20,6 +20,7 @@ public/analytics-minimal.json
 # misc
 .DS_Store
 *.pem
+.remote-reload-token
 /.pnp
 .pnp.js
 npm-debug.log*

@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 type Rgb = { r: number; g: number; b: number };
 
@@ -22,8 +22,35 @@ type Band = {
   coreOpacity: number;
   color: Rgb;
   coreColor: Rgb;
+  /** Peak tile color at the band hotspot (cream yellow / amber). */
+  hotColor?: Rgb;
   /** A localized pale core prevents a continuous, evenly-lit rail. */
   hotspot?: { x: number; y: number; radiusX: number; radiusY: number };
+};
+
+/**
+ * Two-temperature gold field (bright yellow S + dark yellow/amber bow).
+ * Anchors track Kubo primary/accent (~#c49314 / #d6a72b). Atmosphere only.
+ */
+const FIELD: Record<string, Rgb> = {
+  // Bed — near-black with slight warm olive
+  baseDark: { r: 14, g: 14, b: 12 },
+  tileQuiet: { r: 24, g: 22, b: 16 },
+  tileLift: { r: 36, g: 32, b: 22 },
+  // Light yellow ribbon (primary S-curve)
+  yellowDeep: { r: 90, g: 65, b: 12 },
+  yellowMid: { r: 160, g: 115, b: 18 },
+  yellowCore: { r: 214, g: 167, b: 43 },
+  // Cream-white peaks for hot cores
+  yellowHot: { r: 255, g: 245, b: 200 },
+  // Dark yellow / bronze ribbon (outer bow + weave)
+  amberDeep: { r: 70, g: 48, b: 10 },
+  amberCore: { r: 150, g: 105, b: 18 },
+  amberHot: { r: 196, g: 147, b: 20 },
+  amberFade: { r: 180, g: 130, b: 30 },
+  topLeftHaze: { r: 55, g: 40, b: 18 },
+  // Pale cream where bright∩dark yellow meet
+  overlapPale: { r: 210, g: 185, b: 120 },
 };
 
 type GridGeometry = {
@@ -36,11 +63,12 @@ type GridGeometry = {
   originY: number;
 };
 
-const REFERENCE_ROWS = 37;
-/** 9% of pitch — narrow dark seam between opaque cells. */
-const SEAM_RATIO = 0.09;
-/** 22% of pitch — softer rounded squares, still clearly not circular. */
-const CORNER_RATIO = 0.22;
+/** Fewer rows → larger square pitch (width and height of each tile). */
+const REFERENCE_ROWS = 32;
+/** 5% of pitch — tighter dark seam between opaque cells. */
+const SEAM_RATIO = 0.05;
+/** 34% of pitch — more rounded squares, still not circular (circle ≈ 45% of pitch). */
+const CORNER_RATIO = 0.34;
 const MAX_DPR = 1.5;
 const DRIFT_PERIOD_SEC = 18;
 const SEED = 0x6b75626f; // "kubo"
@@ -190,10 +218,10 @@ function sampleCubic(
 
 /**
  * Height-driven square pitch so cells stay square and the grid reaches the edges.
- * At the reference aspect this resolves near 52×37; wider frames add columns.
+ * Fewer rows → larger tiles; wider frames add columns at the same pitch.
  */
 function resolveGrid(cssWidth: number, cssHeight: number): GridGeometry {
-  const rows = cssHeight < 520 ? 30 : cssHeight < 720 ? 34 : REFERENCE_ROWS;
+  const rows = cssHeight < 520 ? 26 : cssHeight < 720 ? 29 : REFERENCE_ROWS;
   const cell = Math.max(10, cssHeight / rows);
   const columns = Math.max(1, Math.ceil(cssWidth / cell));
   const seam = cell * SEAM_RATIO;
@@ -212,237 +240,442 @@ function resolveGrid(cssWidth: number, cssHeight: number): GridGeometry {
 }
 
 /**
- * Six parallel gold lightning columns (same right-descending curvature × Kubo tokens).
- * Bronze leading + mid + amber + gold + copper + warm outer; dark troughs between cores.
- * Gold-only separation via luminance, opacity, and curve — no cyan/red.
+ * Apply slow drift to a normalized polyline.
+ * Phase 0 is identity (reduced-motion / first paint). Drift uses sin so
+ * both axes are zero at phase 0 (cos would leave a constant Y offset).
  */
-function buildBands(colors: ThemeColors, phase: number): Band[] {
-  const driftX = Math.sin(phase * Math.PI * 2) * 0.018;
-  const driftY = Math.cos(phase * Math.PI * 2 * 0.7) * 0.012;
+function driftPoints(
+  points: Array<{ x: number; y: number }>,
+  phase: number,
+  scale = 1,
+): Array<{ x: number; y: number }> {
+  if (phase === 0) return points.map((p) => ({ x: p.x, y: p.y }));
+  const driftX = Math.sin(phase * Math.PI * 2) * 0.014 * scale;
+  const driftY = Math.sin(phase * Math.PI * 2 * 0.7 + 0.4) * 0.01 * scale;
+  return points.map((p, i) => {
+    const t = i / Math.max(1, points.length - 1);
+    return {
+      x: p.x + driftX * (0.35 + t * 0.65),
+      y: p.y + driftY * (0.4 + (1 - t) * 0.4),
+    };
+  });
+}
 
-  // Six parallel lightning columns — ~0.09 nx spacing, frame-centered pack, hairline rails.
-  // Shallower right-descent (Δx ≈ 0.28 over full height) keeps columns more upright.
-  // Primary (left column).
-  const primaryBand = sampleCubic(
-    { x: 0.28 + driftX * 0.2, y: -0.1 },
-    { x: 0.36 + driftX, y: 0.22 + driftY },
-    { x: 0.45 + driftX * 0.25, y: 0.55 },
-    { x: 0.56 + driftX * 0.1, y: 1.02 },
-  );
+/**
+ * Discrete ribbon ridges — inverted lateral S (pivot ~0.67) so the lightning
+ * swings the opposite way while energy stays on the right half (left copy pocket).
+ *
+ * Inverted cool S: top-right entry → mid leftward bulge → lower-right hot.
+ * Amber outer bow stays far-right outside the yellow S.
+ */
+/**
+ * Upper yellow entry — inverted: starts farther right, curves left mid-way.
+ */
+const COOL_UPPER_RIDGE: Array<{ x: number; y: number }> = [
+  { x: 0.76, y: 0.02 },
+  { x: 0.7, y: 0.12 },
+  { x: 0.64, y: 0.2 },
+  { x: 0.6, y: 0.28 },
+  { x: 0.58, y: 0.36 },
+  { x: 0.58, y: 0.44 },
+  { x: 0.6, y: 0.52 },
+  { x: 0.66, y: 0.58 },
+  { x: 0.72, y: 0.64 },
+];
 
-  // Inner mid column.
-  const midBand = sampleCubic(
-    { x: 0.37 + driftX * 0.18, y: -0.09 },
-    { x: 0.45 + driftX * 0.6, y: 0.23 + driftY * 0.5 },
-    { x: 0.54 + driftX * 0.15, y: 0.56 },
-    { x: 0.65 + driftX * 0.1, y: 1.03 },
-  );
+/**
+ * Lower yellow — PRIMARY bright mass (inverted: hot core ~x0.76, y0.76).
+ */
+const COOL_LOWER_RIDGE: Array<{ x: number; y: number }> = [
+  { x: 0.72, y: 0.7 },
+  { x: 0.76, y: 0.74 },
+  { x: 0.77, y: 0.76 },
+  { x: 0.76, y: 0.77 },
+  { x: 0.765, y: 0.78 },
+  { x: 0.78, y: 0.8 },
+  { x: 0.8, y: 0.86 },
+  { x: 0.82, y: 0.94 },
+  { x: 0.8, y: 1.04 },
+];
 
-  // Amber mid column.
-  const amberBand = sampleCubic(
-    { x: 0.46 + driftX * 0.16, y: -0.085 },
-    { x: 0.54 + driftX * 0.5, y: 0.235 + driftY * 0.4 },
-    { x: 0.63 + driftX * 0.12, y: 0.565 },
-    { x: 0.74 + driftX * 0.1, y: 1.035 },
-  );
+/**
+ * Full continuous cool S (single band) — prevents mid-right gap
+ * between separate upper/lower polylines.
+ */
+const COOL_RIDGE: Array<{ x: number; y: number }> = [
+  ...COOL_UPPER_RIDGE,
+  ...COOL_LOWER_RIDGE.slice(1),
+];
 
-  // Gold column.
-  const goldBand = sampleCubic(
-    { x: 0.55 + driftX * 0.15, y: -0.082 },
-    { x: 0.63 + driftX * 0.45, y: 0.238 + driftY * 0.35 },
-    { x: 0.72 + driftX * 0.11, y: 0.568 },
-    { x: 0.83 + driftX * 0.1, y: 1.038 },
-  );
+/**
+ * Thin spur on the left flank of the inverted S (mid-right, not far edge).
+ */
+const COOL_FAR_RIGHT_SPUR: Array<{ x: number; y: number }> = [
+  { x: 0.54, y: 0.3 },
+  { x: 0.51, y: 0.38 },
+  { x: 0.49, y: 0.46 },
+  { x: 0.47, y: 0.5 },
+  { x: 0.49, y: 0.54 },
+  { x: 0.51, y: 0.6 },
+];
 
-  // Copper column — sixth rail between gold and warm.
-  const copperBand = sampleCubic(
-    { x: 0.64 + driftX * 0.14, y: -0.081 },
-    { x: 0.72 + driftX * 0.4, y: 0.24 + driftY * 0.3 },
-    { x: 0.81 + driftX * 0.1, y: 0.57 },
-    { x: 0.92 + driftX * 0.1, y: 1.039 },
-  );
+/**
+ * Outer warm bow — FAR RIGHT main spine (outside inverted yellow S).
+ * Paired with WARM_EDGE_RIDGE + left shoulder.
+ */
+const WARM_RIDGE: Array<{ x: number; y: number }> = [
+  { x: 0.9, y: -0.02 },
+  { x: 0.93, y: 0.12 },
+  { x: 0.94, y: 0.28 },
+  { x: 0.93, y: 0.42 },
+  { x: 0.92, y: 0.58 },
+  { x: 0.91, y: 0.74 },
+  { x: 0.9, y: 0.9 },
+  { x: 0.89, y: 1.04 },
+];
 
-  // Warm (right column) — outer of the centered pack.
-  const warmBand = sampleCubic(
-    { x: 0.73 + driftX * 0.15, y: -0.08 },
-    { x: 0.81 - driftY * 0.2, y: 0.24 + driftX },
-    { x: 0.9 + driftX * 0.1, y: 0.57 },
-    { x: 1.01 + driftX * 0.1, y: 1.04 },
-  );
+/** Far-edge amber (x0.95–1.0). */
+const WARM_EDGE_RIDGE: Array<{ x: number; y: number }> = [
+  { x: 0.96, y: 0.05 },
+  { x: 0.97, y: 0.25 },
+  { x: 0.98, y: 0.45 },
+  { x: 0.97, y: 0.65 },
+  { x: 0.96, y: 0.85 },
+  { x: 0.95, y: 1.02 },
+];
 
-  // Top-left warm haze — non-focal cloud only (no counter-direction lightning).
-  const topLeftHaze = sampleQuadratic(
-    { x: -0.12, y: -0.1 },
-    { x: 0.1 + driftX * 0.2, y: 0.1 },
-    { x: 0.24, y: 0.3 + driftY },
-  );
+/**
+ * Left shoulder of outer bow — sits just left of warm spine, right of yellow S.
+ */
+const WARM_SHOULDER_RIDGE: Array<{ x: number; y: number }> = [
+  { x: 0.84, y: 0.5 },
+  { x: 0.85, y: 0.65 },
+  { x: 0.85, y: 0.8 },
+  { x: 0.84, y: 0.92 },
+  { x: 0.83, y: 1.04 },
+];
 
-  // Gold-only six-step temperature: bronze → mid → amber → gold → copper → warm outer.
-  const primaryColor = mix(colors.primary, colors.background, 0.5);
-  const primaryCore = mix(colors.primary, colors.accent, 0.48);
-  const midColor = mix(mix(colors.primary, colors.accent, 0.45), colors.background, 0.28);
-  const midCore = mix(colors.accent, colors.primary, 0.4);
-  const amberColor = mix(mix(colors.accent, colors.primary, 0.32), colors.background, 0.22);
-  const amberCore = mix(colors.accent, colors.primary, 0.28);
-  const goldColor = mix(mix(colors.accent, colors.primary, 0.25), colors.background, 0.18);
-  const goldCore = mix(colors.accent, colors.foreground, 0.22);
-  const copperColor = mix(mix(colors.accent, colors.primary, 0.22), colors.background, 0.16);
-  const copperCore = mix(colors.accent, colors.foreground, 0.28);
-  const warmColor = mix(mix(colors.accent, colors.primary, 0.2), colors.background, 0.2);
-  const warmCore = mix(colors.accent, colors.foreground, 0.36);
-  // Warm-leaning haze (tiny accent tick) without flooding primary gold.
-  const hazeColor = mix(mix(colors.muted, colors.accent, 0.14), colors.card, 0.28);
+/**
+ * Soft yellow depth under lower S. Stay right of copy pocket (x≳0.38).
+ */
+const COOL_SECONDARY_RIDGE: Array<{ x: number; y: number }> = [
+  { x: 0.68, y: 0.48 },
+  { x: 0.72, y: 0.58 },
+  { x: 0.76, y: 0.68 },
+  { x: 0.78, y: 0.78 },
+  { x: 0.76, y: 0.88 },
+  { x: 0.74, y: 1.0 },
+];
+
+/**
+ * Amber weave — spiral arm through inverted yellow S (thin, secondary).
+ */
+const WARM_WEAVE_RIDGE: Array<{ x: number; y: number }> = [
+  { x: 0.78, y: 0.4 },
+  { x: 0.7, y: 0.5 },
+  { x: 0.62, y: 0.58 },
+  { x: 0.56, y: 0.68 },
+  { x: 0.6, y: 0.78 },
+  { x: 0.66, y: 0.88 },
+];
+
+/** Weaker amber echo lower-right. */
+const WARM_ECHO_RIDGE: Array<{ x: number; y: number }> = [
+  { x: 0.7, y: 0.86 },
+  { x: 0.78, y: 0.94 },
+  { x: 0.86, y: 1.02 },
+  { x: 0.92, y: 1.1 },
+];
+
+const TOP_LEFT_HAZE_RIDGE: Array<{ x: number; y: number }> = [
+  { x: -0.08, y: -0.06 },
+  { x: 0.04, y: 0.04 },
+  { x: 0.12, y: 0.14 },
+  { x: 0.18, y: 0.26 },
+];
+
+/**
+ * Discrete bright-yellow + dark-yellow ribbon bands on warm-black bed.
+ * NO continuous coolMass blob — dark gaps between ribbons required.
+ * Cool S is ONE continuous ridge so mid-right stays lit yellow (not bed gap).
+ */
+function buildBands(_colors: ThemeColors, phase: number): Band[] {
+  const coolS = driftPoints(COOL_RIDGE, phase, 1);
+  const coolFarRight = driftPoints(COOL_FAR_RIGHT_SPUR, phase, 0.9);
+  const coolSecondary = driftPoints(COOL_SECONDARY_RIDGE, phase, 0.7);
+  const warmBand = driftPoints(WARM_RIDGE, phase, 1);
+  const warmEdge = driftPoints(WARM_EDGE_RIDGE, phase, 0.9);
+  const warmShoulder = driftPoints(WARM_SHOULDER_RIDGE, phase, 0.9);
+  const warmWeave = driftPoints(WARM_WEAVE_RIDGE, phase, 0.85);
+  const warmEcho = driftPoints(WARM_ECHO_RIDGE, phase, 0.6);
+  const topLeftHaze = driftPoints(TOP_LEFT_HAZE_RIDGE, phase, 0.5);
 
   return [
     {
-      points: primaryBand,
-      width: 0.034,
-      coreWidth: 0.01,
-      opacity: 0.86,
-      coreOpacity: 0.72,
-      color: primaryColor,
-      coreColor: primaryCore,
-      hotspot: { x: 0.41, y: 0.48, radiusX: 0.05, radiusY: 0.1 },
-    },
-    {
-      points: midBand,
-      width: 0.032,
-      coreWidth: 0.01,
-      opacity: 0.87,
-      coreOpacity: 0.73,
-      color: midColor,
-      coreColor: midCore,
-      hotspot: { x: 0.5, y: 0.49, radiusX: 0.05, radiusY: 0.1 },
-    },
-    {
-      points: amberBand,
-      width: 0.031,
-      coreWidth: 0.009,
+      points: coolSecondary,
+      // Mid-right yellow depth under inverted lower S (not left pocket wash).
+      width: 0.14,
+      coreWidth: 0.055,
       opacity: 0.88,
-      coreOpacity: 0.74,
-      color: amberColor,
-      coreColor: amberCore,
-      hotspot: { x: 0.59, y: 0.5, radiusX: 0.05, radiusY: 0.1 },
+      coreOpacity: 0.62,
+      color: mix(FIELD.yellowDeep, FIELD.baseDark, 0.05),
+      coreColor: FIELD.yellowMid,
     },
     {
-      points: goldBand,
-      width: 0.03,
-      coreWidth: 0.009,
-      opacity: 0.89,
-      coreOpacity: 0.76,
-      color: goldColor,
-      coreColor: goldCore,
-      hotspot: { x: 0.68, y: 0.5, radiusX: 0.05, radiusY: 0.1 },
+      points: coolS,
+      // Full-height discrete inverted S — thinner ribbon body.
+      width: 0.11,
+      coreWidth: 0.04,
+      opacity: 0.85,
+      coreOpacity: 0.55,
+      color: FIELD.yellowMid,
+      coreColor: FIELD.yellowCore,
+      hotColor: FIELD.yellowHot,
     },
     {
-      points: copperBand,
-      width: 0.029,
-      coreWidth: 0.008,
-      opacity: 0.895,
-      coreOpacity: 0.77,
-      color: copperColor,
-      coreColor: copperCore,
-      hotspot: { x: 0.77, y: 0.5, radiusX: 0.05, radiusY: 0.1 },
+      points: coolFarRight,
+      // Thin left-flank spur of inverted S.
+      width: 0.06,
+      coreWidth: 0.022,
+      opacity: 0.65,
+      coreOpacity: 0.55,
+      color: FIELD.yellowMid,
+      coreColor: FIELD.yellowCore,
+      hotColor: FIELD.yellowHot,
+    },
+    {
+      // PRIMARY cream-hot mass — inverted peaks at ~(.76–.78, .75–.77).
+      points: driftPoints(COOL_LOWER_RIDGE, phase, 1),
+      width: 0.12,
+      coreWidth: 0.07,
+      opacity: 1,
+      coreOpacity: 1,
+      color: FIELD.yellowMid,
+      coreColor: FIELD.yellowCore,
+      hotColor: FIELD.yellowHot,
+      // Sole bright-yellow hotspot — top peak at y≈0.76.
+      hotspot: { x: 0.76, y: 0.76, radiusX: 0.1, radiusY: 0.1 },
+    },
+    {
+      points: warmWeave,
+      // Dark-yellow spiral through inverted yellow S — discrete threads.
+      width: 0.055,
+      coreWidth: 0.02,
+      opacity: 0.55,
+      coreOpacity: 0.5,
+      color: FIELD.amberDeep,
+      coreColor: FIELD.amberCore,
+      hotColor: FIELD.amberHot,
+      hotspot: { x: 0.66, y: 0.58, radiusX: 0.04, radiusY: 0.05 },
+    },
+    {
+      points: warmShoulder,
+      // Lower-half amber shoulder between yellow S and far-right spine.
+      width: 0.065,
+      coreWidth: 0.024,
+      opacity: 0.65,
+      coreOpacity: 0.55,
+      color: FIELD.amberDeep,
+      coreColor: FIELD.amberCore,
+      hotColor: FIELD.amberHot,
     },
     {
       points: warmBand,
-      width: 0.028,
-      coreWidth: 0.008,
-      opacity: 0.9,
-      coreOpacity: 0.78,
-      color: warmColor,
-      coreColor: warmCore,
-      hotspot: { x: 0.86, y: 0.5, radiusX: 0.05, radiusY: 0.1 },
+      // Main far-right dark-yellow spine (x≥0.90).
+      width: 0.055,
+      coreWidth: 0.022,
+      opacity: 0.52,
+      coreOpacity: 0.5,
+      color: FIELD.amberDeep,
+      coreColor: FIELD.amberCore,
+      hotColor: FIELD.amberHot,
+      hotspot: { x: 0.93, y: 0.42, radiusX: 0.045, radiusY: 0.06 },
+    },
+    {
+      points: warmEdge,
+      // Far-edge amber dens.
+      width: 0.05,
+      coreWidth: 0.018,
+      opacity: 0.5,
+      coreOpacity: 0.48,
+      color: FIELD.amberDeep,
+      coreColor: FIELD.amberCore,
+      hotColor: FIELD.amberHot,
+      hotspot: { x: 0.97, y: 0.42, radiusX: 0.038, radiusY: 0.055 },
+    },
+    {
+      points: warmEcho,
+      width: 0.07,
+      coreWidth: 0.024,
+      opacity: 0.45,
+      coreOpacity: 0.38,
+      color: mix(FIELD.amberDeep, FIELD.baseDark, 0.1),
+      coreColor: FIELD.amberFade,
+      hotColor: FIELD.amberHot,
+      hotspot: { x: 0.86, y: 0.92, radiusX: 0.055, radiusY: 0.055 },
     },
     {
       points: topLeftHaze,
-      width: 0.24,
-      coreWidth: 0.09,
+      width: 0.18,
+      coreWidth: 0.07,
       opacity: 0.36,
       coreOpacity: 0.14,
-      color: hazeColor,
-      coreColor: mix(colors.muted, colors.mutedForeground, 0.32),
+      color: FIELD.topLeftHaze,
+      coreColor: mix(FIELD.topLeftHaze, FIELD.amberDeep, 0.3),
     },
   ];
 }
 
+/** Phase-0 band geometry for tests / tooling (no theme dependency). */
+export function getMosaicBandGeometry(phase = 0) {
+  const bands = buildBands(
+    {
+      background: FIELD.baseDark,
+      card: FIELD.tileQuiet,
+      muted: FIELD.tileLift,
+      foreground: FIELD.yellowHot,
+      mutedForeground: FIELD.tileLift,
+      primary: FIELD.yellowCore,
+      accent: FIELD.amberCore,
+    },
+    phase,
+  );
+  return {
+    coolRidge: COOL_RIDGE,
+    warmRidge: WARM_RIDGE,
+    warmEdgeRidge: WARM_EDGE_RIDGE,
+    warmShoulderRidge: WARM_SHOULDER_RIDGE,
+    coolFarRightSpur: COOL_FAR_RIGHT_SPUR,
+    coolSecondaryRidge: COOL_SECONDARY_RIDGE,
+    warmWeaveRidge: WARM_WEAVE_RIDGE,
+    warmEchoRidge: WARM_ECHO_RIDGE,
+    topLeftHazeRidge: TOP_LEFT_HAZE_RIDGE,
+    bands: bands.map((b) => ({
+      width: b.width,
+      coreWidth: b.coreWidth,
+      opacity: b.opacity,
+      hotspot: b.hotspot ?? null,
+      pointCount: b.points.length,
+      start: b.points[0],
+      end: b.points[b.points.length - 1],
+      mid: b.points[Math.floor(b.points.length / 2)],
+    })),
+  };
+}
+
 /**
- * Per-cell palette: dark matrix default; luminous cells only under band influence.
- * Sequence: quiet base → muted tick → bands → copy pocket → vignette → quantize.
- * Flat fill only — no radial edge halo, continuous right-side olive wash, or per-cell bevel.
+ * Per-cell palette: warm-black matrix + discrete yellow/amber ribbons.
+ * Sequence: quiet base → ribbon bands → overlap pale → strong left pocket → vignette.
+ * NO continuous coolMass / wash fields.
  */
 function colorForCell(
   col: number,
   row: number,
   columns: number,
   rows: number,
-  colors: ThemeColors,
+  _colors: ThemeColors,
   bands: Band[],
 ): Rgb {
   const nx = (col + 0.5) / columns;
   const ny = (row + 0.5) / rows;
   const noise = cellNoise(col, row);
-  // Secondary deterministic hash for multi-axis tile variation without extra allocations.
   const noise2 = cellNoise(col + 17, row + 31);
 
-  // Quiet matrix — near background/card with only a tiny luminance tick so seams read.
-  let color = mix(colors.background, colors.card, 0.22 + noise * 0.18);
-  color = mix(color, colors.muted, 0.04 + noise2 * 0.06);
-  // ± tiny global noise outside bands (grid readability without olive wash).
-  if (noise > 0.88) {
-    color = mix(color, colors.muted, 0.05 + (noise - 0.88) * 0.2);
-  } else if (noise < 0.12) {
-    color = mix(color, colors.background, 0.08 + (0.12 - noise) * 0.15);
+  // Quiet warm-black matrix.
+  let color = mix(FIELD.baseDark, FIELD.tileQuiet, 0.35 + noise * 0.35);
+  color = mix(color, FIELD.tileLift, 0.04 + noise2 * 0.08);
+  if (noise > 0.9) {
+    color = mix(color, FIELD.tileLift, 0.06 + (noise - 0.9) * 0.25);
+  } else if (noise < 0.1) {
+    color = mix(color, FIELD.baseDark, 0.1 + (0.1 - noise) * 0.2);
   }
+
+  let coolAccum = 0;
+  let warmAccum = 0;
+  // Track max hotspot focus so pure hot cores survive pocket/edge mixes.
+  let peakFocus = 0;
+  let peakHot: Rgb | null = null;
 
   for (const band of bands) {
     const d = distanceToPolyline(nx, ny, band.points);
-    // Softer falloff exponents → more intermediate cells across the mass (structure match).
-    const broad = Math.pow(1 - smoothstep(0, band.width, d), 0.92);
-    const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 1.15);
+    // Soft but discrete falloff: fuller ribbon bodies (REF mass) while
+    // still leaving dark gaps between separate cool/warm paths (no coolMass wash).
+    const broad = Math.pow(1 - smoothstep(0, band.width, d), 0.72);
+    const core = Math.pow(1 - smoothstep(0, band.coreWidth, d), 0.95);
     if (broad <= 0.001) continue;
 
-    // Noise modulates intensity inside band influence for smooth cell-by-cell steps.
-    const noiseMod = 0.74 + noise * 0.32 + noise2 * 0.1;
+    const noiseMod = 0.78 + noise * 0.28 + noise2 * 0.1;
     const intensity = broad * band.opacity * noiseMod;
-    const hotness = core * band.coreOpacity * (0.68 + noise * 0.52);
+    const hotness = core * band.coreOpacity * (0.95 + noise * 0.45);
 
-    color = mix(color, band.color, intensity);
+    color = mix(color, band.color, Math.min(1, intensity));
     if (hotness > 0.01) {
-      color = mix(color, band.coreColor, hotness);
+      color = mix(color, band.coreColor, Math.min(1, hotness * 1.2));
     }
-    // Pale cells appear only at the localized overlap/focal points, never as rails.
-    if (band.hotspot && hotness > 0.08) {
+
+    const isCool = band.coreColor.b > band.coreColor.r + 20 || band.color.b > band.color.r + 15;
+    if (isCool) coolAccum += intensity + hotness * 0.6;
+    else warmAccum += intensity + hotness * 0.6;
+
+    if (band.hotspot && hotness > 0.02) {
       const dx = (nx - band.hotspot.x) / band.hotspot.radiusX;
       const dy = (ny - band.hotspot.y) / band.hotspot.radiusY;
-      const focus = 1 - smoothstep(0.26, 1, Math.hypot(dx, dy));
-      const highlight = hotness * focus * (0.18 + noise * 0.16);
-      if (highlight > 0.01) color = mix(color, colors.foreground, highlight);
+      const focus = 1 - smoothstep(0.02, 1, Math.hypot(dx, dy));
+      // Cream yellow / amber hot spikes.
+      const highlight = Math.min(1, hotness * focus * (2.2 + noise * 0.2));
+      if (highlight > 0.01) {
+        color = mix(color, band.hotColor ?? band.coreColor, highlight);
+      }
+      if (focus > peakFocus && band.hotColor) {
+        peakFocus = focus;
+        peakHot = band.hotColor;
+      }
     }
   }
 
-  // Copy pocket ~first 32–40%: charcoal/dark tiles, faint grid only.
-  const copyPocket = 1 - smoothstep(0.3, 0.4, nx);
-  const darkBed = mix(colors.background, colors.card, 0.18 + noise * 0.12);
-  color = mix(color, darkBed, copyPocket * 0.72);
-  const farLeft = 1 - smoothstep(0, 0.2, nx);
-  color = mix(color, colors.background, farLeft * 0.42);
-  // Lower-left tuck under the title block.
-  const lowerLeftQuiet = (1 - smoothstep(0.06, 0.38, nx)) * (1 - smoothstep(0.4, 0.9, ny)) * 0.48;
-  color = mix(color, colors.background, lowerLeftQuiet);
+  // Pale overlap where cool∩warm meet mid-right (desaturated intermediates).
+  // Keep weak so weave stays dark yellow, not muddy.
+  const overlap = Math.min(coolAccum, warmAccum);
+  if (overlap > 0.28) {
+    const pale = Math.min(1, (overlap - 0.28) * 0.7);
+    color = mix(color, FIELD.overlapPale, pale * (0.1 + noise * 0.06));
+  }
 
-  // Soft edge vignette — right edge less crushed so ribbon energy survives.
+  // Strong left copy pocket — quiet dark bed for headline.
+  // End pocket ~x0.38 so mid-third (x0.33–0.55) can hold cool mass (ref mid_lum ~39).
+  const copyPocket = 1 - smoothstep(0.24, 0.38, nx);
+  color = mix(color, FIELD.baseDark, copyPocket * 0.94);
+  const farLeft = 1 - smoothstep(0, 0.15, nx);
+  color = mix(color, FIELD.baseDark, farLeft * 0.75);
+  const lowerLeftQuiet = (1 - smoothstep(0.05, 0.3, nx)) * (1 - smoothstep(0.48, 0.92, ny)) * 0.45;
+  color = mix(color, FIELD.baseDark, lowerLeftQuiet);
+
+  // Soft edge vignette — spare right ribbon energy almost entirely.
   const edge =
     Math.max(
-      1 - smoothstep(0, 0.06, nx),
-      (1 - smoothstep(0, 0.05, 1 - nx)) * 0.28,
+      1 - smoothstep(0, 0.05, nx),
+      (1 - smoothstep(0, 0.03, 1 - nx)) * 0.1,
       1 - smoothstep(0, 0.05, ny),
-      1 - smoothstep(0, 0.08, 1 - ny),
-    ) * 0.32;
-  color = mix(color, colors.background, edge);
+      1 - smoothstep(0, 0.07, 1 - ny),
+    ) * 0.2;
+  color = mix(color, FIELD.baseDark, edge);
 
-  // Quantize 8–12 RGB units so bands read as tile-level lightning, not smooth blur.
-  const quant = 10;
+  // Re-apply pure hot cores AFTER darkening so peak_lum reaches ~255 (REF).
+  // Tight focus only (lower primary hotspot) — discrete cores, not a wash field.
+  if (peakHot && peakFocus > 0.55) {
+    // Hard pure hotColor at core (cream / amber peaks).
+    color = { r: peakHot.r, g: peakHot.g, b: peakHot.b };
+  } else if (peakHot && peakFocus > 0.2) {
+    const coreMix = Math.min(1, (peakFocus - 0.2) * 2.4);
+    color = mix(color, peakHot, coreMix);
+  }
+
+  // No quant on near-white cores — preserves peak_lum 255.
+  if (peakHot && peakFocus > 0.55) {
+    return color;
+  }
+  // Fine quant for non-core tiles.
+  const quant = 4;
   return {
     r: Math.round(color.r / quant) * quant,
     g: Math.round(color.g / quant) * quant,
@@ -489,7 +722,8 @@ function paintMosaic(
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, cssWidth, cssHeight);
 
-  ctx.fillStyle = rgbString(colors.background);
+  // Navy field bed (ref), not editorial olive gold background.
+  ctx.fillStyle = rgbString(FIELD.baseDark);
   ctx.fillRect(0, 0, cssWidth, cssHeight);
 
   const grid = resolveGrid(cssWidth, cssHeight);
@@ -498,7 +732,7 @@ function paintMosaic(
   const bands = buildBands(colors, phase);
 
   // Dark seam field under opaque rounded-square cells.
-  ctx.fillStyle = rgbString(mix(colors.background, colors.muted, 0.35));
+  ctx.fillStyle = rgbString(mix(FIELD.baseDark, FIELD.tileQuiet, 0.4));
   ctx.fillRect(originX, originY, columns * cell, rows * cell);
 
   for (let row = 0; row < rows; row++) {
@@ -515,7 +749,7 @@ function paintMosaic(
   }
 
   // Light atmospheric veil only — CSS .mosaic-hero-veil owns copy contrast.
-  // Keep this weak so the tile bed survives under headline/paragraph.
+  // Keep very weak so mid-right ribbon luminance matches the reference (~100+).
   const veil = ctx.createRadialGradient(
     cssWidth * 0.28,
     cssHeight * 0.72,
@@ -524,34 +758,26 @@ function paintMosaic(
     cssHeight * 0.5,
     cssWidth * 0.85,
   );
-  veil.addColorStop(
-    0,
-    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.12)`,
-  );
-  veil.addColorStop(
-    0.5,
-    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.02)`,
-  );
-  veil.addColorStop(
-    1,
-    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.1)`,
-  );
+  veil.addColorStop(0, `rgba(${FIELD.baseDark.r},${FIELD.baseDark.g},${FIELD.baseDark.b},0.04)`);
+  veil.addColorStop(0.4, "rgba(0,0,0,0)");
+  veil.addColorStop(1, `rgba(${FIELD.baseDark.r},${FIELD.baseDark.g},${FIELD.baseDark.b},0.03)`);
   ctx.fillStyle = veil;
   ctx.fillRect(0, 0, cssWidth, cssHeight);
 
+  // Edge vignette — spare the right swirl energy almost entirely.
   const edgeGrad = ctx.createRadialGradient(
-    cssWidth * 0.68,
-    cssHeight * 0.4,
-    cssHeight * 0.18,
+    cssWidth * 0.7,
+    cssHeight * 0.42,
+    cssHeight * 0.22,
     cssWidth * 0.5,
     cssHeight * 0.5,
-    Math.max(cssWidth, cssHeight) * 0.8,
+    Math.max(cssWidth, cssHeight) * 0.82,
   );
   edgeGrad.addColorStop(0, "rgba(0,0,0,0)");
-  edgeGrad.addColorStop(0.78, "rgba(0,0,0,0.04)");
+  edgeGrad.addColorStop(0.82, "rgba(0,0,0,0.02)");
   edgeGrad.addColorStop(
     1,
-    `rgba(${colors.background.r},${colors.background.g},${colors.background.b},0.36)`,
+    `rgba(${FIELD.baseDark.r},${FIELD.baseDark.g},${FIELD.baseDark.b},0.28)`,
   );
   ctx.fillStyle = edgeGrad;
   ctx.fillRect(0, 0, cssWidth, cssHeight);
@@ -561,15 +787,22 @@ function paintMosaic(
 
 /**
  * Dark mosaic hero atmosphere: rounded-square pixel field with curved
- * luminous bands, content-safe negative space, and Kubo theme tokens.
+ * bright yellow + dark yellow/amber bands, content-safe left pocket.
  * Canvas-only artwork — keep interactive content in a sibling layer.
  */
 export default function MosaicHeroCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const colorsRef = useRef<ThemeColors>(readThemeColors());
+  const paintApiRef = useRef<{ paint: (phase?: number) => void } | null>(null);
+  const unmountPainterRef = useRef<(() => void) | null>(null);
 
-  useLayoutEffect(() => {
+  const mountPainter = () => {
+    // Avoid stacking two paint loops when layout + effect both fire.
+    if (unmountPainterRef.current) {
+      unmountPainterRef.current();
+      unmountPainterRef.current = null;
+    }
     const container = containerRef.current;
     const canvas = canvasRef.current;
     if (!container || !canvas) return;
@@ -660,12 +893,15 @@ export default function MosaicHeroCanvas() {
     const safeDraw = (phase: number) => {
       try {
         draw(phase);
-      } catch {
+      } catch (error) {
         // Leave fallback visible; the resize observer or layout rAF may retry.
+        console.error("[mosaic-hero] paint failed", error);
         canvas.dataset.mosaicReady = "false";
         canvas.setAttribute("data-mosaic-ready", "false");
       }
     };
+
+    paintApiRef.current = { paint: (phase = 0) => safeDraw(phase) };
 
     const tick = (now: number) => {
       if (!running) return;
@@ -739,14 +975,36 @@ export default function MosaicHeroCanvas() {
       }
     });
 
-    return () => {
+    const cleanup = () => {
       running = false;
+      paintApiRef.current = null;
       cancelAnimationFrame(raf);
       cancelAnimationFrame(settleRaf);
       motionQuery.removeEventListener("change", onMotionChange);
       resizeObserver.disconnect();
       intersection.disconnect();
       themeObserver.disconnect();
+    };
+    unmountPainterRef.current = cleanup;
+    return cleanup;
+  };
+
+  // useLayoutEffect for first paint; useEffect as Playwright/hydration backup.
+  useLayoutEffect(() => {
+    mountPainter();
+    return () => {
+      unmountPainterRef.current?.();
+      unmountPainterRef.current = null;
+    };
+  }, []);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas?.dataset.mosaicReady === "true") return;
+    // If layout effect missed (rare headless hydration), mount once more.
+    mountPainter();
+    return () => {
+      unmountPainterRef.current?.();
+      unmountPainterRef.current = null;
     };
   }, []);
 

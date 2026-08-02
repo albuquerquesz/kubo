@@ -1,8 +1,8 @@
 "use client";
 
-import { X } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { cn } from "@/lib/utils";
 
@@ -26,12 +26,16 @@ export function MobileNavOverlay({
   onCloseComplete,
 }: MobileNavOverlayProps) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const [mounted, setMounted] = useState(false);
 
   const close = useCallback(() => {
     onOpenChange(false);
     requestAnimationFrame(() => onCloseComplete?.());
   }, [onOpenChange, onCloseComplete]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -67,7 +71,10 @@ export function MobileNavOverlay({
 
     document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
-    closeButtonRef.current?.focus();
+
+    // Focus first nav link (no dedicated close control — dismiss via backdrop / Escape).
+    const firstLink = panelRef.current?.querySelector<HTMLElement>("a[href]");
+    firstLink?.focus();
 
     return () => {
       document.body.style.overflow = bodyOverflow;
@@ -75,9 +82,12 @@ export function MobileNavOverlay({
     };
   }, [open, close]);
 
-  if (!open) return null;
+  if (!mounted || !open) return null;
 
-  return (
+  // Portal to body so we are not trapped in the header's fixed stacking context
+  // (fixed-inside-fixed is unreliable on iOS Safari and can leave the page fully
+  // visible under a "transparent" looking menu).
+  return createPortal(
     <div
       ref={panelRef}
       id="mobile-navigation"
@@ -85,21 +95,12 @@ export function MobileNavOverlay({
       aria-modal="true"
       aria-label="Navegação mobile"
       className={cn(
-        "fixed inset-0 z-50 flex h-dvh w-full items-center justify-center",
+        // Near-opaque so menu stays readable without fully killing the page behind.
+        "fixed inset-0 z-[100] flex h-dvh w-full items-center justify-center bg-black/90",
         "pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]",
       )}
     >
-      <div aria-hidden className="absolute inset-0 bg-black/50" onClick={close} />
-
-      <button
-        ref={closeButtonRef}
-        type="button"
-        onClick={close}
-        className="absolute top-[max(1rem,env(safe-area-inset-top,0px))] right-[max(1rem,env(safe-area-inset-right,0px))] z-10 flex size-11 items-center justify-center text-white/80 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-        aria-label="Fechar"
-      >
-        <X className="size-6" />
-      </button>
+      <div aria-hidden className="absolute inset-0 bg-black/90" onClick={close} />
 
       <nav
         aria-label="Links de navegação mobile"
@@ -132,6 +133,7 @@ export function MobileNavOverlay({
           );
         })}
       </nav>
-    </div>
+    </div>,
+    document.body,
   );
 }

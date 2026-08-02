@@ -23,6 +23,10 @@
       "cache": false,
       "persistent": true
     },
+    "dev:remote": {
+      "cache": false,
+      "persistent": true
+    },
     "deploy": {
       "cache": false
     },

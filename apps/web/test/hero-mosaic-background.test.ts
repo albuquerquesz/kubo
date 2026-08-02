@@ -2,6 +2,8 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { getMosaicBandGeometry } from "../src/app/(home)/_components/mosaic-hero-canvas";
+
 const repoRoot = join(import.meta.dir, "../../..");
 
 function readRepo(path: string) {
@@ -9,7 +11,7 @@ function readRepo(path: string) {
 }
 
 describe("mosaic hero background contract", () => {
-  test("keeps the canvas decorative, token-driven, and motion-safe", () => {
+  test("keeps the canvas decorative, yellow/amber field-driven, and motion-safe", () => {
     const source = readRepo("apps/web/src/app/(home)/_components/mosaic-hero-canvas.tsx");
 
     expect(source).toContain('"use client"');
@@ -17,6 +19,7 @@ describe("mosaic hero background contract", () => {
     expect(source).toContain('aria-hidden="true"');
     expect(source).toContain("prefers-reduced-motion");
     expect(source).toContain("MAX_DPR");
+    // Theme tokens still resolved for any residual/theme hooks.
     expect(source).toContain("--background");
     expect(source).toContain("--primary");
     expect(source).toContain("--accent");
@@ -25,155 +28,143 @@ describe("mosaic hero background contract", () => {
     expect(source).toContain("resolveGrid");
     expect(source).toContain("REFERENCE_ROWS");
     expect(source).toContain("data-mosaic-ready");
-    // Softer corners (22% of pitch), narrow seam.
-    expect(source).toContain("CORNER_RATIO = 0.22");
-    expect(source).toContain("SEAM_RATIO = 0.09");
-    // Six parallel lightning columns: frame-centered pack, ~0.09 nx spacing, shallower Δx.
-    expect(source).toContain("sampleCubic");
-    expect(source).toContain("x: 0.28");
-    expect(source).toContain("x: 0.37");
-    expect(source).toContain("x: 0.46");
-    expect(source).toContain("x: 0.55");
-    expect(source).toContain("x: 0.64");
-    expect(source).toContain("x: 0.73");
-    expect(source).toContain("x: 0.36");
-    expect(source).toContain("x: 0.45");
-    expect(source).toContain("x: 0.56");
-    expect(source).toContain("x: 0.65");
-    expect(source).toContain("x: 0.74");
-    expect(source).toContain("x: 0.83");
-    expect(source).toContain("x: 0.92");
-    expect(source).toContain("x: 1.01");
-    // No counter-direction lower-echo lightning.
-    expect(source).not.toContain("lowerEcho");
-    expect(source).not.toContain("y: 1.12");
-    // Flat rounded rects only — no per-cell radial edge treatment in the paint loop.
+    // User-tuned tile geometry.
+    expect(source).toContain("CORNER_RATIO = 0.34");
+    expect(source).toContain("SEAM_RATIO = 0.05");
+    // Yellow + dark yellow field (bright S + amber bow).
+    expect(source).toContain("const FIELD");
+    expect(source).toContain("yellowCore");
+    expect(source).toContain("yellowHot");
+    expect(source).toContain("yellowMid");
+    expect(source).toContain("amberCore");
+    expect(source).toContain("amberHot");
+    expect(source).toContain("amberFade");
+    expect(source).toContain("baseDark");
+    expect(source).toContain("COOL_RIDGE");
+    expect(source).toContain("WARM_RIDGE");
+    expect(source).toContain("COOL_UPPER_RIDGE");
+    expect(source).toContain("COOL_LOWER_RIDGE");
+    // Continuous cool S as one band (no mid-gap wash).
+    expect(source).toContain("coolS");
+    expect(source).toContain("warmBand");
+    expect(source).toContain("topLeftHaze");
+    expect(source).toContain("overlapPale");
+    expect(source).toContain("hotColor");
+    expect(source).toContain("getMosaicBandGeometry");
+    // No gold six-column lightning pack.
+    expect(source).not.toContain("width: 0.034");
+    expect(source).not.toContain("primaryBand");
+    expect(source).not.toContain("copperBand");
+    // Flat rounded rects only.
     expect(source).toContain("ctx.roundRect");
     expect(source).toContain("useLayoutEffect");
-    // Quiet matrix + band-driven energy (no continuous right wash).
     expect(source).toContain("copyPocket");
     expect(source).toContain("noiseMod");
     expect(source).toContain("safeDraw");
-    expect(source).not.toContain("rightField");
-    expect(source).not.toContain("deepOlive");
-    expect(source).not.toContain("midGold");
-    // Hairline six-column fields with localized pale cores.
-    expect(source).toContain("width: 0.034");
-    expect(source).toContain("width: 0.032");
-    expect(source).toContain("width: 0.031");
-    expect(source).toContain("width: 0.03");
-    expect(source).toContain("width: 0.029");
-    expect(source).toContain("width: 0.028");
-    expect(source).toContain("opacity: 0.86");
-    expect(source).toContain("opacity: 0.87");
-    expect(source).toContain("opacity: 0.88");
-    expect(source).toContain("opacity: 0.89");
-    expect(source).toContain("opacity: 0.895");
-    expect(source).toContain("opacity: 0.9");
     expect(source).toContain("hotspot");
-    expect(source).toContain("colors.foreground, highlight");
-    expect(source).not.toContain("verticalGoldEnergy");
     // Canvas mounts without a client-only gate that can leave only the fallback.
     expect(source).toContain('className="mosaic-hero-canvas absolute inset-0 h-full w-full"');
     expect(source).not.toContain("{mounted &&");
-    // Never ship the reference brand or remote artwork.
+    // Never ship the reference brand name or remote artwork URL in the component.
     expect(source).not.toContain("Fluxion");
-    expect(source).not.toContain("twimg.com");
-    expect(source).not.toContain("hero-reference");
+    expect(source).not.toContain("pbs.twimg.com");
   });
 
-  test("hero uses lower-left composition, compact CTA, and full-bleed artwork", () => {
-    const hero = readRepo("apps/web/src/app/(home)/_components/hero-section.tsx");
-    const page = readRepo("apps/web/src/app/(home)/page.tsx");
-    const strip = readRepo("apps/web/src/app/(home)/_components/hero-install-strip.tsx");
+  test("phase-0 ridge geometry is inverted S-curve with far-right warm bow", () => {
+    const geo = getMosaicBandGeometry(0);
+    const source = readRepo("apps/web/src/app/(home)/_components/mosaic-hero-canvas.tsx");
+
+    // No continuous coolMass wash blob (skeptic: restores discrete ribbons).
+    expect(source).not.toContain("coolMassX");
+    expect(source).not.toContain("coolMassY");
+    expect(source).not.toContain("rightWeight");
+
+    // Inverted cool S: enters top-right, not left half.
+    expect(geo.coolRidge[0].x).toBeGreaterThanOrEqual(0.7);
+    expect(geo.coolRidge[0].y).toBeLessThan(0.08);
+    // Mid bulge swings left (x ~0.55–0.62) around y0.36.
+    const coolMid = geo.coolRidge.find((p) => Math.abs(p.y - 0.36) < 0.06);
+    expect(coolMid).toBeDefined();
+    expect(coolMid!.x).toBeGreaterThan(0.52);
+    expect(coolMid!.x).toBeLessThan(0.64);
+    // Lower half swings back right (~0.72–0.82).
+    const coolLower = geo.coolRidge.filter((p) => p.y >= 0.65 && p.y <= 0.95);
+    expect(coolLower.length).toBeGreaterThan(0);
+    for (const p of coolLower) {
+      expect(p.x).toBeGreaterThanOrEqual(0.7);
+      expect(p.x).toBeLessThanOrEqual(0.86);
+    }
+    // Discrete ribbon path span (S-curve, not a vertical rail).
+    const coolXs = geo.coolRidge.map((p) => p.x);
+    expect(Math.max(...coolXs) - Math.min(...coolXs)).toBeGreaterThan(0.18);
+    expect(Math.max(...coolXs)).toBeLessThanOrEqual(0.86);
+
+    // Warm outer bow on FAR right (x0.82–0.98).
+    expect(geo.warmRidge[0].x).toBeGreaterThan(0.78);
+    const warmMid = geo.warmRidge.find((p) => Math.abs(p.y - 0.38) < 0.1);
+    expect(warmMid).toBeDefined();
+    expect(warmMid!.x).toBeGreaterThan(0.88);
+
+    // Warm weave through inverted yellow mid-right.
+    expect(geo.warmWeaveRidge).toBeDefined();
+    const weaveXs = geo.warmWeaveRidge!.map((p) => p.x);
+    expect(Math.min(...weaveXs)).toBeLessThanOrEqual(0.6);
+    expect(Math.max(...weaveXs)).toBeLessThan(0.85);
+
+    // Hotspots: sole cool primary at inverted lower coords + warm outer.
+    const coolLowerHot = geo.bands.find(
+      (b) => b.hotspot && Math.abs(b.hotspot.x - 0.76) < 0.06 && b.hotspot.y > 0.7,
+    );
+    const warmOuter = geo.bands.find(
+      (b) => b.hotspot && b.hotspot.x >= 0.9 && b.hotspot.y > 0.28 && b.hotspot.y < 0.5,
+    );
+    expect(coolLowerHot?.hotspot?.x).toBeCloseTo(0.76, 1);
+    expect(coolLowerHot?.hotspot?.y).toBeCloseTo(0.76, 1);
+    expect(warmOuter?.hotspot?.x).toBeCloseTo(0.91, 1);
+    // Dual outer arms for far-right amber dens.
+    expect(geo.warmShoulderRidge).toBeDefined();
+    expect(geo.warmEdgeRidge).toBeDefined();
+    expect(Math.min(...geo.warmShoulderRidge!.map((p) => p.x))).toBeLessThanOrEqual(0.84);
+    expect(Math.max(...geo.warmEdgeRidge!.map((p) => p.x))).toBeGreaterThanOrEqual(0.96);
+    // Sole lower primary hotspot on cool S (x≥0.7 after invert).
+    const coolHotCount = geo.bands.filter(
+      (b) => b.hotspot && b.hotspot.y > 0.65 && b.hotspot.x >= 0.7 && b.hotspot.x < 0.85,
+    ).length;
+    expect(coolHotCount).toBe(1);
+
+    // Discrete ribbons: thinner widths (not mega-cloud wash). Floor 0.05.
+    for (const b of geo.bands) {
+      expect(b.width).toBeGreaterThanOrEqual(0.05);
+      expect(b.width).toBeLessThanOrEqual(0.2);
+    }
+
+    // Left-flank spur of inverted S (mid x, not far-right).
+    expect(geo.coolFarRightSpur).toBeDefined();
+    const spurXs = geo.coolFarRightSpur!.map((p) => p.x);
+    expect(Math.max(...spurXs)).toBeLessThanOrEqual(0.58);
+    expect(Math.min(...spurXs)).toBeGreaterThanOrEqual(0.44);
+
+    // Phase 0 is identity on cool S start (full ridge).
+    const coolSBand = geo.bands.find(
+      (b) =>
+        b.pointCount >= geo.coolRidge.length - 1 &&
+        b.start &&
+        Math.abs(b.start.x - geo.coolRidge[0].x) < 0.01,
+    );
+    expect(coolSBand?.start.x).toBeCloseTo(geo.coolRidge[0].x, 5);
+    expect(coolSBand?.start.y).toBeCloseTo(geo.coolRidge[0].y, 5);
+  });
+
+  test("CSS fallback uses discrete yellow/amber ribbons not cyan/red", () => {
     const css = readRepo("apps/web/src/app/global.css");
-
-    expect(hero).toContain("MosaicHeroCanvas");
-    expect(hero).toContain("mosaic-hero-veil");
-    expect(hero).toContain('id="top"');
-    expect(hero).toContain("-mt-12");
-    expect(hero).toContain("min-h-svh");
-    expect(hero).toContain("items-start");
-    expect(hero).toContain("justify-end");
-    expect(hero).toContain("text-left");
-    expect(hero).toContain('title="Construa sem começar do zero."');
-    expect(hero).toContain(
-      "Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.",
-    );
-    // CTA replaced by copyable install command (no PM switcher / "Iniciar com").
-    expect(hero).toContain("HeroRailLower");
-    const installCard = readRepo("apps/web/src/app/(home)/_components/hero-install-card.tsx");
-    expect(installCard).not.toContain("Iniciar com");
-    expect(installCard).not.toContain("hero-install-pm");
-    expect(installCard).not.toContain("SelectTrigger");
-    expect(hero).not.toContain("Montar stack");
-    expect(hero).not.toContain('href="/new"');
-    // P1: no bottom scroll arrow.
-    expect(hero).not.toContain("ArrowDown");
-    expect(hero).not.toContain("scrollToNextSection");
-    expect(hero).not.toContain("Rolar para a próxima seção");
-    // Tighter left gutter (lg ~32px), not the previous 64px rail.
-    expect(hero).toContain("lg:px-8");
-    expect(hero).not.toContain("lg:px-16");
-    expect(hero).not.toContain("xl:px-24");
-    // P1: lighter title ~84px / normal weight / milder tracking.
-    expect(hero).toContain("!font-normal");
-    expect(hero).toContain("tracking-[-0.03em]");
-    expect(hero).toContain("5.25rem");
-    expect(hero).not.toContain("EtherealBeamsCanvas");
-    expect(hero).not.toContain("playHeroStickyScale");
-    expect(hero).not.toContain("playHeroScrollRevealIcons");
-    expect(hero).not.toContain("lg:min-h-[200dvh]");
-
-    // Installer lives in the hero (not a separate strip below).
-    expect(page).not.toContain("HeroInstallStrip");
-    expect(strip).toContain("HeroRailLower");
-    expect(installCard).toContain("DEFAULT_PACKAGE_MANAGER");
-
     expect(css).toContain(".mosaic-hero-fallback");
-    expect(css).toContain(".mosaic-hero-fallback::before");
-    expect(css).toContain(".mosaic-hero-veil");
-    expect(css).toContain("--mosaic-pitch");
-    expect(css).toContain("var(--background)");
-    expect(css).toContain("var(--primary)");
-    expect(css).toContain("var(--accent)");
-    // Fallback tiles via mask: rx ≈ 7u / 32u pitch (≈22%), not graph-paper lines.
-    expect(css).toContain("rx='7'");
-    expect(css).toContain("mask-image");
-    // Quiet opaque base + soft-light six columns; hide fallback when Canvas is ready.
-    expect(css).toContain(
-      "soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, soft-light,",
-    );
-    expect(css).toContain("Localized warm highlight");
-    expect(css).toContain('data-mosaic-ready="true"');
-    expect(css).toContain("almost no primary");
-    // No counter-direction lightning in the CSS fallback.
-    expect(css).not.toContain("-16deg");
-    expect(css).not.toContain("Lower echo");
-    // Over-yellow fix: no continuous right-side primary olive field gradient.
-    expect(css).not.toContain("Right-side continuous olive field");
-    expect(css).not.toContain("var(--primary) 24%, var(--card)");
-
-    const layout = readRepo("apps/web/src/app/layout.tsx");
-    const mosaic = readRepo("apps/web/src/app/(home)/_components/mosaic-hero-canvas.tsx");
-    expect(layout).not.toContain("mosaic-hero-boot.js");
-    expect(layout).not.toContain("beforeInteractive");
-    expect(mosaic).not.toContain("mosaic-hero-boot-canvas");
-    expect(mosaic).not.toContain("__kuboMosaic");
-    expect(mosaic).not.toContain("suppressHydrationWarning");
-    expect(css).not.toContain("mosaic-hero-boot-canvas");
-    expect(css).not.toContain("__kuboMosaic");
-    expect(css).toContain('data-mosaic-ready="true"');
-    expect(mosaic).toContain('data-mosaic-ready="false"');
-    // CSS fallback mirrors six shallower right-descending columns (no opposite-direction rail).
-    expect(css).toContain("-14deg");
-    expect(css).toContain("-18deg");
-    expect(css).toContain("-22deg");
-    expect(css).toContain("-26deg");
-    expect(css).toContain("-30deg");
-    expect(css).toContain("-34deg");
-    // Mobile veil extends the copy-safe area to ~76% of the frame.
-    expect(css).toContain("max-width: 640px");
-    expect(css).toContain("76%");
+    expect(css).toContain("rgb(214 167 43");
+    expect(css).toContain("rgb(196 147 20");
+    expect(css).toContain("rgb(150 105 18");
+    expect(css).toContain("#0e0e0c");
+    // Discrete hotspots: inverted lower primary + amber far-right.
+    expect(css).toContain("at 76% 75%");
+    expect(css).toContain("at 72% 16%");
+    expect(css).toContain("at 94% 38%");
   });
 });

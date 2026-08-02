@@ -438,15 +438,14 @@
 
 /* Mosaic hero atmosphere: CSS fallback under the Canvas tile field.
    Pitch defaults to ~height/37; Canvas overwrites --mosaic-pitch after paint.
-   ::before carries narrow directional bands masked into opaque rounded squares
-   (seam ≈ 9%, rx ≈ 22% of 32u pitch). Seams reveal --background.
-   Quiet near-card base first — energy is ribbon-only, not a continuous gold wall. */
+   ::before: bright yellow + dark yellow/amber ribbons on warm-black bed (masked tiles).
+   Seams reveal dark base. Energy is ribbon-only on the right half. */
 .mosaic-hero-fallback {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background-color: var(--background);
-  --mosaic-fallback-pitch: var(--mosaic-pitch, calc(100svh / 37));
+  background-color: #0e0e0c;
+  --mosaic-fallback-pitch: var(--mosaic-pitch, calc(100svh / 32));
 }
 
 .mosaic-hero-fallback::before {
@@ -454,99 +453,70 @@
   inset: 0;
   pointer-events: none;
   content: "";
-  /* Quiet tile bed — almost no primary; dark matrix is the default */
-  background-color: color-mix(in srgb, var(--card) 38%, var(--background));
+  /* Discrete inverted yellow S + far-right amber bow (thinner ribbons) */
+  background-color: #16140f;
   background-image:
-    /* Localized warm highlight — sparse pale tiles, not a continuous white rail. */
+    /* Mid-swirl inverted yellow (~.58 mid bulge) */
     radial-gradient(
-      ellipse 10% 14% at 54% 55%,
-      color-mix(in srgb, var(--foreground) 34%, var(--accent)) 0%,
-      color-mix(in srgb, var(--accent) 34%, transparent) 38%,
+      ellipse 11% 15% at 58% 40%,
+      rgb(255 245 200 / 0.9) 0%,
+      rgb(214 167 43 / 0.65) 28%,
+      rgb(160 115 18 / 0.38) 52%,
       transparent 74%
     ),
-    /* Warm outer column — rightmost of six frame-centered hairline rails. */
-    linear-gradient(
-        -14deg,
-        transparent 0%,
-        transparent 32%,
-        color-mix(in srgb, var(--accent) 16%, transparent) 40%,
-        color-mix(in srgb, var(--accent) 36%, var(--primary)) 46%,
-        color-mix(in srgb, var(--primary) 14%, transparent) 52%,
-        transparent 62%
-      ),
-    /* Copper column — between gold and warm. */
-    linear-gradient(
-        -18deg,
-        transparent 0%,
-        transparent 28%,
-        color-mix(in srgb, var(--accent) 18%, var(--primary)) 36%,
-        color-mix(in srgb, var(--primary) 30%, var(--accent)) 42%,
-        color-mix(in srgb, var(--primary) 12%, transparent) 48%,
-        transparent 60%
-      ),
-    /* Gold column. */
-    linear-gradient(
-        -22deg,
-        transparent 0%,
-        transparent 24%,
-        color-mix(in srgb, var(--accent) 18%, var(--primary)) 32%,
-        color-mix(in srgb, var(--primary) 30%, var(--accent)) 38%,
-        color-mix(in srgb, var(--primary) 12%, transparent) 44%,
-        transparent 58%
-      ),
-    /* Amber column — mid pack. */
-    linear-gradient(
-        -26deg,
-        transparent 0%,
-        transparent 20%,
-        color-mix(in srgb, var(--accent) 18%, var(--primary)) 28%,
-        color-mix(in srgb, var(--primary) 30%, var(--accent)) 34%,
-        color-mix(in srgb, var(--primary) 12%, transparent) 40%,
-        transparent 56%
-      ),
-    /* Mid column — fills the gap between primary and amber. */
-    linear-gradient(
-        -30deg,
-        transparent 0%,
-        transparent 16%,
-        color-mix(in srgb, var(--primary) 20%, var(--accent)) 24%,
-        color-mix(in srgb, var(--accent) 28%, var(--primary)) 30%,
-        color-mix(in srgb, var(--primary) 12%, transparent) 36%,
-        transparent 52%
-      ),
-    /* Primary left column — bronze body, frame-centered pack. */
-    linear-gradient(
-        -34deg,
-        transparent 0%,
-        transparent 12%,
-        color-mix(in srgb, var(--primary) 24%, var(--background)) 20%,
-        color-mix(in srgb, var(--primary) 32%, var(--accent)) 26%,
-        color-mix(in srgb, var(--primary) 12%, transparent) 32%,
-        transparent 48%
-      ),
-    /* Top-left haze — visible non-focal warm cloud, almost no primary.
-       No counter-direction lightning band. */
+    /* Yellow upper ribbon entry (top-right of inverted S) */
     radial-gradient(
-        ellipse 36% 30% at 9% 5%,
-        color-mix(in srgb, var(--muted-foreground) 14%, transparent) 0%,
-        color-mix(in srgb, var(--muted) 22%, transparent) 38%,
-        transparent 70%
+        ellipse 11% 13% at 72% 16%,
+        rgb(160 115 18 / 0.5) 0%,
+        rgb(90 65 12 / 0.26) 50%,
+        transparent 74%
       ),
-    /* Quiet base field — non-directional bed (no opposite-diagonal wash) */
-    linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--muted) 18%, var(--background)) 0%,
-        color-mix(in srgb, var(--card) 36%, var(--background)) 50%,
-        color-mix(in srgb, var(--muted) 14%, var(--background)) 100%
-      );
-  /* Soft-light six columns + haze over a quiet opaque bed */
+    /* Yellow mid leftward bulge */
+    radial-gradient(
+        ellipse 10% 12% at 58% 40%,
+        rgb(214 167 43 / 0.45) 0%,
+        rgb(160 115 18 / 0.2) 52%,
+        transparent 76%
+      ),
+    /* Thin yellow left-flank spur */
+    radial-gradient(ellipse 6% 8% at 50% 42%, rgb(214 167 43 / 0.32) 0%, transparent 70%),
+    /* PRIMARY lower S cream-hot (~.76,.75) */
+    radial-gradient(
+        ellipse 13% 16% at 76% 75%,
+        rgb(255 245 200 / 0.98) 0%,
+        rgb(214 167 43 / 0.72) 32%,
+        rgb(160 115 18 / 0.4) 55%,
+        transparent 76%
+      ),
+    /* Dark yellow/amber hot core — FAR RIGHT */
+    radial-gradient(
+        ellipse 11% 15% at 94% 38%,
+        rgb(196 147 20 / 0.95) 0%,
+        rgb(150 105 18 / 0.65) 32%,
+        rgb(70 48 10 / 0.38) 58%,
+        transparent 76%
+      ),
+    /* Amber outer bow far-right */
+    radial-gradient(
+        ellipse 11% 18% at 96% 52%,
+        rgb(150 105 18 / 0.7) 0%,
+        rgb(180 130 30 / 0.35) 48%,
+        transparent 76%
+      ),
+    /* Amber weave mid-right (thin dark yellow through bright yellow) */
+    radial-gradient(ellipse 7% 10% at 66% 55%, rgb(150 105 18 / 0.38) 0%, transparent 70%),
+    /* Amber lower echo */
+    radial-gradient(ellipse 11% 10% at 78% 92%, rgb(90 65 12 / 0.42) 0%, transparent 72%),
+    /* Top-left warm yellow haze (weak) */
+    radial-gradient(ellipse 24% 22% at 8% 6%, rgb(55 40 18 / 0.45) 0%, transparent 70%),
+    /* Quiet warm-black base field */ linear-gradient(180deg, #12110c 0%, #16140f 50%, #100f0c 100%);
   background-blend-mode:
-    soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, soft-light, soft-light,
-    normal;
+    screen, soft-light, soft-light, soft-light, screen, soft-light, soft-light, soft-light,
+    soft-light, normal;
   /* White rounded rect = visible tile; transparent seam = dark base
-     pitch 32u, fill 29.2u (seam ~8.75%), rx 7u (~22% of pitch) */
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='1.4' y='1.4' width='29.2' height='29.2' rx='7' fill='white'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='1.4' y='1.4' width='29.2' height='29.2' rx='7' fill='white'/%3E%3C/svg%3E");
+     pitch 32u, fill 30.4u (seam ~5%), rx ~11u (~34% of pitch) */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='0.8' y='0.8' width='30.4' height='30.4' rx='11' fill='white'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='0.8' y='0.8' width='30.4' height='30.4' rx='11' fill='white'/%3E%3C/svg%3E");
   -webkit-mask-size: var(--mosaic-fallback-pitch) var(--mosaic-fallback-pitch);
   mask-size: var(--mosaic-fallback-pitch) var(--mosaic-fallback-pitch);
   -webkit-mask-repeat: repeat;
@@ -561,25 +531,16 @@
   pointer-events: none;
   content: "";
   background:
-    /* Lower-left copy pocket — charcoal, faint tile bed may remain */
+    /* Lower-left copy pocket — navy, faint tile bed may remain */
     radial-gradient(
       ellipse 54% 56% at 22% 74%,
-      color-mix(in srgb, var(--background) 52%, transparent) 0%,
-      color-mix(in srgb, var(--background) 18%, transparent) 52%,
+      rgb(14 14 18 / 0.55) 0%,
+      rgb(14 14 18 / 0.18) 52%,
       transparent 76%
     ),
-    linear-gradient(
-      to right,
-      color-mix(in srgb, var(--background) 78%, transparent) 0%,
-      color-mix(in srgb, var(--background) 34%, transparent) 28%,
-      transparent 48%
-    ),
+    linear-gradient(to right, rgb(14 14 18 / 0.82) 0%, rgb(14 14 18 / 0.36) 28%, transparent 48%),
     /* Soft edge vignette — right energy mostly uncrushed */
-    radial-gradient(
-        ellipse 80% 74% at 62% 42%,
-        transparent 50%,
-        color-mix(in srgb, var(--background) 36%, transparent) 100%
-      );
+    radial-gradient(ellipse 80% 74% at 62% 42%, transparent 50%, rgb(14 14 18 / 0.38) 100%);
 }
 
 .mosaic-hero-canvas {

@@ -31,27 +31,13 @@ const exploreGroups = [
   },
 ] as const;
 
+/** Mobile overlay only — keep this list explicit (no exploreGroups dump). */
 function buildMobileNavLinks(): MobileNavLink[] {
-  const seen = new Set<string>();
-  const links: MobileNavLink[] = [];
-
-  const push = (href: string, label: string) => {
-    if (seen.has(href)) return;
-    seen.add(href);
-    links.push({ href, label });
-  };
-
-  for (const link of primaryLinks) {
-    push(link.href, link.label);
-  }
-  // Site pages only — socials stay in the header utility row, not the overlay.
-  for (const link of exploreGroups.find((group) => group.label === "Entenda")?.links ?? []) {
-    push(link.href, link.label);
-  }
-  push("/sponsors", "Patrocinadores");
-  push("/new", "Monte sua stack");
-
-  return links;
+  return [
+    { href: "/docs", label: "Docs" },
+    { href: "/analytics", label: "Análise de uso" },
+    { href: "/new", label: "Monte sua stack" },
+  ];
 }
 
 const mobileNavLinks = buildMobileNavLinks();
