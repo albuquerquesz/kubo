@@ -27,6 +27,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --filter=web",
+    "dev:remote": "turbo run dev:remote --filter=web",
     "dev:convex": "cd packages/backend && bun run dev",
     "cli": "bun run build:cli && ./apps/cli/dist/cli.mjs",
     "smoke:publish": "bun run scripts/publish-smoke.ts",
