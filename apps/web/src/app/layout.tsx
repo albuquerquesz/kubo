@@ -138,14 +138,14 @@ export default function Layout({ children }: { children: ReactNode }) {
               chooseLanguage: "Escolher idioma",
               nextPage: "Próxima página",
               previousPage: "Página anterior",
-              chooseTheme: "Tema",
               editOnGithub: "Editar no GitHub",
             },
           }}
+          // Site is forced dark via <html className="dark">. Disabling next-themes
+          // avoids its client-side <script> injection, which React 19 warns about
+          // ("Encountered a script tag while rendering React component").
           theme={{
-            enableSystem: false,
-            defaultTheme: "dark",
-            forcedTheme: "dark",
+            enabled: false,
           }}
         >
           <Providers>{children}</Providers>

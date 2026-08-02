@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -21,8 +20,6 @@ type FeatureCardProps = {
 };
 
 function TechIcon({ icon, name, className }: { icon: string; name: string; className?: string }) {
-  const { theme } = useTheme();
-
   if (!icon) return null;
 
   if (!icon.startsWith("https://")) {
@@ -33,21 +30,10 @@ function TechIcon({ icon, name, className }: { icon: string; name: string; class
     );
   }
 
-  let iconSrc = icon;
-  if (
-    theme === "light" &&
-    (icon.includes("drizzle") ||
-      icon.includes("prisma") ||
-      icon.includes("express") ||
-      icon.includes("astro") ||
-      icon.includes("vercel"))
-  ) {
-    iconSrc = icon.replace(".svg", "-light.svg");
-  }
-
+  // Site is dark-only; always use the default (dark) icon asset.
   return (
     <Image
-      src={iconSrc}
+      src={icon}
       alt={`Ícone de ${name}`}
       width={24}
       height={24}
