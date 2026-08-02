@@ -6,7 +6,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "@/lib/create-commands";
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
-import { playSplitTextReveal } from "@/lib/motion/timelines/split-text-reveal";
+import { playHeroContentIntro } from "@/lib/motion/timelines/hero-content-intro";
 import { useGsapContext } from "@/lib/motion/use-gsap-context";
 import { cn } from "@/lib/utils";
 
@@ -57,14 +57,17 @@ export type CTASectionProps = {
 
 /**
  * Full-viewport marketing hero with Paper Design dithering atmosphere.
- * Title uses WhatsLeads-style word blur-in (GSAP SplitText). Primary action is a copyable create command.
+ * Content stack enters together (badge → title blur-in → body → CTA). Primary action copies the create command.
  */
 export function CTASection({ className }: CTASectionProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [copied, setCopied] = useState(false);
   const resetTimerRef = useRef<number | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const bodyRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLButtonElement>(null);
   const primary = useThemePrimary();
   const reducedMotion = usePrefersReducedMotion();
   const command = getCreateCommand(DEFAULT_PACKAGE_MANAGER);
@@ -73,21 +76,14 @@ export function CTASection({ className }: CTASectionProps) {
 
   useGsapContext(
     () => {
+      const root = contentRef.current;
+      const badge = badgeRef.current;
       const title = titleRef.current;
-      if (!title) return;
+      const body = bodyRef.current;
+      const cta = ctaRef.current;
+      if (!root || !badge || !title || !body || !cta) return;
 
-      // Keep final state visible for reduced motion (no permanent opacity-0).
-      if (prefersReducedMotion()) {
-        title.classList.remove("opacity-0");
-        return;
-      }
-
-      return playSplitTextReveal({
-        root: title,
-        preset: "blur-in",
-        trigger: "view",
-        revertOnComplete: false,
-      });
+      return playHeroContentIntro({ root, badge, title, body, cta });
     },
     { scope: contentRef, dependencies: [HERO_TITLE] },
   );
@@ -149,9 +145,14 @@ export function CTASection({ className }: CTASectionProps) {
 
       <div
         ref={contentRef}
+        data-hero-pending=""
         className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center"
       >
-        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
+        <div
+          ref={badgeRef}
+          data-hero-enter=""
+          className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm"
+        >
           <span className="relative flex h-2 w-2">
             {!reducedMotion ? (
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
@@ -163,11 +164,10 @@ export function CTASection({ className }: CTASectionProps) {
 
         <h1
           ref={titleRef}
+          data-hero-enter=""
           className={cn(
             "ui-display mb-8 max-w-[16ch] text-5xl font-medium leading-[1.05] tracking-tight text-foreground",
             "md:text-7xl lg:text-8xl",
-            // Hide until SplitText arms words (CSS also respects reduced-motion).
-            !reducedMotion && "opacity-0",
           )}
         >
           Construa sem
@@ -175,12 +175,18 @@ export function CTASection({ className }: CTASectionProps) {
           <span className="text-foreground/80">começar do zero.</span>
         </h1>
 
-        <p className="mb-12 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+        <p
+          ref={bodyRef}
+          data-hero-enter=""
+          className="mb-12 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl"
+        >
           Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.
           Limpo, preciso e do seu jeito.
         </p>
 
         <button
+          ref={ctaRef}
+          data-hero-enter=""
           type="button"
           onClick={copyCommand}
           className={cn(buttonVariants({ variant: "cta", size: "xl" }), "relative")}

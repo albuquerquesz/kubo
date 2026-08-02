@@ -19,6 +19,11 @@ export type {
   SplitTextRevealPreset,
   SplitTextRevealTrigger,
 } from "./timelines/split-text-reveal";
+export { playHeroContentIntro } from "./timelines/hero-content-intro";
+export type {
+  HeroContentIntroOptions,
+  HeroContentIntroHandle,
+} from "./timelines/hero-content-intro";
 export {
   playHeroStickyScale,
   heroIconScrollRange,
