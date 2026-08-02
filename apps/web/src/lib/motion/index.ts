@@ -1,6 +1,7 @@
 export { gsap, ScrollTrigger, SplitText } from "./gsap-client";
 export { ease, duration, stagger } from "./eases";
 export { prefersReducedMotion, onReducedMotionChange } from "./reduced-motion";
+export { fireCtaConfetti } from "./cta-confetti";
 export { occupancyShares, paintedSizeAtScale, areaGrowthRatio } from "./occupancy";
 export type { RectSize, OccupancyShares } from "./occupancy";
 export { useGsapContext } from "./use-gsap-context";
@@ -19,7 +20,11 @@ export type {
   SplitTextRevealPreset,
   SplitTextRevealTrigger,
 } from "./timelines/split-text-reveal";
-export { playHeroContentIntro, msSinceNavigationStart } from "./timelines/hero-content-intro";
+export {
+  playHeroContentIntro,
+  msSinceNavigationStart,
+  waitForHeroIntroGate,
+} from "./timelines/hero-content-intro";
 export type {
   HeroContentIntroOptions,
   HeroContentIntroHandle,

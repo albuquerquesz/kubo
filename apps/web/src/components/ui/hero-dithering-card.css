@@ -1,6 +1,6 @@
 /*
- * Paint-first hero styles (imported by the component so Turbopack always ships them).
- * CSS atmosphere underlay + content cascade from first paint; GSAP may claim via .hero-enter-js.
+ * Hero gate-and-orchestrate styles.
+ * CSS atmosphere paints from frame 0; content stays hidden until data-hero-intro advances.
  */
 
 .hero-dither-fallback {
@@ -11,117 +11,87 @@
   background-color: transparent;
   background-image:
     radial-gradient(
-      ellipse 85% 65% at 50% 42%,
-      color-mix(in srgb, var(--primary) 42%, transparent),
+      ellipse 90% 70% at 50% 42%,
+      color-mix(in srgb, var(--primary) 48%, transparent),
       transparent 72%
     ),
     radial-gradient(
-      ellipse 50% 40% at 70% 60%,
-      color-mix(in srgb, var(--primary) 18%, transparent),
+      ellipse 55% 45% at 72% 62%,
+      color-mix(in srgb, var(--primary) 22%, transparent),
       transparent 65%
     ),
     radial-gradient(
+      ellipse 40% 35% at 28% 58%,
+      color-mix(in srgb, var(--primary) 14%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
       circle,
-      color-mix(in srgb, var(--primary) 50%, transparent) 0 0.55px,
+      color-mix(in srgb, var(--primary) 55%, transparent) 0 0.55px,
       transparent 0.75px
     );
   background-size:
+    100% 100%,
     100% 100%,
     100% 100%,
     3.5px 3.5px;
   background-position:
     0 0,
     0 0,
+    0 0,
     0 0;
-  opacity: 0.5;
+  /* Stronger from first paint so refresh never feels like a black void. */
+  opacity: 0.72;
   mix-blend-mode: multiply;
 }
 
 .dark .hero-dither-fallback {
-  opacity: 0.4;
+  opacity: 0.55;
   mix-blend-mode: screen;
 }
 
 .hero-dither-stage[data-shader-ready="true"] .hero-dither-fallback {
-  opacity: 0.12;
-  transition: opacity 0.45s ease-out;
+  opacity: 0.14;
+  transition: opacity 0.55s ease-out;
 }
 
 .dark .hero-dither-stage[data-shader-ready="true"] .hero-dither-fallback {
-  opacity: 0.1;
+  opacity: 0.12;
 }
 
 .hero-dither-shader {
   opacity: 0;
-  transition: opacity 0.45s ease-out;
+  transition: opacity 0.55s ease-out;
 }
 
 .hero-dither-stage[data-shader-ready="true"] .hero-dither-shader {
   opacity: 1;
 }
 
-@keyframes hero-enter-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Content gate: hidden until GSAP opens the intro (or reduced-motion path). */
+.hero-content[data-hero-intro="pending"] > * {
+  opacity: 0;
+  visibility: hidden;
 }
 
-@keyframes hero-enter-blur {
-  from {
-    opacity: 0;
-    filter: blur(10px);
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-    transform: translateY(0);
-  }
+.hero-content[data-hero-intro="playing"] > *,
+.hero-content[data-hero-intro="done"] > * {
+  visibility: visible;
 }
 
-.hero-enter {
-  animation-duration: 0.55s;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  animation-fill-mode: both;
-  animation-name: hero-enter-up;
-}
-
-.hero-enter-badge {
-  animation-delay: 0ms;
-  animation-duration: 0.45s;
-}
-
-.hero-enter-title {
-  animation-name: hero-enter-blur;
-  animation-delay: 100ms;
-  animation-duration: 0.8s;
-}
-
-.hero-enter-body {
-  animation-delay: 400ms;
-  animation-duration: 0.55s;
-}
-
-.hero-enter-cta {
-  animation-delay: 550ms;
-  animation-duration: 0.55s;
-}
-
-.hero-enter-js {
-  animation: none !important;
+/* Word wrappers from SplitText — keep inline for natural wrap. */
+.hero-content .word {
+  display: inline-block;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-enter {
-    animation: none !important;
-    opacity: 1;
-    filter: none;
-    transform: none;
+  .hero-content[data-hero-intro="pending"] > *,
+  .hero-content[data-hero-intro="playing"] > *,
+  .hero-content[data-hero-intro="done"] > * {
+    opacity: 1 !important;
+    visibility: visible !important;
+    filter: none !important;
+    transform: none !important;
   }
 
   .hero-dither-shader {
