@@ -3,15 +3,19 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "prebuild": "(cd ../../packages/types && bun run build) && (cd ../../packages/template-generator && bun run build)",
+    "ensure-deps": "(cd ../../packages/types && bun run build) && (cd ../../packages/template-generator && bun run build)",
+    "prebuild": "bun run ensure-deps",
     "build": "next build",
+    "predev": "bun run ensure-deps",
     "dev": "bun scripts/dev-remote.mjs",
+    "predev:local": "bun run ensure-deps",
     "dev:local": "next dev --hostname 0.0.0.0 --port 3333",
+    "predev:remote": "bun run ensure-deps",
     "dev:remote": "bun scripts/dev-remote.mjs",
     "dev:remote-watch": "bun scripts/remote-reload-watch.mjs",
     "start": "next start",
     "postinstall": "fumadocs-mdx",
-    "generate-schema": "(cd ../../packages/types && bun run build) && bun scripts/generate-schema.ts"
+    "generate-schema": "bun run ensure-deps && bun scripts/generate-schema.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
