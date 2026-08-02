@@ -6,9 +6,12 @@ import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "@/lib/create-commands";
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
+import { playSplitTextReveal } from "@/lib/motion/timelines/split-text-reveal";
+import { useGsapContext } from "@/lib/motion/use-gsap-context";
 import { cn } from "@/lib/utils";
 
 const PRIMARY_FALLBACK = "#c49314";
+const HERO_TITLE = "Construa sem começar do zero.";
 
 const Dithering = lazy(() =>
   import("@paper-design/shaders-react").then((mod) => ({ default: mod.Dithering })),
@@ -54,17 +57,40 @@ export type CTASectionProps = {
 
 /**
  * Full-viewport marketing hero with Paper Design dithering atmosphere.
- * Primary action is a copyable create-command pill (same hover motion as the old CTA).
+ * Title uses WhatsLeads-style word blur-in (GSAP SplitText). Primary action is a copyable create command.
  */
 export function CTASection({ className }: CTASectionProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [copied, setCopied] = useState(false);
   const resetTimerRef = useRef<number | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const primary = useThemePrimary();
   const reducedMotion = usePrefersReducedMotion();
   const command = getCreateCommand(DEFAULT_PACKAGE_MANAGER);
 
   const shaderSpeed = reducedMotion ? 0 : isHovered ? 0.6 : 0.2;
+
+  useGsapContext(
+    () => {
+      const title = titleRef.current;
+      if (!title) return;
+
+      // Keep final state visible for reduced motion (no permanent opacity-0).
+      if (prefersReducedMotion()) {
+        title.classList.remove("opacity-0");
+        return;
+      }
+
+      return playSplitTextReveal({
+        root: title,
+        preset: "blur-in",
+        trigger: "view",
+        revertOnComplete: false,
+      });
+    },
+    { scope: contentRef, dependencies: [HERO_TITLE] },
+  );
 
   useEffect(() => {
     return () => {
@@ -121,7 +147,10 @@ export function CTASection({ className }: CTASectionProps) {
         </div>
       </Suspense>
 
-      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center">
+      <div
+        ref={contentRef}
+        className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center"
+      >
         <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
           <span className="relative flex h-2 w-2">
             {!reducedMotion ? (
@@ -133,9 +162,12 @@ export function CTASection({ className }: CTASectionProps) {
         </div>
 
         <h1
+          ref={titleRef}
           className={cn(
             "ui-display mb-8 max-w-[16ch] text-5xl font-medium leading-[1.05] tracking-tight text-foreground",
             "md:text-7xl lg:text-8xl",
+            // Hide until SplitText arms words (CSS also respects reduced-motion).
+            !reducedMotion && "opacity-0",
           )}
         >
           Construa sem

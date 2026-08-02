@@ -33,7 +33,10 @@ export type SplitTextRevealOptions = {
   trigger?: SplitTextRevealTrigger;
   /** Multiplier for char/word stagger. Default 1. */
   randomness?: number;
-  /** Revert SplitText DOM after play-once completes. Default true for view/manual. */
+  /**
+   * Revert SplitText DOM after play-once completes.
+   * Default: false for `blur-in` / `word-rise` (avoids layout jump), true for `mask-rise` and scroll.
+   */
   revertOnComplete?: boolean;
   /** ScrollTrigger vars merged when trigger is "scroll". */
   scrollTrigger?: ScrollTrigger.Vars;
@@ -79,10 +82,14 @@ export function createSplitTextReveal(options: SplitTextRevealOptions): SplitTex
     preset = "blur-in",
     trigger = "view",
     randomness = 1,
-    revertOnComplete = trigger !== "scroll",
     scrollTrigger,
     onComplete,
   } = options;
+
+  const revertOnComplete =
+    options.revertOnComplete ??
+    // Word reveals keep split wrappers (no layout jump). Mask-rise reverts to clean HTML.
+    (preset === "mask-rise" && trigger !== "scroll");
 
   let split: SplitText | null = null;
   let timeline: gsap.core.Timeline | null = null;
@@ -153,20 +160,25 @@ export function createSplitTextReveal(options: SplitTextRevealOptions): SplitTex
       );
     }
   } else if (preset === "blur-in") {
+    // WhatsLeads / Framer word appear: blur(10px) + y:10 + fade, staggered per word.
     const words = split.words as HTMLElement[];
     gsap.set(words, {
       opacity: 0,
-      filter: "blur(8px)",
-      y: 12,
+      filter: "blur(10px)",
+      y: 10,
       display: "inline-block",
+      willChange: "transform, opacity, filter",
     });
     timeline.to(words, {
       opacity: 1,
       filter: "blur(0px)",
       y: 0,
-      duration: 0.7,
-      ease: ease.exit,
-      stagger: 0.06 * randomness,
+      duration: duration.blurIn,
+      ease: ease.expoOut,
+      stagger: stagger.word * randomness,
+      onComplete: () => {
+        gsap.set(words, { clearProps: "willChange,filter" });
+      },
     });
   } else {
     // word-rise
