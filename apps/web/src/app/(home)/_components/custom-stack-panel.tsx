@@ -64,19 +64,16 @@ export default function CustomStackPanel({
         className,
       )}
     >
-      <div className="border-rule border-b px-4 py-6 sm:px-6 sm:py-7 lg:min-h-[6.5rem] lg:px-6 lg:py-6">
+      <div className="border-rule flex flex-col gap-4 border-b px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-7 lg:min-h-[6.5rem] lg:px-6 lg:py-6">
         <h2 id={titleId} className="ui-display text-[clamp(1.75rem,3.5vw,2.75rem)] leading-[0.95]">
           {content.title}
         </h2>
-      </div>
-
-      <div className="border-rule border-b px-4 py-6 sm:px-6 lg:px-6 lg:py-6">
-        <p className="text-lg leading-snug text-muted-foreground lg:text-xl">
-          {content.description}
-        </p>
         <Link
           href={content.href}
-          className={cn(buttonVariants({ variant: "cta", size: "xl" }), "mt-5")}
+          className={cn(
+            buttonVariants({ variant: "cta", size: "xl" }),
+            "shrink-0 self-start sm:self-center",
+          )}
         >
           {content.cta}
           <ArrowUpRight
@@ -85,6 +82,12 @@ export default function CustomStackPanel({
             className="size-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
           />
         </Link>
+      </div>
+
+      <div className="border-rule border-b px-4 py-6 sm:px-6 lg:px-6 lg:py-6">
+        <p className="text-lg leading-snug text-muted-foreground lg:text-xl">
+          {content.description}
+        </p>
       </div>
 
       <div className="min-w-0 px-4 py-6 sm:px-6 lg:px-6 lg:py-6">
