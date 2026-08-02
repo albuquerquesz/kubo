@@ -1,11 +1,11 @@
 "use client";
 
 /**
- * Hero content entrance — progressive enhancement over CSS first-paint cascade.
+ * Hero content entrance — gate-and-orchestrate (WhatsLeads parity).
  *
- * CSS (`.hero-enter*`) always runs from first paint so refresh never shows a
- * static full stack waiting on hydration. GSAP word blur-in only arms when
- * the page is still "early"; otherwise we leave CSS alone and never re-hide.
+ * Content stays CSS-hidden until the host opens the gate. GSAP always runs
+ * word-by-word blur-in on title AND description (no late-skip that leaves
+ * static full text). Refresh and first visit share the same path.
  */
 import { duration, ease, stagger } from "@/lib/motion/eases";
 import { gsap, SplitText } from "@/lib/motion/gsap-client";
@@ -17,18 +17,158 @@ export type HeroContentIntroOptions = {
   title: HTMLElement;
   body: HTMLElement;
   cta: HTMLElement;
-  /**
-   * Max ms since navigation start to still take over with GSAP.
-   * Past this, CSS cascade owns the intro. Default 200.
-   */
-  deadlineMs?: number;
 };
 
 export type HeroContentIntroHandle = {
   kill: () => void;
 };
 
-const JS_OWN_CLASS = "hero-enter-js";
+const WORD_FROM = {
+  opacity: 0,
+  filter: "blur(10px)",
+  y: 10,
+  display: "inline-block",
+  willChange: "transform, opacity, filter",
+} as const;
+
+function setIntroState(root: HTMLElement, state: "pending" | "playing" | "done") {
+  root.dataset.heroIntro = state;
+}
+
+function releaseToFinal(root: HTMLElement, els: HTMLElement[]) {
+  setIntroState(root, "done");
+  for (const el of els) {
+    gsap.set(el, { clearProps: "opacity,filter,transform,visibility" });
+    el.style.opacity = "";
+    el.style.filter = "";
+    el.style.transform = "";
+    el.style.visibility = "";
+  }
+}
+
+function delay(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve) => {
+    if (signal?.aborted) {
+      resolve();
+      return;
+    }
+    const id = window.setTimeout(resolve, ms);
+    signal?.addEventListener(
+      "abort",
+      () => {
+        window.clearTimeout(id);
+        resolve();
+      },
+      { once: true },
+    );
+  });
+}
+
+/**
+ * Play coordinated hero entrance: badge → title words → body words → CTA.
+ * Caller is responsible for waiting on the readiness gate before invoking.
+ * Returns cleanup for useGsapContext.
+ */
+export function playHeroContentIntro(options: HeroContentIntroOptions): () => void {
+  const { root, badge, title, body, cta } = options;
+  const stack = [badge, title, body, cta];
+
+  let titleSplit: SplitText | null = null;
+  let bodySplit: SplitText | null = null;
+  let timeline: gsap.core.Timeline | null = null;
+
+  const kill = () => {
+    timeline?.kill();
+    timeline = null;
+    if (titleSplit) {
+      titleSplit.revert();
+      titleSplit = null;
+    }
+    if (bodySplit) {
+      bodySplit.revert();
+      bodySplit = null;
+    }
+  };
+
+  if (prefersReducedMotion()) {
+    releaseToFinal(root, stack);
+    return kill;
+  }
+
+  try {
+    // Split while CSS still keeps the stack visually hidden (pending).
+    titleSplit = SplitText.create(title, {
+      type: "words",
+      wordsClass: "word",
+      aria: "none",
+    });
+    bodySplit = SplitText.create(body, {
+      type: "words",
+      wordsClass: "word",
+      aria: "none",
+    });
+
+    const titleWords = (titleSplit.words as HTMLElement[]) ?? [];
+    const bodyWords = (bodySplit.words as HTMLElement[]) ?? [];
+
+    // Inline pre-state BEFORE flipping data-hero-intro (avoids opacity:1 flash).
+    gsap.set(badge, { opacity: 0, y: 8, visibility: "visible" });
+    gsap.set(cta, { opacity: 0, y: 12, scale: 0.98, visibility: "visible" });
+    gsap.set(titleWords, WORD_FROM);
+    gsap.set(bodyWords, WORD_FROM);
+    // Containers visible; words drive the reveal.
+    gsap.set([title, body], { opacity: 1, visibility: "visible", clearProps: "filter" });
+
+    setIntroState(root, "playing");
+
+    timeline = gsap.timeline({
+      onComplete: () => {
+        gsap.set([...titleWords, ...bodyWords], { clearProps: "willChange,filter" });
+        gsap.set([badge, cta], { clearProps: "transform" });
+        setIntroState(root, "done");
+      },
+    });
+
+    timeline.to(badge, { opacity: 1, y: 0, duration: 0.5, ease: ease.expoOut }, 0);
+
+    if (titleWords.length > 0) {
+      timeline.to(
+        titleWords,
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+          y: 0,
+          duration: duration.blurIn,
+          ease: ease.expoOut,
+          stagger: stagger.word,
+        },
+        0.1,
+      );
+    }
+
+    if (bodyWords.length > 0) {
+      timeline.to(
+        bodyWords,
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+          y: 0,
+          duration: duration.blurIn,
+          ease: ease.expoOut,
+          stagger: stagger.word,
+        },
+        0.42,
+      );
+    }
+
+    timeline.to(cta, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: ease.expoOut }, 0.72);
+  } catch {
+    kill();
+    releaseToFinal(root, stack);
+  }
+
+  return kill;
+}
 
 /** Elapsed ms since navigation start (or performance.now() fallback). */
 export function msSinceNavigationStart(): number {
@@ -42,105 +182,73 @@ export function msSinceNavigationStart(): number {
   return performance.now();
 }
 
-function claimForJs(els: HTMLElement[]) {
-  for (const el of els) {
-    el.classList.add(JS_OWN_CLASS);
-    el.style.animation = "none";
-  }
-}
-
-function releaseToFinal(els: HTMLElement[]) {
-  for (const el of els) {
-    el.classList.add(JS_OWN_CLASS);
-    gsap.set(el, { clearProps: "opacity,filter,transform" });
-    el.style.opacity = "";
-    el.style.filter = "";
-    el.style.transform = "";
-    el.style.animation = "none";
-  }
-}
-
 /**
- * Play coordinated hero entrance when early enough; otherwise no-op (CSS owns it).
- * Returns cleanup for useGsapContext.
+ * Wait until fonts are ready / optional shader signal, with min hold + hard ceiling.
+ * Never blocks forever — maxWaitMs always releases the intro.
  */
-export function playHeroContentIntro(options: HeroContentIntroOptions): () => void {
-  const { badge, title, body, cta, deadlineMs = 200 } = options;
-  const stack = [badge, title, body, cta];
+export async function waitForHeroIntroGate(options: {
+  /** Resolves when WebGL/shader canvas is ready (optional). */
+  shaderReady?: () => boolean;
+  /** Subscribe to shader ready; return unsubscribe. */
+  onShaderReady?: (cb: () => void) => () => void;
+  /** Minimum ms to hold before opening (avoids flash on ultra-fast loads). */
+  minHoldMs?: number;
+  /** Hard ceiling — always open by this time. Default 1100. */
+  maxWaitMs?: number;
+  /** Fonts timeout if document.fonts hangs. Default 400. */
+  fontsTimeoutMs?: number;
+  signal?: AbortSignal;
+}): Promise<void> {
+  const {
+    shaderReady,
+    onShaderReady,
+    minHoldMs = 200,
+    maxWaitMs = 1100,
+    fontsTimeoutMs = 400,
+    signal,
+  } = options;
 
-  let split: SplitText | null = null;
-  let timeline: gsap.core.Timeline | null = null;
+  if (signal?.aborted) return;
 
-  const kill = () => {
-    timeline?.kill();
-    timeline = null;
-    if (split) {
-      split.revert();
-      split = null;
-    }
-  };
-
-  if (prefersReducedMotion()) {
-    // CSS reduced-motion path already shows final state; ensure no leftover inline.
-    releaseToFinal(stack);
-    return kill;
-  }
-
-  const elapsed = msSinceNavigationStart();
-  if (elapsed > deadlineMs) {
-    // Too late to re-orchestrate — never re-hide content the user may already see.
-    return kill;
-  }
+  const started = performance.now();
 
   try {
-    claimForJs(stack);
-
-    split = SplitText.create(title, {
-      type: "words",
-      wordsClass: "word",
-      aria: "none",
-    });
-
-    const words = (split.words as HTMLElement[]) ?? [];
-
-    gsap.set(badge, { opacity: 0, y: 8 });
-    gsap.set(body, { opacity: 0, y: 12 });
-    gsap.set(cta, { opacity: 0, y: 12, scale: 0.98 });
-    gsap.set(words, {
-      opacity: 0,
-      filter: "blur(10px)",
-      y: 10,
-      display: "inline-block",
-      willChange: "transform, opacity, filter",
-    });
-    gsap.set(title, { opacity: 1, clearProps: "filter" });
-
-    timeline = gsap.timeline({
-      onComplete: () => {
-        gsap.set(words, { clearProps: "willChange,filter" });
-        gsap.set([badge, body, cta], { clearProps: "transform" });
-      },
-    });
-
-    timeline.to(badge, { opacity: 1, y: 0, duration: 0.45, ease: ease.expoOut }, 0);
-    timeline.to(
-      words,
-      {
-        opacity: 1,
-        filter: "blur(0px)",
-        y: 0,
-        duration: duration.blurIn,
-        ease: ease.expoOut,
-        stagger: stagger.word,
-      },
-      0.1,
-    );
-    timeline.to(body, { opacity: 1, y: 0, duration: 0.55, ease: ease.expoOut }, 0.4);
-    timeline.to(cta, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: ease.expoOut }, 0.55);
+    if (typeof document !== "undefined" && document.fonts?.ready) {
+      await Promise.race([document.fonts.ready, delay(fontsTimeoutMs, signal)]);
+    }
   } catch {
-    kill();
-    releaseToFinal(stack);
+    // ignore font failures
   }
 
-  return kill;
+  if (signal?.aborted) return;
+
+  if (!shaderReady?.()) {
+    const remaining = Math.max(0, maxWaitMs - (performance.now() - started));
+    await new Promise<void>((resolve) => {
+      if (shaderReady?.()) {
+        resolve();
+        return;
+      }
+      let settled = false;
+      const done = () => {
+        if (settled) return;
+        settled = true;
+        unsub?.();
+        resolve();
+      };
+      const unsub = onShaderReady?.(done);
+      if (shaderReady?.()) {
+        done();
+        return;
+      }
+      void delay(remaining, signal).then(done);
+    });
+  }
+
+  if (signal?.aborted) return;
+
+  const elapsed = performance.now() - started;
+  if (elapsed < minHoldMs) {
+    await delay(minHoldMs - elapsed, signal);
+  }
 }

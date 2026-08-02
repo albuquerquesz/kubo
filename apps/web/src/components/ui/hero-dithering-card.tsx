@@ -1,12 +1,16 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "@/lib/create-commands";
+import { fireCtaConfetti } from "@/lib/motion/cta-confetti";
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
-import { playHeroContentIntro } from "@/lib/motion/timelines/hero-content-intro";
+import {
+  playHeroContentIntro,
+  waitForHeroIntroGate,
+} from "@/lib/motion/timelines/hero-content-intro";
 import { useGsapContext } from "@/lib/motion/use-gsap-context";
 import { cn } from "@/lib/utils";
 
@@ -15,8 +19,10 @@ import "./hero-dithering-card.css";
 const PRIMARY_FALLBACK = "#c49314";
 const HERO_TITLE = "Construa sem começar do zero.";
 
-const Dithering = lazy(() =>
-  import("@paper-design/shaders-react").then((mod) => ({ default: mod.Dithering })),
+/** Eager client-only mount (no SSR WebGL). CSS underlay covers until canvas ready. */
+const Dithering = dynamic(
+  () => import("@paper-design/shaders-react").then((mod) => ({ default: mod.Dithering })),
+  { ssr: false },
 );
 
 function useThemePrimary(): string {
@@ -54,7 +60,8 @@ function usePrefersReducedMotion(): boolean {
 }
 
 /**
- * Lazy Paper dither with canvas-ready signal so CSS underlay can hand off softly.
+ * Paper dither with canvas-ready signal so CSS underlay can hand off softly.
+ * Eager (not lazy) so the above-the-fold atmosphere mounts with the hero.
  */
 function HeroDitherShader({
   primary,
@@ -79,7 +86,6 @@ function HeroDitherShader({
     };
 
     if (host.querySelector("canvas")) {
-      // Next frame so first WebGL paint can land.
       const id = requestAnimationFrame(() => mark());
       return () => cancelAnimationFrame(id);
     }
@@ -122,7 +128,7 @@ export type CTASectionProps = {
 
 /**
  * Full-viewport marketing hero with Paper Design dithering atmosphere.
- * Paint-first: CSS underlay + content cascade from first frame; GSAP enhances when early.
+ * Gate-and-orchestrate: CSS atmosphere from frame 0; content word-blur after readiness gate.
  */
 export function CTASection({ className }: CTASectionProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -134,13 +140,20 @@ export function CTASection({ className }: CTASectionProps) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
+  const shaderReadyRef = useRef(false);
+  const shaderReadyListenersRef = useRef(new Set<() => void>());
   const primary = useThemePrimary();
   const reducedMotion = usePrefersReducedMotion();
   const command = getCreateCommand(DEFAULT_PACKAGE_MANAGER);
 
   const shaderSpeed = reducedMotion ? 0 : isHovered ? 0.6 : 0.2;
 
-  const onShaderReady = useCallback(() => setShaderReady(true), []);
+  const onShaderReady = useCallback(() => {
+    shaderReadyRef.current = true;
+    setShaderReady(true);
+    for (const cb of shaderReadyListenersRef.current) cb();
+    shaderReadyListenersRef.current.clear();
+  }, []);
 
   useGsapContext(
     () => {
@@ -151,7 +164,40 @@ export function CTASection({ className }: CTASectionProps) {
       const cta = ctaRef.current;
       if (!root || !badge || !title || !body || !cta) return;
 
-      return playHeroContentIntro({ root, badge, title, body, cta });
+      if (prefersReducedMotion()) {
+        return playHeroContentIntro({ root, badge, title, body, cta });
+      }
+
+      const abort = new AbortController();
+      let killIntro: (() => void) | undefined;
+
+      void (async () => {
+        await waitForHeroIntroGate({
+          shaderReady: () => shaderReadyRef.current,
+          onShaderReady: (cb) => {
+            if (shaderReadyRef.current) {
+              cb();
+              return () => {};
+            }
+            shaderReadyListenersRef.current.add(cb);
+            return () => {
+              shaderReadyListenersRef.current.delete(cb);
+            };
+          },
+          minHoldMs: 220,
+          maxWaitMs: 1100,
+          fontsTimeoutMs: 400,
+          signal: abort.signal,
+        });
+
+        if (abort.signal.aborted) return;
+        killIntro = playHeroContentIntro({ root, badge, title, body, cta });
+      })();
+
+      return () => {
+        abort.abort();
+        killIntro?.();
+      };
     },
     { scope: contentRef, dependencies: [HERO_TITLE] },
   );
@@ -164,10 +210,24 @@ export function CTASection({ className }: CTASectionProps) {
     };
   }, []);
 
+  // Failsafe: never leave the stack permanently hidden if motion never claims it.
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      const root = contentRef.current;
+      if (root?.dataset.heroIntro === "pending") {
+        root.dataset.heroIntro = "done";
+      }
+    }, 2800);
+    return () => window.clearTimeout(id);
+  }, []);
+
   const copyCommand = async () => {
     try {
       await navigator.clipboard.writeText(command);
       setCopied(true);
+
+      const cta = ctaRef.current;
+      if (cta) fireCtaConfetti(cta);
 
       if (resetTimerRef.current !== null) {
         window.clearTimeout(resetTimerRef.current);
@@ -207,19 +267,18 @@ export function CTASection({ className }: CTASectionProps) {
             "absolute inset-0 opacity-40 mix-blend-multiply dark:opacity-30 dark:mix-blend-screen",
           )}
         >
-          <Suspense fallback={null}>
-            <HeroDitherShader primary={primary} speed={shaderSpeed} onReady={onShaderReady} />
-          </Suspense>
+          <HeroDitherShader primary={primary} speed={shaderSpeed} onReady={onShaderReady} />
         </div>
       </div>
 
       <div
         ref={contentRef}
-        className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center"
+        className="hero-content relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center"
+        data-hero-intro="pending"
       >
         <div
           ref={badgeRef}
-          className="hero-enter hero-enter-badge mb-8 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm"
+          className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm"
         >
           <span className="relative flex h-2 w-2">
             {!reducedMotion ? (
@@ -233,7 +292,7 @@ export function CTASection({ className }: CTASectionProps) {
         <h1
           ref={titleRef}
           className={cn(
-            "hero-enter hero-enter-title ui-display mb-8 max-w-[16ch] text-5xl font-medium leading-[1.05] tracking-tight text-foreground",
+            "ui-display mb-8 max-w-[16ch] text-5xl font-medium leading-[1.05] tracking-tight text-foreground",
             "md:text-7xl lg:text-8xl",
           )}
         >
@@ -244,7 +303,7 @@ export function CTASection({ className }: CTASectionProps) {
 
         <p
           ref={bodyRef}
-          className="hero-enter hero-enter-body mb-12 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl"
+          className="mb-12 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl"
         >
           Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.
           Limpo, preciso e do seu jeito.
@@ -254,10 +313,7 @@ export function CTASection({ className }: CTASectionProps) {
           ref={ctaRef}
           type="button"
           onClick={copyCommand}
-          className={cn(
-            buttonVariants({ variant: "cta", size: "xl" }),
-            "hero-enter hero-enter-cta relative",
-          )}
+          className={cn(buttonVariants({ variant: "cta", size: "xl" }), "relative")}
           aria-label={copied ? "Comando copiado" : `Copiar comando: ${command}`}
           title={copied ? "Copiado" : "Clique para copiar"}
         >
@@ -267,14 +323,6 @@ export function CTASection({ className }: CTASectionProps) {
           <code className="max-w-[min(100%,28rem)] truncate font-mono text-sm tracking-[0.04em] sm:text-base">
             {command}
           </code>
-          {copied ? (
-            <Check aria-hidden className="size-5 shrink-0" />
-          ) : (
-            <Copy
-              aria-hidden
-              className="size-5 shrink-0 transition-transform duration-300 group-hover/button:scale-110"
-            />
-          )}
         </button>
       </div>
     </section>
