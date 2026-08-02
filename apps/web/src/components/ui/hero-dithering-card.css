@@ -1,6 +1,7 @@
 /*
  * Hero gate-and-orchestrate styles.
- * CSS atmosphere paints from frame 0; content stays hidden until data-hero-intro advances.
+ * Dense CSS atmosphere paints from frame 0 (product-ready, not a placeholder).
+ * Content stays hidden until data-hero-intro advances (strong blur-in).
  */
 
 .hero-dither-fallback {
@@ -8,55 +9,81 @@
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-color: transparent;
+  /* Warm bed — matches hero bg-background, never a black void. */
+  background-color: color-mix(in srgb, var(--background) 92%, #1a160c);
   background-image:
+    /* Primary warp core — center / upper */
     radial-gradient(
-      ellipse 90% 70% at 50% 42%,
-      color-mix(in srgb, var(--primary) 48%, transparent),
-      transparent 72%
+      ellipse 88% 68% at 50% 40%,
+      color-mix(in srgb, var(--primary) 72%, transparent) 0%,
+      color-mix(in srgb, var(--primary) 38%, transparent) 38%,
+      color-mix(in srgb, var(--accent) 12%, transparent) 58%,
+      transparent 74%
     ),
+    /* Lower-right secondary bloom */
     radial-gradient(
-      ellipse 55% 45% at 72% 62%,
-      color-mix(in srgb, var(--primary) 22%, transparent),
-      transparent 65%
-    ),
+        ellipse 58% 48% at 74% 66%,
+        color-mix(in srgb, var(--accent) 48%, transparent) 0%,
+        color-mix(in srgb, var(--primary) 22%, transparent) 45%,
+        transparent 70%
+      ),
+    /* Left mid fill so the field is not a single hot spot */
     radial-gradient(
-      ellipse 40% 35% at 28% 58%,
-      color-mix(in srgb, var(--primary) 14%, transparent),
-      transparent 60%
-    ),
+        ellipse 46% 40% at 26% 56%,
+        color-mix(in srgb, var(--primary) 28%, transparent) 0%,
+        transparent 68%
+      ),
+    /* Soft top haze */
     radial-gradient(
-      circle,
-      color-mix(in srgb, var(--primary) 55%, transparent) 0 0.55px,
-      transparent 0.75px
-    );
+        ellipse 70% 36% at 48% 8%,
+        color-mix(in srgb, var(--primary) 18%, transparent) 0%,
+        transparent 72%
+      ),
+    /* Fine dither lattice (Paper-like 4x4 feel) */
+    radial-gradient(
+        circle,
+        color-mix(in srgb, var(--primary) 78%, #fff 8%) 0 0.65px,
+        transparent 0.9px
+      ),
+    /* Slightly coarser secondary lattice for depth */
+    radial-gradient(
+        circle,
+        color-mix(in srgb, var(--accent) 42%, transparent) 0 0.45px,
+        transparent 0.75px
+      );
   background-size:
     100% 100%,
     100% 100%,
     100% 100%,
-    3.5px 3.5px;
+    100% 100%,
+    3.25px 3.25px,
+    6.5px 6.5px;
   background-position:
     0 0,
     0 0,
     0 0,
-    0 0;
-  /* Stronger from first paint so refresh never feels like a black void. */
-  opacity: 0.72;
-  mix-blend-mode: multiply;
-}
-
-.dark .hero-dither-fallback {
-  opacity: 0.55;
-  mix-blend-mode: screen;
-}
-
-.hero-dither-stage[data-shader-ready="true"] .hero-dither-fallback {
-  opacity: 0.14;
+    0 0,
+    0 0,
+    1.5px 1.5px;
+  /* Full-strength product atmosphere from first paint. */
+  opacity: 1;
+  mix-blend-mode: normal;
   transition: opacity 0.55s ease-out;
 }
 
+.dark .hero-dither-fallback {
+  background-color: color-mix(in srgb, var(--background) 88%, #0c0a06);
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+
+/* Once WebGL is up, keep a faint lattice under the shader for density. */
+.hero-dither-stage[data-shader-ready="true"] .hero-dither-fallback {
+  opacity: 0.18;
+}
+
 .dark .hero-dither-stage[data-shader-ready="true"] .hero-dither-fallback {
-  opacity: 0.12;
+  opacity: 0.14;
 }
 
 .hero-dither-shader {
@@ -96,6 +123,10 @@
 
   .hero-dither-shader {
     opacity: 1;
+    transition: none;
+  }
+
+  .hero-dither-fallback {
     transition: none;
   }
 

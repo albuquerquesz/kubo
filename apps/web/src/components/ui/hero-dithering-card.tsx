@@ -19,10 +19,13 @@ import "./hero-dithering-card.css";
 const PRIMARY_FALLBACK = "#c49314";
 const HERO_TITLE = "Construa sem começar do zero.";
 
-/** Eager client-only mount (no SSR WebGL). CSS underlay covers until canvas ready. */
+/** Prefetch Paper chunk as soon as this module evaluates (above-the-fold). */
+void import("@paper-design/shaders-react");
+
+/** Eager client-only mount (no SSR WebGL). Dense CSS underlay covers until canvas ready. */
 const Dithering = dynamic(
   () => import("@paper-design/shaders-react").then((mod) => ({ default: mod.Dithering })),
-  { ssr: false },
+  { ssr: false, loading: () => null },
 );
 
 function useThemePrimary(): string {
@@ -61,7 +64,7 @@ function usePrefersReducedMotion(): boolean {
 
 /**
  * Paper dither with canvas-ready signal so CSS underlay can hand off softly.
- * Eager (not lazy) so the above-the-fold atmosphere mounts with the hero.
+ * Ready only drives atmosphere crossfade — never the content intro gate.
  */
 function HeroDitherShader({
   primary,
@@ -98,8 +101,8 @@ function HeroDitherShader({
     });
     observer.observe(host, { childList: true, subtree: true });
 
-    // Safety: never leave shader layer stuck invisible if canvas is delayed.
-    const safety = window.setTimeout(mark, 2500);
+    // Atmosphere-only safety; content intro does not wait on this.
+    const safety = window.setTimeout(mark, 1000);
 
     return () => {
       observer.disconnect();
@@ -128,7 +131,7 @@ export type CTASectionProps = {
 
 /**
  * Full-viewport marketing hero with Paper Design dithering atmosphere.
- * Gate-and-orchestrate: CSS atmosphere from frame 0; content word-blur after readiness gate.
+ * Dense CSS from frame 0; strong word-blur intro after a short fonts gate (not WebGL).
  */
 export function CTASection({ className }: CTASectionProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -140,8 +143,6 @@ export function CTASection({ className }: CTASectionProps) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
-  const shaderReadyRef = useRef(false);
-  const shaderReadyListenersRef = useRef(new Set<() => void>());
   const primary = useThemePrimary();
   const reducedMotion = usePrefersReducedMotion();
   const command = getCreateCommand(DEFAULT_PACKAGE_MANAGER);
@@ -149,10 +150,7 @@ export function CTASection({ className }: CTASectionProps) {
   const shaderSpeed = reducedMotion ? 0 : isHovered ? 0.6 : 0.2;
 
   const onShaderReady = useCallback(() => {
-    shaderReadyRef.current = true;
     setShaderReady(true);
-    for (const cb of shaderReadyListenersRef.current) cb();
-    shaderReadyListenersRef.current.clear();
   }, []);
 
   useGsapContext(
@@ -172,21 +170,10 @@ export function CTASection({ className }: CTASectionProps) {
       let killIntro: (() => void) | undefined;
 
       void (async () => {
+        // Fonts-only gate — never wait on Paper WebGL (atmosphere crossfades in parallel).
         await waitForHeroIntroGate({
-          shaderReady: () => shaderReadyRef.current,
-          onShaderReady: (cb) => {
-            if (shaderReadyRef.current) {
-              cb();
-              return () => {};
-            }
-            shaderReadyListenersRef.current.add(cb);
-            return () => {
-              shaderReadyListenersRef.current.delete(cb);
-            };
-          },
-          minHoldMs: 220,
-          maxWaitMs: 1100,
-          fontsTimeoutMs: 400,
+          minHoldMs: 0,
+          fontsTimeoutMs: 150,
           signal: abort.signal,
         });
 
@@ -217,7 +204,7 @@ export function CTASection({ className }: CTASectionProps) {
       if (root?.dataset.heroIntro === "pending") {
         root.dataset.heroIntro = "done";
       }
-    }, 2800);
+    }, 1400);
     return () => window.clearTimeout(id);
   }, []);
 
@@ -259,12 +246,12 @@ export function CTASection({ className }: CTASectionProps) {
         data-shader-ready={shaderReady ? "true" : "false"}
         aria-hidden
       >
-        {/* CSS atmosphere — first paint, never pure black void. */}
+        {/* Dense CSS atmosphere — product-ready from first paint. */}
         <div className="hero-dither-fallback" />
 
         <div
           className={cn(
-            "absolute inset-0 opacity-40 mix-blend-multiply dark:opacity-30 dark:mix-blend-screen",
+            "absolute inset-0 opacity-55 mix-blend-multiply dark:opacity-45 dark:mix-blend-screen",
           )}
         >
           <HeroDitherShader primary={primary} speed={shaderSpeed} onReady={onShaderReady} />
