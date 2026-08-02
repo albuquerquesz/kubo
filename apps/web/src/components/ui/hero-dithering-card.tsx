@@ -139,7 +139,6 @@ export function CTASection({ className }: CTASectionProps) {
   const [shaderReady, setShaderReady] = useState(false);
   const resetTimerRef = useRef<number | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const badgeRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
@@ -156,14 +155,13 @@ export function CTASection({ className }: CTASectionProps) {
   useGsapContext(
     () => {
       const root = contentRef.current;
-      const badge = badgeRef.current;
       const title = titleRef.current;
       const body = bodyRef.current;
       const cta = ctaRef.current;
-      if (!root || !badge || !title || !body || !cta) return;
+      if (!root || !title || !body || !cta) return;
 
       if (prefersReducedMotion()) {
-        return playHeroContentIntro({ root, badge, title, body, cta });
+        return playHeroContentIntro({ root, title, body, cta });
       }
 
       const abort = new AbortController();
@@ -178,7 +176,7 @@ export function CTASection({ className }: CTASectionProps) {
         });
 
         if (abort.signal.aborted) return;
-        killIntro = playHeroContentIntro({ root, badge, title, body, cta });
+        killIntro = playHeroContentIntro({ root, title, body, cta });
       })();
 
       return () => {
@@ -263,19 +261,6 @@ export function CTASection({ className }: CTASectionProps) {
         className="hero-content relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center"
         data-hero-intro="pending"
       >
-        <div
-          ref={badgeRef}
-          className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm"
-        >
-          <span className="relative flex h-2 w-2">
-            {!reducedMotion ? (
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-            ) : null}
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-          </span>
-          Stack em minutos
-        </div>
-
         <h1
           ref={titleRef}
           className={cn(
