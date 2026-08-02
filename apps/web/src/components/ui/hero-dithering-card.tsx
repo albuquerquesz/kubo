@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "@/lib/create-commands";
@@ -9,6 +9,8 @@ import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduce
 import { playHeroContentIntro } from "@/lib/motion/timelines/hero-content-intro";
 import { useGsapContext } from "@/lib/motion/use-gsap-context";
 import { cn } from "@/lib/utils";
+
+import "./hero-dithering-card.css";
 
 const PRIMARY_FALLBACK = "#c49314";
 const HERO_TITLE = "Construa sem começar do zero.";
@@ -51,17 +53,81 @@ function usePrefersReducedMotion(): boolean {
   return reduced;
 }
 
+/**
+ * Lazy Paper dither with canvas-ready signal so CSS underlay can hand off softly.
+ */
+function HeroDitherShader({
+  primary,
+  speed,
+  onReady,
+}: {
+  primary: string;
+  speed: number;
+  onReady: () => void;
+}) {
+  const hostRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+
+    let done = false;
+    const mark = () => {
+      if (done) return;
+      done = true;
+      onReady();
+    };
+
+    if (host.querySelector("canvas")) {
+      // Next frame so first WebGL paint can land.
+      const id = requestAnimationFrame(() => mark());
+      return () => cancelAnimationFrame(id);
+    }
+
+    const observer = new MutationObserver(() => {
+      if (host.querySelector("canvas")) {
+        observer.disconnect();
+        requestAnimationFrame(() => mark());
+      }
+    });
+    observer.observe(host, { childList: true, subtree: true });
+
+    // Safety: never leave shader layer stuck invisible if canvas is delayed.
+    const safety = window.setTimeout(mark, 2500);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(safety);
+    };
+  }, [onReady]);
+
+  return (
+    <div ref={hostRef} className="hero-dither-shader size-full">
+      <Dithering
+        colorBack="#00000000"
+        colorFront={primary}
+        shape="warp"
+        type="4x4"
+        speed={speed}
+        className="size-full"
+        minPixelRatio={1}
+      />
+    </div>
+  );
+}
+
 export type CTASectionProps = {
   className?: string;
 };
 
 /**
  * Full-viewport marketing hero with Paper Design dithering atmosphere.
- * Content stack enters together (badge → title blur-in → body → CTA). Primary action copies the create command.
+ * Paint-first: CSS underlay + content cascade from first frame; GSAP enhances when early.
  */
 export function CTASection({ className }: CTASectionProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [shaderReady, setShaderReady] = useState(false);
   const resetTimerRef = useRef<number | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
@@ -73,6 +139,8 @@ export function CTASection({ className }: CTASectionProps) {
   const command = getCreateCommand(DEFAULT_PACKAGE_MANAGER);
 
   const shaderSpeed = reducedMotion ? 0 : isHovered ? 0.6 : 0.2;
+
+  const onShaderReady = useCallback(() => setShaderReady(true), []);
 
   useGsapContext(
     () => {
@@ -126,32 +194,32 @@ export function CTASection({ className }: CTASectionProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Suspense fallback={<div className="absolute inset-0 bg-muted/20" aria-hidden />}>
+      <div
+        className="hero-dither-stage pointer-events-none absolute inset-0 z-0"
+        data-shader-ready={shaderReady ? "true" : "false"}
+        aria-hidden
+      >
+        {/* CSS atmosphere — first paint, never pure black void. */}
+        <div className="hero-dither-fallback" />
+
         <div
-          className="pointer-events-none absolute inset-0 z-0 opacity-40 mix-blend-multiply dark:opacity-30 dark:mix-blend-screen"
-          aria-hidden
+          className={cn(
+            "absolute inset-0 opacity-40 mix-blend-multiply dark:opacity-30 dark:mix-blend-screen",
+          )}
         >
-          <Dithering
-            colorBack="#00000000"
-            colorFront={primary}
-            shape="warp"
-            type="4x4"
-            speed={shaderSpeed}
-            className="size-full"
-            minPixelRatio={1}
-          />
+          <Suspense fallback={null}>
+            <HeroDitherShader primary={primary} speed={shaderSpeed} onReady={onShaderReady} />
+          </Suspense>
         </div>
-      </Suspense>
+      </div>
 
       <div
         ref={contentRef}
-        data-hero-pending=""
         className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center"
       >
         <div
           ref={badgeRef}
-          data-hero-enter=""
-          className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm"
+          className="hero-enter hero-enter-badge mb-8 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm"
         >
           <span className="relative flex h-2 w-2">
             {!reducedMotion ? (
@@ -164,9 +232,8 @@ export function CTASection({ className }: CTASectionProps) {
 
         <h1
           ref={titleRef}
-          data-hero-enter=""
           className={cn(
-            "ui-display mb-8 max-w-[16ch] text-5xl font-medium leading-[1.05] tracking-tight text-foreground",
+            "hero-enter hero-enter-title ui-display mb-8 max-w-[16ch] text-5xl font-medium leading-[1.05] tracking-tight text-foreground",
             "md:text-7xl lg:text-8xl",
           )}
         >
@@ -177,8 +244,7 @@ export function CTASection({ className }: CTASectionProps) {
 
         <p
           ref={bodyRef}
-          data-hero-enter=""
-          className="mb-12 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl"
+          className="hero-enter hero-enter-body mb-12 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl"
         >
           Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.
           Limpo, preciso e do seu jeito.
@@ -186,10 +252,12 @@ export function CTASection({ className }: CTASectionProps) {
 
         <button
           ref={ctaRef}
-          data-hero-enter=""
           type="button"
           onClick={copyCommand}
-          className={cn(buttonVariants({ variant: "cta", size: "xl" }), "relative")}
+          className={cn(
+            buttonVariants({ variant: "cta", size: "xl" }),
+            "hero-enter hero-enter-cta relative",
+          )}
           aria-label={copied ? "Comando copiado" : `Copiar comando: ${command}`}
           title={copied ? "Copiado" : "Clique para copiar"}
         >

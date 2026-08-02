@@ -615,15 +615,7 @@
   }
 }
 
-/* Hero dithering content intro: hide the full stack until GSAP arms (or reduced-motion). */
-[data-hero-pending] [data-hero-enter] {
-  opacity: 0;
-}
-@media (prefers-reduced-motion: reduce) {
-  [data-hero-pending] [data-hero-enter] {
-    opacity: 1;
-  }
-}
+/* Hero paint-first styles live in components/ui/hero-dithering-card.css (component-imported). */
 
 /* Ethereal hero atmosphere: CSS remains visible beneath the optional WebGL layer. */
 .ethereal-beams-fallback {
