@@ -1,0 +1,136 @@
+/*
+ * Paint-first hero styles (imported by the component so Turbopack always ships them).
+ * CSS atmosphere underlay + content cascade from first paint; GSAP may claim via .hero-enter-js.
+ */
+
+.hero-dither-fallback {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-color: transparent;
+  background-image:
+    radial-gradient(
+      ellipse 85% 65% at 50% 42%,
+      color-mix(in srgb, var(--primary) 42%, transparent),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 70% 60%,
+      color-mix(in srgb, var(--primary) 18%, transparent),
+      transparent 65%
+    ),
+    radial-gradient(
+      circle,
+      color-mix(in srgb, var(--primary) 50%, transparent) 0 0.55px,
+      transparent 0.75px
+    );
+  background-size:
+    100% 100%,
+    100% 100%,
+    3.5px 3.5px;
+  background-position:
+    0 0,
+    0 0,
+    0 0;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+}
+
+.dark .hero-dither-fallback {
+  opacity: 0.4;
+  mix-blend-mode: screen;
+}
+
+.hero-dither-stage[data-shader-ready="true"] .hero-dither-fallback {
+  opacity: 0.12;
+  transition: opacity 0.45s ease-out;
+}
+
+.dark .hero-dither-stage[data-shader-ready="true"] .hero-dither-fallback {
+  opacity: 0.1;
+}
+
+.hero-dither-shader {
+  opacity: 0;
+  transition: opacity 0.45s ease-out;
+}
+
+.hero-dither-stage[data-shader-ready="true"] .hero-dither-shader {
+  opacity: 1;
+}
+
+@keyframes hero-enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-enter-blur {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+.hero-enter {
+  animation-duration: 0.55s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+  animation-name: hero-enter-up;
+}
+
+.hero-enter-badge {
+  animation-delay: 0ms;
+  animation-duration: 0.45s;
+}
+
+.hero-enter-title {
+  animation-name: hero-enter-blur;
+  animation-delay: 100ms;
+  animation-duration: 0.8s;
+}
+
+.hero-enter-body {
+  animation-delay: 400ms;
+  animation-duration: 0.55s;
+}
+
+.hero-enter-cta {
+  animation-delay: 550ms;
+  animation-duration: 0.55s;
+}
+
+.hero-enter-js {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-enter {
+    animation: none !important;
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
+  .hero-dither-shader {
+    opacity: 1;
+    transition: none;
+  }
+
+  .hero-dither-stage[data-shader-ready="true"] .hero-dither-fallback,
+  .dark .hero-dither-stage[data-shader-ready="true"] .hero-dither-fallback {
+    transition: none;
+  }
+}
