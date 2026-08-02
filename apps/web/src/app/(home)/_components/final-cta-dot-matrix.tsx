@@ -31,16 +31,17 @@ export default function FinalCtaDotMatrix() {
           <Link
             href="/new"
             className={cn(
-              buttonVariants({ size: "xl" }),
-              "no-underline border-0 bg-black font-semibold tracking-[-0.02em] text-white hover:bg-black/85",
-              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
+              buttonVariants({ variant: "cta", size: "xl" }),
+              // Invert fill for contrast on the yellow final-CTA field.
+              "no-underline bg-black text-white hover:bg-black/85 hover:ring-white/20",
+              "focus-visible:outline-white",
             )}
           >
             Monte sua stack
             <ArrowUpRight
               aria-hidden
               data-icon="inline-end"
-              className="size-4 shrink-0 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
+              className="size-5 shrink-0 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
             />
           </Link>
           <CopyInstallCommandButton />
