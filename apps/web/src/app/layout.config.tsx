@@ -78,4 +78,8 @@ export const baseOptions: BaseLayoutProps = {
   },
   links: links,
   githubUrl: "https://github.com/albuquerquesz/kubo",
+  // Site is dark-only; next-themes is disabled in root layout.
+  themeSwitch: {
+    enabled: false,
+  },
 };

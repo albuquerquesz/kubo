@@ -1,7 +1,6 @@
 "use client";
 
 import { Check, Copy, Link2, QrCode, Share2, SquareTerminal, Terminal } from "lucide-react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import QRCode from "qrcode";
 import React, { useEffect, useRef, useState } from "react";
@@ -80,8 +79,6 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
   const [previewLoaded, setPreviewLoaded] = useState(false);
   const [canNativeShare, setCanNativeShare] = useState(false);
   const copyResetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { resolvedTheme } = useTheme();
-
   const normalizedStack = { ...stackState, projectName: formatProjectName(stackState.projectName) };
   const projectName = normalizedStack.projectName;
   const command = generateStackCommand(normalizedStack);
@@ -136,13 +133,13 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
   useEffect(() => {
     if (!showQr || !stackUrl) return;
     setQrFailed(false);
-    const isDark = resolvedTheme === "dark";
+    // Site is dark-only; match QR contrast to the forced dark UI.
     QRCode.toDataURL(stackUrl, {
       width: 320,
       margin: 2,
       color: {
-        dark: isDark ? "#cdd6f4" : "#11111b",
-        light: isDark ? "#11111b" : "#ffffff",
+        dark: "#cdd6f4",
+        light: "#11111b",
       },
     })
       .then(setQrCodeDataUrl)
@@ -150,7 +147,7 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
         setQrCodeDataUrl("");
         setQrFailed(true);
       });
-  }, [showQr, stackUrl, resolvedTheme]);
+  }, [showQr, stackUrl]);
 
   return (
     <Dialog>
