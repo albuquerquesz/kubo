@@ -67,80 +67,71 @@ export function CTASection({ className }: CTASectionProps) {
       id="top"
       aria-label="Seção principal"
       className={cn(
-        "flex w-full items-center justify-center bg-background px-4 py-12 md:px-6",
+        "relative flex w-full min-h-[min(600px,calc(100svh-var(--site-header-height)))] flex-col items-center justify-center overflow-hidden bg-card",
         className,
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative w-full max-w-7xl">
+      <Suspense fallback={<div className="absolute inset-0 bg-muted/20" aria-hidden />}>
         <div
+          className="pointer-events-none absolute inset-0 z-0 opacity-40 mix-blend-multiply dark:opacity-30 dark:mix-blend-screen"
+          aria-hidden
+        >
+          <Dithering
+            colorBack="#00000000"
+            colorFront={primary}
+            shape="warp"
+            type="4x4"
+            speed={shaderSpeed}
+            className="size-full"
+            minPixelRatio={1}
+          />
+        </div>
+      </Suspense>
+
+      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center">
+        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
+          <span className="relative flex h-2 w-2">
+            {!reducedMotion ? (
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+            ) : null}
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+          </span>
+          Stack em minutos
+        </div>
+
+        <h1
           className={cn(
-            "relative flex min-h-[min(600px,calc(100svh-var(--site-header-height)-6rem))] flex-col items-center justify-center overflow-hidden",
-            "rounded-[48px] border border-border bg-card shadow-sm duration-500",
+            "ui-display mb-8 max-w-[16ch] text-5xl font-medium leading-[1.05] tracking-tight text-foreground",
+            "md:text-7xl lg:text-8xl",
           )}
         >
-          <Suspense fallback={<div className="absolute inset-0 bg-muted/20" aria-hidden />}>
-            <div
-              className="pointer-events-none absolute inset-0 z-0 opacity-40 mix-blend-multiply dark:opacity-30 dark:mix-blend-screen"
-              aria-hidden
-            >
-              <Dithering
-                colorBack="#00000000"
-                colorFront={primary}
-                shape="warp"
-                type="4x4"
-                speed={shaderSpeed}
-                className="size-full"
-                minPixelRatio={1}
-              />
-            </div>
-          </Suspense>
+          Construa sem
+          <br />
+          <span className="text-foreground/80">começar do zero.</span>
+        </h1>
 
-          <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 text-center">
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
-              <span className="relative flex h-2 w-2">
-                {!reducedMotion ? (
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                ) : null}
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-              </span>
-              Stack em minutos
-            </div>
+        <p className="mb-12 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+          Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.
+          Limpo, preciso e do seu jeito.
+        </p>
 
-            <h1
-              className={cn(
-                "ui-display mb-8 max-w-[16ch] text-5xl font-medium leading-[1.05] tracking-tight text-foreground",
-                "md:text-7xl lg:text-8xl",
-              )}
-            >
-              Construa sem
-              <br />
-              <span className="text-foreground/80">começar do zero.</span>
-            </h1>
-
-            <p className="mb-12 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-              Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.
-              Limpo, preciso e do seu jeito.
-            </p>
-
-            <Link
-              href="/new"
-              className={cn(
-                "group relative inline-flex h-14 items-center justify-center gap-3 overflow-hidden rounded-full bg-primary px-12",
-                "text-base font-medium text-primary-foreground transition-all duration-300",
-                "hover:scale-105 hover:bg-primary/90 hover:ring-4 hover:ring-primary/20 active:scale-95",
-                "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-              )}
-            >
-              <span className="relative z-10">Monte sua stack</span>
-              <ArrowRight
-                aria-hidden
-                className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
-              />
-            </Link>
-          </div>
-        </div>
+        <Link
+          href="/new"
+          className={cn(
+            "group relative inline-flex h-14 items-center justify-center gap-3 overflow-hidden rounded-full bg-primary px-12",
+            "text-base font-medium text-primary-foreground transition-all duration-300",
+            "hover:scale-105 hover:bg-primary/90 hover:ring-4 hover:ring-primary/20 active:scale-95",
+            "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+          )}
+        >
+          <span className="relative z-10">Monte sua stack</span>
+          <ArrowRight
+            aria-hidden
+            className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
+          />
+        </Link>
       </div>
     </section>
   );
