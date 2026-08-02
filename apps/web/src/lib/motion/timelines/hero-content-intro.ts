@@ -16,7 +16,8 @@ import { prefersReducedMotion } from "@/lib/motion/reduced-motion";
 
 export type HeroContentIntroOptions = {
   root: HTMLElement;
-  badge: HTMLElement;
+  /** Optional status chip — omitted when the hero ships without a badge. */
+  badge?: HTMLElement | null;
   title: HTMLElement;
   body: HTMLElement;
   cta: HTMLElement;
@@ -68,13 +69,13 @@ function delay(ms: number, signal?: AbortSignal): Promise<void> {
 }
 
 /**
- * Play coordinated hero entrance: badge → title words → body words → CTA.
+ * Play coordinated hero entrance: optional badge → title words → body words → CTA.
  * Caller is responsible for waiting on the readiness gate before invoking.
  * Returns cleanup for useGsapContext.
  */
 export function playHeroContentIntro(options: HeroContentIntroOptions): () => void {
   const { root, badge, title, body, cta } = options;
-  const stack = [badge, title, body, cta];
+  const stack = [title, body, cta, ...(badge ? [badge] : [])];
 
   let titleSplit: SplitText | null = null;
   let bodySplit: SplitText | null = null;
@@ -115,7 +116,7 @@ export function playHeroContentIntro(options: HeroContentIntroOptions): () => vo
     const bodyWords = (bodySplit.words as HTMLElement[]) ?? [];
 
     // Inline pre-state BEFORE flipping data-hero-intro (avoids opacity:1 flash).
-    gsap.set(badge, { opacity: 0, y: 8, visibility: "visible" });
+    if (badge) gsap.set(badge, { opacity: 0, y: 8, visibility: "visible" });
     gsap.set(cta, { opacity: 0, y: 12, scale: 0.98, visibility: "visible" });
     gsap.set(titleWords, WORD_FROM);
     gsap.set(bodyWords, WORD_FROM);
@@ -127,12 +128,20 @@ export function playHeroContentIntro(options: HeroContentIntroOptions): () => vo
     timeline = gsap.timeline({
       onComplete: () => {
         gsap.set([...titleWords, ...bodyWords], { clearProps: "willChange,filter" });
-        gsap.set([badge, cta], { clearProps: "transform" });
+        gsap.set(cta, { clearProps: "transform" });
+        if (badge) gsap.set(badge, { clearProps: "transform" });
         setIntroState(root, "done");
       },
     });
 
-    timeline.to(badge, { opacity: 1, y: 0, duration: 0.5, ease: ease.expoOut }, 0);
+    // Without a badge, title blur starts at t=0 so the reveal still feels immediate.
+    const titleAt = badge ? 0.1 : 0;
+    const bodyAt = badge ? 0.42 : 0.32;
+    const ctaAt = badge ? 0.72 : 0.62;
+
+    if (badge) {
+      timeline.to(badge, { opacity: 1, y: 0, duration: 0.5, ease: ease.expoOut }, 0);
+    }
 
     if (titleWords.length > 0) {
       timeline.to(
@@ -145,7 +154,7 @@ export function playHeroContentIntro(options: HeroContentIntroOptions): () => vo
           ease: ease.expoOut,
           stagger: stagger.word,
         },
-        0.1,
+        titleAt,
       );
     }
 
@@ -160,11 +169,11 @@ export function playHeroContentIntro(options: HeroContentIntroOptions): () => vo
           ease: ease.expoOut,
           stagger: stagger.word,
         },
-        0.42,
+        bodyAt,
       );
     }
 
-    timeline.to(cta, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: ease.expoOut }, 0.72);
+    timeline.to(cta, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: ease.expoOut }, ctaAt);
   } catch {
     kill();
     releaseToFinal(root, stack);
