@@ -7,6 +7,16 @@ import { cn } from "@/lib/utils";
 import CopyInstallCommandButton from "./copy-install-command-button";
 import DotMatrixBackdrop from "./dot-matrix-backdrop";
 
+/** Yellow-field color overrides — both actions share `cta` + `xl` geometry/motion. */
+const finalCtaPrimaryClassName =
+  // Invert fill for contrast on the yellow final-CTA field.
+  "bg-black text-white hover:bg-black/85 hover:ring-white/20 focus-visible:outline-white";
+
+const finalCtaSecondaryClassName = cn(
+  buttonVariants({ variant: "cta", size: "xl" }),
+  "no-underline bg-white/10 text-white hover:bg-white/15 hover:ring-white/20 focus-visible:outline-white",
+);
+
 /** Final conversion CTA; yellow field, black dots, white copy. */
 export default function FinalCtaDotMatrix() {
   return (
@@ -28,15 +38,8 @@ export default function FinalCtaDotMatrix() {
         </h2>
 
         <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-          <Link
-            href="/new"
-            className={cn(
-              buttonVariants({ variant: "cta", size: "xl" }),
-              // Invert fill for contrast on the yellow final-CTA field.
-              "no-underline bg-black text-white hover:bg-black/85 hover:ring-white/20",
-              "focus-visible:outline-white",
-            )}
-          >
+          <CopyInstallCommandButton confetti className={finalCtaPrimaryClassName} />
+          <Link href="/new" className={finalCtaSecondaryClassName}>
             Monte sua stack
             <ArrowUpRight
               aria-hidden
@@ -44,7 +47,6 @@ export default function FinalCtaDotMatrix() {
               className="size-5 shrink-0 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
             />
           </Link>
-          <CopyInstallCommandButton />
         </div>
       </div>
     </section>

@@ -1,8 +1,9 @@
 "use client";
 
-import { Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { buttonVariants } from "@/components/ui/button";
+import { fireCtaConfetti } from "@/lib/motion/cta-confetti";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_COMMAND = "bun create kubojs@latest";
@@ -10,14 +11,21 @@ const DEFAULT_COMMAND = "bun create kubojs@latest";
 type CopyInstallCommandButtonProps = {
   command?: string;
   className?: string;
+  /**
+   * Fire the shared CTA confetti burst after a successful copy.
+   * Default false so secondary / quiet placements stay calm.
+   */
+  confetti?: boolean;
 };
 
 export default function CopyInstallCommandButton({
   command = DEFAULT_COMMAND,
   className,
+  confetti = false,
 }: CopyInstallCommandButtonProps) {
   const [copied, setCopied] = useState(false);
   const resetTimerRef = useRef<number | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setCopied(false);
@@ -36,6 +44,11 @@ export default function CopyInstallCommandButton({
       await navigator.clipboard.writeText(command);
       setCopied(true);
 
+      if (confetti) {
+        const anchor = buttonRef.current;
+        if (anchor) fireCtaConfetti(anchor);
+      }
+
       if (resetTimerRef.current !== null) {
         window.clearTimeout(resetTimerRef.current);
       }
@@ -51,12 +64,12 @@ export default function CopyInstallCommandButton({
 
   return (
     <button
+      ref={buttonRef}
       type="button"
       onClick={copyCommand}
       className={cn(
-        "inline-flex h-12 max-w-full cursor-pointer items-center gap-2 rounded-md bg-white/10 px-5 text-left transition-colors",
-        "hover:bg-white/15",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
+        buttonVariants({ variant: "cta", size: "xl" }),
+        "relative no-underline",
         className,
       )}
       aria-label={copied ? "Comando copiado" : `Copiar comando: ${command}`}
@@ -65,10 +78,9 @@ export default function CopyInstallCommandButton({
       <span className="sr-only" aria-live="polite">
         {copied ? "Comando copiado" : "Copiar comando"}
       </span>
-      <code className="break-all font-mono text-[0.8125rem] leading-6 text-white/90">
+      <code className="max-w-[min(100%,28rem)] break-all font-mono text-sm tracking-[0.04em] sm:text-base">
         {command}
       </code>
-      {copied ? <Check className="size-3.5 shrink-0 text-white" aria-hidden /> : null}
     </button>
   );
 }
