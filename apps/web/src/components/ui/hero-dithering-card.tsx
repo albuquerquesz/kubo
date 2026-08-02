@@ -67,7 +67,8 @@ export function CTASection({ className }: CTASectionProps) {
       id="top"
       aria-label="Seção principal"
       className={cn(
-        "relative flex w-full min-h-[min(600px,calc(100svh-var(--site-header-height)))] flex-col items-center justify-center overflow-hidden bg-card",
+        // Cancel layout header offset so the stage paints edge-to-edge under the fixed bar.
+        "relative -mt-[var(--site-header-height)] flex h-svh min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-card",
         className,
       )}
       onMouseEnter={() => setIsHovered(true)}
