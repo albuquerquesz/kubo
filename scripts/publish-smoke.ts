@@ -64,10 +64,46 @@ async function pack(pkg: Publishable, outDir: string): Promise<string> {
   }
 
   try {
-    const r = await $`npm pack --pack-destination=${outDir} --json`
-      .cwd(join(ROOT, pkg.dir))
-      .quiet();
-    const [entry] = JSON.parse(r.stdout.toString()) as Array<{ filename: string }>;
+    // Prefer spawn over Bun `$` + npm: CI's setup-node injects a registry
+    // .npmrc/NODE_AUTH_TOKEN that can make `$`…`.quiet()` throw TypeError.
+    // Unset token for pack — packing is local-only and does not need auth.
+    const proc = Bun.spawn(["npm", "pack", `--pack-destination=${outDir}`, "--json"], {
+      cwd: join(ROOT, pkg.dir),
+      stdout: "pipe",
+      stderr: "pipe",
+      env: {
+        ...process.env,
+        NODE_AUTH_TOKEN: "",
+      },
+    });
+    const [stdout, stderr, exitCode] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+      proc.exited,
+    ]);
+
+    if (exitCode !== 0) {
+      throw new Error(
+        `npm pack failed for ${pkg.name} (exit ${exitCode})\n${stderr || stdout || "(no output)"}`,
+      );
+    }
+
+    // npm pack --json prints a JSON array; tolerate trailing log noise.
+    const jsonStart = stdout.indexOf("[");
+    const jsonEnd = stdout.lastIndexOf("]");
+    if (jsonStart === -1 || jsonEnd === -1 || jsonEnd < jsonStart) {
+      throw new Error(
+        `npm pack for ${pkg.name} did not return JSON array\nstdout:\n${stdout}\nstderr:\n${stderr}`,
+      );
+    }
+
+    const entries = JSON.parse(stdout.slice(jsonStart, jsonEnd + 1)) as Array<{
+      filename: string;
+    }>;
+    const entry = entries[0];
+    if (!entry?.filename) {
+      throw new Error(`npm pack for ${pkg.name} returned no filename\n${stdout}`);
+    }
     return join(outDir, entry.filename);
   } finally {
     if (pkg.rewriteWorkspaceDeps) writeFileSync(pkgJsonPath, original);
