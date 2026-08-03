@@ -37,13 +37,26 @@ describe("hero CTA mascot above title", () => {
     const mark = readSrc("src/components/brand/kubo-mark.tsx");
     const idle = readSrc("src/lib/motion/timelines/kubo-mark-idle.ts");
     const celebrate = readSrc("src/lib/motion/timelines/kubo-mark-celebrate.ts");
+    const paths = readSrc("src/lib/motion/timelines/kubo-mark-paths.ts");
 
     expect(motion).toContain("playKuboMarkIdle");
     expect(motion).toContain("playKuboMarkCelebrate");
     expect(motion).toContain("prefersReducedMotion");
+    expect(motion).toContain("legLeftRef");
+    expect(motion).toContain("legRightRef");
+    expect(motion).toContain("bodyRef");
+    expect(motion).toContain("clipPath");
+    expect(motion).toContain("KUBO_MARK_BODY_PATH");
+    expect(motion).toContain("KUBO_MARK_LEG_LEFT_PATH");
     expect(mark).not.toContain("playKuboMarkIdle");
     expect(idle).toContain("repeat: -1");
     expect(idle).toContain("KUBO_MARK_SVG_ORIGIN");
+    expect(idle).toContain("KuboMarkIdleTargets");
+    expect(idle).toContain("legLeft");
+    expect(idle).toContain("svgOrigin");
+    expect(paths).toContain("KUBO_MARK_BODY_PATH");
+    expect(paths).toContain("KUBO_MARK_LEG_LEFT_PATH");
+    expect(paths).toContain("KUBO_MARK_LEG_RIGHT_PATH");
     expect(celebrate).toContain("scale: 1.12");
   });
 

@@ -1,10 +1,16 @@
 "use client";
 
-import { forwardRef, useImperativeHandle, useRef } from "react";
+import { forwardRef, useId, useImperativeHandle, useRef } from "react";
 
 import { prefersReducedMotion } from "@/lib/motion/reduced-motion";
 import { playKuboMarkCelebrate } from "@/lib/motion/timelines/kubo-mark-celebrate";
 import { playKuboMarkIdle, type KuboMarkIdleHandle } from "@/lib/motion/timelines/kubo-mark-idle";
+import {
+  KUBO_MARK_BODY_PATH,
+  KUBO_MARK_FILL,
+  KUBO_MARK_LEG_LEFT_PATH,
+  KUBO_MARK_LEG_RIGHT_PATH,
+} from "@/lib/motion/timelines/kubo-mark-paths";
 import { useGsapContext } from "@/lib/motion/use-gsap-context";
 import { cn } from "@/lib/utils";
 
@@ -14,25 +20,37 @@ export type KuboMarkMotionHandle = {
 
 type KuboMarkMotionProps = {
   className?: string;
-  /** Start the quiet idle loop (default true). Off under reduced motion. */
+  /** Start the quiet idle walk loop (default true). Off under reduced motion. */
   idle?: boolean;
 };
 
 /**
- * Hero-only animated mark: Mode A idle on outer group, celebrate punch on inner.
+ * Hero-only animated mark: Mode A multipartite walk idle + celebrate punch.
  * Header / static brand should keep `KuboMark` (no loops).
  */
 export const KuboMarkMotion = forwardRef<KuboMarkMotionHandle, KuboMarkMotionProps>(
   function KuboMarkMotion({ className, idle = true }, ref) {
-    const idleLayerRef = useRef<SVGGElement>(null);
+    const reactId = useId();
+    const groundClipId = `kubo-mark-ground-${reactId.replace(/:/g, "")}`;
+
+    const idleRootRef = useRef<SVGGElement>(null);
     const punchLayerRef = useRef<SVGGElement>(null);
+    const bodyRef = useRef<SVGGElement>(null);
+    const legLeftRef = useRef<SVGGElement>(null);
+    const legRightRef = useRef<SVGGElement>(null);
     const idleHandleRef = useRef<KuboMarkIdleHandle | null>(null);
 
     useGsapContext(
       () => {
-        if (!idle || !idleLayerRef.current || prefersReducedMotion()) return;
+        if (!idle || prefersReducedMotion()) return;
+        if (!bodyRef.current || !legLeftRef.current || !legRightRef.current) return;
 
-        idleHandleRef.current = playKuboMarkIdle(idleLayerRef.current);
+        idleHandleRef.current = playKuboMarkIdle({
+          root: idleRootRef.current,
+          body: bodyRef.current,
+          legLeft: legLeftRef.current,
+          legRight: legRightRef.current,
+        });
         return () => {
           idleHandleRef.current?.kill();
           idleHandleRef.current = null;
@@ -60,13 +78,25 @@ export const KuboMarkMotion = forwardRef<KuboMarkMotionHandle, KuboMarkMotionPro
         aria-hidden
         className={cn("h-auto w-auto", className)}
       >
-        <g ref={idleLayerRef}>
+        <defs>
+          {/* Allowed paint region ends at ground (y=678) so scaleY legs do not punch through. */}
+          <clipPath id={groundClipId}>
+            <rect x={-40} y={-50} width={843} height={728} />
+          </clipPath>
+        </defs>
+        <g ref={idleRootRef}>
           <g ref={punchLayerRef}>
-            <path
-              fill="#FBC80D"
-              fillRule="evenodd"
-              d="M100 678H665A8 8 0 0 1 673 670V328H755A8 8 0 0 1 763 320V134A8 8 0 0 1 755 126H673V8A8 8 0 0 1 665 0H561A8 8 0 0 1 553 8V126H213V8A8 8 0 0 1 205 0H100A8 8 0 0 1 92 8V126H10A8 8 0 0 1 2 134V320A8 8 0 0 1 10 328H92V670A8 8 0 0 1 100 678ZM213 292H298V378H213ZM468 292H553V378H468ZM213 547H553V678H213Z"
-            />
+            <g ref={bodyRef}>
+              <path fill={KUBO_MARK_FILL} fillRule="evenodd" d={KUBO_MARK_BODY_PATH} />
+            </g>
+            <g clipPath={`url(#${groundClipId})`}>
+              <g ref={legLeftRef}>
+                <path fill={KUBO_MARK_FILL} d={KUBO_MARK_LEG_LEFT_PATH} />
+              </g>
+              <g ref={legRightRef}>
+                <path fill={KUBO_MARK_FILL} d={KUBO_MARK_LEG_RIGHT_PATH} />
+              </g>
+            </g>
           </g>
         </g>
       </svg>

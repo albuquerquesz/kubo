@@ -69,5 +69,12 @@ export type {
   ScrollRevealIconsHandle,
 } from "./timelines/scroll-reveal-icons";
 export { playKuboMarkIdle, KUBO_MARK_SVG_ORIGIN } from "./timelines/kubo-mark-idle";
-export type { KuboMarkIdleHandle } from "./timelines/kubo-mark-idle";
+export type { KuboMarkIdleHandle, KuboMarkIdleTargets } from "./timelines/kubo-mark-idle";
 export { playKuboMarkCelebrate } from "./timelines/kubo-mark-celebrate";
+export {
+  KUBO_MARK_BODY_PATH,
+  KUBO_MARK_FILL,
+  KUBO_MARK_HIP_CENTER,
+  KUBO_MARK_LEG_LEFT_PATH,
+  KUBO_MARK_LEG_RIGHT_PATH,
+} from "./timelines/kubo-mark-paths";
