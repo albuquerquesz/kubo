@@ -1,9 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { KuboMark } from "@/components/brand/kubo-mark";
 import { buttonVariants } from "@/components/ui/button";
 import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "@/lib/create-commands";
 import { fireCtaConfetti } from "@/lib/motion/cta-confetti";
@@ -20,10 +20,8 @@ import "./hero-dithering-card.css";
 const PRIMARY_FALLBACK = "#c49314";
 const HERO_TITLE = "Construa sem começar do zero.";
 
-/** Prefetch Paper chunk as soon as this module evaluates (above-the-fold). */
 void import("@paper-design/shaders-react");
 
-/** Eager client-only mount (no SSR WebGL). Dense CSS underlay covers until canvas ready. */
 const Dithering = dynamic(
   () => import("@paper-design/shaders-react").then((mod) => ({ default: mod.Dithering })),
   { ssr: false, loading: () => null },
@@ -63,10 +61,6 @@ function usePrefersReducedMotion(): boolean {
   return reduced;
 }
 
-/**
- * Paper dither with canvas-ready signal so CSS underlay can hand off softly.
- * Ready only drives atmosphere crossfade — never the content intro gate.
- */
 function HeroDitherShader({
   primary,
   speed,
@@ -102,7 +96,6 @@ function HeroDitherShader({
     });
     observer.observe(host, { childList: true, subtree: true });
 
-    // Atmosphere-only safety; content intro does not wait on this.
     const safety = window.setTimeout(mark, 1000);
 
     return () => {
@@ -130,10 +123,6 @@ export type CTASectionProps = {
   className?: string;
 };
 
-/**
- * Full-viewport marketing hero with Paper Design dithering atmosphere.
- * Dense CSS from frame 0; strong word-blur intro after a short fonts gate (not WebGL).
- */
 export function CTASection({ className }: CTASectionProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -171,7 +160,6 @@ export function CTASection({ className }: CTASectionProps) {
       let killIntro: (() => void) | undefined;
 
       void (async () => {
-        // Fonts-only gate — never wait on Paper WebGL (atmosphere crossfades in parallel).
         await waitForHeroIntroGate({
           minHoldMs: 0,
           fontsTimeoutMs: 150,
@@ -198,7 +186,6 @@ export function CTASection({ className }: CTASectionProps) {
     };
   }, []);
 
-  // Failsafe: never leave the stack permanently hidden if motion never claims it.
   useEffect(() => {
     const id = window.setTimeout(() => {
       const root = contentRef.current;
@@ -235,7 +222,6 @@ export function CTASection({ className }: CTASectionProps) {
       id="top"
       aria-label="Seção principal"
       className={cn(
-        // Cancel layout header offset so the stage paints edge-to-edge under the fixed bar.
         "relative -mt-[var(--site-header-height)] flex h-svh min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-background",
         className,
       )}
@@ -247,7 +233,6 @@ export function CTASection({ className }: CTASectionProps) {
         data-shader-ready={shaderReady ? "true" : "false"}
         aria-hidden
       >
-        {/* Dense CSS atmosphere — product-ready from first paint. */}
         <div className="hero-dither-fallback" />
 
         <div
@@ -264,16 +249,8 @@ export function CTASection({ className }: CTASectionProps) {
         className="hero-content relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center"
         data-hero-intro="pending"
       >
-        {/* Transparent mascot mark — fills the former status-badge slot above the title. */}
         <div ref={badgeRef} className="mb-8 flex items-center justify-center" aria-hidden>
-          <Image
-            src="/assets/kubo-mark.png"
-            alt=""
-            width={64}
-            height={56}
-            priority
-            className="h-14 w-auto object-contain"
-          />
+          <KuboMark className="h-14 w-auto" />
         </div>
 
         <h1
