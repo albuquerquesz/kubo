@@ -116,7 +116,8 @@ export function playHeroContentIntro(options: HeroContentIntroOptions): () => vo
     const bodyWords = (bodySplit.words as HTMLElement[]) ?? [];
 
     // Inline pre-state BEFORE flipping data-hero-intro (avoids opacity:1 flash).
-    if (badge) gsap.set(badge, { opacity: 0, y: 8, visibility: "visible" });
+    // Mark pop: scale from 0.7 (toy drop-in); no blur — title owns the blur grammar.
+    if (badge) gsap.set(badge, { opacity: 0, y: 8, scale: 0.7, visibility: "visible" });
     gsap.set(cta, { opacity: 0, y: 12, scale: 0.98, visibility: "visible" });
     gsap.set(titleWords, WORD_FROM);
     gsap.set(bodyWords, WORD_FROM);
@@ -140,7 +141,9 @@ export function playHeroContentIntro(options: HeroContentIntroOptions): () => vo
     const ctaAt = badge ? 0.72 : 0.62;
 
     if (badge) {
-      timeline.to(badge, { opacity: 1, y: 0, duration: 0.5, ease: ease.expoOut }, 0);
+      timeline
+        .to(badge, { opacity: 1, y: 0, scale: 1.05, duration: 0.38, ease: "back.out(1.4)" }, 0)
+        .to(badge, { scale: 1, duration: 0.16, ease: ease.expoOut }, 0.34);
     }
 
     if (titleWords.length > 0) {

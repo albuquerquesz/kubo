@@ -68,3 +68,6 @@ export type {
   ScrollRevealIconsOptions,
   ScrollRevealIconsHandle,
 } from "./timelines/scroll-reveal-icons";
+export { playKuboMarkIdle, KUBO_MARK_SVG_ORIGIN } from "./timelines/kubo-mark-idle";
+export type { KuboMarkIdleHandle } from "./timelines/kubo-mark-idle";
+export { playKuboMarkCelebrate } from "./timelines/kubo-mark-celebrate";
