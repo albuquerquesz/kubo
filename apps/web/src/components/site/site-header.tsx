@@ -21,7 +21,6 @@ const socialLinks = [
   },
 ] as const;
 
-/** Shared fixed-bar height — keep mark, nav, utilities, and layout offset in sync. */
 const headerRowClass = "h-12";
 
 const utilityLinkClass =
@@ -91,7 +90,6 @@ export function SiteHeader({ className }: { className?: string }) {
         <Link
           href="/new"
           className={cn(
-            // Header chrome freezes the pre-pill CTA look (not marketing `cta` variant).
             "group/button inline-flex shrink-0 select-none items-center justify-center gap-2 border-0 bg-primary px-5",
             "rounded-none font-semibold text-base tracking-[-0.02em] text-primary-foreground transition-all",
             "hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring",

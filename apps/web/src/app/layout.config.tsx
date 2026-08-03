@@ -1,19 +1,12 @@
 import type { BaseLayoutProps, LinkItemType } from "fumadocs-ui/layouts/shared";
 import Image from "next/image";
 
+import { KuboMark } from "@/components/brand/kubo-mark";
 import discordLogo from "@/public/icon/discord.svg";
 import npmLogo from "@/public/icon/npm.svg";
 import xLogo from "@/public/icon/x.svg";
 
-export const logo = (
-  <Image
-    alt="Kubo"
-    src="/assets/kubo-mark.png"
-    width={32}
-    height={32}
-    className="size-8 object-contain"
-  />
-);
+export const logo = <KuboMark title="Kubo" className="size-8" />;
 
 export const links: LinkItemType[] = [
   {
@@ -78,7 +71,6 @@ export const baseOptions: BaseLayoutProps = {
   },
   links: links,
   githubUrl: "https://github.com/albuquerquesz/kubo",
-  // Site is dark-only; next-themes is disabled in root layout.
   themeSwitch: {
     enabled: false,
   },
