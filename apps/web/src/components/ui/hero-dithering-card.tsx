@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { KuboMark } from "@/components/brand/kubo-mark";
+import { KuboMarkMotion, type KuboMarkMotionHandle } from "@/components/brand/kubo-mark-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "@/lib/create-commands";
 import { fireCtaConfetti } from "@/lib/motion/cta-confetti";
@@ -130,6 +130,7 @@ export function CTASection({ className }: CTASectionProps) {
   const resetTimerRef = useRef<number | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
+  const markRef = useRef<KuboMarkMotionHandle>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
@@ -203,6 +204,7 @@ export function CTASection({ className }: CTASectionProps) {
 
       const cta = ctaRef.current;
       if (cta) fireCtaConfetti(cta);
+      markRef.current?.celebrate();
 
       if (resetTimerRef.current !== null) {
         window.clearTimeout(resetTimerRef.current);
@@ -250,7 +252,7 @@ export function CTASection({ className }: CTASectionProps) {
         data-hero-intro="pending"
       >
         <div ref={badgeRef} className="mb-8 flex items-center justify-center" aria-hidden>
-          <KuboMark className="h-14 w-auto" />
+          <KuboMarkMotion ref={markRef} className="h-14 w-auto" idle />
         </div>
 
         <h1

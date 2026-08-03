@@ -18,7 +18,9 @@ describe("hero CTA mascot above title", () => {
     );
 
     expect(hero).toContain("badgeRef");
-    expect(hero).toContain("KuboMark");
+    expect(hero).toContain("KuboMarkMotion");
+    expect(hero).toContain("markRef");
+    expect(hero).toContain("celebrate()");
     expect(hero).not.toContain("/assets/kubo-mark.png");
     expect(hero).not.toContain("/assets/kubo.png");
 
@@ -28,6 +30,21 @@ describe("hero CTA mascot above title", () => {
     expect(hero).toContain("playHeroContentIntro({ root, badge, title, body, cta })");
 
     expect(hero).toContain("if (!root || !badge || !title || !body || !cta) return");
+  });
+
+  test("hero mark motion layers idle and celebrate without animating static brand mark", () => {
+    const motion = readSrc("src/components/brand/kubo-mark-motion.tsx");
+    const mark = readSrc("src/components/brand/kubo-mark.tsx");
+    const idle = readSrc("src/lib/motion/timelines/kubo-mark-idle.ts");
+    const celebrate = readSrc("src/lib/motion/timelines/kubo-mark-celebrate.ts");
+
+    expect(motion).toContain("playKuboMarkIdle");
+    expect(motion).toContain("playKuboMarkCelebrate");
+    expect(motion).toContain("prefersReducedMotion");
+    expect(mark).not.toContain("playKuboMarkIdle");
+    expect(idle).toContain("repeat: -1");
+    expect(idle).toContain("KUBO_MARK_SVG_ORIGIN");
+    expect(celebrate).toContain("scale: 1.12");
   });
 
   test("playHeroContentIntro treats badge as optional", () => {
