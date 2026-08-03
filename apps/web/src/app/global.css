@@ -98,6 +98,7 @@
 @theme inline {
   --font-sans: var(--font-archivo);
   --font-mono: var(--font-ibm-plex-mono);
+  --font-jetbrains: var(--font-jetbrains-mono);
   --font-grotesk: var(--font-space-grotesk);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
