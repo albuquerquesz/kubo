@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { FaGithub, FaXTwitter } from "react-icons/fa6";
 
+import { KuboMark } from "@/components/brand/kubo-mark";
 import { cn } from "@/lib/utils";
 
 const primaryLinks = [{ href: "/#documentation", label: "Docs" }] as const;
@@ -31,12 +32,12 @@ function BrandMark() {
     <Link
       href="/"
       className={cn(
-        "font-jetbrains flex shrink-0 items-center border-rule border-r px-3 text-base font-normal tracking-[0.14em] text-foreground transition-colors duration-150 ease-out hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:px-3.5 sm:text-lg",
+        "flex shrink-0 items-center border-rule border-r px-3 transition-colors duration-150 ease-out hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:px-3.5",
         headerRowClass,
       )}
       aria-label="Início Kubo"
     >
-      kubojs
+      <KuboMark className="h-7 w-auto" title="Kubo" />
     </Link>
   );
 }
