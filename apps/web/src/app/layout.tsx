@@ -1,6 +1,6 @@
 import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata, Viewport } from "next";
-import { Archivo, IBM_Plex_Mono, Inter, Space_Grotesk } from "next/font/google";
+import { Archivo, IBM_Plex_Mono, Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import type { ReactNode } from "react";
 
 import Providers from "@/components/providers";
@@ -18,6 +18,12 @@ const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-ibm-plex-mono",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-jetbrains-mono",
 });
 
 const inter = Inter({
@@ -123,6 +129,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       className={cn(
         archivo.variable,
         ibmPlexMono.variable,
+        jetbrainsMono.variable,
         inter.variable,
         spaceGrotesk.variable,
         "dark font-sans",

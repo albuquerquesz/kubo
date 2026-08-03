@@ -32,7 +32,7 @@ function BrandMark() {
     <Link
       href="/"
       className={cn(
-        "ui-grotesk flex shrink-0 items-center border-rule border-r px-3 text-base font-normal tracking-[0.06em] text-foreground transition-colors duration-150 ease-out hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:px-3.5 sm:text-lg",
+        "font-jetbrains flex shrink-0 items-center border-rule border-r px-3 text-base font-normal tracking-[0.14em] text-foreground transition-colors duration-150 ease-out hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:px-3.5 sm:text-lg",
         headerRowClass,
       )}
       aria-label="Início Kubo"
