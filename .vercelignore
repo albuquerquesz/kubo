@@ -1,0 +1,16 @@
+# Local deps/build caches — never upload to Vercel CLI
+node_modules
+**/node_modules
+.next
+**/.next
+.turbo
+**/.turbo
+.git
+**/dist
+**/.scratch-*
+apps/web/public/video
+packages/template-generator/templates-binary
+opensrc
+.playwright-cli
+docs/captures
+*.tar.zst
