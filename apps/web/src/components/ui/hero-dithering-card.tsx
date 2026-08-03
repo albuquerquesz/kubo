@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { KuboMarkMotion, type KuboMarkMotionHandle } from "@/components/brand/kubo-mark-motion";
 import { buttonVariants } from "@/components/ui/button";
 import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "@/lib/create-commands";
 import { fireCtaConfetti } from "@/lib/motion/cta-confetti";
@@ -128,6 +129,8 @@ export function CTASection({ className }: CTASectionProps) {
   const [shaderReady, setShaderReady] = useState(false);
   const resetTimerRef = useRef<number | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const markRef = useRef<KuboMarkMotionHandle>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
@@ -144,13 +147,14 @@ export function CTASection({ className }: CTASectionProps) {
   useGsapContext(
     () => {
       const root = contentRef.current;
+      const badge = badgeRef.current;
       const title = titleRef.current;
       const body = bodyRef.current;
       const cta = ctaRef.current;
-      if (!root || !title || !body || !cta) return;
+      if (!root || !badge || !title || !body || !cta) return;
 
       if (prefersReducedMotion()) {
-        return playHeroContentIntro({ root, title, body, cta });
+        return playHeroContentIntro({ root, badge, title, body, cta });
       }
 
       const abort = new AbortController();
@@ -164,7 +168,7 @@ export function CTASection({ className }: CTASectionProps) {
         });
 
         if (abort.signal.aborted) return;
-        killIntro = playHeroContentIntro({ root, title, body, cta });
+        killIntro = playHeroContentIntro({ root, badge, title, body, cta });
       })();
 
       return () => {
@@ -200,6 +204,7 @@ export function CTASection({ className }: CTASectionProps) {
 
       const cta = ctaRef.current;
       if (cta) fireCtaConfetti(cta);
+      markRef.current?.celebrate();
 
       if (resetTimerRef.current !== null) {
         window.clearTimeout(resetTimerRef.current);
@@ -246,6 +251,10 @@ export function CTASection({ className }: CTASectionProps) {
         className="hero-content relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center"
         data-hero-intro="pending"
       >
+        <div ref={badgeRef} className="mb-8 flex items-center justify-center" aria-hidden>
+          <KuboMarkMotion ref={markRef} className="h-14 w-auto" idle />
+        </div>
+
         <h1
           ref={titleRef}
           className={cn(
