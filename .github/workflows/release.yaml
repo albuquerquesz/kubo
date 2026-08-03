@@ -337,17 +337,25 @@ jobs:
       # Rollback: restore env NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} on these steps.
       # Explicit --tag latest: npm refuses implicit latest when the new semver
       # is lower than an already-published version (e.g. 0.1.0 after 3.36.3).
+      # NODE_AUTH_TOKEN: OIDC Trusted Publisher is preferred long-term; token is
+      # required until all four packages have Trusted Publishing fully linked.
       - name: Publish types to NPM
         if: steps.check-version.outputs.exists == 'false'
         run: cd packages/types && npm publish --access public --provenance --tag latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish template-generator to NPM
         if: steps.check-version.outputs.exists == 'false'
         run: cd packages/template-generator && npm publish --access public --provenance --tag latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish create-kubojs to NPM
         if: steps.check-version.outputs.exists == 'false'
         run: cd apps/cli && npm publish --access public --provenance --tag latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # Backward-compat alias: same artifact under @kubojs/cli for older docs/installs.
       - name: Publish @kubojs/cli alias to NPM
@@ -359,6 +367,8 @@ jobs:
           jq --arg v "$VERSION" '.name = "@kubojs/cli" | .version = $v' package.json > tmp.json && mv tmp.json package.json
           npm publish --access public --provenance --tag latest
           echo "$ORIGINAL" > package.json
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Post-publish npm view verify
         if: steps.check-version.outputs.exists == 'false'
