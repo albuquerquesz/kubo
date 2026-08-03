@@ -32,5 +32,10 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    // Remotion promo project (own package.json/deps). Not part of the Next app;
+    // including it breaks `next build` typecheck (missing chalk/ora/etc.).
+    "public/video"
+  ]
 }
