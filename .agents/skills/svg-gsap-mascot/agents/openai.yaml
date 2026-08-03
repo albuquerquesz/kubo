@@ -1,0 +1,4 @@
+interface:
+  display_name: "SVG + GSAP Mascot"
+  short_description: "Tween, sprite-frame, and hybrid SVG character animation"
+  default_prompt: "Use $svg-gsap-mascot to plan or implement a Kubo mascot/SVG loop with GSAP (tween, frame sprite, or hybrid), using apps/web lib/motion and reduced-motion."
