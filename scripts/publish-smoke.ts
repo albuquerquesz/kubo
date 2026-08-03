@@ -67,7 +67,8 @@ async function pack(pkg: Publishable, outDir: string): Promise<string> {
     // Prefer spawn over Bun `$` + npm: CI's setup-node injects a registry
     // .npmrc/NODE_AUTH_TOKEN that can make `$`…`.quiet()` throw TypeError.
     // Unset token for pack — packing is local-only and does not need auth.
-    const proc = Bun.spawn(["npm", "pack", `--pack-destination=${outDir}`, "--json"], {
+    // Avoid --json: npm may mix notices with the payload and break parse.
+    const proc = Bun.spawn(["npm", "pack", `--pack-destination=${outDir}`], {
       cwd: join(ROOT, pkg.dir),
       stdout: "pipe",
       stderr: "pipe",
@@ -88,23 +89,20 @@ async function pack(pkg: Publishable, outDir: string): Promise<string> {
       );
     }
 
-    // npm pack --json prints a JSON array; tolerate trailing log noise.
-    const jsonStart = stdout.indexOf("[");
-    const jsonEnd = stdout.lastIndexOf("]");
-    if (jsonStart === -1 || jsonEnd === -1 || jsonEnd < jsonStart) {
+    // Last non-empty line is the tarball filename (e.g. kubojs-types-0.1.0.tgz).
+    const filename = stdout
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .at(-1);
+
+    if (!filename || !filename.endsWith(".tgz")) {
       throw new Error(
-        `npm pack for ${pkg.name} did not return JSON array\nstdout:\n${stdout}\nstderr:\n${stderr}`,
+        `npm pack for ${pkg.name} did not print a .tgz filename\nstdout:\n${stdout}\nstderr:\n${stderr}`,
       );
     }
 
-    const entries = JSON.parse(stdout.slice(jsonStart, jsonEnd + 1)) as Array<{
-      filename: string;
-    }>;
-    const entry = entries[0];
-    if (!entry?.filename) {
-      throw new Error(`npm pack for ${pkg.name} returned no filename\n${stdout}`);
-    }
-    return join(outDir, entry.filename);
+    return join(outDir, filename);
   } finally {
     if (pkg.rewriteWorkspaceDeps) writeFileSync(pkgJsonPath, original);
   }
