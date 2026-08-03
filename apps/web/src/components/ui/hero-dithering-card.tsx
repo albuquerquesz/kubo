@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -139,6 +140,7 @@ export function CTASection({ className }: CTASectionProps) {
   const [shaderReady, setShaderReady] = useState(false);
   const resetTimerRef = useRef<number | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
@@ -155,13 +157,14 @@ export function CTASection({ className }: CTASectionProps) {
   useGsapContext(
     () => {
       const root = contentRef.current;
+      const badge = badgeRef.current;
       const title = titleRef.current;
       const body = bodyRef.current;
       const cta = ctaRef.current;
-      if (!root || !title || !body || !cta) return;
+      if (!root || !badge || !title || !body || !cta) return;
 
       if (prefersReducedMotion()) {
-        return playHeroContentIntro({ root, title, body, cta });
+        return playHeroContentIntro({ root, badge, title, body, cta });
       }
 
       const abort = new AbortController();
@@ -176,7 +179,7 @@ export function CTASection({ className }: CTASectionProps) {
         });
 
         if (abort.signal.aborted) return;
-        killIntro = playHeroContentIntro({ root, title, body, cta });
+        killIntro = playHeroContentIntro({ root, badge, title, body, cta });
       })();
 
       return () => {
@@ -261,10 +264,22 @@ export function CTASection({ className }: CTASectionProps) {
         className="hero-content relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center"
         data-hero-intro="pending"
       >
+        {/* Transparent mascot mark — fills the former status-badge slot above the title. */}
+        <div ref={badgeRef} className="mb-8 flex items-center justify-center" aria-hidden>
+          <Image
+            src="/assets/kubo-mark.png"
+            alt=""
+            width={64}
+            height={56}
+            priority
+            className="h-14 w-auto object-contain"
+          />
+        </div>
+
         <h1
           ref={titleRef}
           className={cn(
-            "ui-display mb-8 max-w-[16ch] text-5xl font-medium leading-[1.05] tracking-tight text-foreground",
+            "ui-grotesk mb-8 max-w-[16ch] text-5xl font-medium leading-[1.05] tracking-tight text-foreground",
             "md:text-7xl lg:text-8xl",
           )}
         >
