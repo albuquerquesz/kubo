@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { FaGithub, FaXTwitter } from "react-icons/fa6";
 
@@ -33,20 +32,12 @@ function BrandMark() {
     <Link
       href="/"
       className={cn(
-        "flex shrink-0 items-center gap-1.5 overflow-hidden border-rule border-r px-2 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:gap-2 sm:px-2.5",
+        "ui-grotesk flex shrink-0 items-center border-rule border-r px-3 text-base font-normal tracking-[0.06em] text-foreground transition-colors duration-150 ease-out hover:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:px-3.5 sm:text-lg",
         headerRowClass,
       )}
       aria-label="Início Kubo"
     >
-      <span aria-hidden className="relative size-7 shrink-0 overflow-hidden sm:size-8">
-        <Image
-          src="/assets/kubo-mark.png"
-          alt=""
-          width={32}
-          height={32}
-          className="size-7 object-contain sm:size-8"
-        />
-      </span>
+      kubojs
     </Link>
   );
 }

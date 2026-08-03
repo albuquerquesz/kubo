@@ -98,6 +98,7 @@
 @theme inline {
   --font-sans: var(--font-archivo);
   --font-mono: var(--font-ibm-plex-mono);
+  --font-grotesk: var(--font-space-grotesk);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -733,6 +734,11 @@
   font-family: var(--font-archivo);
   font-weight: 600;
   letter-spacing: -0.065em;
+}
+
+/** Space Grotesk display — brand wordmark + hero H1. */
+.ui-grotesk {
+  font-family: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
 }
 
 .hero-section-title {

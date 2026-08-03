@@ -1,6 +1,6 @@
 /**
- * Hero CTA ships without the "Stack em minutos" status chip.
- * Intro must not require a badge node (would leave content pending forever).
+ * Hero CTA ships the transparent Kubo mascot (not the "Stack em minutos" pill).
+ * Intro animates the mascot node via the optional badge slot.
  */
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
@@ -12,25 +12,28 @@ function readSrc(relative: string): string {
   return readFileSync(join(webRoot, relative), "utf8");
 }
 
-describe("hero CTA without status badge", () => {
-  test("shipped CTASection has no Stack em minutos pill markup", () => {
+describe("hero CTA mascot above title", () => {
+  test("shipped CTASection uses transparent mascot, not Stack em minutos pill", () => {
     const hero = readSrc("src/components/ui/hero-dithering-card.tsx");
 
     expect(hero).not.toContain("Stack em minutos");
-    expect(hero).not.toContain("badgeRef");
     expect(hero).not.toMatch(
       /animate-ping[\s\S]*Stack em minutos|Stack em minutos[\s\S]*animate-ping/,
     );
 
-    // Content stack is title + body + CTA only.
+    // Mascot mark (no plate) in the former badge slot.
+    expect(hero).toContain("badgeRef");
+    expect(hero).toContain("/assets/kubo-mark.png");
+    expect(hero).not.toContain("/assets/kubo.png");
+
+    // Content stack is mascot + title + body + CTA.
     expect(hero).toContain("titleRef");
     expect(hero).toContain("bodyRef");
     expect(hero).toContain("ctaRef");
-    expect(hero).toContain("playHeroContentIntro({ root, title, body, cta })");
+    expect(hero).toContain("playHeroContentIntro({ root, badge, title, body, cta })");
 
-    // Early return must not hard-require a badge node.
-    expect(hero).toContain("if (!root || !title || !body || !cta) return");
-    expect(hero).not.toContain("!badge");
+    // Intro waits on the mascot node as the badge slot.
+    expect(hero).toContain("if (!root || !badge || !title || !body || !cta) return");
   });
 
   test("playHeroContentIntro treats badge as optional", () => {
