@@ -208,7 +208,8 @@ describe("shipped motion tokens match skill Family A", () => {
     expect(component).toContain("getIcons");
 
     const hero = readRepo("apps/web/src/app/(home)/_components/hero-section.tsx");
-    expect(hero).toContain("MosaicHeroCanvas");
+    expect(hero).toContain("CTASection");
+    expect(hero).not.toContain("MosaicHeroCanvas");
     expect(hero).not.toContain("playHeroScrollRevealIcons");
   });
 
@@ -231,10 +232,14 @@ describe("shipped motion tokens match skill Family A", () => {
     expect(src).toContain("playHeroStickyScale");
     expect(src).toContain("hostTransformAtPinProgress");
 
-    const hero = readRepo("apps/web/src/app/(home)/_components/hero-section.tsx");
-    expect(hero).toContain("MosaicHeroCanvas");
+    const shell = readRepo("apps/web/src/app/(home)/_components/hero-section.tsx");
+    const hero = readRepo("apps/web/src/components/ui/hero-dithering-card.tsx");
+    expect(shell).toContain("CTASection");
+    expect(shell).not.toContain("MosaicHeroCanvas");
     expect(hero).toContain("min-h-svh");
     expect(hero).not.toContain("lg:min-h-[200dvh]");
+    expect(shell).not.toContain("playHeroStickyScale");
+    expect(shell).not.toContain('data-hero-motion="sticky-shell"');
     expect(hero).not.toContain("playHeroStickyScale");
     expect(hero).not.toContain('data-hero-motion="sticky-shell"');
   });

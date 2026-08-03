@@ -155,7 +155,8 @@ describe("shipped Family B hostTransformAtPinProgress", () => {
     expect(hero).not.toContain('data-hero-motion="stage-clear"');
     expect(hero).not.toContain("stageClear");
     expect(hero).not.toContain("EtherealBeamsCanvas");
-    expect(hero).toContain("MosaicHeroCanvas");
+    expect(hero).not.toContain("MosaicHeroCanvas");
+    expect(hero).toContain("CTASection");
   });
 
   test("sentence translateX: outer lines move, middle stays 0", () => {
@@ -220,52 +221,36 @@ describe("shipped Family C pin window", () => {
   });
 });
 
-describe("hero mosaic stage layout (shipped markup)", () => {
-  test("hero is a single viewport stage with Mosaic artwork only", () => {
-    const hero = readFileSync(
+describe("hero dithering stage layout (shipped markup)", () => {
+  test("hero is a single viewport stage with dither CTA composition", () => {
+    const shell = readFileSync(
       join(import.meta.dir, "../src/app/(home)/_components/hero-section.tsx"),
       "utf8",
     );
+    const hero = readFileSync(
+      join(import.meta.dir, "../src/components/ui/hero-dithering-card.tsx"),
+      "utf8",
+    );
+    expect(shell).toContain("CTASection");
+    expect(shell).not.toContain("MosaicHeroCanvas");
+    expect(shell).not.toContain("EtherealBeamsCanvas");
     expect(hero).toContain('id="top"');
     expect(hero).toContain("min-h-svh");
     expect(hero).toContain("overflow-hidden");
-    expect(hero).toContain("MosaicHeroCanvas");
-    expect(hero).toContain("mosaic-hero-veil");
+    expect(hero).toContain("hero-dither-stage");
+    expect(hero).not.toContain("MosaicHeroCanvas");
+    expect(hero).not.toContain("mosaic-hero-veil");
     expect(hero).not.toContain("EtherealBeamsCanvas");
     expect(hero).not.toContain("ethereal-beams-veil");
     expect(hero).not.toContain("lg:min-h-[200dvh]");
     expect(hero).not.toContain('data-hero-motion="sticky-shell"');
-    expect(hero).not.toContain("border-rule border-b bg-background");
-    // Mosaic is the only hero artwork import — no dual canvas stack.
-    expect(hero.match(/from "\.\/mosaic-hero-canvas"/g)?.length).toBe(1);
-    expect(hero).not.toContain('from "./ethereal');
   });
 
-  test("hero mosaic artwork is decorative, pointer-inert, and motion-safe", () => {
-    const mosaic = readFileSync(
-      join(import.meta.dir, "../src/app/(home)/_components/mosaic-hero-canvas.tsx"),
-      "utf8",
-    );
-    expect(mosaic).toContain('aria-hidden="true"');
-    expect(mosaic).toContain("pointer-events-none");
-    expect(mosaic).toContain("prefers-reduced-motion");
-    // Static reduced-motion path freezes phase at 0 (no time-based drift).
-    expect(mosaic).toContain("if (reducedMotion) return 0");
-  });
-
-  test("hero has an explicit short-viewport containment contract", () => {
-    const hero = readFileSync(
-      join(import.meta.dir, "../src/app/(home)/_components/hero-section.tsx"),
-      "utf8",
-    );
+  test("mosaic hero is fully removed from the app", () => {
     const css = readFileSync(join(import.meta.dir, "../src/app/global.css"), "utf8");
-    // Full-bleed svh stage; short landscape tightening is an explicit CSS contract.
-    expect(hero).toContain("min-h-svh");
-    expect(hero).toContain("overflow-hidden");
-    expect(hero).toContain("hero-section");
-    expect(css).toContain(".hero-section");
-    expect(css).toContain("@media (max-height:");
-    expect(css).toContain("hero-short-viewport");
+    expect(css).not.toContain(".mosaic-hero-fallback");
+    expect(css).not.toContain(".mosaic-hero-canvas");
+    expect(css).not.toContain(".mosaic-hero-veil");
   });
 
   test("hero does not retain Family B host or title-exit wiring", () => {

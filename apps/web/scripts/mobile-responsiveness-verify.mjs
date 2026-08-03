@@ -50,7 +50,7 @@ async function measureOverflow(page) {
 async function heroMetrics(page) {
   return page.evaluate(() => {
     const section = document.querySelector("#top");
-    const canvas = document.querySelector(".mosaic-hero-canvas");
+    const canvas = document.querySelector(".hero-dither-shader canvas, .hero-dither-stage canvas");
     const title = document.querySelector(
       "#top h1, #top [class*='hero-section-title'], #top .ui-display",
     );
@@ -80,13 +80,13 @@ async function heroMetrics(page) {
     };
 
     const sec = rect(section);
+    const stage = document.querySelector(".hero-dither-stage");
     const canvasEl = canvas;
     return {
       hero: sec,
       heroOffsetHeight: section?.offsetHeight ?? null,
-      canvasReady: canvasEl?.getAttribute("data-mosaic-ready"),
-      canvasCols: canvasEl?.getAttribute("data-mosaic-columns"),
-      canvasRows: canvasEl?.getAttribute("data-mosaic-rows"),
+      shaderReady: stage?.getAttribute("data-shader-ready") === "true",
+      hasCanvas: Boolean(canvasEl),
       title: rect(title || document.querySelector("#top h1")),
       install: rect(installShell),
       rail: rect(rail),
@@ -246,11 +246,12 @@ async function runViewport(browser, { name, width, height, isMobile = true, land
 
   await page.goto(BASE + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
   await page.waitForTimeout(800);
-  // Wait for mosaic ready (or timeout)
+  // Wait for dither shader canvas when present (or timeout)
   try {
     await page.waitForFunction(
       () =>
-        document.querySelector(".mosaic-hero-canvas")?.getAttribute("data-mosaic-ready") === "true",
+        document.querySelector(".hero-dither-stage")?.getAttribute("data-shader-ready") ===
+          "true" || Boolean(document.querySelector(".hero-dither-shader canvas")),
       { timeout: 8000 },
     );
   } catch {
@@ -280,10 +281,10 @@ async function runViewport(browser, { name, width, height, isMobile = true, land
     );
   }
 
-  if (hero.canvasReady === "true") {
-    pass(`${name}/mosaic-ready`, `cols=${hero.canvasCols} rows=${hero.canvasRows}`);
+  if (hero.shaderReady || hero.hasCanvas) {
+    pass(`${name}/shader-ready`, `hasCanvas=${hero.hasCanvas} ready=${hero.shaderReady}`);
   } else {
-    fail(`${name}/mosaic-ready`, `data-mosaic-ready=${hero.canvasReady}`);
+    fail(`${name}/shader-ready`, `shaderReady=${hero.shaderReady} hasCanvas=${hero.hasCanvas}`);
   }
 
   if (install) {

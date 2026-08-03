@@ -8,8 +8,8 @@ function readSrc(relative: string): string {
   return readFileSync(join(webRoot, relative), "utf8");
 }
 
-describe("hero CTA mascot above title", () => {
-  test("shipped CTASection uses transparent mascot, not Stack em minutos pill", () => {
+describe("hero CTA without mascot badge", () => {
+  test("shipped CTASection has no mark / pill above the title", () => {
     const hero = readSrc("src/components/ui/hero-dithering-card.tsx");
 
     expect(hero).not.toContain("Stack em minutos");
@@ -17,27 +17,27 @@ describe("hero CTA mascot above title", () => {
       /animate-ping[\s\S]*Stack em minutos|Stack em minutos[\s\S]*animate-ping/,
     );
 
-    expect(hero).toContain("badgeRef");
-    expect(hero).toContain("KuboMarkMotion");
-    expect(hero).toContain("markRef");
-    expect(hero).toContain("celebrate()");
+    expect(hero).not.toContain("KuboMarkMotion");
+    expect(hero).not.toContain("markRef");
+    expect(hero).not.toContain("badgeRef");
+    expect(hero).not.toContain("celebrate()");
     expect(hero).not.toContain("/assets/kubo-mark.png");
     expect(hero).not.toContain("/assets/kubo.png");
 
     expect(hero).toContain("titleRef");
     expect(hero).toContain("bodyRef");
     expect(hero).toContain("ctaRef");
-    expect(hero).toContain("playHeroContentIntro({ root, badge, title, body, cta })");
-
-    expect(hero).toContain("if (!root || !badge || !title || !body || !cta) return");
+    expect(hero).toContain("playHeroContentIntro({ root, title, body, cta })");
+    expect(hero).toContain("if (!root || !title || !body || !cta) return");
   });
 
-  test("hero mark motion layers idle and celebrate without animating static brand mark", () => {
+  test("KuboMarkMotion stay saved offline (not wired into hero)", () => {
     const motion = readSrc("src/components/brand/kubo-mark-motion.tsx");
     const mark = readSrc("src/components/brand/kubo-mark.tsx");
     const idle = readSrc("src/lib/motion/timelines/kubo-mark-idle.ts");
     const celebrate = readSrc("src/lib/motion/timelines/kubo-mark-celebrate.ts");
     const paths = readSrc("src/lib/motion/timelines/kubo-mark-paths.ts");
+    const hero = readSrc("src/components/ui/hero-dithering-card.tsx");
 
     expect(motion).toContain("playKuboMarkIdle");
     expect(motion).toContain("playKuboMarkCelebrate");
@@ -58,6 +58,7 @@ describe("hero CTA mascot above title", () => {
     expect(paths).toContain("KUBO_MARK_LEG_LEFT_PATH");
     expect(paths).toContain("KUBO_MARK_LEG_RIGHT_PATH");
     expect(celebrate).toContain("scale: 1.12");
+    expect(hero).not.toContain('from "@/components/brand/kubo-mark-motion"');
   });
 
   test("playHeroContentIntro treats badge as optional", () => {
@@ -67,5 +68,13 @@ describe("hero CTA mascot above title", () => {
     expect(intro).toContain("if (badge)");
     expect(intro).toContain("const stack = [title, body, cta, ...(badge ? [badge] : [])]");
     expect(intro).toContain("const titleAt = badge ? 0.1 : 0");
+  });
+
+  test("site header BrandMark uses KuboMark, not wordmark text", () => {
+    const header = readSrc("src/components/site/site-header.tsx");
+
+    expect(header).toContain("KuboMark");
+    expect(header).toContain('from "@/components/brand/kubo-mark"');
+    expect(header).not.toMatch(/>\s*kubojs\s*</);
   });
 });
