@@ -53,3 +53,4 @@ templates-binary
 opensrc/
 .scratch-docker-smoke/
 .scratch-vercel-smoke/
+.env*
