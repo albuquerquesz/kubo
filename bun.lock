@@ -22,7 +22,7 @@
     },
     "apps/cli": {
       "name": "create-kubojs",
-      "version": "3.36.3",
+      "version": "0.1.0",
       "bin": {
         "create-kubojs": "dist/cli.mjs",
         "kubojs": "dist/cli.mjs",
@@ -156,9 +156,9 @@
     },
     "packages/template-generator": {
       "name": "@kubojs/template-generator",
-      "version": "3.36.3",
+      "version": "0.1.0",
       "dependencies": {
-        "@kubojs/types": "^3.36.3",
+        "@kubojs/types": "^0.1.0",
         "better-result": "^2.9.2",
         "handlebars": "^4.7.9",
         "memfs": "^4.57.2",
@@ -178,7 +178,7 @@
     },
     "packages/types": {
       "name": "@kubojs/types",
-      "version": "3.36.3",
+      "version": "0.1.0",
       "dependencies": {
         "zod": "^4.4.3",
       },

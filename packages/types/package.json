@@ -1,6 +1,6 @@
 {
   "name": "@kubojs/types",
-  "version": "3.36.3",
+  "version": "0.1.0",
   "description": "TypeScript types and schemas for kubojs CLI",
   "keywords": [
     "cli",
