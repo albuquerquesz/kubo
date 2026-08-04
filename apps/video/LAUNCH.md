@@ -27,13 +27,28 @@ Open composition **`kubo-launch`** in Remotion Studio.
 | `musicFile`   | `audio/launch-bed.mp3` (or `null`) |
 | `musicVolume` | 0.45                               |
 
-## Music
+## Audio
 
-Place a licensed bed track at:
+### Typing SFX (enabled by default)
 
-`public/audio/launch-bed.mp3`
+Typewriter windows play Mixkit beds from:
 
-If the file is missing, Studio may warn on the Audio node — set `musicFile` to `null` in props until you have a track.
+`public/audio/sfx/fast-keyboard-typing.mp3`
+
+- Command type: frames `0` → `CLI_PHASES.commandTypeEnd` (36)
+- Project name type: frames `nameTypeStart` → `nameTypeEnd`
+
+Other free clips in the same folder (`typing-laptop`, `hard-single-key`, …).  
+**Studio:** press **Play** (space) — scrubbing the timeline does not always play audio; unmute the Studio speaker control.
+
+### Music bed (optional)
+
+Place a licensed bed at `public/audio/launch-bed.mp3`, then set prop:
+
+- `musicFile` → `audio/launch-bed.mp3`
+- `musicVolume` → `0.45`
+
+Default `musicFile` is `null` (no bed until you set it).
 
 ## Render
 
