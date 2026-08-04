@@ -3,6 +3,9 @@ import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
 import {
   KUBO_MARK_BODY_PATH,
+  KUBO_MARK_EYE_FILL,
+  KUBO_MARK_EYE_LEFT,
+  KUBO_MARK_EYE_RIGHT,
   KUBO_MARK_FEET_CENTER,
   KUBO_MARK_FILL,
   KUBO_MARK_HIP_CENTER,
@@ -204,6 +207,21 @@ export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({
           })}
         >
           <path fill={KUBO_MARK_FILL} fillRule="evenodd" d={KUBO_MARK_BODY_PATH} />
+          {/* Solid eyes (body path uses evenodd cutouts — transparent on light backgrounds). */}
+          <rect
+            x={KUBO_MARK_EYE_LEFT.x}
+            y={KUBO_MARK_EYE_LEFT.y}
+            width={KUBO_MARK_EYE_LEFT.width}
+            height={KUBO_MARK_EYE_LEFT.height}
+            fill={KUBO_MARK_EYE_FILL}
+          />
+          <rect
+            x={KUBO_MARK_EYE_RIGHT.x}
+            y={KUBO_MARK_EYE_RIGHT.y}
+            width={KUBO_MARK_EYE_RIGHT.width}
+            height={KUBO_MARK_EYE_RIGHT.height}
+            fill={KUBO_MARK_EYE_FILL}
+          />
         </g>
         <g clipPath={`url(#${clipId})`}>
           <g
