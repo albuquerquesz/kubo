@@ -4,23 +4,14 @@ import { AbsoluteFill, Sequence, staticFile } from "remotion";
 
 import type { KuboLaunchProps } from "./lib/schema";
 import { SCENES } from "./lib/timing";
-import { ProblemScene } from "./scenes/problem-scene";
 import { SolutionScene } from "./scenes/solution-scene";
 
 /**
  * 8s launch cut for X / LinkedIn (16:9). Music-only; mark is frame-driven.
  */
-export const KuboLaunch: React.FC<KuboLaunchProps> = ({
-  problemBullets,
-  command,
-  musicFile,
-  musicVolume,
-}) => {
+export const KuboLaunch: React.FC<KuboLaunchProps> = ({ command, musicFile, musicVolume }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: "#0a0a0a" }}>
-      <Sequence from={SCENES.problem.from} durationInFrames={SCENES.problem.duration}>
-        <ProblemScene bullets={problemBullets} />
-      </Sequence>
       <Sequence from={SCENES.solution.from} durationInFrames={SCENES.solution.duration}>
         <SolutionScene command={command} />
       </Sequence>
