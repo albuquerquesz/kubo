@@ -23,6 +23,7 @@ Applies to Markdown documentation, runbooks, specifications, and agent instructi
 - Base branch: `main`.
 - Requested documentation scope and the relevant source files or diffs.
 - Existing repository instructions in [`AGENTS.md`](../../../../../AGENTS.md).
+- Monorepo layout reference: [`../../reference/monorepo-map.md`](../../reference/monorepo-map.md).
 
 ## Invariants
 
@@ -30,14 +31,16 @@ Applies to Markdown documentation, runbooks, specifications, and agent instructi
 - Link to canonical instructions instead of duplicating long rules.
 - Keep paths, command names, and workflow identifiers exact.
 - Preserve unrelated worktree changes.
+- When the request is a blueprint refresh, keep the router-only surface and sync `SKILL.md`, `template.json`, `reference/*`, and `AGENTS.md` links without inventing workflows.
 
 ## Procedure
 
 1. Inspect the relevant files with `rg`, targeted reads, and `git diff` when changes are involved.
-2. Identify the canonical source for each documented behavior.
+2. Identify the canonical source for each documented behavior (package manifests and live paths beat older prose).
 3. Update only the requested documents using repository terminology and relative links.
-4. Verify every new or changed link resolves to an existing file.
-5. Run a proportional validation, at minimum Markdown/path checks; run `bun run check` when repository formatting or linting may be affected.
+4. If monorepo apps moved, update [`../../reference/monorepo-map.md`](../../reference/monorepo-map.md) and structure sections in `AGENTS.md` / root `README.md` together.
+5. Verify every new or changed link resolves to an existing file.
+6. Run a proportional validation, at minimum Markdown/path checks; run `bun run check` when repository formatting or linting may be affected.
 
 ## Outputs
 
@@ -55,4 +58,5 @@ Applies to Markdown documentation, runbooks, specifications, and agent instructi
 
 - [Project router](../../SKILL.md)
 - [Routing matrix](../../reference/routing-matrix.md)
+- [Monorepo map](../../reference/monorepo-map.md)
 - [Repository rules](../../../../../AGENTS.md)

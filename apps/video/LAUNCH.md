@@ -5,9 +5,12 @@
 ## Preview
 
 ```bash
-cd apps/web/public/video
+# from monorepo root
 bun install
-bun run dev
+bun run dev:video
+
+# or
+cd apps/video && bun run dev
 ```
 
 Open composition **`kubo-launch`** in Remotion Studio.
@@ -34,7 +37,9 @@ If the file is missing, Studio may warn on the Audio node — set `musicFile` to
 ## Render
 
 ```bash
-npx remotion render kubo-launch out/kubo-launch.mp4
+cd apps/video
+bun run render
+# or: bunx remotion render kubo-launch out/kubo-launch.mp4
 ```
 
 ## Iterate

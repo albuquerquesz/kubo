@@ -44,8 +44,11 @@ Type safety end-to-end, clean monorepo layout, and zero lock-in: you choose only
 This repository is organized as a monorepo containing:
 
 - **CLI**: [`apps/cli`](apps/cli) — published as [`create-kubojs`](https://www.npmjs.com/package/create-kubojs) (bins: `create-kubojs`, `kubojs`; `@kubojs/cli` compat alias)
-- **Documentation / site**: [`apps/web`](apps/web)
+- **Documentation / site**: [`apps/web`](apps/web) — Next.js marketing + docs
+- **Video**: [`apps/video`](apps/video) — Remotion app (`@kubojs/video`) for brand/launch videos; Studio + render only (not nested under the web site)
 - **Packages**: [`packages/types`](packages/types), [`packages/template-generator`](packages/template-generator), [`packages/backend`](packages/backend)
+
+Agent-oriented layout notes: [`.agents/skills/kubojs/reference/monorepo-map.md`](.agents/skills/kubojs/reference/monorepo-map.md).
 
 ## Documentation
 
@@ -66,6 +69,9 @@ bun dev
 
 # Start CLI development
 bun cli
+
+# Remotion Studio (launch / brand videos)
+bun run dev:video
 ```
 
 ## Want to contribute?

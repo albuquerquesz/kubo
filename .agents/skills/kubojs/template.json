@@ -1,12 +1,12 @@
 {
   "name": "kubojs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "entry": "SKILL.md",
   "routing": "router-only",
   "commands": [
     {
       "name": "document",
-      "description": "Create or update repository documentation from verified project evidence.",
+      "description": "Create or update repository documentation and the agent blueprint from verified project evidence (including monorepo layout).",
       "skill": "workflows/document/SKILL.md"
     },
     {

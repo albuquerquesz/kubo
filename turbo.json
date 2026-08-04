@@ -10,6 +10,11 @@
       "inputs": ["$TURBO_DEFAULT$"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "templates-binary/**"]
     },
+    "bundle": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": ["build/**", "out/**"]
+    },
     "lint": {
       "dependsOn": ["transit"]
     },

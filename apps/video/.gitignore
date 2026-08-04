@@ -2,6 +2,10 @@ node_modules
 dist
 .DS_Store
 .env
+.env.*
+!.env.example
 
-# Ignore the output video from Git but not videos you import into src/.
+# Remotion Studio / render artifacts
 out
+.remotion
+bun.lock
