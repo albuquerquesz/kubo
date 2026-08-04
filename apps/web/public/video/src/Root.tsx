@@ -2,6 +2,14 @@ import "./index.css";
 import { Composition, getStaticFiles } from "remotion";
 
 import { AIVideo, aiVideoSchema } from "./components/AIVideo";
+import { KuboLaunch } from "./compositions/kubo-launch/KuboLaunch";
+import { defaultKuboLaunchProps, kuboLaunchSchema } from "./compositions/kubo-launch/lib/schema";
+import {
+  LAUNCH_DURATION_FRAMES,
+  LAUNCH_FPS,
+  LAUNCH_HEIGHT,
+  LAUNCH_WIDTH,
+} from "./compositions/kubo-launch/lib/timing";
 import { FPS, INTRO_DURATION } from "./lib/constants";
 import { getTimelinePath, loadTimelineFromFile } from "./lib/utils";
 
@@ -13,6 +21,17 @@ export const RemotionRoot: React.FC = () => {
 
   return (
     <>
+      <Composition
+        id="kubo-launch"
+        component={KuboLaunch}
+        fps={LAUNCH_FPS}
+        width={LAUNCH_WIDTH}
+        height={LAUNCH_HEIGHT}
+        durationInFrames={LAUNCH_DURATION_FRAMES}
+        schema={kuboLaunchSchema}
+        defaultProps={defaultKuboLaunchProps}
+      />
+
       {timelines.map((storyName) => (
         <Composition
           key={storyName}
