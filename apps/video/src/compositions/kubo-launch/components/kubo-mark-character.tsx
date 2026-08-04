@@ -1,5 +1,7 @@
 import React from "react";
+import { useCurrentFrame } from "remotion";
 
+import { getKuboEyeRect, getKuboEyeState } from "../lib/kubo-blink";
 import {
   KUBO_MARK_BODY_PATH,
   KUBO_MARK_EYE_FILL,
@@ -18,8 +20,12 @@ type KuboMarkCharacterProps = {
 
 /** Static Kubo mark kept ready for the next animation pass. */
 export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({ width = 280, style }) => {
+  const frame = useCurrentFrame();
+  const eyeState = getKuboEyeState(frame);
   const height = (width * KUBO_MARK_VIEWBOX.height) / KUBO_MARK_VIEWBOX.width;
   const clipId = "kubo-mark-ground-clip";
+  const leftEye = getKuboEyeRect(KUBO_MARK_EYE_LEFT, eyeState);
+  const rightEye = getKuboEyeRect(KUBO_MARK_EYE_RIGHT, eyeState);
 
   return (
     <svg
@@ -40,20 +46,8 @@ export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({ width = 28
         <g>
           <path fill={KUBO_MARK_FILL} fillRule="evenodd" d={KUBO_MARK_BODY_PATH} />
           {/* Solid eyes (body path uses evenodd cutouts — transparent on light backgrounds). */}
-          <rect
-            x={KUBO_MARK_EYE_LEFT.x}
-            y={KUBO_MARK_EYE_LEFT.y}
-            width={KUBO_MARK_EYE_LEFT.width}
-            height={KUBO_MARK_EYE_LEFT.height}
-            fill={KUBO_MARK_EYE_FILL}
-          />
-          <rect
-            x={KUBO_MARK_EYE_RIGHT.x}
-            y={KUBO_MARK_EYE_RIGHT.y}
-            width={KUBO_MARK_EYE_RIGHT.width}
-            height={KUBO_MARK_EYE_RIGHT.height}
-            fill={KUBO_MARK_EYE_FILL}
-          />
+          <rect {...leftEye} fill={KUBO_MARK_EYE_FILL} />
+          <rect {...rightEye} fill={KUBO_MARK_EYE_FILL} />
         </g>
         <g clipPath={`url(#${clipId})`}>
           <g>
