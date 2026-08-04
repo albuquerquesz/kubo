@@ -18,7 +18,7 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command: _command 
   const op = interpolate(enter, [0, 1], [0, 1]);
 
   return (
-    <SceneShell>
+    <SceneShell background="#ffffff" color="#0a0a0a" showGoldGlow={false}>
       <div
         style={{
           height: "100%",
@@ -35,10 +35,11 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command: _command 
           <h2
             style={{
               margin: 0,
-              fontSize: 92,
+              fontSize: 68,
               fontWeight: 700,
               letterSpacing: "-0.035em",
               lineHeight: 1.05,
+              color: "#0a0a0a",
             }}
           >
             Um comando. Stack pronta.
