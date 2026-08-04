@@ -1,5 +1,5 @@
 import React from "react";
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
 import { CliSelectPanel } from "../components/cli-select-panel";
 import { KuboMarkCharacter } from "../components/kubo-mark-character";
@@ -14,6 +14,49 @@ type SolutionSceneProps = {
 const MARK_HEIGHT = (SQUARE_LAYOUT.markWidth * KUBO_MARK_VIEWBOX.height) / KUBO_MARK_VIEWBOX.width;
 /** Feet flush on panel rim (slight seat into edge). */
 const MARK_TOP = -(MARK_HEIGHT - 2);
+
+const KUBO_ARRIVAL_START = 34;
+const KUBO_RUN_END = 68;
+const KUBO_ARRIVAL_END = 78;
+const KUBO_START_OFFSET_X = -1040;
+
+function getKuboArrivalX(frame: number): number {
+  if (frame < KUBO_ARRIVAL_START) return KUBO_START_OFFSET_X;
+  if (frame < KUBO_RUN_END) {
+    return interpolate(frame, [KUBO_ARRIVAL_START, KUBO_RUN_END], [KUBO_START_OFFSET_X, 20], {
+      easing: Easing.bezier(0.15, 0.85, 0.25, 1),
+    });
+  }
+  return interpolate(frame, [KUBO_RUN_END, KUBO_ARRIVAL_END], [20, 0], {
+    easing: Easing.bezier(0.34, 1.56, 0.64, 1),
+    extrapolateRight: "clamp",
+  });
+}
+
+function getKuboArrivalY(frame: number): number {
+  if (frame < KUBO_ARRIVAL_START) return 0;
+  if (frame < 50) {
+    return interpolate(frame, [KUBO_ARRIVAL_START, 50], [0, -22], {
+      easing: Easing.out(Easing.quad),
+    });
+  }
+  if (frame < KUBO_RUN_END) {
+    return interpolate(frame, [50, KUBO_RUN_END], [-22, 7], {
+      easing: Easing.inOut(Easing.sine),
+    });
+  }
+  return interpolate(frame, [KUBO_RUN_END, KUBO_ARRIVAL_END], [7, 0], {
+    easing: Easing.out(Easing.quad),
+    extrapolateRight: "clamp",
+  });
+}
+
+function getKuboWalkFrame(frame: number): number {
+  if (frame <= KUBO_ARRIVAL_START) return 0;
+  if (frame < KUBO_RUN_END) return (frame - KUBO_ARRIVAL_START) * 1.55;
+
+  return (KUBO_RUN_END - KUBO_ARRIVAL_START) * 1.55 + (frame - KUBO_RUN_END);
+}
 
 /**
  * Square CLI-perch solution: title in upper plate, dark CLI card lower ~⅔,
@@ -69,9 +112,14 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
             right: SQUARE_LAYOUT.markRight,
             zIndex: 2,
             pointerEvents: "none",
+            translate: `${getKuboArrivalX(frame)}px ${getKuboArrivalY(frame)}px`,
           }}
         >
-          <KuboMarkCharacter width={SQUARE_LAYOUT.markWidth} mode="walk" localFrame={frame} />
+          <KuboMarkCharacter
+            width={SQUARE_LAYOUT.markWidth}
+            mode="walk"
+            localFrame={getKuboWalkFrame(frame)}
+          />
         </div>
         <CliSelectPanel
           command={command}
