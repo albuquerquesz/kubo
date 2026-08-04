@@ -20,7 +20,7 @@ export const SQUARE_LAYOUT = {
   /** Title band top offset. */
   titleTop: 48,
   /** Display size for serif title (two lines in upper plate). */
-  titleFontSize: 80,
+  titleFontSize: 96,
   titleWidth: 960,
   /** Panel top Y (31.5% of 1080). */
   panelTop: 340,
