@@ -31,7 +31,7 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command: _command 
           transform: `translateY(${y}px)`,
         }}
       >
-        <div style={{ flex: "0 0 420px", minWidth: 0, marginTop: 12 }}>
+        <div style={{ flex: "0 0 560px", minWidth: 0, marginTop: 12 }}>
           <h2
             style={{
               margin: 0,
