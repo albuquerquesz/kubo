@@ -22,24 +22,15 @@ const KUBO_ARRIVAL_START = 34;
 const KUBO_RUN_END = 92;
 const KUBO_ARRIVAL_END = 104;
 const KUBO_ARRIVAL_OFFSET_X = 1040;
-const KUBO_LANDING_OVERSHOOT_X = -20;
 
 function getKuboArrivalX(frame: number): number {
   if (frame < KUBO_ARRIVAL_START) return KUBO_ARRIVAL_OFFSET_X;
   if (frame < KUBO_RUN_END) {
-    return interpolate(
-      frame,
-      [KUBO_ARRIVAL_START, KUBO_RUN_END],
-      [KUBO_ARRIVAL_OFFSET_X, KUBO_LANDING_OVERSHOOT_X],
-      {
-        easing: Easing.bezier(0.15, 0.85, 0.25, 1),
-      },
-    );
+    return interpolate(frame, [KUBO_ARRIVAL_START, KUBO_RUN_END], [KUBO_ARRIVAL_OFFSET_X, 0], {
+      easing: Easing.bezier(0.15, 0.85, 0.25, 1),
+    });
   }
-  return interpolate(frame, [KUBO_RUN_END, KUBO_ARRIVAL_END], [KUBO_LANDING_OVERSHOOT_X, 0], {
-    easing: Easing.bezier(0.34, 1.56, 0.64, 1),
-    extrapolateRight: "clamp",
-  });
+  return 0;
 }
 
 function getKuboArrivalY(frame: number): number {

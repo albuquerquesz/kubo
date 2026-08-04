@@ -29,8 +29,8 @@ export const SQUARE_LAYOUT = {
   panelTop: 340,
   /** Mark width ≈ 12% of canvas. */
   markWidth: 130,
-  /** Right inset of mark (~8.5% of 1080). */
-  markRight: 92,
+  /** Right inset of mark, keeping it clear of the panel corner. */
+  markRight: 140,
 } as const;
 
 /**
