@@ -143,7 +143,7 @@ const Intro: React.FC = () => (
 
 const CommandLine: React.FC<{ command: string; frame: number }> = ({ command, frame }) => {
   const chars = Math.floor(
-    interpolate(frame, [0, 24], [0, command.length], { extrapolateRight: "clamp" }),
+    interpolate(frame, [0, 48], [0, command.length], { extrapolateRight: "clamp" }),
   );
   const shown = command.slice(0, chars);
 
@@ -162,7 +162,7 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
 }) => {
   const frame = useCurrentFrame();
   const projectNameChars = Math.floor(
-    interpolate(frame, [92, 116], [0, "my-kubo-app".length], {
+    interpolate(frame, [119, 143], [0, "my-kubo-app".length], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     }),
@@ -170,9 +170,9 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
   const projectName = "my-kubo-app".slice(0, projectNameChars);
 
   let content: React.ReactNode;
-  if (frame < 28) {
+  if (frame < 55) {
     content = <CommandLine command={command} frame={frame} />;
-  } else if (frame < 67) {
+  } else if (frame < 94) {
     content = (
       <pre
         style={{
@@ -190,11 +190,11 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
         {KUBO_TITLE.trimStart()}
       </pre>
     );
-  } else if (frame < 91) {
+  } else if (frame < 118) {
     content = <Intro />;
-  } else if (frame < 130) {
+  } else if (frame < 157) {
     content = <NamePrompt value={projectName} cursorVisible={Math.floor(frame / 6) % 2 === 0} />;
-  } else if (frame < 181) {
+  } else if (frame < 208) {
     content = (
       <PromptFrame message="Select project type" options={PROJECT_TYPE_OPTIONS} multi first />
     );
