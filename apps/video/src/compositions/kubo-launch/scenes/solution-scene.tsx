@@ -22,7 +22,7 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
       <h2
         style={{
           position: "absolute",
-          top: 92,
+          top: 48,
           left: 120,
           width: 560,
           margin: 0,
@@ -66,7 +66,8 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
           style={{
             width: "100%",
             maxWidth: "none",
-            minHeight: 880,
+            height: 880,
+            minHeight: 0,
           }}
         />
       </div>
