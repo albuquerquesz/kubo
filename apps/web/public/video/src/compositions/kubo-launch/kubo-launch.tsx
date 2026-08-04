@@ -4,10 +4,10 @@ import { AbsoluteFill, Sequence, staticFile } from "remotion";
 
 import type { KuboLaunchProps } from "./lib/schema";
 import { SCENES } from "./lib/timing";
-import { CtaScene } from "./scenes/CtaScene";
-import { HookScene } from "./scenes/HookScene";
-import { ProblemScene } from "./scenes/ProblemScene";
-import { SolutionScene } from "./scenes/SolutionScene";
+import { CtaScene } from "./scenes/cta-scene";
+import { HookScene } from "./scenes/hook-scene";
+import { ProblemScene } from "./scenes/problem-scene";
+import { SolutionScene } from "./scenes/solution-scene";
 
 /**
  * 15s launch cut for X / LinkedIn (16:9). Music-only; mark is frame-driven.

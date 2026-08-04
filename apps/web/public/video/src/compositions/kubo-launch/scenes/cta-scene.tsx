@@ -1,8 +1,8 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
-import { KuboMarkCharacter } from "../components/KuboMarkCharacter";
-import { SceneShell } from "../components/SceneShell";
+import { KuboMarkCharacter } from "../components/kubo-mark-character";
+import { SceneShell } from "../components/scene-shell";
 
 type CtaSceneProps = {
   command: string;

@@ -1,9 +1,9 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
-import { KuboMarkCharacter } from "../components/KuboMarkCharacter";
-import { SceneShell } from "../components/SceneShell";
-import { TerminalBlock } from "../components/TerminalBlock";
+import { KuboMarkCharacter } from "../components/kubo-mark-character";
+import { SceneShell } from "../components/scene-shell";
+import { TerminalBlock } from "../components/terminal-block";
 
 type SolutionSceneProps = {
   command: string;

@@ -92,7 +92,7 @@ Current project needs light modification if you want to deploy it as a remote se
 
 Remotion renderer with template bundle should be deployed as per usual.
 
-Then you have to update [`Root.tsx`](src/Root.tsx) to use timeline url that you will pass as a prop (instead of project name).
+Then you have to update [`root.tsx`](src/root.tsx) to use timeline url that you will pass as a prop (instead of project name).
 
 The last thing - you have to upload generated resources (images and audio) to server and use urls to them instead of file names when generating a timeline.
 
