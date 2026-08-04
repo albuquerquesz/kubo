@@ -1,0 +1,331 @@
+{
+  "composition": "kubo-launch",
+  "probedAt": "2026-08-04",
+  "method": "remotion still → Playwright canvas getImageData bbox",
+  "canvasFromCode": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "durationFrames": 240,
+    "duration_s": 8
+  },
+  "frames": [
+    {
+      "frame": 0,
+      "t_s": 0,
+      "canvas": {
+        "w": 1920,
+        "h": 1080
+      },
+      "plate": {
+        "whiteRatioTopLeft": 1,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "hex": "#ffffff"
+        }
+      },
+      "panel": null,
+      "mascot": null,
+      "title": null,
+      "eyeBlackPixelsInMarkBbox": 0,
+      "eyeSamples": [],
+      "pixelCounts": {
+        "panelDark": 0,
+        "gold": 0,
+        "titleDark": 0
+      }
+    },
+    {
+      "frame": 30,
+      "t_s": 1,
+      "canvas": {
+        "w": 300,
+        "h": 150
+      },
+      "plate": {
+        "whiteRatioTopLeft": 0,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "hex": "#000000"
+        }
+      },
+      "panel": null,
+      "mascot": null,
+      "title": {
+        "x0": 0,
+        "y0": 0,
+        "x1": 298,
+        "y1": 148,
+        "w": 299,
+        "h": 149
+      },
+      "eyeBlackPixelsInMarkBbox": 0,
+      "eyeSamples": [],
+      "pixelCounts": {
+        "panelDark": 0,
+        "gold": 0,
+        "titleDark": 11250
+      }
+    },
+    {
+      "frame": 60,
+      "t_s": 2,
+      "canvas": {
+        "w": 300,
+        "h": 150
+      },
+      "plate": {
+        "whiteRatioTopLeft": 0,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "hex": "#000000"
+        }
+      },
+      "panel": null,
+      "mascot": null,
+      "title": {
+        "x0": 0,
+        "y0": 0,
+        "x1": 298,
+        "y1": 148,
+        "w": 299,
+        "h": 149
+      },
+      "eyeBlackPixelsInMarkBbox": 0,
+      "eyeSamples": [],
+      "pixelCounts": {
+        "panelDark": 0,
+        "gold": 0,
+        "titleDark": 11250
+      }
+    },
+    {
+      "frame": 90,
+      "t_s": 3,
+      "canvas": {
+        "w": 300,
+        "h": 150
+      },
+      "plate": {
+        "whiteRatioTopLeft": 0,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "hex": "#000000"
+        }
+      },
+      "panel": null,
+      "mascot": null,
+      "title": {
+        "x0": 0,
+        "y0": 0,
+        "x1": 298,
+        "y1": 148,
+        "w": 299,
+        "h": 149
+      },
+      "eyeBlackPixelsInMarkBbox": 0,
+      "eyeSamples": [],
+      "pixelCounts": {
+        "panelDark": 0,
+        "gold": 0,
+        "titleDark": 11250
+      }
+    },
+    {
+      "frame": 120,
+      "t_s": 4,
+      "canvas": {
+        "w": 300,
+        "h": 150
+      },
+      "plate": {
+        "whiteRatioTopLeft": 0,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "hex": "#000000"
+        }
+      },
+      "panel": null,
+      "mascot": null,
+      "title": {
+        "x0": 0,
+        "y0": 0,
+        "x1": 298,
+        "y1": 148,
+        "w": 299,
+        "h": 149
+      },
+      "eyeBlackPixelsInMarkBbox": 0,
+      "eyeSamples": [],
+      "pixelCounts": {
+        "panelDark": 0,
+        "gold": 0,
+        "titleDark": 11250
+      }
+    },
+    {
+      "frame": 157,
+      "t_s": 5.233,
+      "canvas": {
+        "w": 300,
+        "h": 150
+      },
+      "plate": {
+        "whiteRatioTopLeft": 0,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "hex": "#000000"
+        }
+      },
+      "panel": null,
+      "mascot": null,
+      "title": {
+        "x0": 0,
+        "y0": 0,
+        "x1": 298,
+        "y1": 148,
+        "w": 299,
+        "h": 149
+      },
+      "eyeBlackPixelsInMarkBbox": 0,
+      "eyeSamples": [],
+      "pixelCounts": {
+        "panelDark": 0,
+        "gold": 0,
+        "titleDark": 11250
+      }
+    },
+    {
+      "frame": 180,
+      "t_s": 6,
+      "canvas": {
+        "w": 300,
+        "h": 150
+      },
+      "plate": {
+        "whiteRatioTopLeft": 0,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "hex": "#000000"
+        }
+      },
+      "panel": null,
+      "mascot": null,
+      "title": {
+        "x0": 0,
+        "y0": 0,
+        "x1": 298,
+        "y1": 148,
+        "w": 299,
+        "h": 149
+      },
+      "eyeBlackPixelsInMarkBbox": 0,
+      "eyeSamples": [],
+      "pixelCounts": {
+        "panelDark": 0,
+        "gold": 0,
+        "titleDark": 11250
+      }
+    },
+    {
+      "frame": 208,
+      "t_s": 6.933,
+      "canvas": {
+        "w": 300,
+        "h": 150
+      },
+      "plate": {
+        "whiteRatioTopLeft": 0,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "hex": "#000000"
+        }
+      },
+      "panel": null,
+      "mascot": null,
+      "title": {
+        "x0": 0,
+        "y0": 0,
+        "x1": 298,
+        "y1": 148,
+        "w": 299,
+        "h": 149
+      },
+      "eyeBlackPixelsInMarkBbox": 0,
+      "eyeSamples": [],
+      "pixelCounts": {
+        "panelDark": 0,
+        "gold": 0,
+        "titleDark": 11250
+      }
+    },
+    {
+      "frame": 239,
+      "t_s": 7.967,
+      "canvas": {
+        "w": 300,
+        "h": 150
+      },
+      "plate": {
+        "whiteRatioTopLeft": 0,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "hex": "#000000"
+        }
+      },
+      "panel": null,
+      "mascot": null,
+      "title": {
+        "x0": 0,
+        "y0": 0,
+        "x1": 298,
+        "y1": 148,
+        "w": 299,
+        "h": 149
+      },
+      "eyeBlackPixelsInMarkBbox": 0,
+      "eyeSamples": [],
+      "pixelCounts": {
+        "panelDark": 0,
+        "gold": 0,
+        "titleDark": 11250
+      }
+    }
+  ]
+}

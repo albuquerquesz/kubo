@@ -41,8 +41,8 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
       <div
         style={{
           position: "absolute",
-          right: 0,
-          bottom: 8,
+          right: -160,
+          bottom: -120,
           left: 608,
           opacity: op,
           transform: `translateY(${y}px)`,
