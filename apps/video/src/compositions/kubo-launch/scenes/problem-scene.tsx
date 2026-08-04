@@ -27,18 +27,6 @@ export const ProblemScene: React.FC<ProblemSceneProps> = ({ bullets }) => {
           <KuboMarkCharacter width={280} mode="walk" localFrame={frame} />
         </div>
         <div style={{ flex: 1 }}>
-          <div
-            style={{
-              fontSize: 20,
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              color: "#888",
-              marginBottom: 28,
-              fontWeight: 600,
-            }}
-          >
-            O problema
-          </div>
           <ul
             style={{
               listStyle: "none",
