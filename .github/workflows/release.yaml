@@ -1,4 +1,4 @@
-# Production release + OIDC canary (Option B).
+# Production release + OIDC canary (Option B) + web deploy to Vercel.
 #
 # Trusted Publisher on npm must list this filename exactly: release.yaml
 # (owner albuquerquesz / repo kubo / environment empty).
@@ -7,6 +7,14 @@
 # Production auth: npm Trusted Publishing (OIDC) — no NODE_AUTH_TOKEN.
 # Canary auth: same OIDC path, dist-tag oidc-canary only (never latest).
 # Rollback: re-add NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} on publish steps.
+#
+# Web (apps/web → Vercel project "kubo") deploys on the same
+# chore(release): x.y.z path, after npm publish succeeds.
+# Required secrets/vars (repo Settings → Secrets and variables → Actions):
+#   secrets.VERCEL_TOKEN          — Vercel account token (create / full deploy)
+#   vars.VERCEL_ORG_ID            — team_… (from `vercel link` / project.json)
+#   vars.VERCEL_PROJECT_ID        — prj_… (from `vercel link` / project.json)
+#   vars.VERCEL_PRODUCTION_URL    — optional smoke URL (default https://kubo-gamma.vercel.app)
 name: Release
 
 on:
@@ -432,3 +440,127 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### GitHub Release" >> $GITHUB_STEP_SUMMARY
           echo "[v$VERSION](https://github.com/${{ github.repository }}/releases/tag/v$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Web" >> $GITHUB_STEP_SUMMARY
+          echo "Production site deploy runs in the **Deploy web to Vercel** job (same workflow)." >> $GITHUB_STEP_SUMMARY
+
+  # ---------------------------------------------------------------------------
+  # Production web deploy (Vercel) — same chore(release): gate as npm
+  # ---------------------------------------------------------------------------
+  deploy-web:
+    name: Deploy web to Vercel
+    needs: release
+    # Run only when the npm release job actually ran and succeeded.
+    # (Skipped release commits do not deploy the site.)
+    if: >
+      always() &&
+      needs.release.result == 'success' &&
+      github.event_name == 'push' &&
+      startsWith(github.event.head_commit.message, 'chore(release):')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      # Project Root Directory is apps/web; CLI must run from monorepo root.
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          check-latest: true
+          package-manager-cache: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Require Vercel credentials
+        run: |
+          missing=0
+          if [ -z "${VERCEL_TOKEN}" ]; then
+            echo "::error::Missing secret VERCEL_TOKEN (Vercel account token with deploy access)"
+            missing=1
+          fi
+          if [ -z "${VERCEL_ORG_ID}" ]; then
+            echo "::error::Missing repository variable VERCEL_ORG_ID (team_… from vercel project link)"
+            missing=1
+          fi
+          if [ -z "${VERCEL_PROJECT_ID}" ]; then
+            echo "::error::Missing repository variable VERCEL_PROJECT_ID (prj_… from vercel project link)"
+            missing=1
+          fi
+          if [ "$missing" -ne 0 ]; then
+            echo "Configure under Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+          echo "VERCEL_ORG_ID=${VERCEL_ORG_ID}"
+          echo "VERCEL_PROJECT_ID=${VERCEL_PROJECT_ID}"
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      # Build on the runner (prebuilt) so CI does not upload node_modules/.next.
+      - name: Pull Vercel production env
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build production artifacts
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy prebuilt to production
+        id: deploy
+        run: |
+          set -euo pipefail
+          # Last line of CLI output is the deployment URL.
+          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" | tee /tmp/vercel-deploy.log | tail -n 1)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployment URL: $url"
+
+      - name: Smoke production site
+        env:
+          PROD_URL: ${{ vars.VERCEL_PRODUCTION_URL }}
+          DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          set -euo pipefail
+          PROD_URL="${PROD_URL:-https://kubo-gamma.vercel.app}"
+          smoke() {
+            local target="$1"
+            local code="000"
+            for i in 1 2 3 4 5 6; do
+              code=$(curl -sS -o /tmp/vercel-smoke-body.html -w "%{http_code}" --max-time 30 "$target/" || echo "000")
+              echo "attempt $i: $target/ -> $code"
+              if [ "$code" = "200" ]; then
+                return 0
+              fi
+              sleep 5
+            done
+            echo "::error::Smoke failed for $target (last HTTP $code)"
+            return 1
+          }
+          smoke "$PROD_URL"
+          if [ -n "${DEPLOY_URL:-}" ] && [ "$DEPLOY_URL" != "$PROD_URL" ]; then
+            smoke "$DEPLOY_URL"
+          fi
+          # Light content check (prerendered home)
+          if ! grep -q 'kubojs' /tmp/vercel-smoke-body.html; then
+            echo "::error::Home HTML missing expected brand marker"
+            exit 1
+          fi
+          echo "Smoke OK"
+
+      - name: Deploy summary
+        env:
+          PROD_URL: ${{ vars.VERCEL_PRODUCTION_URL }}
+          DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          PROD_URL="${PROD_URL:-https://kubo-gamma.vercel.app}"
+          echo "## Web deploy (Vercel)" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Production: [$PROD_URL]($PROD_URL)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Deployment: [$DEPLOY_URL]($DEPLOY_URL)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Method: \`vercel build --prod\` + \`vercel deploy --prebuilt --prod\`" >> "$GITHUB_STEP_SUMMARY"
