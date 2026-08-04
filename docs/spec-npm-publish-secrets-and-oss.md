@@ -292,11 +292,24 @@ Production:
   npm Trusted Publisher (OIDC) on release.yaml
   → chore(release): x.y.z on main
   → npm publish without NODE_AUTH_TOKEN
+  → deploy-web job: Vercel production (apps/web) via prebuilt CLI
 
 Preview / break-glass:
   Granular token → GitHub secret NPM_TOKEN (never in git)
   → pr-preview.yaml uses NODE_AUTH_TOKEN
 ```
+
+### Web deploy credentials (same release workflow)
+
+| Name                    | Kind                | Purpose                                            |
+| ----------------------- | ------------------- | -------------------------------------------------- |
+| `VERCEL_TOKEN`          | secret              | Vercel account token with deploy access            |
+| `VERCEL_ORG_ID`         | variable            | Team id (`team_…`) from `vercel link`              |
+| `VERCEL_PROJECT_ID`     | variable            | Project id (`prj_…`) for `kubo`                    |
+| `VERCEL_PRODUCTION_URL` | variable (optional) | Smoke URL; default `https://kubo-gamma.vercel.app` |
+
+Create a token at https://vercel.com/account/tokens and set  
+`gh secret set VERCEL_TOKEN`. Org/project ids are non-secret repository variables.
 
 ---
 
@@ -304,7 +317,7 @@ Preview / break-glass:
 
 | Doc / path                                      | Role                                                 |
 | ----------------------------------------------- | ---------------------------------------------------- |
-| `.github/workflows/release.yaml`                | Automated release on `chore(release): x.y.z` (OIDC)  |
+| `.github/workflows/release.yaml`                | npm release + web Vercel deploy on `chore(release):` |
 | `.github/workflows/pr-preview.yaml`             | Preview publishes with `NPM_TOKEN` (token exception) |
 | `spec-npm-trusted-publishing-oidc-migration.md` | OIDC migration + canary + acceptance                 |
 | `scripts/canary-release.ts`                     | Local canary publish helper                          |
