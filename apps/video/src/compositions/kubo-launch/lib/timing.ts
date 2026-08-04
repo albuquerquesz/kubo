@@ -21,9 +21,10 @@ export const SQUARE_LAYOUT = {
   /** Side inset for title + panel left (~6%). */
   insetX: 64,
   /** Title band top offset. */
-  titleTop: 56,
-  titleFontSize: 58,
-  titleWidth: 920,
+  titleTop: 48,
+  /** Display size for serif title (two lines in upper plate). */
+  titleFontSize: 80,
+  titleWidth: 960,
   /** Panel top Y (31.5% of 1080). */
   panelTop: 340,
   /** Mark width ≈ 12% of canvas. */
