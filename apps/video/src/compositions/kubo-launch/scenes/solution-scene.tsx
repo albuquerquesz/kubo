@@ -24,14 +24,14 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
           height: "100%",
           display: "flex",
           flexDirection: "row",
-          alignItems: "center",
+          alignItems: "flex-start",
           justifyContent: "space-between",
           gap: 56,
           opacity: op,
           transform: `translateY(${y}px)`,
         }}
       >
-        <div style={{ flex: "0 1 560px", minWidth: 0 }}>
+        <div style={{ flex: "0 1 560px", minWidth: 0, marginTop: -24 }}>
           <h2
             style={{
               margin: 0,
