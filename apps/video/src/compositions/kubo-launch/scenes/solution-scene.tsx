@@ -55,7 +55,7 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
             minWidth: 0,
           }}
         >
-          <KuboMarkCharacter width={200} mode="walk" localFrame={frame} />
+          <KuboMarkCharacter width={120} mode="walk" localFrame={frame} />
           <TerminalBlock
             command={command}
             typeFrom={12}
