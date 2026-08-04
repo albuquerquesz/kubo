@@ -170,11 +170,12 @@ const CommandLine: React.FC<{ command: string; frame: number }> = ({ command, fr
     interpolate(frame, [0, 48], [0, command.length], { extrapolateRight: "clamp" }),
   );
   const shown = command.slice(0, chars);
+  const isTyping = frame < 48;
 
   return (
     <div style={{ color: WHITE, fontSize: 26, lineHeight: 1.3 }}>
       <span style={{ color: CYAN }}>$</span> {shown}
-      <span style={cursorStyle(Math.floor(frame / 6) % 2 === 0)} />
+      {isTyping ? <span style={cursorStyle(Math.floor(frame / 6) % 2 === 0)} /> : null}
     </div>
   );
 };
