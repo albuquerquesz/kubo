@@ -1,3 +1,4 @@
+import { loadFont } from "@remotion/google-fonts/BreeSerif";
 import React from "react";
 import { Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
@@ -6,6 +7,8 @@ import { KuboMarkCharacter } from "../components/kubo-mark-character";
 import { SceneShell } from "../components/scene-shell";
 import { KUBO_MARK_VIEWBOX } from "../lib/mark-paths";
 import { SQUARE_LAYOUT } from "../lib/timing";
+
+const { fontFamily: titleFontFamily } = loadFont();
 
 type SolutionSceneProps = {
   command: string;
@@ -16,18 +19,24 @@ const MARK_HEIGHT = (SQUARE_LAYOUT.markWidth * KUBO_MARK_VIEWBOX.height) / KUBO_
 const MARK_TOP = -(MARK_HEIGHT - 2);
 
 const KUBO_ARRIVAL_START = 34;
-const KUBO_RUN_END = 68;
-const KUBO_ARRIVAL_END = 78;
-const KUBO_START_OFFSET_X = -1040;
+const KUBO_RUN_END = 92;
+const KUBO_ARRIVAL_END = 104;
+const KUBO_ARRIVAL_OFFSET_X = 1040;
+const KUBO_LANDING_OVERSHOOT_X = -20;
 
 function getKuboArrivalX(frame: number): number {
-  if (frame < KUBO_ARRIVAL_START) return KUBO_START_OFFSET_X;
+  if (frame < KUBO_ARRIVAL_START) return KUBO_ARRIVAL_OFFSET_X;
   if (frame < KUBO_RUN_END) {
-    return interpolate(frame, [KUBO_ARRIVAL_START, KUBO_RUN_END], [KUBO_START_OFFSET_X, 20], {
-      easing: Easing.bezier(0.15, 0.85, 0.25, 1),
-    });
+    return interpolate(
+      frame,
+      [KUBO_ARRIVAL_START, KUBO_RUN_END],
+      [KUBO_ARRIVAL_OFFSET_X, KUBO_LANDING_OVERSHOOT_X],
+      {
+        easing: Easing.bezier(0.15, 0.85, 0.25, 1),
+      },
+    );
   }
-  return interpolate(frame, [KUBO_RUN_END, KUBO_ARRIVAL_END], [20, 0], {
+  return interpolate(frame, [KUBO_RUN_END, KUBO_ARRIVAL_END], [KUBO_LANDING_OVERSHOOT_X, 0], {
     easing: Easing.bezier(0.34, 1.56, 0.64, 1),
     extrapolateRight: "clamp",
   });
@@ -35,14 +44,14 @@ function getKuboArrivalX(frame: number): number {
 
 function getKuboArrivalY(frame: number): number {
   if (frame < KUBO_ARRIVAL_START) return 0;
-  if (frame < 50) {
-    return interpolate(frame, [KUBO_ARRIVAL_START, 50], [0, -22], {
+  if (frame < 62) {
+    return interpolate(frame, [KUBO_ARRIVAL_START, 62], [0, -22], {
       easing: Easing.out(Easing.quad),
     });
   }
   if (frame < KUBO_RUN_END) {
-    return interpolate(frame, [50, KUBO_RUN_END], [-22, 7], {
-      easing: Easing.inOut(Easing.sine),
+    return interpolate(frame, [62, KUBO_RUN_END], [-22, 7], {
+      easing: Easing.bezier(0.42, 0, 0.58, 1),
     });
   }
   return interpolate(frame, [KUBO_RUN_END, KUBO_ARRIVAL_END], [7, 0], {
@@ -53,9 +62,9 @@ function getKuboArrivalY(frame: number): number {
 
 function getKuboWalkFrame(frame: number): number {
   if (frame <= KUBO_ARRIVAL_START) return 0;
-  if (frame < KUBO_RUN_END) return (frame - KUBO_ARRIVAL_START) * 1.55;
+  if (frame < KUBO_RUN_END) return (frame - KUBO_ARRIVAL_START) * 1.2;
 
-  return (KUBO_RUN_END - KUBO_ARRIVAL_START) * 1.55 + (frame - KUBO_RUN_END);
+  return (KUBO_RUN_END - KUBO_ARRIVAL_START) * 1.2 + (frame - KUBO_RUN_END);
 }
 
 /**
@@ -81,10 +90,11 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
           margin: 0,
           opacity: op,
           transform: `translateY(${y}px)`,
+          fontFamily: titleFontFamily,
           fontSize: SQUARE_LAYOUT.titleFontSize,
-          fontWeight: 700,
-          letterSpacing: "-0.035em",
-          lineHeight: 1.05,
+          fontWeight: 400,
+          letterSpacing: "-0.02em",
+          lineHeight: 1.08,
           color: "#0a0a0a",
         }}
       >
@@ -112,7 +122,7 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
             right: SQUARE_LAYOUT.markRight,
             zIndex: 2,
             pointerEvents: "none",
-            translate: `${getKuboArrivalX(frame)}px ${getKuboArrivalY(frame)}px`,
+            transform: `translate(${getKuboArrivalX(frame)}px, ${getKuboArrivalY(frame)}px)`,
           }}
         >
           <KuboMarkCharacter
