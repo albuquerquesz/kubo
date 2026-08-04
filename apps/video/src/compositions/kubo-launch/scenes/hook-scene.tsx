@@ -30,18 +30,6 @@ export const HookScene: React.FC<HookSceneProps> = ({ headline }) => {
         }}
       >
         <div style={{ flex: 1, opacity: titleOp, transform: `translateY(${titleY}px)` }}>
-          <div
-            style={{
-              fontSize: 22,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "#FBC80D",
-              marginBottom: 20,
-              fontWeight: 600,
-            }}
-          >
-            Lançamento
-          </div>
           <h1
             style={{
               margin: 0,
