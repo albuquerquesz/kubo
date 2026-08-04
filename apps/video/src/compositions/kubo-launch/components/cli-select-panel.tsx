@@ -1,6 +1,8 @@
 import React from "react";
 import { interpolate, useCurrentFrame } from "remotion";
 
+import { CLI_PHASES } from "../lib/timing";
+
 type CliSelectPanelProps = {
   command?: string;
   style?: React.CSSProperties;
@@ -55,9 +57,9 @@ const WEB_OPTIONS: CliOption[] = [
 
 const cursorStyle = (visible: boolean): React.CSSProperties => ({
   display: "inline-block",
-  width: 11,
-  height: 27,
-  marginLeft: 4,
+  width: 9,
+  height: 22,
+  marginLeft: 3,
   background: visible ? CYAN : "transparent",
   verticalAlign: "-3px",
 });
@@ -74,28 +76,28 @@ const CliOptionRow: React.FC<{ option: CliOption; multi?: boolean }> = ({
       style={{
         display: "flex",
         alignItems: "baseline",
-        gap: 12,
+        gap: 10,
         minWidth: 0,
         color: option.selected ? WHITE : "#9A9A9A",
-        fontSize: 25,
-        lineHeight: 1.3,
+        fontSize: 20,
+        lineHeight: 1.28,
       }}
     >
-      <span style={{ width: 22, flexShrink: 0, color: markerColor }}>{marker}</span>
+      <span style={{ width: 18, flexShrink: 0, color: markerColor }}>{marker}</span>
       <span style={{ minWidth: 0 }}>{option.label}</span>
-      <span style={{ color: DIM, fontSize: 17, whiteSpace: "nowrap" }}>({option.hint})</span>
+      <span style={{ color: DIM, fontSize: 14, whiteSpace: "nowrap" }}>({option.hint})</span>
     </div>
   );
 };
 
 const SubmittedPrompt: React.FC<{ message: string; value: string }> = ({ message, value }) => (
-  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-    <div style={{ color: DIM, fontSize: 22, lineHeight: 1 }}>│</div>
-    <div style={{ display: "flex", gap: 12, color: "#A6E3A1", fontSize: 26, lineHeight: 1.25 }}>
+  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+    <div style={{ color: DIM, fontSize: 18, lineHeight: 1 }}>│</div>
+    <div style={{ display: "flex", gap: 10, color: "#A6E3A1", fontSize: 21, lineHeight: 1.25 }}>
       <span>◇</span>
       <span style={{ color: WHITE }}>{message}</span>
     </div>
-    <div style={{ paddingLeft: 34, color: DIM, fontSize: 25, lineHeight: 1.3 }}>{value}</div>
+    <div style={{ paddingLeft: 28, color: DIM, fontSize: 20, lineHeight: 1.28 }}>{value}</div>
   </div>
 );
 
@@ -106,19 +108,19 @@ const PromptFrame: React.FC<{
   first?: boolean;
 }> = ({ message, options, multi = false, first = false }) => {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <div style={{ color: DIM, fontSize: 22, lineHeight: 1 }}>│</div>
-      <div style={{ display: "flex", gap: 12, color: CYAN, fontSize: 26, lineHeight: 1.25 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <div style={{ color: DIM, fontSize: 18, lineHeight: 1 }}>│</div>
+      <div style={{ display: "flex", gap: 10, color: CYAN, fontSize: 21, lineHeight: 1.25 }}>
         <span>◆</span>
         <span style={{ color: WHITE }}>{message}</span>
       </div>
-      <div style={{ paddingLeft: 34, display: "flex", flexDirection: "column", gap: 7 }}>
+      <div style={{ paddingLeft: 28, display: "flex", flexDirection: "column", gap: 5 }}>
         {options.map((option) => (
           <CliOptionRow key={option.label} option={option} multi={multi} />
         ))}
       </div>
-      <div style={{ color: CYAN, fontSize: 22, lineHeight: 1 }}>└</div>
-      <div style={{ paddingLeft: 34, color: DIM, fontSize: 17, lineHeight: 1.3 }}>
+      <div style={{ color: CYAN, fontSize: 18, lineHeight: 1 }}>└</div>
+      <div style={{ paddingLeft: 28, color: DIM, fontSize: 14, lineHeight: 1.3 }}>
         ↑/↓ navigate • {multi ? "space select • " : ""}enter confirm • {!first ? "b back • " : ""}
         ctrl+c cancel
       </div>
@@ -130,104 +132,112 @@ const NamePrompt: React.FC<{ value: string; cursorVisible: boolean }> = ({
   value,
   cursorVisible,
 }) => (
-  <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-    <div style={{ color: DIM, fontSize: 22, lineHeight: 1 }}>│</div>
-    <div style={{ display: "flex", gap: 12, color: CYAN, fontSize: 26, lineHeight: 1.25 }}>
+  <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+    <div style={{ color: DIM, fontSize: 18, lineHeight: 1 }}>│</div>
+    <div style={{ display: "flex", gap: 10, color: CYAN, fontSize: 21, lineHeight: 1.25 }}>
       <span>◆</span>
       <span style={{ color: WHITE }}>
         Enter your project name or path (relative to current directory)
       </span>
     </div>
-    <div style={{ paddingLeft: 34, color: WHITE, fontSize: 25, lineHeight: 1.3 }}>
+    <div style={{ paddingLeft: 28, color: WHITE, fontSize: 20, lineHeight: 1.28 }}>
       {value}
       <span style={cursorStyle(cursorVisible)} />
     </div>
-    <div style={{ color: CYAN, fontSize: 22, lineHeight: 1 }}>└</div>
+    <div style={{ color: CYAN, fontSize: 18, lineHeight: 1 }}>└</div>
   </div>
 );
 
 const SubmittedName: React.FC<{ value: string }> = ({ value }) => (
-  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-    <div style={{ color: DIM, fontSize: 22, lineHeight: 1 }}>│</div>
-    <div style={{ display: "flex", gap: 12, color: "#A6E3A1", fontSize: 26, lineHeight: 1.25 }}>
+  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+    <div style={{ color: DIM, fontSize: 18, lineHeight: 1 }}>│</div>
+    <div style={{ display: "flex", gap: 10, color: "#A6E3A1", fontSize: 21, lineHeight: 1.25 }}>
       <span>◇</span>
       <span style={{ color: WHITE }}>
         Enter your project name or path (relative to current directory)
       </span>
     </div>
-    <div style={{ paddingLeft: 34, color: DIM, fontSize: 25, lineHeight: 1.3 }}>{value}</div>
+    <div style={{ paddingLeft: 28, color: DIM, fontSize: 20, lineHeight: 1.28 }}>{value}</div>
   </div>
 );
 
 const Intro: React.FC = () => (
-  <div style={{ color: MAGENTA, fontSize: 25, lineHeight: 1.35 }}>
+  <div style={{ color: MAGENTA, fontSize: 20, lineHeight: 1.35 }}>
     ┌&nbsp; Creating a new I dont know project
   </div>
 );
 
 const CommandLine: React.FC<{ command: string; frame: number }> = ({ command, frame }) => {
+  const typeEnd = CLI_PHASES.commandTypeEnd;
   const chars = Math.floor(
-    interpolate(frame, [0, 48], [0, command.length], { extrapolateRight: "clamp" }),
+    interpolate(frame, [0, typeEnd], [0, command.length], { extrapolateRight: "clamp" }),
   );
   const shown = command.slice(0, chars);
-  const isTyping = frame < 48;
+  const isTyping = frame < typeEnd;
 
   return (
-    <div style={{ color: WHITE, fontSize: 26, lineHeight: 1.3 }}>
+    <div style={{ color: WHITE, fontSize: 21, lineHeight: 1.3 }}>
       <span style={{ color: CYAN }}>$</span> {shown}
       {isTyping ? <span style={cursorStyle(Math.floor(frame / 6) % 2 === 0)} /> : null}
     </div>
   );
 };
 
-/** Deterministic visual playback of the create-kubojs @clack session. */
+/** Deterministic visual playback of the create-kubojs @clack session (6s square). */
 export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
   command = "bun create kubojs",
   style,
 }) => {
   const frame = useCurrentFrame();
   const projectNameChars = Math.floor(
-    interpolate(frame, [119, 143], [0, "my-kubo-app".length], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    }),
+    interpolate(
+      frame,
+      [CLI_PHASES.nameTypeStart, CLI_PHASES.nameTypeEnd],
+      [0, "my-kubo-app".length],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      },
+    ),
   );
   const projectName = "my-kubo-app".slice(0, projectNameChars);
 
-  const showLogo = frame >= 55;
-  const showIntro = frame >= 94;
-  const showName = frame >= 118;
-  const nameSubmitted = frame >= 157;
-  const showProjectType = frame >= 157;
-  const projectTypeSubmitted = frame >= 208;
-  const showWeb = frame >= 208;
+  const showLogo = frame >= CLI_PHASES.logoAt;
+  const showIntro = frame >= CLI_PHASES.introAt;
+  const showName = frame >= CLI_PHASES.nameAt;
+  const nameSubmitted = frame >= CLI_PHASES.nameSubmitted;
+  const showProjectType = frame >= CLI_PHASES.projectTypeAt;
+  const projectTypeSubmitted = frame >= CLI_PHASES.projectTypeSubmitted;
+  const showWeb = frame >= CLI_PHASES.webAt;
+  // Collapse banner once selects fill the card so options stay readable on 1080².
+  const showBanner = showLogo && !showWeb;
 
   return (
     <div
       style={{
-        background: "#0a0a0a",
+        background: "#0d0d0d",
         borderRadius: 28,
         overflow: "hidden",
         boxShadow: "0 28px 90px rgba(0,0,0,0.55)",
         width: "100%",
         boxSizing: "border-box",
-        padding: "44px 48px 40px",
+        padding: "36px 40px 32px",
         fontFamily: MONO,
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-start",
-        minHeight: 680,
+        minHeight: 0,
         ...style,
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 18, alignItems: "stretch" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "stretch" }}>
         <CommandLine command={command} frame={frame} />
-        {showLogo ? (
+        {showBanner ? (
           <pre
             style={{
               margin: 0,
               color: "transparent",
-              fontSize: 16,
+              fontSize: 13,
               lineHeight: 1.08,
               letterSpacing: "-0.05em",
               whiteSpace: "pre",
@@ -239,7 +249,7 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
             {KUBO_TITLE.trimStart()}
           </pre>
         ) : null}
-        {showIntro ? <Intro /> : null}
+        {showIntro && !showWeb ? <Intro /> : null}
         {showName ? (
           nameSubmitted ? (
             <SubmittedName value="my-kubo-app" />
