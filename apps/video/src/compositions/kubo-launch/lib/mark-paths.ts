@@ -12,6 +12,10 @@ export const KUBO_MARK_LEG_LEFT_PATH = "M92 547H213V678H100A8 8 0 0 1 92 670V547
 export const KUBO_MARK_LEG_RIGHT_PATH = "M553 547H673V670A8 8 0 0 1 665 678H553V547Z";
 
 export const KUBO_MARK_FILL = "#FBC80D";
+/** Eye cutouts from body evenodd path — filled solid so they stay visible on light plates. */
+export const KUBO_MARK_EYE_FILL = "#0a0a0a";
+export const KUBO_MARK_EYE_LEFT = { x: 213, y: 292, width: 85, height: 86 };
+export const KUBO_MARK_EYE_RIGHT = { x: 468, y: 292, width: 85, height: 86 };
 
 /** Hip line pivots (svgOrigin-style centers in viewBox coords). */
 export const KUBO_MARK_HIP_Y = 547;

@@ -19,66 +19,56 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command: _command 
 
   return (
     <SceneShell background="#ffffff" color="#0a0a0a" showGoldGlow={false}>
-      <div
+      <h2
         style={{
-          height: "100%",
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          gap: 48,
+          position: "absolute",
+          top: 92,
+          left: 120,
+          width: 560,
+          margin: 0,
           opacity: op,
           transform: `translateY(${y}px)`,
+          fontSize: 84,
+          fontWeight: 700,
+          letterSpacing: "-0.035em",
+          lineHeight: 1.05,
+          color: "#0a0a0a",
         }}
       >
-        <div style={{ flex: "0 0 560px", minWidth: 0, marginTop: 12 }}>
-          <h2
-            style={{
-              margin: 0,
-              fontSize: 84,
-              fontWeight: 700,
-              letterSpacing: "-0.035em",
-              lineHeight: 1.05,
-              color: "#0a0a0a",
-            }}
-          >
-            Um comando. Stack pronta.
-          </h2>
-        </div>
+        Um comando. Stack pronta.
+      </h2>
 
+      <div
+        style={{
+          position: "absolute",
+          right: 0,
+          bottom: 8,
+          left: 608,
+          opacity: op,
+          transform: `translateY(${y}px)`,
+          overflow: "visible",
+        }}
+      >
         <div
           style={{
-            flex: "1 1 auto",
-            width: "100%",
-            position: "relative",
-            minWidth: 0,
-            // Pin near bottom of safe area (room for mascot above panel)
-            marginTop: "auto",
-            marginBottom: 8,
-            overflow: "visible",
+            position: "absolute",
+            // Full mark height (~100px) + gap so feet sit above the panel, not inside
+            top: -102,
+            right: 36,
+            zIndex: 2,
+            pointerEvents: "none",
           }}
         >
-          <div
-            style={{
-              position: "absolute",
-              // Full mark height (~100px) + gap so feet sit above the panel, not inside
-              top: -102,
-              right: 36,
-              zIndex: 2,
-              pointerEvents: "none",
-            }}
-          >
-            <KuboMarkCharacter width={112} mode="walk" localFrame={frame} />
-          </div>
-          <CliSelectPanel
-            selectedIndex={0}
-            style={{
-              width: "100%",
-              maxWidth: "none",
-              minHeight: 560,
-            }}
-          />
+          <KuboMarkCharacter width={112} mode="walk" localFrame={frame} />
         </div>
+        <CliSelectPanel
+          selectedIndex={0}
+          style={{
+            width: "100%",
+            maxWidth: "none",
+            minHeight: 560,
+          }}
+        />
       </div>
     </SceneShell>
   );
