@@ -51,8 +51,9 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command: _command 
             width: "100%",
             position: "relative",
             minWidth: 0,
-            // Push panel down; room for mascot perched on top edge
-            marginTop: 200,
+            // Pin near bottom of safe area (room for mascot above panel)
+            marginTop: "auto",
+            marginBottom: 8,
             overflow: "visible",
           }}
         >
