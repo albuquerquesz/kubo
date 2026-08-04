@@ -1,8 +1,8 @@
 {
-  "name": "kubo-video",
+  "name": "@kubojs/video",
   "version": "1.0.0",
   "private": true,
-  "description": "Create AI videos using remotion",
+  "description": "Remotion app for Kubo brand / launch videos",
   "license": "UNLICENSED",
   "repository": {},
   "sideEffects": [
@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "dev": "remotion studio",
-    "build": "remotion bundle",
+    "bundle": "remotion bundle",
+    "render": "remotion render kubo-launch out/kubo-launch.mp4",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc",
     "gen": "bun cli/cli.ts"

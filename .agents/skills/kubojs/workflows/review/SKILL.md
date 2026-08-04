@@ -56,4 +56,5 @@ Applies to existing diffs, pull requests, and implementation changes. It does no
 - [Project router](../../SKILL.md)
 - [Routing matrix](../../reference/routing-matrix.md)
 - [Role contracts](../../reference/role-contracts.md)
+- [Monorepo map](../../reference/monorepo-map.md)
 - [Repository rules](../../../../../AGENTS.md)

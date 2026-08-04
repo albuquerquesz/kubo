@@ -6,6 +6,7 @@ This repo is a Bun + Turborepo monorepo.
 
 - `apps/cli`: published CLI (`create-kubojs`, bins `create-kubojs` + `kubojs`), with source in `apps/cli/src` and tests in `apps/cli/test`.
 - `apps/web`: Next.js docs/site (`apps/web/src`, `apps/web/content/docs`, `apps/web/public`).
+- `apps/video`: Remotion app for brand/launch videos (`@kubojs/video`). Not part of the Next site; Studio + `remotion render` only.
 - `packages/template-generator`: template generation engine used by the CLI.
 - `packages/types`: shared schemas/types.
 - `packages/backend`: Convex backend used by web features.
@@ -15,6 +16,7 @@ This repo is a Bun + Turborepo monorepo.
 
 - `bun install`: install workspace dependencies.
 - `bun dev`: run web app locally (`next dev --port 3333`).
+- `bun run dev:video`: run Remotion Studio (`apps/video`).
 - `bun cli`: watch-build CLI package.
 - `bun build`: build all packages/apps through Turbo.
 - `bun build:cli`: build only the CLI target.
@@ -57,7 +59,7 @@ This repo is a Bun + Turborepo monorepo.
 ## Commit & Pull Request Guidelines
 
 - Use Conventional Commits with scope, matching history:
-  - `feat(cli): ...`, `fix(web): ...`, `docs(cli): ...`
+  - `feat(cli): ...`, `fix(web): ...`, `docs(video): ...`, `chore(video): ...`
 - Open an issue/discussion before major feature work.
 - PRs should include:
   - clear summary,
@@ -73,6 +75,7 @@ For repository-scoped documentation and review workflows, use the [kubojs router
 
 - [`/kubojs document`](.agents/skills/kubojs/workflows/document/SKILL.md)
 - [`/kubojs review`](.agents/skills/kubojs/workflows/review/SKILL.md)
+- [Monorepo map](.agents/skills/kubojs/reference/monorepo-map.md) (app/package boundaries)
 - [Agent role runbook](docs/runbooks/agent-role-system.md)
 
 ### Issue tracker

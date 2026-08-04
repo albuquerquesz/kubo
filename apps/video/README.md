@@ -1,39 +1,38 @@
-# Remotion AI Video template
+# `@kubojs/video`
 
-<p align="center">
-  <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://cdn.webmonch.dev/img/remotion-template-promo.png">
-      <img alt="Animated Remotion Logo" src="https://cdn.webmonch.dev/img/remotion-template-promo.png">
-    </picture>
-</p>
+Remotion app for Kubo brand and launch videos. Lives as a first-class monorepo app (`apps/video`), not under the Next site.
 
-Using this template you can create high quality **AI videos for TikTok or Instagram**.
-
-It includes a CLI that will generate a story script, images and voiceover using OpenAI and ElevenLabs.
+Based on the Remotion AI video template (story CLI + Studio). Brand composition: **`kubo-launch`** — see [LAUNCH.md](./LAUNCH.md).
 
 ## Getting started
 
-Set up the demo story:
+From the monorepo root:
 
-**Install Dependencies**
-
-```console
-npm i
+```bash
+bun install
+bun run dev:video
 ```
 
-**Start Preview**
+Or from this package:
 
-```console
-npm run dev
+```bash
+cd apps/video
+bun run dev
 ```
 
-**Render video**
+**Render launch video**
 
-```console
-npx remotion render
+```bash
+bun run render
+# or: bunx remotion render kubo-launch out/kubo-launch.mp4
 ```
 
-Or check out the [Remotion docs](/docs/render/). There are lots of ways to render.
+Bundle only (opt-in; not part of root `bun build`):
+
+```bash
+bun run bundle
+# from root: bun run build:video
+```
 
 ## Creating a new story
 

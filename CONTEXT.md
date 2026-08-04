@@ -1,6 +1,8 @@
-# Better T Stack
+# Kubo (domain glossary)
 
-Better T Stack is a project scaffolding CLI that turns a stack selection into a reproducible TypeScript starter project.
+**Kubo** is the product face of this monorepo’s project scaffolding CLI (`create-kubojs` / `kubojs`). Historically documented as Better T Stack; prefer **Kubo** in new agent output. Domain terms below still describe CLI/stack-generation behavior.
+
+Kubo turns a stack selection into a reproducible TypeScript starter project.
 
 ## Language
 
