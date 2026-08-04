@@ -16,6 +16,7 @@ export const KUBO_MARK_FILL = "#FBC80D";
 export const KUBO_MARK_EYE_FILL = "#0a0a0a";
 export const KUBO_MARK_EYE_LEFT = { x: 213, y: 292, width: 85, height: 86 };
 export const KUBO_MARK_EYE_RIGHT = { x: 468, y: 292, width: 85, height: 86 };
+export type KuboMarkEye = typeof KUBO_MARK_EYE_LEFT;
 
 /** Hip line pivots (svgOrigin-style centers in viewBox coords). */
 export const KUBO_MARK_HIP_Y = 547;
