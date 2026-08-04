@@ -1,12 +1,19 @@
 import { loadFont } from "@remotion/google-fonts/BreeSerif";
 import React from "react";
-import { Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame } from "remotion";
 
 import { CliSelectPanel } from "../components/cli-select-panel";
 import { KuboMarkCharacter } from "../components/kubo-mark-character";
 import { SceneShell } from "../components/scene-shell";
+import { getKuboWalkX } from "../lib/kubo-walk";
 import { KUBO_MARK_VIEWBOX } from "../lib/mark-paths";
-import { SQUARE_LAYOUT } from "../lib/timing";
+import {
+  KUBO_WALK_END_FRAME,
+  KUBO_WALK_END_X,
+  KUBO_WALK_START_FRAME,
+  KUBO_WALK_START_X,
+  SQUARE_LAYOUT,
+} from "../lib/timing";
 
 const { fontFamily: titleFontFamily } = loadFont();
 
@@ -18,25 +25,10 @@ const MARK_HEIGHT = (SQUARE_LAYOUT.markWidth * KUBO_MARK_VIEWBOX.height) / KUBO_
 /** Feet flush on panel rim (slight seat into edge). */
 const MARK_TOP = -(MARK_HEIGHT - 2);
 
-const KUBO_ARRIVAL_START = 34;
-const KUBO_RUN_END = 92;
-const KUBO_ARRIVAL_OFFSET_X = 1040;
-
-function getKuboArrivalX(frame: number): number {
-  if (frame < KUBO_ARRIVAL_START) return KUBO_ARRIVAL_OFFSET_X;
-  if (frame < KUBO_RUN_END) {
-    return interpolate(frame, [KUBO_ARRIVAL_START, KUBO_RUN_END], [KUBO_ARRIVAL_OFFSET_X, 0], {
-      easing: Easing.bezier(0.15, 0.85, 0.25, 1),
-    });
-  }
-  return 0;
-}
-
 function getKuboWalkFrame(frame: number): number {
-  if (frame <= KUBO_ARRIVAL_START) return 0;
-  if (frame < KUBO_RUN_END) return (frame - KUBO_ARRIVAL_START) * 1.2;
+  if (frame <= KUBO_WALK_START_FRAME) return 0;
 
-  return (KUBO_RUN_END - KUBO_ARRIVAL_START) * 1.2 + (frame - KUBO_RUN_END);
+  return frame - KUBO_WALK_START_FRAME;
 }
 
 /**
@@ -45,11 +37,6 @@ function getKuboWalkFrame(frame: number): number {
  */
 export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-
-  const enter = spring({ frame, fps, config: { damping: 18, stiffness: 110 } });
-  const y = interpolate(enter, [0, 1], [30, 0]);
-  const op = interpolate(enter, [0, 1], [0, 1]);
 
   return (
     <SceneShell background="#ffffff" color="#0a0a0a" showGoldGlow={false}>
@@ -60,8 +47,6 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
           left: SQUARE_LAYOUT.insetX,
           width: SQUARE_LAYOUT.titleWidth,
           margin: 0,
-          opacity: op,
-          transform: `translateY(${y}px)`,
           fontFamily: titleFontFamily,
           fontSize: SQUARE_LAYOUT.titleFontSize,
           fontWeight: 400,
@@ -82,8 +67,6 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
           left: SQUARE_LAYOUT.insetX,
           right: 0,
           bottom: 0,
-          opacity: op,
-          transform: `translateY(${y}px)`,
           overflow: "visible",
         }}
       >
@@ -91,10 +74,15 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
           style={{
             position: "absolute",
             top: MARK_TOP,
-            right: SQUARE_LAYOUT.markRight,
+            left: getKuboWalkX(
+              frame,
+              KUBO_WALK_START_FRAME,
+              KUBO_WALK_END_FRAME,
+              KUBO_WALK_START_X,
+              KUBO_WALK_END_X,
+            ),
             zIndex: 2,
             pointerEvents: "none",
-            transform: `translateX(${getKuboArrivalX(frame)}px)`,
           }}
         >
           <KuboMarkCharacter

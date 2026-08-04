@@ -10,8 +10,14 @@ export const SCENES = {
   solution: { from: 0, duration: LAUNCH_DURATION_FRAMES }, // 0–6s
 } as const;
 
-/** Walk cycle length in frames (~1.9s full loop matching GSAP step feel). */
+/** Walk cycle length in frames (~1.9s full loop matching the step feel). */
 export const WALK_CYCLE_FRAMES = 58;
+
+/** One-way mascot crossing: right edge to left perch, with no rebound. */
+export const KUBO_WALK_START_FRAME = 30;
+export const KUBO_WALK_END_FRAME = 112;
+export const KUBO_WALK_START_X = 1080;
+export const KUBO_WALK_END_X = 72;
 
 /**
  * Square layout tokens (1080 canvas), aligned with kubo-square-cli-perch grammar.
