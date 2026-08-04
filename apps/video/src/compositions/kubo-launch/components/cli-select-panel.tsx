@@ -9,10 +9,10 @@ type CliSelectPanelProps = {
 };
 
 const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace";
-const CYAN = "#89DCEB";
+const CYAN = "#FBC80D";
 const DIM = "#686868";
-const GREEN = "#A6E3A1";
-const MAGENTA = "#F5C2E7";
+const GREEN = "#FBC80D";
+const MAGENTA = "#FBC80D";
 const WHITE = "#F5F5F5";
 
 const KUBO_TITLE = `
@@ -241,7 +241,7 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
               lineHeight: 1.08,
               letterSpacing: "-0.05em",
               whiteSpace: "pre",
-              backgroundImage: `linear-gradient(90deg, ${MAGENTA}, #CBA6F7, ${CYAN}, ${GREEN})`,
+              backgroundImage: `linear-gradient(90deg, ${MAGENTA}, ${MAGENTA}, ${CYAN}, ${GREEN})`,
               backgroundClip: "text",
               WebkitBackgroundClip: "text",
             }}
