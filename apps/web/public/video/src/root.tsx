@@ -1,8 +1,8 @@
 import "./index.css";
 import { Composition, getStaticFiles } from "remotion";
 
-import { AIVideo, aiVideoSchema } from "./components/AIVideo";
-import { KuboLaunch } from "./compositions/kubo-launch/KuboLaunch";
+import { AIVideo, aiVideoSchema } from "./components/ai-video";
+import { KuboLaunch } from "./compositions/kubo-launch/kubo-launch";
 import { defaultKuboLaunchProps, kuboLaunchSchema } from "./compositions/kubo-launch/lib/schema";
 import {
   LAUNCH_DURATION_FRAMES,
