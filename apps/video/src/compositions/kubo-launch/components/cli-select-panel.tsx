@@ -9,10 +9,8 @@ type CliSelectPanelProps = {
 };
 
 const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace";
-const CYAN = "#FBC80D";
+const ACCENT = "#FFD84A";
 const DIM = "#686868";
-const GREEN = "#FBC80D";
-const MAGENTA = "#FBC80D";
 const WHITE = "#F5F5F5";
 
 const KUBO_TITLE = `
@@ -60,7 +58,7 @@ const cursorStyle = (visible: boolean): React.CSSProperties => ({
   width: 9,
   height: 22,
   marginLeft: 3,
-  background: visible ? CYAN : "transparent",
+  background: visible ? ACCENT : "transparent",
   verticalAlign: "-3px",
 });
 
@@ -69,7 +67,7 @@ const CliOptionRow: React.FC<{ option: CliOption; multi?: boolean }> = ({
   multi = false,
 }) => {
   const marker = multi ? (option.selected ? "◼" : "◻") : option.selected ? "●" : "○";
-  const markerColor = option.selected ? GREEN : DIM;
+  const markerColor = option.selected ? ACCENT : DIM;
 
   return (
     <div
@@ -110,7 +108,7 @@ const PromptFrame: React.FC<{
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       <div style={{ color: DIM, fontSize: 18, lineHeight: 1 }}>│</div>
-      <div style={{ display: "flex", gap: 10, color: CYAN, fontSize: 21, lineHeight: 1.25 }}>
+      <div style={{ display: "flex", gap: 10, color: ACCENT, fontSize: 21, lineHeight: 1.25 }}>
         <span>◆</span>
         <span style={{ color: WHITE }}>{message}</span>
       </div>
@@ -119,7 +117,7 @@ const PromptFrame: React.FC<{
           <CliOptionRow key={option.label} option={option} multi={multi} />
         ))}
       </div>
-      <div style={{ color: CYAN, fontSize: 18, lineHeight: 1 }}>└</div>
+      <div style={{ color: ACCENT, fontSize: 18, lineHeight: 1 }}>└</div>
       <div style={{ paddingLeft: 28, color: DIM, fontSize: 14, lineHeight: 1.3 }}>
         ↑/↓ navigate • {multi ? "space select • " : ""}enter confirm • {!first ? "b back • " : ""}
         ctrl+c cancel
@@ -134,7 +132,7 @@ const NamePrompt: React.FC<{ value: string; cursorVisible: boolean }> = ({
 }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
     <div style={{ color: DIM, fontSize: 18, lineHeight: 1 }}>│</div>
-    <div style={{ display: "flex", gap: 10, color: CYAN, fontSize: 21, lineHeight: 1.25 }}>
+    <div style={{ display: "flex", gap: 10, color: ACCENT, fontSize: 21, lineHeight: 1.25 }}>
       <span>◆</span>
       <span style={{ color: WHITE }}>
         Enter your project name or path (relative to current directory)
@@ -144,7 +142,7 @@ const NamePrompt: React.FC<{ value: string; cursorVisible: boolean }> = ({
       {value}
       <span style={cursorStyle(cursorVisible)} />
     </div>
-    <div style={{ color: CYAN, fontSize: 18, lineHeight: 1 }}>└</div>
+    <div style={{ color: ACCENT, fontSize: 18, lineHeight: 1 }}>└</div>
   </div>
 );
 
@@ -162,7 +160,7 @@ const SubmittedName: React.FC<{ value: string }> = ({ value }) => (
 );
 
 const Intro: React.FC = () => (
-  <div style={{ color: MAGENTA, fontSize: 20, lineHeight: 1.35 }}>
+  <div style={{ color: ACCENT, fontSize: 20, lineHeight: 1.35 }}>
     ┌&nbsp; Creating a new I dont know project
   </div>
 );
@@ -177,7 +175,7 @@ const CommandLine: React.FC<{ command: string; frame: number }> = ({ command, fr
 
   return (
     <div style={{ color: WHITE, fontSize: 21, lineHeight: 1.3 }}>
-      <span style={{ color: CYAN }}>$</span> {shown}
+      <span style={{ color: ACCENT }}>$</span> {shown}
       {isTyping ? <span style={cursorStyle(Math.floor(frame / 6) % 2 === 0)} /> : null}
     </div>
   );
@@ -241,7 +239,7 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
               lineHeight: 1.08,
               letterSpacing: "-0.05em",
               whiteSpace: "pre",
-              backgroundImage: `linear-gradient(90deg, ${MAGENTA}, ${MAGENTA}, ${CYAN}, ${GREEN})`,
+              backgroundImage: `linear-gradient(90deg, ${ACCENT}, ${ACCENT}, ${ACCENT}, ${ACCENT})`,
               backgroundClip: "text",
               WebkitBackgroundClip: "text",
             }}
