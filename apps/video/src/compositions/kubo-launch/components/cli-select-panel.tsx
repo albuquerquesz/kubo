@@ -10,8 +10,8 @@ type CliSelectPanelProps = {
   badge?: string;
   question?: string;
   options?: CliSelectOption[];
-  /** Option shown below the divider (e.g. docs link). */
-  footerOption?: string;
+  /** Option shown below the divider (e.g. docs link). Null hides it. */
+  footerOption?: string | null;
   selectedIndex?: number;
   style?: React.CSSProperties;
 };
@@ -47,7 +47,7 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
   badge = "create-kubojs",
   question = "Qual stack você quer montar?",
   options = DEFAULT_CLI_OPTIONS,
-  footerOption = "Ver docs em kubojs.com",
+  footerOption = null,
   selectedIndex = 0,
   style,
 }) => {
@@ -60,7 +60,6 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
         overflow: "hidden",
         boxShadow: "0 28px 90px rgba(0,0,0,0.55)",
         width: "100%",
-        maxWidth: 980,
         boxSizing: "border-box",
         padding: "40px 44px 36px",
         fontFamily: MONO,
