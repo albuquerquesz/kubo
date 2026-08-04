@@ -36,11 +36,14 @@ export const TerminalBlock: React.FC<TerminalBlockProps> = ({
       style={{
         background: "#141414",
         border: "1px solid #2a2a2a",
-        borderRadius: 16,
+        borderRadius: 20,
         overflow: "hidden",
         boxShadow: "0 24px 80px rgba(0,0,0,0.45)",
         width: "100%",
         maxWidth: 1100,
+        display: "flex",
+        flexDirection: "column",
+        boxSizing: "border-box",
         ...style,
       }}
     >
@@ -48,8 +51,8 @@ export const TerminalBlock: React.FC<TerminalBlockProps> = ({
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 8,
-          padding: "14px 18px",
+          gap: 10,
+          padding: "18px 24px",
           borderBottom: "1px solid #222",
           background: "#101010",
         }}
@@ -58,8 +61,8 @@ export const TerminalBlock: React.FC<TerminalBlockProps> = ({
           <span
             key={c}
             style={{
-              width: 12,
-              height: 12,
+              width: 14,
+              height: 14,
               borderRadius: 999,
               background: c,
               display: "inline-block",
@@ -70,7 +73,7 @@ export const TerminalBlock: React.FC<TerminalBlockProps> = ({
           style={{
             marginLeft: 12,
             color: "#666",
-            fontSize: 14,
+            fontSize: 16,
             fontFamily: "ui-monospace, monospace",
           }}
         >
@@ -79,12 +82,15 @@ export const TerminalBlock: React.FC<TerminalBlockProps> = ({
       </div>
       <div
         style={{
-          padding: "36px 40px",
+          padding: "48px 52px",
           fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
           fontSize,
           lineHeight: 1.4,
           color: "#e8e8e8",
           letterSpacing: "-0.02em",
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
         }}
       >
         <span style={{ color: "#FBC80D", marginRight: 12 }}>$</span>
