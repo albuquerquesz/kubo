@@ -1,19 +1,21 @@
 /**
- * Guards the documented delta between the square CLI-perch promo grammar
- * (skill `kubo-square-cli-perch`) and the current kubo-launch composition.
+ * Guards alignment between the square CLI-perch promo grammar
+ * (skill `kubo-square-cli-perch`) and the shipped kubo-launch composition.
  *
  * Fixture = measured reference (1080² / 6s / 30fps).
- * Live source = apps/video timing constants (not re-implemented here).
+ * Live source = apps/video timing + layout constants.
  */
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import {
+  CLI_PHASES,
   LAUNCH_DURATION_FRAMES,
   LAUNCH_FPS,
   LAUNCH_HEIGHT,
   LAUNCH_WIDTH,
+  SQUARE_LAYOUT,
 } from "../src/compositions/kubo-launch/lib/timing";
 
 const skillRoot = join(import.meta.dir, "../../../.agents/skills/kubo-square-cli-perch");
@@ -59,26 +61,49 @@ describe("kubo-square-cli-perch reference fixture", () => {
     expect(skill).toMatch(/1080\s*[×x]\s*1080/);
     expect(skill.toLowerCase()).toContain("never");
     expect(skill).toMatch(/Claude|Anthropic/);
-    expect(skill).toContain("1920");
-    expect(skill).toContain("16:9");
   });
 });
 
-describe("kubo-launch timing vs square reference (delta)", () => {
-  test("current launch is landscape 1920×1080 @ 8s — not the square reference", () => {
+describe("kubo-launch matches square CLI-perch contract", () => {
+  test("canvas is 1080×1080 @ 6s 30fps (matches reference)", () => {
     const meta = readJson<CanonicalMeta>("references/canonical-meta.json");
 
-    // Drive real shipped constants
     expect(LAUNCH_FPS).toBe(30);
-    expect(LAUNCH_WIDTH).toBe(1920);
+    expect(LAUNCH_WIDTH).toBe(1080);
     expect(LAUNCH_HEIGHT).toBe(1080);
-    expect(LAUNCH_DURATION_FRAMES).toBe(8 * LAUNCH_FPS);
+    expect(LAUNCH_DURATION_FRAMES).toBe(6 * LAUNCH_FPS);
+    expect(LAUNCH_WIDTH).toBe(meta.width);
+    expect(LAUNCH_HEIGHT).toBe(meta.height);
+    expect(LAUNCH_WIDTH / LAUNCH_HEIGHT).toBe(1);
+    expect(LAUNCH_DURATION_FRAMES / LAUNCH_FPS).toBe(meta.duration_s);
+  });
 
-    // Documented mismatch agents must not paper over
-    expect(LAUNCH_WIDTH).not.toBe(meta.width);
-    expect(LAUNCH_WIDTH / LAUNCH_HEIGHT).toBeCloseTo(16 / 9, 5);
-    expect(meta.width / meta.height).toBe(1);
-    expect(LAUNCH_DURATION_FRAMES / LAUNCH_FPS).toBe(8);
-    expect(meta.duration_s).toBe(6);
+  test("layout tokens sit in skill ranges (panel top, mark size)", () => {
+    // Panel top ≈ 31–36% of height
+    const panelTopPct = (SQUARE_LAYOUT.panelTop / LAUNCH_HEIGHT) * 100;
+    expect(panelTopPct).toBeGreaterThanOrEqual(31);
+    expect(panelTopPct).toBeLessThanOrEqual(36);
+
+    // Panel left inset ≈ 5–8%
+    const insetPct = (SQUARE_LAYOUT.insetX / LAUNCH_WIDTH) * 100;
+    expect(insetPct).toBeGreaterThanOrEqual(5);
+    expect(insetPct).toBeLessThanOrEqual(8);
+
+    // Mark width ≈ 10–13% of canvas
+    const markPct = (SQUARE_LAYOUT.markWidth / LAUNCH_WIDTH) * 100;
+    expect(markPct).toBeGreaterThanOrEqual(10);
+    expect(markPct).toBeLessThanOrEqual(13);
+
+    // Mark right inset ~6–10%
+    const markRightPct = (SQUARE_LAYOUT.markRight / LAUNCH_WIDTH) * 100;
+    expect(markRightPct).toBeGreaterThanOrEqual(6);
+    expect(markRightPct).toBeLessThanOrEqual(12);
+  });
+
+  test("CLI phases fit 6s and surface selection by mid-clip", () => {
+    expect(CLI_PHASES.webAt).toBeLessThan(LAUNCH_DURATION_FRAMES);
+    expect(CLI_PHASES.projectTypeAt).toBeLessThanOrEqual(LAUNCH_DURATION_FRAMES / 2);
+    expect(CLI_PHASES.projectTypeAt).toBe(CLI_PHASES.nameSubmitted);
+    expect(CLI_PHASES.webAt).toBe(CLI_PHASES.projectTypeSubmitted);
   });
 });

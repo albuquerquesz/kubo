@@ -4,11 +4,21 @@ import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { CliSelectPanel } from "../components/cli-select-panel";
 import { KuboMarkCharacter } from "../components/kubo-mark-character";
 import { SceneShell } from "../components/scene-shell";
+import { KUBO_MARK_VIEWBOX } from "../lib/mark-paths";
+import { SQUARE_LAYOUT } from "../lib/timing";
 
 type SolutionSceneProps = {
   command: string;
 };
 
+const MARK_HEIGHT = (SQUARE_LAYOUT.markWidth * KUBO_MARK_VIEWBOX.height) / KUBO_MARK_VIEWBOX.width;
+/** Feet flush on panel rim (slight seat into edge). */
+const MARK_TOP = -(MARK_HEIGHT - 2);
+
+/**
+ * Square CLI-perch solution: title in upper plate, dark CLI card lower ~⅔,
+ * mark perched top-right of panel with walk loop.
+ */
 export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -22,28 +32,31 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
       <h2
         style={{
           position: "absolute",
-          top: 48,
-          left: 120,
-          width: 560,
+          top: SQUARE_LAYOUT.titleTop,
+          left: SQUARE_LAYOUT.insetX,
+          width: SQUARE_LAYOUT.titleWidth,
           margin: 0,
           opacity: op,
           transform: `translateY(${y}px)`,
-          fontSize: 84,
+          fontSize: SQUARE_LAYOUT.titleFontSize,
           fontWeight: 700,
           letterSpacing: "-0.035em",
           lineHeight: 1.05,
           color: "#0a0a0a",
         }}
       >
-        Um comando. Stack pronta.
+        Um comando.
+        <br />
+        Stack pronta.
       </h2>
 
       <div
         style={{
           position: "absolute",
-          right: -160,
-          bottom: -120,
-          left: 608,
+          top: SQUARE_LAYOUT.panelTop,
+          left: SQUARE_LAYOUT.insetX,
+          right: 0,
+          bottom: 0,
           opacity: op,
           transform: `translateY(${y}px)`,
           overflow: "visible",
@@ -52,22 +65,22 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
         <div
           style={{
             position: "absolute",
-            // Full mark height (~100px) + gap so feet sit above the panel, not inside
-            top: -102,
-            right: 36,
+            top: MARK_TOP,
+            right: SQUARE_LAYOUT.markRight,
             zIndex: 2,
             pointerEvents: "none",
           }}
         >
-          <KuboMarkCharacter width={112} mode="walk" localFrame={frame} />
+          <KuboMarkCharacter width={SQUARE_LAYOUT.markWidth} mode="walk" localFrame={frame} />
         </div>
         <CliSelectPanel
           command={command}
           style={{
             width: "100%",
             maxWidth: "none",
-            height: 880,
+            height: "100%",
             minHeight: 0,
+            borderRadius: "28px 0 0 0",
           }}
         />
       </div>

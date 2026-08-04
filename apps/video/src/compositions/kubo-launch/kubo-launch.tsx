@@ -7,7 +7,7 @@ import { SCENES } from "./lib/timing";
 import { SolutionScene } from "./scenes/solution-scene";
 
 /**
- * 8s launch cut for X / LinkedIn (16:9). Music-only; mark is frame-driven.
+ * 6s square launch cut for X / LinkedIn (1080×1080). Music-only; mark is frame-driven.
  */
 export const KuboLaunch: React.FC<KuboLaunchProps> = ({ command, musicFile, musicVolume }) => {
   return (

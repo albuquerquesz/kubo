@@ -1,8 +1,10 @@
 # Kubo launch video (`kubo-launch`)
 
-8s · 1920×1080 · PT-BR · music-only · brand mark animated (frame-driven).
+6s · **1080×1080** (1:1) · 30fps · PT-BR · music-only · brand mark animated (frame-driven).
 
-**Solution scene:** dark CLI select panel (`create-kubojs` options) with the Kubo mark perched on the top-right corner — not a typewriter-only terminal.
+**Grammar:** square CLI-perch — title stacked above a dark `create-kubojs` select panel; Kubo mark perched on the panel top-right with a walk loop.
+
+See [docs/spec-kubo-launch-square-cli-perch.md](../../docs/spec-kubo-launch-square-cli-perch.md) and skill `kubo-square-cli-perch`.
 
 ## Preview
 
