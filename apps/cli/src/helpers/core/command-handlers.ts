@@ -23,6 +23,7 @@ import {
   displayError,
 } from "../../utils/errors";
 import { validateAgentSafePathInput } from "../../utils/input-hardening";
+import { kuboGold } from "../../utils/kubo-colors";
 import { handleDirectoryConflict, setupProjectDirectory } from "../../utils/project-directory";
 import { addToHistory } from "../../utils/project-history";
 import { validateProjectName } from "../../utils/project-name-validation";
@@ -154,7 +155,7 @@ async function createProjectHandlerInternal(
     if (!isSilent() && input.renderTitle !== false) {
       renderTitle();
     }
-    if (!isSilent()) intro(pc.magenta("Creating a new I dont know project"));
+    if (!isSilent()) intro(kuboGold("Creating a new I dont know project"));
 
     if (!isSilent() && input.yolo) {
       cliConsola.fatal("YOLO mode enabled - skipping checks. Things may break!");
