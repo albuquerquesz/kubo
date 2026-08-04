@@ -35,7 +35,7 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command: _command 
           <h2
             style={{
               margin: 0,
-              fontSize: 68,
+              fontSize: 84,
               fontWeight: 700,
               letterSpacing: "-0.035em",
               lineHeight: 1.05,
@@ -61,7 +61,8 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command: _command 
           <div
             style={{
               position: "absolute",
-              top: -64,
+              // Full mark height (~100px) + gap so feet sit above the panel, not inside
+              top: -102,
               right: 36,
               zIndex: 2,
               pointerEvents: "none",
