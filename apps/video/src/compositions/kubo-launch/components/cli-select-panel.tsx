@@ -56,7 +56,7 @@ const WEB_OPTIONS: CliOption[] = [
 const cursorStyle = (visible: boolean): React.CSSProperties => ({
   display: "inline-block",
   width: 11,
-  height: 23,
+  height: 27,
   marginLeft: 4,
   background: visible ? CYAN : "transparent",
   verticalAlign: "-3px",
@@ -77,13 +77,13 @@ const CliOptionRow: React.FC<{ option: CliOption; multi?: boolean }> = ({
         gap: 12,
         minWidth: 0,
         color: option.selected ? WHITE : "#9A9A9A",
-        fontSize: 21,
+        fontSize: 25,
         lineHeight: 1.3,
       }}
     >
       <span style={{ width: 22, flexShrink: 0, color: markerColor }}>{marker}</span>
       <span style={{ minWidth: 0 }}>{option.label}</span>
-      <span style={{ color: DIM, fontSize: 15, whiteSpace: "nowrap" }}>({option.hint})</span>
+      <span style={{ color: DIM, fontSize: 17, whiteSpace: "nowrap" }}>({option.hint})</span>
     </div>
   );
 };
@@ -96,8 +96,8 @@ const PromptFrame: React.FC<{
 }> = ({ message, options, multi = false, first = false }) => {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <div style={{ color: DIM, fontSize: 19, lineHeight: 1 }}>│</div>
-      <div style={{ display: "flex", gap: 12, color: CYAN, fontSize: 23, lineHeight: 1.25 }}>
+      <div style={{ color: DIM, fontSize: 22, lineHeight: 1 }}>│</div>
+      <div style={{ display: "flex", gap: 12, color: CYAN, fontSize: 26, lineHeight: 1.25 }}>
         <span>◆</span>
         <span style={{ color: WHITE }}>{message}</span>
       </div>
@@ -106,8 +106,8 @@ const PromptFrame: React.FC<{
           <CliOptionRow key={option.label} option={option} multi={multi} />
         ))}
       </div>
-      <div style={{ color: CYAN, fontSize: 19, lineHeight: 1 }}>└</div>
-      <div style={{ paddingLeft: 34, color: DIM, fontSize: 15, lineHeight: 1.3 }}>
+      <div style={{ color: CYAN, fontSize: 22, lineHeight: 1 }}>└</div>
+      <div style={{ paddingLeft: 34, color: DIM, fontSize: 17, lineHeight: 1.3 }}>
         ↑/↓ navigate • {multi ? "space select • " : ""}enter confirm • {!first ? "b back • " : ""}
         ctrl+c cancel
       </div>
@@ -120,23 +120,23 @@ const NamePrompt: React.FC<{ value: string; cursorVisible: boolean }> = ({
   cursorVisible,
 }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-    <div style={{ color: DIM, fontSize: 19, lineHeight: 1 }}>│</div>
-    <div style={{ display: "flex", gap: 12, color: CYAN, fontSize: 23, lineHeight: 1.25 }}>
+    <div style={{ color: DIM, fontSize: 22, lineHeight: 1 }}>│</div>
+    <div style={{ display: "flex", gap: 12, color: CYAN, fontSize: 26, lineHeight: 1.25 }}>
       <span>◆</span>
       <span style={{ color: WHITE }}>
         Enter your project name or path (relative to current directory)
       </span>
     </div>
-    <div style={{ paddingLeft: 34, color: WHITE, fontSize: 21, lineHeight: 1.3 }}>
+    <div style={{ paddingLeft: 34, color: WHITE, fontSize: 25, lineHeight: 1.3 }}>
       {value}
       <span style={cursorStyle(cursorVisible)} />
     </div>
-    <div style={{ color: CYAN, fontSize: 19, lineHeight: 1 }}>└</div>
+    <div style={{ color: CYAN, fontSize: 22, lineHeight: 1 }}>└</div>
   </div>
 );
 
 const Intro: React.FC = () => (
-  <div style={{ color: MAGENTA, fontSize: 22, lineHeight: 1.35 }}>
+  <div style={{ color: MAGENTA, fontSize: 25, lineHeight: 1.35 }}>
     ┌&nbsp; Creating a new I dont know project
   </div>
 );
@@ -148,7 +148,7 @@ const CommandLine: React.FC<{ command: string; frame: number }> = ({ command, fr
   const shown = command.slice(0, chars);
 
   return (
-    <div style={{ color: WHITE, fontSize: 23, lineHeight: 1.3 }}>
+    <div style={{ color: WHITE, fontSize: 26, lineHeight: 1.3 }}>
       <span style={{ color: CYAN }}>$</span> {shown}
       <span style={cursorStyle(Math.floor(frame / 6) % 2 === 0)} />
     </div>
