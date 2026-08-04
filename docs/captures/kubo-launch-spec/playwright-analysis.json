@@ -1,331 +1,1001 @@
 {
   "composition": "kubo-launch",
   "probedAt": "2026-08-04",
-  "method": "remotion still → Playwright canvas getImageData bbox",
+  "method": "remotion still → ImageMagick RGB bbox + Playwright canvas verify (http static)",
   "canvasFromCode": {
     "width": 1920,
     "height": 1080,
     "fps": 30,
     "durationFrames": 240,
-    "duration_s": 8
+    "duration_s": 8,
+    "aspect": "16:9"
   },
   "frames": [
     {
       "frame": 0,
       "t_s": 0,
-      "canvas": {
-        "w": 1920,
-        "h": 1080
-      },
       "plate": {
         "whiteRatioTopLeft": 1,
         "sample": {
+          "x": 200,
+          "y": 100,
+          "rgb": [255, 255, 255]
+        }
+      },
+      "panel": null,
+      "mascot": null,
+      "title": null,
+      "codeExpected": {
+        "titleTop": 92,
+        "titleLeft": 120,
+        "titleWidth": 560,
+        "titleFont": 84,
+        "panelLeft": 608,
+        "panelBottom": 8,
+        "panelMinH": 680,
+        "markTopRel": -102,
+        "markRight": 36,
+        "markWidth": 112,
+        "markHeight": 99.5
+      }
+    },
+    {
+      "frame": 30,
+      "t_s": 1,
+      "plate": {
+        "whiteRatioTopLeft": 0.911,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "rgb": [255, 255, 255]
+        }
+      },
+      "panel": {
+        "top": 392,
+        "bottom": 1071,
+        "left": 608,
+        "right": 1919,
+        "width": 1312,
+        "height": 680,
+        "topPct": 36.3,
+        "widthPct": 68.33,
+        "heightPct": 62.96,
+        "leftPct": 31.67,
+        "sample": {
+          "x": 708,
+          "y": 442,
+          "rgb": [13, 13, 13]
+        }
+      },
+      "mascot": {
+        "x0": 1773,
+        "y0": 289,
+        "x1": 1884,
+        "y1": 388,
+        "w": 112,
+        "h": 100,
+        "widthPct": 5.83,
+        "rightInset": 35,
+        "overlapIntoPanel": -4,
+        "goldPixels": 6958,
+        "eyeBlackPixels": 275,
+        "eyeSamples": [
+          {
+            "x": 1806,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1851,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1804,
+            "y": 332,
+            "rgb": [70, 67, 55]
+          },
+          {
+            "x": 1853,
+            "y": 332,
+            "rgb": [251, 200, 13]
+          }
+        ]
+      },
+      "title": {
+        "x0": 124,
+        "y0": 108,
+        "x1": 644,
+        "y1": 393,
+        "w": 521,
+        "h": 286,
+        "pixels": 20666
+      },
+      "codeExpected": {
+        "titleTop": 92,
+        "titleLeft": 120,
+        "titleWidth": 560,
+        "titleFont": 84,
+        "panelLeft": 608,
+        "panelBottom": 8,
+        "panelMinH": 680,
+        "markTopRel": -102,
+        "markRight": 36,
+        "markWidth": 112,
+        "markHeight": 99.5
+      }
+    },
+    {
+      "frame": 60,
+      "t_s": 2,
+      "plate": {
+        "whiteRatioTopLeft": 0.911,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "rgb": [255, 255, 255]
+        }
+      },
+      "panel": {
+        "top": 392,
+        "bottom": 1071,
+        "left": 608,
+        "right": 1919,
+        "width": 1312,
+        "height": 680,
+        "topPct": 36.3,
+        "widthPct": 68.33,
+        "heightPct": 62.96,
+        "leftPct": 31.67,
+        "sample": {
+          "x": 708,
+          "y": 442,
+          "rgb": [223, 179, 239]
+        }
+      },
+      "mascot": {
+        "x0": 1772,
+        "y0": 290,
+        "x1": 1883,
+        "y1": 388,
+        "w": 112,
+        "h": 99,
+        "widthPct": 5.83,
+        "rightInset": 36,
+        "overlapIntoPanel": -4,
+        "goldPixels": 6984,
+        "eyeBlackPixels": 276,
+        "eyeSamples": [
+          {
+            "x": 1805,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1850,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1803,
+            "y": 332,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1852,
+            "y": 332,
+            "rgb": [191, 161, 56]
+          }
+        ]
+      },
+      "title": {
+        "x0": 124,
+        "y0": 108,
+        "x1": 644,
+        "y1": 393,
+        "w": 521,
+        "h": 286,
+        "pixels": 20666
+      },
+      "codeExpected": {
+        "titleTop": 92,
+        "titleLeft": 120,
+        "titleWidth": 560,
+        "titleFont": 84,
+        "panelLeft": 608,
+        "panelBottom": 8,
+        "panelMinH": 680,
+        "markTopRel": -102,
+        "markRight": 36,
+        "markWidth": 112,
+        "markHeight": 99.5
+      }
+    },
+    {
+      "frame": 90,
+      "t_s": 3,
+      "plate": {
+        "whiteRatioTopLeft": 0.911,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "rgb": [255, 255, 255]
+        }
+      },
+      "panel": {
+        "top": 392,
+        "bottom": 1071,
+        "left": 608,
+        "right": 1919,
+        "width": 1312,
+        "height": 680,
+        "topPct": 36.3,
+        "widthPct": 68.33,
+        "heightPct": 62.96,
+        "leftPct": 31.67,
+        "sample": {
+          "x": 708,
+          "y": 442,
+          "rgb": [223, 179, 239]
+        }
+      },
+      "mascot": {
+        "x0": 1773,
+        "y0": 289,
+        "x1": 1884,
+        "y1": 388,
+        "w": 112,
+        "h": 100,
+        "widthPct": 5.83,
+        "rightInset": 35,
+        "overlapIntoPanel": -4,
+        "goldPixels": 6955,
+        "eyeBlackPixels": 268,
+        "eyeSamples": [
+          {
+            "x": 1806,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1851,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1804,
+            "y": 332,
+            "rgb": [12, 12, 12]
+          },
+          {
+            "x": 1853,
+            "y": 332,
+            "rgb": [251, 200, 13]
+          }
+        ]
+      },
+      "title": {
+        "x0": 124,
+        "y0": 108,
+        "x1": 644,
+        "y1": 393,
+        "w": 521,
+        "h": 286,
+        "pixels": 20666
+      },
+      "codeExpected": {
+        "titleTop": 92,
+        "titleLeft": 120,
+        "titleWidth": 560,
+        "titleFont": 84,
+        "panelLeft": 608,
+        "panelBottom": 8,
+        "panelMinH": 680,
+        "markTopRel": -102,
+        "markRight": 36,
+        "markWidth": 112,
+        "markHeight": 99.5
+      }
+    },
+    {
+      "frame": 120,
+      "t_s": 4,
+      "plate": {
+        "whiteRatioTopLeft": 0.911,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "rgb": [255, 255, 255]
+        }
+      },
+      "panel": {
+        "top": 392,
+        "bottom": 1071,
+        "left": 608,
+        "right": 1919,
+        "width": 1312,
+        "height": 680,
+        "topPct": 36.3,
+        "widthPct": 68.33,
+        "heightPct": 62.96,
+        "leftPct": 31.67,
+        "sample": {
+          "x": 708,
+          "y": 442,
+          "rgb": [13, 13, 13]
+        }
+      },
+      "mascot": {
+        "x0": 1772,
+        "y0": 290,
+        "x1": 1883,
+        "y1": 388,
+        "w": 112,
+        "h": 99,
+        "widthPct": 5.83,
+        "rightInset": 36,
+        "overlapIntoPanel": -4,
+        "goldPixels": 6928,
+        "eyeBlackPixels": 281,
+        "eyeSamples": [
+          {
+            "x": 1805,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1850,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1803,
+            "y": 332,
+            "rgb": [248, 197, 12]
+          },
+          {
+            "x": 1852,
+            "y": 332,
+            "rgb": [149, 132, 69]
+          }
+        ]
+      },
+      "title": {
+        "x0": 124,
+        "y0": 108,
+        "x1": 644,
+        "y1": 393,
+        "w": 521,
+        "h": 286,
+        "pixels": 20666
+      },
+      "codeExpected": {
+        "titleTop": 92,
+        "titleLeft": 120,
+        "titleWidth": 560,
+        "titleFont": 84,
+        "panelLeft": 608,
+        "panelBottom": 8,
+        "panelMinH": 680,
+        "markTopRel": -102,
+        "markRight": 36,
+        "markWidth": 112,
+        "markHeight": 99.5
+      }
+    },
+    {
+      "frame": 157,
+      "t_s": 5.233,
+      "plate": {
+        "whiteRatioTopLeft": 0.911,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "rgb": [255, 255, 255]
+        }
+      },
+      "panel": {
+        "top": 392,
+        "bottom": 1071,
+        "left": 608,
+        "right": 1919,
+        "width": 1312,
+        "height": 680,
+        "topPct": 36.3,
+        "widthPct": 68.33,
+        "heightPct": 62.96,
+        "leftPct": 31.67,
+        "sample": {
+          "x": 708,
+          "y": 442,
+          "rgb": [13, 13, 13]
+        }
+      },
+      "mascot": {
+        "x0": 1774,
+        "y0": 288,
+        "x1": 1885,
+        "y1": 388,
+        "w": 112,
+        "h": 101,
+        "widthPct": 5.83,
+        "rightInset": 34,
+        "overlapIntoPanel": -4,
+        "goldPixels": 6931,
+        "eyeBlackPixels": 270,
+        "eyeSamples": [
+          {
+            "x": 1807,
+            "y": 328,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1852,
+            "y": 328,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1805,
+            "y": 331,
+            "rgb": [78, 74, 58]
+          },
+          {
+            "x": 1854,
+            "y": 331,
+            "rgb": [251, 200, 13]
+          }
+        ]
+      },
+      "title": {
+        "x0": 124,
+        "y0": 108,
+        "x1": 644,
+        "y1": 393,
+        "w": 521,
+        "h": 286,
+        "pixels": 20666
+      },
+      "codeExpected": {
+        "titleTop": 92,
+        "titleLeft": 120,
+        "titleWidth": 560,
+        "titleFont": 84,
+        "panelLeft": 608,
+        "panelBottom": 8,
+        "panelMinH": 680,
+        "markTopRel": -102,
+        "markRight": 36,
+        "markWidth": 112,
+        "markHeight": 99.5
+      }
+    },
+    {
+      "frame": 180,
+      "t_s": 6,
+      "plate": {
+        "whiteRatioTopLeft": 0.911,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "rgb": [255, 255, 255]
+        }
+      },
+      "panel": {
+        "top": 392,
+        "bottom": 1071,
+        "left": 608,
+        "right": 1919,
+        "width": 1312,
+        "height": 680,
+        "topPct": 36.3,
+        "widthPct": 68.33,
+        "heightPct": 62.96,
+        "leftPct": 31.67,
+        "sample": {
+          "x": 708,
+          "y": 442,
+          "rgb": [13, 13, 13]
+        }
+      },
+      "mascot": {
+        "x0": 1772,
+        "y0": 289,
+        "x1": 1882,
+        "y1": 388,
+        "w": 111,
+        "h": 100,
+        "widthPct": 5.78,
+        "rightInset": 37,
+        "overlapIntoPanel": -4,
+        "goldPixels": 6931,
+        "eyeBlackPixels": 267,
+        "eyeSamples": [
+          {
+            "x": 1805,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1849,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1803,
+            "y": 332,
+            "rgb": [247, 196, 12]
+          },
+          {
+            "x": 1851,
+            "y": 332,
+            "rgb": [75, 72, 57]
+          }
+        ]
+      },
+      "title": {
+        "x0": 124,
+        "y0": 108,
+        "x1": 644,
+        "y1": 393,
+        "w": 521,
+        "h": 286,
+        "pixels": 20666
+      },
+      "codeExpected": {
+        "titleTop": 92,
+        "titleLeft": 120,
+        "titleWidth": 560,
+        "titleFont": 84,
+        "panelLeft": 608,
+        "panelBottom": 8,
+        "panelMinH": 680,
+        "markTopRel": -102,
+        "markRight": 36,
+        "markWidth": 112,
+        "markHeight": 99.5
+      }
+    },
+    {
+      "frame": 208,
+      "t_s": 6.933,
+      "plate": {
+        "whiteRatioTopLeft": 0.911,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "rgb": [255, 255, 255]
+        }
+      },
+      "panel": {
+        "top": 392,
+        "bottom": 1071,
+        "left": 608,
+        "right": 1919,
+        "width": 1312,
+        "height": 680,
+        "topPct": 36.3,
+        "widthPct": 68.33,
+        "heightPct": 62.96,
+        "leftPct": 31.67,
+        "sample": {
+          "x": 708,
+          "y": 442,
+          "rgb": [13, 13, 13]
+        }
+      },
+      "mascot": {
+        "x0": 1773,
+        "y0": 289,
+        "x1": 1884,
+        "y1": 388,
+        "w": 112,
+        "h": 100,
+        "widthPct": 5.83,
+        "rightInset": 35,
+        "overlapIntoPanel": -4,
+        "goldPixels": 6938,
+        "eyeBlackPixels": 277,
+        "eyeSamples": [
+          {
+            "x": 1806,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1851,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1804,
+            "y": 332,
+            "rgb": [24, 24, 24]
+          },
+          {
+            "x": 1853,
+            "y": 332,
+            "rgb": [251, 200, 13]
+          }
+        ]
+      },
+      "title": {
+        "x0": 124,
+        "y0": 108,
+        "x1": 644,
+        "y1": 393,
+        "w": 521,
+        "h": 286,
+        "pixels": 20666
+      },
+      "codeExpected": {
+        "titleTop": 92,
+        "titleLeft": 120,
+        "titleWidth": 560,
+        "titleFont": 84,
+        "panelLeft": 608,
+        "panelBottom": 8,
+        "panelMinH": 680,
+        "markTopRel": -102,
+        "markRight": 36,
+        "markWidth": 112,
+        "markHeight": 99.5
+      }
+    },
+    {
+      "frame": 239,
+      "t_s": 7.967,
+      "plate": {
+        "whiteRatioTopLeft": 0.911,
+        "sample": {
+          "x": 200,
+          "y": 100,
+          "rgb": [255, 255, 255]
+        }
+      },
+      "panel": {
+        "top": 392,
+        "bottom": 1071,
+        "left": 608,
+        "right": 1919,
+        "width": 1312,
+        "height": 680,
+        "topPct": 36.3,
+        "widthPct": 68.33,
+        "heightPct": 62.96,
+        "leftPct": 31.67,
+        "sample": {
+          "x": 708,
+          "y": 442,
+          "rgb": [13, 13, 13]
+        }
+      },
+      "mascot": {
+        "x0": 1771,
+        "y0": 289,
+        "x1": 1882,
+        "y1": 388,
+        "w": 112,
+        "h": 100,
+        "widthPct": 5.83,
+        "rightInset": 37,
+        "overlapIntoPanel": -4,
+        "goldPixels": 6945,
+        "eyeBlackPixels": 270,
+        "eyeSamples": [
+          {
+            "x": 1804,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1849,
+            "y": 329,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1802,
+            "y": 332,
+            "rgb": [251, 200, 13]
+          },
+          {
+            "x": 1851,
+            "y": 332,
+            "rgb": [14, 14, 14]
+          }
+        ]
+      },
+      "title": {
+        "x0": 124,
+        "y0": 108,
+        "x1": 644,
+        "y1": 393,
+        "w": 521,
+        "h": 286,
+        "pixels": 20666
+      },
+      "codeExpected": {
+        "titleTop": 92,
+        "titleLeft": 120,
+        "titleWidth": 560,
+        "titleFont": 84,
+        "panelLeft": 608,
+        "panelBottom": 8,
+        "panelMinH": 680,
+        "markTopRel": -102,
+        "markRight": 36,
+        "markWidth": 112,
+        "markHeight": 99.5
+      }
+    }
+  ],
+  "playwrightCanvasVerify": {
+    "composition": "kubo-launch",
+    "probedAt": "2026-08-04",
+    "method": "Playwright Chromium + local static PNG server + canvas getImageData",
+    "canvasFromCode": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "durationFrames": 240,
+      "duration_s": 8
+    },
+    "frames": [
+      {
+        "frame": 30,
+        "t_s": 1,
+        "canvas": {
+          "w": 1920,
+          "h": 1080
+        },
+        "panelTop": 392,
+        "panelSample": {
+          "x": 900,
+          "y": 472,
+          "r": 13,
+          "g": 13,
+          "b": 13,
+          "hex": "#0d0d0d"
+        },
+        "plateSample": {
           "x": 200,
           "y": 100,
           "r": 255,
           "g": 255,
           "b": 255,
           "hex": "#ffffff"
+        },
+        "mascot": {
+          "x0": 1773,
+          "y0": 289,
+          "x1": 1884,
+          "y1": 388,
+          "w": 112,
+          "h": 100,
+          "widthPct": 5.83,
+          "rightInset": 35,
+          "overlapIntoPanel": -4,
+          "goldPixels": 6958,
+          "eyeBlackPixels": 275,
+          "eyeSamples": [
+            {
+              "x": 1806,
+              "y": 329,
+              "r": 251,
+              "g": 200,
+              "b": 13,
+              "hex": "#fbc80d"
+            },
+            {
+              "x": 1851,
+              "y": 329,
+              "r": 251,
+              "g": 200,
+              "b": 13,
+              "hex": "#fbc80d"
+            }
+          ],
+          "fillSample": {
+            "x": 1828,
+            "y": 343,
+            "r": 251,
+            "g": 200,
+            "b": 13,
+            "hex": "#fbc80d"
+          }
         }
       },
-      "panel": null,
-      "mascot": null,
-      "title": null,
-      "eyeBlackPixelsInMarkBbox": 0,
-      "eyeSamples": [],
-      "pixelCounts": {
-        "panelDark": 0,
-        "gold": 0,
-        "titleDark": 0
-      }
-    },
-    {
-      "frame": 30,
-      "t_s": 1,
-      "canvas": {
-        "w": 300,
-        "h": 150
-      },
-      "plate": {
-        "whiteRatioTopLeft": 0,
-        "sample": {
+      {
+        "frame": 90,
+        "t_s": 3,
+        "canvas": {
+          "w": 1920,
+          "h": 1080
+        },
+        "panelTop": 392,
+        "panelSample": {
+          "x": 900,
+          "y": 472,
+          "r": 102,
+          "g": 150,
+          "b": 136,
+          "hex": "#669688"
+        },
+        "plateSample": {
           "x": 200,
           "y": 100,
-          "r": 0,
-          "g": 0,
-          "b": 0,
-          "hex": "#000000"
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "hex": "#ffffff"
+        },
+        "mascot": {
+          "x0": 1773,
+          "y0": 289,
+          "x1": 1884,
+          "y1": 388,
+          "w": 112,
+          "h": 100,
+          "widthPct": 5.83,
+          "rightInset": 35,
+          "overlapIntoPanel": -4,
+          "goldPixels": 6955,
+          "eyeBlackPixels": 268,
+          "eyeSamples": [
+            {
+              "x": 1806,
+              "y": 329,
+              "r": 251,
+              "g": 200,
+              "b": 13,
+              "hex": "#fbc80d"
+            },
+            {
+              "x": 1851,
+              "y": 329,
+              "r": 251,
+              "g": 200,
+              "b": 13,
+              "hex": "#fbc80d"
+            }
+          ],
+          "fillSample": {
+            "x": 1828,
+            "y": 343,
+            "r": 251,
+            "g": 200,
+            "b": 13,
+            "hex": "#fbc80d"
+          }
         }
       },
-      "panel": null,
-      "mascot": null,
-      "title": {
-        "x0": 0,
-        "y0": 0,
-        "x1": 298,
-        "y1": 148,
-        "w": 299,
-        "h": 149
-      },
-      "eyeBlackPixelsInMarkBbox": 0,
-      "eyeSamples": [],
-      "pixelCounts": {
-        "panelDark": 0,
-        "gold": 0,
-        "titleDark": 11250
-      }
-    },
-    {
-      "frame": 60,
-      "t_s": 2,
-      "canvas": {
-        "w": 300,
-        "h": 150
-      },
-      "plate": {
-        "whiteRatioTopLeft": 0,
-        "sample": {
+      {
+        "frame": 180,
+        "t_s": 6,
+        "canvas": {
+          "w": 1920,
+          "h": 1080
+        },
+        "panelTop": 392,
+        "panelSample": {
+          "x": 900,
+          "y": 472,
+          "r": 13,
+          "g": 13,
+          "b": 13,
+          "hex": "#0d0d0d"
+        },
+        "plateSample": {
           "x": 200,
           "y": 100,
-          "r": 0,
-          "g": 0,
-          "b": 0,
-          "hex": "#000000"
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "hex": "#ffffff"
+        },
+        "mascot": {
+          "x0": 1772,
+          "y0": 289,
+          "x1": 1882,
+          "y1": 388,
+          "w": 111,
+          "h": 100,
+          "widthPct": 5.78,
+          "rightInset": 37,
+          "overlapIntoPanel": -4,
+          "goldPixels": 6931,
+          "eyeBlackPixels": 267,
+          "eyeSamples": [
+            {
+              "x": 1805,
+              "y": 329,
+              "r": 251,
+              "g": 200,
+              "b": 13,
+              "hex": "#fbc80d"
+            },
+            {
+              "x": 1849,
+              "y": 329,
+              "r": 251,
+              "g": 200,
+              "b": 13,
+              "hex": "#fbc80d"
+            }
+          ],
+          "fillSample": {
+            "x": 1827,
+            "y": 343,
+            "r": 251,
+            "g": 200,
+            "b": 13,
+            "hex": "#fbc80d"
+          }
         }
       },
-      "panel": null,
-      "mascot": null,
-      "title": {
-        "x0": 0,
-        "y0": 0,
-        "x1": 298,
-        "y1": 148,
-        "w": 299,
-        "h": 149
-      },
-      "eyeBlackPixelsInMarkBbox": 0,
-      "eyeSamples": [],
-      "pixelCounts": {
-        "panelDark": 0,
-        "gold": 0,
-        "titleDark": 11250
-      }
-    },
-    {
-      "frame": 90,
-      "t_s": 3,
-      "canvas": {
-        "w": 300,
-        "h": 150
-      },
-      "plate": {
-        "whiteRatioTopLeft": 0,
-        "sample": {
+      {
+        "frame": 239,
+        "t_s": 7.966666666666667,
+        "canvas": {
+          "w": 1920,
+          "h": 1080
+        },
+        "panelTop": 392,
+        "panelSample": {
+          "x": 900,
+          "y": 472,
+          "r": 13,
+          "g": 13,
+          "b": 13,
+          "hex": "#0d0d0d"
+        },
+        "plateSample": {
           "x": 200,
           "y": 100,
-          "r": 0,
-          "g": 0,
-          "b": 0,
-          "hex": "#000000"
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "hex": "#ffffff"
+        },
+        "mascot": {
+          "x0": 1771,
+          "y0": 289,
+          "x1": 1882,
+          "y1": 388,
+          "w": 112,
+          "h": 100,
+          "widthPct": 5.83,
+          "rightInset": 37,
+          "overlapIntoPanel": -4,
+          "goldPixels": 6945,
+          "eyeBlackPixels": 270,
+          "eyeSamples": [
+            {
+              "x": 1804,
+              "y": 329,
+              "r": 251,
+              "g": 200,
+              "b": 13,
+              "hex": "#fbc80d"
+            },
+            {
+              "x": 1849,
+              "y": 329,
+              "r": 251,
+              "g": 200,
+              "b": 13,
+              "hex": "#fbc80d"
+            }
+          ],
+          "fillSample": {
+            "x": 1826,
+            "y": 343,
+            "r": 251,
+            "g": 200,
+            "b": 13,
+            "hex": "#fbc80d"
+          }
         }
-      },
-      "panel": null,
-      "mascot": null,
-      "title": {
-        "x0": 0,
-        "y0": 0,
-        "x1": 298,
-        "y1": 148,
-        "w": 299,
-        "h": 149
-      },
-      "eyeBlackPixelsInMarkBbox": 0,
-      "eyeSamples": [],
-      "pixelCounts": {
-        "panelDark": 0,
-        "gold": 0,
-        "titleDark": 11250
       }
-    },
-    {
-      "frame": 120,
-      "t_s": 4,
-      "canvas": {
-        "w": 300,
-        "h": 150
-      },
-      "plate": {
-        "whiteRatioTopLeft": 0,
-        "sample": {
-          "x": 200,
-          "y": 100,
-          "r": 0,
-          "g": 0,
-          "b": 0,
-          "hex": "#000000"
-        }
-      },
-      "panel": null,
-      "mascot": null,
-      "title": {
-        "x0": 0,
-        "y0": 0,
-        "x1": 298,
-        "y1": 148,
-        "w": 299,
-        "h": 149
-      },
-      "eyeBlackPixelsInMarkBbox": 0,
-      "eyeSamples": [],
-      "pixelCounts": {
-        "panelDark": 0,
-        "gold": 0,
-        "titleDark": 11250
-      }
-    },
-    {
-      "frame": 157,
-      "t_s": 5.233,
-      "canvas": {
-        "w": 300,
-        "h": 150
-      },
-      "plate": {
-        "whiteRatioTopLeft": 0,
-        "sample": {
-          "x": 200,
-          "y": 100,
-          "r": 0,
-          "g": 0,
-          "b": 0,
-          "hex": "#000000"
-        }
-      },
-      "panel": null,
-      "mascot": null,
-      "title": {
-        "x0": 0,
-        "y0": 0,
-        "x1": 298,
-        "y1": 148,
-        "w": 299,
-        "h": 149
-      },
-      "eyeBlackPixelsInMarkBbox": 0,
-      "eyeSamples": [],
-      "pixelCounts": {
-        "panelDark": 0,
-        "gold": 0,
-        "titleDark": 11250
-      }
-    },
-    {
-      "frame": 180,
-      "t_s": 6,
-      "canvas": {
-        "w": 300,
-        "h": 150
-      },
-      "plate": {
-        "whiteRatioTopLeft": 0,
-        "sample": {
-          "x": 200,
-          "y": 100,
-          "r": 0,
-          "g": 0,
-          "b": 0,
-          "hex": "#000000"
-        }
-      },
-      "panel": null,
-      "mascot": null,
-      "title": {
-        "x0": 0,
-        "y0": 0,
-        "x1": 298,
-        "y1": 148,
-        "w": 299,
-        "h": 149
-      },
-      "eyeBlackPixelsInMarkBbox": 0,
-      "eyeSamples": [],
-      "pixelCounts": {
-        "panelDark": 0,
-        "gold": 0,
-        "titleDark": 11250
-      }
-    },
-    {
-      "frame": 208,
-      "t_s": 6.933,
-      "canvas": {
-        "w": 300,
-        "h": 150
-      },
-      "plate": {
-        "whiteRatioTopLeft": 0,
-        "sample": {
-          "x": 200,
-          "y": 100,
-          "r": 0,
-          "g": 0,
-          "b": 0,
-          "hex": "#000000"
-        }
-      },
-      "panel": null,
-      "mascot": null,
-      "title": {
-        "x0": 0,
-        "y0": 0,
-        "x1": 298,
-        "y1": 148,
-        "w": 299,
-        "h": 149
-      },
-      "eyeBlackPixelsInMarkBbox": 0,
-      "eyeSamples": [],
-      "pixelCounts": {
-        "panelDark": 0,
-        "gold": 0,
-        "titleDark": 11250
-      }
-    },
-    {
-      "frame": 239,
-      "t_s": 7.967,
-      "canvas": {
-        "w": 300,
-        "h": 150
-      },
-      "plate": {
-        "whiteRatioTopLeft": 0,
-        "sample": {
-          "x": 200,
-          "y": 100,
-          "r": 0,
-          "g": 0,
-          "b": 0,
-          "hex": "#000000"
-        }
-      },
-      "panel": null,
-      "mascot": null,
-      "title": {
-        "x0": 0,
-        "y0": 0,
-        "x1": 298,
-        "y1": 148,
-        "w": 299,
-        "h": 149
-      },
-      "eyeBlackPixelsInMarkBbox": 0,
-      "eyeSamples": [],
-      "pixelCounts": {
-        "panelDark": 0,
-        "gold": 0,
-        "titleDark": 11250
-      }
-    }
-  ]
+    ]
+  }
 }
