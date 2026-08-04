@@ -31,14 +31,14 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
           transform: `translateY(${y}px)`,
         }}
       >
-        <div style={{ flex: "0 1 420px", minWidth: 0 }}>
+        <div style={{ flex: "0 1 560px", minWidth: 0 }}>
           <h2
             style={{
               margin: 0,
-              fontSize: 56,
+              fontSize: 92,
               fontWeight: 700,
-              letterSpacing: "-0.03em",
-              lineHeight: 1.1,
+              letterSpacing: "-0.035em",
+              lineHeight: 1.05,
             }}
           >
             Um comando. Stack pronta.
