@@ -45,7 +45,9 @@ export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({ width = 28
       <g>
         <g>
           <path fill={KUBO_MARK_FILL} fillRule="evenodd" d={KUBO_MARK_BODY_PATH} />
-          {/* Solid eyes (body path uses evenodd cutouts — transparent on light backgrounds). */}
+          {/* Restore the eye cutouts before the animated black eyelids. */}
+          <rect {...KUBO_MARK_EYE_LEFT} fill={KUBO_MARK_FILL} />
+          <rect {...KUBO_MARK_EYE_RIGHT} fill={KUBO_MARK_FILL} />
           <rect {...leftEye} fill={KUBO_MARK_EYE_FILL} />
           <rect {...rightEye} fill={KUBO_MARK_EYE_FILL} />
         </g>
