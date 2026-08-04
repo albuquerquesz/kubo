@@ -2,6 +2,8 @@
 
 8s · 1920×1080 · PT-BR · music-only · brand mark animated (frame-driven).
 
+**Solution scene:** dark CLI select panel (`create-kubojs` options) with the Kubo mark perched on the top-right corner — not a typewriter-only terminal.
+
 ## Preview
 
 ```bash
@@ -17,12 +19,11 @@ Open composition **`kubo-launch`** in Remotion Studio.
 
 ## Props (Studio)
 
-| Prop             | Default                            |
-| ---------------- | ---------------------------------- |
-| `problemBullets` | Setup / stack / deploy             |
-| `command`        | `bun create kubojs`                |
-| `musicFile`      | `audio/launch-bed.mp3` (or `null`) |
-| `musicVolume`    | 0.45                               |
+| Prop          | Default                            |
+| ------------- | ---------------------------------- |
+| `command`     | `bun create kubojs`                |
+| `musicFile`   | `audio/launch-bed.mp3` (or `null`) |
+| `musicVolume` | 0.45                               |
 
 ## Music
 
