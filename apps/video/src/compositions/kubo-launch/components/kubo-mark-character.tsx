@@ -2,6 +2,7 @@ import React from "react";
 import { useCurrentFrame } from "remotion";
 
 import { getKuboEyeRect, getKuboEyeState } from "../lib/kubo-blink";
+import { getKuboScale } from "../lib/kubo-pulse";
 import {
   KUBO_MARK_BODY_PATH,
   KUBO_MARK_EYE_FILL,
@@ -10,6 +11,7 @@ import {
   KUBO_MARK_FILL,
   KUBO_MARK_LEG_LEFT_PATH,
   KUBO_MARK_LEG_RIGHT_PATH,
+  KUBO_MARK_FEET_CENTER,
   KUBO_MARK_VIEWBOX,
 } from "../lib/mark-paths";
 type KuboMarkCharacterProps = {
@@ -22,6 +24,7 @@ type KuboMarkCharacterProps = {
 export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({ width = 280, style }) => {
   const frame = useCurrentFrame();
   const eyeState = getKuboEyeState(frame);
+  const scale = getKuboScale(frame);
   const height = (width * KUBO_MARK_VIEWBOX.height) / KUBO_MARK_VIEWBOX.width;
   const clipId = "kubo-mark-ground-clip";
   const leftEye = getKuboEyeRect(KUBO_MARK_EYE_LEFT, eyeState);
@@ -42,7 +45,10 @@ export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({ width = 28
           <rect x={-40} y={-50} width={843} height={728} />
         </clipPath>
       </defs>
-      <g>
+      <g
+        data-kubo-mark-root
+        transform={`translate(${KUBO_MARK_FEET_CENTER.x} ${KUBO_MARK_FEET_CENTER.y}) scale(${scale}) translate(${-KUBO_MARK_FEET_CENTER.x} ${-KUBO_MARK_FEET_CENTER.y})`}
+      >
         <g>
           <path fill={KUBO_MARK_FILL} fillRule="evenodd" d={KUBO_MARK_BODY_PATH} />
           {/* Restore the eye cutouts before the animated black eyelids. */}
