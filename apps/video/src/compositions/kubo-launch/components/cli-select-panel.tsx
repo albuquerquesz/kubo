@@ -88,6 +88,17 @@ const CliOptionRow: React.FC<{ option: CliOption; multi?: boolean }> = ({
   );
 };
 
+const SubmittedPrompt: React.FC<{ message: string; value: string }> = ({ message, value }) => (
+  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+    <div style={{ color: DIM, fontSize: 22, lineHeight: 1 }}>│</div>
+    <div style={{ display: "flex", gap: 12, color: "#A6E3A1", fontSize: 26, lineHeight: 1.25 }}>
+      <span>◇</span>
+      <span style={{ color: WHITE }}>{message}</span>
+    </div>
+    <div style={{ paddingLeft: 34, color: DIM, fontSize: 25, lineHeight: 1.3 }}>{value}</div>
+  </div>
+);
+
 const PromptFrame: React.FC<{
   message: string;
   options: CliOption[];
@@ -135,6 +146,19 @@ const NamePrompt: React.FC<{ value: string; cursorVisible: boolean }> = ({
   </div>
 );
 
+const SubmittedName: React.FC<{ value: string }> = ({ value }) => (
+  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+    <div style={{ color: DIM, fontSize: 22, lineHeight: 1 }}>│</div>
+    <div style={{ display: "flex", gap: 12, color: "#A6E3A1", fontSize: 26, lineHeight: 1.25 }}>
+      <span>◇</span>
+      <span style={{ color: WHITE }}>
+        Enter your project name or path (relative to current directory)
+      </span>
+    </div>
+    <div style={{ paddingLeft: 34, color: DIM, fontSize: 25, lineHeight: 1.3 }}>{value}</div>
+  </div>
+);
+
 const Intro: React.FC = () => (
   <div style={{ color: MAGENTA, fontSize: 25, lineHeight: 1.35 }}>
     ┌&nbsp; Creating a new I dont know project
@@ -169,38 +193,13 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
   );
   const projectName = "my-kubo-app".slice(0, projectNameChars);
 
-  let content: React.ReactNode;
-  if (frame < 55) {
-    content = <CommandLine command={command} frame={frame} />;
-  } else if (frame < 94) {
-    content = (
-      <pre
-        style={{
-          margin: 0,
-          color: "transparent",
-          fontSize: 16,
-          lineHeight: 1.08,
-          letterSpacing: "-0.05em",
-          whiteSpace: "pre",
-          backgroundImage: `linear-gradient(90deg, ${MAGENTA}, #CBA6F7, ${CYAN}, ${GREEN})`,
-          backgroundClip: "text",
-          WebkitBackgroundClip: "text",
-        }}
-      >
-        {KUBO_TITLE.trimStart()}
-      </pre>
-    );
-  } else if (frame < 118) {
-    content = <Intro />;
-  } else if (frame < 157) {
-    content = <NamePrompt value={projectName} cursorVisible={Math.floor(frame / 6) % 2 === 0} />;
-  } else if (frame < 208) {
-    content = (
-      <PromptFrame message="Select project type" options={PROJECT_TYPE_OPTIONS} multi first />
-    );
-  } else {
-    content = <PromptFrame message="Choose web" options={WEB_OPTIONS} />;
-  }
+  const showLogo = frame >= 55;
+  const showIntro = frame >= 94;
+  const showName = frame >= 118;
+  const nameSubmitted = frame >= 157;
+  const showProjectType = frame >= 157;
+  const projectTypeSubmitted = frame >= 208;
+  const showWeb = frame >= 208;
 
   return (
     <div
@@ -220,7 +219,42 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
         ...style,
       }}
     >
-      <div style={{ flex: 1, display: "flex", alignItems: "flex-start" }}>{content}</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 18, alignItems: "stretch" }}>
+        <CommandLine command={command} frame={frame} />
+        {showLogo ? (
+          <pre
+            style={{
+              margin: 0,
+              color: "transparent",
+              fontSize: 16,
+              lineHeight: 1.08,
+              letterSpacing: "-0.05em",
+              whiteSpace: "pre",
+              backgroundImage: `linear-gradient(90deg, ${MAGENTA}, #CBA6F7, ${CYAN}, ${GREEN})`,
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+            }}
+          >
+            {KUBO_TITLE.trimStart()}
+          </pre>
+        ) : null}
+        {showIntro ? <Intro /> : null}
+        {showName ? (
+          nameSubmitted ? (
+            <SubmittedName value="my-kubo-app" />
+          ) : (
+            <NamePrompt value={projectName} cursorVisible={Math.floor(frame / 6) % 2 === 0} />
+          )
+        ) : null}
+        {showProjectType ? (
+          projectTypeSubmitted ? (
+            <SubmittedPrompt message="Select project type" value="Web" />
+          ) : (
+            <PromptFrame message="Select project type" options={PROJECT_TYPE_OPTIONS} multi first />
+          )
+        ) : null}
+        {showWeb ? <PromptFrame message="Choose web" options={WEB_OPTIONS} /> : null}
+      </div>
     </div>
   );
 };
