@@ -20,7 +20,6 @@ const MARK_TOP = -(MARK_HEIGHT - 2);
 
 const KUBO_ARRIVAL_START = 34;
 const KUBO_RUN_END = 92;
-const KUBO_ARRIVAL_END = 104;
 const KUBO_ARRIVAL_OFFSET_X = 1040;
 
 function getKuboArrivalX(frame: number): number {
@@ -31,24 +30,6 @@ function getKuboArrivalX(frame: number): number {
     });
   }
   return 0;
-}
-
-function getKuboArrivalY(frame: number): number {
-  if (frame < KUBO_ARRIVAL_START) return 0;
-  if (frame < 62) {
-    return interpolate(frame, [KUBO_ARRIVAL_START, 62], [0, -22], {
-      easing: Easing.out(Easing.quad),
-    });
-  }
-  if (frame < KUBO_RUN_END) {
-    return interpolate(frame, [62, KUBO_RUN_END], [-22, 7], {
-      easing: Easing.bezier(0.42, 0, 0.58, 1),
-    });
-  }
-  return interpolate(frame, [KUBO_RUN_END, KUBO_ARRIVAL_END], [7, 0], {
-    easing: Easing.out(Easing.quad),
-    extrapolateRight: "clamp",
-  });
 }
 
 function getKuboWalkFrame(frame: number): number {
@@ -113,7 +94,7 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
             right: SQUARE_LAYOUT.markRight,
             zIndex: 2,
             pointerEvents: "none",
-            transform: `translate(${getKuboArrivalX(frame)}px, ${getKuboArrivalY(frame)}px)`,
+            transform: `translateX(${getKuboArrivalX(frame)}px)`,
           }}
         >
           <KuboMarkCharacter
