@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
+import { getKuboWalkPose, KUBO_WALK_REST, type KuboWalkPose } from "../lib/kubo-walk";
 import {
   KUBO_MARK_BODY_PATH,
   KUBO_MARK_EYE_FILL,
@@ -28,92 +29,7 @@ type KuboMarkCharacterProps = {
   style?: React.CSSProperties;
 };
 
-type Pose = {
-  bodyRot: number;
-  bodyX: number;
-  bodyY: number;
-  legLRot: number;
-  legRRot: number;
-  legLScaleY: number;
-  legRScaleY: number;
-  rootY: number;
-  rootScale: number;
-  rootRot: number;
-};
-
-const REST: Pose = {
-  bodyRot: 0,
-  bodyX: 0,
-  bodyY: 0,
-  legLRot: 0,
-  legRRot: 0,
-  legLScaleY: 1,
-  legRScaleY: 1,
-  rootY: 0,
-  rootScale: 1,
-  rootRot: 0,
-};
-
-/** Piecewise walk matching the site GSAP idle feel (step / pass / rest). */
-function walkPose(frameInCycle: number): Pose {
-  const t = frameInCycle / WALK_CYCLE_FRAMES;
-  // Segment boundaries (normalized): stepA 0–0.28, passA 0.28–0.42, stepB 0.42–0.70, passB 0.70–0.88, rest 0.88–1
-  if (t < 0.28) {
-    const p = t / 0.28;
-    return {
-      ...REST,
-      legLRot: interpolate(p, [0, 1], [0, 10]),
-      legRRot: interpolate(p, [0, 1], [0, -8]),
-      legRScaleY: interpolate(p, [0, 1], [1, 1.04]),
-      bodyRot: interpolate(p, [0, 1], [0, -2.5]),
-      bodyY: interpolate(p, [0, 1], [0, -3]),
-      bodyX: interpolate(p, [0, 1], [0, 2]),
-      rootY: interpolate(p, [0, 1], [0, -2]),
-    };
-  }
-  if (t < 0.42) {
-    const p = (t - 0.28) / 0.14;
-    return {
-      ...REST,
-      legLRot: interpolate(p, [0, 1], [10, 0]),
-      legRRot: interpolate(p, [0, 1], [-8, 0]),
-      legRScaleY: interpolate(p, [0, 1], [1.04, 1]),
-      bodyRot: interpolate(p, [0, 1], [-2.5, 0]),
-      bodyY: interpolate(p, [0, 1], [-3, -1]),
-      bodyX: interpolate(p, [0, 1], [2, 0]),
-      rootY: interpolate(p, [0, 1], [-2, 0]),
-    };
-  }
-  if (t < 0.7) {
-    const p = (t - 0.42) / 0.28;
-    return {
-      ...REST,
-      legLRot: interpolate(p, [0, 1], [0, -8]),
-      legLScaleY: interpolate(p, [0, 1], [1, 1.04]),
-      legRRot: interpolate(p, [0, 1], [0, 10]),
-      bodyRot: interpolate(p, [0, 1], [0, 2.5]),
-      bodyY: interpolate(p, [0, 1], [-1, -3]),
-      bodyX: interpolate(p, [0, 1], [0, -2]),
-      rootY: interpolate(p, [0, 1], [0, -2]),
-    };
-  }
-  if (t < 0.88) {
-    const p = (t - 0.7) / 0.18;
-    return {
-      ...REST,
-      legLRot: interpolate(p, [0, 1], [-8, 0]),
-      legLScaleY: interpolate(p, [0, 1], [1.04, 1]),
-      legRRot: interpolate(p, [0, 1], [10, 0]),
-      bodyRot: interpolate(p, [0, 1], [2.5, 0]),
-      bodyY: interpolate(p, [0, 1], [-3, 0]),
-      bodyX: interpolate(p, [0, 1], [-2, 0]),
-      rootY: interpolate(p, [0, 1], [-2, 0]),
-    };
-  }
-  return REST;
-}
-
-function celebratePose(frame: number, fps: number): Pose {
+function celebratePose(frame: number, fps: number): KuboWalkPose {
   const s = spring({
     frame,
     fps,
@@ -129,7 +45,7 @@ function celebratePose(frame: number, fps: number): Pose {
   });
   const y = interpolate(s, [0, 1], [0, -6]);
   return {
-    ...REST,
+    ...KUBO_WALK_REST,
     rootScale: punch,
     rootRot: rot,
     rootY: y,
@@ -163,14 +79,14 @@ export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({
   const { fps } = useVideoConfig();
   const f = localFrame ?? frame;
 
-  const pose = useMemo((): Pose => {
-    if (mode === "static") return REST;
+  const pose = useMemo((): KuboWalkPose => {
+    if (mode === "static") return KUBO_WALK_REST;
     if (mode === "celebrate") return celebratePose(f, fps);
     if (mode === "idle" || mode === "walk") {
       const cycle = ((f % WALK_CYCLE_FRAMES) + WALK_CYCLE_FRAMES) % WALK_CYCLE_FRAMES;
-      return walkPose(cycle);
+      return getKuboWalkPose(cycle, WALK_CYCLE_FRAMES);
     }
-    return REST;
+    return KUBO_WALK_REST;
   }, [f, fps, mode]);
 
   const height = (width * KUBO_MARK_VIEWBOX.height) / KUBO_MARK_VIEWBOX.width;
