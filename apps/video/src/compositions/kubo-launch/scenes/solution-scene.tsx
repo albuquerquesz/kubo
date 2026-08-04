@@ -80,7 +80,7 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
             maxWidth: "none",
             height: "100%",
             minHeight: 0,
-            borderRadius: "28px 0 0 0",
+            borderRadius: "28px 0 0 28px",
           }}
         />
       </div>

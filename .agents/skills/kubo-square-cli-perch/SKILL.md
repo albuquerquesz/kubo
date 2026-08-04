@@ -165,9 +165,9 @@ Related skills:
 
 ## QA checklist (mechanics)
 
-- [ ] Canvas **1:1**; default design size **1080×1080** for this promo class
-- [ ] Duration on the order of **6s @ 30fps** (or explicit intentional delta)
-- [ ] Title in upper plate; dark CLI card lower ~⅔; **not** forced side-by-side on square
-- [ ] Mascot **perched** on panel top-right, feet on edge, ~10–13% width
-- [ ] Walk loop for clip length; no Anthropic prop/mascot
-- [ ] Kubo CLI badge/options only; light plate without reference brand chrome
+- [x] Canvas **1:1**; default design size **1080×1080** for this promo class
+- [x] Duration on the order of **6s @ 30fps** (or explicit intentional delta)
+- [x] Title in upper plate; dark CLI card lower ~⅔; **not** forced side-by-side on square
+- [x] Mascot **perched** on panel top-right, feet on edge, ~10–13% width
+- [x] Walk loop for clip length; no Anthropic prop/mascot
+- [x] Kubo CLI badge/options only; light plate without reference brand chrome
