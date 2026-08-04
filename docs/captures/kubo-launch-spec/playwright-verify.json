@@ -1,0 +1,270 @@
+{
+  "composition": "kubo-launch",
+  "probedAt": "2026-08-04",
+  "method": "Playwright Chromium + local static PNG server + canvas getImageData",
+  "canvasFromCode": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "durationFrames": 240,
+    "duration_s": 8
+  },
+  "frames": [
+    {
+      "frame": 30,
+      "t_s": 1,
+      "canvas": {
+        "w": 1920,
+        "h": 1080
+      },
+      "panelTop": 392,
+      "panelSample": {
+        "x": 900,
+        "y": 472,
+        "r": 13,
+        "g": 13,
+        "b": 13,
+        "hex": "#0d0d0d"
+      },
+      "plateSample": {
+        "x": 200,
+        "y": 100,
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "hex": "#ffffff"
+      },
+      "mascot": {
+        "x0": 1773,
+        "y0": 289,
+        "x1": 1884,
+        "y1": 388,
+        "w": 112,
+        "h": 100,
+        "widthPct": 5.83,
+        "rightInset": 35,
+        "overlapIntoPanel": -4,
+        "goldPixels": 6958,
+        "eyeBlackPixels": 275,
+        "eyeSamples": [
+          {
+            "x": 1806,
+            "y": 329,
+            "r": 251,
+            "g": 200,
+            "b": 13,
+            "hex": "#fbc80d"
+          },
+          {
+            "x": 1851,
+            "y": 329,
+            "r": 251,
+            "g": 200,
+            "b": 13,
+            "hex": "#fbc80d"
+          }
+        ],
+        "fillSample": {
+          "x": 1828,
+          "y": 343,
+          "r": 251,
+          "g": 200,
+          "b": 13,
+          "hex": "#fbc80d"
+        }
+      }
+    },
+    {
+      "frame": 90,
+      "t_s": 3,
+      "canvas": {
+        "w": 1920,
+        "h": 1080
+      },
+      "panelTop": 392,
+      "panelSample": {
+        "x": 900,
+        "y": 472,
+        "r": 102,
+        "g": 150,
+        "b": 136,
+        "hex": "#669688"
+      },
+      "plateSample": {
+        "x": 200,
+        "y": 100,
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "hex": "#ffffff"
+      },
+      "mascot": {
+        "x0": 1773,
+        "y0": 289,
+        "x1": 1884,
+        "y1": 388,
+        "w": 112,
+        "h": 100,
+        "widthPct": 5.83,
+        "rightInset": 35,
+        "overlapIntoPanel": -4,
+        "goldPixels": 6955,
+        "eyeBlackPixels": 268,
+        "eyeSamples": [
+          {
+            "x": 1806,
+            "y": 329,
+            "r": 251,
+            "g": 200,
+            "b": 13,
+            "hex": "#fbc80d"
+          },
+          {
+            "x": 1851,
+            "y": 329,
+            "r": 251,
+            "g": 200,
+            "b": 13,
+            "hex": "#fbc80d"
+          }
+        ],
+        "fillSample": {
+          "x": 1828,
+          "y": 343,
+          "r": 251,
+          "g": 200,
+          "b": 13,
+          "hex": "#fbc80d"
+        }
+      }
+    },
+    {
+      "frame": 180,
+      "t_s": 6,
+      "canvas": {
+        "w": 1920,
+        "h": 1080
+      },
+      "panelTop": 392,
+      "panelSample": {
+        "x": 900,
+        "y": 472,
+        "r": 13,
+        "g": 13,
+        "b": 13,
+        "hex": "#0d0d0d"
+      },
+      "plateSample": {
+        "x": 200,
+        "y": 100,
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "hex": "#ffffff"
+      },
+      "mascot": {
+        "x0": 1772,
+        "y0": 289,
+        "x1": 1882,
+        "y1": 388,
+        "w": 111,
+        "h": 100,
+        "widthPct": 5.78,
+        "rightInset": 37,
+        "overlapIntoPanel": -4,
+        "goldPixels": 6931,
+        "eyeBlackPixels": 267,
+        "eyeSamples": [
+          {
+            "x": 1805,
+            "y": 329,
+            "r": 251,
+            "g": 200,
+            "b": 13,
+            "hex": "#fbc80d"
+          },
+          {
+            "x": 1849,
+            "y": 329,
+            "r": 251,
+            "g": 200,
+            "b": 13,
+            "hex": "#fbc80d"
+          }
+        ],
+        "fillSample": {
+          "x": 1827,
+          "y": 343,
+          "r": 251,
+          "g": 200,
+          "b": 13,
+          "hex": "#fbc80d"
+        }
+      }
+    },
+    {
+      "frame": 239,
+      "t_s": 7.966666666666667,
+      "canvas": {
+        "w": 1920,
+        "h": 1080
+      },
+      "panelTop": 392,
+      "panelSample": {
+        "x": 900,
+        "y": 472,
+        "r": 13,
+        "g": 13,
+        "b": 13,
+        "hex": "#0d0d0d"
+      },
+      "plateSample": {
+        "x": 200,
+        "y": 100,
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "hex": "#ffffff"
+      },
+      "mascot": {
+        "x0": 1771,
+        "y0": 289,
+        "x1": 1882,
+        "y1": 388,
+        "w": 112,
+        "h": 100,
+        "widthPct": 5.83,
+        "rightInset": 37,
+        "overlapIntoPanel": -4,
+        "goldPixels": 6945,
+        "eyeBlackPixels": 270,
+        "eyeSamples": [
+          {
+            "x": 1804,
+            "y": 329,
+            "r": 251,
+            "g": 200,
+            "b": 13,
+            "hex": "#fbc80d"
+          },
+          {
+            "x": 1849,
+            "y": 329,
+            "r": 251,
+            "g": 200,
+            "b": 13,
+            "hex": "#fbc80d"
+          }
+        ],
+        "fillSample": {
+          "x": 1826,
+          "y": 343,
+          "r": 251,
+          "g": 200,
+          "b": 13,
+          "hex": "#fbc80d"
+        }
+      }
+    }
+  ]
+}
