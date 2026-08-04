@@ -9,7 +9,7 @@ type SolutionSceneProps = {
   command: string;
 };
 
-export const SolutionScene: React.FC<SolutionSceneProps> = ({ command: _command }) => {
+export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -62,7 +62,7 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command: _command 
           <KuboMarkCharacter width={112} mode="walk" localFrame={frame} />
         </div>
         <CliSelectPanel
-          selectedIndex={0}
+          command={command}
           style={{
             width: "100%",
             maxWidth: "none",

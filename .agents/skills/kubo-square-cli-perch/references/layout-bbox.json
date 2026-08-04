@@ -1,0 +1,292 @@
+[
+  {
+    "frame": "t0.png",
+    "canvas": {
+      "w": 1080,
+      "h": 1080
+    },
+    "panel": {
+      "top": 340,
+      "bottom": 1079,
+      "left": 64,
+      "right": 1079,
+      "width": 1015,
+      "height": 739,
+      "topPct": 31.5,
+      "widthPct": 94,
+      "heightPct": 68.4
+    },
+    "mascot": {
+      "x0": 856,
+      "y0": 251,
+      "x1": 989,
+      "y1": 339,
+      "w": 133,
+      "h": 88,
+      "overlapIntoPanel": -1,
+      "rightInset": 91,
+      "widthPct": 12.3
+    }
+  },
+  {
+    "frame": "t0p5.png",
+    "canvas": {
+      "w": 1080,
+      "h": 1080
+    },
+    "panel": {
+      "top": 340,
+      "bottom": 1079,
+      "left": 64,
+      "right": 1079,
+      "width": 1015,
+      "height": 739,
+      "topPct": 31.5,
+      "widthPct": 94,
+      "heightPct": 68.4
+    },
+    "mascot": {
+      "x0": 878,
+      "y0": 256,
+      "x1": 989,
+      "y1": 339,
+      "w": 111,
+      "h": 83,
+      "overlapIntoPanel": -1,
+      "rightInset": 91,
+      "widthPct": 10.3
+    }
+  },
+  {
+    "frame": "t1.png",
+    "canvas": {
+      "w": 1080,
+      "h": 1080
+    },
+    "panel": {
+      "top": 340,
+      "bottom": 1079,
+      "left": 64,
+      "right": 1079,
+      "width": 1015,
+      "height": 739,
+      "topPct": 31.5,
+      "widthPct": 94,
+      "heightPct": 68.4
+    },
+    "mascot": {
+      "x0": 878,
+      "y0": 245,
+      "x1": 989,
+      "y1": 339,
+      "w": 111,
+      "h": 94,
+      "overlapIntoPanel": -1,
+      "rightInset": 91,
+      "widthPct": 10.3
+    }
+  },
+  {
+    "frame": "t1p5.png",
+    "canvas": {
+      "w": 1080,
+      "h": 1080
+    },
+    "panel": {
+      "top": 340,
+      "bottom": 1079,
+      "left": 64,
+      "right": 1079,
+      "width": 1015,
+      "height": 739,
+      "topPct": 31.5,
+      "widthPct": 94,
+      "heightPct": 68.4
+    },
+    "mascot": {
+      "x0": 850,
+      "y0": 250,
+      "x1": 995,
+      "y1": 339,
+      "w": 145,
+      "h": 89,
+      "overlapIntoPanel": -1,
+      "rightInset": 85,
+      "widthPct": 13.4
+    }
+  },
+  {
+    "frame": "t2.png",
+    "canvas": {
+      "w": 1080,
+      "h": 1080
+    },
+    "panel": {
+      "top": 340,
+      "bottom": 1079,
+      "left": 64,
+      "right": 1079,
+      "width": 1015,
+      "height": 739,
+      "topPct": 31.5,
+      "widthPct": 94,
+      "heightPct": 68.4
+    },
+    "mascot": {
+      "x0": 878,
+      "y0": 251,
+      "x1": 995,
+      "y1": 339,
+      "w": 117,
+      "h": 88,
+      "overlapIntoPanel": -1,
+      "rightInset": 85,
+      "widthPct": 10.8
+    }
+  },
+  {
+    "frame": "t2p5.png",
+    "canvas": {
+      "w": 1080,
+      "h": 1080
+    },
+    "panel": {
+      "top": 340,
+      "bottom": 1079,
+      "left": 64,
+      "right": 1079,
+      "width": 1015,
+      "height": 739,
+      "topPct": 31.5,
+      "widthPct": 94,
+      "heightPct": 68.4
+    },
+    "mascot": {
+      "x0": 878,
+      "y0": 251,
+      "x1": 989,
+      "y1": 339,
+      "w": 111,
+      "h": 88,
+      "overlapIntoPanel": -1,
+      "rightInset": 91,
+      "widthPct": 10.3
+    }
+  },
+  {
+    "frame": "t3.png",
+    "canvas": {
+      "w": 1080,
+      "h": 1080
+    },
+    "panel": {
+      "top": 340,
+      "bottom": 1079,
+      "left": 64,
+      "right": 1079,
+      "width": 1015,
+      "height": 739,
+      "topPct": 31.5,
+      "widthPct": 94,
+      "heightPct": 68.4
+    },
+    "mascot": {
+      "x0": 878,
+      "y0": 251,
+      "x1": 989,
+      "y1": 339,
+      "w": 111,
+      "h": 88,
+      "overlapIntoPanel": -1,
+      "rightInset": 91,
+      "widthPct": 10.3
+    }
+  },
+  {
+    "frame": "t4.png",
+    "canvas": {
+      "w": 1080,
+      "h": 1080
+    },
+    "panel": {
+      "top": 340,
+      "bottom": 1079,
+      "left": 64,
+      "right": 1079,
+      "width": 1015,
+      "height": 739,
+      "topPct": 31.5,
+      "widthPct": 94,
+      "heightPct": 68.4
+    },
+    "mascot": {
+      "x0": 850,
+      "y0": 251,
+      "x1": 967,
+      "y1": 339,
+      "w": 117,
+      "h": 88,
+      "overlapIntoPanel": -1,
+      "rightInset": 113,
+      "widthPct": 10.8
+    }
+  },
+  {
+    "frame": "t5.png",
+    "canvas": {
+      "w": 1080,
+      "h": 1080
+    },
+    "panel": {
+      "top": 340,
+      "bottom": 1079,
+      "left": 64,
+      "right": 1079,
+      "width": 1015,
+      "height": 739,
+      "topPct": 31.5,
+      "widthPct": 94,
+      "heightPct": 68.4
+    },
+    "mascot": {
+      "x0": 878,
+      "y0": 251,
+      "x1": 989,
+      "y1": 339,
+      "w": 111,
+      "h": 88,
+      "overlapIntoPanel": -1,
+      "rightInset": 91,
+      "widthPct": 10.3
+    }
+  },
+  {
+    "frame": "t5p9.png",
+    "canvas": {
+      "w": 1080,
+      "h": 1080
+    },
+    "panel": {
+      "top": 340,
+      "bottom": 1079,
+      "left": 64,
+      "right": 1079,
+      "width": 1015,
+      "height": 739,
+      "topPct": 31.5,
+      "widthPct": 94,
+      "heightPct": 68.4
+    },
+    "mascot": {
+      "x0": 862,
+      "y0": 256,
+      "x1": 989,
+      "y1": 339,
+      "w": 127,
+      "h": 83,
+      "overlapIntoPanel": -1,
+      "rightInset": 91,
+      "widthPct": 11.8
+    }
+  }
+]

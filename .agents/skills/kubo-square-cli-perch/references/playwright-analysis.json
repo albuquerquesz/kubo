@@ -1,0 +1,10 @@
+{
+  "meta": {
+    "videoWidth": 1080,
+    "videoHeight": 1080,
+    "duration": 6
+  },
+  "source": "data-url-mp4",
+  "aspect": 1,
+  "canvas_matches_ffprobe": true
+}

@@ -1,0 +1,13 @@
+{
+  "width": 1080,
+  "height": 1080,
+  "sar": "1:1",
+  "dar": "1:1",
+  "duration_s": 6,
+  "fps": "30/1",
+  "nb_frames": "180",
+  "variants": ["320x320", "540x540", "720x720", "1080x1080"],
+  "syndication_duration_ms": 6000,
+  "source_url": "https://video.twimg.com/amplify_video/2079986661207732224/vid/avc1/1080x1080/Oxh4e0y8TtKXCOI4.mp4",
+  "status": "https://x.com/claudeai/status/2079990597973057691"
+}
