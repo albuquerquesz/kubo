@@ -1,94 +1,23 @@
-import React, { useMemo } from "react";
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import React from "react";
 
-import { getKuboWalkPose, KUBO_WALK_REST, type KuboWalkPose } from "../lib/kubo-walk";
 import {
   KUBO_MARK_BODY_PATH,
   KUBO_MARK_EYE_FILL,
   KUBO_MARK_EYE_LEFT,
   KUBO_MARK_EYE_RIGHT,
-  KUBO_MARK_FEET_CENTER,
   KUBO_MARK_FILL,
-  KUBO_MARK_HIP_CENTER,
-  KUBO_MARK_HIP_LEFT,
-  KUBO_MARK_HIP_RIGHT,
   KUBO_MARK_LEG_LEFT_PATH,
   KUBO_MARK_LEG_RIGHT_PATH,
   KUBO_MARK_VIEWBOX,
 } from "../lib/mark-paths";
-import { WALK_CYCLE_FRAMES } from "../lib/timing";
-
-export type KuboMarkMode = "idle" | "walk" | "celebrate" | "static";
-
 type KuboMarkCharacterProps = {
   /** Width in px (height follows viewBox aspect). */
   width?: number;
-  mode?: KuboMarkMode;
-  /** Local frame offset so celebrate/walk can start mid-composition Sequence. */
-  localFrame?: number;
   style?: React.CSSProperties;
 };
 
-function celebratePose(frame: number, fps: number): KuboWalkPose {
-  const s = spring({
-    frame,
-    fps,
-    config: { damping: 12, stiffness: 180, mass: 0.6 },
-  });
-  const punch = interpolate(frame, [0, 4, 8, 12, 18, 28], [1, 1.12, 0.96, 1.04, 1.02, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const rot = interpolate(frame, [0, 4, 8, 12, 18, 28], [0, 0, 6, -5, 2, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const y = interpolate(s, [0, 1], [0, -6]);
-  return {
-    ...KUBO_WALK_REST,
-    rootScale: punch,
-    rootRot: rot,
-    rootY: y,
-  };
-}
-
-function transformAround(
-  cx: number,
-  cy: number,
-  opts: { rotate?: number; scaleX?: number; scaleY?: number; tx?: number; ty?: number },
-): string {
-  const { rotate = 0, scaleX = 1, scaleY = 1, tx = 0, ty = 0 } = opts;
-  return [
-    `translate(${cx + tx} ${cy + ty})`,
-    `rotate(${rotate})`,
-    `scale(${scaleX} ${scaleY})`,
-    `translate(${-cx} ${-cy})`,
-  ].join(" ");
-}
-
-/**
- * Frame-driven Kubo mark (Mode A walk / celebrate). Deterministic for Remotion render.
- */
-export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({
-  width = 280,
-  mode = "walk",
-  localFrame,
-  style,
-}) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const f = localFrame ?? frame;
-
-  const pose = useMemo((): KuboWalkPose => {
-    if (mode === "static") return KUBO_WALK_REST;
-    if (mode === "celebrate") return celebratePose(f, fps);
-    if (mode === "idle" || mode === "walk") {
-      const cycle = ((f % WALK_CYCLE_FRAMES) + WALK_CYCLE_FRAMES) % WALK_CYCLE_FRAMES;
-      return getKuboWalkPose(cycle, WALK_CYCLE_FRAMES);
-    }
-    return KUBO_WALK_REST;
-  }, [f, fps, mode]);
-
+/** Static Kubo mark kept ready for the next animation pass. */
+export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({ width = 280, style }) => {
   const height = (width * KUBO_MARK_VIEWBOX.height) / KUBO_MARK_VIEWBOX.width;
   const clipId = "kubo-mark-ground-clip";
 
@@ -107,21 +36,8 @@ export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({
           <rect x={-40} y={-50} width={843} height={728} />
         </clipPath>
       </defs>
-      <g
-        transform={transformAround(KUBO_MARK_FEET_CENTER.x, KUBO_MARK_FEET_CENTER.y, {
-          rotate: pose.rootRot,
-          scaleX: pose.rootScale,
-          scaleY: pose.rootScale,
-          ty: pose.rootY,
-        })}
-      >
-        <g
-          transform={transformAround(KUBO_MARK_HIP_CENTER.x, KUBO_MARK_HIP_CENTER.y, {
-            rotate: pose.bodyRot,
-            tx: pose.bodyX,
-            ty: pose.bodyY,
-          })}
-        >
+      <g>
+        <g>
           <path fill={KUBO_MARK_FILL} fillRule="evenodd" d={KUBO_MARK_BODY_PATH} />
           {/* Solid eyes (body path uses evenodd cutouts — transparent on light backgrounds). */}
           <rect
@@ -140,20 +56,10 @@ export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({
           />
         </g>
         <g clipPath={`url(#${clipId})`}>
-          <g
-            transform={transformAround(KUBO_MARK_HIP_LEFT.x, KUBO_MARK_HIP_LEFT.y, {
-              rotate: pose.legLRot,
-              scaleY: pose.legLScaleY,
-            })}
-          >
+          <g>
             <path fill={KUBO_MARK_FILL} d={KUBO_MARK_LEG_LEFT_PATH} />
           </g>
-          <g
-            transform={transformAround(KUBO_MARK_HIP_RIGHT.x, KUBO_MARK_HIP_RIGHT.y, {
-              rotate: pose.legRRot,
-              scaleY: pose.legRScaleY,
-            })}
-          >
+          <g>
             <path fill={KUBO_MARK_FILL} d={KUBO_MARK_LEG_RIGHT_PATH} />
           </g>
         </g>
