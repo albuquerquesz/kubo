@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const kuboLaunchSchema = z.object({
-  headline: z.string(),
   problemBullets: z.array(z.string()).min(1).max(5),
   command: z.string(),
   ctaUrl: z.string(),
@@ -12,7 +11,6 @@ export const kuboLaunchSchema = z.object({
 export type KuboLaunchProps = z.infer<typeof kuboLaunchSchema>;
 
 export const defaultKuboLaunchProps: KuboLaunchProps = {
-  headline: "Full-stack em um comando",
   problemBullets: ["Setup engole o dia", "Stack fragmentada", "Deploy longe do código"],
   command: "bun create kubojs",
   ctaUrl: "kubojs.dev",

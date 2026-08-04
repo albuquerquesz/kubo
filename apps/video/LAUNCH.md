@@ -1,6 +1,6 @@
 # Kubo launch video (`kubo-launch`)
 
-15s · 1920×1080 · PT-BR · music-only · brand mark animated (frame-driven).
+12s · 1920×1080 · PT-BR · music-only · brand mark animated (frame-driven).
 
 ## Preview
 
@@ -19,7 +19,6 @@ Open composition **`kubo-launch`** in Remotion Studio.
 
 | Prop             | Default                            |
 | ---------------- | ---------------------------------- |
-| `headline`       | Full-stack em um comando           |
 | `problemBullets` | Setup / stack / deploy             |
 | `command`        | `bun create kubojs`                |
 | `ctaUrl`         | kubojs.dev                         |
