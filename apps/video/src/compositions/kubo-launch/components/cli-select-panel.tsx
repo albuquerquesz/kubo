@@ -24,7 +24,6 @@ const KUBO_TITLE = `
 type CliOption = {
   label: string;
   hint: string;
-  active?: boolean;
   selected?: boolean;
 };
 
@@ -178,11 +177,14 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
       <pre
         style={{
           margin: 0,
-          color: MAGENTA,
+          color: "transparent",
           fontSize: 16,
           lineHeight: 1.08,
           letterSpacing: "-0.05em",
           whiteSpace: "pre",
+          backgroundImage: `linear-gradient(90deg, ${MAGENTA}, #CBA6F7, ${CYAN}, ${GREEN})`,
+          backgroundClip: "text",
+          WebkitBackgroundClip: "text",
         }}
       >
         {KUBO_TITLE.trimStart()}
