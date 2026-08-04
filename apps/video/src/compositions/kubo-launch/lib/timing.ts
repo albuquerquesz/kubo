@@ -27,7 +27,7 @@ export const SQUARE_LAYOUT = {
   /** Mark width ≈ 12% of canvas. */
   markWidth: 130,
   /** Left offset of the static mark relative to the panel. */
-  markLeft: 72,
+  markLeft: 100,
 } as const;
 
 /**
