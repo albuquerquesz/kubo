@@ -1,15 +1,15 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
+import { CliSelectPanel } from "../components/cli-select-panel";
 import { KuboMarkCharacter } from "../components/kubo-mark-character";
 import { SceneShell } from "../components/scene-shell";
-import { TerminalBlock } from "../components/terminal-block";
 
 type SolutionSceneProps = {
   command: string;
 };
 
-export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
+export const SolutionScene: React.FC<SolutionSceneProps> = ({ command: _command }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -26,12 +26,14 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
           flexDirection: "row",
           alignItems: "flex-start",
           justifyContent: "space-between",
-          gap: 56,
+          gap: 48,
           opacity: op,
           transform: `translateY(${y}px)`,
+          // Room for mascot perched above the panel top edge
+          paddingTop: 48,
         }}
       >
-        <div style={{ flex: "0 1 560px", minWidth: 0, marginTop: -24 }}>
+        <div style={{ flex: "0 1 520px", minWidth: 0, marginTop: 12 }}>
           <h2
             style={{
               margin: 0,
@@ -48,23 +50,29 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
         <div
           style={{
             flex: "1 1 900px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-end",
-            gap: 20,
+            position: "relative",
             minWidth: 0,
+            maxWidth: 980,
+            // Let the perched mark paint above the panel
+            overflow: "visible",
           }}
         >
-          <KuboMarkCharacter width={120} mode="walk" localFrame={frame} />
-          <TerminalBlock
-            command={command}
-            typeFrom={12}
-            typeDuration={40}
-            fontSize={56}
+          <div
+            style={{
+              position: "absolute",
+              top: -64,
+              right: 36,
+              zIndex: 2,
+              pointerEvents: "none",
+            }}
+          >
+            <KuboMarkCharacter width={112} mode="walk" localFrame={frame} />
+          </div>
+          <CliSelectPanel
+            selectedIndex={0}
             style={{
               width: "100%",
-              maxWidth: 980,
-              minHeight: 520,
+              minHeight: 560,
             }}
           />
         </div>
