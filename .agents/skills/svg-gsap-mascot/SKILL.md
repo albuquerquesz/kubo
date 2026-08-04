@@ -151,6 +151,27 @@ const swayX = [0, 0, -5, -5, 0, 4, 4, 4, 0, 0, -5, -5];
 // For each frame at time t: show frame i, set hand x, set body x, left hand y
 ```
 
+### Blink — short discrete eye cycle
+
+A blink is a small Mode B sprite sequence, even when the rest of the mascot is
+continuous. Keep the eye boxes centered and change only their height so the
+character does not shift or resize:
+
+```ts
+type EyeState = "open" | "closing" | "closed" | "opening";
+
+const eyeHeight = state === "closed" ? 8 : state === "open" ? 86 : 42;
+const eyeY = 292 + (86 - eyeHeight) / 2;
+```
+
+Use a 4–5 frame beat at the project FPS: one closing frame, one or two closed
+holds, one opening frame, then return to open. Place one or two blinks at
+meaningful idle moments rather than looping continuously. In Remotion, derive
+the state from `useCurrentFrame()`; this keeps renders deterministic and avoids
+layout-shift from CSS or wall-clock animation. A centered height change works
+for Kubo's rectangular eye cutouts; a different SVG anatomy should use
+dedicated eyelid groups or drawn frames instead.
+
 ### Multi-timeline sync (confetti + stomp)
 
 Independent timelines with **delays aligned to the character cycle** beat
@@ -300,6 +321,7 @@ not a brand law.
 - One ease for jump X and Y (kills gravity)
 - Flat frame rate for gym/stomp (slideshow feel)
 - Missing landing overshoot (stiff impact)
+- Blinking by moving the whole mascot or changing layout position
 - Prop not parented to hand group (flag drifts)
 - Re-playing “rise” frames every loop when prop should stay up
 - Copying Claude orange / official mascot drawings
