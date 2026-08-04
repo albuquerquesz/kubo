@@ -20,7 +20,7 @@ type KuboMarkCharacterProps = {
   style?: React.CSSProperties;
 };
 
-/** Static Kubo mark kept ready for the next animation pass. */
+/** Frame-driven Kubo mark with a grounded presence pulse and discrete blink. */
 export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({ width = 280, style }) => {
   const frame = useCurrentFrame();
   const eyeState = getKuboEyeState(frame);
