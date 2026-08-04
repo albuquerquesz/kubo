@@ -35,12 +35,14 @@ export const SQUARE_LAYOUT = {
  * selection is readable by mid-clip (~3s / frame 90).
  */
 export const CLI_PHASES = {
-  commandTypeEnd: 28,
-  logoAt: 29,
-  introAt: 46,
-  nameAt: 59,
-  nameTypeStart: 60,
-  nameTypeEnd: 78,
+  /** Type the shell command over 1.2s so each character reads clearly. */
+  commandTypeEnd: 36,
+  logoAt: 37,
+  introAt: 52,
+  nameAt: 65,
+  nameTypeStart: 66,
+  /** Type the project name over 0.8s. */
+  nameTypeEnd: 90,
   nameSubmitted: 90,
   projectTypeAt: 90,
   projectTypeSubmitted: 135,
