@@ -32,18 +32,6 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
         }}
       >
         <div style={{ flex: "0 1 420px", minWidth: 0 }}>
-          <div
-            style={{
-              fontSize: 20,
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              color: "#FBC80D",
-              marginBottom: 16,
-              fontWeight: 600,
-            }}
-          >
-            A solução
-          </div>
           <h2
             style={{
               margin: 0,
