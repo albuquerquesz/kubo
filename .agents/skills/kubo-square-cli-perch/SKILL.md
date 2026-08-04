@@ -120,20 +120,18 @@ Easing: walk is continuous character motion (see `svg-gsap-mascot` / video mark 
 
 Source of truth for current composition: `apps/video/src/compositions/kubo-launch/lib/timing.ts`.
 
-|          | **Reference promo**              | **Current `kubo-launch`**            | Agent action                                                                                                         |
-| -------- | -------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| Size     | **1080 × 1080**                  | **1920 × 1080**                      | Reference is **smaller per axis on height-matched…** actually **same height**, **wider** Kubo → **16:9**, not square |
-| Aspect   | **1:1**                          | **16:9**                             | Wrong aspect for matching this X square cut                                                                          |
-| Duration | **6 s**                          | **8 s**                              | Longer than reference                                                                                                |
-| FPS      | **30**                           | **30**                               | Match                                                                                                                |
-| Layout   | Stacked title **above** panel    | Title **left** + panel **right** row | Side-by-side is a 16:9 compromise; square wants **stack**                                                            |
-| Plate    | Cream/white                      | White (solution) / was dark          | Light plate OK                                                                                                       |
-| Mascot   | Perch top-right of panel, ~11% W | Perch OK, size/offsets differ        | Keep perch mechanics; tune % for 1:1                                                                                 |
-| Brand    | Claude/security                  | Kubo gold mark + `create-kubojs` CLI | Keep Kubo only                                                                                                       |
+|          | **Reference promo**              | **Current `kubo-launch`**                   | Status           |
+| -------- | -------------------------------- | ------------------------------------------- | ---------------- |
+| Size     | **1080 × 1080**                  | **1080 × 1080**                             | Match            |
+| Aspect   | **1:1**                          | **1:1**                                     | Match            |
+| Duration | **6 s**                          | **6 s** (180 frames)                        | Match            |
+| FPS      | **30**                           | **30**                                      | Match            |
+| Layout   | Stacked title **above** panel    | Stacked title **above** panel               | Match            |
+| Plate    | Cream/white                      | White, no gold glow                         | Match            |
+| Mascot   | Perch top-right of panel, ~11% W | Perch top-right, ~12% W, walk loop          | Match mechanics  |
+| Brand    | Claude/security                  | Kubo gold mark + `create-kubojs` CLI phases | Kubo only (keep) |
 
-**Why it feels “too large”:** shipping **1920×1080** for a format that is natively **1080×1080** overshoots X square crops, wastes horizontal FOV, and forces a landscape layout grammar (title beside panel) instead of the reference stack.
-
-**When adapting later (out of this skill’s non-goals):** set `LAUNCH_WIDTH = LAUNCH_HEIGHT = 1080`, duration **~6s @30fps**, restack solution scene **column** on square, keep `CliSelectPanel` + perched `KuboMarkCharacter`.
+CLI content remains a multi-step `@clack` playback (richer than the static reference list). Prop/shield and Claude chrome stay **omitted**.
 
 ---
 
