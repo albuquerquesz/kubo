@@ -55,7 +55,6 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
     <div
       style={{
         background: "#0d0d0d",
-        border: "1px solid #222",
         borderRadius: 28,
         overflow: "hidden",
         boxShadow: "0 28px 90px rgba(0,0,0,0.55)",
