@@ -172,6 +172,30 @@ layout-shift from CSS or wall-clock animation. A centered height change works
 for Kubo's rectangular eye cutouts; a different SVG anatomy should use
 dedicated eyelid groups or drawn frames instead.
 
+### Uniform presence pulse — continuous SVG scale
+
+For a mascot that should feel alive without walking or changing silhouette, use
+a small uniform scale tween on the complete rig. This is a Mode A motion: the
+topology stays stable, so no sprite frames are needed.
+
+- Drive the pulse from the render frame in Remotion; use GSAP only for browser
+  components. This keeps the video deterministic.
+- Scale around a stable ground pivot, usually the midpoint of the feet and the
+  baseline of the viewBox. The feet must remain visually planted while the body
+  grows and contracts.
+- Start with a slow 1.5–2s cycle and a 2–5% amplitude (`0.96 → 1.04 → 0.96`)
+  before tuning by eye. Use a sine-like ease for an organic presence pulse.
+- Apply the SVG `transform` to the complete character group. Do not animate
+  layout CSS, the outer wrapper, `top`, `margin`, or the SVG width/height.
+- Validate the transformed group across minimum, midpoint, and return frames:
+  its bottom edge should stay fixed, its horizontal center should not drift,
+  and the surrounding composition must not reflow.
+
+The Claude reference work reinforces this separation: continuous motion is used
+where the rig keeps its topology, while silhouette changes are handled as
+discrete frames. The pulse belongs to the continuous category; it should not be
+implemented by redrawing or swapping mascot frames.
+
 ### Multi-timeline sync (confetti + stomp)
 
 Independent timelines with **delays aligned to the character cycle** beat
@@ -322,6 +346,8 @@ not a brand law.
 - Flat frame rate for gym/stomp (slideshow feel)
 - Missing landing overshoot (stiff impact)
 - Blinking by moving the whole mascot or changing layout position
+- Scaling from the SVG corner instead of anchoring the pulse at the feet
+- Using layout or wrapper scaling that changes the terminal composition bounds
 - Prop not parented to hand group (flag drifts)
 - Re-playing “rise” frames every loop when prop should stay up
 - Copying Claude orange / official mascot drawings
