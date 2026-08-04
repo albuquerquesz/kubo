@@ -66,7 +66,7 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
           style={{
             width: "100%",
             maxWidth: "none",
-            minHeight: 680,
+            minHeight: 880,
           }}
         />
       </div>
