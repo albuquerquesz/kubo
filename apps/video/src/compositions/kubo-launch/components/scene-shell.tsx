@@ -29,7 +29,7 @@ export const SceneShell: React.FC<SceneShellProps> = ({
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: background,
+        background,
         color,
         fontFamily: "system-ui, -apple-system, Segoe UI, sans-serif",
         ...style,
