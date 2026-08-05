@@ -174,28 +174,18 @@ animation. A centered height change works for Kubo's rectangular eye cutouts; a
 different SVG anatomy should use dedicated eyelid groups or drawn frames
 instead.
 
-### Pixel-stepped idle — alternating leg poses
+### Static pixel idle
 
-When a mascot should feel alive without moving its body, keep the SVG dimensions
-fixed and animate only stable appendages. For Kubo, use a slow rest → left-step
-→ rest → right-step sequence with integer leg offsets.
+When a mascot should remain planted, keep the entire SVG pose fixed. For Kubo,
+do not apply transforms to the root, body, eyes, legs, wrapper, or SVG
+dimensions. Personality effects such as blinking may still be driven by the
+render frame, but the feet must remain in their authored position so the mascot
+cannot enter the terminal or cause visual drift.
 
-- Drive poses from the render frame in Remotion; use `gsap.set`/frame lookup for
-  browser components instead of a tween.
-- Hold the rest pose longer than the step poses so it reads as an idle loop,
-  not a slideshow.
-- Transform only the leg groups with small, integer SVG offsets. Keep the body,
-  eyes, root, wrapper, and SVG dimensions unchanged.
-- Use a long rest hold and short alternating step holds so the motion reads as
-  pixel legs walking in place rather than the whole mascot bobbing.
-- Validate the rest, left-step, and right-step frames: the root transform must
-  stay absent, the leg transforms must be discrete, and the terminal must not
-  reflow.
-
-The Claude reference work reinforces this separation: continuous motion is used
-where the rig keeps its topology, while visible pixel beats use discrete frame
-changes and variable holds. A Kubo idle loop can keep one SVG rig and still use
-that discrete timing grammar without a generic scale pulse.
+- Render one stable leg pose with no frame lookup or idle transform.
+- Keep blink geometry centered and pixel-snapped independently from the body.
+- Validate that the root and both leg groups have no transform and that the
+  mascot bounding box remains unchanged across the loop.
 
 ### Multi-timeline sync (confetti + stomp)
 
