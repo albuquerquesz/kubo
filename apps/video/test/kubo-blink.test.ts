@@ -18,23 +18,37 @@ describe("Kubo blink", () => {
     expect(getKuboEyeState(75)).toBe("open");
   });
 
-  test("keeps a closed eye centered on the original eye box", () => {
+  test("snaps the eyelid between open and closed pixel states", () => {
+    expect(getKuboEyeRect(KUBO_MARK_EYE_LEFT, "closing")).toEqual({
+      x: 213,
+      y: 331,
+      width: 85,
+      height: 8,
+    });
     expect(getKuboEyeRect(KUBO_MARK_EYE_LEFT, "closed")).toEqual({
       x: 213,
       y: 331,
       width: 85,
       height: 8,
     });
+    expect(getKuboEyeRect(KUBO_MARK_EYE_LEFT, "opening")).toEqual(KUBO_MARK_EYE_LEFT);
   });
 });
 
 describe("Kubo presence pulse", () => {
-  test("scales from the minimum to the maximum and back", () => {
-    expect(getKuboScale(0)).toBeCloseTo(KUBO_PULSE.minScale);
-    expect(getKuboScale(KUBO_PULSE.cycleFrames / 4)).toBeCloseTo(1);
-    expect(getKuboScale(KUBO_PULSE.cycleFrames / 2)).toBeCloseTo(KUBO_PULSE.maxScale);
-    expect(getKuboScale((KUBO_PULSE.cycleFrames * 3) / 4)).toBeCloseTo(1);
-    expect(getKuboScale(KUBO_PULSE.cycleFrames)).toBeCloseTo(KUBO_PULSE.minScale);
+  test("holds discrete scale states instead of interpolating", () => {
+    const expected = [
+      ...Array(8).fill(0.96),
+      ...Array(4).fill(0.98),
+      ...Array(4).fill(1.02),
+      ...Array(8).fill(1.04),
+      ...Array(4).fill(1.02),
+      ...Array(4).fill(0.98),
+      ...Array(16).fill(0.96),
+    ];
+
+    expect(expected).toHaveLength(KUBO_PULSE.cycleFrames);
+    expect(expected.map((_, frame) => getKuboScale(frame))).toEqual(expected);
   });
 
   test("repeats without leaving the configured range", () => {
@@ -42,6 +56,12 @@ describe("Kubo presence pulse", () => {
       const scale = getKuboScale(frame);
       expect(scale).toBeGreaterThanOrEqual(KUBO_PULSE.minScale);
       expect(scale).toBeLessThanOrEqual(KUBO_PULSE.maxScale);
+    }
+  });
+
+  test("repeats the same stepped cycle", () => {
+    for (let frame = 0; frame < KUBO_PULSE.cycleFrames; frame += 1) {
+      expect(getKuboScale(frame + KUBO_PULSE.cycleFrames)).toBe(getKuboScale(frame));
     }
   });
 });
