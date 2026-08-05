@@ -233,7 +233,7 @@ ${getClerkSetupLines(frontend, backend, api, false).join("\n")}`
     : ""
 }
 ${payments === "abacatepay" ? generateAbacatePaySetup(options, packageManagerRunCmd, webPort) : ""}
-${observability === "getmonitor" ? generateGetMonitorSetup(backend, webPort) : ""}
+${observability === "getmonitor" ? generateGetMonitorSetup() : ""}
 
 Then, run the development server:
 
@@ -416,21 +416,17 @@ The scaffold keeps a placeholder \`prod_your_product_id\` in \`packages/payments
 `;
 }
 
-function generateGetMonitorSetup(backend: ProjectConfig["backend"], webPort: string): string {
-  const localTarget =
-    backend === "none" ? `http://localhost:${webPort}` : "your deployed public health URL";
-
+function generateGetMonitorSetup(): string {
   return `
 ## GetMonitor Setup
 
-This project is ready to be monitored by [GetMonitor](https://getmonitor.io). GetMonitor checks public HTTP endpoints, sends alerts when status changes, and can publish a hosted status page.
+This project includes the [GetMonitor JavaScript error-tracking SDK](https://github.com/get-monitor/getmonitor-js).
 
-1. Deploy the application and choose a stable public endpoint to monitor. Prefer a lightweight health endpoint when your service provides one; otherwise monitor a public page or API route that represents availability.
-2. In GetMonitor, create an HTTP monitor for the deployed URL. Use a 2xx expected response and a timeout appropriate for the service.
-3. Add at least one alert integration (email, Slack, SMS, Discord, Telegram, or webhook), then test it.
-4. Create a public or private status page and add the monitor as a component.
+1. Create a GetMonitor project and copy its public project key.
+2. Set the generated \`.env\` value ending in \`GETMONITOR_API_KEY\` for the web app and/or server.
+3. Keep \`GETMONITOR_API_HOST\` set to \`https://ingest.getmonitor.com\` unless your project uses another ingestion host.
 
-For local development, the app is typically available at \`${localTarget}\`, but GetMonitor requires a public URL. See the [GetMonitor documentation](https://getmonitor.io/docs/getting-started/introduction/) for monitor, alert, incident, maintenance, and status-page configuration.
+Browser errors are captured automatically after the client bootstrap runs. Node server errors are captured automatically when the server key is configured. See the [browser SDK](https://github.com/get-monitor/getmonitor-js/tree/main/packages/browser) and [Node SDK](https://github.com/get-monitor/getmonitor-js/tree/main/packages/node) guides for manual capture and filtering.
 `;
 }
 
@@ -545,7 +541,7 @@ function generateFeaturesList(
   const features = ["- **TypeScript** - For type safety and improved developer experience"];
 
   if (observability === "getmonitor") {
-    features.push("- **GetMonitor** - Uptime monitoring, alerts, and hosted status pages");
+    features.push("- **GetMonitor** - JavaScript error tracking for browser and server runtimes");
   }
 
   const frontendFeatures: Record<string, string> = {

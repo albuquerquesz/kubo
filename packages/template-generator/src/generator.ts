@@ -10,6 +10,7 @@ import {
   processAlchemyPlugins,
   processPwaPlugins,
   processEnvVariables,
+  processObservability,
 } from "./processors";
 import {
   type TemplateData,
@@ -81,6 +82,7 @@ export async function generate(
       processPackageConfigs(vfs, config);
       processDependencies(vfs, config);
       processEnvVariables(vfs, config);
+      processObservability(vfs, config);
       processAuthPlugins(vfs, config);
       processAlchemyPlugins(vfs, config);
       processPwaPlugins(vfs, config);

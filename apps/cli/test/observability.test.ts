@@ -8,7 +8,7 @@ import { processFlags } from "../src/utils/config-processing";
 import { collectFiles } from "./setup";
 
 describe("GetMonitor observability", () => {
-  it("generates GetMonitor setup guidance without adding runtime dependencies", async () => {
+  it("generates the browser and Node SDK integrations with schema-backed env vars", async () => {
     const result = await createVirtual({
       projectName: "getmonitor-app",
       frontend: ["tanstack-router"],
@@ -31,9 +31,47 @@ describe("GetMonitor observability", () => {
     if (result.isErr()) return;
 
     const readme = collectFiles(result.value.root, "/virtual").get("README.md");
+    const files = collectFiles(result.value.root, "/virtual");
+    const webPackage = JSON.parse(files.get("apps/web/package.json") ?? "{}");
+    const serverPackage = JSON.parse(files.get("apps/server/package.json") ?? "{}");
+
     expect(readme).toContain("## GetMonitor Setup");
-    expect(readme).toContain("https://getmonitor.io/docs/getting-started/introduction/");
-    expect(readme).toContain("GetMonitor");
+    expect(readme).toContain("JavaScript error-tracking SDK");
+    expect(readme).not.toContain("uptime monitoring");
+    expect(webPackage.dependencies["@getmonitor/browser"]).toBe("^0.1.0");
+    expect(serverPackage.dependencies["@getmonitor/node"]).toBe("^0.1.0");
+    expect(files.get("apps/web/src/lib/getmonitor.ts")).toContain("GetMonitor.init");
+    expect(files.get("apps/web/.env")).toContain("VITE_GETMONITOR_API_KEY=");
+    expect(files.get("apps/server/src/getmonitor.ts")).toContain("new GetMonitor");
+    expect(files.get("apps/server/.env")).toContain("GETMONITOR_API_KEY=");
+  });
+
+  it("keeps Express error handling in the generated pipeline", async () => {
+    const result = await createVirtual({
+      projectName: "getmonitor-express-app",
+      frontend: [],
+      backend: "express",
+      runtime: "bun",
+      database: "none",
+      orm: "none",
+      auth: "none",
+      payments: "none",
+      observability: "getmonitor",
+      addons: ["none"],
+      examples: ["none"],
+      dbSetup: "none",
+      api: "none",
+      webDeploy: "none",
+      serverDeploy: "none",
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+
+    const files = collectFiles(result.value.root, "/virtual");
+    const server = files.get("apps/server/src/index.ts") ?? "";
+    expect(server).toContain("setupExpressErrorHandler(getMonitor, app)");
+    expect(server).toContain('from "@getmonitor/node"');
   });
 });
 

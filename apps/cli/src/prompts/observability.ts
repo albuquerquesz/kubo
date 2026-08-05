@@ -7,7 +7,7 @@ const options = [
   {
     value: "getmonitor" as Observability,
     label: "GetMonitor",
-    hint: "Uptime monitoring, alerts, and hosted status pages",
+    hint: "JavaScript error tracking for browser and server runtimes",
   },
   {
     value: "none" as Observability,
