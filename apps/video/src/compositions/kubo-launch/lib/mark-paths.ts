@@ -24,4 +24,3 @@ export const KUBO_MARK_VIEWBOX = { width: 763, height: 678 };
 export const KUBO_MARK_HIP_CENTER = { x: 381.5, y: 547 };
 export const KUBO_MARK_HIP_LEFT = { x: 152.5, y: 547 };
 export const KUBO_MARK_HIP_RIGHT = { x: 613, y: 547 };
-export const KUBO_MARK_FEET_CENTER = { x: 381.5, y: 678 };
