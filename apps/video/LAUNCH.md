@@ -1,6 +1,6 @@
 # Kubo launch video (`kubo-launch`)
 
-6s · **1080×1080** (1:1) · 30fps · PT-BR · music-only · brand mark animated (frame-driven).
+7s · **1080×1080** (1:1) · 30fps · PT-BR · music-only · brand mark animated (frame-driven).
 
 **Grammar:** square CLI-perch — title stacked above a dark `create-kubojs` select panel; Kubo mark perched on the panel top-right with a walk loop.
 

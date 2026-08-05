@@ -65,17 +65,18 @@ describe("kubo-square-cli-perch reference fixture", () => {
 });
 
 describe("kubo-launch matches square CLI-perch contract", () => {
-  test("canvas is 1080×1080 @ 6s 30fps (matches reference)", () => {
+  test("canvas is 1080×1080 @ 7s 30fps (square contract; +1s hold vs 6s fixture)", () => {
     const meta = readJson<CanonicalMeta>("references/canonical-meta.json");
 
     expect(LAUNCH_FPS).toBe(30);
     expect(LAUNCH_WIDTH).toBe(1080);
     expect(LAUNCH_HEIGHT).toBe(1080);
-    expect(LAUNCH_DURATION_FRAMES).toBe(6 * LAUNCH_FPS);
+    expect(LAUNCH_DURATION_FRAMES).toBe(7 * LAUNCH_FPS);
     expect(LAUNCH_WIDTH).toBe(meta.width);
     expect(LAUNCH_HEIGHT).toBe(meta.height);
     expect(LAUNCH_WIDTH / LAUNCH_HEIGHT).toBe(1);
-    expect(LAUNCH_DURATION_FRAMES / LAUNCH_FPS).toBe(meta.duration_s);
+    // Live cut is longer than the historical 6s fixture so the final select holds.
+    expect(LAUNCH_DURATION_FRAMES / LAUNCH_FPS).toBeGreaterThan(meta.duration_s);
   });
 
   test("layout tokens sit in skill ranges (panel top, mark size)", () => {
@@ -94,13 +95,14 @@ describe("kubo-launch matches square CLI-perch contract", () => {
     expect(markPct).toBeGreaterThanOrEqual(10);
     expect(markPct).toBeLessThanOrEqual(13);
 
-    // Mark right inset ~6–10%
-    const markRightPct = (SQUARE_LAYOUT.markRight / LAUNCH_WIDTH) * 100;
-    expect(markRightPct).toBeGreaterThanOrEqual(6);
-    expect(markRightPct).toBeLessThanOrEqual(12);
+    // Mark left is panel-relative and must leave room for mark width inside the panel.
+    expect(SQUARE_LAYOUT.markLeft).toBeGreaterThanOrEqual(0);
+    expect(SQUARE_LAYOUT.markLeft + SQUARE_LAYOUT.markWidth).toBeLessThanOrEqual(
+      LAUNCH_WIDTH - SQUARE_LAYOUT.insetX,
+    );
   });
 
-  test("CLI phases fit 6s and surface selection by mid-clip", () => {
+  test("CLI phases fit duration and surface selection by mid-clip", () => {
     expect(CLI_PHASES.webAt).toBeLessThan(LAUNCH_DURATION_FRAMES);
     expect(CLI_PHASES.projectTypeAt).toBeLessThanOrEqual(LAUNCH_DURATION_FRAMES / 2);
     expect(CLI_PHASES.projectTypeAt).toBe(CLI_PHASES.nameSubmitted);

@@ -181,7 +181,7 @@ const CommandLine: React.FC<{ command: string; frame: number }> = ({ command, fr
   );
 };
 
-/** Deterministic visual playback of the create-kubojs @clack session (6s square). */
+/** Deterministic visual playback of the create-kubojs @clack session (7s square). */
 export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
   command = "bun create kubojs",
   style,

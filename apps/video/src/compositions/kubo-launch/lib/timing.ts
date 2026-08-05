@@ -1,13 +1,13 @@
-/** Launch composition timing — square CLI-perch promo @ 30 fps → 6s total. */
+/** Launch composition timing — square CLI-perch promo @ 30 fps → 7s total. */
 
 export const LAUNCH_FPS = 30;
-export const LAUNCH_DURATION_FRAMES = 6 * LAUNCH_FPS; // 180
+export const LAUNCH_DURATION_FRAMES = 7 * LAUNCH_FPS; // 210
 export const LAUNCH_WIDTH = 1080;
 export const LAUNCH_HEIGHT = 1080;
 
 /** Scene ranges [from, duration] in frames (absolute). */
 export const SCENES = {
-  solution: { from: 0, duration: LAUNCH_DURATION_FRAMES }, // 0–6s
+  solution: { from: 0, duration: LAUNCH_DURATION_FRAMES }, // 0–7s
 } as const;
 
 /**
@@ -31,8 +31,9 @@ export const SQUARE_LAYOUT = {
 } as const;
 
 /**
- * CLI session phase starts (local frames), compressed for 6s so project-type
- * selection is readable by mid-clip (~3s / frame 90).
+ * CLI session phase starts (local frames), compressed so project-type
+ * selection is readable by mid-clip (~3s / frame 90). Final web select holds
+ * through the remaining duration (~frames 135–210 on a 7s cut).
  */
 export const CLI_PHASES = {
   /** Type the shell command over 1.2s so each character reads clearly. */
