@@ -31,21 +31,20 @@ export const SQUARE_LAYOUT = {
 } as const;
 
 /**
- * Title intro — Family A (LP hero display): delayed masked char rise.
- * Mirrors `hero-display-intro` tokens at 30fps (1s char, 0.7s line gap, 0.005s char stagger).
+ * Title intro — same as LP hero (`playHeroContentIntro` word blur-in).
+ * Tokens from `apps/web/src/lib/motion/eases.ts` + `hero-content-intro.ts` @ 30fps.
  */
-export const TITLE_INTRO = {
-  /** Hold blank before first line starts rising. */
-  delayFrames: 12,
-  /** Per-char rise duration (~1s). */
-  charDurationFrames: 30,
-  /** Gap before second line starts (~0.7s). */
-  lineDelayFrames: 21,
-  /**
-   * Per-char stagger in frames (`stagger.charFactor * randomness * fps`).
-   * 0.005s × 30fps = 0.15.
-   */
-  charStaggerFrames: 0.15,
+export const TITLE_BLUR_INTRO = {
+  /** Soft hold before first word (composition beat; LP titleAt ≈ 0 after gate). */
+  delayFrames: 6,
+  /** `duration.blurIn` = 0.8s. */
+  durationFrames: 24,
+  /** `stagger.word` = 0.055s → 1.65 frames. */
+  wordStaggerFrames: 1.65,
+  /** WORD_FROM.y */
+  fromY: 10,
+  /** WORD_FROM.filter blur */
+  fromBlur: 10,
 } as const;
 
 /**
