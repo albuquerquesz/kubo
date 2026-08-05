@@ -1,7 +1,11 @@
 import { describe, expect, test } from "bun:test";
 
 import { getKuboEyeRect, getKuboEyeState } from "../src/compositions/kubo-launch/lib/kubo-blink";
-import { getKuboScale, KUBO_PULSE } from "../src/compositions/kubo-launch/lib/kubo-pulse";
+import {
+  getKuboIdlePose,
+  getKuboLegOffsets,
+  KUBO_IDLE,
+} from "../src/compositions/kubo-launch/lib/kubo-idle";
 import { KUBO_MARK_EYE_LEFT } from "../src/compositions/kubo-launch/lib/mark-paths";
 
 describe("Kubo blink", () => {
@@ -35,33 +39,28 @@ describe("Kubo blink", () => {
   });
 });
 
-describe("Kubo presence pulse", () => {
-  test("holds discrete scale states instead of interpolating", () => {
+describe("Kubo pixel idle", () => {
+  test("holds each leg pose for the configured frame range", () => {
     const expected = [
-      ...Array(8).fill(0.96),
-      ...Array(4).fill(0.98),
-      ...Array(4).fill(1.02),
-      ...Array(8).fill(1.04),
-      ...Array(4).fill(1.02),
-      ...Array(4).fill(0.98),
-      ...Array(16).fill(0.96),
+      ...Array(10).fill("rest"),
+      ...Array(4).fill("left-step"),
+      ...Array(10).fill("rest"),
+      ...Array(4).fill("right-step"),
     ];
 
-    expect(expected).toHaveLength(KUBO_PULSE.cycleFrames);
-    expect(expected.map((_, frame) => getKuboScale(frame))).toEqual(expected);
+    expect(expected).toHaveLength(KUBO_IDLE.cycleFrames);
+    expect(expected.map((_, frame) => getKuboIdlePose(frame))).toEqual(expected);
   });
 
-  test("repeats without leaving the configured range", () => {
-    for (let frame = 0; frame < KUBO_PULSE.cycleFrames * 4; frame += 1) {
-      const scale = getKuboScale(frame);
-      expect(scale).toBeGreaterThanOrEqual(KUBO_PULSE.minScale);
-      expect(scale).toBeLessThanOrEqual(KUBO_PULSE.maxScale);
-    }
+  test("moves only one side outward in each step pose", () => {
+    expect(getKuboLegOffsets("rest")).toEqual({ left: 0, right: 0 });
+    expect(getKuboLegOffsets("left-step")).toEqual({ left: -8, right: 5 });
+    expect(getKuboLegOffsets("right-step")).toEqual({ left: -5, right: 8 });
   });
 
-  test("repeats the same stepped cycle", () => {
-    for (let frame = 0; frame < KUBO_PULSE.cycleFrames; frame += 1) {
-      expect(getKuboScale(frame + KUBO_PULSE.cycleFrames)).toBe(getKuboScale(frame));
+  test("repeats without changing the cycle", () => {
+    for (let frame = 0; frame < KUBO_IDLE.cycleFrames; frame += 1) {
+      expect(getKuboIdlePose(frame + KUBO_IDLE.cycleFrames)).toBe(getKuboIdlePose(frame));
     }
   });
 });
