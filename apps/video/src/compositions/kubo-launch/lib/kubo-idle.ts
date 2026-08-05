@@ -1,22 +1,22 @@
-export type KuboIdlePose = "rest" | "left-step" | "right-step";
+export type KuboIdlePose = "rest" | "rise" | "fall";
 
 export const KUBO_IDLE = {
-  cycleFrames: 28,
+  cycleFrames: 48,
   steps: [
-    { pose: "rest", duration: 10 },
-    { pose: "left-step", duration: 4 },
-    { pose: "rest", duration: 10 },
-    { pose: "right-step", duration: 4 },
+    { pose: "rest", duration: 18 },
+    { pose: "rise", duration: 6 },
+    { pose: "rest", duration: 18 },
+    { pose: "fall", duration: 6 },
   ],
 } as const satisfies {
   cycleFrames: number;
   steps: ReadonlyArray<{ pose: KuboIdlePose; duration: number }>;
 };
 
-const LEG_OFFSETS: Record<KuboIdlePose, { left: number; right: number }> = {
-  rest: { left: 0, right: 0 },
-  "left-step": { left: -8, right: 5 },
-  "right-step": { left: -5, right: 8 },
+const VERTICAL_OFFSETS: Record<KuboIdlePose, number> = {
+  rest: 0,
+  rise: -18,
+  fall: 18,
 };
 
 export function getKuboIdlePose(frame: number): KuboIdlePose {
@@ -32,6 +32,6 @@ export function getKuboIdlePose(frame: number): KuboIdlePose {
   return "rest";
 }
 
-export function getKuboLegOffsets(pose: KuboIdlePose) {
-  return LEG_OFFSETS[pose];
+export function getKuboVerticalOffset(pose: KuboIdlePose) {
+  return VERTICAL_OFFSETS[pose];
 }
