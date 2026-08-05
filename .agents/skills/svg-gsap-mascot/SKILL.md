@@ -174,31 +174,28 @@ animation. A centered height change works for Kubo's rectangular eye cutouts; a
 different SVG anatomy should use dedicated eyelid groups or drawn frames
 instead.
 
-### Pixel-stepped presence pulse — discrete SVG scale states
+### Pixel-stepped idle — discrete leg poses
 
-For a mascot that should feel alive without walking or changing silhouette, use a
-small uniform scale table on the complete rig. This keeps the topology stable
-but makes the motion read like pixel animation: scale values change instantly
-and remain held for several render frames.
+When a mascot should feel alive without a grow effect, keep the body and face
+fixed and animate only stable appendages with discrete poses. For Kubo, use a
+short rest → left step → rest → right step sequence.
 
-- Drive the pulse from the render frame in Remotion; use `gsap.set`/frame lookup
-  for browser components instead of a tween. This keeps the video deterministic.
-- Use a short table of 2–5% scale steps with unequal holds, for example
-  `0.96×8 → 0.98×4 → 1.02×4 → 1.04×8 → 1.02×4 → 0.98×4 → 0.96×16`.
-- Do not use sine/cosine interpolation, `lerp`, or easing for this style.
-- Scale around a stable ground pivot, usually the midpoint of the feet and the
-  baseline of the viewBox. The feet must remain visually planted while the body
-  grows and contracts.
-- Apply the SVG `transform` to the complete character group. Do not animate
-  layout CSS, the outer wrapper, `top`, `margin`, or the SVG width/height.
-- Validate the transformed group across minimum, midpoint, and return frames:
-  its bottom edge should stay fixed, its horizontal center should not drift,
-  and the surrounding composition must not reflow.
+- Drive poses from the render frame in Remotion; use `gsap.set`/frame lookup for
+  browser components instead of a tween.
+- Hold the rest pose longer than the step poses so it reads as an idle loop,
+  not a slideshow.
+- Transform only the leg groups with small integer SVG offsets. Keep the body,
+  eyes, wrapper, and SVG dimensions unchanged.
+- Keep the lower edge of both legs fixed; do not introduce `y`, `scale`, or
+  layout changes that make the mascot float or resize.
+- Validate the rest, left-step, and right-step frames: the body transform must
+  remain fixed, only the intended leg offsets may change, and the terminal must
+  not reflow.
 
 The Claude reference work reinforces this separation: continuous motion is used
 where the rig keeps its topology, while visible pixel beats use discrete frame
-changes and variable holds. A simple Kubo pulse can keep one SVG rig and still
-use that discrete timing grammar.
+changes and variable holds. A Kubo idle loop can keep one SVG rig and still use
+that discrete timing grammar without a generic scale pulse.
 
 ### Multi-timeline sync (confetti + stomp)
 
@@ -350,8 +347,8 @@ not a brand law.
 - Flat frame rate for gym/stomp (slideshow feel)
 - Missing landing overshoot (stiff impact)
 - Blinking by moving the whole mascot or changing layout position
-- Scaling from the SVG corner instead of anchoring the stepped pulse at the feet
-- Using cosine/sine interpolation when the intended style is pixel-stepped
+- Using a generic scale pulse when the intended character action is an idle step
+- Moving the complete SVG when only a leg or appendage should change
 - Using layout or wrapper scaling that changes the terminal composition bounds
 - Prop not parented to hand group (flag drifts)
 - Re-playing “rise” frames every loop when prop should stay up

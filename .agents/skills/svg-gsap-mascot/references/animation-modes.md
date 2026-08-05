@@ -196,27 +196,24 @@ interpolated eye sizes: the bar snaps to 8px, holds, then snaps back to 86px.
 Drive the state from the Remotion frame, test the exact frame boundaries, and
 verify the mascot bounding box is unchanged while the eye height changes.
 
-## Presence pulse recipe — discrete scale table
+## Idle recipe — discrete leg poses
 
-When the desired reference feels pixelated, replace a continuous ease with a
-frame lookup and variable holds:
+When the desired reference feels pixelated but the mascot should not grow,
+replace a full-character scale pulse with a frame lookup on stable appendages:
 
 ```ts
 const steps = [
-  { scale: 0.96, duration: 8 },
-  { scale: 0.98, duration: 4 },
-  { scale: 1.02, duration: 4 },
-  { scale: 1.04, duration: 8 },
-  { scale: 1.02, duration: 4 },
-  { scale: 0.98, duration: 4 },
-  { scale: 0.96, duration: 16 },
+  { pose: "rest", duration: 10 },
+  { pose: "left-step", duration: 4 },
+  { pose: "rest", duration: 10 },
+  { pose: "right-step", duration: 4 },
 ];
 ```
 
 Resolve the current frame against cumulative durations and return the selected
-scale without easing. Apply it to the whole SVG rig around the feet so each
-step is visible while the character remains grounded and the layout stays
-stable.
+pose without easing. Apply only small integer `translate(x 0)` offsets to the
+leg groups. Keep the body and face untouched so the character remains grounded,
+pixelated, and layout-stable.
 
 ---
 
