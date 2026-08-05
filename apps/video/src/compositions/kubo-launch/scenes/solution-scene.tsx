@@ -21,7 +21,7 @@ type SolutionSceneProps = {
 };
 
 const MARK_HEIGHT = (SQUARE_LAYOUT.markWidth * KUBO_MARK_VIEWBOX.height) / KUBO_MARK_VIEWBOX.width;
-const CREAM_BACKGROUND = "#faf8f2";
+const PLATE_BACKGROUND = "linear-gradient(135deg, #ffffff 0%, #fffef8 46%, #fff3ad 100%)";
 /** Feet flush on panel rim (slight seat into edge). */
 const MARK_TOP = -(MARK_HEIGHT - 2);
 
@@ -31,7 +31,7 @@ const MARK_TOP = -(MARK_HEIGHT - 2);
  */
 export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
   return (
-    <SceneShell background={CREAM_BACKGROUND} color="#0a0a0a" showGoldGlow={false}>
+    <SceneShell background={PLATE_BACKGROUND} color="#0a0a0a" showGoldGlow={false}>
       <WordBlurInTitle
         lines={TITLE_LINES}
         style={{
