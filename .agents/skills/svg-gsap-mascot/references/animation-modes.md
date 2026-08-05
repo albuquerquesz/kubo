@@ -196,24 +196,25 @@ interpolated eye sizes: the bar snaps to 8px, holds, then snaps back to 86px.
 Drive the state from the Remotion frame, test the exact frame boundaries, and
 verify the mascot bounding box is unchanged while the eye height changes.
 
-## Idle recipe — slow vertical pixel poses
+## Idle recipe — alternating pixel leg poses
 
-When the desired reference feels pixelated but the mascot should not grow,
-replace a full-character scale pulse with a frame lookup on stable appendages:
+When the desired reference feels pixelated but the mascot body should stay
+fixed, replace a full-character scale pulse with a frame lookup on the legs:
 
 ```ts
 const steps = [
   { pose: "rest", duration: 18 },
-  { pose: "rise", duration: 6 },
+  { pose: "left-step", duration: 6 },
   { pose: "rest", duration: 18 },
-  { pose: "fall", duration: 6 },
+  { pose: "right-step", duration: 6 },
 ];
 ```
 
 Resolve the current frame against cumulative durations and return the selected
-pose without easing. Apply only small integer `translate(0 y)` offsets to the
-stable mascot root. Keep the X position, SVG dimensions, and wrapper untouched
-so the character remains pixelated and layout-stable.
+pose without easing. Apply only small integer `translate(x y)` offsets to the
+two leg groups, with opposite offsets for each step. Keep the body, root X,
+SVG dimensions, and wrapper untouched so the character remains pixelated and
+layout-stable.
 
 ---
 
