@@ -174,22 +174,23 @@ animation. A centered height change works for Kubo's rectangular eye cutouts; a
 different SVG anatomy should use dedicated eyelid groups or drawn frames
 instead.
 
-### Pixel-stepped idle — slow vertical poses
+### Pixel-stepped idle — alternating leg poses
 
-When a mascot should feel alive without a grow effect, keep the SVG dimensions
-fixed and animate a discrete vertical idle. For Kubo, use a slow rest → rise →
-rest → fall sequence with a larger integer offset.
+When a mascot should feel alive without moving its body, keep the SVG dimensions
+fixed and animate only stable appendages. For Kubo, use a slow rest → left-step
+→ rest → right-step sequence with integer leg offsets.
 
 - Drive poses from the render frame in Remotion; use `gsap.set`/frame lookup for
   browser components instead of a tween.
 - Hold the rest pose longer than the step poses so it reads as an idle loop,
   not a slideshow.
-- Transform the mascot root only on the Y axis with small, integer SVG offsets.
-  Keep X, the wrapper, and the SVG dimensions unchanged.
-- Use a long rest hold and short rise/fall holds so the motion reads as a slow
-  pixel bob rather than a horizontal walk or a continuous tween.
-- Validate the rest, rise, and fall frames: the root X must remain fixed, the
-  Y offsets must be discrete, and the terminal must not reflow.
+- Transform only the leg groups with small, integer SVG offsets. Keep the body,
+  eyes, root, wrapper, and SVG dimensions unchanged.
+- Use a long rest hold and short alternating step holds so the motion reads as
+  pixel legs walking in place rather than the whole mascot bobbing.
+- Validate the rest, left-step, and right-step frames: the root transform must
+  stay absent, the leg transforms must be discrete, and the terminal must not
+  reflow.
 
 The Claude reference work reinforces this separation: continuous motion is used
 where the rig keeps its topology, while visible pixel beats use discrete frame
