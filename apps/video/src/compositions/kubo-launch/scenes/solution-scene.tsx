@@ -3,20 +3,25 @@ import React from "react";
 
 import { CliSelectPanel } from "../components/cli-select-panel";
 import { KuboMarkCharacter } from "../components/kubo-mark-character";
-import { MaskedCharRiseTitle } from "../components/masked-char-rise-title";
 import { SceneShell } from "../components/scene-shell";
+import { WordBlurInTitle } from "../components/word-blur-in-title";
 import { KUBO_MARK_VIEWBOX } from "../lib/mark-paths";
 import { SQUARE_LAYOUT } from "../lib/timing";
 
 const { fontFamily: titleFontFamily } = loadFont();
 
-const TITLE_LINES = ["Um comando.", "Stack pronta."] as const;
+/** Word splits matching LP hero blur-in grammar. */
+const TITLE_LINES = [
+  ["Um", "comando."],
+  ["Stack", "pronta."],
+] as const;
 
 type SolutionSceneProps = {
   command: string;
 };
 
 const MARK_HEIGHT = (SQUARE_LAYOUT.markWidth * KUBO_MARK_VIEWBOX.height) / KUBO_MARK_VIEWBOX.width;
+const CREAM_BACKGROUND = "#faf8f2";
 /** Feet flush on panel rim (slight seat into edge). */
 const MARK_TOP = -(MARK_HEIGHT - 2);
 
@@ -26,8 +31,8 @@ const MARK_TOP = -(MARK_HEIGHT - 2);
  */
 export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
   return (
-    <SceneShell background="#ffffff" color="#0a0a0a" showGoldGlow={false}>
-      <MaskedCharRiseTitle
+    <SceneShell background={CREAM_BACKGROUND} color="#0a0a0a" showGoldGlow={false}>
+      <WordBlurInTitle
         lines={TITLE_LINES}
         style={{
           position: "absolute",
