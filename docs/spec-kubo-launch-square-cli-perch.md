@@ -3,7 +3,7 @@
 ## Status
 
 **Square CLI-perch target implemented — 2026-08-04.**  
-`kubo-launch` ships **1080×1080 @ 6s / 30fps** with stacked title-above-panel layout. Historical landscape measurements remain under [captures](./captures/kubo-launch-spec/) for comparison.
+`kubo-launch` ships **1080×1080 @ 7s / 30fps** with stacked title-above-panel layout. Historical landscape measurements remain under [captures](./captures/kubo-launch-spec/) for comparison.
 
 ## Date
 
@@ -57,7 +57,7 @@ From `lib/timing.ts` + `root.tsx`:
 | ------------------ | ------------------------------------------------- |
 | **Width × height** | **1080 × 1080**                                   |
 | **Aspect**         | **1:1**                                           |
-| **Duration**       | **6.000 s** (`LAUNCH_DURATION_FRAMES = 180`)      |
+| **Duration**       | **7.000 s** (`LAUNCH_DURATION_FRAMES = 210`)      |
 | **Frame rate**     | **30 fps**                                        |
 | **Scenes**         | Single `solution` sequence, frames `0–179`        |
 | **Audio**          | Optional bed (`musicFile`, default `null`); no VO |
@@ -101,12 +101,12 @@ Default props (`lib/schema.ts`): `command = "bun create kubojs"`, `musicVolume =
 
 ### Global layers
 
-| Layer                         | Behavior over 6s                                       |
-| ----------------------------- | ------------------------------------------------------ |
-| White plate                   | Held after enter                                       |
-| Title + panel chrome position | Held after enter (no layout pan)                       |
-| Mark                          | Continuous **walk** cycle for full composition         |
-| CLI interior                  | **Phased** `@clack`-style playback (compressed for 6s) |
+| Layer                         | Behavior over 7s                                             |
+| ----------------------------- | ------------------------------------------------------------ |
+| White plate                   | Held after enter                                             |
+| Title + panel chrome position | Held after enter (no layout pan)                             |
+| Mark                          | Continuous **walk** cycle for full composition               |
+| CLI interior                  | **Phased** `@clack`-style playback (compressed; hold at end) |
 
 ### Walk (`KuboMarkCharacter` + `WALK_CYCLE_FRAMES = 58`)
 
@@ -136,7 +136,7 @@ Optional spring (&lt;1s settle). Reference held from t=0; Kubo keeps short enter
 
 | Property    | Square reference                                           |
 | ----------- | ---------------------------------------------------------- |
-| Canvas      | **1080 × 1080**, **1:1**, **6 s**, **30 fps** (180 frames) |
+| Canvas      | **1080 × 1080**, **1:1**, **7 s**, **30 fps** (210 frames) |
 | Plate       | Cream / near-white full-bleed                              |
 | Layout      | **Stacked**: title upper ~⅓ · dark CLI lower ~⅔            |
 | Panel top   | **~31.5%** (y≈340 / 1080)                                  |
@@ -153,7 +153,7 @@ Optional spring (&lt;1s settle). Reference held from t=0; Kubo keeps short enter
 | ----------------------- | --------------------------------- | --------------------------------- | ---------------------- |
 | Width × height          | 1080 × 1080                       | 1080 × 1080                       | **Match**              |
 | Aspect                  | 1:1                               | 1:1                               | **Match**              |
-| Duration                | 6 s                               | ~6 s                              | **Match**              |
+| Duration                | 7 s                               | ~6–7 s                            | **Match** (+1s hold)   |
 | FPS                     | 30                                | 30                                | **Match**              |
 | Layout grammar          | Title **above** + panel **below** | Title **above** + panel **below** | **Match**              |
 | Plate                   | `#ffffff`                         | Cream/white OK                    | **Match**              |
@@ -180,9 +180,9 @@ Optional spring (&lt;1s settle). Reference held from t=0; Kubo keeps short enter
 
 ## QA checklist
 
-### Shipped square (`1080×1080` / 6s)
+### Shipped square (`1080×1080` / 7s)
 
-- [x] Composition id `kubo-launch` at 1080×1080 @ 30fps / 180 frames
+- [x] Composition id `kubo-launch` at 1080×1080 @ 30fps / 210 frames
 - [x] White plate, no gold glow
 - [x] Stacked title above dark CLI panel
 - [x] Panel ~90%+ width; mark ~10–13% width; feet flush

@@ -7,7 +7,7 @@ import { SCENES } from "./lib/timing";
 import { SolutionScene } from "./scenes/solution-scene";
 
 /**
- * 6s square launch cut for X / LinkedIn (1080×1080). Optional music bed; no typing SFX.
+ * 7s square launch cut for X / LinkedIn (1080×1080). Optional music bed; no typing SFX.
  */
 export const KuboLaunch: React.FC<KuboLaunchProps> = ({ command, musicFile, musicVolume }) => {
   return (
