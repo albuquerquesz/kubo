@@ -41,7 +41,7 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
           width: SQUARE_LAYOUT.titleWidth,
           fontFamily: titleFontFamily,
           fontSize: SQUARE_LAYOUT.titleFontSize,
-          fontWeight: 400,
+          fontWeight: 300,
           letterSpacing: "-0.02em",
           lineHeight: 1.08,
           color: "#0a0a0a",
