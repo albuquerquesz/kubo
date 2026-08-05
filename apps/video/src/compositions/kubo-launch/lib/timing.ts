@@ -31,6 +31,24 @@ export const SQUARE_LAYOUT = {
 } as const;
 
 /**
+ * Title intro — Family A (LP hero display): delayed masked char rise.
+ * Mirrors `hero-display-intro` tokens at 30fps (1s char, 0.7s line gap, 0.005s char stagger).
+ */
+export const TITLE_INTRO = {
+  /** Hold blank before first line starts rising. */
+  delayFrames: 12,
+  /** Per-char rise duration (~1s). */
+  charDurationFrames: 30,
+  /** Gap before second line starts (~0.7s). */
+  lineDelayFrames: 21,
+  /**
+   * Per-char stagger in frames (`stagger.charFactor * randomness * fps`).
+   * 0.005s × 30fps = 0.15.
+   */
+  charStaggerFrames: 0.15,
+} as const;
+
+/**
  * CLI session phase starts (local frames), compressed so project-type
  * selection is readable by mid-clip (~3s / frame 90). Final web select holds
  * through the remaining duration (~frames 135–210 on a 7s cut).

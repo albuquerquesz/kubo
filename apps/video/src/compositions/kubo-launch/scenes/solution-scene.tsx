@@ -3,11 +3,14 @@ import React from "react";
 
 import { CliSelectPanel } from "../components/cli-select-panel";
 import { KuboMarkCharacter } from "../components/kubo-mark-character";
+import { MaskedCharRiseTitle } from "../components/masked-char-rise-title";
 import { SceneShell } from "../components/scene-shell";
 import { KUBO_MARK_VIEWBOX } from "../lib/mark-paths";
 import { SQUARE_LAYOUT } from "../lib/timing";
 
 const { fontFamily: titleFontFamily } = loadFont();
+
+const TITLE_LINES = ["Um comando.", "Stack pronta."] as const;
 
 type SolutionSceneProps = {
   command: string;
@@ -24,13 +27,13 @@ const MARK_TOP = -(MARK_HEIGHT - 2);
 export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
   return (
     <SceneShell background="#ffffff" color="#0a0a0a" showGoldGlow={false}>
-      <h2
+      <MaskedCharRiseTitle
+        lines={TITLE_LINES}
         style={{
           position: "absolute",
           top: SQUARE_LAYOUT.titleTop,
           left: SQUARE_LAYOUT.insetX,
           width: SQUARE_LAYOUT.titleWidth,
-          margin: 0,
           fontFamily: titleFontFamily,
           fontSize: SQUARE_LAYOUT.titleFontSize,
           fontWeight: 400,
@@ -38,11 +41,7 @@ export const SolutionScene: React.FC<SolutionSceneProps> = ({ command }) => {
           lineHeight: 1.08,
           color: "#0a0a0a",
         }}
-      >
-        Um comando.
-        <br />
-        Stack pronta.
-      </h2>
+      />
 
       <div
         style={{
