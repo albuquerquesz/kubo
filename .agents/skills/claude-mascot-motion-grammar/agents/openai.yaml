@@ -1,0 +1,4 @@
+interface:
+  display_name: "Claude-like Pixel Mascot Motion"
+  short_description: "Reverse-engineer pixel mascot motion into SVG frame grammars"
+  default_prompt: "Use $claude-mascot-motion-grammar with $svg-gsap-mascot to analyze or implement a discrete pixel mascot motion loop without copying Claude assets."
