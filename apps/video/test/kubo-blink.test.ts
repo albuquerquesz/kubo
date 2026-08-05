@@ -44,7 +44,7 @@ describe("Kubo blink", () => {
 });
 
 describe("Kubo pixel idle", () => {
-  test("holds each vertical pose for the configured frame range", () => {
+  test("holds each leg pose for the configured frame range", () => {
     const expected = [
       ...Array(18).fill("rest"),
       ...Array(6).fill("left-step"),
