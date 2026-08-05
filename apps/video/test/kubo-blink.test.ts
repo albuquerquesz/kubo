@@ -3,7 +3,7 @@ import { describe, expect, test } from "bun:test";
 import { getKuboEyeRect, getKuboEyeState } from "../src/compositions/kubo-launch/lib/kubo-blink";
 import {
   getKuboIdlePose,
-  getKuboLegOffsets,
+  getKuboVerticalOffset,
   KUBO_IDLE,
 } from "../src/compositions/kubo-launch/lib/kubo-idle";
 import { KUBO_MARK_EYE_LEFT } from "../src/compositions/kubo-launch/lib/mark-paths";
@@ -15,11 +15,15 @@ describe("Kubo blink", () => {
   });
 
   test("uses a short closing, closed, and opening sequence", () => {
-    expect(getKuboEyeState(71)).toBe("closing");
-    expect(getKuboEyeState(72)).toBe("closed");
-    expect(getKuboEyeState(73)).toBe("closed");
-    expect(getKuboEyeState(74)).toBe("opening");
-    expect(getKuboEyeState(75)).toBe("open");
+    expect(getKuboEyeState(45)).toBe("closing");
+    expect(getKuboEyeState(46)).toBe("closed");
+    expect(getKuboEyeState(47)).toBe("closed");
+    expect(getKuboEyeState(48)).toBe("opening");
+    expect(getKuboEyeState(49)).toBe("open");
+    expect(getKuboEyeState(95)).toBe("closing");
+    expect(getKuboEyeState(98)).toBe("opening");
+    expect(getKuboEyeState(145)).toBe("closing");
+    expect(getKuboEyeState(195)).toBe("closing");
   });
 
   test("snaps the eyelid between open and closed pixel states", () => {
@@ -42,20 +46,20 @@ describe("Kubo blink", () => {
 describe("Kubo pixel idle", () => {
   test("holds each leg pose for the configured frame range", () => {
     const expected = [
-      ...Array(10).fill("rest"),
-      ...Array(4).fill("left-step"),
-      ...Array(10).fill("rest"),
-      ...Array(4).fill("right-step"),
+      ...Array(18).fill("rest"),
+      ...Array(6).fill("rise"),
+      ...Array(18).fill("rest"),
+      ...Array(6).fill("fall"),
     ];
 
     expect(expected).toHaveLength(KUBO_IDLE.cycleFrames);
     expect(expected.map((_, frame) => getKuboIdlePose(frame))).toEqual(expected);
   });
 
-  test("moves only one side outward in each step pose", () => {
-    expect(getKuboLegOffsets("rest")).toEqual({ left: 0, right: 0 });
-    expect(getKuboLegOffsets("left-step")).toEqual({ left: -8, right: 5 });
-    expect(getKuboLegOffsets("right-step")).toEqual({ left: -5, right: 8 });
+  test("uses a larger vertical pixel offset without changing the x position", () => {
+    expect(getKuboVerticalOffset("rest")).toBe(0);
+    expect(getKuboVerticalOffset("rise")).toBe(-18);
+    expect(getKuboVerticalOffset("fall")).toBe(18);
   });
 
   test("repeats without changing the cycle", () => {

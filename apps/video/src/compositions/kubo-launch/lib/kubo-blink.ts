@@ -4,8 +4,10 @@ export type KuboEyeState = "open" | "closing" | "closed" | "opening";
 
 /** Short, frame-locked blinks for deterministic Remotion renders. */
 const BLINKS = [
-  { closeAt: 71, closedUntil: 73, openAt: 74 },
-  { closeAt: 151, closedUntil: 153, openAt: 154 },
+  { closeAt: 45, closedUntil: 47, openAt: 48 },
+  { closeAt: 95, closedUntil: 97, openAt: 98 },
+  { closeAt: 145, closedUntil: 147, openAt: 148 },
+  { closeAt: 195, closedUntil: 197, openAt: 198 },
 ] as const;
 
 export function getKuboEyeState(frame: number): KuboEyeState {
