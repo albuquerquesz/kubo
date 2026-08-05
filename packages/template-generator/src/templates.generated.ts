@@ -33536,6 +33536,10 @@ export const env = createEnv({
 {{/if}}
 		CORS_ORIGIN: z.url(),
 		NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+	{{#if (eq observability "getmonitor")}}
+		GETMONITOR_API_KEY: z.string().min(1).optional(),
+		GETMONITOR_API_HOST: z.url().optional(),
+	{{/if}}
 	},
 	runtimeEnv: {{#if (or (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}runtimeEnv{{else}}process.env{{/if}},
 	skipValidation: !!process.env.SKIP_ENV_VALIDATION,
@@ -33617,6 +33621,10 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
+{{#if (eq observability "getmonitor")}}
+		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
+		VITE_GETMONITOR_API_HOST: z.url().optional(),
+{{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
 {{/if}}
@@ -33639,6 +33647,10 @@ export const env = createEnv({
 	client: {
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+{{/if}}
+{{#if (eq observability "getmonitor")}}
+		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
+		VITE_GETMONITOR_API_HOST: z.url().optional(),
 {{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
@@ -33673,6 +33685,10 @@ export const env = createEnv({
 		VITE_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+{{/if}}
+{{#if (eq observability "getmonitor")}}
+		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
+		VITE_GETMONITOR_API_HOST: z.url().optional(),
 {{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,

@@ -15,6 +15,7 @@ import { processExamplesDeps } from "./examples-deps";
 import { processFrontendDeps } from "./frontend-deps";
 import { processInfraDeps } from "./infra-deps";
 import { processNxConfig } from "./nx-generator";
+import { processObservability } from "./observability";
 import { processPaymentsDeps } from "./payments-deps";
 import { processPwaPlugins } from "./pwa-plugins";
 import { processReadme } from "./readme-generator";
@@ -64,4 +65,5 @@ export {
   processAlchemyPlugins,
   processPwaPlugins,
   processEnvVariables,
+  processObservability,
 };

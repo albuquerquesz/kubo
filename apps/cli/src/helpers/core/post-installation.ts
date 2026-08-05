@@ -468,12 +468,12 @@ function getNoOrmWarning() {
 function getGetMonitorInstructions() {
   return `${pc.bold("GetMonitor observability:")}\n${pc.cyan(
     "•",
-  )} Deploy first, then create an HTTP monitor for a stable public health endpoint\n${pc.cyan(
+  )} Set the generated GETMONITOR_API_KEY in the web and/or server .env file\n${pc.cyan(
     "•",
-  )} Add an alert integration and test delivery\n${pc.cyan(
+  )} Keep GETMONITOR_API_HOST set to https://ingest.getmonitor.com unless overridden\n${pc.cyan(
     "•",
-  )} Create a status page and add the monitor as a component\n${pc.dim(
-    "   https://getmonitor.io/docs/getting-started/introduction/",
+  )} Browser and Node exceptions are captured automatically by the generated SDK bootstrap\n${pc.dim(
+    "   https://github.com/get-monitor/getmonitor-js",
   )}`;
 }
 

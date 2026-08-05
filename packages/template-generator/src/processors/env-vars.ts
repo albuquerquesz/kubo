@@ -138,6 +138,7 @@ function buildClientVars(
   frontend: string[],
   backend: ProjectConfig["backend"],
   auth: ProjectConfig["auth"],
+  observability: ProjectConfig["observability"],
 ): EnvVariable[] {
   const hasNextJs = frontend.includes("next");
   const hasReactRouter = frontend.includes("react-router");
@@ -200,6 +201,26 @@ function buildClientVars(
         condition: true,
       });
     }
+  }
+
+  if (observability === "getmonitor") {
+    const getMonitorKey = hasNextJs
+      ? "NEXT_PUBLIC_GETMONITOR_API_KEY"
+      : frontend.includes("nuxt")
+        ? "NUXT_PUBLIC_GETMONITOR_API_KEY"
+        : frontend.includes("svelte") || frontend.includes("astro")
+          ? "PUBLIC_GETMONITOR_API_KEY"
+          : "VITE_GETMONITOR_API_KEY";
+    const getMonitorHost = getMonitorKey.replace("_KEY", "_HOST");
+    vars.push(
+      { key: getMonitorKey, value: "", condition: true, comment: "GetMonitor public project key" },
+      {
+        key: getMonitorHost,
+        value: "https://ingest.getmonitor.com",
+        condition: true,
+        comment: "GetMonitor ingestion host",
+      },
+    );
   }
 
   return vars;
@@ -407,6 +428,7 @@ function buildServerVars(
   serverDeploy: ProjectConfig["serverDeploy"],
   payments: ProjectConfig["payments"],
   examples: ProjectConfig["examples"],
+  observability: ProjectConfig["observability"],
 ): EnvVariable[] {
   const hasReactRouter = frontend.includes("react-router");
   const hasSvelte = frontend.includes("svelte");
@@ -496,6 +518,18 @@ function buildServerVars(
       condition: examples?.includes("ai") || false,
     },
     {
+      key: "GETMONITOR_API_KEY",
+      value: "",
+      condition: observability === "getmonitor",
+      comment: "GetMonitor public project key",
+    },
+    {
+      key: "GETMONITOR_API_HOST",
+      value: "https://ingest.getmonitor.com",
+      condition: observability === "getmonitor",
+      comment: "GetMonitor ingestion host",
+    },
+    {
       key: "DATABASE_URL",
       value: databaseUrl,
       condition: database !== "none" && dbSetup === "none",
@@ -542,6 +576,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     serverDeploy,
     runtime,
     payments,
+    observability,
   } = config;
 
   const hasReactRouter = frontend.includes("react-router");
@@ -567,7 +602,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     const clientDir = "apps/web";
     if (vfs.directoryExists(clientDir)) {
       const envPath = `${clientDir}/.env`;
-      const clientVars = buildClientVars(frontend, backend, auth);
+      const clientVars = buildClientVars(frontend, backend, auth, observability);
       writeEnvFile(vfs, envPath, clientVars);
     }
   }
@@ -665,6 +700,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     serverDeploy,
     payments,
     examples,
+    observability,
   );
 
   if (backend === "self") {
