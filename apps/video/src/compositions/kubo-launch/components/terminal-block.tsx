@@ -1,5 +1,11 @@
+import { loadFont } from "@remotion/google-fonts/JetBrainsMono";
 import React from "react";
 import { interpolate, useCurrentFrame } from "remotion";
+
+const { fontFamily: MONO } = loadFont("normal", {
+  weights: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+});
 
 type TerminalBlockProps = {
   command: string;
@@ -74,7 +80,7 @@ export const TerminalBlock: React.FC<TerminalBlockProps> = ({
             marginLeft: 12,
             color: "#666",
             fontSize: 16,
-            fontFamily: "ui-monospace, monospace",
+            fontFamily: MONO,
           }}
         >
           terminal
@@ -83,7 +89,7 @@ export const TerminalBlock: React.FC<TerminalBlockProps> = ({
       <div
         style={{
           padding: "48px 52px",
-          fontFamily: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
+          fontFamily: MONO,
           fontSize,
           lineHeight: 1.4,
           color: "#e8e8e8",

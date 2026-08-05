@@ -1,3 +1,4 @@
+import { loadFont } from "@remotion/google-fonts/JetBrainsMono";
 import React from "react";
 import { interpolate, useCurrentFrame } from "remotion";
 
@@ -8,10 +9,25 @@ type CliSelectPanelProps = {
   style?: React.CSSProperties;
 };
 
-const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace";
+const { fontFamily: MONO } = loadFont("normal", {
+  weights: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+});
+
 const ACCENT = "#FFD84A";
 const DIM = "#686868";
 const WHITE = "#F5F5F5";
+
+/** Type scale inside the CLI panel (JetBrains Mono throughout). */
+const TYPE = {
+  command: 26,
+  body: 24,
+  option: 24,
+  hint: 16,
+  tree: 20,
+  footer: 16,
+  banner: 15,
+} as const;
 
 const KUBO_TITLE = `
 ██╗  ██╗██╗   ██╗██████╗  ██████╗
@@ -53,13 +69,19 @@ const WEB_OPTIONS: CliOption[] = [
   },
 ];
 
+const monoStyle = (extra?: React.CSSProperties): React.CSSProperties => ({
+  fontFamily: MONO,
+  ...extra,
+});
+
 const cursorStyle = (visible: boolean): React.CSSProperties => ({
   display: "inline-block",
-  width: 9,
-  height: 22,
+  width: 11,
+  height: 26,
   marginLeft: 3,
   background: visible ? ACCENT : "transparent",
   verticalAlign: "-3px",
+  fontFamily: MONO,
 });
 
 const CliOptionRow: React.FC<{ option: CliOption; multi?: boolean }> = ({
@@ -71,31 +93,45 @@ const CliOptionRow: React.FC<{ option: CliOption; multi?: boolean }> = ({
 
   return (
     <div
-      style={{
+      style={monoStyle({
         display: "flex",
         alignItems: "baseline",
         gap: 10,
         minWidth: 0,
         color: option.selected ? WHITE : "#9A9A9A",
-        fontSize: 20,
+        fontSize: TYPE.option,
         lineHeight: 1.28,
-      }}
+      })}
     >
-      <span style={{ width: 18, flexShrink: 0, color: markerColor }}>{marker}</span>
-      <span style={{ minWidth: 0 }}>{option.label}</span>
-      <span style={{ color: DIM, fontSize: 14, whiteSpace: "nowrap" }}>({option.hint})</span>
+      <span style={monoStyle({ width: 20, flexShrink: 0, color: markerColor })}>{marker}</span>
+      <span style={monoStyle({ minWidth: 0 })}>{option.label}</span>
+      <span style={monoStyle({ color: DIM, fontSize: TYPE.hint, whiteSpace: "nowrap" })}>
+        ({option.hint})
+      </span>
     </div>
   );
 };
 
 const SubmittedPrompt: React.FC<{ message: string; value: string }> = ({ message, value }) => (
-  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-    <div style={{ color: DIM, fontSize: 18, lineHeight: 1 }}>│</div>
-    <div style={{ display: "flex", gap: 10, color: "#A6E3A1", fontSize: 21, lineHeight: 1.25 }}>
+  <div style={monoStyle({ display: "flex", flexDirection: "column", gap: 6 })}>
+    <div style={monoStyle({ color: DIM, fontSize: TYPE.tree, lineHeight: 1 })}>│</div>
+    <div
+      style={monoStyle({
+        display: "flex",
+        gap: 10,
+        color: "#A6E3A1",
+        fontSize: TYPE.body,
+        lineHeight: 1.25,
+      })}
+    >
       <span>◇</span>
-      <span style={{ color: WHITE }}>{message}</span>
+      <span style={monoStyle({ color: WHITE })}>{message}</span>
     </div>
-    <div style={{ paddingLeft: 28, color: DIM, fontSize: 20, lineHeight: 1.28 }}>{value}</div>
+    <div
+      style={monoStyle({ paddingLeft: 28, color: DIM, fontSize: TYPE.option, lineHeight: 1.28 })}
+    >
+      {value}
+    </div>
   </div>
 );
 
@@ -106,19 +142,29 @@ const PromptFrame: React.FC<{
   first?: boolean;
 }> = ({ message, options, multi = false, first = false }) => {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <div style={{ color: DIM, fontSize: 18, lineHeight: 1 }}>│</div>
-      <div style={{ display: "flex", gap: 10, color: ACCENT, fontSize: 21, lineHeight: 1.25 }}>
+    <div style={monoStyle({ display: "flex", flexDirection: "column", gap: 6 })}>
+      <div style={monoStyle({ color: DIM, fontSize: TYPE.tree, lineHeight: 1 })}>│</div>
+      <div
+        style={monoStyle({
+          display: "flex",
+          gap: 10,
+          color: ACCENT,
+          fontSize: TYPE.body,
+          lineHeight: 1.25,
+        })}
+      >
         <span>◆</span>
-        <span style={{ color: WHITE }}>{message}</span>
+        <span style={monoStyle({ color: WHITE })}>{message}</span>
       </div>
-      <div style={{ paddingLeft: 28, display: "flex", flexDirection: "column", gap: 5 }}>
+      <div style={monoStyle({ paddingLeft: 28, display: "flex", flexDirection: "column", gap: 5 })}>
         {options.map((option) => (
           <CliOptionRow key={option.label} option={option} multi={multi} />
         ))}
       </div>
-      <div style={{ color: ACCENT, fontSize: 18, lineHeight: 1 }}>└</div>
-      <div style={{ paddingLeft: 28, color: DIM, fontSize: 14, lineHeight: 1.3 }}>
+      <div style={monoStyle({ color: ACCENT, fontSize: TYPE.tree, lineHeight: 1 })}>└</div>
+      <div
+        style={monoStyle({ paddingLeft: 28, color: DIM, fontSize: TYPE.footer, lineHeight: 1.3 })}
+      >
         ↑/↓ navigate • {multi ? "space select • " : ""}enter confirm • {!first ? "b back • " : ""}
         ctrl+c cancel
       </div>
@@ -130,37 +176,59 @@ const NamePrompt: React.FC<{ value: string; cursorVisible: boolean }> = ({
   value,
   cursorVisible,
 }) => (
-  <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-    <div style={{ color: DIM, fontSize: 18, lineHeight: 1 }}>│</div>
-    <div style={{ display: "flex", gap: 10, color: ACCENT, fontSize: 21, lineHeight: 1.25 }}>
+  <div style={monoStyle({ display: "flex", flexDirection: "column", gap: 7 })}>
+    <div style={monoStyle({ color: DIM, fontSize: TYPE.tree, lineHeight: 1 })}>│</div>
+    <div
+      style={monoStyle({
+        display: "flex",
+        gap: 10,
+        color: ACCENT,
+        fontSize: TYPE.body,
+        lineHeight: 1.25,
+      })}
+    >
       <span>◆</span>
-      <span style={{ color: WHITE }}>
+      <span style={monoStyle({ color: WHITE })}>
         Enter your project name or path (relative to current directory)
       </span>
     </div>
-    <div style={{ paddingLeft: 28, color: WHITE, fontSize: 20, lineHeight: 1.28 }}>
+    <div
+      style={monoStyle({ paddingLeft: 28, color: WHITE, fontSize: TYPE.option, lineHeight: 1.28 })}
+    >
       {value}
       <span style={cursorStyle(cursorVisible)} />
     </div>
-    <div style={{ color: ACCENT, fontSize: 18, lineHeight: 1 }}>└</div>
+    <div style={monoStyle({ color: ACCENT, fontSize: TYPE.tree, lineHeight: 1 })}>└</div>
   </div>
 );
 
 const SubmittedName: React.FC<{ value: string }> = ({ value }) => (
-  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-    <div style={{ color: DIM, fontSize: 18, lineHeight: 1 }}>│</div>
-    <div style={{ display: "flex", gap: 10, color: "#A6E3A1", fontSize: 21, lineHeight: 1.25 }}>
+  <div style={monoStyle({ display: "flex", flexDirection: "column", gap: 6 })}>
+    <div style={monoStyle({ color: DIM, fontSize: TYPE.tree, lineHeight: 1 })}>│</div>
+    <div
+      style={monoStyle({
+        display: "flex",
+        gap: 10,
+        color: "#A6E3A1",
+        fontSize: TYPE.body,
+        lineHeight: 1.25,
+      })}
+    >
       <span>◇</span>
-      <span style={{ color: WHITE }}>
+      <span style={monoStyle({ color: WHITE })}>
         Enter your project name or path (relative to current directory)
       </span>
     </div>
-    <div style={{ paddingLeft: 28, color: DIM, fontSize: 20, lineHeight: 1.28 }}>{value}</div>
+    <div
+      style={monoStyle({ paddingLeft: 28, color: DIM, fontSize: TYPE.option, lineHeight: 1.28 })}
+    >
+      {value}
+    </div>
   </div>
 );
 
 const Intro: React.FC = () => (
-  <div style={{ color: ACCENT, fontSize: 20, lineHeight: 1.35 }}>
+  <div style={monoStyle({ color: ACCENT, fontSize: TYPE.body, lineHeight: 1.35 })}>
     ┌&nbsp; Creating a new I dont know project
   </div>
 );
@@ -174,8 +242,8 @@ const CommandLine: React.FC<{ command: string; frame: number }> = ({ command, fr
   const isTyping = frame < typeEnd;
 
   return (
-    <div style={{ color: WHITE, fontSize: 21, lineHeight: 1.3 }}>
-      <span style={{ color: ACCENT }}>$</span> {shown}
+    <div style={monoStyle({ color: WHITE, fontSize: TYPE.command, lineHeight: 1.3 })}>
+      <span style={monoStyle({ color: ACCENT })}>$</span> {shown}
       {isTyping ? <span style={cursorStyle(Math.floor(frame / 6) % 2 === 0)} /> : null}
     </div>
   );
@@ -212,7 +280,7 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
 
   return (
     <div
-      style={{
+      style={monoStyle({
         background: "#0d0d0d",
         borderRadius: 28,
         overflow: "hidden",
@@ -220,29 +288,35 @@ export const CliSelectPanel: React.FC<CliSelectPanelProps> = ({
         width: "100%",
         boxSizing: "border-box",
         padding: "36px 40px 32px",
-        fontFamily: MONO,
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-start",
         minHeight: 0,
         ...style,
-      }}
+      })}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "stretch" }}>
+      <div
+        style={monoStyle({
+          display: "flex",
+          flexDirection: "column",
+          gap: 14,
+          alignItems: "stretch",
+        })}
+      >
         <CommandLine command={command} frame={frame} />
         {showBanner ? (
           <pre
-            style={{
+            style={monoStyle({
               margin: 0,
               color: "transparent",
-              fontSize: 13,
+              fontSize: TYPE.banner,
               lineHeight: 1.08,
               letterSpacing: "-0.05em",
               whiteSpace: "pre",
               backgroundImage: `linear-gradient(90deg, ${ACCENT}, ${ACCENT}, ${ACCENT}, ${ACCENT})`,
               backgroundClip: "text",
               WebkitBackgroundClip: "text",
-            }}
+            })}
           >
             {KUBO_TITLE.trimStart()}
           </pre>
