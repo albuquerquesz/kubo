@@ -151,7 +151,7 @@ const swayX = [0, 0, -5, -5, 0, 4, 4, 4, 0, 0, -5, -5];
 // For each frame at time t: show frame i, set hand x, set body x, left hand y
 ```
 
-### Blink — short discrete eye cycle
+### Blink — short pixel-stepped eye cycle
 
 A blink is a small Mode B sprite sequence, even when the rest of the mascot is
 continuous. Keep the eye boxes centered and change only their height so the
@@ -160,31 +160,35 @@ character does not shift or resize:
 ```ts
 type EyeState = "open" | "closing" | "closed" | "opening";
 
-const eyeHeight = state === "closed" ? 8 : state === "open" ? 86 : 42;
+// State labels mark the beat; the rendered geometry still snaps.
+const eyeHeight = state === "open" || state === "opening" ? 86 : 8;
 const eyeY = 292 + (86 - eyeHeight) / 2;
 ```
 
-Use a 4–5 frame beat at the project FPS: one closing frame, one or two closed
-holds, one opening frame, then return to open. Place one or two blinks at
-meaningful idle moments rather than looping continuously. In Remotion, derive
-the state from `useCurrentFrame()`; this keeps renders deterministic and avoids
-layout-shift from CSS or wall-clock animation. A centered height change works
-for Kubo's rectangular eye cutouts; a different SVG anatomy should use
-dedicated eyelid groups or drawn frames instead.
+Use a 4–5 frame beat at the project FPS: snap closed, hold the closed bar, then
+snap open. Do not render a transitional 42px eyelid when the reference is
+pixelated. Place one or two blinks at meaningful idle moments rather than
+looping continuously. In Remotion, derive the state from `useCurrentFrame()`;
+this keeps renders deterministic and avoids layout-shift from CSS or wall-clock
+animation. A centered height change works for Kubo's rectangular eye cutouts; a
+different SVG anatomy should use dedicated eyelid groups or drawn frames
+instead.
 
-### Uniform presence pulse — continuous SVG scale
+### Pixel-stepped presence pulse — discrete SVG scale states
 
-For a mascot that should feel alive without walking or changing silhouette, use
-a small uniform scale tween on the complete rig. This is a Mode A motion: the
-topology stays stable, so no sprite frames are needed.
+For a mascot that should feel alive without walking or changing silhouette, use a
+small uniform scale table on the complete rig. This keeps the topology stable
+but makes the motion read like pixel animation: scale values change instantly
+and remain held for several render frames.
 
-- Drive the pulse from the render frame in Remotion; use GSAP only for browser
-  components. This keeps the video deterministic.
+- Drive the pulse from the render frame in Remotion; use `gsap.set`/frame lookup
+  for browser components instead of a tween. This keeps the video deterministic.
+- Use a short table of 2–5% scale steps with unequal holds, for example
+  `0.96×8 → 0.98×4 → 1.02×4 → 1.04×8 → 1.02×4 → 0.98×4 → 0.96×16`.
+- Do not use sine/cosine interpolation, `lerp`, or easing for this style.
 - Scale around a stable ground pivot, usually the midpoint of the feet and the
   baseline of the viewBox. The feet must remain visually planted while the body
   grows and contracts.
-- Start with a slow 1.5–2s cycle and a 2–5% amplitude (`0.96 → 1.04 → 0.96`)
-  before tuning by eye. Use a sine-like ease for an organic presence pulse.
 - Apply the SVG `transform` to the complete character group. Do not animate
   layout CSS, the outer wrapper, `top`, `margin`, or the SVG width/height.
 - Validate the transformed group across minimum, midpoint, and return frames:
@@ -192,9 +196,9 @@ topology stays stable, so no sprite frames are needed.
   and the surrounding composition must not reflow.
 
 The Claude reference work reinforces this separation: continuous motion is used
-where the rig keeps its topology, while silhouette changes are handled as
-discrete frames. The pulse belongs to the continuous category; it should not be
-implemented by redrawing or swapping mascot frames.
+where the rig keeps its topology, while visible pixel beats use discrete frame
+changes and variable holds. A simple Kubo pulse can keep one SVG rig and still
+use that discrete timing grammar.
 
 ### Multi-timeline sync (confetti + stomp)
 
@@ -346,7 +350,8 @@ not a brand law.
 - Flat frame rate for gym/stomp (slideshow feel)
 - Missing landing overshoot (stiff impact)
 - Blinking by moving the whole mascot or changing layout position
-- Scaling from the SVG corner instead of anchoring the pulse at the feet
+- Scaling from the SVG corner instead of anchoring the stepped pulse at the feet
+- Using cosine/sine interpolation when the intended style is pixel-stepped
 - Using layout or wrapper scaling that changes the terminal composition bounds
 - Prop not parented to hand group (flag drifts)
 - Re-playing “rise” frames every loop when prop should stay up
