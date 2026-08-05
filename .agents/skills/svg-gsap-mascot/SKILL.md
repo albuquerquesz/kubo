@@ -16,6 +16,12 @@ description: >
 `kubo-motion-grammar` / `scroll-reveal-icons`. Mosaic hero tiles —
 `kubo-mosaic-hero-background`.
 
+For reverse-engineering a short, pixel-stepped social-video mascot reference,
+also load [`claude-mascot-motion-grammar`](../claude-mascot-motion-grammar/SKILL.md).
+It defines the stage-vs-mascot separation, Playwright sampling workflow, and
+hold-based timing grammar; this skill remains the implementation authority for
+SVG rigs, GSAP timelines, and reduced-motion behavior.
+
 **Primary research:** Codrops / Ayotomiwa — _Reverse-Engineering Claude AI’s
 Mascot Animations with SVG and GSAP_ (2026-05-05)
 https://tympanus.net/codrops/2026/05/05/reverse-engineering-claude-ais-mascot-animations-with-svg-and-gsap/  
