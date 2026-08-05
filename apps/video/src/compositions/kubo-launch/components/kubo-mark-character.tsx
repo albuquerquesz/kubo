@@ -2,7 +2,7 @@ import React from "react";
 import { useCurrentFrame } from "remotion";
 
 import { getKuboEyeRect, getKuboEyeState } from "../lib/kubo-blink";
-import { getKuboIdlePose, getKuboVerticalOffset } from "../lib/kubo-idle";
+import { getKuboIdlePose, getKuboLegOffsets } from "../lib/kubo-idle";
 import {
   KUBO_MARK_BODY_PATH,
   KUBO_MARK_EYE_FILL,
@@ -19,12 +19,12 @@ type KuboMarkCharacterProps = {
   style?: React.CSSProperties;
 };
 
-/** Frame-driven Kubo mark with a slow, vertical pixel idle and discrete blink. */
+/** Frame-driven Kubo mark with discrete pixel steps and a discrete blink. */
 export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({ width = 280, style }) => {
   const frame = useCurrentFrame();
   const eyeState = getKuboEyeState(frame);
   const idlePose = getKuboIdlePose(frame);
-  const verticalOffset = getKuboVerticalOffset(idlePose);
+  const legOffsets = getKuboLegOffsets(idlePose);
   const height = (width * KUBO_MARK_VIEWBOX.height) / KUBO_MARK_VIEWBOX.width;
   const clipId = "kubo-mark-ground-clip";
   const leftEye = getKuboEyeRect(KUBO_MARK_EYE_LEFT, eyeState);
@@ -45,7 +45,7 @@ export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({ width = 28
           <rect x={-40} y={-50} width={843} height={728} />
         </clipPath>
       </defs>
-      <g data-kubo-mark-root transform={`translate(0 ${verticalOffset})`}>
+      <g data-kubo-mark-root>
         <g>
           <path fill={KUBO_MARK_FILL} fillRule="evenodd" d={KUBO_MARK_BODY_PATH} />
           {/* Restore the eye cutouts before the animated black eyelids. */}
@@ -55,10 +55,13 @@ export const KuboMarkCharacter: React.FC<KuboMarkCharacterProps> = ({ width = 28
           <rect {...rightEye} fill={KUBO_MARK_EYE_FILL} />
         </g>
         <g clipPath={`url(#${clipId})`}>
-          <g data-kubo-leg-left>
+          <g data-kubo-leg-left transform={`translate(${legOffsets.left.x} ${legOffsets.left.y})`}>
             <path fill={KUBO_MARK_FILL} d={KUBO_MARK_LEG_LEFT_PATH} />
           </g>
-          <g data-kubo-leg-right>
+          <g
+            data-kubo-leg-right
+            transform={`translate(${legOffsets.right.x} ${legOffsets.right.y})`}
+          >
             <path fill={KUBO_MARK_FILL} d={KUBO_MARK_LEG_RIGHT_PATH} />
           </g>
         </g>

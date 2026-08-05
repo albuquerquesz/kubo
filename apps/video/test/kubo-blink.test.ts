@@ -3,7 +3,7 @@ import { describe, expect, test } from "bun:test";
 import { getKuboEyeRect, getKuboEyeState } from "../src/compositions/kubo-launch/lib/kubo-blink";
 import {
   getKuboIdlePose,
-  getKuboVerticalOffset,
+  getKuboLegOffsets,
   KUBO_IDLE,
 } from "../src/compositions/kubo-launch/lib/kubo-idle";
 import { KUBO_MARK_EYE_LEFT } from "../src/compositions/kubo-launch/lib/mark-paths";
@@ -47,19 +47,28 @@ describe("Kubo pixel idle", () => {
   test("holds each vertical pose for the configured frame range", () => {
     const expected = [
       ...Array(18).fill("rest"),
-      ...Array(6).fill("rise"),
+      ...Array(6).fill("left-step"),
       ...Array(18).fill("rest"),
-      ...Array(6).fill("fall"),
+      ...Array(6).fill("right-step"),
     ];
 
     expect(expected).toHaveLength(KUBO_IDLE.cycleFrames);
     expect(expected.map((_, frame) => getKuboIdlePose(frame))).toEqual(expected);
   });
 
-  test("uses a larger vertical pixel offset without changing the x position", () => {
-    expect(getKuboVerticalOffset("rest")).toBe(0);
-    expect(getKuboVerticalOffset("rise")).toBe(-18);
-    expect(getKuboVerticalOffset("fall")).toBe(18);
+  test("alternates only the legs with discrete pixel offsets", () => {
+    expect(getKuboLegOffsets("rest")).toEqual({
+      left: { x: 0, y: 0 },
+      right: { x: 0, y: 0 },
+    });
+    expect(getKuboLegOffsets("left-step")).toEqual({
+      left: { x: -14, y: 0 },
+      right: { x: 10, y: -8 },
+    });
+    expect(getKuboLegOffsets("right-step")).toEqual({
+      left: { x: -10, y: -8 },
+      right: { x: 14, y: 0 },
+    });
   });
 
   test("repeats without changing the cycle", () => {
