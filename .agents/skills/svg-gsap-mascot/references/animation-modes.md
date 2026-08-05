@@ -177,7 +177,7 @@ Particle Y example:
 const particleYOffsets = [-65, -72, -76, -70, -58, -42, -22, 0];
 ```
 
-## Blink recipe
+## Blink recipe — pixel-stepped
 
 Treat a pixel eye blink as a tiny sprite sequence: `closing → closed → closed →
 opening → open`. The Claude reconstruction research uses discrete SVG frames for
@@ -185,14 +185,38 @@ changes that should not be interpolated; the same principle applies here, but
 with Kubo's own `#FBC80D` mark and eye geometry. Keep the eye's center fixed:
 
 ```ts
-const height = state === "closed" ? 8 : state === "open" ? 86 : 42;
+const height = state === "open" || state === "opening" ? 86 : 8;
 const y = 292 + (86 - height) / 2;
 ```
 
 At 30 fps, a 4–5 frame blink is about 130–170 ms. Two sparse blinks per short
 promo loop are enough to add personality without making the mascot look noisy.
+The important pixel rule is that closing/opening are beat labels, not
+interpolated eye sizes: the bar snaps to 8px, holds, then snaps back to 86px.
 Drive the state from the Remotion frame, test the exact frame boundaries, and
 verify the mascot bounding box is unchanged while the eye height changes.
+
+## Presence pulse recipe — discrete scale table
+
+When the desired reference feels pixelated, replace a continuous ease with a
+frame lookup and variable holds:
+
+```ts
+const steps = [
+  { scale: 0.96, duration: 8 },
+  { scale: 0.98, duration: 4 },
+  { scale: 1.02, duration: 4 },
+  { scale: 1.04, duration: 8 },
+  { scale: 1.02, duration: 4 },
+  { scale: 0.98, duration: 4 },
+  { scale: 0.96, duration: 16 },
+];
+```
+
+Resolve the current frame against cumulative durations and return the selected
+scale without easing. Apply it to the whole SVG rig around the feet so each
+step is visible while the character remains grounded and the layout stays
+stable.
 
 ---
 
