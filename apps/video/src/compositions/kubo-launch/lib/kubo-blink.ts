@@ -19,7 +19,8 @@ export function getKuboEyeState(frame: number): KuboEyeState {
 }
 
 export function getKuboEyeRect(eye: KuboMarkEye, state: KuboEyeState) {
-  const height = state === "closed" ? 8 : state === "open" ? eye.height : 42;
+  // State labels mark the beat; the rendered geometry still snaps.
+  const height = state === "open" || state === "opening" ? eye.height : 8;
 
   return {
     x: eye.x,
