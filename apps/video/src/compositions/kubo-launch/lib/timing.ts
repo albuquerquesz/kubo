@@ -31,16 +31,16 @@ export const SQUARE_LAYOUT = {
 } as const;
 
 /**
- * Title intro — same as LP hero (`playHeroContentIntro` word blur-in).
- * Tokens from `apps/web/src/lib/motion/eases.ts` + `hero-content-intro.ts` @ 30fps.
+ * Title intro — same grammar as LP hero word blur-in, slowed for a 7s social cut
+ * (LP is 0.8s / 0.055s stagger; here ~1.6× slower so it reads on-camera).
  */
 export const TITLE_BLUR_INTRO = {
-  /** Soft hold before first word (composition beat; LP titleAt ≈ 0 after gate). */
-  delayFrames: 6,
-  /** `duration.blurIn` = 0.8s. */
-  durationFrames: 24,
-  /** `stagger.word` = 0.055s → 1.65 frames. */
-  wordStaggerFrames: 1.65,
+  /** Soft hold before first word. */
+  delayFrames: 10,
+  /** Per-word blur-in (~1.3s; LP blurIn is 0.8s). */
+  durationFrames: 40,
+  /** Gap between words (~0.1s; LP stagger.word is 0.055s). */
+  wordStaggerFrames: 3,
   /** WORD_FROM.y */
   fromY: 10,
   /** WORD_FROM.filter blur */
