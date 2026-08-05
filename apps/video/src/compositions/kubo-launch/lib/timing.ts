@@ -32,15 +32,16 @@ export const SQUARE_LAYOUT = {
 
 /**
  * Title intro — same grammar as LP hero word blur-in, slowed for a 7s social cut
- * (LP is 0.8s / 0.055s stagger; here ~1.6× slower so it reads on-camera).
+ * (LP is 0.8s / 0.055s stagger; here intentionally slower so each word reads
+ * clearly on-camera).
  */
 export const TITLE_BLUR_INTRO = {
   /** Soft hold before first word. */
-  delayFrames: 10,
-  /** Per-word blur-in (~1.3s; LP blurIn is 0.8s). */
-  durationFrames: 40,
-  /** Gap between words (~0.1s; LP stagger.word is 0.055s). */
-  wordStaggerFrames: 3,
+  delayFrames: 14,
+  /** Per-word blur-in (~1.8s; LP blurIn is 0.8s). */
+  durationFrames: 55,
+  /** Gap between words (~0.2s; LP stagger.word is 0.055s). */
+  wordStaggerFrames: 6,
   /** WORD_FROM.y */
   fromY: 10,
   /** WORD_FROM.filter blur */
