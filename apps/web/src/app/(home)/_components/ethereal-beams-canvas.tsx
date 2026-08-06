@@ -1,8 +1,13 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Component, useEffect, useMemo, useState, type ReactNode } from "react";
+import { Canvas, useFrame, type ThreeElements } from "@react-three/fiber";
+import { Component, useEffect, useMemo, useState, type ComponentType, type ReactNode } from "react";
 import * as THREE from "three";
+
+const Mesh = "mesh" as unknown as ComponentType<ThreeElements["mesh"]>;
+const PlaneGeometry = "planeGeometry" as unknown as ComponentType<ThreeElements["planeGeometry"]>;
+const Color = "color" as unknown as ComponentType<ThreeElements["color"]>;
+const Group = "group" as unknown as ComponentType<ThreeElements["group"]>;
 
 type BeamColors = {
   background: string;
@@ -163,9 +168,9 @@ function Beam({
   const scale = [0.62 + (index % 4) * 0.15, 1.5 + (index % 3) * 0.2, 1] as const;
 
   return (
-    <mesh material={material} position={position} rotation={rotation} scale={scale}>
-      <planeGeometry args={[1.15, 6.8, 1, 18]} />
-    </mesh>
+    <Mesh material={material} position={position} rotation={rotation} scale={scale}>
+      <PlaneGeometry args={[1.15, 6.8, 1, 18]} />
+    </Mesh>
   );
 }
 
@@ -185,12 +190,12 @@ function BeamScene({
 
   return (
     <>
-      <color attach="background" args={[colors.background]} />
-      <group position={[0, 0, -1]}>
+      <Color attach="background" args={[colors.background]} />
+      <Group position={[0, 0, -1]}>
         {beams.map((index) => (
           <Beam key={index} colors={colors} index={index} reducedMotion={reducedMotion} />
         ))}
-      </group>
+      </Group>
     </>
   );
 }

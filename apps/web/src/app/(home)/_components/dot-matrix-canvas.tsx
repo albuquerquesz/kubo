@@ -1,10 +1,16 @@
 "use client";
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef } from "react";
+import { Canvas, useFrame, useThree, type ThreeElements } from "@react-three/fiber";
+import { useEffect, useMemo, useRef, type ComponentType } from "react";
 import * as THREE from "three";
 
 import { cn } from "@/lib/utils";
+
+const Mesh = "mesh" as unknown as ComponentType<ThreeElements["mesh"]>;
+const PlaneGeometry = "planeGeometry" as unknown as ComponentType<ThreeElements["planeGeometry"]>;
+const ShaderMaterial = "shaderMaterial" as unknown as ComponentType<
+  ThreeElements["shaderMaterial"]
+>;
 
 const vertexShader = `
   precision mediump float;
@@ -128,9 +134,9 @@ function DotMatrixMaterial({
   });
 
   return (
-    <mesh>
-      <planeGeometry args={[2, 2]} />
-      <shaderMaterial
+    <Mesh>
+      <PlaneGeometry args={[2, 2]} />
+      <ShaderMaterial
         ref={materialRef}
         blending={THREE.NormalBlending}
         depthWrite={false}
@@ -140,7 +146,7 @@ function DotMatrixMaterial({
         uniforms={uniforms}
         vertexShader={vertexShader}
       />
-    </mesh>
+    </Mesh>
   );
 }
 
