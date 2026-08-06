@@ -36,7 +36,7 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
 });
 
-const ogImage = "https://kubojs.dev/assets/kubo-bg.png?v=2";
+const ogImage = "https://kubojs.dev/assets/kubo-social.jpg";
 
 export const metadata: Metadata = {
   title: "kubojs — crie projetos TypeScript type-safe",
@@ -85,7 +85,7 @@ export const metadata: Metadata = {
         url: ogImage,
         width: 1670,
         height: 942,
-        type: "image/png",
+        type: "image/jpeg",
         alt: "kubojs — CLI para projetos TypeScript type-safe",
       },
     ],
