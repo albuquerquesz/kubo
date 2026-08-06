@@ -2,11 +2,14 @@
 
 import { forwardRef, useId, useImperativeHandle, useRef } from "react";
 
+import { gsap } from "@/lib/motion/gsap-client";
 import { prefersReducedMotion } from "@/lib/motion/reduced-motion";
 import { playKuboMarkCelebrate } from "@/lib/motion/timelines/kubo-mark-celebrate";
-import { playKuboMarkIdle, type KuboMarkIdleHandle } from "@/lib/motion/timelines/kubo-mark-idle";
 import {
   KUBO_MARK_BODY_PATH,
+  KUBO_MARK_EYE_FILL,
+  KUBO_MARK_EYE_LEFT,
+  KUBO_MARK_EYE_RIGHT,
   KUBO_MARK_FILL,
   KUBO_MARK_LEG_LEFT_PATH,
   KUBO_MARK_LEG_RIGHT_PATH,
@@ -20,44 +23,36 @@ export type KuboMarkMotionHandle = {
 
 type KuboMarkMotionProps = {
   className?: string;
-  /** Start the quiet idle walk loop (default true). Off under reduced motion. */
-  idle?: boolean;
 };
 
 /**
- * Hero-only animated mark: Mode A multipartite walk idle + celebrate punch.
+ * Hero-only animated mark: launch-video blink + celebrate punch.
  * Header / static brand should keep `KuboMark` (no loops).
  */
 export const KuboMarkMotion = forwardRef<KuboMarkMotionHandle, KuboMarkMotionProps>(
-  function KuboMarkMotion({ className, idle = true }, ref) {
+  function KuboMarkMotion({ className }, ref) {
     const reactId = useId();
     const groundClipId = `kubo-mark-ground-${reactId.replace(/:/g, "")}`;
 
-    const idleRootRef = useRef<SVGGElement>(null);
     const punchLayerRef = useRef<SVGGElement>(null);
-    const bodyRef = useRef<SVGGElement>(null);
-    const legLeftRef = useRef<SVGGElement>(null);
-    const legRightRef = useRef<SVGGElement>(null);
-    const idleHandleRef = useRef<KuboMarkIdleHandle | null>(null);
+    const eyeLeftRef = useRef<SVGRectElement>(null);
+    const eyeRightRef = useRef<SVGRectElement>(null);
 
-    useGsapContext(
-      () => {
-        if (!idle || prefersReducedMotion()) return;
-        if (!bodyRef.current || !legLeftRef.current || !legRightRef.current) return;
+    useGsapContext(() => {
+      if (prefersReducedMotion() || !eyeLeftRef.current || !eyeRightRef.current) return;
 
-        idleHandleRef.current = playKuboMarkIdle({
-          root: idleRootRef.current,
-          body: bodyRef.current,
-          legLeft: legLeftRef.current,
-          legRight: legRightRef.current,
-        });
-        return () => {
-          idleHandleRef.current?.kill();
-          idleHandleRef.current = null;
-        };
-      },
-      { dependencies: [idle] },
-    );
+      // Match the launch-video character: a short, centered, pixel-stepped blink.
+      const blinkTargets = [eyeLeftRef.current, eyeRightRef.current].filter(Boolean);
+      const blink = gsap.timeline({ repeat: -1, repeatDelay: 2.5, delay: 1.5 });
+      blink
+        .to(blinkTargets, { attr: { height: 8, y: 331 }, duration: 0.05 })
+        .to({}, { duration: 0.08 })
+        .set(blinkTargets, { attr: { height: 86, y: 292 } });
+
+      return () => {
+        blink.kill();
+      };
+    }, {});
 
     useImperativeHandle(
       ref,
@@ -84,19 +79,16 @@ export const KuboMarkMotion = forwardRef<KuboMarkMotionHandle, KuboMarkMotionPro
             <rect x={-40} y={-50} width={843} height={728} />
           </clipPath>
         </defs>
-        <g ref={idleRootRef}>
-          <g ref={punchLayerRef}>
-            <g ref={bodyRef}>
-              <path fill={KUBO_MARK_FILL} fillRule="evenodd" d={KUBO_MARK_BODY_PATH} />
-            </g>
-            <g clipPath={`url(#${groundClipId})`}>
-              <g ref={legLeftRef}>
-                <path fill={KUBO_MARK_FILL} d={KUBO_MARK_LEG_LEFT_PATH} />
-              </g>
-              <g ref={legRightRef}>
-                <path fill={KUBO_MARK_FILL} d={KUBO_MARK_LEG_RIGHT_PATH} />
-              </g>
-            </g>
+        <g ref={punchLayerRef}>
+          <path fill={KUBO_MARK_FILL} fillRule="evenodd" d={KUBO_MARK_BODY_PATH} />
+          {/* The launch-video character has visible eyes; restore the cutouts before blinking. */}
+          <rect {...KUBO_MARK_EYE_LEFT} fill={KUBO_MARK_FILL} />
+          <rect {...KUBO_MARK_EYE_RIGHT} fill={KUBO_MARK_FILL} />
+          <rect ref={eyeLeftRef} {...KUBO_MARK_EYE_LEFT} fill={KUBO_MARK_EYE_FILL} />
+          <rect ref={eyeRightRef} {...KUBO_MARK_EYE_RIGHT} fill={KUBO_MARK_EYE_FILL} />
+          <g clipPath={`url(#${groundClipId})`}>
+            <path fill={KUBO_MARK_FILL} d={KUBO_MARK_LEG_LEFT_PATH} />
+            <path fill={KUBO_MARK_FILL} d={KUBO_MARK_LEG_RIGHT_PATH} />
           </g>
         </g>
       </svg>

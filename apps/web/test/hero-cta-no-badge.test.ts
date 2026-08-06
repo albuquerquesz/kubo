@@ -32,28 +32,21 @@ describe("hero CTA with animated Kubo mark", () => {
     expect(hero).toContain("if (!root || !badge || !title || !body || !cta) return");
   });
 
-  test("KuboMarkMotion keeps walk idle + celebrate + reduced motion", () => {
+  test("KuboMarkMotion keeps video blink + celebrate + reduced motion", () => {
     const motion = readSrc("src/components/brand/kubo-mark-motion.tsx");
     const mark = readSrc("src/components/brand/kubo-mark.tsx");
-    const idle = readSrc("src/lib/motion/timelines/kubo-mark-idle.ts");
     const celebrate = readSrc("src/lib/motion/timelines/kubo-mark-celebrate.ts");
     const paths = readSrc("src/lib/motion/timelines/kubo-mark-paths.ts");
 
-    expect(motion).toContain("playKuboMarkIdle");
     expect(motion).toContain("playKuboMarkCelebrate");
     expect(motion).toContain("prefersReducedMotion");
-    expect(motion).toContain("legLeftRef");
-    expect(motion).toContain("legRightRef");
-    expect(motion).toContain("bodyRef");
+    expect(motion).toContain("repeatDelay: 2.5");
+    expect(motion).toContain("eyeLeftRef");
+    expect(motion).toContain("eyeRightRef");
     expect(motion).toContain("clipPath");
     expect(motion).toContain("KUBO_MARK_BODY_PATH");
     expect(motion).toContain("KUBO_MARK_LEG_LEFT_PATH");
     expect(mark).not.toContain("playKuboMarkIdle");
-    expect(idle).toContain("repeat: -1");
-    expect(idle).toContain("KUBO_MARK_SVG_ORIGIN");
-    expect(idle).toContain("KuboMarkIdleTargets");
-    expect(idle).toContain("legLeft");
-    expect(idle).toContain("svgOrigin");
     expect(paths).toContain("KUBO_MARK_BODY_PATH");
     expect(paths).toContain("KUBO_MARK_LEG_LEFT_PATH");
     expect(paths).toContain("KUBO_MARK_LEG_RIGHT_PATH");
