@@ -252,7 +252,7 @@ export function CTASection({ className }: CTASectionProps) {
         data-hero-intro="pending"
       >
         <div ref={badgeRef} className="mb-8 flex items-center justify-center" aria-hidden>
-          <KuboMarkMotion ref={markRef} className="h-14 w-auto" idle />
+          <KuboMarkMotion ref={markRef} className="h-14 w-auto" />
         </div>
 
         <h1

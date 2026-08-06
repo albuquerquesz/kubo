@@ -24,6 +24,11 @@ export const KUBO_MARK_LEG_RIGHT_PATH = "M553 547H673V670A8 8 0 0 1 665 678H553V
 
 export const KUBO_MARK_FILL = "#FBC80D";
 
+/** Eye cutouts restored as solid dark eyes, matching the Remotion launch mark. */
+export const KUBO_MARK_EYE_FILL = "#0a0a0a";
+export const KUBO_MARK_EYE_LEFT = { x: 213, y: 292, width: 85, height: 86 };
+export const KUBO_MARK_EYE_RIGHT = { x: 468, y: 292, width: 85, height: 86 };
+
 /** Hip line — walk pivots. */
 export const KUBO_MARK_HIP_Y = 547;
 export const KUBO_MARK_HIP_CENTER = "381.5 547";
