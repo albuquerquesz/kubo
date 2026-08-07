@@ -1,13 +1,13 @@
-/** Launch composition timing — square CLI-perch promo @ 30 fps → 7s total. */
+/** Launch composition timing — square CLI-perch promo @ 30 fps → 5s total. */
 
 export const LAUNCH_FPS = 30;
-export const LAUNCH_DURATION_FRAMES = 7 * LAUNCH_FPS; // 210
+export const LAUNCH_DURATION_FRAMES = 5 * LAUNCH_FPS; // 150
 export const LAUNCH_WIDTH = 1080;
 export const LAUNCH_HEIGHT = 1080;
 
 /** Scene ranges [from, duration] in frames (absolute). */
 export const SCENES = {
-  solution: { from: 0, duration: LAUNCH_DURATION_FRAMES }, // 0–7s
+  solution: { from: 0, duration: LAUNCH_DURATION_FRAMES }, // 0–5s
 } as const;
 
 /**
@@ -55,15 +55,15 @@ export const TITLE_BLUR_INTRO = {
  */
 export const CLI_PHASES = {
   /** Type the shell command over 1.2s so each character reads clearly. */
-  commandTypeEnd: 36,
-  logoAt: 37,
-  introAt: 52,
-  nameAt: 65,
-  nameTypeStart: 66,
-  /** Type the project name over 0.8s. */
-  nameTypeEnd: 90,
-  nameSubmitted: 90,
-  projectTypeAt: 90,
-  projectTypeSubmitted: 135,
-  webAt: 135,
+  commandTypeEnd: 24,
+  logoAt: 25,
+  introAt: 36,
+  nameAt: 45,
+  nameTypeStart: 46,
+  /** Type the project name over 0.7s. */
+  nameTypeEnd: 66,
+  nameSubmitted: 66,
+  projectTypeAt: 66,
+  projectTypeSubmitted: 105,
+  webAt: 105,
 } as const;

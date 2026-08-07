@@ -21,7 +21,7 @@ type SolutionSceneProps = {
 };
 
 const MARK_HEIGHT = (SQUARE_LAYOUT.markWidth * KUBO_MARK_VIEWBOX.height) / KUBO_MARK_VIEWBOX.width;
-const PLATE_BACKGROUND = "linear-gradient(135deg, #ffffff 0%, #fffef8 46%, #fff3ad 100%)";
+const PLATE_BACKGROUND = "#fffbea";
 /** Feet flush on panel rim (slight seat into edge). */
 const MARK_TOP = -(MARK_HEIGHT - 2);
 
