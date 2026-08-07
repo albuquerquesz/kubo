@@ -123,6 +123,9 @@ describe("shipped markup + assets", () => {
     expect(src).toContain("AbacatePay");
     expect(src).toContain("Guara Cloud");
     expect(src).toContain("GetMonitor");
+    expect(src).toContain('href: "https://www.abacatepay.com"');
+    expect(src).toContain('href: "https://guaracloud.com"');
+    expect(src).toContain('href: "https://getmonitor.io"');
     expect(src).toContain("/integrations/abacatepay.svg");
     expect(src).toContain("/integrations/guaracloud.png");
     expect(src).toContain("https://getmonitor.io/logo.svg");
