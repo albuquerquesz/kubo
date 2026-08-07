@@ -204,6 +204,11 @@ export default function LogoMarquee() {
     const onPointerDown = (event: PointerEvent) => {
       if (event.button !== 0 && event.pointerType === "mouse") return;
 
+      // Let links receive a native click. Starting a drag from the link makes
+      // moving marquee cells unstable for browser click dispatch.
+      const target = event.target;
+      if (target instanceof Element && target.closest("[data-marquee-link]")) return;
+
       dragRef.current = {
         pointerId: event.pointerId,
         startX: event.clientX,
