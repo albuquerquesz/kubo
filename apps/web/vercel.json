@@ -1,6 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
+  "bunVersion": "1.x",
   "installCommand": "cd ../.. && bun install --ignore-scripts",
   "buildCommand": "bunx fumadocs-mdx && cd ../.. && bun run build:web"
 }
