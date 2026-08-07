@@ -125,7 +125,7 @@ describe("shipped markup + assets", () => {
     expect(src).toContain("GetMonitor");
     expect(src).toContain("/integrations/abacatepay.svg");
     expect(src).toContain("/integrations/guaracloud.png");
-    expect(src).toContain("/integrations/getmonitor.svg");
+    expect(src).toContain("https://getmonitor.io/logo.svg");
     expect(src).toContain("TRACK_COPIES = 3");
     expect(src).toContain("LOGO_MARQUEE_AUTOPLAY_PX_PER_SEC");
     expect(src).toContain("requestAnimationFrame");

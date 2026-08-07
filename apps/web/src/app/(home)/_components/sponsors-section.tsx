@@ -115,7 +115,7 @@ const BR_INTEGRATIONS: EcosystemItem[] = [
     id: "getmonitor",
     name: "GetMonitor",
     href: TECH_HREFS.getmonitor,
-    iconSrc: "/integrations/getmonitor.svg",
+    iconSrc: "https://getmonitor.io/logo.svg",
   },
 ];
 

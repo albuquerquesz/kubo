@@ -38,7 +38,7 @@ const LOGOS: LogoItem[] = [
   {
     name: "GetMonitor",
     href: "https://getmonitor.io",
-    src: "/integrations/getmonitor.svg",
+    src: "https://getmonitor.io/logo.svg",
   },
 ];
 
