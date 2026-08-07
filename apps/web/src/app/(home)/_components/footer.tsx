@@ -13,7 +13,7 @@ const footerGroups = [
   },
   {
     label: "Explorar",
-    links: [{ label: "Pacote NPM", href: "https://www.npmjs.com/package/kubojs" }],
+    links: [{ label: "Pacote NPM", href: "https://www.npmjs.com/package/create-kubojs" }],
   },
   {
     label: "Comunidade",

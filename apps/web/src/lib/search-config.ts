@@ -26,7 +26,7 @@ export const customSearchItems: CustomSearchItem[] = [
   },
   {
     title: "Pacote NPM",
-    url: "https://www.npmjs.com/package/kubojs",
+    url: "https://www.npmjs.com/package/create-kubojs",
     content: "Pacote NPM do kubojs",
     tags: ["npm", "pacote", "instalar", "cli", "ferramenta"],
   },
