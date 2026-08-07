@@ -12,6 +12,7 @@
     "dev": "remotion studio",
     "bundle": "remotion bundle",
     "render": "remotion render kubo-launch out/kubo-launch.mp4",
+    "render:video": "remotion render kubo-launch out/kubo-launch-social.mp4 --codec h264 --crf 18 --pixel-format yuv420p",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc",
     "gen": "bun cli/cli.ts"
