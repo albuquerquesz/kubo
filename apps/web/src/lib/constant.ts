@@ -525,7 +525,7 @@ export const TECH_OPTIONS: Record<
       id: "getmonitor",
       name: "GetMonitor",
       description: "Monitoramento de uptime, alertas e páginas de status hospedadas",
-      icon: "/integrations/getmonitor.svg",
+      icon: "https://getmonitor.io/favicon.png",
       color: "from-sky-400 to-blue-700",
     },
   ],

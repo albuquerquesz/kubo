@@ -30,4 +30,10 @@ describe("stack builder technology icons", () => {
 
     expect(remoteIcons).toEqual([]);
   });
+
+  test("uses the GetMonitor favicon only for the GetMonitor option", () => {
+    const getMonitor = TECH_OPTIONS.observability.find((option) => option.id === "getmonitor");
+
+    expect(getMonitor?.icon).toBe("https://getmonitor.io/favicon.png");
+  });
 });
