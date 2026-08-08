@@ -74,6 +74,7 @@ export { playKuboMarkCelebrate } from "./timelines/kubo-mark-celebrate";
 export {
   KUBO_MARK_BODY_PATH,
   KUBO_MARK_FILL,
+  KUBO_MARK_FULL_PATH,
   KUBO_MARK_HIP_CENTER,
   KUBO_MARK_LEG_LEFT_PATH,
   KUBO_MARK_LEG_RIGHT_PATH,

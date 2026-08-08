@@ -43,10 +43,12 @@ describe("hero CTA with animated Kubo mark", () => {
     expect(motion).toContain("repeatDelay: 2.5");
     expect(motion).toContain("eyeLeftRef");
     expect(motion).toContain("eyeRightRef");
-    expect(motion).toContain("clipPath");
-    expect(motion).toContain("KUBO_MARK_BODY_PATH");
-    expect(motion).toContain("KUBO_MARK_LEG_LEFT_PATH");
+    // Single full silhouette — no multipartite legs / hip seams (walk idle removed).
+    expect(motion).toContain("KUBO_MARK_FULL_PATH");
+    expect(motion).not.toContain("KUBO_MARK_LEG_LEFT_PATH");
+    expect(motion).not.toContain("clipPath");
     expect(mark).not.toContain("playKuboMarkIdle");
+    expect(paths).toContain("KUBO_MARK_FULL_PATH");
     expect(paths).toContain("KUBO_MARK_BODY_PATH");
     expect(paths).toContain("KUBO_MARK_LEG_LEFT_PATH");
     expect(paths).toContain("KUBO_MARK_LEG_RIGHT_PATH");
