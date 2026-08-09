@@ -8,6 +8,7 @@ import {
   FrontendSchema,
   AddonsSchema,
   ExamplesSchema,
+  TestingSchema,
   PackageManagerSchema,
   DatabaseSetupSchema,
   APISchema,
@@ -55,6 +56,10 @@ export function getAddonsJsonSchema() {
 
 export function getExamplesJsonSchema() {
   return z.toJSONSchema(ExamplesSchema);
+}
+
+export function getTestingJsonSchema() {
+  return z.toJSONSchema(TestingSchema);
 }
 
 export function getPackageManagerJsonSchema() {
@@ -139,6 +144,7 @@ export function getAllJsonSchemas() {
     frontend: getFrontendJsonSchema(),
     addons: getAddonsJsonSchema(),
     examples: getExamplesJsonSchema(),
+    testing: getTestingJsonSchema(),
     packageManager: getPackageManagerJsonSchema(),
     databaseSetup: getDatabaseSetupJsonSchema(),
     api: getAPIJsonSchema(),
