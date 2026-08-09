@@ -19,6 +19,7 @@ export const stackUrlKeys: UrlKeys<
   observability: "obs",
   packageManager: "pm",
   addons: "add",
+  testing: "test",
   examples: "ex",
   git: "git",
   install: "i",

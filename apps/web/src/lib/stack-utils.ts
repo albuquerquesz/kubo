@@ -22,6 +22,7 @@ const CATEGORY_ORDER: Array<keyof typeof TECH_OPTIONS> = [
   "observability",
   "packageManager",
   "addons",
+  "testing",
   "examples",
   "git",
   "install",
@@ -226,6 +227,11 @@ export function generateStackCommand(stack: StackState) {
         : "none"
     }`,
     `--examples ${stack.examples.join(" ") || "none"}`,
+    `--testing ${
+      stack.testing.length > 0
+        ? stack.testing.filter((t) => ["vitest", "playwright"].includes(t)).join(" ") || "none"
+        : "none"
+    }`,
   ];
 
   if (stack.yolo === "true") {

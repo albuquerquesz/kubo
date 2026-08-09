@@ -19,6 +19,8 @@ export const getBadgeColors = (category: string): string => {
       return "border-primary/30 bg-primary/10 text-primary";
     case "addons":
       return "border-accent/50 bg-accent/20 text-accent";
+    case "testing":
+      return "border-primary/45 bg-primary/18 text-primary";
     case "examples":
       return "border-primary/40 bg-primary/15 text-primary";
     case "packageManager":

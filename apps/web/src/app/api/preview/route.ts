@@ -109,6 +109,7 @@ function stackStateToConfig(state: StackState): ProjectConfig {
     frontend: frontend.length > 0 ? frontend : ["none"],
     addons: (state.addons || []).filter((a) => a !== "none") as ProjectConfig["addons"],
     examples: (state.examples || []).filter((e) => e !== "none") as ProjectConfig["examples"],
+    testing: (state.testing || []).filter((t) => t !== "none") as ProjectConfig["testing"],
     auth: (state.auth || "none") as ProjectConfig["auth"],
     payments: (state.payments || "none") as ProjectConfig["payments"],
     observability: (state.observability || "none") as ProjectConfig["observability"],

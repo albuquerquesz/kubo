@@ -3,6 +3,7 @@ import { DEFAULT_STACK, type StackState, TECH_OPTIONS } from "./constant";
 const validWebFrontendIds = new Set(TECH_OPTIONS.webFrontend.map((option) => option.id));
 const validNativeFrontendIds = new Set(TECH_OPTIONS.nativeFrontend.map((option) => option.id));
 const validAddonIds = new Set(["none", ...TECH_OPTIONS.addons.map((option) => option.id)]);
+const validTestingIds = new Set(["none", ...TECH_OPTIONS.testing.map((option) => option.id)]);
 const validExampleIds = new Set(["none", ...TECH_OPTIONS.examples.map((option) => option.id)]);
 
 export const TASK_RUNNER_ADDONS = ["nx", "turborepo", "vite-plus"] as const;
@@ -63,6 +64,10 @@ export function sanitizeAddons(addons: readonly string[] | null | undefined): st
   return resolveMonorepoAddonConflicts(sanitized);
 }
 
+export function sanitizeTesting(testing: readonly string[] | null | undefined): string[] {
+  return sanitizeMultiSelection(testing, validTestingIds, DEFAULT_STACK.testing);
+}
+
 export function sanitizeExamples(examples: readonly string[] | null | undefined): string[] {
   return sanitizeMultiSelection(examples, validExampleIds, DEFAULT_STACK.examples);
 }
@@ -87,6 +92,7 @@ export function sanitizeStackState(stack: StackState): StackState {
     webFrontend: sanitizeWebFrontends(stack.webFrontend),
     nativeFrontend: sanitizeNativeFrontends(stack.nativeFrontend),
     addons: sanitizeAddons(stack.addons),
+    testing: sanitizeTesting(stack.testing),
     examples: sanitizeExamples(stack.examples),
   };
 }
