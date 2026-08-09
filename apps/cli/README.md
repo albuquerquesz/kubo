@@ -36,6 +36,7 @@ Follow the prompts to configure your project or use the `--yes` flag for default
 | **Authentication**       | • Better Auth<br>• Clerk                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | **Styling**              | Tailwind CSS with a shared shadcn/ui package for React web apps                                                                                                                                                                                                                                                                                                                                                                           |
 | **Addons**               | • PWA support<br>• Tauri (desktop applications)<br>• Electrobun (lightweight desktop shell)<br>• Starlight and Fumadocs (documentation sites)<br>• Biome, Oxlint, Ultracite, or Vite+ (linting and formatting)<br>• Lefthook, Husky (Git hooks)<br>• evlog (request logging for server/fullstack backends)<br>• MCP, Skills (agent tooling)<br>• OpenTUI, WXT (platform extensions)<br>• Turborepo, Nx, or Vite+ (monorepo orchestration) |
+| **Testing**              | • Vitest (unit tests)<br>• Playwright (end-to-end tests, requires a web frontend)                                                                                                                                                                                                                                                                                                                                                         |
 | **Examples**             | • Todo app<br>• AI Chat interface (using Vercel AI SDK)                                                                                                                                                                                                                                                                                                                                                                                   |
 | **Developer Experience** | • Automatic Git initialization<br>• Package manager choice (npm, pnpm, bun)<br>• Automatic dependency installation                                                                                                                                                                                                                                                                                                                        |
 
@@ -56,6 +57,7 @@ Options:
   --frontend <types...>           Frontend types (tanstack-router, react-router, tanstack-start, next, nuxt, svelte, solid, astro, native-bare, native-uniwind, native-unistyles, none)
   --addons <types...>             Additional addons (pwa, tauri, electrobun, starlight, biome, lefthook, husky, mcp, turborepo, nx, vite-plus, fumadocs, ultracite, oxlint, opentui, wxt, skills, evlog, none)
   --examples <types...>           Examples to include (todo, ai, none)
+  --testing <types...>            Testing tools (vitest, playwright, none)
   --git                           Initialize git repository
   --no-git                        Skip git initialization
   --package-manager <pm>          Package manager (npm, pnpm, bun)
@@ -241,6 +243,7 @@ npx kubojs --frontend none --backend hono --api trpc --database none --addons no
 - **Cloudflare Workers runtime**: Only compatible with Hono backend. If a database is used, MongoDB is not supported.
 - **Cloudflare D1 setup**: Requires `sqlite` and either `--runtime workers --server-deploy cloudflare` or `--backend self --web-deploy cloudflare`. For `backend self`, D1 is supported on `next`, `tanstack-start`, `nuxt`, `svelte`, and `astro`.
 - **Addons 'none'**: Skips all addons.
+- **Testing 'none'**: Skips all testing tools. Playwright requires a web frontend.
 - **Examples 'none'**: Skips all example implementations (todo, AI chat).
 - **Nuxt, Svelte, SolidJS, and Astro** frontends are only compatible with oRPC API layer
 - **PWA support** requires TanStack Router, React Router, Next.js, or SolidJS
