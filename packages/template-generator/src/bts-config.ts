@@ -27,6 +27,7 @@ export function writeBtsConfigToVfs(
     frontend: projectConfig.frontend,
     addons: projectConfig.addons,
     examples: projectConfig.examples,
+    testing: projectConfig.testing,
     auth: projectConfig.auth,
     payments: projectConfig.payments,
     observability: projectConfig.observability,
