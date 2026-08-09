@@ -69,6 +69,8 @@ export const ExamplesSchema = z
   .enum(["todo", "ai", "none"])
   .describe("Example templates to include");
 
+export const TestingSchema = z.enum(["vitest", "playwright", "none"]).describe("Testing tools");
+
 export const PackageManagerSchema = z.enum(["npm", "pnpm", "bun"]).describe("Package manager");
 
 export const DatabaseSetupSchema = z
@@ -439,6 +441,7 @@ export const CreateInputSchema = z
     frontend: z.array(FrontendSchema).optional(),
     addons: AddonsListSchema.optional(),
     examples: z.array(ExamplesSchema).optional(),
+    testing: z.array(TestingSchema).optional(),
     git: z.boolean().optional(),
     packageManager: PackageManagerSchema.optional(),
     install: z.boolean().optional(),
@@ -462,6 +465,7 @@ export const CreateInputSchema = z
 export const AddInputSchema = z
   .object({
     addons: AddonsListSchema.optional(),
+    testing: z.array(TestingSchema).optional(),
     addonOptions: AddonOptionsSchema.optional(),
     webDeploy: WebDeploySchema.optional(),
     serverDeploy: ServerDeploySchema.optional(),
@@ -489,6 +493,7 @@ export const ProjectConfigSchema = z.object({
   frontend: z.array(FrontendSchema),
   addons: AddonsListSchema,
   examples: z.array(ExamplesSchema),
+  testing: z.array(TestingSchema),
   auth: AuthSchema,
   payments: PaymentsSchema,
   observability: ObservabilitySchema,
@@ -514,6 +519,7 @@ export const BetterTStackConfigSchema = z.object({
   frontend: z.array(FrontendSchema),
   addons: AddonsListSchema,
   examples: z.array(ExamplesSchema),
+  testing: z.array(TestingSchema),
   auth: AuthSchema,
   payments: PaymentsSchema,
   observability: ObservabilitySchema,
@@ -554,6 +560,7 @@ export const RUNTIME_VALUES = RuntimeSchema.options;
 export const FRONTEND_VALUES = FrontendSchema.options;
 export const ADDONS_VALUES = AddonsSchema.options;
 export const EXAMPLES_VALUES = ExamplesSchema.options;
+export const TESTING_VALUES = TestingSchema.options;
 export const PACKAGE_MANAGER_VALUES = PackageManagerSchema.options;
 export const DATABASE_SETUP_VALUES = DatabaseSetupSchema.options;
 export const API_VALUES = APISchema.options;
