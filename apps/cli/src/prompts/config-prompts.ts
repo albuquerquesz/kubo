@@ -15,6 +15,7 @@ import type {
   ProjectConfig,
   Runtime,
   ServerDeploy,
+  Testing,
   WebDeploy,
 } from "../types";
 import { isSilent } from "../utils/context";
@@ -36,6 +37,7 @@ import { getPackageManagerChoice } from "./package-manager";
 import { getPaymentsChoice } from "./payments";
 import { getRuntimeChoice } from "./runtime";
 import { getServerDeploymentChoice } from "./server-deploy";
+import { getTestingChoice } from "./testing";
 import { getDeploymentChoice } from "./web-deploy";
 
 type PromptGroupResults = {
@@ -50,6 +52,7 @@ type PromptGroupResults = {
   observability: Observability;
   addons: Addons[];
   examples: Examples[];
+  testing: Testing[];
   dbSetup: DatabaseSetup;
   git: boolean;
   packageManager: PackageManager;
@@ -81,6 +84,7 @@ export async function gatherConfig(
       observability: flags.observability ?? DEFAULT_CONFIG.observability,
       addons: flags.addons ?? [...DEFAULT_CONFIG.addons],
       examples: flags.examples ?? [...DEFAULT_CONFIG.examples],
+      testing: flags.testing ?? [...DEFAULT_CONFIG.testing],
       git: flags.git ?? DEFAULT_CONFIG.git,
       packageManager: flags.packageManager ?? DEFAULT_CONFIG.packageManager,
       install: flags.install ?? DEFAULT_CONFIG.install,
@@ -142,6 +146,8 @@ export async function gatherConfig(
           results.api,
           previousAnswer,
         ) as Promise<Examples[]>,
+      testing: ({ results, previousAnswer }) =>
+        getTestingChoice(flags.testing, results.frontend, previousAnswer),
       dbSetup: ({ results, previousAnswer }) =>
         getDBSetupChoice(
           results.database ?? "none",
@@ -196,6 +202,7 @@ export async function gatherConfig(
     observability: result.observability,
     addons: result.addons,
     examples: result.examples,
+    testing: result.testing,
     git: result.git,
     packageManager: result.packageManager,
     install: result.install,

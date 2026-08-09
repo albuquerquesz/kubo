@@ -12,6 +12,7 @@ import type {
   ProjectConfig,
   Runtime,
   ServerDeploy,
+  Testing,
   WebDeploy,
 } from "../types";
 import { WEB_FRAMEWORKS } from "./compatibility";
@@ -268,6 +269,10 @@ export function isExampleTodoAllowed(
   // Todo requires both database and API to communicate
   if (database === "none" || api === "none") return false;
   return true;
+}
+
+export function isPlaywrightAllowed(frontends: Frontend[] = []) {
+  return frontends.some((frontend) => isWebFrontend(frontend));
 }
 
 export function isExampleAIAllowed(backend?: ProjectConfig["backend"], frontends: Frontend[] = []) {
@@ -547,6 +552,16 @@ export function validateAddonsAgainstConfig(
     config.backend,
     config.runtime,
   );
+}
+
+export function validateTestingAgainstFrontends(
+  testing: Testing[] = [],
+  frontends: Frontend[] = [],
+): ValidationResult {
+  if (testing.includes("playwright") && !isPlaywrightAllowed(frontends)) {
+    return validationErr("playwright testing requires a web frontend");
+  }
+  return Result.ok(undefined);
 }
 
 export function validatePaymentsCompatibility(

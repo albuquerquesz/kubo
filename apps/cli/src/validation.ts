@@ -16,6 +16,7 @@ const CORE_STACK_FLAGS = new Set([
   "frontend",
   "addons",
   "examples",
+  "testing",
   "auth",
   "dbSetup",
   "payments",

@@ -33,7 +33,7 @@ export async function updateBtsConfig(
   updates: Partial<
     Pick<
       BetterTStackConfig,
-      "addons" | "addonOptions" | "dbSetupOptions" | "webDeploy" | "serverDeploy"
+      "addons" | "testing" | "addonOptions" | "dbSetupOptions" | "webDeploy" | "serverDeploy"
     >
   >,
 ): Promise<void> {

@@ -23,6 +23,7 @@ export const DEFAULT_CONFIG_BASE = {
   observability: "none",
   addons: ["turborepo"],
   examples: [],
+  testing: [],
   git: true,
   install: true,
   dbSetup: "none",
@@ -41,6 +42,7 @@ export function getDefaultConfig() {
     frontend: [...DEFAULT_CONFIG_BASE.frontend],
     addons: [...DEFAULT_CONFIG_BASE.addons],
     examples: [...DEFAULT_CONFIG_BASE.examples],
+    testing: [...DEFAULT_CONFIG_BASE.testing],
   };
 }
 

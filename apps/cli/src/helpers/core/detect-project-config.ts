@@ -22,6 +22,7 @@ export async function detectProjectConfig(projectDir: string) {
           frontend: btsConfig.frontend,
           addons: btsConfig.addons,
           examples: btsConfig.examples,
+          testing: btsConfig.testing,
           auth: btsConfig.auth,
           payments: btsConfig.payments,
           observability: btsConfig.observability,

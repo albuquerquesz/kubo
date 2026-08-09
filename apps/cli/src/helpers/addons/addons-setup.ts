@@ -51,7 +51,7 @@ async function runAddonStep(addon: string, step: () => Promise<void>): Promise<v
 }
 
 export async function setupAddons(config: ProjectConfig): Promise<void> {
-  const { addons, frontend, projectDir } = config;
+  const { addons, testing, frontend, projectDir } = config;
   const hasWebFrontend = frontend.some((value) =>
     (desktopWebFrontends as readonly string[]).includes(value),
   );
@@ -126,6 +126,14 @@ export async function setupAddons(config: ProjectConfig): Promise<void> {
   if (addons.includes("evlog")) {
     await runSetup(() => setupEvlog(config));
   }
+
+  if (testing.includes("vitest")) {
+    await runAddonStep("vitest", () => setupVitest(projectDir));
+  }
+
+  if (testing.includes("playwright")) {
+    await runAddonStep("playwright", () => setupPlaywright(projectDir));
+  }
 }
 
 export async function setupBiome(projectDir: string) {
@@ -179,6 +187,45 @@ export async function setupHusky(projectDir: string, linter?: "biome" | "oxlint"
         "**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,vue,astro,svelte}": "",
       };
     }
+
+    await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+  }
+}
+
+export async function setupVitest(projectDir: string) {
+  await addPackageDependency({
+    devDependencies: ["vitest"],
+    projectDir,
+  });
+
+  const packageJsonPath = path.join(projectDir, "package.json");
+  if (await fs.pathExists(packageJsonPath)) {
+    const packageJson = await fs.readJson(packageJsonPath);
+
+    packageJson.scripts = {
+      ...packageJson.scripts,
+      test: "vitest run",
+      "test:watch": "vitest",
+    };
+
+    await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+  }
+}
+
+export async function setupPlaywright(projectDir: string) {
+  await addPackageDependency({
+    devDependencies: ["@playwright/test"],
+    projectDir,
+  });
+
+  const packageJsonPath = path.join(projectDir, "package.json");
+  if (await fs.pathExists(packageJsonPath)) {
+    const packageJson = await fs.readJson(packageJsonPath);
+
+    packageJson.scripts = {
+      ...packageJson.scripts,
+      "test:e2e": "playwright test",
+    };
 
     await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
   }

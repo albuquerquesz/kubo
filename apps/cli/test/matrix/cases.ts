@@ -131,6 +131,7 @@ export function createMatrixConfig(overrides: Partial<MatrixConfigInput> = {}): 
     frontend: [...config.frontend],
     addons: [],
     examples: [...config.examples],
+    testing: [],
     auth: config.auth,
     payments: config.payments,
     git: false,

@@ -61,6 +61,13 @@ export function displayConfig(config: Partial<ProjectConfig>) {
     configDisplay.push(`${pc.blue("Examples:")} ${examplesText}`);
   }
 
+  if (config.testing !== undefined) {
+    const testing = Array.isArray(config.testing) ? config.testing : [config.testing];
+    const testingText =
+      testing.length > 0 && testing[0] !== undefined ? testing.join(", ") : "none";
+    configDisplay.push(`${pc.blue("Testing:")} ${testingText}`);
+  }
+
   if (config.git !== undefined) {
     const gitText =
       typeof config.git === "boolean" ? (config.git ? "Yes" : "No") : String(config.git);

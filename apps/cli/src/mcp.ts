@@ -22,6 +22,7 @@ import {
   PaymentsSchema,
   RuntimeSchema,
   ServerDeploySchema,
+  TestingSchema,
   WebDeploySchema,
 } from "./types";
 import { getLatestCLIVersion } from "./utils/get-latest-cli-version";
@@ -52,6 +53,9 @@ const McpCreateProjectInputSchema = CreateInputSchema.safeExtend({
   examples: z
     .array(ExamplesSchema)
     .describe("Explicit example list. Use [] when no examples are needed."),
+  testing: z
+    .array(TestingSchema)
+    .describe("Explicit testing tools list. Use [] when no testing tools are needed."),
   git: z.boolean().describe("Whether to initialize a git repository"),
   packageManager: PackageManagerSchema.describe("Explicit package manager"),
   install: z.boolean().describe("Whether to install dependencies"),
@@ -141,6 +145,7 @@ function getStackGuidance() {
         "payments",
         "addons",
         "examples",
+        "testing",
         "git",
         "packageManager",
         "install",
@@ -156,6 +161,7 @@ function getStackGuidance() {
         "frontend is for app surfaces only. Choose explicit app targets such as next, react-router, tanstack-router, native-bare, native-uniwind, or native-unistyles.",
       addons: "addons must be an explicit array. Use [] when no addons are requested.",
       examples: "examples must be an explicit array. Use [] when no examples are requested.",
+      testing: "testing must be an explicit array. Use [] when no testing tools are requested.",
       dbSetup:
         "dbSetup is always required. Use 'none' when no managed database provisioning is requested.",
       webDeploy:
