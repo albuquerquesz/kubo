@@ -120,6 +120,10 @@ export function processFlags(options: CLIInput, projectName?: string) {
     config.examples = processArrayOption(options.examples);
   }
 
+  if (options.testing && options.testing.length > 0) {
+    config.testing = processArrayOption(options.testing);
+  }
+
   return config;
 }
 
@@ -154,6 +158,9 @@ export function validateArrayOptions(options: CLIInput): Result<void, Validation
 
   const examplesResult = validateNoneExclusivity(options.examples, "examples");
   if (examplesResult.isErr()) return examplesResult;
+
+  const testingResult = validateNoneExclusivity(options.testing, "testing");
+  if (testingResult.isErr()) return testingResult;
 
   return Result.ok(undefined);
 }

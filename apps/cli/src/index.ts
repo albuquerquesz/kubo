@@ -52,6 +52,7 @@ import {
   ServerDeploySchema,
   type Template,
   TemplateSchema,
+  TestingSchema,
   type WebDeploy,
   WebDeploySchema,
 } from "./types";
@@ -70,6 +71,7 @@ export const SchemaNameSchema = z
     "frontend",
     "addons",
     "examples",
+    "testing",
     "packageManager",
     "databaseSetup",
     "api",
@@ -153,6 +155,7 @@ export const router = t.router({
           frontend: z.array(FrontendSchema).optional(),
           addons: z.array(AddonsSchema).optional(),
           examples: z.array(ExamplesSchema).optional(),
+          testing: z.array(TestingSchema).optional(),
           git: z.boolean().optional(),
           packageManager: PackageManagerSchema.optional(),
           install: z.boolean().optional(),
@@ -228,6 +231,7 @@ export const router = t.router({
     .input(
       z.object({
         addons: z.array(AddonsSchema).optional().describe("Addons to add"),
+        testing: z.array(TestingSchema).optional().describe("Testing tools to add"),
         install: z
           .boolean()
           .optional()
@@ -425,6 +429,7 @@ export async function createVirtual(
     frontend: options.frontend || ["tanstack-router"],
     addons: options.addons || [],
     examples: options.examples || [],
+    testing: options.testing || [],
     auth: options.auth || "none",
     payments: options.payments || "none",
     observability: options.observability || "none",
@@ -445,6 +450,7 @@ export async function createVirtual(
     "frontend",
     "addons",
     "examples",
+    "testing",
     "auth",
     "dbSetup",
     "payments",

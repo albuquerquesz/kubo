@@ -51,6 +51,7 @@ export async function displayPostInstallInstructions(
     depsInstalled,
     orm,
     addons,
+    testing,
     runtime,
     frontend,
     backend,
@@ -111,6 +112,9 @@ export async function displayPostInstallInstructions(
     addons?.includes("pwa") && frontend?.includes("react-router") ? getPwaInstructions() : "";
   const starlightInstructions = addons?.includes("starlight")
     ? getStarlightInstructions(runCmd)
+    : "";
+  const playwrightInstructions = testing?.includes("playwright")
+    ? getPlaywrightInstructions(runCmd)
     : "";
   const clerkInstructions =
     config.auth === "clerk" ? getClerkInstructions(frontend || [], backend, api) : "";
@@ -230,6 +234,7 @@ export async function displayPostInstallInstructions(
   if (lintingInstructions) output += `\n${lintingInstructions.trim()}\n`;
   if (pwaInstructions) output += `\n${pwaInstructions.trim()}\n`;
   if (starlightInstructions) output += `\n${starlightInstructions.trim()}\n`;
+  if (playwrightInstructions) output += `\n${playwrightInstructions.trim()}\n`;
   if (clerkInstructions) output += `\n${clerkInstructions.trim()}\n`;
   if (betterAuthConvexInstructions) output += `\n${betterAuthConvexInstructions.trim()}\n`;
   if (getMonitorInstructions) output += `\n${getMonitorInstructions.trim()}\n`;
@@ -299,6 +304,14 @@ function getHuskyInstructions(runCmd: string) {
   return `${pc.bold("Git hooks with Husky:")}\n${pc.cyan(
     "•",
   )} Initialize hooks: ${`${runCmd} prepare`}\n`;
+}
+
+function getPlaywrightInstructions(runCmd: string) {
+  return `${pc.bold("End-to-end tests with Playwright:")}\n${pc.cyan(
+    "•",
+  )} Install browsers: ${"npx playwright install"}\n${pc.cyan(
+    "•",
+  )} Run e2e tests: ${`${runCmd} test:e2e`}\n`;
 }
 
 function getLintingInstructions(runCmd: string) {

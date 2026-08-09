@@ -7,6 +7,7 @@ import {
   processAddonsDeps,
   processNxConfig,
   processPackageConfigs,
+  processTestingTemplates,
   processTurboConfig,
   processVitePlusConfig,
   processTemplateString,
@@ -18,9 +19,13 @@ import fs from "fs-extra";
 import pc from "picocolors";
 
 import { getAddonsToAdd } from "../../prompts/addons";
-import type { AddInput, Addons, AddonOptions, ProjectConfig } from "../../types";
+import { getTestingToAdd } from "../../prompts/testing";
+import type { AddInput, Addons, AddonOptions, ProjectConfig, Testing } from "../../types";
 import { updateBtsConfig } from "../../utils/bts-config";
-import { validateAddonsAgainstConfig } from "../../utils/compatibility-rules";
+import {
+  validateAddonsAgainstConfig,
+  validateTestingAgainstFrontends,
+} from "../../utils/compatibility-rules";
 import { isSilent, runWithContextAsync } from "../../utils/context";
 import { CLIError, UserCancelledError, displayError } from "../../utils/errors";
 import { validateAgentSafePathInput } from "../../utils/input-hardening";
@@ -36,6 +41,7 @@ export interface AddHandlerOptions {
 export interface AddResult {
   success: boolean;
   addedAddons: Addons[];
+  addedTesting: Testing[];
   projectDir: string;
   dryRun?: boolean;
   plannedFileCount?: number;
@@ -172,6 +178,7 @@ export async function addHandler(
         return {
           success: false,
           addedAddons: [],
+          addedTesting: [],
           projectDir: "",
           error: error.message,
         };
@@ -183,6 +190,7 @@ export async function addHandler(
       return {
         success: false,
         addedAddons: [],
+        addedTesting: [],
         projectDir: "",
         error: error.message,
       };
@@ -227,34 +235,43 @@ async function addHandlerInternal(
     log.info(pc.dim(`Detected project: ${existingConfig.projectName}`));
   }
 
-  // Determine which addons to add
-  let addonsToAdd: Addons[];
+  // Determine which addons/testing tools to add
+  let addonsToAdd: Addons[] = [];
+  let testingToAdd: Testing[] = [];
 
-  if (input.addons && input.addons.length > 0) {
-    // Filter out 'none' and already installed addons
-    addonsToAdd = input.addons.filter(
+  const hasAddonsInput = (input.addons?.length ?? 0) > 0;
+  const hasTestingInput = (input.testing?.length ?? 0) > 0;
+
+  if (hasAddonsInput || hasTestingInput) {
+    // Filter out 'none' and already installed entries
+    addonsToAdd = (input.addons ?? []).filter(
       (addon) => addon !== "none" && !existingConfig.addons.includes(addon),
     );
+    testingToAdd = (input.testing ?? []).filter(
+      (item) => item !== "none" && !(existingConfig.testing ?? []).includes(item),
+    );
 
-    if (addonsToAdd.length === 0) {
+    if (addonsToAdd.length === 0 && testingToAdd.length === 0) {
       if (!isSilent()) {
-        log.warn(pc.yellow("All specified addons are already installed or invalid."));
+        log.warn(pc.yellow("All specified addons/testing tools are already installed or invalid."));
       }
       return Result.ok({
         success: true,
         addedAddons: [],
+        addedTesting: [],
         projectDir,
       });
     }
   } else if (isSilent()) {
     return Result.err(
       new CLIError({
-        message: "Addons are required in silent mode. Provide them via add() or add-json.",
+        message:
+          "Addons or testing tools are required in silent mode. Provide them via add() or add-json.",
       }),
     );
   } else {
-    // Interactive mode - prompt user to select addons
-    const promptResult = await Result.tryPromise({
+    // Interactive mode - prompt user to select addons, then testing tools
+    const addonsPromptResult = await Result.tryPromise({
       try: () => getAddonsToAdd(existingConfig),
       catch: (e: unknown) => {
         if (UserCancelledError.is(e)) return e;
@@ -265,36 +282,71 @@ async function addHandlerInternal(
       },
     });
 
-    if (promptResult.isErr()) {
-      return Result.err(promptResult.error);
+    if (addonsPromptResult.isErr()) {
+      return Result.err(addonsPromptResult.error);
     }
 
-    const selectedAddons = promptResult.value;
+    addonsToAdd = addonsPromptResult.value;
 
-    if (selectedAddons.length === 0) {
+    const testingPromptResult = await Result.tryPromise({
+      try: () => getTestingToAdd(existingConfig),
+      catch: (e: unknown) => {
+        if (UserCancelledError.is(e)) return e;
+        return new CLIError({
+          message: e instanceof Error ? e.message : String(e),
+          cause: e,
+        });
+      },
+    });
+
+    if (testingPromptResult.isErr()) {
+      return Result.err(testingPromptResult.error);
+    }
+
+    testingToAdd = testingPromptResult.value;
+
+    if (addonsToAdd.length === 0 && testingToAdd.length === 0) {
       if (!isSilent()) {
-        log.info(pc.dim("No addons selected."));
+        log.info(pc.dim("Nothing selected."));
         outro(pc.magenta("Nothing to add."));
       }
       return Result.ok({
         success: true,
         addedAddons: [],
+        addedTesting: [],
         projectDir,
       });
     }
-
-    addonsToAdd = selectedAddons;
   }
 
-  // Build config for addon setup
+  // Build config for addon/testing setup
   const updatedAddons = [...existingConfig.addons, ...addonsToAdd];
-  const addonsValidationResult = validateAddonsAgainstConfig(updatedAddons, existingConfig);
-  if (addonsValidationResult.isErr()) {
-    return Result.err(new CLIError({ message: addonsValidationResult.error.message }));
+  const updatedTesting = [...(existingConfig.testing ?? []), ...testingToAdd];
+
+  if (addonsToAdd.length > 0) {
+    const addonsValidationResult = validateAddonsAgainstConfig(updatedAddons, existingConfig);
+    if (addonsValidationResult.isErr()) {
+      return Result.err(new CLIError({ message: addonsValidationResult.error.message }));
+    }
+  }
+
+  if (testingToAdd.length > 0) {
+    const testingValidationResult = validateTestingAgainstFrontends(
+      updatedTesting,
+      existingConfig.frontend,
+    );
+    if (testingValidationResult.isErr()) {
+      return Result.err(new CLIError({ message: testingValidationResult.error.message }));
+    }
   }
 
   if (!isSilent()) {
-    log.info(pc.cyan(`Adding addons: ${addonsToAdd.join(", ")}`));
+    if (addonsToAdd.length > 0) {
+      log.info(pc.cyan(`Adding addons: ${addonsToAdd.join(", ")}`));
+    }
+    if (testingToAdd.length > 0) {
+      log.info(pc.cyan(`Adding testing tools: ${testingToAdd.join(", ")}`));
+    }
   }
 
   const mergedAddonOptions = mergeAddonOptions(existingConfig.addonOptions, input.addonOptions);
@@ -310,6 +362,7 @@ async function addHandlerInternal(
     frontend: existingConfig.frontend,
     addons: addonsToAdd, // Only the new addons for template processing
     examples: existingConfig.examples,
+    testing: testingToAdd, // Only the new testing tools for template processing
     auth: existingConfig.auth,
     payments: existingConfig.payments,
     observability: existingConfig.observability,
@@ -324,6 +377,7 @@ async function addHandlerInternal(
   const updatedConfig: ProjectConfig = {
     ...config,
     addons: updatedAddons,
+    testing: updatedTesting,
   };
 
   // Create VFS and process addon templates using template-generator's logic
@@ -351,6 +405,7 @@ async function addHandlerInternal(
 
   // Process addon templates
   await processAddonTemplates(vfs, EMBEDDED_TEMPLATES, config);
+  await processTestingTemplates(vfs, EMBEDDED_TEMPLATES, config);
 
   // Process addon dependencies (adds deps to package.json files in VFS)
   processAddonsDeps(vfs, config);
@@ -401,6 +456,7 @@ async function addHandlerInternal(
     return Result.ok({
       success: true,
       addedAddons: addonsToAdd,
+      addedTesting: testingToAdd,
       projectDir,
       dryRun: true,
       plannedFileCount: vfs.getFileCount(),
@@ -442,9 +498,10 @@ async function addHandlerInternal(
     return Result.err(setupResult.error);
   }
 
-  // Update bts.jsonc with new addons
+  // Update bts.jsonc with new addons/testing tools
   await updateBtsConfig(projectDir, {
     addons: updatedAddons,
+    testing: updatedTesting,
     addonOptions: updatedConfig.addonOptions,
   });
 
@@ -457,7 +514,7 @@ async function addHandlerInternal(
   }
 
   if (!isSilent()) {
-    log.success(pc.green(`Successfully added: ${addonsToAdd.join(", ")}`));
+    log.success(pc.green(`Successfully added: ${[...addonsToAdd, ...testingToAdd].join(", ")}`));
 
     if (!input.install) {
       log.info(
@@ -473,6 +530,7 @@ async function addHandlerInternal(
   return Result.ok({
     success: true,
     addedAddons: addonsToAdd,
+    addedTesting: testingToAdd,
     projectDir,
     plannedFileCount: vfs.getFileCount(),
   });
