@@ -39,6 +39,7 @@ export const stackParsers = {
     getValidIds("packageManager"),
   ).withDefault(DEFAULT_STACK.packageManager),
   addons: parseAsArrayOf(parseAsString).withDefault(DEFAULT_STACK.addons),
+  testing: parseAsArrayOf(parseAsString).withDefault(DEFAULT_STACK.testing),
   examples: parseAsArrayOf(parseAsString).withDefault(DEFAULT_STACK.examples),
   git: parseAsStringEnum<StackState["git"]>(["true", "false"]).withDefault(DEFAULT_STACK.git),
   install: parseAsStringEnum<StackState["install"]>(["true", "false"]).withDefault(
@@ -82,6 +83,7 @@ export function useStackState() {
     observability: queryState.observability,
     packageManager: queryState.packageManager,
     addons: queryState.addons,
+    testing: queryState.testing,
     examples: queryState.examples,
     git: queryState.git,
     install: queryState.install,

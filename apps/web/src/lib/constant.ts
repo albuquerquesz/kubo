@@ -701,6 +701,24 @@ export const TECH_OPTIONS: Record<
       default: false,
     },
   ],
+  testing: [
+    {
+      id: "vitest",
+      name: "Vitest",
+      description: "Test runner de unidade rápido",
+      icon: `${ICON_BASE_URL}/vitest.svg`,
+      color: "from-lime-500 to-green-700",
+      default: false,
+    },
+    {
+      id: "playwright",
+      name: "Playwright",
+      description: "Testes de ponta a ponta no navegador",
+      icon: `${ICON_BASE_URL}/playwright.svg`,
+      color: "from-teal-500 to-emerald-700",
+      default: false,
+    },
+  ],
   examples: [
     {
       id: "todo",
@@ -774,6 +792,7 @@ export const PRESET_TEMPLATES = [
       observability: "none",
       packageManager: "bun",
       addons: ["turborepo"],
+      testing: ["none"],
       examples: ["todo"],
       git: "true",
       install: "true",
@@ -801,6 +820,7 @@ export const PRESET_TEMPLATES = [
       observability: "none",
       packageManager: "bun",
       addons: ["turborepo"],
+      testing: ["none"],
       examples: ["todo"],
       git: "true",
       install: "true",
@@ -828,6 +848,7 @@ export const PRESET_TEMPLATES = [
       observability: "none",
       packageManager: "bun",
       addons: ["biome", "turborepo"],
+      testing: ["none"],
       examples: ["none"],
       git: "true",
       install: "true",
@@ -855,6 +876,7 @@ export const PRESET_TEMPLATES = [
       observability: "none",
       packageManager: "bun",
       addons: ["none"],
+      testing: ["none"],
       examples: ["none"],
       git: "true",
       install: "true",
@@ -880,6 +902,7 @@ export type StackState = {
   observability: string;
   packageManager: string;
   addons: string[];
+  testing: string[];
   examples: string[];
   git: string;
   install: string;
@@ -903,6 +926,7 @@ export const DEFAULT_STACK: StackState = {
   observability: "none",
   packageManager: "bun",
   addons: ["turborepo"],
+  testing: ["none"],
   examples: ["none"],
   git: "true",
   install: "true",

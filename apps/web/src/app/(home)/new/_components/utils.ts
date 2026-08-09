@@ -103,6 +103,9 @@ export const hasElectrobunCompatibleFrontend = (webFrontend: string[], backend =
 export const hasEvlogCompatibleBackend = (backend: string) =>
   ["hono", "express", "fastify", "elysia", ...selfHostedFullstackBackends].includes(backend);
 
+export const hasPlaywrightCompatibleFrontend = (webFrontend: string[]) =>
+  webFrontend.some((f) => (desktopWebFrontends as readonly string[]).includes(f));
+
 // Mirrors the CLI rule: Tauri static exports can't bundle Convex Better Auth on these frontends
 const tauriStaticExportFrontends = ["next", "tanstack-start"] as const;
 
@@ -131,6 +134,7 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
   observability: "Observabilidade",
   packageManager: "Package Manager",
   addons: "Add-ons",
+  testing: "Testes",
   examples: "Exemplos",
   git: "Git",
   install: "Instalação",
@@ -717,6 +721,22 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
   }
 
   // ============================================
+  // TESTING CONSTRAINTS
+  // ============================================
+
+  const playwrightCompat = hasPlaywrightCompatibleFrontend(nextStack.webFrontend);
+
+  if (!playwrightCompat && nextStack.testing.includes("playwright")) {
+    nextStack.testing = nextStack.testing.filter((a) => a !== "playwright");
+    if (nextStack.testing.length === 0) nextStack.testing = ["none"];
+    changed = true;
+    changes.push({
+      category: "testing",
+      message: "Playwright removido (exige frontend compatível)",
+    });
+  }
+
+  // ============================================
   // EXAMPLES CONSTRAINTS
   // ============================================
 
@@ -1228,6 +1248,12 @@ export const getDisabledReason = (
     }
     // Task runners are mutually exclusive in the CLI, but the builder lets users swap them.
     // URL/state sanitization keeps only the latest selected runner before generating commands.
+  }
+
+  if (category === "testing") {
+    if (optionId === "playwright" && !hasPlaywrightCompatibleFrontend(currentStack.webFrontend)) {
+      return "Playwright exige um frontend web";
+    }
   }
 
   // ============================================

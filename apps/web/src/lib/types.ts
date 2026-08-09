@@ -15,6 +15,7 @@ export type TechCategory =
   | "observability"
   | "packageManager"
   | "addons"
+  | "testing"
   | "examples"
   | "git"
   | "install";

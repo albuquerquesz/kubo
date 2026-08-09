@@ -190,6 +190,7 @@ export function useStackBuilder() {
         catKey === "webFrontend" ||
         catKey === "nativeFrontend" ||
         catKey === "addons" ||
+        catKey === "testing" ||
         catKey === "examples"
       ) {
         if (catKey === "webFrontend" || catKey === "nativeFrontend") {
@@ -202,7 +203,7 @@ export function useStackBuilder() {
 
         const numToPick = Math.floor(Math.random() * Math.min(options.length, 4));
         if (numToPick === 0) {
-          randomStack[catKey as "addons" | "examples"] = ["none"];
+          randomStack[catKey as "addons" | "testing" | "examples"] = ["none"];
           continue;
         }
 
@@ -211,7 +212,9 @@ export function useStackBuilder() {
           .sort(() => 0.5 - Math.random())
           .slice(0, numToPick);
 
-        randomStack[catKey as "addons" | "examples"] = shuffledOptions.map((opt) => opt.id);
+        randomStack[catKey as "addons" | "testing" | "examples"] = shuffledOptions.map(
+          (opt) => opt.id,
+        );
         continue;
       }
 
@@ -246,6 +249,7 @@ export function useStackBuilder() {
           catKey === "webFrontend" ||
           catKey === "nativeFrontend" ||
           catKey === "addons" ||
+          catKey === "testing" ||
           catKey === "examples"
         ) {
           const currentArray = Array.isArray(currentValue) ? [...currentValue] : [];
@@ -286,7 +290,12 @@ export function useStackBuilder() {
               nextArray = nextArray.filter((id) => id !== "none");
             }
 
-            if (nextArray.length === 0 && catKey !== "addons" && catKey !== "examples") {
+            if (
+              nextArray.length === 0 &&
+              catKey !== "addons" &&
+              catKey !== "testing" &&
+              catKey !== "examples"
+            ) {
               nextArray = ["none"];
             }
           }
@@ -315,7 +324,8 @@ export function useStackBuilder() {
     const value = stack[categoryKey];
     const options = TECH_OPTIONS[category] || [];
     const hasNoneOption = options.some((option) => option.id === "none");
-    const forceNoneFallback = category === "addons" || category === "examples";
+    const forceNoneFallback =
+      category === "addons" || category === "testing" || category === "examples";
 
     if (Array.isArray(value)) {
       const next = value.filter((id) => id !== techId);
