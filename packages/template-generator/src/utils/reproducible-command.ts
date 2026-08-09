@@ -32,6 +32,7 @@ export function generateReproducibleCommand(config: ProjectConfig): string {
   const frontend = normalizeMultiValues(config.frontend);
   const addons = normalizeMultiValues(config.addons);
   const examples = normalizeMultiValues(config.examples);
+  const testing = normalizeMultiValues(config.testing);
 
   flags.push(formatMultiFlag("--frontend", frontend));
 
@@ -46,6 +47,7 @@ export function generateReproducibleCommand(config: ProjectConfig): string {
 
   flags.push(formatMultiFlag("--addons", addons));
   flags.push(formatMultiFlag("--examples", examples));
+  flags.push(formatMultiFlag("--testing", testing));
 
   flags.push(`--db-setup ${config.dbSetup}`);
   if (config.dbSetupOptions?.mode === "manual") {

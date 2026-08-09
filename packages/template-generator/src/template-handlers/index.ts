@@ -9,5 +9,6 @@ export { processAuthTemplates } from "./auth";
 export { processPaymentsTemplates } from "./payments";
 export { processAddonTemplates } from "./addons";
 export { processExampleTemplates } from "./examples";
+export { processTestingTemplates } from "./testing";
 export { processExtrasTemplates } from "./extras";
 export { processDeployTemplates } from "./deploy";

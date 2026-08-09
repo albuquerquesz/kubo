@@ -26,6 +26,7 @@ import {
   processPaymentsTemplates,
   processAddonTemplates,
   processExampleTemplates,
+  processTestingTemplates,
   processExtrasTemplates,
   processDeployTemplates,
 } from "./template-handlers";
@@ -76,6 +77,7 @@ export async function generate(
       await processPaymentsTemplates(vfs, templates, config);
       await processAddonTemplates(vfs, templates, config);
       await processExampleTemplates(vfs, templates, config);
+      await processTestingTemplates(vfs, templates, config);
       await processExtrasTemplates(vfs, templates, config);
       await processDeployTemplates(vfs, templates, config);
 
