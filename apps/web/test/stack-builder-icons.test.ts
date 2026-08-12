@@ -39,11 +39,11 @@ describe("stack builder technology icons", () => {
 
   test("features GetMonitor as the default observability option", () => {
     const getMonitor = TECH_OPTIONS.observability.find((option) => option.id === "getmonitor");
-    const none = TECH_OPTIONS.observability.find((option) => option.id === "none");
+    const himetrica = TECH_OPTIONS.observability.find((option) => option.id === "himetrica");
 
     expect(TECH_OPTIONS.observability[0]?.id).toBe("getmonitor");
     expect(getMonitor?.default).toBe(true);
-    expect(none?.default).toBeUndefined();
+    expect(himetrica?.default).toBeUndefined();
     expect(getMonitor?.description.toLowerCase()).toContain("error");
   });
 });
