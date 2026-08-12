@@ -17,6 +17,7 @@ export default defineConfig({
   dialect: "sqlite",
   driver: "d1-http",
   {{else}}
+  // libsql/sqlite local + Turso remote both use the turso dialect in drizzle-kit
   dialect: "turso",
   dbCredentials: {
     url: process.env.DATABASE_URL || "",

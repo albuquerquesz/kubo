@@ -23,6 +23,8 @@ function createProjectConfig(overrides: Partial<ProjectConfig> = {}): ProjectCon
     examples: ["none"],
     auth: "none",
     payments: "none",
+    observability: "none",
+    communication: "none",
     git: false,
     packageManager: "bun",
     install: false,
@@ -92,9 +94,9 @@ async function runWithFakeBunx<T>(
 describe("Addon setup regressions", () => {
   it("uses a package execution command for the kubojs MCP server target", () => {
     const servers = getRecommendedMcpServers(createProjectConfig(), "project");
-    const betterTStackServer = servers.find((server) => server.key === "kubojs");
+    const kubojsServer = servers.find((server) => server.key === "kubojs");
 
-    expect(betterTStackServer?.target).toBe("bunx kubojs@latest mcp");
+    expect(kubojsServer?.target).toBe("bunx kubojs@latest mcp");
   });
 
   it("preserves explicit empty MCP selections in silent mode", async () => {
@@ -206,7 +208,7 @@ describe("Addon setup regressions", () => {
     await fs.remove(projectDir);
     await fs.ensureDir(projectDir);
     await fs.writeFile(
-      path.join(projectDir, "bts.jsonc"),
+      path.join(projectDir, "kubojs.jsonrc"),
       JSON.stringify({
         version: "0.0.0-test",
         createdAt: new Date(0).toISOString(),

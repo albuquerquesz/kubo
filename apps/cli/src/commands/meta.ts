@@ -1,11 +1,8 @@
-import { intro, log } from "@clack/prompts";
+import { log } from "@clack/prompts";
 import { Result } from "better-result";
 import pc from "picocolors";
 
-import { displayError } from "../utils/errors";
 import { openUrl } from "../utils/open-url";
-import { renderTitle } from "../utils/render-title";
-import { displaySponsors, fetchSponsors } from "../utils/sponsors";
 
 const DOCS_URL = "https://kubojs.dev/docs";
 const BUILDER_URL = "https://kubojs.dev/new";
@@ -21,20 +18,6 @@ async function openExternalUrl(url: string, successMessage: string) {
   } else {
     log.message(`Please visit ${url}`);
   }
-}
-
-export async function showSponsorsCommand() {
-  renderTitle();
-  intro(pc.magenta("I dont know Sponsors"));
-
-  const sponsorsResult = await fetchSponsors();
-  if (sponsorsResult.isErr()) {
-    displayError(sponsorsResult.error);
-    process.exit(1);
-    return;
-  }
-
-  displaySponsors(sponsorsResult.value);
 }
 
 export async function openDocsCommand() {

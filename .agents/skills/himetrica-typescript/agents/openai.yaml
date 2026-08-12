@@ -1,0 +1,4 @@
+interface:
+  display_name: "Himetrica TypeScript"
+  short_description: "Implement Himetrica analytics in Kubo web and server flows"
+  default_prompt: "Use $himetrica-typescript to plan or implement Himetrica tracking, events, errors, Web Vitals, and server-side analytics in this repository."

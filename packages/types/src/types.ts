@@ -15,6 +15,7 @@ import type {
   AuthSchema,
   PaymentsSchema,
   ObservabilitySchema,
+  CommunicationSchema,
   WebDeploySchema,
   ServerDeploySchema,
   DirectoryConflictSchema,
@@ -26,7 +27,7 @@ import type {
   AddInputSchema,
   CLIInputSchema,
   ProjectConfigSchema,
-  BetterTStackConfigSchema,
+  KubojsConfigSchema,
   InitResultSchema,
 } from "./schemas";
 
@@ -45,6 +46,7 @@ export type API = z.infer<typeof APISchema>;
 export type Auth = z.infer<typeof AuthSchema>;
 export type Payments = z.infer<typeof PaymentsSchema>;
 export type Observability = z.infer<typeof ObservabilitySchema>;
+export type Communication = z.infer<typeof CommunicationSchema>;
 export type WebDeploy = z.infer<typeof WebDeploySchema>;
 export type ServerDeploy = z.infer<typeof ServerDeploySchema>;
 export type DirectoryConflict = z.infer<typeof DirectoryConflictSchema>;
@@ -57,7 +59,7 @@ export type CreateInput = z.infer<typeof CreateInputSchema>;
 export type AddInput = z.infer<typeof AddInputSchema>;
 export type CLIInput = z.infer<typeof CLIInputSchema>;
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
-export type BetterTStackConfig = z.infer<typeof BetterTStackConfigSchema>;
+export type KubojsConfig = z.infer<typeof KubojsConfigSchema>;
 export type InitResult = z.infer<typeof InitResultSchema>;
 
 export type WebFrontend = Extract<

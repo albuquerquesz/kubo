@@ -94,7 +94,7 @@ function getAddonDisplay(addon: Addons): { label: string; hint: string } {
       break;
     case "mcp":
       label = "MCP";
-      hint = "Install MCP servers, including I dont know, via add-mcp";
+      hint = "Install MCP servers, including kubojs, via add-mcp";
       break;
     case "evlog":
       label = "evlog";
@@ -151,6 +151,12 @@ function validateAddonSelection(selected: Addons[] | undefined) {
     selected?.filter((addon) => ["turborepo", "nx", "vite-plus"].includes(addon)) ?? [];
   if (selectedTaskRunners.length > 1) {
     return "Choose Turborepo, Nx, or Vite+ as your task runner, not more than one.";
+  }
+
+  const selectedLinters =
+    selected?.filter((addon) => ["biome", "oxlint", "ultracite"].includes(addon)) ?? [];
+  if (selectedLinters.length > 1) {
+    return "Choose Biome, Oxlint, or Ultracite as your code-quality tool, not more than one.";
   }
 }
 

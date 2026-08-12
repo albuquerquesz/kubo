@@ -5,7 +5,7 @@ import fs from "fs-extra";
 
 import { setupNeonPostgres } from "../src/helpers/database-providers/neon-setup";
 import { create } from "../src/index";
-import { readBtsConfig } from "../src/utils/bts-config";
+import { readKubojsConfig } from "../src/utils/kubojs-config";
 
 const SMOKE_DIR_PATH = path.join(import.meta.dir, "..", ".smoke");
 
@@ -45,8 +45,8 @@ describe("Database setup options", () => {
     expect(result.value.reproducibleCommand).toContain("--manual-db");
     expect(result.value.reproducibleCommand).not.toContain("create-json --input");
 
-    const btsConfig = await readBtsConfig(projectPath);
-    expect(btsConfig?.dbSetupOptions).toEqual({ mode: "manual" });
+    const kubojsConfig = await readKubojsConfig(projectPath);
+    expect(kubojsConfig?.dbSetupOptions).toEqual({ mode: "manual" });
   });
 
   it("uses flags when dbSetupOptions only contains auto mode", async () => {
@@ -145,8 +145,8 @@ describe("Database setup options", () => {
 
     expect(result.value.projectConfig.dbSetupOptions).toBeUndefined();
 
-    const btsConfig = await readBtsConfig(projectPath);
-    expect(btsConfig?.dbSetupOptions).toBeUndefined();
+    const kubojsConfig = await readKubojsConfig(projectPath);
+    expect(kubojsConfig?.dbSetupOptions).toBeUndefined();
   });
 
   it("does not persist dbSetupOptions or force create-json when dbSetup is none", async () => {
@@ -180,8 +180,8 @@ describe("Database setup options", () => {
     expect(result.value.projectConfig.dbSetupOptions).toBeUndefined();
     expect(result.value.reproducibleCommand).not.toContain("create-json --input");
 
-    const btsConfig = await readBtsConfig(projectPath);
-    expect(btsConfig?.dbSetupOptions).toBeUndefined();
+    const kubojsConfig = await readKubojsConfig(projectPath);
+    expect(kubojsConfig?.dbSetupOptions).toBeUndefined();
   });
 
   it("skips Neon prompts when external commands are disabled", async () => {

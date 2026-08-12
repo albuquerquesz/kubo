@@ -1,0 +1,30 @@
+{
+  "name": "server",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsdown",
+    "check-types": "tsc -b",
+    "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
+    "dev": "bun run --hot src/index.ts",
+    "start": "bun run dist/index.mjs"
+  },
+  "dependencies": {
+    "@hono/trpc-server": "^0.4.2",
+    "@notifique-smoke/api": "workspace:*",
+    "@notifique-smoke/db": "workspace:*",
+    "@notifique-smoke/env": "workspace:*",
+    "@notifique-smoke/notifique": "workspace:*",
+    "@trpc/server": "catalog:",
+    "dotenv": "catalog:",
+    "hono": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@notifique-smoke/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "tsdown": "0.22.0",
+    "typescript": "catalog:",
+    "unrun": "^0.3.1"
+  }
+}

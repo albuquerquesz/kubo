@@ -2,7 +2,8 @@ import { describe, expect, it } from "bun:test";
 
 import {
   AddInputSchema,
-  BetterTStackConfigFileSchema,
+  CommunicationSchema,
+  KubojsConfigFileSchema,
   CLIInputSchema,
   CreateInputSchema,
   ObservabilitySchema,
@@ -14,6 +15,18 @@ describe("Input schemas", () => {
     expect(ObservabilitySchema.safeParse("getmonitor").success).toBe(true);
     expect(
       CreateInputSchema.safeParse({ projectName: "app", observability: "getmonitor" }).success,
+    ).toBe(true);
+  });
+
+  it("accepts Resend and Notifique as communication providers", () => {
+    expect(CommunicationSchema.safeParse("resend").success).toBe(true);
+    expect(CommunicationSchema.safeParse("notifique").success).toBe(true);
+    expect(CommunicationSchema.safeParse("none").success).toBe(true);
+    expect(
+      CreateInputSchema.safeParse({ projectName: "app", communication: "resend" }).success,
+    ).toBe(true);
+    expect(
+      CreateInputSchema.safeParse({ projectName: "app", communication: "notifique" }).success,
     ).toBe(true);
   });
 
@@ -50,8 +63,8 @@ describe("Input schemas", () => {
     expect(result.success).toBe(false);
   });
 
-  it("rejects unknown keys in bts.jsonc config payloads", () => {
-    const result = BetterTStackConfigFileSchema.safeParse({
+  it("rejects unknown keys in kubojs.jsonrc config payloads", () => {
+    const result = KubojsConfigFileSchema.safeParse({
       version: "0.0.0",
       createdAt: new Date(0).toISOString(),
       projectName: "app",
@@ -156,11 +169,11 @@ describe("Input schemas", () => {
     expect(typeof module.createBtsMcpServer).toBe("function");
   });
 
-  it("exposes the Better T Stack config file JSON schema by name", () => {
-    const schemaName = SchemaNameSchema.safeParse("betterTStackConfigFile");
+  it("exposes the kubojs config file JSON schema by name", () => {
+    const schemaName = SchemaNameSchema.safeParse("kubojsConfigFile");
 
     expect(schemaName.success).toBe(true);
-    expect(getSchemaResult("betterTStackConfigFile")).toMatchObject({
+    expect(getSchemaResult("kubojsConfigFile")).toMatchObject({
       type: "object",
     });
   });

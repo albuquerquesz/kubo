@@ -13,6 +13,8 @@ const baseConfig: ProjectConfig = {
   orm: "drizzle",
   auth: "none",
   payments: "none",
+  observability: "none",
+  communication: "none",
   addons: ["vite-plus"],
   examples: [],
   git: false,
@@ -36,9 +38,12 @@ describe("Vite+ config generator", () => {
 
     expect(patterns).toContain("apps/web/dist/**");
     expect(patterns).toContain("apps/web/.tanstack/**");
-    expect(patterns).toContain("apps/web/src/routeTree.gen.ts");
+    // routeTree.gen.ts is committed source (not a build ignore)
+    expect(patterns).not.toContain("apps/web/src/routeTree.gen.ts");
     expect(patterns).toContain("apps/server/dist/**");
     expect(patterns).toContain("packages/db/dist/**");
+    expect(patterns).toContain("local.db");
+    expect(patterns).toContain("local.db-*");
     expect(patterns).toContain("packages/db/local.db*");
     expect(patterns).not.toContain("apps/web/.next/**");
     expect(patterns).not.toContain("apps/web/.nuxt/**");
@@ -131,6 +136,8 @@ describe("Vite+ config generator", () => {
       }),
     );
 
+    expect(tursoPatterns).toContain("local.db");
+    expect(tursoPatterns).toContain("local.db-*");
     expect(tursoPatterns).toContain("packages/db/local.db*");
     expect(tursoPatterns).not.toContain("packages/db/prisma/**/*.db*");
 
@@ -141,6 +148,7 @@ describe("Vite+ config generator", () => {
       }),
     );
 
+    expect(prismaTursoPatterns).toContain("local.db");
     expect(prismaTursoPatterns).toContain("packages/db/local.db*");
     expect(prismaTursoPatterns).toContain("packages/db/prisma/**/*.db*");
 
@@ -151,6 +159,8 @@ describe("Vite+ config generator", () => {
       }),
     );
 
+    expect(d1Patterns).not.toContain("local.db");
+    expect(d1Patterns).not.toContain("local.db-*");
     expect(d1Patterns).not.toContain("packages/db/local.db*");
     expect(d1Patterns).not.toContain("packages/db/prisma/**/*.db*");
   });

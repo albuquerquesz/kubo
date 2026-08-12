@@ -1,0 +1,56 @@
+import path from "node:path";
+
+import type { KubojsConfig } from "@kubojs/types";
+import fs from "fs-extra";
+import { applyEdits, modify, parse } from "jsonc-parser";
+
+const KUBOJS_CONFIG_FILE = "kubojs.jsonrc";
+
+/**
+ * Reads the kubojs configuration file from the project directory.
+ */
+export async function readKubojsConfig(projectDir: string): Promise<KubojsConfig | null> {
+  try {
+    const configPath = path.join(projectDir, KUBOJS_CONFIG_FILE);
+
+    if (!(await fs.pathExists(configPath))) {
+      return null;
+    }
+
+    const configContent = await fs.readFile(configPath, "utf-8");
+    const config = parse(configContent) as KubojsConfig;
+    return config;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Updates specific fields in the kubojs configuration file.
+ */
+export async function updateKubojsConfig(
+  projectDir: string,
+  updates: Partial<
+    Pick<KubojsConfig, "addons" | "addonOptions" | "dbSetupOptions" | "webDeploy" | "serverDeploy">
+  >,
+): Promise<void> {
+  try {
+    const configPath = path.join(projectDir, KUBOJS_CONFIG_FILE);
+
+    if (!(await fs.pathExists(configPath))) {
+      return;
+    }
+
+    let content = await fs.readFile(configPath, "utf-8");
+
+    // Apply each update using jsonc-parser's modify (preserves comments)
+    for (const [key, value] of Object.entries(updates)) {
+      const edits = modify(content, [key], value, { formattingOptions: { tabSize: 2 } });
+      content = applyEdits(content, edits);
+    }
+
+    await fs.writeFile(configPath, content, "utf-8");
+  } catch {
+    // Silent failure
+  }
+}

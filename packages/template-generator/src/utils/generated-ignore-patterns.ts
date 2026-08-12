@@ -1,18 +1,14 @@
 import type { ProjectConfig } from "@kubojs/types";
 
 const FRONTEND_GENERATED_PATTERNS = {
-  "tanstack-router": ["apps/web/dist/**", "apps/web/.tanstack/**", "apps/web/src/routeTree.gen.ts"],
+  // routeTree.gen.ts is source (TanStack recommends committing it) — not ignored
+  "tanstack-router": ["apps/web/dist/**", "apps/web/.tanstack/**"],
   "react-router": ["apps/web/build/**", "apps/web/.react-router/**"],
-  "tanstack-start": [
-    "apps/web/dist/**",
-    "apps/web/.vinxi/**",
-    "apps/web/.tanstack/**",
-    "apps/web/src/routeTree.gen.ts",
-  ],
+  "tanstack-start": ["apps/web/dist/**", "apps/web/.vinxi/**", "apps/web/.tanstack/**"],
   next: ["apps/web/.next/**", "apps/web/out/**"],
   nuxt: ["apps/web/.nuxt/**", "apps/web/.output/**", "apps/web/.data/**", "apps/web/.nitro/**"],
   svelte: ["apps/web/.svelte-kit/**", "apps/web/build/**", "apps/web/.output/**"],
-  solid: ["apps/web/dist/**", "apps/web/.tanstack/**", "apps/web/src/routeTree.gen.ts"],
+  solid: ["apps/web/dist/**", "apps/web/.tanstack/**"],
   astro: ["apps/web/dist/**", "apps/web/.astro/**"],
   "native-bare": ["apps/native/.expo/**", "apps/native/dist/**", "apps/native/web-build/**"],
   "native-uniwind": ["apps/native/.expo/**", "apps/native/dist/**", "apps/native/web-build/**"],
@@ -48,6 +44,11 @@ export function getStackGeneratedIgnorePatterns(config: ProjectConfig): string[]
   }
 
   if (config.database === "sqlite" && config.dbSetup !== "d1" && config.orm !== "none") {
+    // DATABASE_URL=file:../../local.db is CWD-relative from both apps/server and
+    // packages/db, so the file lands at monorepo root. Also cover package-local
+    // turso `db:local` / accidental packages/db paths.
+    patterns.add("local.db");
+    patterns.add("local.db-*");
     patterns.add("packages/db/local.db*");
   }
 

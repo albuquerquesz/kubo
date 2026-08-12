@@ -6,7 +6,7 @@ metadata:
   docs:
     - "https://kubojs.dev/docs"
   pathPatterns:
-    - "bts.jsonc"
+    - "kubojs.jsonrc"
 ---
 
 # Add addons to an existing kubojs project
@@ -15,7 +15,7 @@ Use the kubojs MCP server to install addons into an existing project rather than
 
 ## When this applies
 
-The user already has a kubojs project (look for a `bts.jsonc` config) and wants to add tooling or features — e.g. "add PWA support", "add a docs site", "switch to Biome", "add Turborepo", "wire up the MCP addon".
+The user already has a kubojs project (look for a `kubojs.jsonrc` config) and wants to add tooling or features — e.g. "add PWA support", "add a docs site", "switch to Biome", "add Turborepo", "wire up the MCP addon".
 
 For brand-new projects, use the **scaffold-project** skill instead.
 

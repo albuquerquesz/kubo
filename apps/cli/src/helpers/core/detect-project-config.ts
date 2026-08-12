@@ -3,34 +3,35 @@ import path from "node:path";
 import { Result } from "better-result";
 import fs from "fs-extra";
 
-import { readBtsConfig } from "../../utils/bts-config";
+import { normalizeObservability } from "../../utils/config-processing";
+import { readKubojsConfig } from "../../utils/kubojs-config";
 
 export async function detectProjectConfig(projectDir: string) {
   const result = await Result.tryPromise({
     try: async () => {
-      const btsConfig = await readBtsConfig(projectDir);
-      if (btsConfig) {
+      const kubojsConfig = await readKubojsConfig(projectDir);
+      if (kubojsConfig) {
         return {
           projectDir,
           projectName: path.basename(projectDir),
-          addonOptions: btsConfig.addonOptions,
-          dbSetupOptions: btsConfig.dbSetupOptions,
-          database: btsConfig.database,
-          orm: btsConfig.orm,
-          backend: btsConfig.backend,
-          runtime: btsConfig.runtime,
-          frontend: btsConfig.frontend,
-          addons: btsConfig.addons,
-          examples: btsConfig.examples,
-          testing: btsConfig.testing,
-          auth: btsConfig.auth,
-          payments: btsConfig.payments,
-          observability: btsConfig.observability,
-          packageManager: btsConfig.packageManager,
-          dbSetup: btsConfig.dbSetup,
-          api: btsConfig.api,
-          webDeploy: btsConfig.webDeploy,
-          serverDeploy: btsConfig.serverDeploy,
+          addonOptions: kubojsConfig.addonOptions,
+          dbSetupOptions: kubojsConfig.dbSetupOptions,
+          database: kubojsConfig.database,
+          orm: kubojsConfig.orm,
+          backend: kubojsConfig.backend,
+          runtime: kubojsConfig.runtime,
+          frontend: kubojsConfig.frontend,
+          addons: kubojsConfig.addons,
+          examples: kubojsConfig.examples,
+          auth: kubojsConfig.auth,
+          payments: kubojsConfig.payments,
+          observability: normalizeObservability(kubojsConfig.observability),
+          communication: kubojsConfig.communication ?? "none",
+          packageManager: kubojsConfig.packageManager,
+          dbSetup: kubojsConfig.dbSetup,
+          api: kubojsConfig.api,
+          webDeploy: kubojsConfig.webDeploy,
+          serverDeploy: kubojsConfig.serverDeploy,
         };
       }
 
@@ -42,9 +43,9 @@ export async function detectProjectConfig(projectDir: string) {
   return result.isOk() ? result.value : null;
 }
 
-export async function isBetterTStackProject(projectDir: string): Promise<boolean> {
+export async function isKubojsProject(projectDir: string): Promise<boolean> {
   const result = await Result.tryPromise({
-    try: () => fs.pathExists(path.join(projectDir, "bts.jsonc")),
+    try: () => fs.pathExists(path.join(projectDir, "kubojs.jsonrc")),
     catch: () => false,
   });
 

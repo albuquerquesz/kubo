@@ -9,10 +9,10 @@ import type {
   CLIInput,
   Frontend,
   Payments,
+  Communication,
   ProjectConfig,
   Runtime,
   ServerDeploy,
-  Testing,
   WebDeploy,
 } from "../types";
 import { WEB_FRAMEWORKS } from "./compatibility";
@@ -21,7 +21,44 @@ import { ValidationError } from "./errors";
 type ValidationResult = Result<void, ValidationError>;
 type AddonCompatibilityConfig = Pick<ProjectConfig, "frontend" | "auth" | "backend" | "runtime">;
 const TASK_RUNNER_ADDONS = ["turborepo", "nx", "vite-plus"] as const satisfies readonly Addons[];
+/** Mutually exclusive code-quality linters (one slot). */
+export const LINTER_ADDONS = ["biome", "oxlint", "ultracite"] as const satisfies readonly Addons[];
 const STATIC_DESKTOP_ADDONS = ["tauri", "electrobun"] as const satisfies readonly Addons[];
+
+export function isLinterAddon(addon: string): boolean {
+  return (LINTER_ADDONS as readonly string[]).includes(addon);
+}
+
+/**
+ * When adding a code-quality linter, drop sibling linters so only one remains.
+ * Last-selected linter wins. Task runners stay validation-only (reject on dual).
+ */
+export function mergeAddonsExclusive(
+  existingAddons: readonly Addons[],
+  addonsToAdd: readonly Addons[],
+): { updatedAddons: Addons[]; removedAddons: Addons[] } {
+  const removed = new Set<Addons>();
+  let result = [...existingAddons];
+
+  for (const addon of addonsToAdd) {
+    if ((LINTER_ADDONS as readonly Addons[]).includes(addon)) {
+      for (const current of result) {
+        if ((LINTER_ADDONS as readonly Addons[]).includes(current) && current !== addon) {
+          removed.add(current);
+        }
+      }
+      result = result.filter(
+        (current) => !(LINTER_ADDONS as readonly Addons[]).includes(current) || current === addon,
+      );
+    }
+
+    if (!result.includes(addon) && addon !== "none") {
+      result.push(addon);
+    }
+  }
+
+  return { updatedAddons: result, removedAddons: [...removed] };
+}
 const TAURI_STATIC_EXPORT_FRONTENDS = [
   "next",
   "tanstack-start",
@@ -269,10 +306,6 @@ export function isExampleTodoAllowed(
   // Todo requires both database and API to communicate
   if (database === "none" || api === "none") return false;
   return true;
-}
-
-export function isPlaywrightAllowed(frontends: Frontend[] = []) {
-  return frontends.some((frontend) => isWebFrontend(frontend));
 }
 
 export function isExampleAIAllowed(backend?: ProjectConfig["backend"], frontends: Frontend[] = []) {
@@ -525,6 +558,15 @@ export function validateAddonsAgainstFrontends(
     );
   }
 
+  const selectedLinters = [
+    ...new Set(addons.filter((addon) => (LINTER_ADDONS as readonly Addons[]).includes(addon))),
+  ];
+  if (selectedLinters.length > 1) {
+    return validationErr(
+      "Cannot combine 'biome', 'oxlint', and 'ultracite' addons. Choose one code-quality linter.",
+    );
+  }
+
   for (const addon of addons) {
     if (addon === "none") continue;
     const { isCompatible, reason } = validateAddonCompatibility(
@@ -554,13 +596,18 @@ export function validateAddonsAgainstConfig(
   );
 }
 
-export function validateTestingAgainstFrontends(
-  testing: Testing[] = [],
-  frontends: Frontend[] = [],
+export function validateCommunicationCompatibility(
+  communication: Communication | undefined,
+  backend: Backend | undefined,
 ): ValidationResult {
-  if (testing.includes("playwright") && !isPlaywrightAllowed(frontends)) {
-    return validationErr("playwright testing requires a web frontend");
+  if (!communication || communication === "none") return Result.ok(undefined);
+
+  if ((communication === "resend" || communication === "notifique") && backend === "none") {
+    return validationErr(
+      `${communication === "notifique" ? "Notifique" : "Resend"} communication requires a server backend. Please choose a backend or use '--communication none'.`,
+    );
   }
+
   return Result.ok(undefined);
 }
 

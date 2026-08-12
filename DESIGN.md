@@ -1,5 +1,5 @@
 ---
-name: Better T Stack
+name: Kubo
 description: A dark, grid-led editorial system for choosing and generating explicit TypeScript stacks (Kubo / create-kubojs).
 colors:
   warm-canvas: "#11110d"
@@ -127,13 +127,13 @@ components:
     height: "48px"
 ---
 
-# Design System: Better T Stack
+# Design System: Kubo
 
 ## Overview
 
 **Creative North Star: "The System Manual"**
 
-Better T Stack (product face: **Kubo**) should feel like a well-made infrastructure manual brought to life: exact, independent, and kinetic. A visible soft-rule grid, explicit states, and compact technical metadata make architecture choices feel inspectable. The shell is dark-first because it lives beside editors and terminals, not because developer tools must look neon or theatrical.
+Kubo (product face: **Kubo**) should feel like a well-made infrastructure manual brought to life: exact, independent, and kinetic. A visible soft-rule grid, explicit states, and compact technical metadata make architecture choices feel inspectable. The shell is dark-first because it lives beside editors and terminals, not because developer tools must look neon or theatrical.
 
 The design is architectural, not card-driven. Sections, navigation, controls, diagrams, and footers meet at shared 1 px soft rules. Product behavior carries the visual story through stack diagrams, create commands, compatibility states, and real usage data. Gold is a **signal**, not wallpaper: primary conversion surfaces, selected states, and structural emphasis only. Display titles stay cream ink; accent color is not used to colorize every second line of a headline.
 

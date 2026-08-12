@@ -7,7 +7,6 @@ import {
   processAddonsDeps,
   processNxConfig,
   processPackageConfigs,
-  processTestingTemplates,
   processTurboConfig,
   processVitePlusConfig,
   processTemplateString,
@@ -19,16 +18,16 @@ import fs from "fs-extra";
 import pc from "picocolors";
 
 import { getAddonsToAdd } from "../../prompts/addons";
-import { getTestingToAdd } from "../../prompts/testing";
-import type { AddInput, Addons, AddonOptions, ProjectConfig, Testing } from "../../types";
-import { updateBtsConfig } from "../../utils/bts-config";
+import type { AddInput, Addons, AddonOptions, ProjectConfig } from "../../types";
 import {
+  isLinterAddon,
+  mergeAddonsExclusive,
   validateAddonsAgainstConfig,
-  validateTestingAgainstFrontends,
 } from "../../utils/compatibility-rules";
 import { isSilent, runWithContextAsync } from "../../utils/context";
 import { CLIError, UserCancelledError, displayError } from "../../utils/errors";
 import { validateAgentSafePathInput } from "../../utils/input-hardening";
+import { updateKubojsConfig } from "../../utils/kubojs-config";
 import { renderTitle } from "../../utils/render-title";
 import { setupAddons } from "../addons/addons-setup";
 import { detectProjectConfig } from "./detect-project-config";
@@ -41,7 +40,6 @@ export interface AddHandlerOptions {
 export interface AddResult {
   success: boolean;
   addedAddons: Addons[];
-  addedTesting: Testing[];
   projectDir: string;
   dryRun?: boolean;
   plannedFileCount?: number;
@@ -141,6 +139,55 @@ function refreshLefthookTemplate(vfs: VirtualFileSystem, config: ProjectConfig):
   vfs.writeFile("lefthook.yml", processTemplateString(template, config));
 }
 
+/** Remove files/deps left by a replaced exclusive linter. */
+async function cleanupRemovedLinters(projectDir: string, removedAddons: Addons[]): Promise<void> {
+  const removedLinters = removedAddons.filter(isLinterAddon);
+  if (removedLinters.length === 0) return;
+
+  const packageJsonPath = path.join(projectDir, "package.json");
+  if (await fs.pathExists(packageJsonPath)) {
+    const packageJson = await fs.readJson(packageJsonPath);
+    packageJson.devDependencies = packageJson.devDependencies ?? {};
+
+    for (const removed of removedLinters) {
+      if (removed === "biome" || removed === "ultracite") {
+        delete packageJson.devDependencies["@biomejs/biome"];
+        delete packageJson.devDependencies.ultracite;
+      }
+      if (removed === "oxlint" || removed === "ultracite") {
+        delete packageJson.devDependencies.oxlint;
+        delete packageJson.devDependencies.oxfmt;
+      }
+    }
+
+    // Drop dual check scripts when switching away; setup for the new linter rewrites them.
+    if (
+      typeof packageJson.scripts?.check === "string" &&
+      removedLinters.some((linter) => {
+        if (linter === "biome") return packageJson.scripts.check.includes("biome");
+        if (linter === "oxlint") return packageJson.scripts.check.includes("oxlint");
+        if (linter === "ultracite") return packageJson.scripts.check.includes("ultracite");
+        return false;
+      })
+    ) {
+      delete packageJson.scripts.check;
+    }
+
+    await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+  }
+
+  for (const removed of removedLinters) {
+    if (removed === "biome") {
+      await fs.remove(path.join(projectDir, "biome.json"));
+    }
+    if (removed === "oxlint") {
+      await fs.remove(path.join(projectDir, ".oxlintrc.json"));
+      await fs.remove(path.join(projectDir, ".oxfmtrc.json"));
+      await fs.remove(path.join(projectDir, ".oxfmtrc.jsonc"));
+    }
+  }
+}
+
 function updateViteConfigImportsForVitePlus(vfs: VirtualFileSystem): void {
   const viteConfigPaths = ["apps/web/vite.config.ts"];
 
@@ -178,7 +225,6 @@ export async function addHandler(
         return {
           success: false,
           addedAddons: [],
-          addedTesting: [],
           projectDir: "",
           error: error.message,
         };
@@ -190,7 +236,6 @@ export async function addHandler(
       return {
         success: false,
         addedAddons: [],
-        addedTesting: [],
         projectDir: "",
         error: error.message,
       };
@@ -217,7 +262,7 @@ async function addHandlerInternal(
 
   if (!isSilent()) {
     renderTitle();
-    intro(pc.magenta("Add addons to your I dont know project"));
+    intro(pc.magenta("Add addons to your kubojs project"));
   }
 
   // Detect existing project configuration
@@ -226,7 +271,7 @@ async function addHandlerInternal(
   if (!existingConfig) {
     return Result.err(
       new CLIError({
-        message: `No I dont know project found in ${projectDir}. Make sure bts.jsonc exists.`,
+        message: `No kubojs project found in ${projectDir}. Make sure kubojs.jsonrc exists.`,
       }),
     );
   }
@@ -235,43 +280,34 @@ async function addHandlerInternal(
     log.info(pc.dim(`Detected project: ${existingConfig.projectName}`));
   }
 
-  // Determine which addons/testing tools to add
-  let addonsToAdd: Addons[] = [];
-  let testingToAdd: Testing[] = [];
+  // Determine which addons to add
+  let addonsToAdd: Addons[];
 
-  const hasAddonsInput = (input.addons?.length ?? 0) > 0;
-  const hasTestingInput = (input.testing?.length ?? 0) > 0;
-
-  if (hasAddonsInput || hasTestingInput) {
-    // Filter out 'none' and already installed entries
-    addonsToAdd = (input.addons ?? []).filter(
+  if (input.addons && input.addons.length > 0) {
+    // Filter out 'none' and already installed addons
+    addonsToAdd = input.addons.filter(
       (addon) => addon !== "none" && !existingConfig.addons.includes(addon),
     );
-    testingToAdd = (input.testing ?? []).filter(
-      (item) => item !== "none" && !(existingConfig.testing ?? []).includes(item),
-    );
 
-    if (addonsToAdd.length === 0 && testingToAdd.length === 0) {
+    if (addonsToAdd.length === 0) {
       if (!isSilent()) {
-        log.warn(pc.yellow("All specified addons/testing tools are already installed or invalid."));
+        log.warn(pc.yellow("All specified addons are already installed or invalid."));
       }
       return Result.ok({
         success: true,
         addedAddons: [],
-        addedTesting: [],
         projectDir,
       });
     }
   } else if (isSilent()) {
     return Result.err(
       new CLIError({
-        message:
-          "Addons or testing tools are required in silent mode. Provide them via add() or add-json.",
+        message: "Addons are required in silent mode. Provide them via add() or add-json.",
       }),
     );
   } else {
-    // Interactive mode - prompt user to select addons, then testing tools
-    const addonsPromptResult = await Result.tryPromise({
+    // Interactive mode - prompt user to select addons
+    const promptResult = await Result.tryPromise({
       try: () => getAddonsToAdd(existingConfig),
       catch: (e: unknown) => {
         if (UserCancelledError.is(e)) return e;
@@ -282,70 +318,38 @@ async function addHandlerInternal(
       },
     });
 
-    if (addonsPromptResult.isErr()) {
-      return Result.err(addonsPromptResult.error);
+    if (promptResult.isErr()) {
+      return Result.err(promptResult.error);
     }
 
-    addonsToAdd = addonsPromptResult.value;
+    const selectedAddons = promptResult.value;
 
-    const testingPromptResult = await Result.tryPromise({
-      try: () => getTestingToAdd(existingConfig),
-      catch: (e: unknown) => {
-        if (UserCancelledError.is(e)) return e;
-        return new CLIError({
-          message: e instanceof Error ? e.message : String(e),
-          cause: e,
-        });
-      },
-    });
-
-    if (testingPromptResult.isErr()) {
-      return Result.err(testingPromptResult.error);
-    }
-
-    testingToAdd = testingPromptResult.value;
-
-    if (addonsToAdd.length === 0 && testingToAdd.length === 0) {
+    if (selectedAddons.length === 0) {
       if (!isSilent()) {
-        log.info(pc.dim("Nothing selected."));
+        log.info(pc.dim("No addons selected."));
         outro(pc.magenta("Nothing to add."));
       }
       return Result.ok({
         success: true,
         addedAddons: [],
-        addedTesting: [],
         projectDir,
       });
     }
+
+    addonsToAdd = selectedAddons;
   }
 
-  // Build config for addon/testing setup
-  const updatedAddons = [...existingConfig.addons, ...addonsToAdd];
-  const updatedTesting = [...(existingConfig.testing ?? []), ...testingToAdd];
-
-  if (addonsToAdd.length > 0) {
-    const addonsValidationResult = validateAddonsAgainstConfig(updatedAddons, existingConfig);
-    if (addonsValidationResult.isErr()) {
-      return Result.err(new CLIError({ message: addonsValidationResult.error.message }));
-    }
-  }
-
-  if (testingToAdd.length > 0) {
-    const testingValidationResult = validateTestingAgainstFrontends(
-      updatedTesting,
-      existingConfig.frontend,
-    );
-    if (testingValidationResult.isErr()) {
-      return Result.err(new CLIError({ message: testingValidationResult.error.message }));
-    }
+  // Build config for addon setup (exclusive lint/task-runner slots replace siblings)
+  const { updatedAddons, removedAddons } = mergeAddonsExclusive(existingConfig.addons, addonsToAdd);
+  const addonsValidationResult = validateAddonsAgainstConfig(updatedAddons, existingConfig);
+  if (addonsValidationResult.isErr()) {
+    return Result.err(new CLIError({ message: addonsValidationResult.error.message }));
   }
 
   if (!isSilent()) {
-    if (addonsToAdd.length > 0) {
-      log.info(pc.cyan(`Adding addons: ${addonsToAdd.join(", ")}`));
-    }
-    if (testingToAdd.length > 0) {
-      log.info(pc.cyan(`Adding testing tools: ${testingToAdd.join(", ")}`));
+    log.info(pc.cyan(`Adding addons: ${addonsToAdd.join(", ")}`));
+    if (removedAddons.length > 0) {
+      log.info(pc.dim(`Replacing exclusive addons: ${removedAddons.join(", ")}`));
     }
   }
 
@@ -362,10 +366,10 @@ async function addHandlerInternal(
     frontend: existingConfig.frontend,
     addons: addonsToAdd, // Only the new addons for template processing
     examples: existingConfig.examples,
-    testing: testingToAdd, // Only the new testing tools for template processing
     auth: existingConfig.auth,
     payments: existingConfig.payments,
     observability: existingConfig.observability,
+    communication: existingConfig.communication ?? "none",
     git: false,
     packageManager: input.packageManager || existingConfig.packageManager,
     install: input.install ?? false,
@@ -377,7 +381,6 @@ async function addHandlerInternal(
   const updatedConfig: ProjectConfig = {
     ...config,
     addons: updatedAddons,
-    testing: updatedTesting,
   };
 
   // Create VFS and process addon templates using template-generator's logic
@@ -405,7 +408,6 @@ async function addHandlerInternal(
 
   // Process addon templates
   await processAddonTemplates(vfs, EMBEDDED_TEMPLATES, config);
-  await processTestingTemplates(vfs, EMBEDDED_TEMPLATES, config);
 
   // Process addon dependencies (adds deps to package.json files in VFS)
   processAddonsDeps(vfs, config);
@@ -456,7 +458,6 @@ async function addHandlerInternal(
     return Result.ok({
       success: true,
       addedAddons: addonsToAdd,
-      addedTesting: testingToAdd,
       projectDir,
       dryRun: true,
       plannedFileCount: vfs.getFileCount(),
@@ -476,6 +477,9 @@ async function addHandlerInternal(
   if (vfs.getFileCount() > 0 && !isSilent()) {
     log.info(pc.dim(`Wrote ${vfs.getFileCount()} addon files`));
   }
+
+  // Drop previous exclusive linter files/deps before installing the replacement.
+  await cleanupRemovedLinters(projectDir, removedAddons);
 
   // Run addon setup (handles deps and interactive prompts)
   // Wrap with Result.tryPromise since setupAddons can throw UserCancelledError
@@ -498,10 +502,9 @@ async function addHandlerInternal(
     return Result.err(setupResult.error);
   }
 
-  // Update bts.jsonc with new addons/testing tools
-  await updateBtsConfig(projectDir, {
+  // Update kubojs.jsonrc with final exclusive addon list (preserves JSONC comments)
+  await updateKubojsConfig(projectDir, {
     addons: updatedAddons,
-    testing: updatedTesting,
     addonOptions: updatedConfig.addonOptions,
   });
 
@@ -514,7 +517,7 @@ async function addHandlerInternal(
   }
 
   if (!isSilent()) {
-    log.success(pc.green(`Successfully added: ${[...addonsToAdd, ...testingToAdd].join(", ")}`));
+    log.success(pc.green(`Successfully added: ${addonsToAdd.join(", ")}`));
 
     if (!input.install) {
       log.info(
@@ -530,7 +533,6 @@ async function addHandlerInternal(
   return Result.ok({
     success: true,
     addedAddons: addonsToAdd,
-    addedTesting: testingToAdd,
     projectDir,
     plannedFileCount: vfs.getFileCount(),
   });

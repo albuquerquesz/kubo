@@ -12,7 +12,7 @@ July 19, 2026
 
 The plugin needs a reusable design skill for creating technically confident AI-product marketing interfaces. The intended visual direction is informed by the structural and interaction patterns observed on `mistral.ai`, but it must never reproduce Mistral's brand identity, copy, navigation labels, product names, logo, or copyrighted artwork.
 
-The skill is distributed with the Better T Stack plugin and must be concise enough to guide an agent during implementation while retaining the rules that materially affect the result: page composition, responsive behavior, accessible interaction, and brand-safe visual translation.
+The skill is distributed with the Kubo plugin and must be concise enough to guide an agent during implementation while retaining the rules that materially affect the result: page composition, responsive behavior, accessible interaction, and brand-safe visual translation.
 
 ## Research evidence
 

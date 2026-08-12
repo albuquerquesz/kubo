@@ -64,7 +64,7 @@ Specifically:
 
 ## Users
 
-- CLI users generating a Better T Stack project with `payments=abacatepay`
+- CLI users generating a Kubo project with `payments=abacatepay`
 - Maintainers validating that generated AbacatePay projects boot, build, and document themselves correctly
 
 ## Current State

@@ -7,7 +7,7 @@ import { SMOKE_DIR } from "./setup";
 
 describe("add()", () => {
   it("returns an error in silent mode instead of exiting when the project config is missing", async () => {
-    const projectDir = join(SMOKE_DIR, "missing-bts-config");
+    const projectDir = join(SMOKE_DIR, "missing-kubojs-config");
     await mkdir(projectDir, { recursive: true });
 
     const result = await add({

@@ -10,6 +10,7 @@ import type {
   Database,
   DatabaseSetup,
   Observability,
+  Communication,
   ORM,
   PackageManager,
   Payments,
@@ -71,8 +72,12 @@ export function processFlags(options: CLIInput, projectName?: string) {
     config.payments = options.payments as Payments;
   }
 
-  if (options.observability !== undefined) {
-    config.observability = options.observability as Observability;
+  if (options.observability !== undefined)
+    config.observability = normalizeObservability(options.observability);
+  if (options.disableObservability) config.observability = [];
+
+  if (options.communication !== undefined) {
+    config.communication = options.communication as Communication;
   }
 
   if (options.git !== undefined) {
@@ -127,6 +132,18 @@ export function processFlags(options: CLIInput, projectName?: string) {
   return config;
 }
 
+export function normalizeObservability(value: unknown): Observability {
+  if (value === "none" || value === undefined) return [];
+  const values = Array.isArray(value) ? value : [value];
+  return [
+    ...new Set(
+      values.filter(
+        (item): item is Observability[number] => item === "getmonitor" || item === "himetrica",
+      ),
+    ),
+  ];
+}
+
 export function getProvidedFlags(options: CLIInput) {
   return new Set(
     Object.keys(options).filter((key) => options[key as keyof CLIInput] !== undefined),
@@ -150,6 +167,14 @@ function validateNoneExclusivity<T>(
 }
 
 export function validateArrayOptions(options: CLIInput): Result<void, ValidationError> {
+  if (options.disableObservability && options.observability !== undefined) {
+    return Result.err(
+      new ValidationError({
+        message: "Cannot combine '--disable-observability' with '--observability'.",
+      }),
+    );
+  }
+
   const frontendResult = validateNoneExclusivity(options.frontend, "frontend options");
   if (frontendResult.isErr()) return frontendResult;
 

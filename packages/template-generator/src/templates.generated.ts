@@ -23,7 +23,7 @@ export const EMBEDDED_TEMPLATES: Map<string, string> = new Map([
 			"!**/routeTree.gen.ts",
 			"!**/src-tauri",
 			"!**/.nuxt",
-			"!bts.jsonc",
+			"!kubojs.jsonrc",
 			"!**/.expo",
 			"!**/.wrangler",
 			"!**/.alchemy",
@@ -35,13 +35,19 @@ export const EMBEDDED_TEMPLATES: Map<string, string> = new Map([
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"indentStyle": "space",
+		"indentWidth": 2
 	},
 	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"linter": {
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"a11y": {
+				"noLabelWithoutControl": "off",
+				"useKeyWithClickEvents": "off",
+				"useSemanticElements": "off"
+			},
 			"correctness": {
 				"useExhaustiveDependencies": "info"
 			},
@@ -65,6 +71,9 @@ export const EMBEDDED_TEMPLATES: Map<string, string> = new Map([
 				"useNumberNamespace": "error",
 				"noInferrableTypes": "error",
 				"noUselessElse": "error"
+			},
+			"suspicious": {
+				"noExplicitAny": "off"
 			}
 		}
 	},
@@ -110,7 +119,7 @@ const webBuildDir =
 export default {
   app: {
     name: "{{projectName}}",
-    identifier: "dev.bettertstack.{{projectName}}.desktop",
+    identifier: "dev.kubo.{{projectName}}.desktop",
     version: "0.0.1",
   },
   runtime: {
@@ -5718,7 +5727,7 @@ return (
         <ExpoUIText
           textStyle=\\{{ color: theme.text, fontSize: 24, fontWeight: "bold", textAlign: "center" }}
         >
-          BETTER T STACK
+          Kubo
         </ExpoUIText>
       </Host>
 
@@ -6514,7 +6523,7 @@ export default function Home() {
     <Container>
       <ScrollView>
         <View style={styles.pageContainer}>
-          <Text style={styles.headerTitle}>BETTER T STACK</Text>
+          <Text style={styles.headerTitle}>Kubo</Text>
           {session?.user ? (
             <View style={styles.sessionInfoCard}>
               <View style={styles.sessionUserRow}>
@@ -7264,7 +7273,7 @@ return (
 <Container className="p-6">
   <View className="py-4 mb-6">
     <Text className="text-4xl font-bold text-foreground mb-2">
-      BETTER T STACK
+      Kubo
     </Text>
   </View>
 
@@ -7834,8 +7843,8 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 {{#if (ne backend "self")}}
 		advanced: {
 			defaultCookieAttributes: {
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: process.env.NODE_ENV === "production",
 				httpOnly: true,
 			},
 		},
@@ -7917,8 +7926,8 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 {{#if (ne backend "self")}}
 		advanced: {
 			defaultCookieAttributes: {
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: process.env.NODE_ENV === "production",
 				httpOnly: true,
 			},
 		},
@@ -7997,8 +8006,8 @@ export function createAuth() {
 		baseURL: env.BETTER_AUTH_URL,
 		advanced: {
 			defaultCookieAttributes: {
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: process.env.NODE_ENV === "production",
 				httpOnly: true,
 			},
 			// uncomment crossSubDomainCookies setting when ready to deploy and replace <your-workers-subdomain> with your actual workers subdomain
@@ -8072,8 +8081,8 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 {{#if (ne backend "self")}}
 		advanced: {
 			defaultCookieAttributes: {
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: process.env.NODE_ENV === "production",
 				httpOnly: true,
 			},
 		},
@@ -8144,8 +8153,8 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 {{#if (ne backend "self")}}
 		advanced: {
 			defaultCookieAttributes: {
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: process.env.NODE_ENV === "production",
 				httpOnly: true,
 			},
 		},
@@ -14444,7 +14453,9 @@ export default defineConfig({
     format: 'esm',
     outDir: './dist',
     clean: true,
-    noExternal: [/@{{projectName}}\\/.*/]
+    deps: {
+        alwaysBundle: [/@{{projectName}}\\/.*/],
+    },
 });
 `],
   ["backend/server/elysia/src/index.ts.hbs", `import { env } from "@{{projectName}}/env/server";
@@ -15451,9 +15462,6 @@ dist
 build
 *.tsbuildinfo
 
-# Generated files
-apps/web/src/routeTree.gen.ts
-
 # Environment variables
 .env
 .env*.local
@@ -15496,6 +15504,11 @@ coverage
 .cache
 tmp
 temp
+
+# Local SQLite (default DATABASE_URL file:../../local.db resolves to monorepo root
+# from apps/server and packages/db; also covers package-local turso db files)
+local.db
+local.db-*
 `],
   ["base/package.json.hbs", `{
   "name": "kubojs",
@@ -15854,6 +15867,7 @@ export default defineConfig({
   dialect: "sqlite",
   driver: "d1-http",
   {{else}}
+  // libsql/sqlite local + Turso remote both use the turso dialect in drizzle-kit
   dialect: "turso",
   dbCredentials: {
     url: process.env.DATABASE_URL || "",
@@ -26816,7 +26830,7 @@ return (
         <ExpoUIText
           textStyle=\\{{ color: theme.text, fontSize: 24, fontWeight: "bold", textAlign: "center" }}
         >
-          BETTER T STACK
+          Kubo
         </ExpoUIText>
       </Host>
 
@@ -28076,7 +28090,7 @@ export default function Home() {
         showsVerticalScrollIndicator={false}
       >
         <Text style={styles.heroTitle}>
-          BETTER T STACK
+          Kubo
         </Text>
 
         {{#unless (and (eq backend "convex") (eq auth "better-auth"))}}
@@ -29402,7 +29416,7 @@ return (
 <Container className="px-4 pb-4">
   <View className="py-6 mb-5">
     <Text className="text-3xl font-semibold text-foreground tracking-tight">
-      Better T Stack
+      Kubo
     </Text>
     <Text className="text-muted text-sm mt-1">Full-stack TypeScript starter</Text>
   </View>
@@ -31264,7 +31278,7 @@ export default defineConfig({
 		"build": "vite build",
 		"serve": "vite preview",
 		"start": "vite",
-		"check-types": "vite build && tsc --noEmit"
+		"check-types": "tsc --noEmit"
 	},
 	"dependencies": {
         "@hookform/resolvers": "^5.4.0",
@@ -33321,6 +33335,86 @@ export default defineConfig({
     ]
   }
 }`],
+  ["packages/email/package.json.hbs", `{
+  "name": "@{{projectName}}/email",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "devDependencies": {}
+}
+`],
+  ["packages/email/src/index.ts.hbs", `{{#if (eq communication "resend")}}
+export * from "./lib/resend";
+{{/if}}
+export {};
+`],
+  ["packages/email/src/lib/resend.ts.hbs", `import { Resend } from "resend";
+import { env } from "@{{projectName}}/env/server";
+
+export type SendEmailInput = {
+	to: string | string[];
+	subject: string;
+	html: string;
+	from?: string;
+	replyTo?: string | string[];
+	/** Unique key to prevent duplicate sends (expires after 24h on Resend). */
+	idempotencyKey?: string;
+};
+
+function getResendClient() {
+	const apiKey = env.RESEND_API_KEY;
+	if (!apiKey) {
+		throw new Error(
+			"RESEND_API_KEY is not set. Add it to your server .env before sending email.",
+		);
+	}
+	return new Resend(apiKey);
+}
+
+/**
+ * Send a transactional email via Resend.
+ * Keys are optional at scaffold time — this throws only when you call it without a key.
+ */
+export async function sendEmail(input: SendEmailInput) {
+	const resend = getResendClient();
+	const from = input.from ?? env.RESEND_FROM_EMAIL ?? "Acme <onboarding@resend.dev>";
+
+	const { data, error } = await resend.emails.send(
+		{
+			from,
+			to: input.to,
+			subject: input.subject,
+			html: input.html,
+			replyTo: input.replyTo,
+		},
+		input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : undefined,
+	);
+
+	if (error) {
+		throw new Error(error.message);
+	}
+
+	return data;
+}
+`],
+  ["packages/email/tsconfig.json.hbs", `{
+  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "composite": true
+  }
+}
+`],
   ["packages/env/package.json.hbs", `{
 	"name": "@{{projectName}}/env",
 	"version": "0.0.0",
@@ -33468,9 +33562,24 @@ export const env = new Proxy({} as Env, {
 // Types are defined in env.d.ts based on your alchemy.run.ts bindings
 export { env } from "cloudflare:workers";
 {{else}}
-import "dotenv/config";
+import { config } from "dotenv";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
+
+// Load monorepo package env relative to this file (not process.cwd()).
+// Turbo/\`bun run\` from the workspace root would otherwise miss apps/*/ .env.
+const envFilePath = resolve(
+	fileURLToPath(new URL(".", import.meta.url)),
+{{#if (eq backend "self")}}
+	"../../../apps/web/.env",
+{{else}}
+	"../../../apps/server/.env",
+{{/if}}
+);
+config({ path: envFilePath });
+
 
 {{#if (or (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}
 function getVercelOrigin() {
@@ -33536,9 +33645,19 @@ export const env = createEnv({
 {{/if}}
 		CORS_ORIGIN: z.url(),
 		NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-	{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		GETMONITOR_API_KEY: z.string().min(1).optional(),
-		GETMONITOR_API_HOST: z.url().optional(),
+	{{/if}}
+	{{#if (eq communication "resend")}}
+		RESEND_API_KEY: z.string().min(1).optional(),
+		// Test-only default; replace with a verified domain sender for production.
+		RESEND_FROM_EMAIL: z.string().min(1).default("Acme <onboarding@resend.dev>"),
+	{{/if}}
+	{{#if (eq communication "notifique")}}
+		NOTIFIQUE_API_KEY: z.string().min(1).optional(),
+		NOTIFIQUE_BASE_URL: z.url().default("https://api.notifique.dev"),
+		NOTIFIQUE_WHATSAPP_INSTANCE_ID: z.string().min(1).optional(),
+		NOTIFIQUE_FROM_EMAIL: z.string().min(1).optional(),
 	{{/if}}
 	},
 	runtimeEnv: {{#if (or (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}runtimeEnv{{else}}process.env{{/if}},
@@ -33591,6 +33710,9 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
+{{#if (includes observability "getmonitor")}}
+		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 	runtimeEnv: {
 		NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
@@ -33600,15 +33722,24 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
+{{#if (includes observability "getmonitor")}}
+		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
+{{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
 	client: {
 		NUXT_PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
+{{#if (includes observability "getmonitor")}}
+		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 {{else if (or (includes frontend "svelte") (includes frontend "astro"))}}
 	clientPrefix: "PUBLIC_",
 	client: {
 		PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
+{{#if (includes observability "getmonitor")}}
+		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
 {{else}}
@@ -33621,9 +33752,8 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
-		VITE_GETMONITOR_API_HOST: z.url().optional(),
 {{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
@@ -33634,23 +33764,32 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
+{{#if (includes observability "getmonitor")}}
+		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 	runtimeEnv: {
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
+{{#if (includes observability "getmonitor")}}
+		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
+{{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
-	client: {},
+	client: {
+{{#if (includes observability "getmonitor")}}
+		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
+	},
 {{else}}
 	clientPrefix: "VITE_",
 	client: {
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
-		VITE_GETMONITOR_API_HOST: z.url().optional(),
 {{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
@@ -33662,21 +33801,33 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
+{{#if (includes observability "getmonitor")}}
+		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 	runtimeEnv: {
 		NEXT_PUBLIC_SERVER_URL: process.env.NEXT_PUBLIC_SERVER_URL,
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
+{{#if (includes observability "getmonitor")}}
+		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
+{{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
 	client: {
 		NUXT_PUBLIC_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
+{{#if (includes observability "getmonitor")}}
+		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 {{else if (or (includes frontend "svelte") (includes frontend "astro"))}}
 	clientPrefix: "PUBLIC_",
 	client: {
 		PUBLIC_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
+{{#if (includes observability "getmonitor")}}
+		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
 {{else}}
@@ -33686,9 +33837,8 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
-		VITE_GETMONITOR_API_HOST: z.url().optional(),
 {{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
@@ -34182,6 +34332,279 @@ await app.finalize();
     "dev": "alchemy dev",
     "deploy": "alchemy deploy",
     "destroy": "alchemy destroy"
+  }
+}
+`],
+  ["packages/notifique/package.json.hbs", `{
+  "name": "@{{projectName}}/notifique",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "devDependencies": {}
+}
+`],
+  ["packages/notifique/src/index.ts.hbs", `export { NotifiqueError, notifiqueRequest } from "./lib/client";
+export { sendSms } from "./lib/sms";
+export { sendWhatsAppText } from "./lib/whatsapp";
+export { sendEmail } from "./lib/email";
+`],
+  ["packages/notifique/src/lib/client.ts.hbs", `import { env } from "@{{projectName}}/env/server";
+
+export type NotifiqueEnvelope<T> = {
+	success?: boolean;
+	data?: T;
+	error?: string;
+	message?: string;
+	code?: string;
+};
+
+export class NotifiqueError extends Error {
+	readonly status: number;
+	readonly code?: string;
+
+	constructor(status: number, message: string, code?: string) {
+		super(message);
+		this.name = "NotifiqueError";
+		this.status = status;
+		this.code = code;
+	}
+}
+
+function getApiKey(): string {
+	const apiKey = env.NOTIFIQUE_API_KEY?.trim();
+	if (!apiKey) {
+		throw new NotifiqueError(
+			401,
+			"NOTIFIQUE_API_KEY is not set. Add it to your server .env (sk_live_… or sk_test_…).",
+		);
+	}
+	return apiKey;
+}
+
+function getBaseUrl(): string {
+	const base = (env.NOTIFIQUE_BASE_URL ?? "https://api.notifique.dev").replace(/\\/$/, "");
+	return base.endsWith("/v1") ? base : \`\${base}/v1\`;
+}
+
+export type NotifiqueRequestOptions = {
+	method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+	body?: unknown;
+	/** Header Idempotency-Key — retries within 24h do not create duplicate sends. */
+	idempotencyKey?: string;
+};
+
+/**
+ * Low-level Notifique REST helper.
+ * Auth: Authorization Bearer only. Do not send x-workspace-id (key scopes the workspace).
+ * Docs: https://docs.notifique.dev/skill.md · https://docs.notifique.dev/llms.txt
+ */
+export async function notifiqueRequest<T>(
+	path: string,
+	options: NotifiqueRequestOptions = {},
+): Promise<T> {
+	const apiKey = getApiKey();
+	const url = \`\${getBaseUrl()}\${path.startsWith("/") ? path : \`/\${path}\`}\`;
+
+	const headers: Record<string, string> = {
+		"Content-Type": "application/json",
+		Authorization: \`Bearer \${apiKey}\`,
+	};
+	if (options.idempotencyKey) {
+		headers["Idempotency-Key"] = options.idempotencyKey;
+	}
+
+	const response = await fetch(url, {
+		method: options.method ?? (options.body !== undefined ? "POST" : "GET"),
+		headers,
+		body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+	});
+
+	const payload = (await response.json().catch(() => ({}))) as NotifiqueEnvelope<T>;
+
+	// 202 Accepted is the normal success for send endpoints.
+	if (!response.ok) {
+		throw new NotifiqueError(
+			response.status,
+			payload.message ?? payload.error ?? \`Notifique request failed (\${response.status})\`,
+			payload.code,
+		);
+	}
+
+	if (payload.data !== undefined) {
+		return payload.data;
+	}
+
+	return payload as unknown as T;
+}
+`],
+  ["packages/notifique/src/lib/email.ts.hbs", `import { env } from "@{{projectName}}/env/server";
+import { notifiqueRequest } from "./client";
+
+export type SendNotifiqueEmailInput = {
+	/** Verified domain sender, e.g. "Acme <noreply@example.com>". Defaults to NOTIFIQUE_FROM_EMAIL. */
+	from?: string;
+	to: string | string[];
+	subject: string;
+	html?: string;
+	text?: string;
+	cc?: string | string[];
+	bcc?: string | string[];
+	replyTo?: string | string[];
+	idempotencyKey?: string;
+};
+
+export type SendNotifiqueEmailResult = {
+	status: "QUEUED" | "SCHEDULED" | string;
+	count?: number;
+	messageIds: string[];
+	emailIds?: string[];
+};
+
+function asArray(value: string | string[] | undefined): string[] | undefined {
+	if (value === undefined) return undefined;
+	return Array.isArray(value) ? value : [value];
+}
+
+/**
+ * POST /v1/email/messages — transactional email (202 Accepted).
+ * Requires a VERIFIED domain on \`from\`. Docs: https://docs.notifique.dev/emails-api/como-funciona/quick-start
+ */
+export async function sendEmail(
+	input: SendNotifiqueEmailInput,
+): Promise<SendNotifiqueEmailResult> {
+	const from = input.from ?? env.NOTIFIQUE_FROM_EMAIL;
+	if (!from) {
+		throw new Error(
+			"Email from is required. Pass from or set NOTIFIQUE_FROM_EMAIL (verified domain).",
+		);
+	}
+	if (!input.html && !input.text) {
+		throw new Error("Email requires payload.html and/or payload.text.");
+	}
+
+	return notifiqueRequest<SendNotifiqueEmailResult>("/email/messages", {
+		body: {
+			from,
+			to: asArray(input.to),
+			cc: asArray(input.cc),
+			bcc: asArray(input.bcc),
+			replyTo: asArray(input.replyTo),
+			type: "email",
+			payload: {
+				subject: input.subject,
+				html: input.html,
+				text: input.text,
+			},
+		},
+		idempotencyKey: input.idempotencyKey,
+	});
+}
+`],
+  ["packages/notifique/src/lib/sms.ts.hbs", `import { notifiqueRequest } from "./client";
+
+export type NotifiqueSmsSpeed = "full" | "standard" | "slow";
+
+export type SendSmsInput = {
+	/** Digits only, international (no +), e.g. 5511999999999 — or array of numbers */
+	to: string | string[];
+	/** Plain text; API requires at least 9 characters */
+	message: string;
+	idempotencyKey?: string;
+	/** Operator route / pricing: full | standard | slow */
+	speed?: NotifiqueSmsSpeed;
+};
+
+export type SendSmsResult = {
+	status: "QUEUED" | "SCHEDULED" | string;
+	count?: number;
+	messageIds: string[];
+	smsIds?: string[];
+	scheduledAt?: string | null;
+};
+
+/**
+ * POST /v1/sms/messages — text SMS (202 Accepted).
+ * Skill: https://docs.notifique.dev/skill.md · Quick start: https://docs.notifique.dev/sms-api/como-funciona/quick-start
+ */
+export async function sendSms(input: SendSmsInput): Promise<SendSmsResult> {
+	const to = Array.isArray(input.to) ? input.to : [input.to];
+	if (input.message.trim().length < 9) {
+		throw new Error("SMS message must be at least 9 characters (Notifique API rule).");
+	}
+
+	return notifiqueRequest<SendSmsResult>("/sms/messages", {
+		body: {
+			to,
+			type: "text",
+			payload: { message: input.message },
+			...(input.speed ? { options: { speed: input.speed } } : {}),
+		},
+		idempotencyKey: input.idempotencyKey,
+	});
+}
+`],
+  ["packages/notifique/src/lib/whatsapp.ts.hbs", `import { env } from "@{{projectName}}/env/server";
+import { notifiqueRequest } from "./client";
+
+export type SendWhatsAppTextInput = {
+	/** WhatsApp instance id (ACTIVE). Defaults to NOTIFIQUE_WHATSAPP_INSTANCE_ID when set. */
+	instanceId?: string;
+	/** Digits only, international (no +), e.g. 5511999999999 */
+	to: string | string[];
+	message: string;
+	idempotencyKey?: string;
+};
+
+export type SendWhatsAppResult = {
+	status: "QUEUED" | "SCHEDULED" | string;
+	messageIds: string[];
+	scheduledAt?: string | null;
+};
+
+/**
+ * POST /v1/whatsapp/messages — free-form text (unofficial / open 24h window on official).
+ * Official first contact outside 24h needs type: "template" (not covered here).
+ * Docs: https://docs.notifique.dev/whatsapp-api/como-funciona/quick-start
+ */
+export async function sendWhatsAppText(
+	input: SendWhatsAppTextInput,
+): Promise<SendWhatsAppResult> {
+	const instanceId =
+		input.instanceId?.trim() || env.NOTIFIQUE_WHATSAPP_INSTANCE_ID?.trim();
+	if (!instanceId) {
+		throw new Error(
+			"WhatsApp instanceId is required. Pass instanceId or set NOTIFIQUE_WHATSAPP_INSTANCE_ID.",
+		);
+	}
+
+	const to = Array.isArray(input.to) ? input.to : [input.to];
+
+	return notifiqueRequest<SendWhatsAppResult>("/whatsapp/messages", {
+		body: {
+			instanceId,
+			to,
+			type: "text",
+			payload: { message: input.message },
+		},
+		idempotencyKey: input.idempotencyKey,
+	});
+}
+`],
+  ["packages/notifique/tsconfig.json.hbs", `{
+  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "composite": true
   }
 }
 `],
@@ -37602,42 +38025,7 @@ function SuccessPage() {
 		<p>Checkout ID: {checkout_id}</p>
 	{/if}
 </div>
-`],
-  ["testing/playwright/e2e/example.spec.ts.hbs", `import { expect, test } from "@playwright/test";
-
-test("homepage loads", async ({ page }) => {
-  await page.goto("/");
-  await expect(page).toHaveTitle(/.+/);
-});
-`],
-  ["testing/playwright/playwright.config.ts.hbs", `import { defineConfig } from "@playwright/test";
-
-const baseURL = "http://localhost:{{webPort frontend}}";
-
-export default defineConfig({
-  testDir: "./e2e",
-  fullyParallel: true,
-  reporter: "list",
-  use: {
-    baseURL,
-    trace: "on-first-retry",
-  },
-  webServer: {
-    command: "{{packageManager}} run dev",
-    url: baseURL,
-    reuseExistingServer: !process.env.CI,
-  },
-});
-`],
-  ["testing/vitest/vitest.config.ts.hbs", `import { defineConfig } from "vitest/config";
-
-export default defineConfig({
-  test: {
-    passWithNoTests: true,
-    include: ["apps/*/src/**/*.{test,spec}.ts", "packages/*/src/**/*.{test,spec}.ts"],
-  },
-});
 `]
 ]);
 
-export const TEMPLATE_COUNT = 548;
+export const TEMPLATE_COUNT = 556;

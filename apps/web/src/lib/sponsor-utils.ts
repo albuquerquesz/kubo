@@ -1,6 +1,6 @@
 import type { Sponsor } from "@/lib/types";
 
-export const SPECIAL_SPONSOR_THRESHOLD = 100;
+export const SPECIAL_SPONSOR_THRESHOLD = 20;
 
 export const calculateLifetimeContribution = (sponsor: Sponsor): number => {
   // totalProcessedAmount is always provided by the API

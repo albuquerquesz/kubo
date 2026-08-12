@@ -91,6 +91,7 @@ export async function runTRPCTest(config: TestConfig): Promise<TestResult> {
         auth: "none" as Auth,
         payments: "none" as Payments,
         observability: "none" as Observability,
+        communication: "none" as const,
         addons: ["none"] as Addons[],
         examples: ["none"] as Examples[],
         dbSetup: "none" as DatabaseSetup,

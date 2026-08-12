@@ -91,9 +91,24 @@ export const env = new Proxy({} as Env, {
 // Types are defined in env.d.ts based on your alchemy.run.ts bindings
 export { env } from "cloudflare:workers";
 {{else}}
-import "dotenv/config";
+import { config } from "dotenv";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
+
+// Load monorepo package env relative to this file (not process.cwd()).
+// Turbo/`bun run` from the workspace root would otherwise miss apps/*/ .env.
+const envFilePath = resolve(
+	fileURLToPath(new URL(".", import.meta.url)),
+{{#if (eq backend "self")}}
+	"../../../apps/web/.env",
+{{else}}
+	"../../../apps/server/.env",
+{{/if}}
+);
+config({ path: envFilePath });
+
 
 {{#if (or (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}
 function getVercelOrigin() {
@@ -159,9 +174,19 @@ export const env = createEnv({
 {{/if}}
 		CORS_ORIGIN: z.url(),
 		NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-	{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		GETMONITOR_API_KEY: z.string().min(1).optional(),
-		GETMONITOR_API_HOST: z.url().optional(),
+	{{/if}}
+	{{#if (eq communication "resend")}}
+		RESEND_API_KEY: z.string().min(1).optional(),
+		// Test-only default; replace with a verified domain sender for production.
+		RESEND_FROM_EMAIL: z.string().min(1).default("Acme <onboarding@resend.dev>"),
+	{{/if}}
+	{{#if (eq communication "notifique")}}
+		NOTIFIQUE_API_KEY: z.string().min(1).optional(),
+		NOTIFIQUE_BASE_URL: z.url().default("https://api.notifique.dev"),
+		NOTIFIQUE_WHATSAPP_INSTANCE_ID: z.string().min(1).optional(),
+		NOTIFIQUE_FROM_EMAIL: z.string().min(1).optional(),
 	{{/if}}
 	},
 	runtimeEnv: {{#if (or (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}runtimeEnv{{else}}process.env{{/if}},

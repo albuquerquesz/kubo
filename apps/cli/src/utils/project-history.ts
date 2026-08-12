@@ -28,7 +28,8 @@ export type ProjectHistoryEntry = {
     runtime: string;
     auth: string;
     payments: string;
-    observability: string;
+    observability: string[];
+    communication: string;
     api: string;
     addons: string[];
     examples: string[];
@@ -153,6 +154,7 @@ export async function addToHistory(
       auth: config.auth,
       payments: config.payments,
       observability: config.observability,
+      communication: config.communication,
       api: config.api,
       addons: config.addons,
       examples: config.examples,

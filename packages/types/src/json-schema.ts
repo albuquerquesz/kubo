@@ -15,6 +15,7 @@ import {
   AuthSchema,
   PaymentsSchema,
   ObservabilitySchema,
+  CommunicationSchema,
   WebDeploySchema,
   ServerDeploySchema,
   DirectoryConflictSchema,
@@ -24,8 +25,8 @@ import {
   CreateInputSchema,
   AddInputSchema,
   ProjectConfigSchema,
-  BetterTStackConfigSchema,
-  BetterTStackConfigFileSchema,
+  KubojsConfigSchema,
+  KubojsConfigFileSchema,
   InitResultSchema,
 } from "./schemas";
 
@@ -86,6 +87,10 @@ export function getObservabilityJsonSchema() {
   return z.toJSONSchema(ObservabilitySchema);
 }
 
+export function getCommunicationJsonSchema() {
+  return z.toJSONSchema(CommunicationSchema);
+}
+
 export function getWebDeployJsonSchema() {
   return z.toJSONSchema(WebDeploySchema);
 }
@@ -122,12 +127,12 @@ export function getProjectConfigJsonSchema() {
   return z.toJSONSchema(ProjectConfigSchema);
 }
 
-export function getBetterTStackConfigJsonSchema() {
-  return z.toJSONSchema(BetterTStackConfigSchema);
+export function getKubojsConfigJsonSchema() {
+  return z.toJSONSchema(KubojsConfigSchema);
 }
 
-export function getBetterTStackConfigFileJsonSchema() {
-  return z.toJSONSchema(BetterTStackConfigFileSchema, { target: "draft-7" });
+export function getKubojsConfigFileJsonSchema() {
+  return z.toJSONSchema(KubojsConfigFileSchema, { target: "draft-7" });
 }
 
 export function getInitResultJsonSchema() {
@@ -151,6 +156,7 @@ export function getAllJsonSchemas() {
     auth: getAuthJsonSchema(),
     payments: getPaymentsJsonSchema(),
     observability: getObservabilityJsonSchema(),
+    communication: getCommunicationJsonSchema(),
     webDeploy: getWebDeployJsonSchema(),
     serverDeploy: getServerDeployJsonSchema(),
     directoryConflict: getDirectoryConflictJsonSchema(),
@@ -160,8 +166,8 @@ export function getAllJsonSchemas() {
     createInput: getCreateInputJsonSchema(),
     addInput: getAddInputJsonSchema(),
     projectConfig: getProjectConfigJsonSchema(),
-    betterTStackConfig: getBetterTStackConfigJsonSchema(),
-    betterTStackConfigFile: getBetterTStackConfigFileJsonSchema(),
+    kubojsConfig: getKubojsConfigJsonSchema(),
+    kubojsConfigFile: getKubojsConfigFileJsonSchema(),
     initResult: getInitResultJsonSchema(),
   };
 }
