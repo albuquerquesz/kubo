@@ -43,6 +43,9 @@ export function displayConfig(config: Partial<ProjectConfig>) {
   if (config.payments !== undefined) {
     configDisplay.push(`${pc.blue("Payments:")} ${String(config.payments)}`);
   }
+  if (config.communication !== undefined) {
+    configDisplay.push(`${pc.blue("Communication:")} ${String(config.communication)}`);
+  }
 
   if (config.observability !== undefined) {
     configDisplay.push(`${pc.blue("Observability:")} ${String(config.observability)}`);

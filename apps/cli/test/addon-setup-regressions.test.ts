@@ -23,6 +23,8 @@ function createProjectConfig(overrides: Partial<ProjectConfig> = {}): ProjectCon
     examples: ["none"],
     auth: "none",
     payments: "none",
+    observability: "none",
+    communication: "none",
     git: false,
     packageManager: "bun",
     install: false,

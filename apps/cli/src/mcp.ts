@@ -20,6 +20,8 @@ import {
   ORMSchema,
   PackageManagerSchema,
   PaymentsSchema,
+  ObservabilitySchema,
+  CommunicationSchema,
   RuntimeSchema,
   ServerDeploySchema,
   WebDeploySchema,
@@ -48,6 +50,8 @@ const McpCreateProjectInputSchema = CreateInputSchema.safeExtend({
   api: APISchema.describe("Explicit API layer"),
   auth: AuthSchema.describe("Explicit authentication provider"),
   payments: PaymentsSchema.describe("Explicit payments provider"),
+  observability: ObservabilitySchema.describe("Explicit observability provider"),
+  communication: CommunicationSchema.describe("Explicit communication provider"),
   addons: z.array(AddonsSchema).describe("Explicit addon list. Use [] when no addons are needed."),
   examples: z
     .array(ExamplesSchema)

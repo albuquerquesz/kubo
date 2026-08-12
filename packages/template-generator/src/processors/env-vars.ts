@@ -433,6 +433,7 @@ function buildServerVars(
   payments: ProjectConfig["payments"],
   examples: ProjectConfig["examples"],
   observability: ProjectConfig["observability"],
+  communication: ProjectConfig["communication"],
 ): EnvVariable[] {
   const hasReactRouter = frontend.includes("react-router");
   const hasSvelte = frontend.includes("svelte");
@@ -528,6 +529,18 @@ function buildServerVars(
       comment: "GetMonitor public project key (gm_xxx)",
     },
     {
+      key: "RESEND_API_KEY",
+      value: "",
+      condition: communication === "resend",
+      comment: "Resend API key (re_xxx) — optional until you send email",
+    },
+    {
+      key: "RESEND_FROM_EMAIL",
+      value: "Acme <onboarding@resend.dev>",
+      condition: communication === "resend",
+      comment: "Default From address (test domain until you verify your own)",
+    },
+    {
       key: "DATABASE_URL",
       value: databaseUrl,
       condition: database !== "none" && dbSetup === "none",
@@ -575,6 +588,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     runtime,
     payments,
     observability,
+    communication,
   } = config;
 
   const hasReactRouter = frontend.includes("react-router");
@@ -699,6 +713,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     payments,
     examples,
     observability,
+    communication,
   );
 
   if (backend === "self") {

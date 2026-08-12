@@ -58,6 +58,7 @@ export async function displayPostInstallInstructions(
     webDeploy,
     serverDeploy,
     observability,
+    communication,
   } = config;
 
   const isConvex = backend === "convex";
@@ -121,6 +122,7 @@ export async function displayPostInstallInstructions(
     backend,
   );
   const getMonitorInstructions = observability === "getmonitor" ? getGetMonitorInstructions() : "";
+  const resendInstructions = communication === "resend" ? getResendInstructions() : "";
 
   const hasWeb = frontend?.some((f) => (desktopWebFrontends as readonly string[]).includes(f));
   const hasNative =
@@ -233,6 +235,7 @@ export async function displayPostInstallInstructions(
   if (clerkInstructions) output += `\n${clerkInstructions.trim()}\n`;
   if (betterAuthConvexInstructions) output += `\n${betterAuthConvexInstructions.trim()}\n`;
   if (getMonitorInstructions) output += `\n${getMonitorInstructions.trim()}\n`;
+  if (resendInstructions) output += `\n${resendInstructions.trim()}\n`;
   // Deploy steps come last so env sync happens after auth/payment keys exist
   if (alchemyDeployInstructions) output += `\n${alchemyDeployInstructions.trim()}\n`;
 
@@ -480,6 +483,20 @@ function getGetMonitorInstructions() {
     "•",
   )} Opt out next time with --observability none\n${pc.dim(
     "   https://github.com/get-monitor/getmonitor-js",
+  )}`;
+}
+
+function getResendInstructions() {
+  return `${pc.bold("Resend communication:")}\n${pc.cyan(
+    "•",
+  )} Keys are optional on first run — sendEmail throws only when called without RESEND_API_KEY\n${pc.cyan(
+    "•",
+  )} Set RESEND_API_KEY (and optional RESEND_FROM_EMAIL) in the server .env\n${pc.cyan(
+    "•",
+  )} Import sendEmail from packages/email (e.g. @project/email)\n${pc.cyan(
+    "•",
+  )} Replace onboarding@resend.dev with a verified domain sender for production\n${pc.dim(
+    "   https://resend.com/docs/send-with-nodejs",
   )}`;
 }
 

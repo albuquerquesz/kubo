@@ -33335,6 +33335,86 @@ export default defineConfig({
     ]
   }
 }`],
+  ["packages/email/package.json.hbs", `{
+  "name": "@{{projectName}}/email",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "devDependencies": {}
+}
+`],
+  ["packages/email/src/index.ts.hbs", `{{#if (eq communication "resend")}}
+export * from "./lib/resend";
+{{/if}}
+export {};
+`],
+  ["packages/email/src/lib/resend.ts.hbs", `import { Resend } from "resend";
+import { env } from "@{{projectName}}/env/server";
+
+export type SendEmailInput = {
+	to: string | string[];
+	subject: string;
+	html: string;
+	from?: string;
+	replyTo?: string | string[];
+	/** Unique key to prevent duplicate sends (expires after 24h on Resend). */
+	idempotencyKey?: string;
+};
+
+function getResendClient() {
+	const apiKey = env.RESEND_API_KEY;
+	if (!apiKey) {
+		throw new Error(
+			"RESEND_API_KEY is not set. Add it to your server .env before sending email.",
+		);
+	}
+	return new Resend(apiKey);
+}
+
+/**
+ * Send a transactional email via Resend.
+ * Keys are optional at scaffold time — this throws only when you call it without a key.
+ */
+export async function sendEmail(input: SendEmailInput) {
+	const resend = getResendClient();
+	const from = input.from ?? env.RESEND_FROM_EMAIL ?? "Acme <onboarding@resend.dev>";
+
+	const { data, error } = await resend.emails.send(
+		{
+			from,
+			to: input.to,
+			subject: input.subject,
+			html: input.html,
+			replyTo: input.replyTo,
+		},
+		input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : undefined,
+	);
+
+	if (error) {
+		throw new Error(error.message);
+	}
+
+	return data;
+}
+`],
+  ["packages/email/tsconfig.json.hbs", `{
+  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "composite": true
+  }
+}
+`],
   ["packages/env/package.json.hbs", `{
 	"name": "@{{projectName}}/env",
 	"version": "0.0.0",
@@ -33567,6 +33647,11 @@ export const env = createEnv({
 		NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 	{{#if (eq observability "getmonitor")}}
 		GETMONITOR_API_KEY: z.string().min(1).optional(),
+	{{/if}}
+	{{#if (eq communication "resend")}}
+		RESEND_API_KEY: z.string().min(1).optional(),
+		// Test-only default; replace with a verified domain sender for production.
+		RESEND_FROM_EMAIL: z.string().min(1).default("Acme <onboarding@resend.dev>"),
 	{{/if}}
 	},
 	runtimeEnv: {{#if (or (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}runtimeEnv{{else}}process.env{{/if}},
@@ -37664,4 +37749,4 @@ function SuccessPage() {
 `]
 ]);
 
-export const TEMPLATE_COUNT = 545;
+export const TEMPLATE_COUNT = 549;

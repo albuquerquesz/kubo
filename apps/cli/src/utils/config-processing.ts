@@ -10,6 +10,7 @@ import type {
   Database,
   DatabaseSetup,
   Observability,
+  Communication,
   ORM,
   PackageManager,
   Payments,
@@ -73,6 +74,10 @@ export function processFlags(options: CLIInput, projectName?: string) {
 
   if (options.observability !== undefined) {
     config.observability = options.observability as Observability;
+  }
+
+  if (options.communication !== undefined) {
+    config.communication = options.communication as Communication;
   }
 
   if (options.git !== undefined) {

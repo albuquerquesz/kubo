@@ -177,6 +177,8 @@ export const dependencyVersionMap = {
   "@getmonitor/react": "^0.1.0",
   "@getmonitor/nextjs-config": "^0.1.0",
   "@getmonitor/nuxt": "^0.1.0",
+
+  resend: "^6.19.0",
 } as const;
 
 export type AvailableDependencies = keyof typeof dependencyVersionMap;

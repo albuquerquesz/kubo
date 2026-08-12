@@ -156,6 +156,7 @@ function generateReadmeContent(options: ProjectConfig): string {
     auth,
     payments,
     observability,
+    communication,
     addons = [],
     orm = "drizzle",
     runtime = "bun",
@@ -189,7 +190,7 @@ This project was created with [kubojs](https://github.com/albuquerquesz/kubo), a
 
 ## Features
 
-${generateFeaturesList(database, auth, payments, observability, addons, orm, runtime, frontend, backend, api, dbSetup)}
+${generateFeaturesList(database, auth, payments, observability, communication, addons, orm, runtime, frontend, backend, api, dbSetup)}
 
 ## Getting Started
 
@@ -234,6 +235,7 @@ ${getClerkSetupLines(frontend, backend, api, false).join("\n")}`
 }
 ${payments === "abacatepay" ? generateAbacatePaySetup(options, packageManagerRunCmd, webPort) : ""}
 ${observability === "getmonitor" ? generateGetMonitorSetup() : ""}
+${communication === "resend" ? generateResendSetup() : ""}
 
 Then, run the development server:
 
@@ -522,11 +524,38 @@ function generateProjectStructure(config: ProjectConfig): string {
   return structure.join("\n");
 }
 
+function generateResendSetup(): string {
+  return `
+## Resend Setup
+
+This project includes a \`packages/email\` helper powered by [Resend](https://resend.com).
+
+Keys are **optional for local first run** — the app starts without them. \`sendEmail\` throws only when you call it without \`RESEND_API_KEY\`.
+
+1. Create an API key at [resend.com/api-keys](https://resend.com/api-keys).
+2. Set \`RESEND_API_KEY\` (and optionally \`RESEND_FROM_EMAIL\`) in the server \`.env\`.
+3. For production, verify a domain and replace the default test From address (\`onboarding@resend.dev\`).
+
+\`\`\`ts
+import { sendEmail } from "@your-project/email";
+
+await sendEmail({
+  to: "user@example.com",
+  subject: "Hello",
+  html: "<strong>It works!</strong>",
+});
+\`\`\`
+
+See the [Node.js guide](https://resend.com/docs/send-with-nodejs).
+`;
+}
+
 function generateFeaturesList(
   database: ProjectConfig["database"],
   auth: ProjectConfig["auth"],
   payments: ProjectConfig["payments"],
   observability: ProjectConfig["observability"],
+  communication: ProjectConfig["communication"],
   addons: ProjectConfig["addons"],
   orm: ProjectConfig["orm"],
   runtime: ProjectConfig["runtime"],
@@ -547,6 +576,10 @@ function generateFeaturesList(
 
   if (observability === "getmonitor") {
     features.push("- **GetMonitor** - JavaScript error tracking for browser and server runtimes");
+  }
+
+  if (communication === "resend") {
+    features.push("- **Resend** - Transactional email via packages/email");
   }
 
   const frontendFeatures: Record<string, string> = {

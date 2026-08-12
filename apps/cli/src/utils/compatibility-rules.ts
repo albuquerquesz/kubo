@@ -9,6 +9,7 @@ import type {
   CLIInput,
   Frontend,
   Payments,
+  Communication,
   ProjectConfig,
   Runtime,
   ServerDeploy,
@@ -593,6 +594,21 @@ export function validateAddonsAgainstConfig(
     config.backend,
     config.runtime,
   );
+}
+
+export function validateCommunicationCompatibility(
+  communication: Communication | undefined,
+  backend: Backend | undefined,
+): ValidationResult {
+  if (!communication || communication === "none") return Result.ok(undefined);
+
+  if (communication === "resend" && backend === "none") {
+    return validationErr(
+      "Resend communication requires a server backend. Please choose a backend or use '--communication none'.",
+    );
+  }
+
+  return Result.ok(undefined);
 }
 
 export function validatePaymentsCompatibility(

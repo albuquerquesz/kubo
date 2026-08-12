@@ -30,6 +30,7 @@ export function writeKubojsConfigToVfs(
     auth: projectConfig.auth,
     payments: projectConfig.payments,
     observability: projectConfig.observability,
+    communication: projectConfig.communication,
     packageManager: projectConfig.packageManager,
     dbSetup: projectConfig.dbSetup,
     api: projectConfig.api,

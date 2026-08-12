@@ -7,6 +7,7 @@ export { processApiTemplates } from "./api";
 export { processConfigPackage, processEnvPackage, processUiPackage } from "./packages";
 export { processAuthTemplates } from "./auth";
 export { processPaymentsTemplates } from "./payments";
+export { processCommunicationTemplates } from "./communication";
 export { processAddonTemplates } from "./addons";
 export { processExampleTemplates } from "./examples";
 export { processExtrasTemplates } from "./extras";

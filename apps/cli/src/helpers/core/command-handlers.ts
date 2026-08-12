@@ -80,6 +80,7 @@ function createEmptyResult(
       auth: "none",
       payments: "none",
       observability: "none",
+      communication: "none",
       git: false,
       packageManager: "npm",
       install: false,
