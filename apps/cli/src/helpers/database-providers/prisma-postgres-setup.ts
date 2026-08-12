@@ -44,7 +44,7 @@ const AVAILABLE_REGIONS = [
   { value: "us-west-1", label: "US West (N. California)" },
 ];
 
-const CREATE_DB_USER_AGENT = "aman/kubojs";
+const CREATE_DB_USER_AGENT = "kubojs/kubojs";
 
 async function setupWithCreateDb(
   serverDir: string,

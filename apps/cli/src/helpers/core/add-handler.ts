@@ -30,6 +30,7 @@ import { validateAgentSafePathInput } from "../../utils/input-hardening";
 import { updateKubojsConfig } from "../../utils/kubojs-config";
 import { renderTitle } from "../../utils/render-title";
 import { setupAddons } from "../addons/addons-setup";
+import { setupTesting } from "../testing/testing-setup";
 import { detectProjectConfig } from "./detect-project-config";
 import { installDependencies } from "./install-dependencies";
 
@@ -369,6 +370,7 @@ async function addHandlerInternal(
     auth: existingConfig.auth,
     payments: existingConfig.payments,
     observability: existingConfig.observability,
+    communication: existingConfig.communication ?? "none",
     git: false,
     packageManager: input.packageManager || existingConfig.packageManager,
     install: input.install ?? false,
@@ -500,6 +502,13 @@ async function addHandlerInternal(
   if (setupResult.isErr()) {
     return Result.err(setupResult.error);
   }
+
+  const testingSetupResult = await Result.tryPromise({
+    try: () => setupTesting(projectDir, updatedTesting),
+    catch: (e: unknown) =>
+      new CLIError({ message: e instanceof Error ? e.message : String(e), cause: e }),
+  });
+  if (testingSetupResult.isErr()) return Result.err(testingSetupResult.error);
 
   // Update kubojs.jsonrc with final exclusive addon list (preserves JSONC comments)
   await updateKubojsConfig(projectDir, {

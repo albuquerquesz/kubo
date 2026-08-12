@@ -25,8 +25,8 @@ Make a default scaffold (tanstack-router + hono + bun + sqlite/drizzle + better-
 | Item                                                                                         | Status                                                  |
 | -------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | `bts.jsonc` → `kubojs.jsonrc`                                                                | Done                                                    |
-| `bts-config` / `BetterTStack*` → `kubojs-config` / `Kubojs*`                                 | Done                                                    |
-| Strip Aman / Better-T-Stack branding from config path                                        | Done                                                    |
+| `bts-config` / `Kubo*` → `kubojs-config` / `Kubojs*`                                         | Done                                                    |
+| Strip Aman / Kubo branding from config path                                                  | Done                                                    |
 | `packageManager: bun@latest` → pin `bun@<process.versions.bun>` + strip invalid field on add | Done (`create-project.ts`, `package-configs.ts`, tests) |
 
 ## Smoke baseline (reference stack)
@@ -298,13 +298,13 @@ Small consistency gaps that did not block smoke but erode polish.
 
 ### Checklist (verify + fix if still present)
 
-| Item                                                                       | Onde (hunt)                                  | Fix                             |
-| -------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------- | -------------- | ------------------------- | --------------- |
-| Leftover `bts` / Better-T-Stack strings in generated files or CLI messages | `rg -i 'bts\.jsonc                           | Better-T-Stack                  | better-t-stack | Aman'` in templates + CLI | Rename / delete |
-| Dual `dotenv` in catalog vs direct version noise                           | root / workspace package.json templates      | Prefer catalog only             |
-| README scripts list mismatch after §5/§7                                   | `readme-generator.ts`                        | Align with real scripts         |
-| Frontend packages missing pure `check-types`                               | all `templates/frontend/**/package.json.hbs` | Audit each framework            |
-| `formatProject` formatting binary / lockfiles                              | `file-formatter.ts`                          | Skip non-text / known lockfiles |
+| Item                                                             | Onde (hunt)                                  | Fix                             |
+| ---------------------------------------------------------------- | -------------------------------------------- | ------------------------------- | ---- | ------------------------- | --------------- |
+| Leftover `bts` / Kubo strings in generated files or CLI messages | `rg -i 'bts\.jsonc                           | Kubo                            | kubo | Aman'` in templates + CLI | Rename / delete |
+| Dual `dotenv` in catalog vs direct version noise                 | root / workspace package.json templates      | Prefer catalog only             |
+| README scripts list mismatch after §5/§7                         | `readme-generator.ts`                        | Align with real scripts         |
+| Frontend packages missing pure `check-types`                     | all `templates/frontend/**/package.json.hbs` | Audit each framework            |
+| `formatProject` formatting binary / lockfiles                    | `file-formatter.ts`                          | Skip non-text / known lockfiles |
 
 ### Aceite
 

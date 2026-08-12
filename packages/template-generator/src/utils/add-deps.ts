@@ -68,6 +68,9 @@ export const dependencyVersionMap = {
   lefthook: "^2.1.9",
   "lint-staged": "^17.0.7",
 
+  vitest: "^4.1.10",
+  "@playwright/test": "^1.62.1",
+
   tsx: "^4.22.5",
   "@types/node": "^22.13.14",
 
@@ -172,8 +175,14 @@ export const dependencyVersionMap = {
   "@t3-oss/env-nuxt": "^0.13.11",
 
   evlog: "^2.19.2",
+  "@himetrica/tracker-js": "^0.1.36",
   "@getmonitor/browser": "^0.1.0",
   "@getmonitor/node": "^0.1.0",
+  "@getmonitor/react": "^0.1.0",
+  "@getmonitor/nextjs-config": "^0.1.0",
+  "@getmonitor/nuxt": "^0.1.0",
+
+  resend: "^6.19.0",
 } as const;
 
 export type AvailableDependencies = keyof typeof dependencyVersionMap;

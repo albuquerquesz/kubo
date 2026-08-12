@@ -10,11 +10,13 @@ import type {
   Frontend,
   ORM,
   Observability,
+  Communication,
   PackageManager,
   Payments,
   ProjectConfig,
   Runtime,
   ServerDeploy,
+  Testing,
   WebDeploy,
 } from "../types";
 import { isSilent } from "../utils/context";
@@ -23,6 +25,7 @@ import { getAddonsChoice } from "./addons";
 import { getApiChoice } from "./api";
 import { getAuthChoice } from "./auth";
 import { getBackendFrameworkChoice } from "./backend";
+import { getCommunicationChoice } from "./communication";
 import { getDatabaseChoice } from "./database";
 import { getDBSetupChoice } from "./database-setup";
 import { getExamplesChoice } from "./examples";
@@ -36,6 +39,7 @@ import { getPackageManagerChoice } from "./package-manager";
 import { getPaymentsChoice } from "./payments";
 import { getRuntimeChoice } from "./runtime";
 import { getServerDeploymentChoice } from "./server-deploy";
+import { getTestingChoice } from "./testing";
 import { getDeploymentChoice } from "./web-deploy";
 
 type PromptGroupResults = {
@@ -48,8 +52,10 @@ type PromptGroupResults = {
   auth: Auth;
   payments: Payments;
   observability: Observability;
+  communication: Communication;
   addons: Addons[];
   examples: Examples[];
+  testing: Testing[];
   dbSetup: DatabaseSetup;
   git: boolean;
   packageManager: PackageManager;
@@ -79,8 +85,10 @@ export async function gatherConfig(
       auth: flags.auth ?? DEFAULT_CONFIG.auth,
       payments: flags.payments ?? DEFAULT_CONFIG.payments,
       observability: flags.observability ?? DEFAULT_CONFIG.observability,
+      communication: flags.communication ?? DEFAULT_CONFIG.communication,
       addons: flags.addons ?? [...DEFAULT_CONFIG.addons],
       examples: flags.examples ?? [...DEFAULT_CONFIG.examples],
+      testing: flags.testing ?? [...DEFAULT_CONFIG.testing],
       git: flags.git ?? DEFAULT_CONFIG.git,
       packageManager: flags.packageManager ?? DEFAULT_CONFIG.packageManager,
       install: flags.install ?? DEFAULT_CONFIG.install,
@@ -124,6 +132,8 @@ export async function gatherConfig(
         ),
       observability: ({ previousAnswer }) =>
         getObservabilityChoice(flags.observability, previousAnswer),
+      communication: ({ results, previousAnswer }) =>
+        getCommunicationChoice(flags.communication, results.backend, previousAnswer),
       addons: ({ results, previousAnswer }) =>
         getAddonsChoice(
           flags.addons,
@@ -142,6 +152,8 @@ export async function gatherConfig(
           results.api,
           previousAnswer,
         ) as Promise<Examples[]>,
+      testing: ({ results, previousAnswer }) =>
+        getTestingChoice(flags.testing, results.frontend, previousAnswer),
       dbSetup: ({ results, previousAnswer }) =>
         getDBSetupChoice(
           results.database ?? "none",
@@ -194,8 +206,10 @@ export async function gatherConfig(
     auth: result.auth,
     payments: result.payments,
     observability: result.observability,
+    communication: result.communication,
     addons: result.addons,
     examples: result.examples,
+    testing: result.testing,
     git: result.git,
     packageManager: result.packageManager,
     install: result.install,

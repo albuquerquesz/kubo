@@ -243,7 +243,7 @@ describe("stack builder D1 compatibility", () => {
       database: "sqlite",
       orm: "drizzle",
       payments: "abacatepay",
-      observability: "getmonitor",
+      observability: ["getmonitor"],
       webDeploy: "guaracloud",
       serverDeploy: "guaracloud",
     });
@@ -261,7 +261,15 @@ describe("stack builder D1 compatibility", () => {
     expect(command).toContain("--server-deploy guaracloud");
   });
 
-  test("emits --observability none for backend-less stacks (Stack Builder → CLI)", () => {
+  test("default stack implies GetMonitor and short --yes command", () => {
+    expect(DEFAULT_STACK.observability).toEqual(["getmonitor"]);
+
+    const command = generateStackCommand(createStack({}));
+    expect(command).toMatch(/--yes\s*$/);
+    expect(command).not.toContain("--observability");
+  });
+
+  test("emits --disable-observability for backend-less stacks (Stack Builder → CLI)", () => {
     const stack = createStack({
       projectName: "atscopilot",
       webFrontend: ["tanstack-router"],
@@ -271,7 +279,8 @@ describe("stack builder D1 compatibility", () => {
       api: "none",
       auth: "none",
       payments: "none",
-      observability: "none",
+      observability: [],
+      communication: "none",
       database: "none",
       orm: "none",
       dbSetup: "none",
@@ -285,10 +294,25 @@ describe("stack builder D1 compatibility", () => {
     });
 
     const command = generateStackCommand(stack);
-    expect(command).toContain("--observability none");
+    expect(command).toContain("--disable-observability");
+    expect(command).toContain("--communication none");
     expect(command).toContain("--payments none");
     expect(command).toContain("--backend none");
     expect(command).toContain("--web-deploy vercel");
+  });
+
+  test("emits --communication resend and disables Resend without backend", () => {
+    const withResend = createStack({
+      communication: "resend",
+      backend: "hono",
+    });
+    expect(generateStackCommand(withResend)).toContain("--communication resend");
+
+    const noBackend = createStack({
+      backend: "none",
+      communication: "resend",
+    });
+    expect(getDisabledReason(noBackend, "communication", "resend")).toContain("backend");
   });
 
   test("blocks the AI example for Astro frontends", () => {

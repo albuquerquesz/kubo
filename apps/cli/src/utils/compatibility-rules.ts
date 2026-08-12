@@ -9,9 +9,11 @@ import type {
   CLIInput,
   Frontend,
   Payments,
+  Communication,
   ProjectConfig,
   Runtime,
   ServerDeploy,
+  Testing,
   WebDeploy,
 } from "../types";
 import { WEB_FRAMEWORKS } from "./compatibility";
@@ -86,6 +88,20 @@ function validationErr(message: string): ValidationResult {
 
 export function isWebFrontend(value: Frontend) {
   return WEB_FRAMEWORKS.includes(value);
+}
+
+export function isPlaywrightAllowed(frontends: Frontend[] = []) {
+  return frontends.some((frontend) => isWebFrontend(frontend));
+}
+
+export function validateTestingAgainstFrontends(
+  testing: Testing[] = [],
+  frontends: Frontend[] = [],
+): ValidationResult {
+  if (testing.includes("playwright") && !isPlaywrightAllowed(frontends)) {
+    return validationErr("playwright testing requires a web frontend");
+  }
+  return Result.ok(undefined);
 }
 
 export function splitFrontends(values: Frontend[] = []): {
@@ -593,6 +609,21 @@ export function validateAddonsAgainstConfig(
     config.backend,
     config.runtime,
   );
+}
+
+export function validateCommunicationCompatibility(
+  communication: Communication | undefined,
+  backend: Backend | undefined,
+): ValidationResult {
+  if (!communication || communication === "none") return Result.ok(undefined);
+
+  if ((communication === "resend" || communication === "notifique") && backend === "none") {
+    return validationErr(
+      `${communication === "notifique" ? "Notifique" : "Resend"} communication requires a server backend. Please choose a backend or use '--communication none'.`,
+    );
+  }
+
+  return Result.ok(undefined);
 }
 
 export function validatePaymentsCompatibility(

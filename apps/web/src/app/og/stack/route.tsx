@@ -21,6 +21,7 @@ const categoryChipColors: Partial<Record<string, string>> = {
   payments: "#eba0ac",
   packageManager: "#f9e2af",
   addons: "#cba6f7",
+  testing: "#a6e3a1",
   examples: "#94e2d5",
 };
 

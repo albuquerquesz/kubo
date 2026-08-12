@@ -3,6 +3,7 @@ import path from "node:path";
 import { Result } from "better-result";
 import fs from "fs-extra";
 
+import { normalizeObservability } from "../../utils/config-processing";
 import { readKubojsConfig } from "../../utils/kubojs-config";
 
 export async function detectProjectConfig(projectDir: string) {
@@ -24,7 +25,8 @@ export async function detectProjectConfig(projectDir: string) {
           examples: kubojsConfig.examples,
           auth: kubojsConfig.auth,
           payments: kubojsConfig.payments,
-          observability: kubojsConfig.observability,
+          observability: normalizeObservability(kubojsConfig.observability),
+          communication: kubojsConfig.communication ?? "none",
           packageManager: kubojsConfig.packageManager,
           dbSetup: kubojsConfig.dbSetup,
           api: kubojsConfig.api,

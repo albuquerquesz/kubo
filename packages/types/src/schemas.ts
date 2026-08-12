@@ -69,6 +69,8 @@ export const ExamplesSchema = z
   .enum(["todo", "ai", "none"])
   .describe("Example templates to include");
 
+export const TestingSchema = z.enum(["vitest", "playwright", "none"]).describe("Testing tools");
+
 export const PackageManagerSchema = z.enum(["npm", "pnpm", "bun"]).describe("Package manager");
 
 export const DatabaseSetupSchema = z
@@ -93,9 +95,30 @@ export const AuthSchema = z
 
 export const PaymentsSchema = z.enum(["none", "abacatepay"]).describe("Payments provider");
 
+export const ObservabilityProviderSchema = z.enum(["getmonitor", "himetrica"]);
+
 export const ObservabilitySchema = z
-  .enum(["none", "getmonitor"])
-  .describe("Observability provider");
+  .preprocess(
+    (value) => {
+      if (value === "none") return [];
+      if (typeof value === "string") return [value];
+      if (Array.isArray(value)) return value.filter((item) => item !== "none");
+      return value;
+    },
+    z.array(ObservabilityProviderSchema).superRefine((providers, ctx) => {
+      if (new Set(providers).size !== providers.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Observability providers must be unique",
+        });
+      }
+    }),
+  )
+  .describe("Selected observability providers");
+
+export const CommunicationSchema = z
+  .enum(["none", "resend", "notifique"])
+  .describe("Communication provider (email / messaging)");
 
 export const WebDeploySchema = z
   .enum(["cloudflare", "docker", "vercel", "guaracloud", "none"])
@@ -436,9 +459,12 @@ export const CreateInputSchema = z
     auth: AuthSchema.optional(),
     payments: PaymentsSchema.optional(),
     observability: ObservabilitySchema.optional(),
+    disableObservability: z.boolean().optional(),
+    communication: CommunicationSchema.optional(),
     frontend: z.array(FrontendSchema).optional(),
     addons: AddonsListSchema.optional(),
     examples: z.array(ExamplesSchema).optional(),
+    testing: z.array(TestingSchema).optional(),
     git: z.boolean().optional(),
     packageManager: PackageManagerSchema.optional(),
     install: z.boolean().optional(),
@@ -462,6 +488,7 @@ export const CreateInputSchema = z
 export const AddInputSchema = z
   .object({
     addons: AddonsListSchema.optional(),
+    testing: z.array(TestingSchema).optional(),
     addonOptions: AddonOptionsSchema.optional(),
     webDeploy: WebDeploySchema.optional(),
     serverDeploy: ServerDeploySchema.optional(),
@@ -489,9 +516,11 @@ export const ProjectConfigSchema = z.object({
   frontend: z.array(FrontendSchema),
   addons: AddonsListSchema,
   examples: z.array(ExamplesSchema),
+  testing: z.array(TestingSchema),
   auth: AuthSchema,
   payments: PaymentsSchema,
   observability: ObservabilitySchema,
+  communication: CommunicationSchema,
   git: z.boolean(),
   packageManager: PackageManagerSchema,
   install: z.boolean(),
@@ -514,9 +543,11 @@ export const KubojsConfigSchema = z.object({
   frontend: z.array(FrontendSchema),
   addons: AddonsListSchema,
   examples: z.array(ExamplesSchema),
+  testing: z.array(TestingSchema),
   auth: AuthSchema,
   payments: PaymentsSchema,
   observability: ObservabilitySchema,
+  communication: CommunicationSchema,
   packageManager: PackageManagerSchema,
   dbSetup: DatabaseSetupSchema,
   api: APISchema,
@@ -554,12 +585,14 @@ export const RUNTIME_VALUES = RuntimeSchema.options;
 export const FRONTEND_VALUES = FrontendSchema.options;
 export const ADDONS_VALUES = AddonsSchema.options;
 export const EXAMPLES_VALUES = ExamplesSchema.options;
+export const TESTING_VALUES = TestingSchema.options;
 export const PACKAGE_MANAGER_VALUES = PackageManagerSchema.options;
 export const DATABASE_SETUP_VALUES = DatabaseSetupSchema.options;
 export const API_VALUES = APISchema.options;
 export const AUTH_VALUES = AuthSchema.options;
 export const PAYMENTS_VALUES = PaymentsSchema.options;
-export const OBSERVABILITY_VALUES = ObservabilitySchema.options;
+export const OBSERVABILITY_VALUES = ObservabilityProviderSchema.options;
+export const COMMUNICATION_VALUES = CommunicationSchema.options;
 export const WEB_DEPLOY_VALUES = WebDeploySchema.options;
 export const SERVER_DEPLOY_VALUES = ServerDeploySchema.options;
 export const DIRECTORY_CONFLICT_VALUES = DirectoryConflictSchema.options;

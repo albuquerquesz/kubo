@@ -43,9 +43,12 @@ export function displayConfig(config: Partial<ProjectConfig>) {
   if (config.payments !== undefined) {
     configDisplay.push(`${pc.blue("Payments:")} ${String(config.payments)}`);
   }
+  if (config.communication !== undefined) {
+    configDisplay.push(`${pc.blue("Communication:")} ${String(config.communication)}`);
+  }
 
   if (config.observability !== undefined) {
-    configDisplay.push(`${pc.blue("Observability:")} ${String(config.observability)}`);
+    configDisplay.push(`${pc.blue("Observability:")} ${config.observability.join(", ") || "none"}`);
   }
 
   if (config.addons !== undefined) {
@@ -59,6 +62,13 @@ export function displayConfig(config: Partial<ProjectConfig>) {
     const examplesText =
       examples.length > 0 && examples[0] !== undefined ? examples.join(", ") : "none";
     configDisplay.push(`${pc.blue("Examples:")} ${examplesText}`);
+  }
+
+  if (config.testing !== undefined) {
+    const testing = Array.isArray(config.testing) ? config.testing : [config.testing];
+    const testingText =
+      testing.length > 0 && testing[0] !== undefined ? testing.join(", ") : "none";
+    configDisplay.push(`${pc.blue("Testing:")} ${testingText}`);
   }
 
   if (config.git !== undefined) {

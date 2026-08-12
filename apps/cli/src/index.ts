@@ -5,7 +5,7 @@ import { createCli, type TrpcCliMeta } from "trpc-cli";
 import z from "zod";
 
 import { historyHandler } from "./commands/history";
-import { openBuilderCommand, openDocsCommand, showSponsorsCommand } from "./commands/meta";
+import { openBuilderCommand, openDocsCommand } from "./commands/meta";
 import { addHandler, type AddResult } from "./helpers/core/add-handler";
 import { createProjectHandler } from "./helpers/core/command-handlers";
 import {
@@ -44,6 +44,8 @@ import {
   PackageManagerSchema,
   type Payments,
   PaymentsSchema,
+  type Communication,
+  CommunicationSchema,
   type ProjectConfig,
   ProjectNameSchema,
   type Runtime,
@@ -52,6 +54,7 @@ import {
   ServerDeploySchema,
   type Template,
   TemplateSchema,
+  TestingSchema,
   type WebDeploy,
   WebDeploySchema,
 } from "./types";
@@ -70,12 +73,14 @@ export const SchemaNameSchema = z
     "frontend",
     "addons",
     "examples",
+    "testing",
     "packageManager",
     "databaseSetup",
     "api",
     "auth",
     "payments",
     "observability",
+    "communication",
     "webDeploy",
     "serverDeploy",
     "directoryConflict",
@@ -150,9 +155,15 @@ export const router = t.router({
           auth: AuthSchema.optional(),
           payments: PaymentsSchema.optional(),
           observability: ObservabilitySchema.optional(),
+          disableObservability: z
+            .boolean()
+            .optional()
+            .describe("Disable all observability providers"),
+          communication: CommunicationSchema.optional(),
           frontend: z.array(FrontendSchema).optional(),
           addons: z.array(AddonsSchema).optional(),
           examples: z.array(ExamplesSchema).optional(),
+          testing: z.array(TestingSchema).optional(),
           git: z.boolean().optional(),
           packageManager: PackageManagerSchema.optional(),
           install: z.boolean().optional(),
@@ -214,9 +225,6 @@ export const router = t.router({
       }),
     )
     .query(({ input }) => getSchemaResult(input.name)),
-  sponsors: t.procedure
-    .meta({ description: "Show kubojs sponsors" })
-    .mutation(() => showSponsorsCommand()),
   docs: t.procedure
     .meta({ description: "Open kubojs documentation" })
     .mutation(() => openDocsCommand()),
@@ -228,6 +236,7 @@ export const router = t.router({
     .input(
       z.object({
         addons: z.array(AddonsSchema).optional().describe("Addons to add"),
+        testing: z.array(TestingSchema).optional().describe("Testing tools to add"),
         install: z
           .boolean()
           .optional()
@@ -352,10 +361,6 @@ export async function create(
   });
 }
 
-export async function sponsors() {
-  return showSponsorsCommand();
-}
-
 export async function docs() {
   return openDocsCommand();
 }
@@ -425,9 +430,11 @@ export async function createVirtual(
     frontend: options.frontend || ["tanstack-router"],
     addons: options.addons || [],
     examples: options.examples || [],
+    testing: options.testing || [],
     auth: options.auth || "none",
     payments: options.payments || "none",
-    observability: options.observability || "none",
+    observability: options.disableObservability ? [] : options.observability || [],
+    communication: options.communication || "none",
     git: options.git ?? false,
     packageManager: options.packageManager || "bun",
     install: false,
@@ -445,10 +452,13 @@ export async function createVirtual(
     "frontend",
     "addons",
     "examples",
+    "testing",
     "auth",
     "dbSetup",
     "payments",
     "observability",
+    "disableObservability",
+    "communication",
     "api",
     "webDeploy",
     "serverDeploy",
@@ -493,6 +503,7 @@ export type {
   Auth,
   Payments,
   Observability,
+  Communication,
   WebDeploy,
   ServerDeploy,
   Template,

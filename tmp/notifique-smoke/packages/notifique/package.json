@@ -1,0 +1,22 @@
+{
+  "name": "@notifique-smoke/notifique",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@notifique-smoke/env": "workspace:*",
+    "dotenv": "^17.4.2",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@notifique-smoke/config": "workspace:*",
+    "typescript": "^6"
+  }
+}

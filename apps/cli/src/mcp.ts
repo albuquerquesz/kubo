@@ -20,8 +20,11 @@ import {
   ORMSchema,
   PackageManagerSchema,
   PaymentsSchema,
+  ObservabilitySchema,
+  CommunicationSchema,
   RuntimeSchema,
   ServerDeploySchema,
+  TestingSchema,
   WebDeploySchema,
 } from "./types";
 import { getLatestCLIVersion } from "./utils/get-latest-cli-version";
@@ -48,10 +51,15 @@ const McpCreateProjectInputSchema = CreateInputSchema.safeExtend({
   api: APISchema.describe("Explicit API layer"),
   auth: AuthSchema.describe("Explicit authentication provider"),
   payments: PaymentsSchema.describe("Explicit payments provider"),
+  observability: ObservabilitySchema.describe("Explicit observability providers; use [] for none"),
+  communication: CommunicationSchema.describe("Explicit communication provider"),
   addons: z.array(AddonsSchema).describe("Explicit addon list. Use [] when no addons are needed."),
   examples: z
     .array(ExamplesSchema)
     .describe("Explicit example list. Use [] when no examples are needed."),
+  testing: z
+    .array(TestingSchema)
+    .describe("Explicit testing tools list. Use [] when no testing tools are needed."),
   git: z.boolean().describe("Whether to initialize a git repository"),
   packageManager: PackageManagerSchema.describe("Explicit package manager"),
   install: z.boolean().describe("Whether to install dependencies"),
@@ -141,6 +149,7 @@ function getStackGuidance() {
         "payments",
         "addons",
         "examples",
+        "testing",
         "git",
         "packageManager",
         "install",
@@ -156,6 +165,7 @@ function getStackGuidance() {
         "frontend is for app surfaces only. Choose explicit app targets such as next, react-router, tanstack-router, native-bare, native-uniwind, or native-unistyles.",
       addons: "addons must be an explicit array. Use [] when no addons are requested.",
       examples: "examples must be an explicit array. Use [] when no examples are requested.",
+      testing: "testing must be an explicit array. Use [] when no testing tools are requested.",
       dbSetup:
         "dbSetup is always required. Use 'none' when no managed database provisioning is requested.",
       webDeploy:

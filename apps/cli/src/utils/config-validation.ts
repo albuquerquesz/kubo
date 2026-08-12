@@ -11,6 +11,8 @@ import {
   validateApiFrontendCompatibility,
   validateExamplesCompatibility,
   validatePaymentsCompatibility,
+  validateTestingAgainstFrontends,
+  validateCommunicationCompatibility,
   validateSelfBackendCompatibility,
   validateDockerServerDeploy,
   validateDockerWebDeployDesktopAddons,
@@ -349,6 +351,12 @@ export function validateBackendNoneConstraints(
     );
   }
 
+  if (has("communication") && config.communication !== "none") {
+    return validationErr(
+      "Backend 'none' requires '--communication none'. Please remove the --communication flag or set it to 'none'.",
+    );
+  }
+
   if (has("dbSetup") && config.dbSetup !== "none") {
     return validationErr(
       "Backend 'none' requires '--db-setup none'. Please remove the --db-setup flag or set it to 'none'.",
@@ -499,6 +507,7 @@ export function validateFullConfig(
     yield* validateBackendConstraints(config, providedFlags, options);
 
     yield* validateFrontendConstraints(config, providedFlags);
+    yield* validateTestingAgainstFrontends(config.testing ?? [], config.frontend ?? []);
 
     yield* validateApiConstraints(config, options);
 
@@ -561,6 +570,8 @@ export function validateFullConfig(
       config.database,
     );
 
+    yield* validateCommunicationCompatibility(config.communication, config.backend);
+
     return Result.ok(undefined);
   });
 }
@@ -574,6 +585,7 @@ export function validateConfigForProgrammaticUse(config: Partial<ProjectConfig>)
     }
 
     yield* validateApiFrontendCompatibility(config.api, config.frontend);
+    yield* validateTestingAgainstFrontends(config.testing ?? [], config.frontend ?? []);
 
     yield* validatePaymentsCompatibility(
       config.payments,
@@ -583,6 +595,8 @@ export function validateConfigForProgrammaticUse(config: Partial<ProjectConfig>)
       config.orm,
       config.database,
     );
+
+    yield* validateCommunicationCompatibility(config.communication, config.backend);
 
     if (config.addons && config.addons.length > 0) {
       yield* validateAddonsAgainstFrontends(
