@@ -1197,8 +1197,10 @@ export const getDisabledReason = (
   // COMMUNICATION CONSTRAINTS
   // ============================================
   if (category === "communication") {
-    if (optionId === "resend" && currentStack.backend === "none") {
-      return "Resend exige um backend com runtime de servidor";
+    if ((optionId === "resend" || optionId === "notifique") && currentStack.backend === "none") {
+      return optionId === "notifique"
+        ? "Notifique exige um backend com runtime de servidor"
+        : "Resend exige um backend com runtime de servidor";
     }
   }
 

@@ -545,6 +545,13 @@ export const TECH_OPTIONS: Record<
       icon: "https://resend.com/favicon.ico",
       color: "from-zinc-600 to-black",
     },
+    {
+      id: "notifique",
+      name: "Notifique",
+      description: "Mensageria omnichannel (WhatsApp, SMS, e-mail, …)",
+      icon: "https://notifique.dev/favicon.ico",
+      color: "from-amber-400 to-orange-600",
+    },
   ],
   packageManager: [
     {
