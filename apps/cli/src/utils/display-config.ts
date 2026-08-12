@@ -48,7 +48,7 @@ export function displayConfig(config: Partial<ProjectConfig>) {
   }
 
   if (config.observability !== undefined) {
-    configDisplay.push(`${pc.blue("Observability:")} ${String(config.observability)}`);
+    configDisplay.push(`${pc.blue("Observability:")} ${config.observability.join(", ") || "none"}`);
   }
 
   if (config.addons !== undefined) {

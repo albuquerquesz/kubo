@@ -1,18 +1,20 @@
 import { DEFAULT_CONFIG } from "../constants";
 import type { Observability } from "../types";
 import { UserCancelledError } from "../utils/errors";
-import { isCancel, navigableSelect, preferValidInitial } from "./navigable";
+import { isCancel, navigableMultiselect } from "./navigable";
+
+type ObservabilityProvider = Observability[number];
 
 const options = [
   {
-    value: "getmonitor" as Observability,
+    value: "getmonitor" as ObservabilityProvider,
     label: "GetMonitor",
     hint: "Recommended — JS/TS error tracking for browser and server",
   },
   {
-    value: "none" as Observability,
-    label: "None",
-    hint: "Skip observability SDK setup",
+    value: "himetrica" as ObservabilityProvider,
+    label: "Himetrica",
+    hint: "Product analytics, errors, and Web Vitals for web apps",
   },
 ];
 
@@ -22,10 +24,11 @@ export async function getObservabilityChoice(
 ) {
   if (observability !== undefined) return observability;
 
-  const response = await navigableSelect<Observability>({
-    message: "Select observability provider",
+  const response = await navigableMultiselect<ObservabilityProvider>({
+    message: "Select observability providers",
     options,
-    initialValue: preferValidInitial(options, previousValue, DEFAULT_CONFIG.observability),
+    required: false,
+    initialValues: previousValue ?? DEFAULT_CONFIG.observability,
   });
 
   if (isCancel(response)) throw new UserCancelledError({ message: "Operation cancelled" });
