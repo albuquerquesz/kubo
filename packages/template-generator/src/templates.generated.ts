@@ -33567,7 +33567,6 @@ export const env = createEnv({
 		NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 	{{#if (eq observability "getmonitor")}}
 		GETMONITOR_API_KEY: z.string().min(1).optional(),
-		GETMONITOR_API_HOST: z.url().optional(),
 	{{/if}}
 	},
 	runtimeEnv: {{#if (or (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}runtimeEnv{{else}}process.env{{/if}},
@@ -33620,6 +33619,9 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
+{{#if (eq observability "getmonitor")}}
+		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 	runtimeEnv: {
 		NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
@@ -33629,15 +33631,24 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
+{{#if (eq observability "getmonitor")}}
+		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
+{{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
 	client: {
 		NUXT_PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
+{{#if (eq observability "getmonitor")}}
+		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 {{else if (or (includes frontend "svelte") (includes frontend "astro"))}}
 	clientPrefix: "PUBLIC_",
 	client: {
 		PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
+{{#if (eq observability "getmonitor")}}
+		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
 {{else}}
@@ -33652,7 +33663,6 @@ export const env = createEnv({
 {{/if}}
 {{#if (eq observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
-		VITE_GETMONITOR_API_HOST: z.url().optional(),
 {{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
@@ -33663,14 +33673,24 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
+{{#if (eq observability "getmonitor")}}
+		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 	runtimeEnv: {
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
+{{#if (eq observability "getmonitor")}}
+		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
+{{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
-	client: {},
+	client: {
+{{#if (eq observability "getmonitor")}}
+		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
+	},
 {{else}}
 	clientPrefix: "VITE_",
 	client: {
@@ -33679,7 +33699,6 @@ export const env = createEnv({
 {{/if}}
 {{#if (eq observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
-		VITE_GETMONITOR_API_HOST: z.url().optional(),
 {{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
@@ -33691,21 +33710,33 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
+{{#if (eq observability "getmonitor")}}
+		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 	runtimeEnv: {
 		NEXT_PUBLIC_SERVER_URL: process.env.NEXT_PUBLIC_SERVER_URL,
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
+{{#if (eq observability "getmonitor")}}
+		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
+{{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
 	client: {
 		NUXT_PUBLIC_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
+{{#if (eq observability "getmonitor")}}
+		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 {{else if (or (includes frontend "svelte") (includes frontend "astro"))}}
 	clientPrefix: "PUBLIC_",
 	client: {
 		PUBLIC_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
+{{#if (eq observability "getmonitor")}}
+		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
 {{else}}
@@ -33717,7 +33748,6 @@ export const env = createEnv({
 {{/if}}
 {{#if (eq observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
-		VITE_GETMONITOR_API_HOST: z.url().optional(),
 {{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,

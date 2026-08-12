@@ -358,6 +358,7 @@ export function useStackBuilder() {
     startTransition(() => {
       setStack(DEFAULT_STACK);
     });
+    analytics.track("stack_reset", {});
     contentRef.current?.scrollTo(0, 0);
   }
 

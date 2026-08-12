@@ -10,7 +10,7 @@ export function KuboHimetricaProvider({ children }: { children: React.ReactNode 
   }
 
   return (
-    <HimetricaProvider apiKey={apiKey} autoTrackPageViews={false} autoTrackErrors trackVitals>
+    <HimetricaProvider apiKey={apiKey} autoTrackErrors trackVitals>
       {children}
     </HimetricaProvider>
   );

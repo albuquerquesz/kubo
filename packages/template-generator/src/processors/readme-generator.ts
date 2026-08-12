@@ -422,11 +422,16 @@ function generateGetMonitorSetup(): string {
 
 This project includes the [GetMonitor JavaScript error-tracking SDK](https://github.com/get-monitor/getmonitor-js).
 
-1. Create a GetMonitor project and copy its public project key.
-2. Set the generated \`.env\` value ending in \`GETMONITOR_API_KEY\` for the web app and/or server.
-3. Keep \`GETMONITOR_API_HOST\` set to \`https://ingest.getmonitor.com\` unless your project uses another ingestion host.
+Keys are **optional for local first run** — the app starts without them and capture stays idle until you configure a project key.
 
-Browser errors are captured automatically after the client bootstrap runs. Node server errors are captured automatically when the server key is configured. See the [browser SDK](https://github.com/get-monitor/getmonitor-js/tree/main/packages/browser) and [Node SDK](https://github.com/get-monitor/getmonitor-js/tree/main/packages/node) guides for manual capture and filtering.
+1. Create a GetMonitor project and copy its public project key (\`gm_xxx\`).
+2. Set the generated \`.env\` value ending in \`GETMONITOR_API_KEY\` for the web app and/or server when you are ready to send events.
+3. Ingestion uses a fixed host (\`http://ingest.getmonitor.io\`) — no \`apiHost\` env var is required.
+4. Optional (Next.js / Nuxt production builds): set \`GETMONITOR_AUTH_TOKEN\` (secret, never public) so source maps upload during \`next build\` / \`nuxt build\`.
+
+Browser uncaught errors are captured after the client bootstrap runs. React apps also wrap the tree in \`<GetMonitorErrorBoundary>\`. Node server errors are captured when the server key is configured.
+
+See the [browser](https://github.com/get-monitor/getmonitor-js/tree/main/packages/browser), [Node](https://github.com/get-monitor/getmonitor-js/tree/main/packages/node), [React](https://github.com/get-monitor/getmonitor-js/tree/main/packages/react), [Next.js](https://github.com/get-monitor/getmonitor-js/tree/main/packages/nextjs-config), and [Nuxt](https://github.com/get-monitor/getmonitor-js/tree/main/packages/nuxt) package guides.
 `;
 }
 
