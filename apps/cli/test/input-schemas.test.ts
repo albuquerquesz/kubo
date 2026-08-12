@@ -50,7 +50,7 @@ describe("Input schemas", () => {
     expect(result.success).toBe(false);
   });
 
-  it("rejects unknown keys in bts.jsonc config payloads", () => {
+  it("rejects unknown keys in kubojs.jsonrc config payloads", () => {
     const result = BetterTStackConfigFileSchema.safeParse({
       version: "0.0.0",
       createdAt: new Date(0).toISOString(),

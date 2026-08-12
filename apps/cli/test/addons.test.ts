@@ -785,7 +785,7 @@ describe("Addon Configurations", () => {
         "Cannot combine 'turborepo', 'nx', and 'vite-plus' addons",
       );
 
-      const btsConfig = await readFile(join(projectDir, "bts.jsonc"), "utf8");
+      const btsConfig = await readFile(join(projectDir, "kubojs.jsonrc"), "utf8");
       expect(btsConfig).toContain('"turborepo"');
       expect(btsConfig).not.toContain('"vite-plus"');
     });
@@ -823,7 +823,7 @@ describe("Addon Configurations", () => {
         "Cannot combine 'turborepo', 'nx', and 'vite-plus' addons",
       );
 
-      const btsConfig = await readFile(join(projectDir, "bts.jsonc"), "utf8");
+      const btsConfig = await readFile(join(projectDir, "kubojs.jsonrc"), "utf8");
       expect(btsConfig).toContain('"vite-plus"');
       expect(btsConfig).not.toContain('"nx"');
     });

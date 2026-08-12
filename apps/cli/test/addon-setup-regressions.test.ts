@@ -206,7 +206,7 @@ describe("Addon setup regressions", () => {
     await fs.remove(projectDir);
     await fs.ensureDir(projectDir);
     await fs.writeFile(
-      path.join(projectDir, "bts.jsonc"),
+      path.join(projectDir, "kubojs.jsonrc"),
       JSON.stringify({
         version: "0.0.0-test",
         createdAt: new Date(0).toISOString(),
