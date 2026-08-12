@@ -1,24 +1,24 @@
 ---
-title: bts.jsonc
-description: O que o bts.jsonc faz e por que importa
+title: kubojs.jsonrc
+description: O que o kubojs.jsonrc faz e por que importa
 ---
 
 ## O que é?
 
-`bts.jsonc` é um pequeno arquivo de configuração gravado na raiz do projeto quando você o cria. Ele registra as escolhas de stack (frontend, backend, API, DB/ORM, auth, addons etc.). O arquivo usa JSONC (JSON com comentários) e inclui um schema para dicas no editor.
+`kubojs.jsonrc` é um pequeno arquivo de configuração gravado na raiz do projeto quando você o cria. Ele registra as escolhas de stack (frontend, backend, API, DB/ORM, auth, addons etc.). O arquivo usa JSONC (JSON com comentários) e inclui um schema para dicas no editor.
 
-Onde: `./bts.jsonc`
+Onde: `./kubojs.jsonrc`
 
 ## Por que existe
 
 - Necessário para o comando `add` detectar a stack atual
 - Ajuda a validar compatibilidade e pré-preencher padrões sensatos
 
-Se `bts.jsonc` estiver ausente, o comando `add` não consegue rodar porque o projeto não pode ser detectado.
+Se `kubojs.jsonrc` estiver ausente, o comando `add` não consegue rodar porque o projeto não pode ser detectado.
 
 ## Seguro apagar (com ressalva)
 
-É seguro apagar no desenvolvimento normal; o código gerado em `apps/*` e `packages/*` continua sendo a fonte da verdade. Porém, se planejar usar o comando `add` depois, você deve manter o `bts.jsonc` (ou recriá-lo) para a CLI detectar o projeto.
+É seguro apagar no desenvolvimento normal; o código gerado em `apps/*` e `packages/*` continua sendo a fonte da verdade. Porém, se planejar usar o comando `add` depois, você deve manter o `kubojs.jsonrc` (ou recriá-lo) para a CLI detectar o projeto.
 
 ## Formato
 

@@ -225,7 +225,7 @@ The SDK normalizes plain thrown values, chained `error.cause`, and `AggregateErr
 
 ## Verification
 
-For a Kubo schema/provider change, verify the provider through the full path: shared schema/types, CLI flags and prompts, `bts.jsonc`, reproducible command, web stack-builder state/URL/command, generated README, post-install output, and tests.
+For a Kubo schema/provider change, verify the provider through the full path: shared schema/types, CLI flags and prompts, `kubojs.jsonrc`, reproducible command, web stack-builder state/URL/command, generated README, post-install output, and tests.
 
 For a generated SDK integration, verify at minimum:
 
