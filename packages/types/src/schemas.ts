@@ -501,7 +501,7 @@ export const ProjectConfigSchema = z.object({
   serverDeploy: ServerDeploySchema,
 });
 
-export const BetterTStackConfigSchema = z.object({
+export const KubojsConfigSchema = z.object({
   version: z.string().describe("CLI version used to create this project"),
   createdAt: z.string().describe("Timestamp when the project was created"),
   reproducibleCommand: z.string().optional().describe("Command to reproduce this project setup"),
@@ -524,11 +524,11 @@ export const BetterTStackConfigSchema = z.object({
   serverDeploy: ServerDeploySchema,
 });
 
-export const BetterTStackConfigFileSchema = z
+export const KubojsConfigFileSchema = z
   .object({
     $schema: z.string().optional().describe("JSON Schema reference for validation"),
   })
-  .extend(BetterTStackConfigSchema.shape)
+  .extend(KubojsConfigSchema.shape)
   .strict()
   .meta({
     id: "https://r2.kubojs.dev/schema.json",

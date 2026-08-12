@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import type { BetterTStackConfig } from "@kubojs/types";
+import type { KubojsConfig } from "@kubojs/types";
 import fs from "fs-extra";
 import { applyEdits, modify, parse } from "jsonc-parser";
 
@@ -9,7 +9,7 @@ const KUBOJS_CONFIG_FILE = "kubojs.jsonrc";
 /**
  * Reads the kubojs configuration file from the project directory.
  */
-export async function readKubojsConfig(projectDir: string): Promise<BetterTStackConfig | null> {
+export async function readKubojsConfig(projectDir: string): Promise<KubojsConfig | null> {
   try {
     const configPath = path.join(projectDir, KUBOJS_CONFIG_FILE);
 
@@ -18,7 +18,7 @@ export async function readKubojsConfig(projectDir: string): Promise<BetterTStack
     }
 
     const configContent = await fs.readFile(configPath, "utf-8");
-    const config = parse(configContent) as BetterTStackConfig;
+    const config = parse(configContent) as KubojsConfig;
     return config;
   } catch {
     return null;
@@ -31,10 +31,7 @@ export async function readKubojsConfig(projectDir: string): Promise<BetterTStack
 export async function updateKubojsConfig(
   projectDir: string,
   updates: Partial<
-    Pick<
-      BetterTStackConfig,
-      "addons" | "addonOptions" | "dbSetupOptions" | "webDeploy" | "serverDeploy"
-    >
+    Pick<KubojsConfig, "addons" | "addonOptions" | "dbSetupOptions" | "webDeploy" | "serverDeploy">
   >,
 ): Promise<void> {
   try {

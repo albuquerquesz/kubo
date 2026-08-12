@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 
 import {
   AddInputSchema,
-  BetterTStackConfigFileSchema,
+  KubojsConfigFileSchema,
   CLIInputSchema,
   CreateInputSchema,
   ObservabilitySchema,
@@ -51,7 +51,7 @@ describe("Input schemas", () => {
   });
 
   it("rejects unknown keys in kubojs.jsonrc config payloads", () => {
-    const result = BetterTStackConfigFileSchema.safeParse({
+    const result = KubojsConfigFileSchema.safeParse({
       version: "0.0.0",
       createdAt: new Date(0).toISOString(),
       projectName: "app",
@@ -156,11 +156,11 @@ describe("Input schemas", () => {
     expect(typeof module.createBtsMcpServer).toBe("function");
   });
 
-  it("exposes the Better T Stack config file JSON schema by name", () => {
-    const schemaName = SchemaNameSchema.safeParse("betterTStackConfigFile");
+  it("exposes the kubojs config file JSON schema by name", () => {
+    const schemaName = SchemaNameSchema.safeParse("kubojsConfigFile");
 
     expect(schemaName.success).toBe(true);
-    expect(getSchemaResult("betterTStackConfigFile")).toMatchObject({
+    expect(getSchemaResult("kubojsConfigFile")).toMatchObject({
       type: "object",
     });
   });
