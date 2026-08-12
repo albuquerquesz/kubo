@@ -93,9 +93,26 @@ export const AuthSchema = z
 
 export const PaymentsSchema = z.enum(["none", "abacatepay"]).describe("Payments provider");
 
+export const ObservabilityProviderSchema = z.enum(["getmonitor", "himetrica"]);
+
 export const ObservabilitySchema = z
-  .enum(["none", "getmonitor"])
-  .describe("Observability provider");
+  .preprocess(
+    (value) => {
+      if (value === "none") return [];
+      if (typeof value === "string") return [value];
+      if (Array.isArray(value)) return value.filter((item) => item !== "none");
+      return value;
+    },
+    z.array(ObservabilityProviderSchema).superRefine((providers, ctx) => {
+      if (new Set(providers).size !== providers.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Observability providers must be unique",
+        });
+      }
+    }),
+  )
+  .describe("Selected observability providers");
 
 export const CommunicationSchema = z
   .enum(["none", "resend", "notifique"])
@@ -440,6 +457,7 @@ export const CreateInputSchema = z
     auth: AuthSchema.optional(),
     payments: PaymentsSchema.optional(),
     observability: ObservabilitySchema.optional(),
+    disableObservability: z.boolean().optional(),
     communication: CommunicationSchema.optional(),
     frontend: z.array(FrontendSchema).optional(),
     addons: AddonsListSchema.optional(),
@@ -566,7 +584,7 @@ export const DATABASE_SETUP_VALUES = DatabaseSetupSchema.options;
 export const API_VALUES = APISchema.options;
 export const AUTH_VALUES = AuthSchema.options;
 export const PAYMENTS_VALUES = PaymentsSchema.options;
-export const OBSERVABILITY_VALUES = ObservabilitySchema.options;
+export const OBSERVABILITY_VALUES = ObservabilityProviderSchema.options;
 export const COMMUNICATION_VALUES = CommunicationSchema.options;
 export const WEB_DEPLOY_VALUES = WebDeploySchema.options;
 export const SERVER_DEPLOY_VALUES = ServerDeploySchema.options;
