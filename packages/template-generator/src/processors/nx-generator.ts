@@ -34,7 +34,7 @@ export function generateNxConfig(config: ProjectConfig): NxConfig {
   const dbSupport = getDbScriptSupport(config);
   const hasDatabase = dbSupport.hasDbScripts;
   const isDocker = dbSetup === "docker";
-  const isSqliteLocal = database === "sqlite" && dbSetup !== "d1" && hasDatabase;
+  const isSqliteLocal = database === "sqlite" && dbSetup === "turso" && hasDatabase;
   const hasCloudflare = webDeploy === "cloudflare" || serverDeploy === "cloudflare";
 
   const targetDefaults: Record<string, NxTargetDefaults> = {

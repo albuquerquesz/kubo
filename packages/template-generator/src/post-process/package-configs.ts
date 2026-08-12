@@ -160,7 +160,8 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
     }
   }
 
-  if (database === "sqlite" && dbSetup !== "d1") {
+  // Turso CLI local replica only when user chose Turso setup (not plain sqlite file:)
+  if (database === "sqlite" && dbSetup === "turso") {
     scripts["db:local"] = pmConfig.filter(dbPackageName, "db:local");
   }
 
@@ -560,7 +561,7 @@ function updateDbPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): voi
   const { isD1Alchemy } = dbSupport;
 
   if (database !== "none") {
-    if (database === "sqlite" && dbSetup !== "d1") {
+    if (database === "sqlite" && dbSetup === "turso") {
       scripts["db:local"] = "turso dev --db-file local.db";
     }
 
@@ -729,7 +730,7 @@ function updateVitePlusPackageScripts(vfs: VirtualFileSystem, config: ProjectCon
     "vite build": "vp build",
     "vite preview": "vp preview",
     "vitest run": "vp test",
-    "vite build && tsc --noEmit": "vp build && tsc --noEmit",
+    // check-types stays pure `tsc --noEmit` (never rewrite to a production build)
   };
 
   for (const [scriptName, command] of Object.entries(webPkg.scripts)) {

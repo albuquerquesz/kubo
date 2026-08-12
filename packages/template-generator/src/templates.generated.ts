@@ -35,13 +35,19 @@ export const EMBEDDED_TEMPLATES: Map<string, string> = new Map([
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"indentStyle": "space",
+		"indentWidth": 2
 	},
 	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"linter": {
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"a11y": {
+				"noLabelWithoutControl": "off",
+				"useKeyWithClickEvents": "off",
+				"useSemanticElements": "off"
+			},
 			"correctness": {
 				"useExhaustiveDependencies": "info"
 			},
@@ -65,6 +71,9 @@ export const EMBEDDED_TEMPLATES: Map<string, string> = new Map([
 				"useNumberNamespace": "error",
 				"noInferrableTypes": "error",
 				"noUselessElse": "error"
+			},
+			"suspicious": {
+				"noExplicitAny": "off"
 			}
 		}
 	},
@@ -7834,8 +7843,8 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 {{#if (ne backend "self")}}
 		advanced: {
 			defaultCookieAttributes: {
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: process.env.NODE_ENV === "production",
 				httpOnly: true,
 			},
 		},
@@ -7917,8 +7926,8 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 {{#if (ne backend "self")}}
 		advanced: {
 			defaultCookieAttributes: {
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: process.env.NODE_ENV === "production",
 				httpOnly: true,
 			},
 		},
@@ -7997,8 +8006,8 @@ export function createAuth() {
 		baseURL: env.BETTER_AUTH_URL,
 		advanced: {
 			defaultCookieAttributes: {
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: process.env.NODE_ENV === "production",
 				httpOnly: true,
 			},
 			// uncomment crossSubDomainCookies setting when ready to deploy and replace <your-workers-subdomain> with your actual workers subdomain
@@ -8072,8 +8081,8 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 {{#if (ne backend "self")}}
 		advanced: {
 			defaultCookieAttributes: {
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: process.env.NODE_ENV === "production",
 				httpOnly: true,
 			},
 		},
@@ -8144,8 +8153,8 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 {{#if (ne backend "self")}}
 		advanced: {
 			defaultCookieAttributes: {
-				sameSite: "none",
-				secure: true,
+				sameSite: "lax",
+				secure: process.env.NODE_ENV === "production",
 				httpOnly: true,
 			},
 		},
@@ -15854,6 +15863,7 @@ export default defineConfig({
   dialect: "sqlite",
   driver: "d1-http",
   {{else}}
+  // libsql/sqlite local + Turso remote both use the turso dialect in drizzle-kit
   dialect: "turso",
   dbCredentials: {
     url: process.env.DATABASE_URL || "",
@@ -31264,7 +31274,7 @@ export default defineConfig({
 		"build": "vite build",
 		"serve": "vite preview",
 		"start": "vite",
-		"check-types": "vite build && tsc --noEmit"
+		"check-types": "tsc --noEmit"
 	},
 	"dependencies": {
         "@hookform/resolvers": "^5.4.0",
@@ -33468,9 +33478,24 @@ export const env = new Proxy({} as Env, {
 // Types are defined in env.d.ts based on your alchemy.run.ts bindings
 export { env } from "cloudflare:workers";
 {{else}}
-import "dotenv/config";
+import { config } from "dotenv";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
+
+// Load monorepo package env relative to this file (not process.cwd()).
+// Turbo/\`bun run\` from the workspace root would otherwise miss apps/*/ .env.
+const envFilePath = resolve(
+	fileURLToPath(new URL(".", import.meta.url)),
+{{#if (eq backend "self")}}
+	"../../../apps/web/.env",
+{{else}}
+	"../../../apps/server/.env",
+{{/if}}
+);
+config({ path: envFilePath });
+
 
 {{#if (or (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}
 function getVercelOrigin() {

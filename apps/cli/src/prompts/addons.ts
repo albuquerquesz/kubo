@@ -152,6 +152,12 @@ function validateAddonSelection(selected: Addons[] | undefined) {
   if (selectedTaskRunners.length > 1) {
     return "Choose Turborepo, Nx, or Vite+ as your task runner, not more than one.";
   }
+
+  const selectedLinters =
+    selected?.filter((addon) => ["biome", "oxlint", "ultracite"].includes(addon)) ?? [];
+  if (selectedLinters.length > 1) {
+    return "Choose Biome, Oxlint, or Ultracite as your code-quality tool, not more than one.";
+  }
 }
 
 export async function getAddonsChoice(

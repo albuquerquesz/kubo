@@ -19,7 +19,11 @@ import pc from "picocolors";
 
 import { getAddonsToAdd } from "../../prompts/addons";
 import type { AddInput, Addons, AddonOptions, ProjectConfig } from "../../types";
-import { validateAddonsAgainstConfig } from "../../utils/compatibility-rules";
+import {
+  isLinterAddon,
+  mergeAddonsExclusive,
+  validateAddonsAgainstConfig,
+} from "../../utils/compatibility-rules";
 import { isSilent, runWithContextAsync } from "../../utils/context";
 import { CLIError, UserCancelledError, displayError } from "../../utils/errors";
 import { validateAgentSafePathInput } from "../../utils/input-hardening";
@@ -133,6 +137,55 @@ function refreshLefthookTemplate(vfs: VirtualFileSystem, config: ProjectConfig):
   if (!template) return;
 
   vfs.writeFile("lefthook.yml", processTemplateString(template, config));
+}
+
+/** Remove files/deps left by a replaced exclusive linter. */
+async function cleanupRemovedLinters(projectDir: string, removedAddons: Addons[]): Promise<void> {
+  const removedLinters = removedAddons.filter(isLinterAddon);
+  if (removedLinters.length === 0) return;
+
+  const packageJsonPath = path.join(projectDir, "package.json");
+  if (await fs.pathExists(packageJsonPath)) {
+    const packageJson = await fs.readJson(packageJsonPath);
+    packageJson.devDependencies = packageJson.devDependencies ?? {};
+
+    for (const removed of removedLinters) {
+      if (removed === "biome" || removed === "ultracite") {
+        delete packageJson.devDependencies["@biomejs/biome"];
+        delete packageJson.devDependencies.ultracite;
+      }
+      if (removed === "oxlint" || removed === "ultracite") {
+        delete packageJson.devDependencies.oxlint;
+        delete packageJson.devDependencies.oxfmt;
+      }
+    }
+
+    // Drop dual check scripts when switching away; setup for the new linter rewrites them.
+    if (
+      typeof packageJson.scripts?.check === "string" &&
+      removedLinters.some((linter) => {
+        if (linter === "biome") return packageJson.scripts.check.includes("biome");
+        if (linter === "oxlint") return packageJson.scripts.check.includes("oxlint");
+        if (linter === "ultracite") return packageJson.scripts.check.includes("ultracite");
+        return false;
+      })
+    ) {
+      delete packageJson.scripts.check;
+    }
+
+    await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+  }
+
+  for (const removed of removedLinters) {
+    if (removed === "biome") {
+      await fs.remove(path.join(projectDir, "biome.json"));
+    }
+    if (removed === "oxlint") {
+      await fs.remove(path.join(projectDir, ".oxlintrc.json"));
+      await fs.remove(path.join(projectDir, ".oxfmtrc.json"));
+      await fs.remove(path.join(projectDir, ".oxfmtrc.jsonc"));
+    }
+  }
 }
 
 function updateViteConfigImportsForVitePlus(vfs: VirtualFileSystem): void {
@@ -286,8 +339,8 @@ async function addHandlerInternal(
     addonsToAdd = selectedAddons;
   }
 
-  // Build config for addon setup
-  const updatedAddons = [...existingConfig.addons, ...addonsToAdd];
+  // Build config for addon setup (exclusive lint/task-runner slots replace siblings)
+  const { updatedAddons, removedAddons } = mergeAddonsExclusive(existingConfig.addons, addonsToAdd);
   const addonsValidationResult = validateAddonsAgainstConfig(updatedAddons, existingConfig);
   if (addonsValidationResult.isErr()) {
     return Result.err(new CLIError({ message: addonsValidationResult.error.message }));
@@ -295,6 +348,9 @@ async function addHandlerInternal(
 
   if (!isSilent()) {
     log.info(pc.cyan(`Adding addons: ${addonsToAdd.join(", ")}`));
+    if (removedAddons.length > 0) {
+      log.info(pc.dim(`Replacing exclusive addons: ${removedAddons.join(", ")}`));
+    }
   }
 
   const mergedAddonOptions = mergeAddonOptions(existingConfig.addonOptions, input.addonOptions);
@@ -421,6 +477,9 @@ async function addHandlerInternal(
     log.info(pc.dim(`Wrote ${vfs.getFileCount()} addon files`));
   }
 
+  // Drop previous exclusive linter files/deps before installing the replacement.
+  await cleanupRemovedLinters(projectDir, removedAddons);
+
   // Run addon setup (handles deps and interactive prompts)
   // Wrap with Result.tryPromise since setupAddons can throw UserCancelledError
   const setupResult = await Result.tryPromise({
@@ -442,7 +501,7 @@ async function addHandlerInternal(
     return Result.err(setupResult.error);
   }
 
-  // Update kubojs.jsonrc with new addons
+  // Update kubojs.jsonrc with final exclusive addon list (preserves JSONC comments)
   await updateKubojsConfig(projectDir, {
     addons: updatedAddons,
     addonOptions: updatedConfig.addonOptions,

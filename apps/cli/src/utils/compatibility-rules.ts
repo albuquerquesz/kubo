@@ -20,7 +20,44 @@ import { ValidationError } from "./errors";
 type ValidationResult = Result<void, ValidationError>;
 type AddonCompatibilityConfig = Pick<ProjectConfig, "frontend" | "auth" | "backend" | "runtime">;
 const TASK_RUNNER_ADDONS = ["turborepo", "nx", "vite-plus"] as const satisfies readonly Addons[];
+/** Mutually exclusive code-quality linters (one slot). */
+export const LINTER_ADDONS = ["biome", "oxlint", "ultracite"] as const satisfies readonly Addons[];
 const STATIC_DESKTOP_ADDONS = ["tauri", "electrobun"] as const satisfies readonly Addons[];
+
+export function isLinterAddon(addon: string): boolean {
+  return (LINTER_ADDONS as readonly string[]).includes(addon);
+}
+
+/**
+ * When adding a code-quality linter, drop sibling linters so only one remains.
+ * Last-selected linter wins. Task runners stay validation-only (reject on dual).
+ */
+export function mergeAddonsExclusive(
+  existingAddons: readonly Addons[],
+  addonsToAdd: readonly Addons[],
+): { updatedAddons: Addons[]; removedAddons: Addons[] } {
+  const removed = new Set<Addons>();
+  let result = [...existingAddons];
+
+  for (const addon of addonsToAdd) {
+    if ((LINTER_ADDONS as readonly Addons[]).includes(addon)) {
+      for (const current of result) {
+        if ((LINTER_ADDONS as readonly Addons[]).includes(current) && current !== addon) {
+          removed.add(current);
+        }
+      }
+      result = result.filter(
+        (current) => !(LINTER_ADDONS as readonly Addons[]).includes(current) || current === addon,
+      );
+    }
+
+    if (!result.includes(addon) && addon !== "none") {
+      result.push(addon);
+    }
+  }
+
+  return { updatedAddons: result, removedAddons: [...removed] };
+}
 const TAURI_STATIC_EXPORT_FRONTENDS = [
   "next",
   "tanstack-start",
@@ -517,6 +554,15 @@ export function validateAddonsAgainstFrontends(
   if (selectedTaskRunners.length > 1) {
     return validationErr(
       "Cannot combine 'turborepo', 'nx', and 'vite-plus' addons. Choose one task runner.",
+    );
+  }
+
+  const selectedLinters = [
+    ...new Set(addons.filter((addon) => (LINTER_ADDONS as readonly Addons[]).includes(addon))),
+  ];
+  if (selectedLinters.length > 1) {
+    return validationErr(
+      "Cannot combine 'biome', 'oxlint', and 'ultracite' addons. Choose one code-quality linter.",
     );
   }
 
