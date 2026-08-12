@@ -134,6 +134,8 @@ export async function gatherConfig(
         getObservabilityChoice(flags.observability, previousAnswer),
       communication: ({ results, previousAnswer }) =>
         getCommunicationChoice(flags.communication, results.backend, previousAnswer),
+      testing: ({ results, previousAnswer }) =>
+        getTestingChoice(flags.testing, results.frontend, previousAnswer),
       addons: ({ results, previousAnswer }) =>
         getAddonsChoice(
           flags.addons,
@@ -152,8 +154,6 @@ export async function gatherConfig(
           results.api,
           previousAnswer,
         ) as Promise<Examples[]>,
-      testing: ({ results, previousAnswer }) =>
-        getTestingChoice(flags.testing, results.frontend, previousAnswer),
       dbSetup: ({ results, previousAnswer }) =>
         getDBSetupChoice(
           results.database ?? "none",
