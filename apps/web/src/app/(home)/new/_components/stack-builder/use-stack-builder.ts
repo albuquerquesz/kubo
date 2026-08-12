@@ -83,7 +83,7 @@ export function useStackBuilder() {
   const projectNameError = validateProjectName(stack.projectName || "");
 
   useEffect(() => {
-    const savedStack = localStorage.getItem("betterTStackPreference");
+    const savedStack = localStorage.getItem("kubojsStackPreference");
     if (!savedStack) {
       return;
     }
@@ -93,7 +93,7 @@ export function useStackBuilder() {
       setLastSavedStack(parsedStack);
     } catch (error) {
       console.error("Failed to parse saved stack", error);
-      localStorage.removeItem("betterTStackPreference");
+      localStorage.removeItem("kubojsStackPreference");
     }
   }, []);
 
@@ -352,7 +352,7 @@ export function useStackBuilder() {
 
   function saveCurrentStack() {
     const stackToSave = withFormattedProjectName(compatibilityAnalysis.adjustedStack || stack);
-    localStorage.setItem("betterTStackPreference", JSON.stringify(stackToSave));
+    localStorage.setItem("kubojsStackPreference", JSON.stringify(stackToSave));
     setLastSavedStack(stackToSave);
     toast.success("A configuração da sua stack foi salva");
   }
