@@ -8,7 +8,7 @@ import fs from "fs-extra";
 
 import { create } from "../src/index";
 import { createBtsMcpServer } from "../src/mcp";
-import { readBtsConfig } from "../src/utils/bts-config";
+import { readKubojsConfig } from "../src/utils/kubojs-config";
 import { SMOKE_DIR } from "./setup";
 
 async function connectInMemoryClient() {
@@ -380,8 +380,8 @@ describe("MCP server", () => {
     expect(payload.data?.projectDirectory).toBe(projectPath);
     expect(await fs.pathExists(projectPath)).toBe(true);
 
-    const btsConfig = await readBtsConfig(projectPath);
-    expect(btsConfig?.frontend).toEqual(["next"]);
+    const kubojsConfig = await readKubojsConfig(projectPath);
+    expect(kubojsConfig?.frontend).toEqual(["next"]);
   });
 
   it("rejects install=true during MCP project creation with an actionable error", async () => {
@@ -453,7 +453,7 @@ describe("MCP server", () => {
     });
     expect(createResult.isOk()).toBe(true);
 
-    const before = await readBtsConfig(projectPath);
+    const before = await readKubojsConfig(projectPath);
 
     const result = await client.callTool({
       name: "bts_plan_addons",
@@ -475,7 +475,7 @@ describe("MCP server", () => {
     expect(payload.data?.dryRun).toBe(true);
     expect(payload.data?.addedAddons).toEqual(["biome"]);
 
-    const after = await readBtsConfig(projectPath);
+    const after = await readKubojsConfig(projectPath);
     expect(after).toEqual(before);
   });
 
@@ -525,7 +525,7 @@ describe("MCP server", () => {
     expect(payload.data?.success).toBe(true);
     expect(payload.data?.addedAddons).toEqual(["biome"]);
 
-    const after = await readBtsConfig(projectPath);
+    const after = await readKubojsConfig(projectPath);
     expect(after?.addons).toEqual(expect.arrayContaining(["turborepo", "biome"]));
   });
 

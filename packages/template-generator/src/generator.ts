@@ -1,7 +1,7 @@
 import { Result } from "better-result";
 
-import { writeBtsConfigToVfs } from "./bts-config";
 import { VirtualFileSystem } from "./core/virtual-fs";
+import { writeKubojsConfigToVfs } from "./kubojs-config";
 import { processCatalogs, processPackageConfigs, processVercelConfig } from "./post-process";
 import {
   processDependencies,
@@ -93,7 +93,7 @@ export async function generate(
       // Write kubojs.jsonrc config file
       if (options.version) {
         const reproducibleCommand = generateReproducibleCommand(config);
-        writeBtsConfigToVfs(vfs, config, options.version, reproducibleCommand);
+        writeKubojsConfigToVfs(vfs, config, options.version, reproducibleCommand);
       }
 
       const tree: VirtualFileTree = {
