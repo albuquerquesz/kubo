@@ -11,6 +11,7 @@ import {
   validateApiFrontendCompatibility,
   validateExamplesCompatibility,
   validatePaymentsCompatibility,
+  validateTestingAgainstFrontends,
   validateCommunicationCompatibility,
   validateSelfBackendCompatibility,
   validateDockerServerDeploy,
@@ -506,6 +507,7 @@ export function validateFullConfig(
     yield* validateBackendConstraints(config, providedFlags, options);
 
     yield* validateFrontendConstraints(config, providedFlags);
+    yield* validateTestingAgainstFrontends(config.testing ?? [], config.frontend ?? []);
 
     yield* validateApiConstraints(config, options);
 
@@ -583,6 +585,7 @@ export function validateConfigForProgrammaticUse(config: Partial<ProjectConfig>)
     }
 
     yield* validateApiFrontendCompatibility(config.api, config.frontend);
+    yield* validateTestingAgainstFrontends(config.testing ?? [], config.frontend ?? []);
 
     yield* validatePaymentsCompatibility(
       config.payments,

@@ -191,45 +191,6 @@ export async function setupHusky(projectDir: string, linter?: "biome" | "oxlint"
   }
 }
 
-export async function setupVitest(projectDir: string) {
-  await addPackageDependency({
-    devDependencies: ["vitest"],
-    projectDir,
-  });
-
-  const packageJsonPath = path.join(projectDir, "package.json");
-  if (await fs.pathExists(packageJsonPath)) {
-    const packageJson = await fs.readJson(packageJsonPath);
-
-    packageJson.scripts = {
-      ...packageJson.scripts,
-      test: "vitest run",
-      "test:watch": "vitest",
-    };
-
-    await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
-  }
-}
-
-export async function setupPlaywright(projectDir: string) {
-  await addPackageDependency({
-    devDependencies: ["@playwright/test"],
-    projectDir,
-  });
-
-  const packageJsonPath = path.join(projectDir, "package.json");
-  if (await fs.pathExists(packageJsonPath)) {
-    const packageJson = await fs.readJson(packageJsonPath);
-
-    packageJson.scripts = {
-      ...packageJson.scripts,
-      "test:e2e": "playwright test",
-    };
-
-    await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
-  }
-}
-
 export async function setupLefthook(projectDir: string) {
   await addPackageDependency({
     devDependencies: ["lefthook"],

@@ -11,7 +11,7 @@ import type {
   ServerDeploy,
   WebDeploy,
 } from "../../types";
-import { desktopWebFrontends } from "../../types";
+import { desktopWebFrontends, getWebPort } from "../../types";
 import { getDockerStatus } from "../../utils/docker-utils";
 import { cliConsola } from "../../utils/terminal-output";
 
@@ -133,11 +133,7 @@ export async function displayPostInstallInstructions(
     frontend?.includes("native-uniwind") ||
     frontend?.includes("native-unistyles");
 
-  const hasReactRouter = frontend?.includes("react-router");
-  const hasSvelte = frontend?.includes("svelte");
-  const hasAstro = frontend?.includes("astro");
-  // TanStack Router/Start, Next, Nuxt and Solid all dev on 3001; only React Router and SvelteKit use Vite's default 5173.
-  const webPort = hasReactRouter || hasSvelte ? "5173" : hasAstro ? "4321" : "3001";
+  const webPort = getWebPort(frontend ?? []);
 
   const betterAuthConvexInstructions =
     isConvex && config.auth === "better-auth"

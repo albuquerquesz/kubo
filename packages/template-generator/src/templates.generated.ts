@@ -38025,7 +38025,42 @@ function SuccessPage() {
 		<p>Checkout ID: {checkout_id}</p>
 	{/if}
 </div>
+`],
+  ["testing/playwright/e2e/example.spec.ts.hbs", `import { expect, test } from "@playwright/test";
+
+test("homepage loads", async ({ page }) => {
+  await page.goto("/");
+  await expect(page).toHaveTitle(/.+/);
+});
+`],
+  ["testing/playwright/playwright.config.ts.hbs", `import { defineConfig } from "@playwright/test";
+
+const baseURL = "http://localhost:{{webPort frontend}}";
+
+export default defineConfig({
+  testDir: "./e2e",
+  fullyParallel: true,
+  reporter: "list",
+  use: {
+    baseURL,
+    trace: "on-first-retry",
+  },
+  webServer: {
+    command: "{{packageManager}} run dev",
+    url: baseURL,
+    reuseExistingServer: !process.env.CI,
+  },
+});
+`],
+  ["testing/vitest/vitest.config.ts.hbs", `import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    passWithNoTests: true,
+    include: ["apps/*/src/**/*.{test,spec}.ts", "packages/*/src/**/*.{test,spec}.ts"],
+  },
+});
 `]
 ]);
 
-export const TEMPLATE_COUNT = 556;
+export const TEMPLATE_COUNT = 559;

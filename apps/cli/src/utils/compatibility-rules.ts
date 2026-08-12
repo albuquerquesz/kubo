@@ -13,6 +13,7 @@ import type {
   ProjectConfig,
   Runtime,
   ServerDeploy,
+  Testing,
   WebDeploy,
 } from "../types";
 import { WEB_FRAMEWORKS } from "./compatibility";
@@ -87,6 +88,20 @@ function validationErr(message: string): ValidationResult {
 
 export function isWebFrontend(value: Frontend) {
   return WEB_FRAMEWORKS.includes(value);
+}
+
+export function isPlaywrightAllowed(frontends: Frontend[] = []) {
+  return frontends.some((frontend) => isWebFrontend(frontend));
+}
+
+export function validateTestingAgainstFrontends(
+  testing: Testing[] = [],
+  frontends: Frontend[] = [],
+): ValidationResult {
+  if (testing.includes("playwright") && !isPlaywrightAllowed(frontends)) {
+    return validationErr("playwright testing requires a web frontend");
+  }
+  return Result.ok(undefined);
 }
 
 export function splitFrontends(values: Frontend[] = []): {
