@@ -4,7 +4,7 @@ import path from "node:path";
 import fs from "fs-extra";
 
 import { add, create } from "../src/index";
-import { readBtsConfig } from "../src/utils/bts-config";
+import { readKubojsConfig } from "../src/utils/kubojs-config";
 
 const SMOKE_DIR_PATH = path.join(import.meta.dir, "..", ".smoke");
 
@@ -73,8 +73,8 @@ describe("Addon options", () => {
     );
     expect(result.value.reproducibleCommand).not.toContain("create-json --input");
 
-    const btsConfig = await readBtsConfig(projectPath);
-    expect(btsConfig?.addonOptions).toEqual(addonOptions);
+    const kubojsConfig = await readKubojsConfig(projectPath);
+    expect(kubojsConfig?.addonOptions).toEqual(addonOptions);
   });
 
   it("persists addonOptions during add", async () => {
@@ -109,9 +109,9 @@ describe("Addon options", () => {
 
     expect(addResult?.success).toBe(true);
 
-    const btsConfig = await readBtsConfig(projectPath);
-    expect(btsConfig?.addonOptions).toEqual(addonOptions);
-    expect(btsConfig?.addons).toEqual(expect.arrayContaining(["turborepo", "wxt", "mcp"]));
+    const kubojsConfig = await readKubojsConfig(projectPath);
+    expect(kubojsConfig?.addonOptions).toEqual(addonOptions);
+    expect(kubojsConfig?.addons).toEqual(expect.arrayContaining(["turborepo", "wxt", "mcp"]));
   });
 
   it("deep merges nested addonOptions during add", async () => {
@@ -159,8 +159,8 @@ describe("Addon options", () => {
 
     expect(secondAddResult?.success).toBe(true);
 
-    const btsConfig = await readBtsConfig(projectPath);
-    expect(btsConfig?.addonOptions).toEqual({
+    const kubojsConfig = await readKubojsConfig(projectPath);
+    expect(kubojsConfig?.addonOptions).toEqual({
       mcp: {
         scope: "project",
         servers: ["context7"],

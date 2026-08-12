@@ -5,10 +5,10 @@ import pc from "picocolors";
 import { navigableMultiselect, navigableSelect } from "../../prompts/navigable";
 import { navigableGroup } from "../../prompts/navigable-group";
 import type { AddonOptions, ProjectConfig } from "../../types";
-import { readBtsConfig } from "../../utils/bts-config";
 import { isSilent } from "../../utils/context";
 import { AddonSetupError, UserCancelledError } from "../../utils/errors";
 import { shouldSkipExternalCommands } from "../../utils/external-commands";
+import { readKubojsConfig } from "../../utils/kubojs-config";
 import { getPackageRunnerPrefix } from "../../utils/package-runner";
 import { cliLog, createSpinner } from "../../utils/terminal-output";
 
@@ -352,12 +352,12 @@ export async function setupSkills(
   const { packageManager, projectDir } = config;
 
   // Load full config from kubojs.jsonrc to get all addons (existing + new)
-  const btsConfig = await readBtsConfig(projectDir);
-  const fullConfig: ProjectConfig = btsConfig
+  const kubojsConfig = await readKubojsConfig(projectDir);
+  const fullConfig: ProjectConfig = kubojsConfig
     ? {
         ...config,
-        addons: btsConfig.addons ?? config.addons,
-        addonOptions: btsConfig.addonOptions ?? config.addonOptions,
+        addons: kubojsConfig.addons ?? config.addons,
+        addonOptions: kubojsConfig.addonOptions ?? config.addonOptions,
       }
     : config;
 

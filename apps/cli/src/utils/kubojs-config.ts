@@ -4,14 +4,14 @@ import type { BetterTStackConfig } from "@kubojs/types";
 import fs from "fs-extra";
 import { applyEdits, modify, parse } from "jsonc-parser";
 
-const BTS_CONFIG_FILE = "kubojs.jsonrc";
+const KUBOJS_CONFIG_FILE = "kubojs.jsonrc";
 
 /**
- * Reads the BTS configuration file from the project directory.
+ * Reads the kubojs configuration file from the project directory.
  */
-export async function readBtsConfig(projectDir: string): Promise<BetterTStackConfig | null> {
+export async function readKubojsConfig(projectDir: string): Promise<BetterTStackConfig | null> {
   try {
-    const configPath = path.join(projectDir, BTS_CONFIG_FILE);
+    const configPath = path.join(projectDir, KUBOJS_CONFIG_FILE);
 
     if (!(await fs.pathExists(configPath))) {
       return null;
@@ -26,9 +26,9 @@ export async function readBtsConfig(projectDir: string): Promise<BetterTStackCon
 }
 
 /**
- * Updates specific fields in the BTS configuration file.
+ * Updates specific fields in the kubojs configuration file.
  */
-export async function updateBtsConfig(
+export async function updateKubojsConfig(
   projectDir: string,
   updates: Partial<
     Pick<
@@ -38,7 +38,7 @@ export async function updateBtsConfig(
   >,
 ): Promise<void> {
   try {
-    const configPath = path.join(projectDir, BTS_CONFIG_FILE);
+    const configPath = path.join(projectDir, KUBOJS_CONFIG_FILE);
 
     if (!(await fs.pathExists(configPath))) {
       return;

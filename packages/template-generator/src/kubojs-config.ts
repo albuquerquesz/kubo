@@ -2,19 +2,19 @@ import type { BetterTStackConfig, ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "./core/virtual-fs";
 
-const BTS_CONFIG_FILE = "kubojs.jsonrc";
+const KUBOJS_CONFIG_FILE = "kubojs.jsonrc";
 
 /**
- * Writes the BTS configuration file to the VFS (for new project creation).
+ * Writes the kubojs configuration file to the VFS (for new project creation).
  * This is browser-safe as it only writes to VFS, not the real filesystem.
  */
-export function writeBtsConfigToVfs(
+export function writeKubojsConfigToVfs(
   vfs: VirtualFileSystem,
   projectConfig: ProjectConfig,
   version: string,
   reproducibleCommand?: string,
 ): void {
-  const btsConfig: BetterTStackConfig = {
+  const kubojsConfig: BetterTStackConfig = {
     version,
     createdAt: new Date().toISOString(),
     reproducibleCommand,
@@ -39,7 +39,7 @@ export function writeBtsConfigToVfs(
 
   const baseContent = {
     $schema: "https://r2.kubojs.dev/schema.json",
-    ...btsConfig,
+    ...kubojsConfig,
   };
 
   const jsonContent = JSON.stringify(baseContent, null, 2);
@@ -63,5 +63,5 @@ export function writeBtsConfigToVfs(
 
 ${jsonContent}`;
 
-  vfs.writeFile(BTS_CONFIG_FILE, finalContent);
+  vfs.writeFile(KUBOJS_CONFIG_FILE, finalContent);
 }

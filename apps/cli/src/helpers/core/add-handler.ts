@@ -19,11 +19,11 @@ import pc from "picocolors";
 
 import { getAddonsToAdd } from "../../prompts/addons";
 import type { AddInput, Addons, AddonOptions, ProjectConfig } from "../../types";
-import { updateBtsConfig } from "../../utils/bts-config";
 import { validateAddonsAgainstConfig } from "../../utils/compatibility-rules";
 import { isSilent, runWithContextAsync } from "../../utils/context";
 import { CLIError, UserCancelledError, displayError } from "../../utils/errors";
 import { validateAgentSafePathInput } from "../../utils/input-hardening";
+import { updateKubojsConfig } from "../../utils/kubojs-config";
 import { renderTitle } from "../../utils/render-title";
 import { setupAddons } from "../addons/addons-setup";
 import { detectProjectConfig } from "./detect-project-config";
@@ -443,7 +443,7 @@ async function addHandlerInternal(
   }
 
   // Update kubojs.jsonrc with new addons
-  await updateBtsConfig(projectDir, {
+  await updateKubojsConfig(projectDir, {
     addons: updatedAddons,
     addonOptions: updatedConfig.addonOptions,
   });
