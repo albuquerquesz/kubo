@@ -36,7 +36,8 @@ describe("Nx config generator", () => {
 
     expect(productionInputs).toContain("!{workspaceRoot}/apps/web/dist/**");
     expect(productionInputs).toContain("!{workspaceRoot}/apps/web/.tanstack/**");
-    expect(productionInputs).toContain("!{workspaceRoot}/apps/web/src/routeTree.gen.ts");
+    // routeTree.gen.ts is committed source — included in production inputs
+    expect(productionInputs).not.toContain("!{workspaceRoot}/apps/web/src/routeTree.gen.ts");
     expect(productionInputs).toContain("!{workspaceRoot}/apps/server/dist/**");
     expect(productionInputs).toContain("!{workspaceRoot}/packages/db/dist/**");
     expect(productionInputs).toContain("!{workspaceRoot}/packages/db/local.db*");

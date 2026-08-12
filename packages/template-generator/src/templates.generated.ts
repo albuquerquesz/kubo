@@ -15460,9 +15460,6 @@ dist
 build
 *.tsbuildinfo
 
-# Generated files
-apps/web/src/routeTree.gen.ts
-
 # Environment variables
 .env
 .env*.local

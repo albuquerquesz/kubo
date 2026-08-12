@@ -543,7 +543,8 @@ describe("Addon Configurations", () => {
       expect(rootViteConfig).toContain('import { defineConfig } from "vite-plus";');
       expect(rootViteConfig).toContain('"apps/web/dist/**"');
       expect(rootViteConfig).toContain('"apps/web/.tanstack/**"');
-      expect(rootViteConfig).toContain('"apps/web/src/routeTree.gen.ts"');
+      // routeTree.gen.ts is committed source (not listed as generated ignore)
+      expect(rootViteConfig).not.toContain('"apps/web/src/routeTree.gen.ts"');
       expect(rootViteConfig).toContain('"apps/server/dist/**"');
       expect(rootViteConfig).toContain('"packages/db/dist/**"');
       expect(rootViteConfig).toContain('"packages/db/local.db*"');
