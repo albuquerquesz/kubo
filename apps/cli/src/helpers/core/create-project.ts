@@ -12,6 +12,7 @@ import type { DbSetupOptions, ProjectConfig } from "../../types";
 import { isSilent } from "../../utils/context";
 import { ProjectCreationError } from "../../utils/errors";
 import { formatProject } from "../../utils/file-formatter";
+import { generateRouteTreeIfNeeded } from "../../utils/generate-route-tree";
 import { getLatestCLIVersion } from "../../utils/get-latest-cli-version";
 import { setupAddons } from "../addons/addons-setup";
 import { setupDatabase } from "../core/db-setup";
@@ -80,6 +81,9 @@ export async function createProject(
         ),
       ),
     );
+
+    // Generate TanStack routeTree.gen.ts so typecheck works without a prior vite build
+    yield* Result.await(generateRouteTreeIfNeeded(projectDir, options));
 
     // Set package manager version
     yield* Result.await(setPackageManagerVersion(projectDir, options.packageManager));

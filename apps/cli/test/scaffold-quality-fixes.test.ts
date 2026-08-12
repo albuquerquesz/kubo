@@ -128,6 +128,11 @@ describe("scaffold quality fixes", () => {
     const kubojsConfig = await readFile(path.join(projectPath, "kubojs.jsonrc"), "utf8");
     expect(kubojsConfig).toContain("// kubojs");
     expect(kubojsConfig).toContain("$schema");
+
+    // routeTree.gen.ts shipped for day-1 typecheck (not gitignored)
+    expect(await fs.pathExists(path.join(projectPath, "apps/web/src/routeTree.gen.ts"))).toBe(true);
+    const gitignore = await readFile(path.join(projectPath, ".gitignore"), "utf8");
+    expect(gitignore).not.toContain("routeTree.gen.ts");
   });
 
   it("add oxlint replaces biome exclusively", async () => {
