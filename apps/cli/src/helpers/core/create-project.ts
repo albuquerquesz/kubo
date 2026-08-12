@@ -15,6 +15,7 @@ import { formatProject } from "../../utils/file-formatter";
 import { getLatestCLIVersion } from "../../utils/get-latest-cli-version";
 import { setupAddons } from "../addons/addons-setup";
 import { setupDatabase } from "../core/db-setup";
+import { setupTesting } from "../testing/testing-setup";
 import { initializeGit } from "./git";
 import { installDependencies } from "./install-dependencies";
 import { displayPostInstallInstructions } from "./post-installation";
@@ -100,7 +101,9 @@ export async function createProject(
     }
 
     // Setup addons if any
-    if (options.addons.length > 0 && options.addons[0] !== "none") {
+    const hasAddons = options.addons.some((addon) => addon !== "none");
+    const hasTesting = options.testing.some((tool) => tool !== "none");
+    if (hasAddons) {
       yield* Result.await(
         Result.tryPromise({
           try: () => setupAddons(options),
@@ -110,6 +113,15 @@ export async function createProject(
               message: `Failed to setup addons: ${e instanceof Error ? e.message : String(e)}`,
               cause: e,
             }),
+        }),
+      );
+    }
+    if (hasTesting) {
+      yield* Result.await(
+        Result.tryPromise({
+          try: () => setupTesting(projectDir, options.testing),
+          catch: (e) =>
+            new ProjectCreationError({ phase: "testing-setup", message: String(e), cause: e }),
         }),
       );
     }
