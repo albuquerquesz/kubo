@@ -263,9 +263,15 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
     scripts["docker:logs"] = "docker compose logs -f";
   }
 
-  // Note: packageManager version is set by CLI at runtime since it requires running the actual CLI
-  // For preview purposes, we just show the configured package manager
-  pkgJson.packageManager = `${packageManager}@latest`;
+  // Corepack and Turbo require `name@x.y.z` (semver). Never write `@latest`.
+  // The CLI pins the real installed version after scaffolding. When reprocessing
+  // during `add`, preserve an existing valid pin instead of clobbering it.
+  if (
+    typeof pkgJson.packageManager === "string" &&
+    !isValidPackageManagerField(pkgJson.packageManager)
+  ) {
+    delete pkgJson.packageManager;
+  }
 
   if (config.api === "orpc" && config.frontend.includes("nuxt")) {
     pkgJson.overrides = {
@@ -313,6 +319,14 @@ function getWorkspacePackages(workspaces: PackageJson["workspaces"]): string[] {
   }
 
   return [];
+}
+
+/**
+ * Corepack/Turbo accept packageManager fields like `bun@1.3.10` (semver, optional
+ * pre-release/build metadata). Reject placeholders such as `bun@latest`.
+ */
+function isValidPackageManagerField(value: string): boolean {
+  return /^(bun|npm|pnpm|yarn)@\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(value);
 }
 
 function getUpdatedWorkspaces(
