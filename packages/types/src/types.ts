@@ -14,6 +14,7 @@ import type {
   AuthSchema,
   PaymentsSchema,
   ObservabilitySchema,
+  CommunicationSchema,
   WebDeploySchema,
   ServerDeploySchema,
   DirectoryConflictSchema,
@@ -43,6 +44,7 @@ export type API = z.infer<typeof APISchema>;
 export type Auth = z.infer<typeof AuthSchema>;
 export type Payments = z.infer<typeof PaymentsSchema>;
 export type Observability = z.infer<typeof ObservabilitySchema>;
+export type Communication = z.infer<typeof CommunicationSchema>;
 export type WebDeploy = z.infer<typeof WebDeploySchema>;
 export type ServerDeploy = z.infer<typeof ServerDeploySchema>;
 export type DirectoryConflict = z.infer<typeof DirectoryConflictSchema>;

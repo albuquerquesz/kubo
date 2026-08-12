@@ -97,6 +97,10 @@ export const ObservabilitySchema = z
   .enum(["none", "getmonitor"])
   .describe("Observability provider");
 
+export const CommunicationSchema = z
+  .enum(["none", "resend"])
+  .describe("Communication provider (transactional email)");
+
 export const WebDeploySchema = z
   .enum(["cloudflare", "docker", "vercel", "guaracloud", "none"])
   .describe("Web deployment");
@@ -436,6 +440,7 @@ export const CreateInputSchema = z
     auth: AuthSchema.optional(),
     payments: PaymentsSchema.optional(),
     observability: ObservabilitySchema.optional(),
+    communication: CommunicationSchema.optional(),
     frontend: z.array(FrontendSchema).optional(),
     addons: AddonsListSchema.optional(),
     examples: z.array(ExamplesSchema).optional(),
@@ -492,6 +497,7 @@ export const ProjectConfigSchema = z.object({
   auth: AuthSchema,
   payments: PaymentsSchema,
   observability: ObservabilitySchema,
+  communication: CommunicationSchema,
   git: z.boolean(),
   packageManager: PackageManagerSchema,
   install: z.boolean(),
@@ -517,6 +523,7 @@ export const KubojsConfigSchema = z.object({
   auth: AuthSchema,
   payments: PaymentsSchema,
   observability: ObservabilitySchema,
+  communication: CommunicationSchema,
   packageManager: PackageManagerSchema,
   dbSetup: DatabaseSetupSchema,
   api: APISchema,
@@ -560,6 +567,7 @@ export const API_VALUES = APISchema.options;
 export const AUTH_VALUES = AuthSchema.options;
 export const PAYMENTS_VALUES = PaymentsSchema.options;
 export const OBSERVABILITY_VALUES = ObservabilitySchema.options;
+export const COMMUNICATION_VALUES = CommunicationSchema.options;
 export const WEB_DEPLOY_VALUES = WebDeploySchema.options;
 export const SERVER_DEPLOY_VALUES = ServerDeploySchema.options;
 export const DIRECTORY_CONFLICT_VALUES = DirectoryConflictSchema.options;

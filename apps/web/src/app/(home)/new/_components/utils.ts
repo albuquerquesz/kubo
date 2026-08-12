@@ -129,6 +129,7 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
   auth: "Auth",
   payments: "Pagamentos",
   observability: "Observabilidade",
+  communication: "Comunicação",
   packageManager: "Package Manager",
   addons: "Add-ons",
   examples: "Exemplos",
@@ -260,6 +261,7 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
       dbSetup: "none",
       serverDeploy: "none",
       payments: "none",
+      communication: "none",
     };
 
     for (const [key, value] of Object.entries(noneOverrides)) {
@@ -926,6 +928,9 @@ export const getDisabledReason = (
     if (category === "payments" && optionId !== "none") {
       return "Nenhum backend selecionado";
     }
+    if (category === "communication" && optionId !== "none") {
+      return "Nenhum backend selecionado";
+    }
     if (category === "examples" && optionId !== "none") {
       return "Nenhum backend selecionado";
     }
@@ -1185,6 +1190,15 @@ export const getDisabledReason = (
       ) {
         return "AbacatePay v1 exige um banco SQL com Prisma ou Drizzle";
       }
+    }
+  }
+
+  // ============================================
+  // COMMUNICATION CONSTRAINTS
+  // ============================================
+  if (category === "communication") {
+    if (optionId === "resend" && currentStack.backend === "none") {
+      return "Resend exige um backend com runtime de servidor";
     }
   }
 

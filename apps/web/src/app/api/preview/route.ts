@@ -112,6 +112,7 @@ function stackStateToConfig(state: StackState): ProjectConfig {
     auth: (state.auth || "none") as ProjectConfig["auth"],
     payments: (state.payments || "none") as ProjectConfig["payments"],
     observability: (state.observability || "none") as ProjectConfig["observability"],
+    communication: (state.communication || "none") as ProjectConfig["communication"],
     git,
     packageManager: (state.packageManager || "bun") as ProjectConfig["packageManager"],
     install: false,

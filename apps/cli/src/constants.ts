@@ -21,6 +21,7 @@ export const DEFAULT_CONFIG_BASE = {
   auth: "better-auth",
   payments: "none",
   observability: "getmonitor",
+  communication: "none",
   addons: ["turborepo"],
   examples: [],
   git: true,

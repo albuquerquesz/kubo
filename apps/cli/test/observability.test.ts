@@ -223,6 +223,7 @@ describe("observability CLI flag processing", () => {
       auth: "none",
       payments: "none",
       observability: "none",
+      communication: "none",
       addons: ["biome"],
       examples: [],
       dbSetup: "none",

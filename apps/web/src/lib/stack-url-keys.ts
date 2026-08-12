@@ -17,6 +17,7 @@ export const stackUrlKeys: UrlKeys<
   auth: "au",
   payments: "pay",
   observability: "obs",
+  communication: "comm",
   packageManager: "pm",
   addons: "add",
   examples: "ex",

@@ -25,6 +25,7 @@ export async function detectProjectConfig(projectDir: string) {
           auth: kubojsConfig.auth,
           payments: kubojsConfig.payments,
           observability: kubojsConfig.observability,
+          communication: kubojsConfig.communication ?? "none",
           packageManager: kubojsConfig.packageManager,
           dbSetup: kubojsConfig.dbSetup,
           api: kubojsConfig.api,

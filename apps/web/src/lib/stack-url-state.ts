@@ -48,6 +48,9 @@ const serverStackParsers = {
   observability: parseAsStringEnumServer<StackState["observability"]>(
     getValidIds("observability"),
   ).withDefault(DEFAULT_STACK.observability),
+  communication: parseAsStringEnumServer<StackState["communication"]>(
+    getValidIds("communication"),
+  ).withDefault(DEFAULT_STACK.communication),
   packageManager: parseAsStringEnumServer<StackState["packageManager"]>(
     getValidIds("packageManager"),
   ).withDefault(DEFAULT_STACK.packageManager),

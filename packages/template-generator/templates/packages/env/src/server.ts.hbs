@@ -177,6 +177,11 @@ export const env = createEnv({
 	{{#if (eq observability "getmonitor")}}
 		GETMONITOR_API_KEY: z.string().min(1).optional(),
 	{{/if}}
+	{{#if (eq communication "resend")}}
+		RESEND_API_KEY: z.string().min(1).optional(),
+		// Test-only default; replace with a verified domain sender for production.
+		RESEND_FROM_EMAIL: z.string().min(1).default("Acme <onboarding@resend.dev>"),
+	{{/if}}
 	},
 	runtimeEnv: {{#if (or (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}runtimeEnv{{else}}process.env{{/if}},
 	skipValidation: !!process.env.SKIP_ENV_VALIDATION,

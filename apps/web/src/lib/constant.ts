@@ -529,6 +529,23 @@ export const TECH_OPTIONS: Record<
       color: "from-gray-400 to-gray-600",
     },
   ],
+  communication: [
+    {
+      id: "none",
+      name: "Sem comunicação",
+      description: "Sem provider de email/comunicação",
+      icon: "",
+      color: "from-gray-400 to-gray-600",
+      default: true,
+    },
+    {
+      id: "resend",
+      name: "Resend",
+      description: "Email transacional para developers",
+      icon: "https://resend.com/favicon.ico",
+      color: "from-zinc-600 to-black",
+    },
+  ],
   packageManager: [
     {
       id: "npm",
@@ -772,6 +789,7 @@ export const PRESET_TEMPLATES = [
       auth: "better-auth",
       payments: "none",
       observability: "getmonitor",
+      communication: "none",
       packageManager: "bun",
       addons: ["turborepo"],
       examples: ["todo"],
@@ -799,6 +817,7 @@ export const PRESET_TEMPLATES = [
       auth: "better-auth",
       payments: "none",
       observability: "getmonitor",
+      communication: "none",
       packageManager: "bun",
       addons: ["turborepo"],
       examples: ["todo"],
@@ -826,6 +845,7 @@ export const PRESET_TEMPLATES = [
       auth: "better-auth",
       payments: "none",
       observability: "getmonitor",
+      communication: "none",
       packageManager: "bun",
       addons: ["biome", "turborepo"],
       examples: ["none"],
@@ -853,6 +873,7 @@ export const PRESET_TEMPLATES = [
       auth: "none",
       payments: "none",
       observability: "none",
+      communication: "none",
       packageManager: "bun",
       addons: ["none"],
       examples: ["none"],
@@ -878,6 +899,7 @@ export type StackState = {
   auth: string;
   payments: string;
   observability: string;
+  communication: string;
   packageManager: string;
   addons: string[];
   examples: string[];
@@ -901,6 +923,7 @@ export const DEFAULT_STACK: StackState = {
   auth: "better-auth",
   payments: "none",
   observability: "getmonitor",
+  communication: "none",
   packageManager: "bun",
   addons: ["turborepo"],
   examples: ["none"],

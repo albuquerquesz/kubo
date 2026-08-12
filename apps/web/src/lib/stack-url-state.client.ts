@@ -35,6 +35,9 @@ export const stackParsers = {
   observability: parseAsStringEnum<StackState["observability"]>(
     getValidIds("observability"),
   ).withDefault(DEFAULT_STACK.observability),
+  communication: parseAsStringEnum<StackState["communication"]>(
+    getValidIds("communication"),
+  ).withDefault(DEFAULT_STACK.communication),
   packageManager: parseAsStringEnum<StackState["packageManager"]>(
     getValidIds("packageManager"),
   ).withDefault(DEFAULT_STACK.packageManager),
@@ -80,6 +83,7 @@ export function useStackState() {
     auth: queryState.auth,
     payments: queryState.payments,
     observability: queryState.observability,
+    communication: queryState.communication,
     packageManager: queryState.packageManager,
     addons: queryState.addons,
     examples: queryState.examples,
