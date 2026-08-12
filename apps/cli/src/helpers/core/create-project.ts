@@ -144,6 +144,45 @@ export async function createProject(
   });
 }
 
+/**
+ * Corepack/Turbo require `name@x.y.z`. Placeholders like `@latest` are invalid.
+ */
+function isValidPackageManagerField(value: string): boolean {
+  return /^(bun|npm|pnpm|yarn)@\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(value);
+}
+
+function normalizePackageManagerVersion(version: string): string | null {
+  const cleaned = version.replace(/^v/i, "").trim();
+  if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(cleaned)) {
+    return null;
+  }
+  return cleaned;
+}
+
+async function resolveInstalledPackageManagerVersion(
+  packageManager: ProjectConfig["packageManager"],
+): Promise<string | null> {
+  // Prefer the runtime bun version when available — no shell required, always semver.
+  if (
+    packageManager === "bun" &&
+    typeof process.versions.bun === "string" &&
+    process.versions.bun.length > 0
+  ) {
+    return normalizePackageManagerVersion(process.versions.bun);
+  }
+
+  const versionResult = await Result.tryPromise({
+    try: async () => {
+      // Run in a neutral directory to avoid local package manager shims affecting lookup.
+      const { stdout } = await $({ cwd: os.tmpdir() })`${packageManager} -v`;
+      return normalizePackageManagerVersion(stdout);
+    },
+    catch: () => null as string | null,
+  });
+
+  return versionResult.isOk() ? versionResult.value : null;
+}
+
 async function setPackageManagerVersion(
   projectDir: string,
   packageManager: ProjectConfig["packageManager"],
@@ -154,25 +193,21 @@ async function setPackageManagerVersion(
     return Result.ok(undefined);
   }
 
-  // First, try to get the version
-  const versionResult = await Result.tryPromise({
-    try: async () => {
-      // Run in a neutral directory to avoid local package manager shims affecting lookup.
-      const { stdout } = await $({ cwd: os.tmpdir() })`${packageManager} -v`;
-      return stdout.trim();
-    },
-    catch: () => null, // Return null if we can't get version
-  });
+  const version = await resolveInstalledPackageManagerVersion(packageManager);
 
-  // Now update the package.json
   return Result.tryPromise({
     try: async () => {
       const pkgJson = await fs.readJson(pkgJsonPath);
 
-      if (versionResult.isOk() && versionResult.value) {
-        pkgJson.packageManager = `${packageManager}@${versionResult.value}`;
+      if (version) {
+        const packageManagerField = `${packageManager}@${version}`;
+        if (isValidPackageManagerField(packageManagerField)) {
+          pkgJson.packageManager = packageManagerField;
+        } else {
+          delete pkgJson.packageManager;
+        }
       } else {
-        // If we can't get the version, just remove the packageManager field
+        // Prefer omitting the field over writing an invalid pin (e.g. `@latest`).
         delete pkgJson.packageManager;
       }
 
