@@ -150,9 +150,9 @@ export async function displayPostInstallInstructions(
     output += `${pc.cyan(`${stepCounter++}.`)} ${packageManager} install\n`;
   }
 
-  if (database === "sqlite" && dbSetup !== "d1") {
+  if (database === "sqlite" && dbSetup === "turso") {
     output += `${pc.cyan(`${stepCounter++}.`)} ${runCmd} db:local\n${pc.dim(
-      "   (optional - starts local SQLite database)",
+      "   (optional - starts local Turso/libsql replica; requires Turso CLI)",
     )}\n`;
   }
 

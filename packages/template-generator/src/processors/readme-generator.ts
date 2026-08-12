@@ -702,16 +702,22 @@ ${steps.join("\n\n")}
   const dbDescriptions: Record<string, string> = {
     sqlite: `This project uses SQLite${ormDesc}.
 
-1. Start the local SQLite database (optional):
 ${
   dbSetup === "d1"
-    ? "D1 local development and migrations are handled automatically by Alchemy during dev and deploy."
-    : `\`\`\`bash
-${packageManagerRunCmd} db:local
-\`\`\``
-}
+    ? `1. D1 local development and migrations are handled automatically by Alchemy during dev and deploy.
 
-2. Update your \`.env\` file in the \`${isBackendSelf ? "apps/web" : "apps/server"}\` directory with the appropriate connection details if needed.`,
+2. Update your \`.env\` file in the \`${isBackendSelf ? "apps/web" : "apps/server"}\` directory with the appropriate connection details if needed.`
+    : dbSetup === "turso"
+      ? `1. Start a local Turso/libsql replica (optional; requires the Turso CLI):
+\`\`\`bash
+${packageManagerRunCmd} db:local
+\`\`\`
+
+2. Update your \`.env\` file in the \`${isBackendSelf ? "apps/web" : "apps/server"}\` directory with the Turso URL and auth token.`
+      : `1. Local SQLite uses a \`file:\` URL via libsql (no Turso account or CLI required). Default \`DATABASE_URL\` points at a local file database.
+
+2. Update your \`.env\` file in the \`${isBackendSelf ? "apps/web" : "apps/server"}\` directory if you need a different path.`
+}`,
 
     postgres: `This project uses PostgreSQL${ormDesc}.
 
@@ -800,8 +806,8 @@ function generateScriptsList(
     }
   }
 
-  if (database === "sqlite" && dbSetup !== "d1" && dbSupport.hasDbScripts) {
-    scripts += `\n- \`${packageManagerRunCmd} db:local\`: Start the local SQLite database`;
+  if (database === "sqlite" && dbSetup === "turso" && dbSupport.hasDbScripts) {
+    scripts += `\n- \`${packageManagerRunCmd} db:local\`: Start a local Turso/libsql database (Turso CLI)`;
   }
 
   if (addons.includes("vite-plus")) {

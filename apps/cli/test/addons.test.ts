@@ -536,7 +536,7 @@ describe("Addon Configurations", () => {
       expect(webPackageJson.scripts.dev).toBe("vp dev");
       expect(webPackageJson.scripts.build).toBe("vp build");
       expect(webPackageJson.scripts.start).toBe("vp dev");
-      expect(webPackageJson.scripts["check-types"]).toBe("vp build && tsc --noEmit");
+      expect(webPackageJson.scripts["check-types"]).toBe("tsc --noEmit");
       expect(webViteConfig).toContain('import { defineConfig } from "vite-plus";');
       expect(webViteConfig).not.toContain('import { defineConfig } from "vite";');
       const rootViteConfig = await readFile(join(projectDir!, "vite.config.ts"), "utf8");

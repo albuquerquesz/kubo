@@ -6,6 +6,7 @@ const validAddonIds = new Set(["none", ...TECH_OPTIONS.addons.map((option) => op
 const validExampleIds = new Set(["none", ...TECH_OPTIONS.examples.map((option) => option.id)]);
 
 export const TASK_RUNNER_ADDONS = ["nx", "turborepo", "vite-plus"] as const;
+export const LINTER_ADDONS = ["biome", "oxlint", "ultracite"] as const;
 
 function sanitizeSingleSelection(
   values: readonly string[] | null | undefined,
@@ -40,6 +41,7 @@ function sanitizeMultiSelection(
 function resolveMonorepoAddonConflicts(addons: readonly string[]): string[] {
   const resolved: string[] = [];
   const taskRunners = new Set<string>(TASK_RUNNER_ADDONS);
+  const linters = new Set<string>(LINTER_ADDONS);
 
   for (const addon of addons) {
     if (taskRunners.has(addon)) {
@@ -47,6 +49,14 @@ function resolveMonorepoAddonConflicts(addons: readonly string[]): string[] {
 
       if (existingMonorepoIndex !== -1) {
         resolved.splice(existingMonorepoIndex, 1);
+      }
+    }
+
+    if (linters.has(addon)) {
+      const existingLinterIndex = resolved.findIndex((value) => linters.has(value));
+
+      if (existingLinterIndex !== -1) {
+        resolved.splice(existingLinterIndex, 1);
       }
     }
 

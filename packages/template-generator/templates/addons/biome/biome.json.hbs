@@ -31,13 +31,19 @@
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"indentStyle": "space",
+		"indentWidth": 2
 	},
 	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"linter": {
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"a11y": {
+				"noLabelWithoutControl": "off",
+				"useKeyWithClickEvents": "off",
+				"useSemanticElements": "off"
+			},
 			"correctness": {
 				"useExhaustiveDependencies": "info"
 			},
@@ -61,6 +67,9 @@
 				"useNumberNamespace": "error",
 				"noInferrableTypes": "error",
 				"noUselessElse": "error"
+			},
+			"suspicious": {
+				"noExplicitAny": "off"
 			}
 		}
 	},

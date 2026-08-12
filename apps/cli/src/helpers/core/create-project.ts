@@ -114,8 +114,8 @@ export async function createProject(
       );
     }
 
-    // Format project
-    yield* Result.await(formatProject(projectDir));
+    // Format project (skip oxfmt when biome/ultracite owns formatting)
+    yield* Result.await(formatProject(projectDir, { addons: options.addons }));
 
     if (!isSilent()) log.success("Project template successfully scaffolded!");
 

@@ -2,7 +2,7 @@
 
 ## Status
 
-Ready to implement. Covers remaining P0–P2 findings from the generated-project quality review (after `kubojs.jsonrc` rebrand + `packageManager` pin).
+Implemented (2026-08-12). Covers remaining P0–P2 findings from the generated-project quality review (after `kubojs.jsonrc` rebrand + `packageManager` pin).
 
 ## Date
 

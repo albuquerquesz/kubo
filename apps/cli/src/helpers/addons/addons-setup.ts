@@ -61,10 +61,11 @@ export async function setupAddons(config: ProjectConfig): Promise<void> {
   }
 
   const hasUltracite = addons.includes("ultracite");
-  const hasBiome = addons.includes("biome");
+  // Exclusive lint slot: ultracite > oxlint > biome (never install dual base linters)
+  const hasOxlint = !hasUltracite && addons.includes("oxlint");
+  const hasBiome = !hasUltracite && !hasOxlint && addons.includes("biome");
   const hasHusky = addons.includes("husky");
   const hasLefthook = addons.includes("lefthook");
-  const hasOxlint = addons.includes("oxlint");
   const hasVitePlus = addons.includes("vite-plus");
 
   if (hasUltracite) {
@@ -75,9 +76,7 @@ export async function setupAddons(config: ProjectConfig): Promise<void> {
   } else {
     if (hasBiome) {
       await runAddonStep("biome", () => setupBiome(projectDir));
-    }
-
-    if (hasOxlint) {
+    } else if (hasOxlint) {
       await runSetup(() => setupOxlint(projectDir, config.packageManager));
     }
 
