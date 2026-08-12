@@ -105,6 +105,7 @@
         "@base-ui/utils": "^0.2.8",
         "@erquhart/convex-oss-stats": "catalog:",
         "@gsap/react": "^2.1.2",
+        "@himetrica/tracker-js": "0.1.36",
         "@kubojs/backend": "workspace:*",
         "@kubojs/template-generator": "workspace:*",
         "@kubojs/types": "workspace:*",
@@ -156,6 +157,7 @@
         "sonner": "^2.0.7",
         "tailwind-merge": "^3.6.0",
         "three": "^0.185.1",
+        "web-vitals": "^4.2.0",
         "zod": "^4.4.3",
       },
       "devDependencies": {
@@ -382,6 +384,8 @@
     "@fumadocs/tailwind": ["@fumadocs/tailwind@0.0.5", "", { "peerDependencies": { "@tailwindcss/oxide": "^4.0.0", "tailwindcss": "^4.0.0" }, "optionalPeers": ["@tailwindcss/oxide", "tailwindcss"] }, "sha512-ENKPWUDRmriccsrUDE4bDBq3FNr/ms3BP2rWlsAEMV1yP23pcCaan+ceGfeBUsAQjw7sj9Q3R4Kl3g/TCStPzQ=="],
 
     "@gsap/react": ["@gsap/react@2.1.2", "", { "peerDependencies": { "gsap": "^3.12.5", "react": ">=17" } }, "sha512-JqliybO1837UcgH2hVOM4VO+38APk3ECNrsuSM4MuXp+rbf+/2IG2K1YJiqfTcXQHH7XlA0m3ykniFYstfq0Iw=="],
+
+    "@himetrica/tracker-js": ["@himetrica/tracker-js@0.1.36", "", { "peerDependencies": { "react": ">=18", "react-dom": ">=18", "web-vitals": "^4.0.0" }, "optionalPeers": ["react", "react-dom", "web-vitals"] }, "sha512-mouxjAa4AcvSKMtnp8FbWh4XYBkFUKMbXxo0JxvNM/gAO00iqinshjIv3Wp8ZqcfY9f+FjGp2sfHt03BgtsCyQ=="],
 
     "@hono/node-server": ["@hono/node-server@1.19.11", "", { "peerDependencies": { "hono": "^4" } }, "sha512-dr8/3zEaB+p0D2n/IUrlPF1HZm586qgJNXK1a9fhg/PzdtkK7Ksd5l312tJX2yBuALqDYBlG20QEbayqPyxn+g=="],
 
@@ -2902,6 +2906,8 @@
     "web": ["web@workspace:apps/web"],
 
     "web-namespaces": ["web-namespaces@2.0.1", "", {}, "sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ=="],
+
+    "web-vitals": ["web-vitals@4.2.4", "", {}, "sha512-r4DIlprAGwJ7YM11VZp4R884m0Vmgr6EAKe3P+kO0PPj3Unqyvv59rczf6UiGcb9Z8QxZVcqKNwv/g0WNdWwsw=="],
 
     "webidl-conversions": ["webidl-conversions@3.0.1", "", {}, "sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ=="],
 

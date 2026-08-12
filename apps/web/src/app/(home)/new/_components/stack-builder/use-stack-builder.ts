@@ -2,6 +2,7 @@ import { startTransition, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { DEFAULT_STACK, PRESET_TEMPLATES, type StackState, TECH_OPTIONS } from "@/lib/constant";
+import { useKuboHimetrica } from "@/lib/himetrica-events";
 import { sanitizeStackState, TASK_RUNNER_ADDONS } from "@/lib/sanitize-stack-addons";
 import { useStackState } from "@/lib/stack-url-state.client";
 import {
@@ -56,6 +57,7 @@ export function getCompatibilityAdjustmentState(
 }
 
 export function useStackBuilder() {
+  const analytics = useKuboHimetrica();
   const [stack, setStack, viewMode, setViewMode, selectedFile, setSelectedFile] = useStackState();
 
   const [command, setCommand] = useState("");
@@ -67,6 +69,10 @@ export function useStackBuilder() {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
   const lastAppliedAdjustmentKey = useRef<string>("");
+
+  useEffect(() => {
+    analytics.track("builder_started", {});
+  }, [analytics]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -228,6 +234,8 @@ export function useStackBuilder() {
       });
     });
 
+    analytics.track("stack_randomized", {});
+
     contentRef.current?.scrollTo(0, 0);
   }
 
@@ -235,6 +243,8 @@ export function useStackBuilder() {
     if (!isOptionCompatible(stack, category, techId)) {
       return;
     }
+
+    analytics.track("stack_option_selected", { category: String(category), value: techId });
 
     startTransition(() => {
       setStack((currentStack: StackState) => {
@@ -336,6 +346,7 @@ export function useStackBuilder() {
   async function copyToClipboard() {
     try {
       await navigator.clipboard.writeText(command);
+      analytics.track("command_copied", { source: "builder" });
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -354,6 +365,7 @@ export function useStackBuilder() {
     const stackToSave = withFormattedProjectName(compatibilityAnalysis.adjustedStack || stack);
     localStorage.setItem("kubojsStackPreference", JSON.stringify(stackToSave));
     setLastSavedStack(stackToSave);
+    analytics.track("stack_saved", {});
     toast.success("A configuração da sua stack foi salva");
   }
 
@@ -379,6 +391,8 @@ export function useStackBuilder() {
     startTransition(() => {
       setStack(preset.stack);
     });
+
+    analytics.track("preset_applied", { preset: preset.id });
 
     contentRef.current?.scrollTo(0, 0);
     toast.success(`Modelo aplicado: ${preset.name}`);
