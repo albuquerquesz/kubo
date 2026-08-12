@@ -165,15 +165,24 @@ export const dependencyVersionMap = {
   "@guaracloud/cli": "^0.3.0",
 
   dotenv: "^17.4.2",
-  tsdown: "^0.22.3",
+  // Pin 0.22.0: newer 0.22.x (e.g. 0.22.14) requires Node ≥22.18 for the node binary
+  // (Promise.withResolvers). Scaffold users often still run Node 20 under bun scripts.
+  tsdown: "0.22.0",
+  unrun: "^0.3.1",
   zod: "^4.4.3",
   "@t3-oss/env-core": "^0.13.11",
   "@t3-oss/env-nextjs": "^0.13.11",
   "@t3-oss/env-nuxt": "^0.13.11",
 
   evlog: "^2.19.2",
+  "@himetrica/tracker-js": "^0.1.36",
   "@getmonitor/browser": "^0.1.0",
   "@getmonitor/node": "^0.1.0",
+  "@getmonitor/react": "^0.1.0",
+  "@getmonitor/nextjs-config": "^0.1.0",
+  "@getmonitor/nuxt": "^0.1.0",
+
+  resend: "^6.19.0",
 } as const;
 
 export type AvailableDependencies = keyof typeof dependencyVersionMap;

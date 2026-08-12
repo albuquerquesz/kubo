@@ -24,6 +24,8 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     db: vfs.exists("packages/db/package.json"),
     auth: vfs.exists("packages/auth/package.json"),
     payments: vfs.exists("packages/payments/package.json"),
+    email: vfs.exists("packages/email/package.json"),
+    notifique: vfs.exists("packages/notifique/package.json"),
     api: vfs.exists("packages/api/package.json"),
     ui: vfs.exists("packages/ui/package.json"),
     backend: vfs.exists("packages/backend/package.json"),
@@ -114,6 +116,32 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     });
   }
 
+  if (packages.email) {
+    const emailDeps: AvailableDependencies[] = [...commonDeps];
+    if (config.communication === "resend") {
+      emailDeps.push("resend");
+    }
+    addPackageDependency({
+      vfs,
+      packagePath: "packages/email/package.json",
+      dependencies: emailDeps,
+      devDependencies: ["typescript"],
+      customDependencies: envDep,
+      customDevDependencies: configDep,
+    });
+  }
+
+  if (packages.notifique) {
+    addPackageDependency({
+      vfs,
+      packagePath: "packages/notifique/package.json",
+      dependencies: commonDeps,
+      devDependencies: ["typescript"],
+      customDependencies: envDep,
+      customDevDependencies: configDep,
+    });
+  }
+
   if (packages.api) {
     const apiPackageDeps: Record<string, string> = { ...envDep };
     if (auth !== "none" && packages.auth) {
@@ -148,11 +176,13 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     if (auth !== "none" && packages.auth) serverDeps[`@${projectName}/auth`] = workspaceVersion;
     if (database !== "none" && packages.db) serverDeps[`@${projectName}/db`] = workspaceVersion;
     if (packages.payments) serverDeps[`@${projectName}/payments`] = workspaceVersion;
+    if (packages.email) serverDeps[`@${projectName}/email`] = workspaceVersion;
+    if (packages.notifique) serverDeps[`@${projectName}/notifique`] = workspaceVersion;
     addPackageDependency({
       vfs,
       packagePath: "apps/server/package.json",
       dependencies: commonDeps,
-      devDependencies: ["typescript", "tsdown"],
+      devDependencies: ["typescript", "tsdown", "unrun"],
       customDependencies: serverDeps,
       customDevDependencies: configDep,
     });
@@ -167,6 +197,12 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     }
     if (backend === "self" && packages.payments) {
       webPackageDeps[`@${projectName}/payments`] = workspaceVersion;
+    }
+    if (backend === "self" && packages.email) {
+      webPackageDeps[`@${projectName}/email`] = workspaceVersion;
+    }
+    if (backend === "self" && packages.notifique) {
+      webPackageDeps[`@${projectName}/notifique`] = workspaceVersion;
     }
     if (backend === "convex" && packages.backend)
       webPackageDeps[`@${projectName}/backend`] = workspaceVersion;

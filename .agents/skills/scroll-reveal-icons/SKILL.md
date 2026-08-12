@@ -13,7 +13,7 @@ description: >
 
 - Marketing / product home sections where icons should **surface on scroll** next to a statement.
 - User asks for “icons from under the text”, “Mistral-style icon reveal”, or scroll-linked icon rise.
-- Kubo / Better T Stack home mission rail or similar editorial columns.
+- Kubo / Kubo home mission rail or similar editorial columns.
 
 ## When not to use
 

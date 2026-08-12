@@ -156,6 +156,7 @@ function generateReadmeContent(options: ProjectConfig): string {
     auth,
     payments,
     observability,
+    communication,
     addons = [],
     orm = "drizzle",
     runtime = "bun",
@@ -189,7 +190,7 @@ This project was created with [kubojs](https://github.com/albuquerquesz/kubo), a
 
 ## Features
 
-${generateFeaturesList(database, auth, payments, observability, addons, orm, runtime, frontend, backend, api, dbSetup)}
+${generateFeaturesList(database, auth, payments, observability, communication, addons, orm, runtime, frontend, backend, api, dbSetup)}
 
 ## Getting Started
 
@@ -233,7 +234,10 @@ ${getClerkSetupLines(frontend, backend, api, false).join("\n")}`
     : ""
 }
 ${payments === "abacatepay" ? generateAbacatePaySetup(options, packageManagerRunCmd, webPort) : ""}
-${observability === "getmonitor" ? generateGetMonitorSetup() : ""}
+${observability.includes("getmonitor") ? generateGetMonitorSetup() : ""}
+${observability.includes("himetrica") ? generateHimetricaSetup() : ""}
+${communication === "resend" ? generateResendSetup() : ""}
+${communication === "notifique" ? generateNotifiqueSetup() : ""}
 
 Then, run the development server:
 
@@ -422,11 +426,31 @@ function generateGetMonitorSetup(): string {
 
 This project includes the [GetMonitor JavaScript error-tracking SDK](https://github.com/get-monitor/getmonitor-js).
 
-1. Create a GetMonitor project and copy its public project key.
-2. Set the generated \`.env\` value ending in \`GETMONITOR_API_KEY\` for the web app and/or server.
-3. Keep \`GETMONITOR_API_HOST\` set to \`https://ingest.getmonitor.com\` unless your project uses another ingestion host.
+Keys are **optional for local first run** — the app starts without them and capture stays idle until you configure a project key.
 
-Browser errors are captured automatically after the client bootstrap runs. Node server errors are captured automatically when the server key is configured. See the [browser SDK](https://github.com/get-monitor/getmonitor-js/tree/main/packages/browser) and [Node SDK](https://github.com/get-monitor/getmonitor-js/tree/main/packages/node) guides for manual capture and filtering.
+1. Create a GetMonitor project and copy its public project key (\`gm_xxx\`).
+2. Set the generated \`.env\` value ending in \`GETMONITOR_API_KEY\` for the web app and/or server when you are ready to send events.
+3. Ingestion uses a fixed host (\`http://ingest.getmonitor.io\`) — no \`apiHost\` env var is required.
+4. Optional (Next.js / Nuxt production builds): set \`GETMONITOR_AUTH_TOKEN\` (secret, never public) so source maps upload during \`next build\` / \`nuxt build\`.
+
+Browser uncaught errors are captured after the client bootstrap runs. React apps also wrap the tree in \`<GetMonitorErrorBoundary>\`. Node server errors are captured when the server key is configured.
+
+See the [browser](https://github.com/get-monitor/getmonitor-js/tree/main/packages/browser), [Node](https://github.com/get-monitor/getmonitor-js/tree/main/packages/node), [React](https://github.com/get-monitor/getmonitor-js/tree/main/packages/react), [Next.js](https://github.com/get-monitor/getmonitor-js/tree/main/packages/nextjs-config), and [Nuxt](https://github.com/get-monitor/getmonitor-js/tree/main/packages/nuxt) package guides.
+`;
+}
+
+function generateHimetricaSetup(): string {
+  return `
+## Himetrica Setup
+
+This project includes the [Himetrica TypeScript tracker](https://www.himetrica.com/docs/web).
+
+1. Create a Himetrica project and copy its public tracker key (\`hm_pk_...\`).
+2. Set the generated web \`.env\` value ending in \`HIMETRICA_API_KEY\`.
+3. Page views, uncaught errors, and Web Vitals are collected automatically when the key is configured.
+4. Add product events with the SDK's \`track\` method; do not send secrets, source code, or raw user input.
+
+The generated integration is browser-only. Keep Himetrica secret keys out of client projects and use the Himetrica Server API from a server-only module for trusted backend events.
 `;
 }
 
@@ -517,11 +541,81 @@ function generateProjectStructure(config: ProjectConfig): string {
   return structure.join("\n");
 }
 
+function generateResendSetup(): string {
+  return `
+## Resend Setup
+
+This project includes a \`packages/email\` helper powered by [Resend](https://resend.com).
+
+Keys are **optional for local first run** — the app starts without them. \`sendEmail\` throws only when you call it without \`RESEND_API_KEY\`.
+
+1. Create an API key at [resend.com/api-keys](https://resend.com/api-keys).
+2. Set \`RESEND_API_KEY\` (and optionally \`RESEND_FROM_EMAIL\`) in the server \`.env\`.
+3. For production, verify a domain and replace the default test From address (\`onboarding@resend.dev\`).
+
+\`\`\`ts
+import { sendEmail } from "@your-project/email";
+
+await sendEmail({
+  to: "user@example.com",
+  subject: "Hello",
+  html: "<strong>It works!</strong>",
+});
+\`\`\`
+
+See the [Node.js guide](https://resend.com/docs/send-with-nodejs).
+`;
+}
+
+function generateNotifiqueSetup(): string {
+  return `
+## Notifique Setup
+
+This project includes a \`packages/notifique\` REST client for [Notifique](https://notifique.dev) (WhatsApp, SMS, email, and more).
+
+Keys are **optional for local first run** — helpers throw only when called without \`NOTIFIQUE_API_KEY\`.
+
+1. Create an API key in the [Developer panel](https://docs.notifique.dev/guides/api-key/index) (\`sk_live_…\` or sandbox \`sk_test_…\`).
+2. Grant the scopes you need (e.g. \`sms:send\`, \`whatsapp:send\`, \`email:send\`).
+3. Set \`NOTIFIQUE_API_KEY\` (and optionally \`NOTIFIQUE_WHATSAPP_INSTANCE_ID\`, \`NOTIFIQUE_FROM_EMAIL\`) in the server \`.env\`.
+4. Auth is **Bearer only** — do not send \`x-workspace-id\`.
+
+\`\`\`ts
+import { sendSms, sendWhatsAppText, sendEmail } from "@your-project/notifique";
+
+await sendSms({
+  to: "5511999999999",
+  message: "Seu código é 123456",
+  idempotencyKey: "otp/user-123",
+});
+
+await sendWhatsAppText({
+  instanceId: "INSTANCE_ID",
+  to: "5511999999999",
+  message: "Olá!",
+});
+
+await sendEmail({
+  from: "Acme <noreply@seudominio.com>",
+  to: "cliente@example.com",
+  subject: "Pedido confirmado",
+  html: "<p>Obrigado!</p>",
+});
+\`\`\`
+
+Agent skill / API map:
+
+- https://docs.notifique.dev/skill.md
+- https://docs.notifique.dev/llms.txt
+`;
+}
+
 function generateFeaturesList(
   database: ProjectConfig["database"],
   auth: ProjectConfig["auth"],
   payments: ProjectConfig["payments"],
   observability: ProjectConfig["observability"],
+  communication: ProjectConfig["communication"],
   addons: ProjectConfig["addons"],
   orm: ProjectConfig["orm"],
   runtime: ProjectConfig["runtime"],
@@ -540,8 +634,22 @@ function generateFeaturesList(
 
   const features = ["- **TypeScript** - For type safety and improved developer experience"];
 
-  if (observability === "getmonitor") {
+  if (observability.includes("getmonitor")) {
     features.push("- **GetMonitor** - JavaScript error tracking for browser and server runtimes");
+  }
+
+  if (observability.includes("himetrica")) {
+    features.push("- **Himetrica** - Browser analytics, error tracking, and Web Vitals");
+  }
+
+  if (communication === "resend") {
+    features.push("- **Resend** - Transactional email via packages/email");
+  }
+
+  if (communication === "notifique") {
+    features.push(
+      "- **Notifique** - Omnichannel messaging (SMS, WhatsApp, email) via packages/notifique",
+    );
   }
 
   const frontendFeatures: Record<string, string> = {
@@ -607,7 +715,7 @@ function generateFeaturesList(
       mongoose: "Mongoose",
     };
     const dbNames: Record<string, string> = {
-      sqlite: dbSetup === "d1" ? "Cloudflare D1" : "SQLite/Turso",
+      sqlite: dbSetup === "d1" ? "Cloudflare D1" : dbSetup === "turso" ? "Turso" : "SQLite",
       postgres: "PostgreSQL",
       mysql: "MySQL",
       mongodb: "MongoDB",
@@ -702,16 +810,22 @@ ${steps.join("\n\n")}
   const dbDescriptions: Record<string, string> = {
     sqlite: `This project uses SQLite${ormDesc}.
 
-1. Start the local SQLite database (optional):
 ${
   dbSetup === "d1"
-    ? "D1 local development and migrations are handled automatically by Alchemy during dev and deploy."
-    : `\`\`\`bash
-${packageManagerRunCmd} db:local
-\`\`\``
-}
+    ? `1. D1 local development and migrations are handled automatically by Alchemy during dev and deploy.
 
-2. Update your \`.env\` file in the \`${isBackendSelf ? "apps/web" : "apps/server"}\` directory with the appropriate connection details if needed.`,
+2. Update your \`.env\` file in the \`${isBackendSelf ? "apps/web" : "apps/server"}\` directory with the appropriate connection details if needed.`
+    : dbSetup === "turso"
+      ? `1. Start a local Turso/libsql replica (optional; requires the Turso CLI):
+\`\`\`bash
+${packageManagerRunCmd} db:local
+\`\`\`
+
+2. Update your \`.env\` file in the \`${isBackendSelf ? "apps/web" : "apps/server"}\` directory with the Turso URL and auth token.`
+      : `1. Local SQLite uses a \`file:\` URL via libsql (no Turso account or CLI required). Default \`DATABASE_URL\` points at a local file database.
+
+2. Update your \`.env\` file in the \`${isBackendSelf ? "apps/web" : "apps/server"}\` directory if you need a different path.`
+}`,
 
     postgres: `This project uses PostgreSQL${ormDesc}.
 
@@ -800,8 +914,8 @@ function generateScriptsList(
     }
   }
 
-  if (database === "sqlite" && dbSetup !== "d1" && dbSupport.hasDbScripts) {
-    scripts += `\n- \`${packageManagerRunCmd} db:local\`: Start the local SQLite database`;
+  if (database === "sqlite" && dbSetup === "turso" && dbSupport.hasDbScripts) {
+    scripts += `\n- \`${packageManagerRunCmd} db:local\`: Start a local Turso/libsql database (Turso CLI)`;
   }
 
   if (addons.includes("vite-plus")) {

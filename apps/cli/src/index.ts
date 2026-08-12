@@ -5,7 +5,7 @@ import { createCli, type TrpcCliMeta } from "trpc-cli";
 import z from "zod";
 
 import { historyHandler } from "./commands/history";
-import { openBuilderCommand, openDocsCommand, showSponsorsCommand } from "./commands/meta";
+import { openBuilderCommand, openDocsCommand } from "./commands/meta";
 import { addHandler, type AddResult } from "./helpers/core/add-handler";
 import { createProjectHandler } from "./helpers/core/command-handlers";
 import {
@@ -21,7 +21,7 @@ import {
   AuthSchema,
   type Backend,
   BackendSchema,
-  type BetterTStackConfig,
+  type KubojsConfig,
   type CLIInput,
   type CreateInput,
   CreateInputSchema,
@@ -44,6 +44,8 @@ import {
   PackageManagerSchema,
   type Payments,
   PaymentsSchema,
+  type Communication,
+  CommunicationSchema,
   type ProjectConfig,
   ProjectNameSchema,
   type Runtime,
@@ -78,6 +80,7 @@ export const SchemaNameSchema = z
     "auth",
     "payments",
     "observability",
+    "communication",
     "webDeploy",
     "serverDeploy",
     "directoryConflict",
@@ -87,8 +90,8 @@ export const SchemaNameSchema = z
     "createInput",
     "addInput",
     "projectConfig",
-    "betterTStackConfig",
-    "betterTStackConfigFile",
+    "kubojsConfig",
+    "kubojsConfigFile",
     "initResult",
   ])
   .default("all");
@@ -122,7 +125,7 @@ export function getSchemaResult(name: SchemaName): unknown {
 export const router = t.router({
   create: t.procedure
     .meta({
-      description: "Create a new I dont know project",
+      description: "Create a new kubojs project",
       default: true,
       negateBooleans: true,
     })
@@ -152,6 +155,11 @@ export const router = t.router({
           auth: AuthSchema.optional(),
           payments: PaymentsSchema.optional(),
           observability: ObservabilitySchema.optional(),
+          disableObservability: z
+            .boolean()
+            .optional()
+            .describe("Disable all observability providers"),
+          communication: CommunicationSchema.optional(),
           frontend: z.array(FrontendSchema).optional(),
           addons: z.array(AddonsSchema).optional(),
           examples: z.array(ExamplesSchema).optional(),
@@ -217,17 +225,14 @@ export const router = t.router({
       }),
     )
     .query(({ input }) => getSchemaResult(input.name)),
-  sponsors: t.procedure
-    .meta({ description: "Show I dont know sponsors" })
-    .mutation(() => showSponsorsCommand()),
   docs: t.procedure
-    .meta({ description: "Open I dont know documentation" })
+    .meta({ description: "Open kubojs documentation" })
     .mutation(() => openDocsCommand()),
   builder: t.procedure
     .meta({ description: "Open the web-based stack builder" })
     .mutation(() => openBuilderCommand()),
   add: t.procedure
-    .meta({ description: "Add addons to an existing I dont know project" })
+    .meta({ description: "Add addons to an existing kubojs project" })
     .input(
       z.object({
         addons: z.array(AddonsSchema).optional().describe("Addons to add"),
@@ -293,7 +298,7 @@ export { Result } from "better-result";
 export type CreateError = UserCancelledError | CLIError | ProjectCreationError;
 
 /**
- * Programmatic API to create a new I dont know project.
+ * Programmatic API to create a new kubojs project.
  * Returns a Result type - no console output, no interactive prompts.
  *
  * @example
@@ -354,10 +359,6 @@ export async function create(
       });
     },
   });
-}
-
-export async function sponsors() {
-  return showSponsorsCommand();
 }
 
 export async function docs() {
@@ -432,7 +433,8 @@ export async function createVirtual(
     testing: options.testing || [],
     auth: options.auth || "none",
     payments: options.payments || "none",
-    observability: options.observability || "none",
+    observability: options.disableObservability ? [] : options.observability || [],
+    communication: options.communication || "none",
     git: options.git ?? false,
     packageManager: options.packageManager || "bun",
     install: false,
@@ -455,6 +457,8 @@ export async function createVirtual(
     "dbSetup",
     "payments",
     "observability",
+    "disableObservability",
+    "communication",
     "api",
     "webDeploy",
     "serverDeploy",
@@ -483,7 +487,7 @@ export async function createVirtual(
 export type {
   CreateInput,
   InitResult,
-  BetterTStackConfig,
+  KubojsConfig,
   Database,
   ORM,
   Backend,
@@ -499,6 +503,7 @@ export type {
   Auth,
   Payments,
   Observability,
+  Communication,
   WebDeploy,
   ServerDeploy,
   Template,
@@ -508,7 +513,7 @@ export type {
 export type { AddResult };
 
 /**
- * Programmatic API to add addons to an existing I dont know project.
+ * Programmatic API to add addons to an existing kubojs project.
  *
  * @example
  * ```typescript

@@ -3,8 +3,8 @@
   "version": "0.1.1",
   "description": "Let your AI scaffold and extend projects with kubojs. Bundles the kubojs MCP server plus skills so the assistant plans a valid stack and generates it instead of hand-rolling boilerplate.",
   "author": {
-    "name": "Aman Varshney",
-    "url": "https://github.com/AmanVarshney01"
+    "name": "Kubo",
+    "url": "https://github.com/albuquerquesz"
   },
   "homepage": "https://kubojs.dev",
   "repository": "https://github.com/albuquerquesz/kubo",
@@ -36,7 +36,7 @@
     "displayName": "kubojs",
     "shortDescription": "Scaffold end-to-end type-safe TypeScript projects",
     "longDescription": "Bring kubojs into Codex with skills that plan a valid stack and generate it through the official kubojs MCP server, plus an add-addons workflow for existing projects. Covers frontends (Next, TanStack, Nuxt, Svelte, Solid, Astro, React Native), backends (Hono, Express, Fastify, Elysia, Convex), databases and ORMs, auth, payments, deployment, and DB provisioning (Neon, Prisma Postgres, Supabase, Turso, PlanetScale, MongoDB Atlas, Cloudflare D1, Docker).",
-    "developerName": "Aman Varshney",
+    "developerName": "Kubo",
     "category": "Coding",
     "capabilities": ["Interactive", "Write", "MCP"],
     "websiteURL": "https://kubojs.dev",

@@ -203,7 +203,7 @@ function buildClientVars(
     }
   }
 
-  if (observability === "getmonitor") {
+  if (observability.includes("getmonitor")) {
     const getMonitorKey = hasNextJs
       ? "NEXT_PUBLIC_GETMONITOR_API_KEY"
       : frontend.includes("nuxt")
@@ -211,16 +211,36 @@ function buildClientVars(
         : frontend.includes("svelte") || frontend.includes("astro")
           ? "PUBLIC_GETMONITOR_API_KEY"
           : "VITE_GETMONITOR_API_KEY";
-    const getMonitorHost = getMonitorKey.replace("_KEY", "_HOST");
-    vars.push(
-      { key: getMonitorKey, value: "", condition: true, comment: "GetMonitor public project key" },
-      {
-        key: getMonitorHost,
-        value: "https://ingest.getmonitor.com",
+    vars.push({
+      key: getMonitorKey,
+      value: "",
+      condition: true,
+      comment: "GetMonitor public project key (gm_xxx)",
+    });
+    if (hasNextJs || frontend.includes("nuxt")) {
+      vars.push({
+        key: "GETMONITOR_AUTH_TOKEN",
+        value: "",
         condition: true,
-        comment: "GetMonitor ingestion host",
-      },
-    );
+        comment: "GetMonitor source-map upload token (server/build only — never expose publicly)",
+      });
+    }
+  }
+
+  if (observability.includes("himetrica")) {
+    const himetricaKey = hasNextJs
+      ? "NEXT_PUBLIC_HIMETRICA_API_KEY"
+      : frontend.includes("nuxt")
+        ? "NUXT_PUBLIC_HIMETRICA_API_KEY"
+        : frontend.includes("svelte") || frontend.includes("astro")
+          ? "PUBLIC_HIMETRICA_API_KEY"
+          : "VITE_HIMETRICA_API_KEY";
+    vars.push({
+      key: himetricaKey,
+      value: "",
+      condition: true,
+      comment: "Himetrica public tracker key (hm_pk_...)",
+    });
   }
 
   return vars;
@@ -429,6 +449,7 @@ function buildServerVars(
   payments: ProjectConfig["payments"],
   examples: ProjectConfig["examples"],
   observability: ProjectConfig["observability"],
+  communication: ProjectConfig["communication"],
 ): EnvVariable[] {
   const hasReactRouter = frontend.includes("react-router");
   const hasSvelte = frontend.includes("svelte");
@@ -520,14 +541,44 @@ function buildServerVars(
     {
       key: "GETMONITOR_API_KEY",
       value: "",
-      condition: observability === "getmonitor",
-      comment: "GetMonitor public project key",
+      condition: observability.includes("getmonitor"),
+      comment: "GetMonitor public project key (gm_xxx)",
     },
     {
-      key: "GETMONITOR_API_HOST",
-      value: "https://ingest.getmonitor.com",
-      condition: observability === "getmonitor",
-      comment: "GetMonitor ingestion host",
+      key: "RESEND_API_KEY",
+      value: "",
+      condition: communication === "resend",
+      comment: "Resend API key (re_xxx) — optional until you send email",
+    },
+    {
+      key: "RESEND_FROM_EMAIL",
+      value: "Acme <onboarding@resend.dev>",
+      condition: communication === "resend",
+      comment: "Default From address (test domain until you verify your own)",
+    },
+    {
+      key: "NOTIFIQUE_API_KEY",
+      value: "",
+      condition: communication === "notifique",
+      comment: "Notifique API key (sk_live_… or sk_test_…) — optional until you send",
+    },
+    {
+      key: "NOTIFIQUE_BASE_URL",
+      value: "https://api.notifique.dev",
+      condition: communication === "notifique",
+      comment: "Notifique API host (paths use /v1 automatically)",
+    },
+    {
+      key: "NOTIFIQUE_WHATSAPP_INSTANCE_ID",
+      value: "",
+      condition: communication === "notifique",
+      comment: "Optional default WhatsApp instance id for sendWhatsAppText",
+    },
+    {
+      key: "NOTIFIQUE_FROM_EMAIL",
+      value: "",
+      condition: communication === "notifique",
+      comment: "Optional default From (must use a VERIFIED domain)",
     },
     {
       key: "DATABASE_URL",
@@ -577,6 +628,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     runtime,
     payments,
     observability,
+    communication,
   } = config;
 
   const hasReactRouter = frontend.includes("react-router");
@@ -701,6 +753,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     payments,
     examples,
     observability,
+    communication,
   );
 
   if (backend === "self") {

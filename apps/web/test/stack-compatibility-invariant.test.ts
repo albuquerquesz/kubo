@@ -49,7 +49,7 @@ function randomStack(rand: () => number): StackState {
     dbSetup: pick(rand, ids("dbSetup")) as StackState["dbSetup"],
     auth: pick(rand, ids("auth")) as StackState["auth"],
     payments: pick(rand, ids("payments")) as StackState["payments"],
-    observability: pick(rand, ids("observability")) as StackState["observability"],
+    observability: [pick(rand, ids("observability"))],
     packageManager: pick(rand, ids("packageManager")) as StackState["packageManager"],
     webDeploy: pick(rand, ids("webDeploy")) as StackState["webDeploy"],
     serverDeploy: pick(rand, ids("serverDeploy")) as StackState["serverDeploy"],

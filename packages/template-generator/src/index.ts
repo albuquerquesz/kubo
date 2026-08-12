@@ -9,7 +9,7 @@ export { processNxConfig } from "./processors/nx-generator";
 export { processTurboConfig } from "./processors/turbo-generator";
 export { processVitePlusConfig } from "./processors/vite-plus-generator";
 export { processPackageConfigs, processVercelConfig } from "./post-process";
-export { writeBtsConfigToVfs } from "./bts-config";
+export { writeKubojsConfigToVfs } from "./kubojs-config";
 
 export { EMBEDDED_TEMPLATES, TEMPLATE_COUNT } from "./templates.generated";
 export { dependencyVersionMap, type AvailableDependencies } from "./utils/add-deps";

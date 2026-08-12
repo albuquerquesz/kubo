@@ -514,19 +514,43 @@ export const TECH_OPTIONS: Record<
   ],
   observability: [
     {
+      id: "getmonitor",
+      name: "GetMonitor",
+      description: "Error tracking para browser e server (JS/TS)",
+      icon: "https://getmonitor.io/favicon.png",
+      color: "from-sky-400 to-blue-700",
+      default: true,
+    },
+    {
+      id: "himetrica",
+      name: "Himetrica",
+      description: "Analytics de produto, erros e Web Vitals para web apps",
+      icon: "https://www.himetrica.com/favicon.ico",
+      color: "from-violet-400 to-purple-700",
+    },
+  ],
+  communication: [
+    {
       id: "none",
-      name: "Sem observabilidade",
-      description: "Pular orientação de observabilidade",
+      name: "Sem comunicação",
+      description: "Sem provider de email/comunicação",
       icon: "",
       color: "from-gray-400 to-gray-600",
       default: true,
     },
     {
-      id: "getmonitor",
-      name: "GetMonitor",
-      description: "Monitoramento de uptime, alertas e páginas de status hospedadas",
-      icon: "https://getmonitor.io/favicon.png",
-      color: "from-sky-400 to-blue-700",
+      id: "resend",
+      name: "Resend",
+      description: "Email transacional para developers",
+      icon: "https://resend.com/favicon.ico",
+      color: "from-zinc-600 to-black",
+    },
+    {
+      id: "notifique",
+      name: "Notifique",
+      description: "Mensageria omnichannel",
+      icon: "https://notifique.dev/favicon.ico",
+      color: "from-amber-400 to-orange-600",
     },
   ],
   packageManager: [
@@ -789,7 +813,8 @@ export const PRESET_TEMPLATES = [
       dbSetup: "mongodb-atlas",
       auth: "better-auth",
       payments: "none",
-      observability: "none",
+      observability: ["getmonitor"],
+      communication: "none",
       packageManager: "bun",
       addons: ["turborepo"],
       testing: ["none"],
@@ -817,7 +842,8 @@ export const PRESET_TEMPLATES = [
       dbSetup: "none",
       auth: "better-auth",
       payments: "none",
-      observability: "none",
+      observability: ["getmonitor"],
+      communication: "none",
       packageManager: "bun",
       addons: ["turborepo"],
       testing: ["none"],
@@ -845,7 +871,8 @@ export const PRESET_TEMPLATES = [
       dbSetup: "none",
       auth: "better-auth",
       payments: "none",
-      observability: "none",
+      observability: ["getmonitor"],
+      communication: "none",
       packageManager: "bun",
       addons: ["biome", "turborepo"],
       testing: ["none"],
@@ -873,7 +900,8 @@ export const PRESET_TEMPLATES = [
       dbSetup: "none",
       auth: "none",
       payments: "none",
-      observability: "none",
+      observability: [],
+      communication: "none",
       packageManager: "bun",
       addons: ["none"],
       testing: ["none"],
@@ -899,7 +927,8 @@ export type StackState = {
   dbSetup: string;
   auth: string;
   payments: string;
-  observability: string;
+  observability: string[];
+  communication: string;
   packageManager: string;
   addons: string[];
   testing: string[];
@@ -923,7 +952,8 @@ export const DEFAULT_STACK: StackState = {
   dbSetup: "none",
   auth: "better-auth",
   payments: "none",
-  observability: "none",
+  observability: ["getmonitor"],
+  communication: "none",
   packageManager: "bun",
   addons: ["turborepo"],
   testing: ["none"],

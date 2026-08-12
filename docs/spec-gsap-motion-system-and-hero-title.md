@@ -14,7 +14,7 @@ July 20, 2026
 2. Implement the home hero **dual-title pattern**: a visually hidden semantic `h1` for SEO/accessibility and a decorative animated title for display.
 3. Phase out ad-hoc CSS keyframe enters and new `motion` (Motion One) usage for marketing surfaces, without blocking the hero on a full charts rewrite.
 
-This continues `spec-home-editorial-system.md`. It is original Kubo / Better T Stack work: **do not** ship Mistral’s typeface (ALTMistral), palette, wordmark, copy, or assets.
+This continues `spec-home-editorial-system.md`. It is original Kubo / Kubo work: **do not** ship Mistral’s typeface (ALTMistral), palette, wordmark, copy, or assets.
 
 ## Research evidence
 

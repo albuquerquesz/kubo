@@ -1,0 +1,183 @@
+import { describe, expect, it } from "bun:test";
+
+import { generateReproducibleCommand } from "@kubojs/template-generator";
+
+import { DEFAULT_CONFIG } from "../src/constants";
+import { createVirtual } from "../src/index";
+import type { ProjectConfig } from "../src/types";
+import { processFlags } from "../src/utils/config-processing";
+import { collectFiles } from "./setup";
+
+describe("Resend communication", () => {
+  it("defaults communication to none", () => {
+    expect(DEFAULT_CONFIG.communication).toBe("none");
+  });
+
+  it("generates packages/email with Resend helper and env placeholders", async () => {
+    const result = await createVirtual({
+      projectName: "resend-app",
+      frontend: ["tanstack-router"],
+      backend: "hono",
+      runtime: "bun",
+      database: "sqlite",
+      orm: "drizzle",
+      auth: "none",
+      payments: "none",
+      observability: "none",
+      communication: "resend",
+      addons: ["none"],
+      examples: ["none"],
+      dbSetup: "none",
+      api: "trpc",
+      webDeploy: "none",
+      serverDeploy: "none",
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+
+    const files = collectFiles(result.value.root, "/virtual");
+    const emailIndex = files.get("packages/email/src/index.ts") ?? "";
+    const resendLib = files.get("packages/email/src/lib/resend.ts") ?? "";
+    const emailPackage = JSON.parse(files.get("packages/email/package.json") ?? "{}");
+    const serverPackage = JSON.parse(files.get("apps/server/package.json") ?? "{}");
+    const serverEnv = files.get("apps/server/.env") ?? "";
+    const readme = files.get("README.md") ?? "";
+
+    expect(emailIndex).toContain("./lib/resend");
+    expect(resendLib).toContain('from "resend"');
+    expect(resendLib).toContain("sendEmail");
+    expect(resendLib).not.toContain("hardcode");
+    expect(emailPackage.dependencies?.resend).toBe("^6.19.0");
+    expect(
+      serverPackage.dependencies?.["@resend-app/email"] || serverPackage.dependencies,
+    ).toBeTruthy();
+    expect(serverEnv).toContain("RESEND_API_KEY=");
+    expect(serverEnv).toContain("RESEND_FROM_EMAIL=");
+    expect(readme).toContain("Resend");
+  });
+
+  it("does not generate packages/email when communication is none", async () => {
+    const result = await createVirtual({
+      projectName: "no-email-app",
+      frontend: ["tanstack-router"],
+      backend: "hono",
+      runtime: "bun",
+      database: "sqlite",
+      orm: "drizzle",
+      auth: "none",
+      payments: "none",
+      observability: "none",
+      communication: "none",
+      addons: ["none"],
+      examples: ["none"],
+      dbSetup: "none",
+      api: "trpc",
+      webDeploy: "none",
+      serverDeploy: "none",
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+
+    const files = collectFiles(result.value.root, "/virtual");
+    expect(files.has("packages/email/package.json")).toBe(false);
+  });
+
+  it("keeps --communication from Stack Builder commands in processFlags", () => {
+    const noneConfig = processFlags({
+      communication: "none",
+      backend: "hono",
+    });
+    expect(noneConfig.communication).toBe("none");
+
+    const resendConfig = processFlags({
+      communication: "resend",
+      backend: "hono",
+    });
+    expect(resendConfig.communication).toBe("resend");
+  });
+
+  it("generates packages/notifique helpers aligned with the Notifique skill", async () => {
+    const result = await createVirtual({
+      projectName: "notifique-app",
+      frontend: ["tanstack-router"],
+      backend: "hono",
+      runtime: "bun",
+      database: "sqlite",
+      orm: "drizzle",
+      auth: "none",
+      payments: "none",
+      observability: "none",
+      communication: "notifique",
+      addons: ["none"],
+      examples: ["none"],
+      dbSetup: "none",
+      api: "trpc",
+      webDeploy: "none",
+      serverDeploy: "none",
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+
+    const files = collectFiles(result.value.root, "/virtual");
+    const client = files.get("packages/notifique/src/lib/client.ts") ?? "";
+    const sms = files.get("packages/notifique/src/lib/sms.ts") ?? "";
+    const whatsapp = files.get("packages/notifique/src/lib/whatsapp.ts") ?? "";
+    const email = files.get("packages/notifique/src/lib/email.ts") ?? "";
+    const index = files.get("packages/notifique/src/index.ts") ?? "";
+    const serverEnv = files.get("apps/server/.env") ?? "";
+    const serverPackage = JSON.parse(files.get("apps/server/package.json") ?? "{}");
+    const readme = files.get("README.md") ?? "";
+
+    expect(files.has("packages/email/package.json")).toBe(false);
+    expect(index).toContain("sendSms");
+    expect(client).toContain("Authorization");
+    expect(client).toContain("Bearer");
+    expect(client).toContain("api.notifique.dev");
+    // Skill rule: never send x-workspace-id as a request header (comment may mention it).
+    expect(client).not.toMatch(/["']x-workspace-id["']\s*:/);
+    expect(client).toContain("Idempotency-Key");
+    expect(sms).toContain("/sms/messages");
+    expect(sms).toContain('type: "text"');
+    expect(sms).toContain("payload");
+    expect(whatsapp).toContain("/whatsapp/messages");
+    expect(whatsapp).toContain("instanceId");
+    expect(email).toContain("/email/messages");
+    expect(email).toContain('type: "email"');
+    expect(serverEnv).toContain("NOTIFIQUE_API_KEY=");
+    expect(serverPackage.dependencies?.["@notifique-app/notifique"]).toBeTruthy();
+    expect(readme).toContain("Notifique");
+    expect(readme).toContain("docs.notifique.dev/skill.md");
+  });
+
+  it("includes --communication in the reproducible create command", () => {
+    const config = {
+      projectName: "mail-app",
+      projectDir: "/tmp/mail-app",
+      relativePath: "mail-app",
+      frontend: ["tanstack-router"],
+      backend: "hono",
+      runtime: "bun",
+      database: "sqlite",
+      orm: "drizzle",
+      api: "trpc",
+      auth: "none",
+      payments: "none",
+      observability: "none",
+      communication: "resend",
+      addons: [],
+      examples: [],
+      dbSetup: "none",
+      packageManager: "bun",
+      git: true,
+      install: true,
+      webDeploy: "none",
+      serverDeploy: "none",
+    } satisfies ProjectConfig;
+
+    const command = generateReproducibleCommand(config);
+    expect(command).toContain("--communication resend");
+  });
+});

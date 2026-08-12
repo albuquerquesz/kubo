@@ -9,260 +9,221 @@ Use this skill when a kubojs project selects `observability: "getmonitor"`, or w
 
 ## Product boundary
 
-The upstream `get-monitor/getmonitor-js` repository is the client-side JavaScript/TypeScript SDK for error tracking. It captures exceptions in browser and Node.js processes, normalizes them into a shared event shape, and sends them to an ingestion endpoint.
+The upstream `get-monitor/getmonitor-js` repository is the client-side JavaScript/TypeScript SDK for error tracking. It captures exceptions in browser and Node.js processes, normalizes them into a shared event shape, and sends them to GetMonitor ingestion (`ingester-api`).
 
-This SDK is not an uptime monitor, incident manager, maintenance-window tool, or status-page API. Do not describe or implement those features from this repository. The upstream README says backend ingestion, grouping, and triage are separate and not yet built.
+This SDK is not an uptime monitor, incident manager, maintenance-window tool, or status-page API. Do not describe or implement those features from this repository.
 
-Current upstream packages are version `0.1.0`:
+Current packages (published under `@getmonitor/*`, version `0.1.0` as of writing):
 
-- `@getmonitor/browser` — browser SDK; automatic uncaught-error, unhandled-rejection, and `console.error` capture; manual capture; breadcrumbs; filters.
-- `@getmonitor/node` — Node SDK; automatic `uncaughtException`/`unhandledRejection` capture; manual capture; breadcrumbs; `AsyncLocalStorage` identity scoping; Express middleware.
-- `@getmonitor/core` — shared internals and types. Do not install it directly in a normal application; the platform packages depend on and expose the needed API.
+| Package                     | Role                                                                                                |
+| --------------------------- | --------------------------------------------------------------------------------------------------- |
+| `@getmonitor/browser`       | Browser SDK — automatic uncaught / rejection / `console.error` capture; manual capture; breadcrumbs |
+| `@getmonitor/node`          | Node SDK — uncaught/unhandled + Express middleware; `AsyncLocalStorage` identity                    |
+| `@getmonitor/core`          | Shared internals (do not install directly in apps)                                                  |
+| `@getmonitor/react`         | `<GetMonitorErrorBoundary>` for React render errors                                                 |
+| `@getmonitor/cli`           | Source map upload tool (used by Next/Nuxt packages)                                                 |
+| `@getmonitor/nextjs-config` | `withGetMonitor()` for Next.js production source maps                                               |
+| `@getmonitor/nuxt`          | Nuxt module for production source maps                                                              |
 
-Phase 1 is the capture engine. Source-map tooling (`@getmonitor/cli`, `@getmonitor/nextjs-config`, `@getmonitor/nuxt`) and React integration (`@getmonitor/react`) are deferred in the upstream repository and must not be invented in generated projects.
+**Current upstream scope:** Phase 1 (capture engine), Phase 2 (source maps), Phase 3 (React error boundary). All three are available.
+
+> **npm lag:** GitHub main (2026-08-11) pins the exception host and removes public `apiHost`. Older published builds still required `apiHost`. Kubo scaffolds generate **main-shaped** code (no `apiHost`). Prefer packages that match main when available.
 
 ## Credentials and transport
 
-The SDK takes a public, write-only project key such as `gm_xxx`. It sends one JSON event per exception to:
+- **Public project key** (`gm_xxx`): write-only ingest key. Safe to embed in browser bundles (same trust model as a Sentry DSN).
+- **Auth token** (`GETMONITOR_AUTH_TOKEN`): **secret** used only for source-map upload at build time. Never put it in client env prefixes (`NEXT_PUBLIC_`, `VITE_`, `NUXT_PUBLIC_`, `PUBLIC_`).
+
+Exception delivery:
 
 ```text
-{apiHost}/api/v1/exceptions
+POST http://ingest.getmonitor.io/api/v1/exceptions
+Authorization: Bearer <public project key>
+Content-Type: application/json
 ```
 
-The request uses `Authorization: Bearer <public project key>` and `Content-Type: application/json`. The key is intentionally safe to embed in browser bundles, like a Sentry DSN or PostHog project key. Still keep the key configurable through the generated app's environment/configuration conventions rather than hardcoding it.
+The ingestion host is **fixed** and not customer-configurable. Do not generate `GETMONITOR_API_HOST` / `apiHost` options for application code.
 
-The upstream quickstart uses:
-
-```text
-https://ingest.getmonitor.com
-```
-
-Do not assume the ingestion host is the same as `https://getmonitor.io`; keep `apiHost` explicit and configurable.
+Source-map upload (Phase 2) uses a fixed upload host documented in `@getmonitor/cli` (`https://ingest.getmonitor.io/api/v1/sourcemaps`).
 
 ## Choose the package
 
-| Generated target                                | Package               | Initialization                                                                        |
-| ----------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------- |
-| Browser/client code                             | `@getmonitor/browser` | `GetMonitor.init(apiKey, options)` once per page load                                 |
-| Node server, worker, CLI, or serverless handler | `@getmonitor/node`    | `new GetMonitor(apiKey, options)`                                                     |
-| Express server                                  | `@getmonitor/node`    | Add `setupExpressErrorHandler(gm, app)` after routes and before custom error handlers |
-
-For a full-stack app, install both platform packages only when both browser and server errors are meant to be tracked. Use separate project keys when the deployment model calls for separate browser/server projects; otherwise use the project’s chosen key consistently.
+| Generated target        | Package                              | Initialization                                                |
+| ----------------------- | ------------------------------------ | ------------------------------------------------------------- |
+| Browser/client          | `@getmonitor/browser`                | `GetMonitor.init(apiKey, options?)` once per page load        |
+| React UI tree           | `@getmonitor/react` (+ browser)      | `<GetMonitorErrorBoundary>` after browser `init`              |
+| Node server / worker    | `@getmonitor/node`                   | `new GetMonitor(apiKey, options?)`                            |
+| Express                 | `@getmonitor/node`                   | `setupExpressErrorHandler(gm, app)` after routes              |
+| Next.js production maps | `@getmonitor/nextjs-config` (devDep) | `withGetMonitor(nextConfig, { authToken })`                   |
+| Nuxt production maps    | `@getmonitor/nuxt` (devDep)          | `modules: ['@getmonitor/nuxt']` + `getmonitor: { authToken }` |
 
 ## Browser integration
-
-Install:
 
 ```bash
 npm install @getmonitor/browser
 ```
 
-Initialize once in client-only code, after the browser runtime exists:
-
 ```ts
 import { GetMonitor } from "@getmonitor/browser";
 
-GetMonitor.init(import.meta.env.PUBLIC_GETMONITOR_API_KEY, {
-  apiHost: import.meta.env.PUBLIC_GETMONITOR_API_HOST ?? "https://ingest.getmonitor.com",
+GetMonitor.init(import.meta.env.VITE_GETMONITOR_API_KEY, {
   environment: "production",
   release: "1.4.2",
 });
 ```
 
-The exact public environment-variable prefix must follow the selected frontend framework. Never use a server-only variable in code that is bundled for the browser. `GetMonitor` is a singleton, not a class.
+`GetMonitor` is a **singleton**. Match the frontend’s public env prefix (`NEXT_PUBLIC_`, `VITE_`, `NUXT_PUBLIC_`, `PUBLIC_`). Never ship a server-only secret into the browser bundle.
 
-After initialization, automatic capture is enabled by default:
+Automatic capture (defaults on): uncaught exceptions, unhandled rejections, `console.error`.
 
-- `window` error events → `uncaught_exception`
-- unhandled promise rejections → `unhandled_rejection`
-- `console.error` → `console_error`
+## React error boundary (Phase 3)
 
-Disable individual sources when they would be noisy:
+```bash
+npm install @getmonitor/react @getmonitor/browser
+```
+
+Initialize the browser SDK **before** the boundary mounts. Disable console capture to avoid **duplicate** events (React logs boundary catches via `console.error`):
 
 ```ts
 GetMonitor.init(apiKey, {
-  apiHost,
+  environment: "production",
   captureConsoleErrors: false,
 });
 ```
 
-Manual capture returns `Promise<void>` and can be awaited before navigation or redirect:
+```tsx
+import { GetMonitorErrorBoundary } from "@getmonitor/react";
 
-```ts
-try {
-  await submitOrder();
-} catch (error) {
-  await GetMonitor.captureException(error, {
-    tags: { area: "checkout" },
-    level: "error",
-  });
-  throw error;
-}
+<GetMonitorErrorBoundary
+  fallback={(error, reset) => (
+    <div>
+      <p>Something went wrong.</p>
+      <button type="button" onClick={reset}>
+        Try again
+      </button>
+    </div>
+  )}
+>
+  <App />
+</GetMonitorErrorBoundary>;
 ```
 
-Without a bundler, the upstream package also ships a UMD build:
-
-```html
-<script src="https://unpkg.com/@getmonitor/browser/dist/index.umd.js"></script>
-<script>
-  GetMonitor.init("gm_xxx", { apiHost: "https://ingest.getmonitor.com" });
-</script>
-```
-
-## Node and Express integration
-
-Install:
+## Node and Express
 
 ```bash
 npm install @getmonitor/node
 ```
 
-Create one long-lived client per configured project/process:
-
 ```ts
-import { GetMonitor } from "@getmonitor/node";
+import { GetMonitor, setupExpressErrorHandler } from "@getmonitor/node";
 
 const gm = new GetMonitor(process.env.GETMONITOR_API_KEY!, {
-  apiHost: process.env.GETMONITOR_API_HOST ?? "https://ingest.getmonitor.com",
   environment: process.env.NODE_ENV ?? "development",
-  release: process.env.APP_RELEASE,
 });
-```
 
-Automatic `uncaughtException` and `unhandledRejection` capture is enabled by default. The uncaught-exception hook awaits delivery and then exits with status 1, matching Node's normal behavior. For short-lived scripts, serverless functions, edge handlers, or code that may exit immediately, use the immediate path:
-
-```ts
-await gm.captureExceptionImmediate(error);
-```
-
-Normal `captureException()` uses an in-memory retry queue. Do not rely on that queue surviving process shutdown.
-
-For Express, register the middleware after all routes and before application error handlers:
-
-```ts
-import express from "express";
-import { setupExpressErrorHandler } from "@getmonitor/node";
-
-const app = express();
-// routes and ordinary middleware
+// Express: after routes, before custom error handlers
 setupExpressErrorHandler(gm, app);
-// custom four-argument error handlers
 ```
 
-The middleware captures with `mechanism: "express_middleware"`, marks the error handled, and calls `next(err)` so existing error handlers still run. Express is an optional peer dependency; install it only when using this helper.
+Use `captureExceptionImmediate` when the process may exit immediately (serverless/short scripts). Call `gm.shutdown()` in short-lived test fixtures.
 
-Call `gm.shutdown()` when a client has a shorter lifetime than the process, especially in tests, to remove its process listeners.
+## Source maps (Phase 2)
 
-## Request identity and context
+### Next.js
 
-Both SDKs support:
+```bash
+npm install --save-dev @getmonitor/nextjs-config
+```
 
 ```ts
-client.identify(userId, { plan: "pro" });
-client.addBreadcrumb({
-  category: "checkout",
-  message: "user applied promo code",
-  data: { orderId },
+import { withGetMonitor } from "@getmonitor/nextjs-config";
+
+export default process.env.GETMONITOR_AUTH_TOKEN
+  ? withGetMonitor(nextConfig, {
+      authToken: process.env.GETMONITOR_AUTH_TOKEN,
+    })
+  : nextConfig;
+```
+
+Kubo gates the wrap on token presence so local production builds without a token still succeed. Upstream `withGetMonitor` fails the build if upload fails.
+
+### Nuxt
+
+```bash
+npm install --save-dev @getmonitor/nuxt
+```
+
+```ts
+export default defineNuxtConfig({
+  modules: ["@getmonitor/nuxt"],
+  getmonitor: {
+    authToken: process.env.GETMONITOR_AUTH_TOKEN,
+  },
 });
 ```
 
-In Node concurrent servers, do not call `identify()` directly with request-specific data on a shared client: that global identity can leak across in-flight requests. Use `runWithIdentity()`:
+Without an auth token the module is a silent no-op for uploads (main branch behavior).
 
-```ts
-gm.runWithIdentity(req.user.id, () => next(), { plan: req.user.plan });
-```
-
-Browser breadcrumbs are automatically collected from console log/info/warn, navigation, and clicks, with a count-capped ring buffer. Node breadcrumbs are manual only. Breadcrumbs are attached to exception events; they are not sent as standalone events.
-
-## Filtering, grouping, and limits
-
-Shared configuration supports:
+## Filtering and identity
 
 ```ts
 GetMonitor.init(apiKey, {
-  apiHost,
-  ignoreErrors: ["ResizeObserver loop limit exceeded", /^Network request failed/],
+  ignoreErrors: ["ResizeObserver loop limit exceeded"],
   beforeCapture(event) {
     if (event.user?.internal) return null;
-    event.fingerprint = ["checkout-failure"];
     return event;
   },
-  rateLimit: { maxTokens: 10, refillIntervalMs: 10_000 },
 });
 ```
 
-- `ignoreErrors` matches exception type/message using strings or regular expressions.
-- `beforeCapture` runs after filtering and may mutate the event or return `null` to drop it.
-- Browser only: `denyUrls` and `allowUrls` match stack-frame source filenames.
-- Default grouping uses exception type/message without a stack, or type plus the first in-app stack frame with a stack. Override with `fingerprint` in capture options or `beforeCapture`.
-- The default per-exception-type token bucket has 10 tokens and refills one token every 10 seconds. Dropped events do not consume rate-limit budget.
+Node concurrent servers: prefer `runWithIdentity(id, fn, traits)` over global `identify()` so identity does not leak across requests.
 
-Do not put secrets, passwords, authorization headers, or sensitive request bodies into `tags`, `context`, breadcrumbs, user traits, or custom event data. The SDK's public project key is ingest-only, but captured application data may still be sensitive.
+Never put secrets, tokens, passwords, or raw PII into tags, breadcrumbs, traits, or context.
 
 ## Event contract
 
-The shared event contains `eventId`, `timestamp`, optional `release`/`environment`, `fingerprint`, an `exceptions` array, `handled`, `level`, `mechanism`, `breadcrumbs`, optional `user`, `tags`, and platform-specific `context`.
+Shared event fields: `eventId`, `timestamp`, optional `release`/`environment`, `fingerprint`, `exceptions[]`, `handled`, `level`, `mechanism`, `breadcrumbs`, optional `user`, `tags`, `context`.
 
-Supported mechanisms currently include:
-
-```text
-uncaught_exception | unhandled_rejection | console_error | manual | react_error_boundary | express_middleware
-```
-
-The SDK normalizes plain thrown values, chained `error.cause`, and `AggregateError`; exception chains are ordered root cause first and primary error last. Treat this as the current upstream contract and link to the source instead of duplicating types in Kubo.
+Mechanisms: `uncaught_exception | unhandled_rejection | console_error | manual | react_error_boundary | express_middleware`.
 
 ## Kubo integration rules
 
-- Keep `getmonitor` as the canonical `observability` identifier and retain `none`.
-- Treat GetMonitor as an observability provider, not an addon, database, API, auth, or deployment target.
-- Select the platform package from the generated runtime/frontend. Do not install a browser SDK into server-only projects or a Node SDK into browser bundles.
-- Add a real SDK integration only when the generated project has a clear environment/configuration strategy and the selected runtime is supported. Documentation-only selection is not equivalent to SDK integration.
-- Do not generate uptime-monitor, incident, maintenance, or status-page setup instructions from this SDK repository.
-- Do not invent source-map, React error-boundary, Next.js, Nuxt, or backend-admin integrations while upstream marks those phases deferred.
-- Keep `apiHost`, project-key names, environment, and release configurable; do not hardcode the project key.
-- For server rendering, initialize browser tracking only in a client boundary; for Node, initialize the client once at server startup.
-- Generated READMEs and post-install output must link to the upstream package README matching the selected platform and clearly distinguish public browser keys from server configuration.
+- Keep `getmonitor` as the canonical `observability` identifier and retain `none` (single enum — no multiselect).
+- **Default-on:** interactive CLI, Stack Builder `DEFAULT_STACK`, and full-stack templates (`mern` / `pern` / `t3`) use `getmonitor`. Minimal native-only preset (`uniwind`) stays `none`.
+- **Explicit opt-out:** user selects None in the prompt/builder, or passes `--observability none`.
+- **Keys optional on first run:** scaffold must not fail without `GETMONITOR_API_KEY` / `GETMONITOR_AUTH_TOKEN`; capture stays idle until configured. Document this in README and post-install.
+- Treat GetMonitor as observability, not addon / database / auth / deploy.
+- Install only the platform packages needed for the selected frontend/backend.
+- Do **not** generate configurable `apiHost` / `*_GETMONITOR_API_HOST`.
+- Initialize browser tracking only on the client boundary; Node once at server startup.
+- For React scaffolds: install `@getmonitor/react`, wrap the tree, set `captureConsoleErrors: false`.
+- For Next/Nuxt: wire source-map packages and document `GETMONITOR_AUTH_TOKEN`.
+- README and post-install must distinguish public project keys from the build-time auth token.
+- Product copy: error tracking (browser/server JS/TS) — never uptime/status-page claims.
 
 ## Verification
 
-For a Kubo schema/provider change, verify the provider through the full path: shared schema/types, CLI flags and prompts, `bts.jsonc`, reproducible command, web stack-builder state/URL/command, generated README, post-install output, and tests.
+Schema/provider path: types, CLI flags/prompts, stack builder, README, post-install, tests.
 
-For a generated SDK integration, verify at minimum:
+Generated integration checks:
 
-1. The selected package is present in the generated manifest and only the appropriate platform package is used.
-2. Initialization is guarded by the selected runtime's client/server boundary.
-3. The configured `apiHost` and key are passed to the SDK without hardcoded secrets.
-4. A manual exception reaches a test/mock endpoint at `/api/v1/exceptions` with bearer authentication.
-5. Browser automatic capture, Node automatic capture, Express middleware, or immediate delivery are tested when those paths are generated.
-6. `gm.shutdown()` is used in short-lived Node test fixtures.
-7. Existing application error handling still runs after SDK capture.
-8. Sensitive data is excluded from identity, breadcrumbs, tags, and context.
-
-Run the upstream repository's relevant checks when investigating SDK behavior:
-
-```bash
-pnpm install
-pnpm build
-pnpm test
-pnpm test:e2e
-pnpm lint
-```
-
-The upstream repository currently requires Node `>=20` and pnpm `10`; the root project has no CI workflow, so these checks are local.
+1. Correct package(s) in the manifest for the selected stack.
+2. No `apiHost` / `*_API_HOST` in generated app code or env schemas.
+3. Init guarded by client/server boundary.
+4. React stacks include ErrorBoundary + `captureConsoleErrors: false`.
+5. Next wraps config only when auth token is present (Kubo DX).
+6. Nuxt module registered; browser client plugin present.
+7. Express middleware still after routes.
+8. Secrets excluded from identity/breadcrumbs/tags.
 
 ## Source resources
 
-Use these primary resources and prefer the platform README over memory:
-
 - [Upstream repository](https://github.com/get-monitor/getmonitor-js)
-- [Upstream README](https://github.com/get-monitor/getmonitor-js/blob/main/README.md)
-- [Browser SDK README](https://github.com/get-monitor/getmonitor-js/blob/main/packages/browser/README.md)
-- [Node SDK README](https://github.com/get-monitor/getmonitor-js/blob/main/packages/node/README.md)
-- [Core README and event schema](https://github.com/get-monitor/getmonitor-js/blob/main/packages/core/README.md)
-- [Browser SDK source](https://github.com/get-monitor/getmonitor-js/tree/main/packages/browser/src)
-- [Node SDK source](https://github.com/get-monitor/getmonitor-js/tree/main/packages/node/src)
-- [Core types](https://github.com/get-monitor/getmonitor-js/blob/main/packages/core/src/types.ts)
-- [Core transport](https://github.com/get-monitor/getmonitor-js/blob/main/packages/core/src/httpClient.ts)
-- [Upstream package releases](https://github.com/get-monitor/getmonitor-js/releases)
+- [Browser README](https://github.com/get-monitor/getmonitor-js/blob/main/packages/browser/README.md)
+- [Node README](https://github.com/get-monitor/getmonitor-js/blob/main/packages/node/README.md)
+- [React README](https://github.com/get-monitor/getmonitor-js/blob/main/packages/react/README.md)
+- [Next.js config README](https://github.com/get-monitor/getmonitor-js/blob/main/packages/nextjs-config/README.md)
+- [Nuxt README](https://github.com/get-monitor/getmonitor-js/blob/main/packages/nuxt/README.md)
+- [Core event schema](https://github.com/get-monitor/getmonitor-js/blob/main/packages/core/README.md)
 
-When upstream changes package names, supported mechanisms, endpoint/authentication, deferred phases, or initialization behavior, re-read the repository and update this skill before changing Kubo templates.
+When upstream changes package names, host policy, deferred phases, or init shape, re-read the repository and update this skill before changing Kubo templates.

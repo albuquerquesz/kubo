@@ -80,7 +80,7 @@ function getAllMcpServers(config: ProjectConfig): McpServerDef[] {
   return [
     {
       key: "kubojs",
-      label: "I dont know",
+      label: "kubojs",
       name: "kubojs",
       target: getPackageExecutionCommand(config.packageManager, "kubojs@latest mcp"),
     },

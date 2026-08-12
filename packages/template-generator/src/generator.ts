@@ -1,7 +1,8 @@
+import type { ProjectConfig } from "@kubojs/types";
 import { Result } from "better-result";
 
-import { writeBtsConfigToVfs } from "./bts-config";
 import { VirtualFileSystem } from "./core/virtual-fs";
+import { writeKubojsConfigToVfs } from "./kubojs-config";
 import { processCatalogs, processPackageConfigs, processVercelConfig } from "./post-process";
 import {
   processDependencies,
@@ -24,6 +25,7 @@ import {
   processUiPackage,
   processAuthTemplates,
   processPaymentsTemplates,
+  processCommunicationTemplates,
   processAddonTemplates,
   processExampleTemplates,
   processTestingTemplates,
@@ -54,7 +56,11 @@ export async function generate(
 ): Promise<Result<VirtualFileTree, GeneratorError>> {
   return Result.tryPromise({
     try: async () => {
-      const { config, templates } = options;
+      const config = {
+        ...options.config,
+        observability: normalizeObservability(options.config.observability),
+      };
+      const { templates } = options;
 
       if (!templates || templates.size === 0) {
         throw new GeneratorError({
@@ -75,6 +81,7 @@ export async function generate(
       await processUiPackage(vfs, templates, config);
       await processAuthTemplates(vfs, templates, config);
       await processPaymentsTemplates(vfs, templates, config);
+      await processCommunicationTemplates(vfs, templates, config);
       await processAddonTemplates(vfs, templates, config);
       await processExampleTemplates(vfs, templates, config);
       await processTestingTemplates(vfs, templates, config);
@@ -92,10 +99,10 @@ export async function generate(
       processVercelConfig(vfs, config);
       processReadme(vfs, config);
 
-      // Write bts.jsonc config file
+      // Write kubojs.jsonrc config file
       if (options.version) {
         const reproducibleCommand = generateReproducibleCommand(config);
-        writeBtsConfigToVfs(vfs, config, options.version, reproducibleCommand);
+        writeKubojsConfigToVfs(vfs, config, options.version, reproducibleCommand);
       }
 
       const tree: VirtualFileTree = {
@@ -118,4 +125,17 @@ export async function generate(
       });
     },
   });
+}
+
+function normalizeObservability(value: unknown): ProjectConfig["observability"] {
+  if (value === "none" || value === undefined) return [];
+  const values = Array.isArray(value) ? value : [value];
+  return [
+    ...new Set(
+      values.filter(
+        (item): item is ProjectConfig["observability"][number] =>
+          item === "getmonitor" || item === "himetrica",
+      ),
+    ),
+  ];
 }

@@ -1,0 +1,31 @@
+{
+  "name": "@notifique-smoke/db",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "dependencies": {
+    "@libsql/client": "0.17.4",
+    "@notifique-smoke/env": "workspace:*",
+    "dotenv": "catalog:",
+    "drizzle-orm": "^0.45.2",
+    "libsql": "0.5.29",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@notifique-smoke/config": "workspace:*",
+    "drizzle-kit": "^0.31.10",
+    "typescript": "catalog:"
+  }
+}

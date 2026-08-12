@@ -1,6 +1,6 @@
 # Kubo (domain glossary)
 
-**Kubo** is the product face of this monorepo’s project scaffolding CLI (`create-kubojs` / `kubojs`). Historically documented as Better T Stack; prefer **Kubo** in new agent output. Domain terms below still describe CLI/stack-generation behavior.
+**Kubo** is the product face of this monorepo’s project scaffolding CLI (`create-kubojs` / `kubojs`). Historically documented as Kubo; prefer **Kubo** in new agent output. Domain terms below still describe CLI/stack-generation behavior.
 
 Kubo turns a stack selection into a reproducible TypeScript starter project.
 
@@ -71,11 +71,11 @@ The CLI workflow that turns a project configuration into a new scaffolded projec
 _Avoid_: Init path, generation path
 
 **Add Path**:
-The CLI workflow that adds capabilities to an existing Better T Stack project.
+The CLI workflow that adds capabilities to an existing Kubo project.
 _Avoid_: Update path, addon install path
 
 **MCP Surface**:
-The Model Context Protocol server and tools that expose Better T Stack planning, creation, addon, guidance, and schema operations to agents.
+The Model Context Protocol server and tools that expose Kubo planning, creation, addon, guidance, and schema operations to agents.
 _Avoid_: MCP addon
 
 ## Relationships

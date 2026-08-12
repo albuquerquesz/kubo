@@ -1,0 +1,48 @@
+import { Resend } from "resend";
+import { env } from "@{{projectName}}/env/server";
+
+export type SendEmailInput = {
+	to: string | string[];
+	subject: string;
+	html: string;
+	from?: string;
+	replyTo?: string | string[];
+	/** Unique key to prevent duplicate sends (expires after 24h on Resend). */
+	idempotencyKey?: string;
+};
+
+function getResendClient() {
+	const apiKey = env.RESEND_API_KEY;
+	if (!apiKey) {
+		throw new Error(
+			"RESEND_API_KEY is not set. Add it to your server .env before sending email.",
+		);
+	}
+	return new Resend(apiKey);
+}
+
+/**
+ * Send a transactional email via Resend.
+ * Keys are optional at scaffold time — this throws only when you call it without a key.
+ */
+export async function sendEmail(input: SendEmailInput) {
+	const resend = getResendClient();
+	const from = input.from ?? env.RESEND_FROM_EMAIL ?? "Acme <onboarding@resend.dev>";
+
+	const { data, error } = await resend.emails.send(
+		{
+			from,
+			to: input.to,
+			subject: input.subject,
+			html: input.html,
+			replyTo: input.replyTo,
+		},
+		input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : undefined,
+	);
+
+	if (error) {
+		throw new Error(error.message);
+	}
+
+	return data;
+}

@@ -31,7 +31,7 @@
   ],
   "homepage": "https://kubojs.dev/",
   "license": "MIT",
-  "author": "Aman Varshney",
+  "author": "Kubo",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/albuquerquesz/kubo.git",
@@ -76,6 +76,7 @@
     "@kubojs/template-generator": "workspace:*",
     "@kubojs/types": "workspace:*",
     "@modelcontextprotocol/sdk": "1.29.0",
+    "@tanstack/router-generator": "1.167.28",
     "@trpc/server": "^11.17.0",
     "better-result": "^2.9.2",
     "consola": "^3.4.2",

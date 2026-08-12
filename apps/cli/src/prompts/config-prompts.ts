@@ -10,6 +10,7 @@ import type {
   Frontend,
   ORM,
   Observability,
+  Communication,
   PackageManager,
   Payments,
   ProjectConfig,
@@ -24,6 +25,7 @@ import { getAddonsChoice } from "./addons";
 import { getApiChoice } from "./api";
 import { getAuthChoice } from "./auth";
 import { getBackendFrameworkChoice } from "./backend";
+import { getCommunicationChoice } from "./communication";
 import { getDatabaseChoice } from "./database";
 import { getDBSetupChoice } from "./database-setup";
 import { getExamplesChoice } from "./examples";
@@ -50,6 +52,7 @@ type PromptGroupResults = {
   auth: Auth;
   payments: Payments;
   observability: Observability;
+  communication: Communication;
   addons: Addons[];
   examples: Examples[];
   testing: Testing[];
@@ -82,6 +85,7 @@ export async function gatherConfig(
       auth: flags.auth ?? DEFAULT_CONFIG.auth,
       payments: flags.payments ?? DEFAULT_CONFIG.payments,
       observability: flags.observability ?? DEFAULT_CONFIG.observability,
+      communication: flags.communication ?? DEFAULT_CONFIG.communication,
       addons: flags.addons ?? [...DEFAULT_CONFIG.addons],
       examples: flags.examples ?? [...DEFAULT_CONFIG.examples],
       testing: flags.testing ?? [...DEFAULT_CONFIG.testing],
@@ -128,6 +132,8 @@ export async function gatherConfig(
         ),
       observability: ({ previousAnswer }) =>
         getObservabilityChoice(flags.observability, previousAnswer),
+      communication: ({ results, previousAnswer }) =>
+        getCommunicationChoice(flags.communication, results.backend, previousAnswer),
       addons: ({ results, previousAnswer }) =>
         getAddonsChoice(
           flags.addons,
@@ -200,6 +206,7 @@ export async function gatherConfig(
     auth: result.auth,
     payments: result.payments,
     observability: result.observability,
+    communication: result.communication,
     addons: result.addons,
     examples: result.examples,
     testing: result.testing,

@@ -536,16 +536,19 @@ describe("Addon Configurations", () => {
       expect(webPackageJson.scripts.dev).toBe("vp dev");
       expect(webPackageJson.scripts.build).toBe("vp build");
       expect(webPackageJson.scripts.start).toBe("vp dev");
-      expect(webPackageJson.scripts["check-types"]).toBe("vp build && tsc --noEmit");
+      expect(webPackageJson.scripts["check-types"]).toBe("tsc --noEmit");
       expect(webViteConfig).toContain('import { defineConfig } from "vite-plus";');
       expect(webViteConfig).not.toContain('import { defineConfig } from "vite";');
       const rootViteConfig = await readFile(join(projectDir!, "vite.config.ts"), "utf8");
       expect(rootViteConfig).toContain('import { defineConfig } from "vite-plus";');
       expect(rootViteConfig).toContain('"apps/web/dist/**"');
       expect(rootViteConfig).toContain('"apps/web/.tanstack/**"');
-      expect(rootViteConfig).toContain('"apps/web/src/routeTree.gen.ts"');
+      // routeTree.gen.ts is committed source (not listed as generated ignore)
+      expect(rootViteConfig).not.toContain('"apps/web/src/routeTree.gen.ts"');
       expect(rootViteConfig).toContain('"apps/server/dist/**"');
       expect(rootViteConfig).toContain('"packages/db/dist/**"');
+      expect(rootViteConfig).toContain('"local.db"');
+      expect(rootViteConfig).toContain('"local.db-*"');
       expect(rootViteConfig).toContain('"packages/db/local.db*"');
       expect(rootViteConfig).not.toContain('"apps/web/.next/**"');
       expect(rootViteConfig).not.toContain('"apps/web/.nuxt/**"');
@@ -710,6 +713,8 @@ describe("Addon Configurations", () => {
       expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/apps/web/dist/**");
       expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/apps/server/dist/**");
       expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/packages/db/dist/**");
+      expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/local.db");
+      expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/local.db-*");
       expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/packages/db/local.db*");
     });
 
@@ -785,9 +790,9 @@ describe("Addon Configurations", () => {
         "Cannot combine 'turborepo', 'nx', and 'vite-plus' addons",
       );
 
-      const btsConfig = await readFile(join(projectDir, "bts.jsonc"), "utf8");
-      expect(btsConfig).toContain('"turborepo"');
-      expect(btsConfig).not.toContain('"vite-plus"');
+      const kubojsConfig = await readFile(join(projectDir, "kubojs.jsonrc"), "utf8");
+      expect(kubojsConfig).toContain('"turborepo"');
+      expect(kubojsConfig).not.toContain('"vite-plus"');
     });
 
     it("should reject adding another task runner to a Vite+ project", async () => {
@@ -823,9 +828,9 @@ describe("Addon Configurations", () => {
         "Cannot combine 'turborepo', 'nx', and 'vite-plus' addons",
       );
 
-      const btsConfig = await readFile(join(projectDir, "bts.jsonc"), "utf8");
-      expect(btsConfig).toContain('"vite-plus"');
-      expect(btsConfig).not.toContain('"nx"');
+      const kubojsConfig = await readFile(join(projectDir, "kubojs.jsonrc"), "utf8");
+      expect(kubojsConfig).toContain('"vite-plus"');
+      expect(kubojsConfig).not.toContain('"nx"');
     });
 
     it("should refresh existing Git hook addons when Vite+ is added later", async () => {

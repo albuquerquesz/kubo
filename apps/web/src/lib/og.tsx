@@ -127,7 +127,7 @@ export function OgShell({
                 display: "flex",
               }}
             >
-              Better-T Stack
+              Kubo
             </span>
             <span style={{ color: ogColors.border, fontSize: "18px", display: "flex" }}>/</span>
             <span style={{ color: ogColors.overlay, fontSize: "16px", display: "flex" }}>

@@ -5,8 +5,10 @@ const validNativeFrontendIds = new Set(TECH_OPTIONS.nativeFrontend.map((option) 
 const validAddonIds = new Set(["none", ...TECH_OPTIONS.addons.map((option) => option.id)]);
 const validTestingIds = new Set(["none", ...TECH_OPTIONS.testing.map((option) => option.id)]);
 const validExampleIds = new Set(["none", ...TECH_OPTIONS.examples.map((option) => option.id)]);
+const validObservabilityIds = new Set(TECH_OPTIONS.observability.map((option) => option.id));
 
 export const TASK_RUNNER_ADDONS = ["nx", "turborepo", "vite-plus"] as const;
+export const LINTER_ADDONS = ["biome", "oxlint", "ultracite"] as const;
 
 function sanitizeSingleSelection(
   values: readonly string[] | null | undefined,
@@ -41,6 +43,7 @@ function sanitizeMultiSelection(
 function resolveMonorepoAddonConflicts(addons: readonly string[]): string[] {
   const resolved: string[] = [];
   const taskRunners = new Set<string>(TASK_RUNNER_ADDONS);
+  const linters = new Set<string>(LINTER_ADDONS);
 
   for (const addon of addons) {
     if (taskRunners.has(addon)) {
@@ -48,6 +51,14 @@ function resolveMonorepoAddonConflicts(addons: readonly string[]): string[] {
 
       if (existingMonorepoIndex !== -1) {
         resolved.splice(existingMonorepoIndex, 1);
+      }
+    }
+
+    if (linters.has(addon)) {
+      const existingLinterIndex = resolved.findIndex((value) => linters.has(value));
+
+      if (existingLinterIndex !== -1) {
+        resolved.splice(existingLinterIndex, 1);
       }
     }
 
@@ -72,6 +83,14 @@ export function sanitizeExamples(examples: readonly string[] | null | undefined)
   return sanitizeMultiSelection(examples, validExampleIds, DEFAULT_STACK.examples);
 }
 
+export function sanitizeObservability(
+  values: readonly string[] | string | null | undefined,
+): string[] {
+  if (values == null) return [...DEFAULT_STACK.observability];
+  const normalized = typeof values === "string" ? [values] : values;
+  return [...new Set(normalized.filter((value) => validObservabilityIds.has(value)))];
+}
+
 export function sanitizeWebFrontends(webFrontend: readonly string[] | null | undefined): string[] {
   return sanitizeSingleSelection(webFrontend, validWebFrontendIds, DEFAULT_STACK.webFrontend);
 }
@@ -94,6 +113,7 @@ export function sanitizeStackState(stack: StackState): StackState {
     addons: sanitizeAddons(stack.addons),
     testing: sanitizeTesting(stack.testing),
     examples: sanitizeExamples(stack.examples),
+    observability: sanitizeObservability(stack.observability),
   };
 }
 

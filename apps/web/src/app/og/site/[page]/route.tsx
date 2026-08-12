@@ -29,12 +29,6 @@ const PAGES: Record<
     title: "Análise",
     description: "Insights de uso em tempo real da CLI kubojs",
   },
-  sponsors: {
-    path: "~/sponsors",
-    section: "patrocinadores",
-    title: "Patrocinadores",
-    description: "Empresas e desenvolvedores que financiam o desenvolvimento do kubojs",
-  },
 };
 
 export async function GET(_req: Request, { params }: RouteContext<"/og/site/[page]">) {

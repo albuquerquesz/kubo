@@ -20,6 +20,7 @@ const CATEGORY_ORDER: Array<keyof typeof TECH_OPTIONS> = [
   "auth",
   "payments",
   "observability",
+  "communication",
   "packageManager",
   "addons",
   "testing",
@@ -189,7 +190,10 @@ export function generateStackCommand(stack: StackState) {
     `--payments ${stack.payments || "none"}`,
     // Always emit observability so Stack Builder → CLI carries the choice
     // (including explicit "none"); CLI processFlags must accept this flag.
-    `--observability ${stack.observability || "none"}`,
+    stack.observability.length > 0
+      ? `--observability ${stack.observability.join(" ")}`
+      : "--disable-observability",
+    `--communication ${stack.communication || "none"}`,
     `--database ${stack.database}`,
     `--orm ${stack.orm}`,
     `--db-setup ${stack.dbSetup}`,

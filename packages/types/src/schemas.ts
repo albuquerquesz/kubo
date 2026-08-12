@@ -95,9 +95,30 @@ export const AuthSchema = z
 
 export const PaymentsSchema = z.enum(["none", "abacatepay"]).describe("Payments provider");
 
+export const ObservabilityProviderSchema = z.enum(["getmonitor", "himetrica"]);
+
 export const ObservabilitySchema = z
-  .enum(["none", "getmonitor"])
-  .describe("Observability provider");
+  .preprocess(
+    (value) => {
+      if (value === "none") return [];
+      if (typeof value === "string") return [value];
+      if (Array.isArray(value)) return value.filter((item) => item !== "none");
+      return value;
+    },
+    z.array(ObservabilityProviderSchema).superRefine((providers, ctx) => {
+      if (new Set(providers).size !== providers.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Observability providers must be unique",
+        });
+      }
+    }),
+  )
+  .describe("Selected observability providers");
+
+export const CommunicationSchema = z
+  .enum(["none", "resend", "notifique"])
+  .describe("Communication provider (email / messaging)");
 
 export const WebDeploySchema = z
   .enum(["cloudflare", "docker", "vercel", "guaracloud", "none"])
@@ -438,6 +459,8 @@ export const CreateInputSchema = z
     auth: AuthSchema.optional(),
     payments: PaymentsSchema.optional(),
     observability: ObservabilitySchema.optional(),
+    disableObservability: z.boolean().optional(),
+    communication: CommunicationSchema.optional(),
     frontend: z.array(FrontendSchema).optional(),
     addons: AddonsListSchema.optional(),
     examples: z.array(ExamplesSchema).optional(),
@@ -497,6 +520,7 @@ export const ProjectConfigSchema = z.object({
   auth: AuthSchema,
   payments: PaymentsSchema,
   observability: ObservabilitySchema,
+  communication: CommunicationSchema,
   git: z.boolean(),
   packageManager: PackageManagerSchema,
   install: z.boolean(),
@@ -506,7 +530,7 @@ export const ProjectConfigSchema = z.object({
   serverDeploy: ServerDeploySchema,
 });
 
-export const BetterTStackConfigSchema = z.object({
+export const KubojsConfigSchema = z.object({
   version: z.string().describe("CLI version used to create this project"),
   createdAt: z.string().describe("Timestamp when the project was created"),
   reproducibleCommand: z.string().optional().describe("Command to reproduce this project setup"),
@@ -523,6 +547,7 @@ export const BetterTStackConfigSchema = z.object({
   auth: AuthSchema,
   payments: PaymentsSchema,
   observability: ObservabilitySchema,
+  communication: CommunicationSchema,
   packageManager: PackageManagerSchema,
   dbSetup: DatabaseSetupSchema,
   api: APISchema,
@@ -530,11 +555,11 @@ export const BetterTStackConfigSchema = z.object({
   serverDeploy: ServerDeploySchema,
 });
 
-export const BetterTStackConfigFileSchema = z
+export const KubojsConfigFileSchema = z
   .object({
     $schema: z.string().optional().describe("JSON Schema reference for validation"),
   })
-  .extend(BetterTStackConfigSchema.shape)
+  .extend(KubojsConfigSchema.shape)
   .strict()
   .meta({
     id: "https://r2.kubojs.dev/schema.json",
@@ -566,7 +591,8 @@ export const DATABASE_SETUP_VALUES = DatabaseSetupSchema.options;
 export const API_VALUES = APISchema.options;
 export const AUTH_VALUES = AuthSchema.options;
 export const PAYMENTS_VALUES = PaymentsSchema.options;
-export const OBSERVABILITY_VALUES = ObservabilitySchema.options;
+export const OBSERVABILITY_VALUES = ObservabilityProviderSchema.options;
+export const COMMUNICATION_VALUES = CommunicationSchema.options;
 export const WEB_DEPLOY_VALUES = WebDeploySchema.options;
 export const SERVER_DEPLOY_VALUES = ServerDeploySchema.options;
 export const DIRECTORY_CONFLICT_VALUES = DirectoryConflictSchema.options;

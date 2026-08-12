@@ -13,6 +13,7 @@ export type TechCategory =
   | "auth"
   | "payments"
   | "observability"
+  | "communication"
   | "packageManager"
   | "addons"
   | "testing"

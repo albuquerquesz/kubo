@@ -10,9 +10,9 @@ July 19, 2026
 
 ## Goal
 
-Evolve the Better T Stack home into a dense, editorial product surface inspired by the _interaction grammar_ observed on `mistral.ai`: structural grids, oversized declarative type, a fixed utility header, contained motion, and composed content modules.
+Evolve the Kubo home into a dense, editorial product surface inspired by the _interaction grammar_ observed on `mistral.ai`: structural grids, oversized declarative type, a fixed utility header, contained motion, and composed content modules.
 
-This is an original Better T Stack system. It must retain the project palette, copy, logo, routes, data, and existing dark “System Manual” identity. Do not reproduce Mistral’s wordmark, pixel assets, orange/red/blue palette, copy, illustrations, exact layout dimensions, or brand-specific navigation taxonomy.
+This is an original Kubo system. It must retain the project palette, copy, logo, routes, data, and existing dark “System Manual” identity. Do not reproduce Mistral’s wordmark, pixel assets, orange/red/blue palette, copy, illustrations, exact layout dimensions, or brand-specific navigation taxonomy.
 
 ## Research evidence
 
@@ -34,7 +34,7 @@ These local captures are layout-reference evidence only. They are not product as
 
 The external site’s current body surface is `rgb(251, 251, 248)`, header height is 49 px, its body type is Inter, its small labels are Space Mono at 13 px, and its supporting desktop type is 32 px / 40 px. These are observations, not values to copy.
 
-## Existing Better T Stack foundation
+## Existing Kubo foundation
 
 Use the current home structure and tokens as the foundation:
 
@@ -111,7 +111,7 @@ Implement by **redefining** the shared tokens so every existing `border-rule` / 
 - [ ] Focus rings and primary gold actions remain higher contrast than the soft rule.
 - [ ] `bun run check` passes after the token roll-out.
 
-## Better T Stack token contract
+## Kubo token contract
 
 Keep the existing semantic variables. Update structural border values to the soft-rule standard above. Surface values track the current slightly lifted dark canvas (not the original near-black `#080806` if the shell has been lightened).
 
@@ -150,7 +150,7 @@ Preserve this content order. At mobile widths, it is also the reading and tab or
 
 ### Desktop (1024 px and above)
 
-- Keep the fixed 56 px Better T Stack header. Treat it as a row of outlined cells: mark, section links, GitHub utility, and gold `Build a stack` action.
+- Keep the fixed 56 px Kubo header. Treat it as a row of outlined cells: mark, section links, GitHub utility, and gold `Build a stack` action.
 - Place the hero under the header in a 12-column grid, with a minimum first-viewport height of `calc(100svh - 3.5rem)` only when content remains above the fold.
 - The lead statement spans 7–8 columns. Use `ui-display`, `clamp(3.5rem, 8vw, 8.5rem)`, `line-height: 0.9–0.96`, tight tracking, and no more than two or three lines. For the SEO dual-title pattern (visually hidden `h1` + decorative animated display line) and the GSAP motion standard, see [`spec-gsap-motion-system-and-hero-title.md`](./spec-gsap-motion-system-and-hero-title.md).
 - A 4–5-column companion panel contains an eyebrow/index, a 2–4 line positioning statement, a compact proof item or rotating release note, and the primary action only if it does not duplicate the header action.
@@ -166,7 +166,7 @@ Preserve this content order. At mobile widths, it is also the reading and tab or
 
 ## SignalField: original decorative animation
 
-Build an original Better T Stack signal field rather than a colored-block copy.
+Build an original Kubo signal field rather than a colored-block copy.
 
 - **Visual language:** dark grid cells, occasional gold signal squares/lines, and muted cream/pale-gold glyphs inspired by typed stack configuration—not pixel characters or Mistral-like geometric sequences.
 - **Implementation:** a CSS grid or a canvas loaded only after the hero is visible. Prefer a CSS grid for a small number of cells. Use a canvas only if the animation needs a dense field and can stay isolated in a client component.
@@ -186,7 +186,7 @@ Build an original Better T Stack signal field rather than a colored-block copy.
 
 ### Sponsor/proof ticker
 
-- The current sponsor section can borrow the reference’s moving-logo principle, but logos remain monochrome/low-emphasis on the Better T Stack dark base.
+- The current sponsor section can borrow the reference’s moving-logo principle, but logos remain monochrome/low-emphasis on the Kubo dark base.
 - Motion is optional: duplicate enough content for a seamless visual loop only if all duplicate logos are `aria-hidden`; provide a static row under reduced motion.
 - Treat this as proof, not a loud marquee. It must not outrank the hero headline or primary action.
 
@@ -245,7 +245,7 @@ Use `motion-safe:` utilities for optional transforms. The standard interactive t
 ### Out of scope
 
 - Copying Mistral visual assets, content, exact geometry, navigation labels, color palette, or source code.
-- Changing Better T Stack routes, sponsor/testimonial data contracts, or the global brand palette.
+- Changing Kubo routes, sponsor/testimonial data contracts, or the global brand palette.
 - Introducing a new animation library, design system dependency, carousel package, or custom font solely to resemble the reference.
 - Replacing accessible links with canvas hotspots or interaction that relies on hover.
 

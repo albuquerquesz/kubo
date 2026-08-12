@@ -1,0 +1,42 @@
+import { notifiqueRequest } from "./client";
+
+export type NotifiqueSmsSpeed = "full" | "standard" | "slow";
+
+export type SendSmsInput = {
+	/** Digits only, international (no +), e.g. 5511999999999 — or array of numbers */
+	to: string | string[];
+	/** Plain text; API requires at least 9 characters */
+	message: string;
+	idempotencyKey?: string;
+	/** Operator route / pricing: full | standard | slow */
+	speed?: NotifiqueSmsSpeed;
+};
+
+export type SendSmsResult = {
+	status: "QUEUED" | "SCHEDULED" | string;
+	count?: number;
+	messageIds: string[];
+	smsIds?: string[];
+	scheduledAt?: string | null;
+};
+
+/**
+ * POST /v1/sms/messages — text SMS (202 Accepted).
+ * Skill: https://docs.notifique.dev/skill.md · Quick start: https://docs.notifique.dev/sms-api/como-funciona/quick-start
+ */
+export async function sendSms(input: SendSmsInput): Promise<SendSmsResult> {
+	const to = Array.isArray(input.to) ? input.to : [input.to];
+	if (input.message.trim().length < 9) {
+		throw new Error("SMS message must be at least 9 characters (Notifique API rule).");
+	}
+
+	return notifiqueRequest<SendSmsResult>("/sms/messages", {
+		body: {
+			to,
+			type: "text",
+			payload: { message: input.message },
+			...(input.speed ? { options: { speed: input.speed } } : {}),
+		},
+		idempotencyKey: input.idempotencyKey,
+	});
+}
