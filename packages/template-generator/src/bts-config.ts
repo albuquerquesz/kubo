@@ -57,7 +57,6 @@ export function writeBtsConfigToVfs(
 // Stack Builder: https://www.kubojs.dev/new
 // Analytics: https://www.kubojs.dev/analytics
 // Showcase: https://www.kubojs.dev/showcase
-// Sponsor: https://github.com/sponsors/AmanVarshney01
 //
 // Add new addons with: ${addCommand}
 // This file is safe to delete
