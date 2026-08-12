@@ -182,6 +182,12 @@ export const env = createEnv({
 		// Test-only default; replace with a verified domain sender for production.
 		RESEND_FROM_EMAIL: z.string().min(1).default("Acme <onboarding@resend.dev>"),
 	{{/if}}
+	{{#if (eq communication "notifique")}}
+		NOTIFIQUE_API_KEY: z.string().min(1).optional(),
+		NOTIFIQUE_BASE_URL: z.url().default("https://api.notifique.dev"),
+		NOTIFIQUE_WHATSAPP_INSTANCE_ID: z.string().min(1).optional(),
+		NOTIFIQUE_FROM_EMAIL: z.string().min(1).optional(),
+	{{/if}}
 	},
 	runtimeEnv: {{#if (or (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}runtimeEnv{{else}}process.env{{/if}},
 	skipValidation: !!process.env.SKIP_ENV_VALIDATION,

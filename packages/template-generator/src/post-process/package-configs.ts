@@ -41,6 +41,7 @@ export function processPackageConfigs(vfs: VirtualFileSystem, config: ProjectCon
   updateEnvPackageJson(vfs, config);
   updatePaymentsPackageJson(vfs, config);
   updateEmailPackageJson(vfs, config);
+  updateNotifiquePackageJson(vfs, config);
   updateUiPackageJson(vfs, config);
   updateInfraPackageJson(vfs, config);
   updateDesktopPackageJson(vfs, config);
@@ -669,6 +670,14 @@ function updateEmailPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): 
 
   pkgJson.name = `@${config.projectName}/email`;
   vfs.writeJson("packages/email/package.json", pkgJson);
+}
+
+function updateNotifiquePackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
+  const pkgJson = vfs.readJson<PackageJson>("packages/notifique/package.json");
+  if (!pkgJson) return;
+
+  pkgJson.name = `@${config.projectName}/notifique`;
+  vfs.writeJson("packages/notifique/package.json", pkgJson);
 }
 
 function updateUiPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
