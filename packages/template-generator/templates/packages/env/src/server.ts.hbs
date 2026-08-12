@@ -174,7 +174,7 @@ export const env = createEnv({
 {{/if}}
 		CORS_ORIGIN: z.url(),
 		NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-	{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		GETMONITOR_API_KEY: z.string().min(1).optional(),
 	{{/if}}
 	{{#if (eq communication "resend")}}

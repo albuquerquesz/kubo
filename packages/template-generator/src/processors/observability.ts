@@ -33,6 +33,15 @@ function getWebEnvKey(frontend: ProjectConfig["frontend"]): string {
   return "VITE_GETMONITOR_API_KEY";
 }
 
+function getHimetricaWebEnvKey(frontend: ProjectConfig["frontend"]): string {
+  if (frontend.includes("next")) return "NEXT_PUBLIC_HIMETRICA_API_KEY";
+  if (frontend.includes("nuxt")) return "NUXT_PUBLIC_HIMETRICA_API_KEY";
+  if (frontend.includes("svelte") || frontend.includes("astro")) {
+    return "PUBLIC_HIMETRICA_API_KEY";
+  }
+  return "VITE_HIMETRICA_API_KEY";
+}
+
 const ERROR_BOUNDARY_FALLBACK = `fallback={(error, reset) => (
         <div>
           <p>Something went wrong.</p>
@@ -298,6 +307,139 @@ function processBrowserIntegration(vfs: VirtualFileSystem, config: ProjectConfig
   processViteBrowserIntegration(vfs, config, key);
 }
 
+function processHimetricaNextIntegration(
+  vfs: VirtualFileSystem,
+  config: ProjectConfig,
+  key: string,
+): void {
+  addPackageDependency({
+    vfs,
+    packagePath: "apps/web/package.json",
+    dependencies: ["@himetrica/tracker-js"],
+  });
+
+  vfs.writeFile(
+    "apps/web/src/components/himetrica.tsx",
+    `"use client";
+
+import { HimetricaProvider } from "@himetrica/tracker-js/react";
+
+export function KuboHimetricaProvider({ children }: { children: React.ReactNode }) {
+  const apiKey = process.env.${key};
+
+  if (!apiKey) return children;
+
+  return (
+    <HimetricaProvider apiKey={apiKey} autoTrackErrors trackVitals>
+      {children}
+    </HimetricaProvider>
+  );
+}
+`,
+  );
+
+  const layoutPath = "apps/web/src/app/layout.tsx";
+  if (!vfs.exists(layoutPath)) return;
+  let layout = vfs.readFile(layoutPath) ?? "";
+  const importLine = 'import { KuboHimetricaProvider } from "@/components/himetrica";';
+  if (!layout.includes("@/components/himetrica")) layout = `${importLine}\n${layout}`;
+  if (!layout.includes("<KuboHimetricaProvider")) {
+    layout = layout.replace(
+      /<Providers([^>]*)>/g,
+      "<KuboHimetricaProvider>\n\t\t\t\t<Providers$1>",
+    );
+    layout = layout.replace(/<\/Providers>/g, "</Providers>\n\t\t\t\t</KuboHimetricaProvider>");
+  }
+  vfs.writeFile(layoutPath, layout);
+}
+
+function processHimetricaBrowserIntegration(
+  vfs: VirtualFileSystem,
+  config: ProjectConfig,
+  key: string,
+): void {
+  addPackageDependency({
+    vfs,
+    packagePath: "apps/web/package.json",
+    dependencies: ["@himetrica/tracker-js"],
+  });
+
+  if (config.frontend.includes("nuxt")) {
+    vfs.writeFile(
+      "apps/web/app/plugins/himetrica.client.ts",
+      `import { HimetricaClient } from "@himetrica/tracker-js";
+
+export default defineNuxtPlugin(() => {
+  const apiKey = process.env.${key};
+  if (!apiKey) return;
+
+  new HimetricaClient({
+    apiKey,
+    autoTrackPageViews: true,
+    autoTrackErrors: true,
+    trackVitals: true,
+  });
+});
+`,
+    );
+    return;
+  }
+
+  vfs.writeFile(
+    "apps/web/src/lib/himetrica.ts",
+    `import { HimetricaClient } from "@himetrica/tracker-js";
+import { env } from "@${config.projectName}/env/web";
+
+export const himetrica =
+  typeof window !== "undefined" && env.${key}
+    ? new HimetricaClient({
+        apiKey: env.${key},
+        autoTrackPageViews: true,
+        autoTrackErrors: true,
+        trackVitals: true,
+      })
+    : null;
+`,
+  );
+
+  const entryByFrontend: Record<string, string> = {
+    "tanstack-router": "apps/web/src/main.tsx",
+    "react-router": "apps/web/src/root.tsx",
+    "tanstack-start": "apps/web/src/router.tsx",
+    solid: "apps/web/src/main.tsx",
+    svelte: "apps/web/src/routes/+layout.ts",
+    astro: "apps/web/src/layouts/Layout.astro",
+  };
+  const frontend = config.frontend.find((value) => entryByFrontend[value]);
+  const entryPath = frontend ? entryByFrontend[frontend] : undefined;
+  if (entryPath && vfs.exists(entryPath)) {
+    let content = vfs.readFile(entryPath) ?? "";
+    if (!content.includes("himetrica")) {
+      if (frontend === "svelte") {
+        content = content.replace(
+          '<script lang="ts">',
+          '<script lang="ts">\n\timport "$lib/himetrica";',
+        );
+      } else if (frontend === "astro") {
+        content = `import "../../lib/himetrica";\n${content}`;
+      } else {
+        content = `import "./lib/himetrica";\n${content}`;
+      }
+      vfs.writeFile(entryPath, content);
+    }
+  }
+}
+
+function processHimetricaIntegration(vfs: VirtualFileSystem, config: ProjectConfig): void {
+  if (!hasWebFrontend(config.frontend) || !vfs.exists("apps/web/package.json")) return;
+  const key = getHimetricaWebEnvKey(config.frontend);
+  if (config.frontend.includes("next")) {
+    processHimetricaNextIntegration(vfs, config, key);
+    return;
+  }
+  processHimetricaBrowserIntegration(vfs, config, key);
+}
+
 function processNodeIntegration(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const supported =
     config.backend !== "none" &&
@@ -347,7 +489,9 @@ export const getMonitor = env.GETMONITOR_API_KEY
 }
 
 export function processObservability(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  if (config.observability !== "getmonitor") return;
-  processBrowserIntegration(vfs, config);
-  processNodeIntegration(vfs, config);
+  if (config.observability.includes("getmonitor")) {
+    processBrowserIntegration(vfs, config);
+    processNodeIntegration(vfs, config);
+  }
+  if (config.observability.includes("himetrica")) processHimetricaIntegration(vfs, config);
 }

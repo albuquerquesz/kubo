@@ -203,7 +203,7 @@ function buildClientVars(
     }
   }
 
-  if (observability === "getmonitor") {
+  if (observability.includes("getmonitor")) {
     const getMonitorKey = hasNextJs
       ? "NEXT_PUBLIC_GETMONITOR_API_KEY"
       : frontend.includes("nuxt")
@@ -225,6 +225,22 @@ function buildClientVars(
         comment: "GetMonitor source-map upload token (server/build only — never expose publicly)",
       });
     }
+  }
+
+  if (observability.includes("himetrica")) {
+    const himetricaKey = hasNextJs
+      ? "NEXT_PUBLIC_HIMETRICA_API_KEY"
+      : frontend.includes("nuxt")
+        ? "NUXT_PUBLIC_HIMETRICA_API_KEY"
+        : frontend.includes("svelte") || frontend.includes("astro")
+          ? "PUBLIC_HIMETRICA_API_KEY"
+          : "VITE_HIMETRICA_API_KEY";
+    vars.push({
+      key: himetricaKey,
+      value: "",
+      condition: true,
+      comment: "Himetrica public tracker key (hm_pk_...)",
+    });
   }
 
   return vars;
@@ -525,7 +541,7 @@ function buildServerVars(
     {
       key: "GETMONITOR_API_KEY",
       value: "",
-      condition: observability === "getmonitor",
+      condition: observability.includes("getmonitor"),
       comment: "GetMonitor public project key (gm_xxx)",
     },
     {

@@ -1,3 +1,4 @@
+import type { ProjectConfig } from "@kubojs/types";
 import { Result } from "better-result";
 
 import { VirtualFileSystem } from "./core/virtual-fs";
@@ -54,7 +55,11 @@ export async function generate(
 ): Promise<Result<VirtualFileTree, GeneratorError>> {
   return Result.tryPromise({
     try: async () => {
-      const { config, templates } = options;
+      const config = {
+        ...options.config,
+        observability: normalizeObservability(options.config.observability),
+      };
+      const { templates } = options;
 
       if (!templates || templates.size === 0) {
         throw new GeneratorError({
@@ -118,4 +123,17 @@ export async function generate(
       });
     },
   });
+}
+
+function normalizeObservability(value: unknown): ProjectConfig["observability"] {
+  if (value === "none" || value === undefined) return [];
+  const values = Array.isArray(value) ? value : [value];
+  return [
+    ...new Set(
+      values.filter(
+        (item): item is ProjectConfig["observability"][number] =>
+          item === "getmonitor" || item === "himetrica",
+      ),
+    ),
+  ];
 }

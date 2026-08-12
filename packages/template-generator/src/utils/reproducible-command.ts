@@ -42,7 +42,16 @@ export function generateReproducibleCommand(config: ProjectConfig): string {
   flags.push(`--api ${config.api}`);
   flags.push(`--auth ${config.auth}`);
   flags.push(`--payments ${config.payments}`);
-  flags.push(`--observability ${config.observability}`);
+  const observability = Array.isArray(config.observability)
+    ? config.observability
+    : config.observability === "none"
+      ? []
+      : [config.observability];
+  if (observability.length === 0) {
+    flags.push("--disable-observability");
+  } else {
+    flags.push(`--observability ${observability.join(" ")}`);
+  }
   flags.push(`--communication ${config.communication}`);
 
   flags.push(formatMultiFlag("--addons", addons));

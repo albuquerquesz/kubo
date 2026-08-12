@@ -172,6 +172,7 @@ export const dependencyVersionMap = {
   "@t3-oss/env-nuxt": "^0.13.11",
 
   evlog: "^2.19.2",
+  "@himetrica/tracker-js": "^0.1.36",
   "@getmonitor/browser": "^0.1.0",
   "@getmonitor/node": "^0.1.0",
   "@getmonitor/react": "^0.1.0",
