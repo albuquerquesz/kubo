@@ -23,10 +23,6 @@ export const links: LinkItemType[] = [
     url: "/analytics",
   },
   {
-    text: "Patrocinadores",
-    url: "/sponsors",
-  },
-  {
     text: "Demo",
     url: "https://my-kubo-app.amanv.cloud/",
     external: true,

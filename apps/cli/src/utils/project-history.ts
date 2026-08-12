@@ -28,10 +28,12 @@ export type ProjectHistoryEntry = {
     runtime: string;
     auth: string;
     payments: string;
-    observability: string;
+    observability: string[];
+    communication: string;
     api: string;
     addons: string[];
     examples: string[];
+    testing: string[];
     dbSetup: string;
     packageManager: string;
   };
@@ -152,9 +154,11 @@ export async function addToHistory(
       auth: config.auth,
       payments: config.payments,
       observability: config.observability,
+      communication: config.communication,
       api: config.api,
       addons: config.addons,
       examples: config.examples,
+      testing: config.testing,
       dbSetup: config.dbSetup,
       packageManager: config.packageManager,
     },

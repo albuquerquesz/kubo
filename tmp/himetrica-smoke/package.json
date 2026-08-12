@@ -1,0 +1,16 @@
+{
+  "name": "himetrica-smoke",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "run": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "@himetrica/tracker-js": "0.1.36"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.0",
+    "typescript": "^6.0.0"
+  }
+}

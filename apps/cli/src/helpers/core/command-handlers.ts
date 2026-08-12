@@ -11,7 +11,10 @@ import { gatherConfig } from "../../prompts/config-prompts";
 import { getProjectName } from "../../prompts/project-name";
 import type { CreateInput, DirectoryConflict, ProjectConfig } from "../../types";
 import { trackProjectCreation } from "../../utils/analytics";
-import { validateAddonsAgainstFrontends } from "../../utils/compatibility-rules";
+import {
+  validateAddonsAgainstFrontends,
+  validateTestingAgainstFrontends,
+} from "../../utils/compatibility-rules";
 import { isSilent, runWithContextAsync } from "../../utils/context";
 import { displayConfig } from "../../utils/display-config";
 import {
@@ -77,9 +80,11 @@ function createEmptyResult(
       frontend: [],
       addons: [],
       examples: [],
+      testing: [],
       auth: "none",
       payments: "none",
-      observability: "none",
+      observability: [],
+      communication: "none",
       git: false,
       packageManager: "npm",
       install: false,
@@ -359,6 +364,14 @@ async function createProjectHandlerInternal(
       );
       if (addonsValidationResult.isErr()) {
         return Result.err(new CLIError({ message: addonsValidationResult.error.message }));
+      }
+
+      const testingValidationResult = validateTestingAgainstFrontends(
+        config.testing,
+        config.frontend,
+      );
+      if (testingValidationResult.isErr()) {
+        return Result.err(new CLIError({ message: testingValidationResult.error.message }));
       }
     }
 

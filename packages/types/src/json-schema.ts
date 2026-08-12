@@ -8,12 +8,14 @@ import {
   FrontendSchema,
   AddonsSchema,
   ExamplesSchema,
+  TestingSchema,
   PackageManagerSchema,
   DatabaseSetupSchema,
   APISchema,
   AuthSchema,
   PaymentsSchema,
   ObservabilitySchema,
+  CommunicationSchema,
   WebDeploySchema,
   ServerDeploySchema,
   DirectoryConflictSchema,
@@ -57,6 +59,10 @@ export function getExamplesJsonSchema() {
   return z.toJSONSchema(ExamplesSchema);
 }
 
+export function getTestingJsonSchema() {
+  return z.toJSONSchema(TestingSchema);
+}
+
 export function getPackageManagerJsonSchema() {
   return z.toJSONSchema(PackageManagerSchema);
 }
@@ -79,6 +85,10 @@ export function getPaymentsJsonSchema() {
 
 export function getObservabilityJsonSchema() {
   return z.toJSONSchema(ObservabilitySchema);
+}
+
+export function getCommunicationJsonSchema() {
+  return z.toJSONSchema(CommunicationSchema);
 }
 
 export function getWebDeployJsonSchema() {
@@ -139,12 +149,14 @@ export function getAllJsonSchemas() {
     frontend: getFrontendJsonSchema(),
     addons: getAddonsJsonSchema(),
     examples: getExamplesJsonSchema(),
+    testing: getTestingJsonSchema(),
     packageManager: getPackageManagerJsonSchema(),
     databaseSetup: getDatabaseSetupJsonSchema(),
     api: getAPIJsonSchema(),
     auth: getAuthJsonSchema(),
     payments: getPaymentsJsonSchema(),
     observability: getObservabilityJsonSchema(),
+    communication: getCommunicationJsonSchema(),
     webDeploy: getWebDeployJsonSchema(),
     serverDeploy: getServerDeployJsonSchema(),
     directoryConflict: getDirectoryConflictJsonSchema(),

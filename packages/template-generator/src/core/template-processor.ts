@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubojs/types";
+import { getWebPort, type ProjectConfig } from "@kubojs/types";
 import Handlebars from "handlebars";
 import isBinaryPath from "is-binary-path";
 
@@ -8,6 +8,9 @@ Handlebars.registerHelper("and", (...args) => args.slice(0, -1).every(Boolean));
 Handlebars.registerHelper("or", (...args) => args.slice(0, -1).some(Boolean));
 Handlebars.registerHelper("not", (a) => !a);
 Handlebars.registerHelper("includes", (arr, val) => Array.isArray(arr) && arr.includes(val));
+Handlebars.registerHelper("webPort", (frontend) => {
+  return getWebPort(Array.isArray(frontend) ? frontend : []);
+});
 
 // Shared across every web client template (oRPC/tRPC/better-auth) so the
 // same-origin URL normalization for Vercel deploys has one source of truth.

@@ -32,6 +32,7 @@ export function generateReproducibleCommand(config: ProjectConfig): string {
   const frontend = normalizeMultiValues(config.frontend);
   const addons = normalizeMultiValues(config.addons);
   const examples = normalizeMultiValues(config.examples);
+  const testing = normalizeMultiValues(config.testing);
 
   flags.push(formatMultiFlag("--frontend", frontend));
 
@@ -42,10 +43,21 @@ export function generateReproducibleCommand(config: ProjectConfig): string {
   flags.push(`--api ${config.api}`);
   flags.push(`--auth ${config.auth}`);
   flags.push(`--payments ${config.payments}`);
-  flags.push(`--observability ${config.observability}`);
+  const observability = Array.isArray(config.observability)
+    ? config.observability
+    : config.observability === "none"
+      ? []
+      : [config.observability];
+  if (observability.length === 0) {
+    flags.push("--disable-observability");
+  } else {
+    flags.push(`--observability ${observability.join(" ")}`);
+  }
+  flags.push(`--communication ${config.communication}`);
 
   flags.push(formatMultiFlag("--addons", addons));
   flags.push(formatMultiFlag("--examples", examples));
+  flags.push(formatMultiFlag("--testing", testing));
 
   flags.push(`--db-setup ${config.dbSetup}`);
   if (config.dbSetupOptions?.mode === "manual") {

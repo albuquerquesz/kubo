@@ -1,0 +1,61 @@
+import { env } from "@notifique-smoke/env/server";
+
+import { notifiqueRequest } from "./client";
+
+export type SendNotifiqueEmailInput = {
+  /** Verified domain sender, e.g. "Acme <noreply@example.com>". Defaults to NOTIFIQUE_FROM_EMAIL. */
+  from?: string;
+  to: string | string[];
+  subject: string;
+  html?: string;
+  text?: string;
+  cc?: string | string[];
+  bcc?: string | string[];
+  replyTo?: string | string[];
+  idempotencyKey?: string;
+};
+
+export type SendNotifiqueEmailResult = {
+  status: "QUEUED" | "SCHEDULED" | string;
+  count?: number;
+  messageIds: string[];
+  emailIds?: string[];
+};
+
+function asArray(value: string | string[] | undefined): string[] | undefined {
+  if (value === undefined) return undefined;
+  return Array.isArray(value) ? value : [value];
+}
+
+/**
+ * POST /v1/email/messages — transactional email (202 Accepted).
+ * Requires a VERIFIED domain on `from`. Docs: https://docs.notifique.dev/emails-api/como-funciona/quick-start
+ */
+export async function sendEmail(input: SendNotifiqueEmailInput): Promise<SendNotifiqueEmailResult> {
+  const from = input.from ?? env.NOTIFIQUE_FROM_EMAIL;
+  if (!from) {
+    throw new Error(
+      "Email from is required. Pass from or set NOTIFIQUE_FROM_EMAIL (verified domain).",
+    );
+  }
+  if (!input.html && !input.text) {
+    throw new Error("Email requires payload.html and/or payload.text.");
+  }
+
+  return notifiqueRequest<SendNotifiqueEmailResult>("/email/messages", {
+    body: {
+      from,
+      to: asArray(input.to),
+      cc: asArray(input.cc),
+      bcc: asArray(input.bcc),
+      replyTo: asArray(input.replyTo),
+      type: "email",
+      payload: {
+        subject: input.subject,
+        html: input.html,
+        text: input.text,
+      },
+    },
+    idempotencyKey: input.idempotencyKey,
+  });
+}

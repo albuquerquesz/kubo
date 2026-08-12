@@ -20,9 +20,11 @@ export const DEFAULT_CONFIG_BASE = {
   orm: "drizzle",
   auth: "better-auth",
   payments: "none",
-  observability: "none",
+  observability: ["getmonitor"],
+  communication: "none",
   addons: ["turborepo"],
   examples: [],
+  testing: [],
   git: true,
   install: true,
   dbSetup: "none",
@@ -41,6 +43,7 @@ export function getDefaultConfig() {
     frontend: [...DEFAULT_CONFIG_BASE.frontend],
     addons: [...DEFAULT_CONFIG_BASE.addons],
     examples: [...DEFAULT_CONFIG_BASE.examples],
+    testing: [...DEFAULT_CONFIG_BASE.testing],
   };
 }
 

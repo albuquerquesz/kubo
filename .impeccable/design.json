@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "generatedAt": "2026-07-20T19:40:33.000Z",
-  "title": "Design System: Better T Stack",
+  "title": "Design System: Kubo",
   "extensions": {
     "colorMeta": {
       "warm-canvas": {
@@ -176,7 +176,7 @@
   ],
   "narrative": {
     "northStar": "The System Manual",
-    "overview": "Better T Stack (product face: Kubo) should feel like a well-made infrastructure manual brought to life: exact, independent, and kinetic. A visible soft-rule grid, explicit states, and compact technical metadata make architecture choices feel inspectable. The shell is dark-first because it lives beside editors and terminals, not because developer tools must look neon or theatrical.\n\nThe design is architectural, not card-driven. Sections, navigation, controls, diagrams, and footers meet at shared 1 px soft rules. Product behavior carries the visual story through stack diagrams, create commands, compatibility states, and real usage data. Gold is a signal, not wallpaper: primary conversion surfaces, selected states, and structural emphasis only. Display titles stay cream ink; accent color is not used to colorize every second line of a headline.\n\nIt explicitly rejects Mistral's identity and assets, generic purple gradients, glowing glass cards, decorative terminal chrome, excessive shadows, rounded-card grids as default layout, and a split light/dark dual identity.",
+    "overview": "Kubo (product face: Kubo) should feel like a well-made infrastructure manual brought to life: exact, independent, and kinetic. A visible soft-rule grid, explicit states, and compact technical metadata make architecture choices feel inspectable. The shell is dark-first because it lives beside editors and terminals, not because developer tools must look neon or theatrical.\n\nThe design is architectural, not card-driven. Sections, navigation, controls, diagrams, and footers meet at shared 1 px soft rules. Product behavior carries the visual story through stack diagrams, create commands, compatibility states, and real usage data. Gold is a signal, not wallpaper: primary conversion surfaces, selected states, and structural emphasis only. Display titles stay cream ink; accent color is not used to colorize every second line of a headline.\n\nIt explicitly rejects Mistral's identity and assets, generic purple gradients, glowing glass cards, decorative terminal chrome, excessive shadows, rounded-card grids as default layout, and a split light/dark dual identity.",
     "keyCharacteristics": [
       "Dark, warm-olive canvas (#11110d) with cream ink (#f2ede0)",
       "Soft structural rules (white mixed 6% into canvas), not loud brown rails",

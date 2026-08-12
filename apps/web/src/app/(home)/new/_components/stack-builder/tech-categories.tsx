@@ -24,6 +24,7 @@ function getIsSelected(stack: StackState, category: keyof StackState, techId: st
 
   if (
     category === "addons" ||
+    category === "testing" ||
     category === "examples" ||
     category === "webFrontend" ||
     category === "nativeFrontend"

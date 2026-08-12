@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test";
 
 import {
   AddInputSchema,
+  CommunicationSchema,
   KubojsConfigFileSchema,
   CLIInputSchema,
   CreateInputSchema,
@@ -14,6 +15,18 @@ describe("Input schemas", () => {
     expect(ObservabilitySchema.safeParse("getmonitor").success).toBe(true);
     expect(
       CreateInputSchema.safeParse({ projectName: "app", observability: "getmonitor" }).success,
+    ).toBe(true);
+  });
+
+  it("accepts Resend and Notifique as communication providers", () => {
+    expect(CommunicationSchema.safeParse("resend").success).toBe(true);
+    expect(CommunicationSchema.safeParse("notifique").success).toBe(true);
+    expect(CommunicationSchema.safeParse("none").success).toBe(true);
+    expect(
+      CreateInputSchema.safeParse({ projectName: "app", communication: "resend" }).success,
+    ).toBe(true);
+    expect(
+      CreateInputSchema.safeParse({ projectName: "app", communication: "notifique" }).success,
     ).toBe(true);
   });
 

@@ -10,6 +10,7 @@ import type {
   Database,
   DatabaseSetup,
   Observability,
+  Communication,
   ORM,
   PackageManager,
   Payments,
@@ -71,8 +72,12 @@ export function processFlags(options: CLIInput, projectName?: string) {
     config.payments = options.payments as Payments;
   }
 
-  if (options.observability !== undefined) {
-    config.observability = options.observability as Observability;
+  if (options.observability !== undefined)
+    config.observability = normalizeObservability(options.observability);
+  if (options.disableObservability) config.observability = [];
+
+  if (options.communication !== undefined) {
+    config.communication = options.communication as Communication;
   }
 
   if (options.git !== undefined) {
@@ -120,7 +125,23 @@ export function processFlags(options: CLIInput, projectName?: string) {
     config.examples = processArrayOption(options.examples);
   }
 
+  if (options.testing && options.testing.length > 0) {
+    config.testing = processArrayOption(options.testing);
+  }
+
   return config;
+}
+
+export function normalizeObservability(value: unknown): Observability {
+  if (value === "none" || value === undefined) return [];
+  const values = Array.isArray(value) ? value : [value];
+  return [
+    ...new Set(
+      values.filter(
+        (item): item is Observability[number] => item === "getmonitor" || item === "himetrica",
+      ),
+    ),
+  ];
 }
 
 export function getProvidedFlags(options: CLIInput) {
@@ -146,6 +167,14 @@ function validateNoneExclusivity<T>(
 }
 
 export function validateArrayOptions(options: CLIInput): Result<void, ValidationError> {
+  if (options.disableObservability && options.observability !== undefined) {
+    return Result.err(
+      new ValidationError({
+        message: "Cannot combine '--disable-observability' with '--observability'.",
+      }),
+    );
+  }
+
   const frontendResult = validateNoneExclusivity(options.frontend, "frontend options");
   if (frontendResult.isErr()) return frontendResult;
 
@@ -154,6 +183,9 @@ export function validateArrayOptions(options: CLIInput): Result<void, Validation
 
   const examplesResult = validateNoneExclusivity(options.examples, "examples");
   if (examplesResult.isErr()) return examplesResult;
+
+  const testingResult = validateNoneExclusivity(options.testing, "testing");
+  if (testingResult.isErr()) return testingResult;
 
   return Result.ok(undefined);
 }

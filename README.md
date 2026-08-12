@@ -33,6 +33,7 @@ npx create-kubojs@latest
 - ORMs: Drizzle, Prisma, Mongoose (or none)
 - Auth: Better Auth or Clerk (optional)
 - Addons: Turborepo, Nx, PWA, Tauri, Electrobun, Biome, Lefthook, Husky, Starlight, Fumadocs, Ultracite, Oxlint, MCP, OpenTUI, WXT, Skills, Get Monitor, Guara Cloud, AbacatePay
+- Testing: Vitest, Playwright
 - Examples: Todo, AI
 - DB Setup: Turso, Neon, Supabase, Prisma PostgreSQL, MongoDB Atlas, Cloudflare D1, Docker
 - Web Deploy: Cloudflare Workers

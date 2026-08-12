@@ -11,12 +11,8 @@ import type {
   ServerDeploy,
   WebDeploy,
 } from "../../types";
-import { desktopWebFrontends } from "../../types";
+import { desktopWebFrontends, getWebPort } from "../../types";
 import { getDockerStatus } from "../../utils/docker-utils";
-import {
-  fetchSponsorsQuietly,
-  formatPostInstallSpecialSponsorsSection,
-} from "../../utils/sponsors";
 import { cliConsola } from "../../utils/terminal-output";
 
 function getDesktopStaticBuildNote(frontend: Frontend[]): string {
@@ -51,6 +47,7 @@ export async function displayPostInstallInstructions(
     depsInstalled,
     orm,
     addons,
+    testing,
     runtime,
     frontend,
     backend,
@@ -58,6 +55,7 @@ export async function displayPostInstallInstructions(
     webDeploy,
     serverDeploy,
     observability,
+    communication,
   } = config;
 
   const isConvex = backend === "convex";
@@ -112,6 +110,9 @@ export async function displayPostInstallInstructions(
   const starlightInstructions = addons?.includes("starlight")
     ? getStarlightInstructions(runCmd)
     : "";
+  const playwrightInstructions = testing?.includes("playwright")
+    ? getPlaywrightInstructions(runCmd)
+    : "";
   const clerkInstructions =
     config.auth === "clerk" ? getClerkInstructions(frontend || [], backend, api) : "";
   const alchemyDeployInstructions = getAlchemyDeployInstructions(
@@ -120,7 +121,11 @@ export async function displayPostInstallInstructions(
     serverDeploy,
     backend,
   );
-  const getMonitorInstructions = observability === "getmonitor" ? getGetMonitorInstructions() : "";
+  const getMonitorInstructions = observability.includes("getmonitor")
+    ? getGetMonitorInstructions()
+    : "";
+  const resendInstructions = communication === "resend" ? getResendInstructions() : "";
+  const notifiqueInstructions = communication === "notifique" ? getNotifiqueInstructions() : "";
 
   const hasWeb = frontend?.some((f) => (desktopWebFrontends as readonly string[]).includes(f));
   const hasNative =
@@ -128,11 +133,7 @@ export async function displayPostInstallInstructions(
     frontend?.includes("native-uniwind") ||
     frontend?.includes("native-unistyles");
 
-  const hasReactRouter = frontend?.includes("react-router");
-  const hasSvelte = frontend?.includes("svelte");
-  const hasAstro = frontend?.includes("astro");
-  // TanStack Router/Start, Next, Nuxt and Solid all dev on 3001; only React Router and SvelteKit use Vite's default 5173.
-  const webPort = hasReactRouter || hasSvelte ? "5173" : hasAstro ? "4321" : "3001";
+  const webPort = getWebPort(frontend ?? []);
 
   const betterAuthConvexInstructions =
     isConvex && config.auth === "better-auth"
@@ -230,23 +231,17 @@ export async function displayPostInstallInstructions(
   if (lintingInstructions) output += `\n${lintingInstructions.trim()}\n`;
   if (pwaInstructions) output += `\n${pwaInstructions.trim()}\n`;
   if (starlightInstructions) output += `\n${starlightInstructions.trim()}\n`;
+  if (playwrightInstructions) output += `\n${playwrightInstructions.trim()}\n`;
   if (clerkInstructions) output += `\n${clerkInstructions.trim()}\n`;
   if (betterAuthConvexInstructions) output += `\n${betterAuthConvexInstructions.trim()}\n`;
   if (getMonitorInstructions) output += `\n${getMonitorInstructions.trim()}\n`;
+  if (resendInstructions) output += `\n${resendInstructions.trim()}\n`;
+  if (notifiqueInstructions) output += `\n${notifiqueInstructions.trim()}\n`;
   // Deploy steps come last so env sync happens after auth/payment keys exist
   if (alchemyDeployInstructions) output += `\n${alchemyDeployInstructions.trim()}\n`;
 
   if (noOrmWarning) output += `\n${noOrmWarning.trim()}\n`;
   if (bunWebNativeWarning) output += `\n${bunWebNativeWarning.trim()}\n`;
-
-  const sponsorsResult = await fetchSponsorsQuietly();
-  const specialSponsorsSection = sponsorsResult.isOk()
-    ? formatPostInstallSpecialSponsorsSection(sponsorsResult.value)
-    : "";
-
-  if (specialSponsorsSection) {
-    output += `\n${specialSponsorsSection.trim()}\n`;
-  }
 
   output += `\n${pc.bold("Like kubojs?")} Please consider giving us a star\n   on GitHub:\n`;
   output += pc.cyan("https://github.com/albuquerquesz/kubo");
@@ -299,6 +294,14 @@ function getHuskyInstructions(runCmd: string) {
   return `${pc.bold("Git hooks with Husky:")}\n${pc.cyan(
     "•",
   )} Initialize hooks: ${`${runCmd} prepare`}\n`;
+}
+
+function getPlaywrightInstructions(runCmd: string) {
+  return `${pc.bold("End-to-end tests with Playwright:")}\n${pc.cyan(
+    "•",
+  )} Install browsers: ${"npx playwright install"}\n${pc.cyan(
+    "•",
+  )} Run e2e tests: ${`${runCmd} test:e2e`}\n`;
 }
 
 function getLintingInstructions(runCmd: string) {
@@ -468,12 +471,46 @@ function getNoOrmWarning() {
 function getGetMonitorInstructions() {
   return `${pc.bold("GetMonitor observability:")}\n${pc.cyan(
     "•",
-  )} Set the generated GETMONITOR_API_KEY in the web and/or server .env file\n${pc.cyan(
+  )} Keys are optional on first run — the app starts without them; capture stays idle until configured\n${pc.cyan(
     "•",
-  )} Keep GETMONITOR_API_HOST set to https://ingest.getmonitor.com unless overridden\n${pc.cyan(
+  )} When ready, set GETMONITOR_API_KEY (public gm_xxx) in the web and/or server .env\n${pc.cyan(
     "•",
-  )} Browser and Node exceptions are captured automatically by the generated SDK bootstrap\n${pc.dim(
+  )} Ingestion host is fixed (http://ingest.getmonitor.io) — no apiHost env var\n${pc.cyan(
+    "•",
+  )} Optional: set GETMONITOR_AUTH_TOKEN for Next/Nuxt source-map upload on production builds\n${pc.cyan(
+    "•",
+  )} Browser/Node capture is automatic; React trees include GetMonitorErrorBoundary\n${pc.cyan(
+    "•",
+  )} Opt out next time with --disable-observability\n${pc.dim(
     "   https://github.com/get-monitor/getmonitor-js",
+  )}`;
+}
+
+function getResendInstructions() {
+  return `${pc.bold("Resend communication:")}\n${pc.cyan(
+    "•",
+  )} Keys are optional on first run — sendEmail throws only when called without RESEND_API_KEY\n${pc.cyan(
+    "•",
+  )} Set RESEND_API_KEY (and optional RESEND_FROM_EMAIL) in the server .env\n${pc.cyan(
+    "•",
+  )} Import sendEmail from packages/email (e.g. @project/email)\n${pc.cyan(
+    "•",
+  )} Replace onboarding@resend.dev with a verified domain sender for production\n${pc.dim(
+    "   https://resend.com/docs/send-with-nodejs",
+  )}`;
+}
+
+function getNotifiqueInstructions() {
+  return `${pc.bold("Notifique communication:")}\n${pc.cyan(
+    "•",
+  )} Keys are optional on first run — helpers throw only when called without NOTIFIQUE_API_KEY\n${pc.cyan(
+    "•",
+  )} Set NOTIFIQUE_API_KEY (sk_live_… / sk_test_…) in the server .env\n${pc.cyan(
+    "•",
+  )} Import sendSms / sendWhatsAppText / sendEmail from packages/notifique\n${pc.cyan(
+    "•",
+  )} Auth is Bearer only — do not send x-workspace-id\n${pc.dim(
+    "   https://docs.notifique.dev/skill.md",
   )}`;
 }
 
