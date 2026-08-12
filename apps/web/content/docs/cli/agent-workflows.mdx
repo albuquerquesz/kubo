@@ -254,7 +254,7 @@ Exemplo:
 }
 ```
 
-Opções estruturadas de addon ainda são persistidas em `bts.jsonc`, mas o comando reproduzível impresso agora fica em flags normais da CLI por consistência. Isso significa que opções profundamente aninhadas de addon ou de setup específico de provider não ficam totalmente codificadas no comando de replay de uma linha.
+Opções estruturadas de addon ainda são persistidas em `kubojs.jsonrc`, mas o comando reproduzível impresso agora fica em flags normais da CLI por consistência. Isso significa que opções profundamente aninhadas de addon ou de setup específico de provider não ficam totalmente codificadas no comando de replay de uma linha.
 
 ## Opções estruturadas de setup de banco
 
@@ -321,12 +321,12 @@ As APIs exportadas `create()` e `add()` rodam em modo silencioso por padrão, en
 
 Veja [API programática](/docs/cli/programmatic-api) para exemplos em TypeScript.
 
-## Armazenado em `bts.jsonc`
+## Armazenado em `kubojs.jsonrc`
 
-O kubojs persiste configuração estruturada em `bts.jsonc`, incluindo:
+O kubojs persiste configuração estruturada em `kubojs.jsonrc`, incluindo:
 
 - `reproducibleCommand`
 - `addonOptions`
 - `dbSetupOptions`
 
-Veja [`bts.jsonc`](/docs/bts-config) para o formato do arquivo.
+Veja [`kubojs.jsonrc`](/docs/kubojs-config) para o formato do arquivo.
