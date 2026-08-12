@@ -40,6 +40,8 @@ describe("Nx config generator", () => {
     expect(productionInputs).not.toContain("!{workspaceRoot}/apps/web/src/routeTree.gen.ts");
     expect(productionInputs).toContain("!{workspaceRoot}/apps/server/dist/**");
     expect(productionInputs).toContain("!{workspaceRoot}/packages/db/dist/**");
+    expect(productionInputs).toContain("!{workspaceRoot}/local.db");
+    expect(productionInputs).toContain("!{workspaceRoot}/local.db-*");
     expect(productionInputs).toContain("!{workspaceRoot}/packages/db/local.db*");
     expect(productionInputs).not.toContain("!{workspaceRoot}/apps/web/.next/**");
     expect(productionInputs).not.toContain("!{workspaceRoot}/packages/db/prisma/generated/**");
@@ -56,6 +58,7 @@ describe("Nx config generator", () => {
 
     expect(prismaTursoInputs).toContain("!{workspaceRoot}/packages/db/prisma/generated/**");
     expect(prismaTursoInputs).toContain("!{workspaceRoot}/packages/db/prisma/**/*.db*");
+    expect(prismaTursoInputs).toContain("!{workspaceRoot}/local.db");
     expect(prismaTursoInputs).toContain("!{workspaceRoot}/packages/db/local.db*");
     expect(prismaTursoInputs).not.toContain(
       "!{workspaceRoot}/packages/backend/convex/_generated/**",
@@ -71,6 +74,7 @@ describe("Nx config generator", () => {
 
     expect(convexInputs).toContain("!{workspaceRoot}/packages/backend/convex/_generated/**");
     expect(convexInputs).not.toContain("!{workspaceRoot}/apps/server/dist/**");
+    expect(convexInputs).not.toContain("!{workspaceRoot}/local.db");
     expect(convexInputs).not.toContain("!{workspaceRoot}/packages/db/local.db*");
     expect(convexInputs).not.toContain("!{workspaceRoot}/packages/db/prisma/generated/**");
   });

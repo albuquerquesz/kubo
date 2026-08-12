@@ -262,7 +262,7 @@ async function addHandlerInternal(
 
   if (!isSilent()) {
     renderTitle();
-    intro(pc.magenta("Add addons to your I dont know project"));
+    intro(pc.magenta("Add addons to your kubojs project"));
   }
 
   // Detect existing project configuration

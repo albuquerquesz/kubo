@@ -229,7 +229,7 @@ const SubmittedName: React.FC<{ value: string }> = ({ value }) => (
 
 const Intro: React.FC = () => (
   <div style={monoStyle({ color: ACCENT, fontSize: TYPE.body, lineHeight: 1.35 })}>
-    ┌&nbsp; Creating a new I dont know project
+    ┌&nbsp; Creating a new kubojs project
   </div>
 );
 

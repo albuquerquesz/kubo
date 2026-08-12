@@ -120,7 +120,7 @@ export function getSchemaResult(name: SchemaName): unknown {
 export const router = t.router({
   create: t.procedure
     .meta({
-      description: "Create a new I dont know project",
+      description: "Create a new kubojs project",
       default: true,
       negateBooleans: true,
     })
@@ -215,16 +215,16 @@ export const router = t.router({
     )
     .query(({ input }) => getSchemaResult(input.name)),
   sponsors: t.procedure
-    .meta({ description: "Show I dont know sponsors" })
+    .meta({ description: "Show kubojs sponsors" })
     .mutation(() => showSponsorsCommand()),
   docs: t.procedure
-    .meta({ description: "Open I dont know documentation" })
+    .meta({ description: "Open kubojs documentation" })
     .mutation(() => openDocsCommand()),
   builder: t.procedure
     .meta({ description: "Open the web-based stack builder" })
     .mutation(() => openBuilderCommand()),
   add: t.procedure
-    .meta({ description: "Add addons to an existing I dont know project" })
+    .meta({ description: "Add addons to an existing kubojs project" })
     .input(
       z.object({
         addons: z.array(AddonsSchema).optional().describe("Addons to add"),
@@ -289,7 +289,7 @@ export { Result } from "better-result";
 export type CreateError = UserCancelledError | CLIError | ProjectCreationError;
 
 /**
- * Programmatic API to create a new I dont know project.
+ * Programmatic API to create a new kubojs project.
  * Returns a Result type - no console output, no interactive prompts.
  *
  * @example
@@ -502,7 +502,7 @@ export type {
 export type { AddResult };
 
 /**
- * Programmatic API to add addons to an existing I dont know project.
+ * Programmatic API to add addons to an existing kubojs project.
  *
  * @example
  * ```typescript

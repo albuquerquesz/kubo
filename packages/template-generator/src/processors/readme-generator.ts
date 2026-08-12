@@ -607,7 +607,7 @@ function generateFeaturesList(
       mongoose: "Mongoose",
     };
     const dbNames: Record<string, string> = {
-      sqlite: dbSetup === "d1" ? "Cloudflare D1" : "SQLite/Turso",
+      sqlite: dbSetup === "d1" ? "Cloudflare D1" : dbSetup === "turso" ? "Turso" : "SQLite",
       postgres: "PostgreSQL",
       mysql: "MySQL",
       mongodb: "MongoDB",
