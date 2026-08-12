@@ -1,5 +1,6 @@
 "use client";
 
+import { Star } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -19,6 +20,7 @@ import "./hero-dithering-card.css";
 
 const PRIMARY_FALLBACK = "#c49314";
 const HERO_TITLE = "Construa sem começar do zero.";
+const GITHUB_REPOSITORY_URL = "https://github.com/albuquerquesz/kubo";
 
 void import("@paper-design/shaders-react");
 
@@ -275,21 +277,38 @@ export function CTASection({ className }: CTASectionProps) {
           Limpo, preciso e do seu jeito.
         </p>
 
-        <button
-          ref={ctaRef}
-          type="button"
-          onClick={copyCommand}
-          className={cn(buttonVariants({ variant: "cta", size: "xl" }), "relative")}
-          aria-label={copied ? "Comando copiado" : `Copiar comando: ${command}`}
-          title={copied ? "Copiado" : "Clique para copiar"}
-        >
-          <span className="sr-only" aria-live="polite">
-            {copied ? "Comando copiado" : "Copiar comando"}
-          </span>
-          <code className="max-w-[min(100%,28rem)] truncate font-mono text-sm tracking-[0.04em] sm:text-base">
-            {command}
-          </code>
-        </button>
+        <div className="flex max-w-full flex-wrap items-center justify-center gap-3">
+          <button
+            ref={ctaRef}
+            type="button"
+            onClick={copyCommand}
+            className={cn(buttonVariants({ variant: "cta", size: "xl" }), "relative")}
+            aria-label={copied ? "Comando copiado" : `Copiar comando: ${command}`}
+            title={copied ? "Copiado" : "Clique para copiar"}
+          >
+            <span className="sr-only" aria-live="polite">
+              {copied ? "Comando copiado" : "Copiar comando"}
+            </span>
+            <code className="max-w-[min(100%,28rem)] truncate font-mono text-sm tracking-[0.04em] sm:text-base">
+              {command}
+            </code>
+          </button>
+
+          <a
+            href={GITHUB_REPOSITORY_URL}
+            target="_blank"
+            rel="noreferrer"
+            className={cn(
+              "inline-flex size-12 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-background/70 text-foreground transition-all duration-300",
+              "hover:scale-105 hover:border-primary hover:bg-primary/10 hover:text-primary active:scale-95",
+              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+            )}
+            aria-label="Abrir o repositório Kubo no GitHub para dar uma estrela"
+            title="Dar uma estrela no GitHub"
+          >
+            <Star aria-hidden className="size-5" strokeWidth={1.8} />
+          </a>
+        </div>
       </div>
     </section>
   );
