@@ -188,9 +188,84 @@ describe("GetMonitor observability", () => {
   });
 });
 
+describe("Himetrica observability", () => {
+  it("generates a browser tracker for Vite-based web apps", async () => {
+    const result = await createVirtual({
+      projectName: "himetrica-app",
+      frontend: ["tanstack-router"],
+      backend: "hono",
+      runtime: "bun",
+      database: "none",
+      orm: "none",
+      auth: "none",
+      payments: "none",
+      observability: "himetrica",
+      addons: ["none"],
+      examples: ["none"],
+      dbSetup: "none",
+      api: "none",
+      webDeploy: "none",
+      serverDeploy: "none",
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+
+    const files = collectFiles(result.value.root, "/virtual");
+    const webPackage = JSON.parse(files.get("apps/web/package.json") ?? "{}");
+    const tracker = files.get("apps/web/src/lib/himetrica.ts") ?? "";
+    const entry = files.get("apps/web/src/main.tsx") ?? "";
+    const webEnv = files.get("apps/web/.env") ?? "";
+    const readme = files.get("README.md") ?? "";
+
+    expect(webPackage.dependencies["@himetrica/tracker-js"]).toBe("^0.1.36");
+    expect(tracker).toContain("new HimetricaClient");
+    expect(tracker).toContain("autoTrackPageViews: true");
+    expect(entry).toContain('import "./lib/himetrica";');
+    expect(webEnv).toContain("VITE_HIMETRICA_API_KEY=");
+    expect(readme).toContain("## Himetrica Setup");
+    expect(readme).not.toContain("## GetMonitor Setup");
+  });
+
+  it("wraps generated Next.js providers with the Himetrica React provider", async () => {
+    const result = await createVirtual({
+      projectName: "himetrica-next-app",
+      frontend: ["next"],
+      backend: "hono",
+      runtime: "bun",
+      database: "none",
+      orm: "none",
+      auth: "none",
+      payments: "none",
+      observability: "himetrica",
+      addons: ["none"],
+      examples: ["none"],
+      dbSetup: "none",
+      api: "trpc",
+      webDeploy: "none",
+      serverDeploy: "none",
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+
+    const files = collectFiles(result.value.root, "/virtual");
+    const provider = files.get("apps/web/src/components/himetrica.tsx") ?? "";
+    const layout = files.get("apps/web/src/app/layout.tsx") ?? "";
+    const webEnv = files.get("apps/web/.env") ?? "";
+
+    expect(provider).toContain('from "@himetrica/tracker-js/react"');
+    expect(provider).toContain("autoTrackErrors trackVitals");
+    expect(layout).toContain("KuboHimetricaProvider");
+    expect(layout.match(/<KuboHimetricaProvider>/g)?.length).toBe(1);
+    expect(layout.match(/<\/KuboHimetricaProvider>/g)?.length).toBe(1);
+    expect(webEnv).toContain("NEXT_PUBLIC_HIMETRICA_API_KEY=");
+  });
+});
+
 describe("observability CLI flag processing", () => {
   it("defaults interactive and --yes paths to getmonitor", () => {
-    expect(DEFAULT_CONFIG.observability).toBe("getmonitor");
+    expect(DEFAULT_CONFIG.observability).toEqual(["getmonitor"]);
   });
 
   it("keeps --observability from Stack Builder commands in processFlags", () => {
@@ -199,17 +274,23 @@ describe("observability CLI flag processing", () => {
       payments: "none",
       backend: "none",
     });
-    expect(noneConfig.observability).toBe("none");
+    expect(noneConfig.observability).toEqual([]);
     expect(noneConfig.payments).toBe("none");
 
     const getMonitorConfig = processFlags({
       observability: "getmonitor",
       backend: "hono",
     });
-    expect(getMonitorConfig.observability).toBe("getmonitor");
+    expect(getMonitorConfig.observability).toEqual(["getmonitor"]);
+
+    const himetricaConfig = processFlags({
+      observability: "himetrica",
+      backend: "hono",
+    });
+    expect(himetricaConfig.observability).toEqual(["himetrica"]);
   });
 
-  it("includes --observability none in the reproducible create command", () => {
+  it("uses --disable-observability in the reproducible create command", () => {
     const config = {
       projectName: "atscopilot",
       projectDir: "/tmp/atscopilot",
@@ -235,7 +316,39 @@ describe("observability CLI flag processing", () => {
     } satisfies ProjectConfig;
 
     const command = generateReproducibleCommand(config);
-    expect(command).toContain("--observability none");
+    expect(command).toContain("--disable-observability");
     expect(command).toContain("--payments none");
+  });
+
+  it("preserves both providers in a combined configuration", async () => {
+    const result = await createVirtual({
+      projectName: "combined-observability-app",
+      frontend: ["tanstack-router"],
+      backend: "hono",
+      runtime: "bun",
+      database: "none",
+      orm: "none",
+      auth: "none",
+      payments: "none",
+      observability: ["getmonitor", "himetrica"],
+      addons: [],
+      examples: [],
+      dbSetup: "none",
+      api: "none",
+      webDeploy: "none",
+      serverDeploy: "none",
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+    const files = collectFiles(result.value.root, "/virtual");
+    const readme = files.get("README.md") ?? "";
+    const webPackage = JSON.parse(files.get("apps/web/package.json") ?? "{}");
+    expect(webPackage.dependencies["@getmonitor/browser"]).toBe("^0.1.0");
+    expect(webPackage.dependencies["@himetrica/tracker-js"]).toBe("^0.1.36");
+    expect(files.get("apps/web/src/lib/getmonitor.ts")).toContain("GetMonitor.init");
+    expect(files.get("apps/web/src/lib/himetrica.ts")).toContain("HimetricaClient");
+    expect(readme).toContain("## GetMonitor Setup");
+    expect(readme).toContain("## Himetrica Setup");
   });
 });
