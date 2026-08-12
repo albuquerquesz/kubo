@@ -236,6 +236,7 @@ ${getClerkSetupLines(frontend, backend, api, false).join("\n")}`
 ${payments === "abacatepay" ? generateAbacatePaySetup(options, packageManagerRunCmd, webPort) : ""}
 ${observability === "getmonitor" ? generateGetMonitorSetup() : ""}
 ${communication === "resend" ? generateResendSetup() : ""}
+${communication === "notifique" ? generateNotifiqueSetup() : ""}
 
 Then, run the development server:
 
@@ -550,6 +551,49 @@ See the [Node.js guide](https://resend.com/docs/send-with-nodejs).
 `;
 }
 
+function generateNotifiqueSetup(): string {
+  return `
+## Notifique Setup
+
+This project includes a \`packages/notifique\` REST client for [Notifique](https://notifique.dev) (WhatsApp, SMS, email, and more).
+
+Keys are **optional for local first run** — helpers throw only when called without \`NOTIFIQUE_API_KEY\`.
+
+1. Create an API key in the [Developer panel](https://docs.notifique.dev/guides/api-key/index) (\`sk_live_…\` or sandbox \`sk_test_…\`).
+2. Grant the scopes you need (e.g. \`sms:send\`, \`whatsapp:send\`, \`email:send\`).
+3. Set \`NOTIFIQUE_API_KEY\` (and optionally \`NOTIFIQUE_WHATSAPP_INSTANCE_ID\`, \`NOTIFIQUE_FROM_EMAIL\`) in the server \`.env\`.
+4. Auth is **Bearer only** — do not send \`x-workspace-id\`.
+
+\`\`\`ts
+import { sendSms, sendWhatsAppText, sendEmail } from "@your-project/notifique";
+
+await sendSms({
+  to: "5511999999999",
+  message: "Seu código é 123456",
+  idempotencyKey: "otp/user-123",
+});
+
+await sendWhatsAppText({
+  instanceId: "INSTANCE_ID",
+  to: "5511999999999",
+  message: "Olá!",
+});
+
+await sendEmail({
+  from: "Acme <noreply@seudominio.com>",
+  to: "cliente@example.com",
+  subject: "Pedido confirmado",
+  html: "<p>Obrigado!</p>",
+});
+\`\`\`
+
+Agent skill / API map:
+
+- https://docs.notifique.dev/skill.md
+- https://docs.notifique.dev/llms.txt
+`;
+}
+
 function generateFeaturesList(
   database: ProjectConfig["database"],
   auth: ProjectConfig["auth"],
@@ -580,6 +624,12 @@ function generateFeaturesList(
 
   if (communication === "resend") {
     features.push("- **Resend** - Transactional email via packages/email");
+  }
+
+  if (communication === "notifique") {
+    features.push(
+      "- **Notifique** - Omnichannel messaging (SMS, WhatsApp, email) via packages/notifique",
+    );
   }
 
   const frontendFeatures: Record<string, string> = {

@@ -541,6 +541,30 @@ function buildServerVars(
       comment: "Default From address (test domain until you verify your own)",
     },
     {
+      key: "NOTIFIQUE_API_KEY",
+      value: "",
+      condition: communication === "notifique",
+      comment: "Notifique API key (sk_live_… or sk_test_…) — optional until you send",
+    },
+    {
+      key: "NOTIFIQUE_BASE_URL",
+      value: "https://api.notifique.dev",
+      condition: communication === "notifique",
+      comment: "Notifique API host (paths use /v1 automatically)",
+    },
+    {
+      key: "NOTIFIQUE_WHATSAPP_INSTANCE_ID",
+      value: "",
+      condition: communication === "notifique",
+      comment: "Optional default WhatsApp instance id for sendWhatsAppText",
+    },
+    {
+      key: "NOTIFIQUE_FROM_EMAIL",
+      value: "",
+      condition: communication === "notifique",
+      comment: "Optional default From (must use a VERIFIED domain)",
+    },
+    {
       key: "DATABASE_URL",
       value: databaseUrl,
       condition: database !== "none" && dbSetup === "none",
