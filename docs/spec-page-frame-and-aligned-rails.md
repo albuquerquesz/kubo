@@ -10,12 +10,12 @@ July 19, 2026
 
 ## Goal
 
-Make the Better T Stack marketing shell (header + full page) read as a single framed surface:
+Make the Kubo marketing shell (header + full page) read as a single framed surface:
 
 1. **Side spacing** that matches the _structural grammar_ measured on [mistral.ai](https://mistral.ai/) — shared max-width frame for header and body, outer gutters only when the viewport exceeds the frame.
 2. **Continuous vertical rails** that match the _border alignment grammar_ measured on [efferd.com](https://efferd.com/) — 1 px left/right lines that run through stacked modules so components share one border column, not disconnected boxes.
 
-This is an original Better T Stack system. Keep the existing dark palette (`--background`, `--rule`, `--border`, `--primary`). Do **not** copy Mistral/Efferd colors, copy, assets, navigation labels, or exact decorative content.
+This is an original Kubo system. Keep the existing dark palette (`--background`, `--rule`, `--border`, `--primary`). Do **not** copy Mistral/Efferd colors, copy, assets, navigation labels, or exact decorative content.
 
 ## Why the previous attempt felt like “nothing changed”
 
@@ -119,7 +119,7 @@ Computed `::before` on main @ 1440:
 3. **Pseudo rails** (1 px, absolute, extended on Y) so modules stacked inside the frame inherit one vertical alignment column — borders of cards/sections meet the same left/right rule.
 4. Optional inner content pad (`.cpx` → **24 px**) inside the frame; rails stay on the frame edge, not on the padded content edge.
 
-## Better T Stack contract
+## Kubo contract
 
 ### Tokens
 

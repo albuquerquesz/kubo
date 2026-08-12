@@ -1,4 +1,4 @@
-# Better T Stack
+# Kubo
 
 ## Register
 
@@ -10,7 +10,7 @@ TypeScript developers and engineering teams choosing a frontend, backend, databa
 
 ## Product Purpose
 
-Better T Stack makes modern TypeScript project setup explicit and composable. It gives developers a fast CLI and a visual Stack Builder while keeping every generated choice visible, interoperable, and free from framework lock-in. Success means a visitor can understand the philosophy, trust the compatibility rules, assemble a stack, and start a project with confidence.
+Kubo makes modern TypeScript project setup explicit and composable. It gives developers a fast CLI and a visual Stack Builder while keeping every generated choice visible, interoperable, and free from framework lock-in. Success means a visitor can understand the philosophy, trust the compatibility rules, assemble a stack, and start a project with confidence.
 
 ## Brand Personality
 
@@ -29,7 +29,7 @@ Exact, independent, and kinetic. The voice is technically confident without post
 2. Structure creates trust: use a rigorous shared grid and rules so marketing, docs, analytics, and the builder feel like one product.
 3. Show product behavior: code, diagrams, configuration, and real output should explain value more often than abstract decoration.
 4. Recompose, do not shrink: mobile preserves the task and reading order with purpose-built navigation and touch targets.
-5. Original by construction: borrow durable interaction grammar while keeping Better T Stack's language, palette, and product story unmistakably its own.
+5. Original by construction: borrow durable interaction grammar while keeping Kubo's language, palette, and product story unmistakably its own.
 
 ## Accessibility & Inclusion
 

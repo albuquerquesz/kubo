@@ -10,9 +10,9 @@ July 19, 2026
 
 ## Goal
 
-Add an original, navigable product mosaic to the Better T Stack home page. It should give visitors a compact overview of the primary product paths through an intentionally asymmetric grid, inspired by the _structural interaction pattern_ validated on `mistral.ai` and by the supplied reference image.
+Add an original, navigable product mosaic to the Kubo home page. It should give visitors a compact overview of the primary product paths through an intentionally asymmetric grid, inspired by the _structural interaction pattern_ validated on `mistral.ai` and by the supplied reference image.
 
-This is not a Mistral recreation. It must use Better T Stack’s dark "System Manual" visual system, its own copy, its existing routes, and no Mistral marks, colors, names, artwork, or layout measurements.
+This is not a Mistral recreation. It must use Kubo’s dark "System Manual" visual system, its own copy, its existing routes, and no Mistral marks, colors, names, artwork, or layout measurements.
 
 ## Research evidence
 
@@ -138,7 +138,7 @@ At tablet and mobile breakpoints, recompose rather than scale the desktop artwor
 
 ## Acceptance criteria
 
-- The home page includes an original Better T Stack product mosaic after the command section.
+- The home page includes an original Kubo product mosaic after the command section.
 - All seven configured destinations are complete full-surface links with correct internal hrefs.
 - The desktop layout is visibly asymmetric and contiguous, with one featured conversion tile and no rounded-card gallery appearance.
 - The tile reading/tab order matches the configuration order and the mobile visual order.
