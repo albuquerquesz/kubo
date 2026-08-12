@@ -30,7 +30,7 @@ export interface GeneratorOptions {
   config: ProjectConfig;
   templateBasePath?: string;
   templates?: Map<string, string>;
-  /** CLI version string for bts.jsonc */
+  /** CLI version string for kubojs.jsonrc */
   version?: string;
 }
 

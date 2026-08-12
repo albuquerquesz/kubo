@@ -4,7 +4,7 @@ import type { BetterTStackConfig } from "@kubojs/types";
 import fs from "fs-extra";
 import { applyEdits, modify, parse } from "jsonc-parser";
 
-const BTS_CONFIG_FILE = "bts.jsonc";
+const BTS_CONFIG_FILE = "kubojs.jsonrc";
 
 /**
  * Reads the BTS configuration file from the project directory.

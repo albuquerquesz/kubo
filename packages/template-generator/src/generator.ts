@@ -90,7 +90,7 @@ export async function generate(
       processVercelConfig(vfs, config);
       processReadme(vfs, config);
 
-      // Write bts.jsonc config file
+      // Write kubojs.jsonrc config file
       if (options.version) {
         const reproducibleCommand = generateReproducibleCommand(config);
         writeBtsConfigToVfs(vfs, config, options.version, reproducibleCommand);

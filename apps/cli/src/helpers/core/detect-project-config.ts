@@ -43,7 +43,7 @@ export async function detectProjectConfig(projectDir: string) {
 
 export async function isBetterTStackProject(projectDir: string): Promise<boolean> {
   const result = await Result.tryPromise({
-    try: () => fs.pathExists(path.join(projectDir, "bts.jsonc")),
+    try: () => fs.pathExists(path.join(projectDir, "kubojs.jsonrc")),
     catch: () => false,
   });
 
