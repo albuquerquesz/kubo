@@ -92,9 +92,9 @@ async function runWithFakeBunx<T>(
 describe("Addon setup regressions", () => {
   it("uses a package execution command for the kubojs MCP server target", () => {
     const servers = getRecommendedMcpServers(createProjectConfig(), "project");
-    const betterTStackServer = servers.find((server) => server.key === "kubojs");
+    const kubojsServer = servers.find((server) => server.key === "kubojs");
 
-    expect(betterTStackServer?.target).toBe("bunx kubojs@latest mcp");
+    expect(kubojsServer?.target).toBe("bunx kubojs@latest mcp");
   });
 
   it("preserves explicit empty MCP selections in silent mode", async () => {
