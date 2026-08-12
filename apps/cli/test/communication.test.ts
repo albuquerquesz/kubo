@@ -98,6 +98,60 @@ describe("Resend communication", () => {
     expect(resendConfig.communication).toBe("resend");
   });
 
+  it("generates packages/notifique helpers aligned with the Notifique skill", async () => {
+    const result = await createVirtual({
+      projectName: "notifique-app",
+      frontend: ["tanstack-router"],
+      backend: "hono",
+      runtime: "bun",
+      database: "sqlite",
+      orm: "drizzle",
+      auth: "none",
+      payments: "none",
+      observability: "none",
+      communication: "notifique",
+      addons: ["none"],
+      examples: ["none"],
+      dbSetup: "none",
+      api: "trpc",
+      webDeploy: "none",
+      serverDeploy: "none",
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+
+    const files = collectFiles(result.value.root, "/virtual");
+    const client = files.get("packages/notifique/src/lib/client.ts") ?? "";
+    const sms = files.get("packages/notifique/src/lib/sms.ts") ?? "";
+    const whatsapp = files.get("packages/notifique/src/lib/whatsapp.ts") ?? "";
+    const email = files.get("packages/notifique/src/lib/email.ts") ?? "";
+    const index = files.get("packages/notifique/src/index.ts") ?? "";
+    const serverEnv = files.get("apps/server/.env") ?? "";
+    const serverPackage = JSON.parse(files.get("apps/server/package.json") ?? "{}");
+    const readme = files.get("README.md") ?? "";
+
+    expect(files.has("packages/email/package.json")).toBe(false);
+    expect(index).toContain("sendSms");
+    expect(client).toContain("Authorization");
+    expect(client).toContain("Bearer");
+    expect(client).toContain("api.notifique.dev");
+    // Skill rule: never send x-workspace-id as a request header (comment may mention it).
+    expect(client).not.toMatch(/["']x-workspace-id["']\s*:/);
+    expect(client).toContain("Idempotency-Key");
+    expect(sms).toContain("/sms/messages");
+    expect(sms).toContain('type: "text"');
+    expect(sms).toContain("payload");
+    expect(whatsapp).toContain("/whatsapp/messages");
+    expect(whatsapp).toContain("instanceId");
+    expect(email).toContain("/email/messages");
+    expect(email).toContain('type: "email"');
+    expect(serverEnv).toContain("NOTIFIQUE_API_KEY=");
+    expect(serverPackage.dependencies?.["@notifique-app/notifique"]).toBeTruthy();
+    expect(readme).toContain("Notifique");
+    expect(readme).toContain("docs.notifique.dev/skill.md");
+  });
+
   it("includes --communication in the reproducible create command", () => {
     const config = {
       projectName: "mail-app",

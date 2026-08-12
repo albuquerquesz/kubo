@@ -25,6 +25,11 @@ export async function getCommunicationChoice(
       label: "Resend",
       hint: "Transactional email for developers",
     },
+    {
+      value: "notifique" as Communication,
+      label: "Notifique",
+      hint: "Omnichannel BR messaging API (WhatsApp, SMS, email, …)",
+    },
   ];
 
   const response = await navigableSelect<Communication>({
