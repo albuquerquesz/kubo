@@ -28,7 +28,7 @@ export async function getCommunicationChoice(
     {
       value: "notifique" as Communication,
       label: "Notifique",
-      hint: "Omnichannel BR messaging API (WhatsApp, SMS, email, …)",
+      hint: "Omnichannel BR messaging API",
     },
   ];
 
