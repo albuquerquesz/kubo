@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubojs/types";
+import { getWebPort, type ProjectConfig } from "@kubojs/types";
 import Handlebars from "handlebars";
 import isBinaryPath from "is-binary-path";
 
@@ -8,13 +8,8 @@ Handlebars.registerHelper("and", (...args) => args.slice(0, -1).every(Boolean));
 Handlebars.registerHelper("or", (...args) => args.slice(0, -1).some(Boolean));
 Handlebars.registerHelper("not", (a) => !a);
 Handlebars.registerHelper("includes", (arr, val) => Array.isArray(arr) && arr.includes(val));
-// Mirrors the webPort heuristic in helpers/core/post-installation.ts (CLI) and
-// processors/readme-generator.ts — kept in sync manually, no shared module between the two packages.
 Handlebars.registerHelper("webPort", (frontend) => {
-  const frontends = Array.isArray(frontend) ? frontend : [];
-  if (frontends.includes("react-router") || frontends.includes("svelte")) return "5173";
-  if (frontends.includes("astro")) return "4321";
-  return "3001";
+  return getWebPort(Array.isArray(frontend) ? frontend : []);
 });
 
 // Shared across every web client template (oRPC/tRPC/better-auth) so the
