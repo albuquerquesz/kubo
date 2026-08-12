@@ -123,6 +123,7 @@ export async function displayPostInstallInstructions(
   );
   const getMonitorInstructions = observability === "getmonitor" ? getGetMonitorInstructions() : "";
   const resendInstructions = communication === "resend" ? getResendInstructions() : "";
+  const notifiqueInstructions = communication === "notifique" ? getNotifiqueInstructions() : "";
 
   const hasWeb = frontend?.some((f) => (desktopWebFrontends as readonly string[]).includes(f));
   const hasNative =
@@ -236,6 +237,7 @@ export async function displayPostInstallInstructions(
   if (betterAuthConvexInstructions) output += `\n${betterAuthConvexInstructions.trim()}\n`;
   if (getMonitorInstructions) output += `\n${getMonitorInstructions.trim()}\n`;
   if (resendInstructions) output += `\n${resendInstructions.trim()}\n`;
+  if (notifiqueInstructions) output += `\n${notifiqueInstructions.trim()}\n`;
   // Deploy steps come last so env sync happens after auth/payment keys exist
   if (alchemyDeployInstructions) output += `\n${alchemyDeployInstructions.trim()}\n`;
 
@@ -497,6 +499,20 @@ function getResendInstructions() {
     "•",
   )} Replace onboarding@resend.dev with a verified domain sender for production\n${pc.dim(
     "   https://resend.com/docs/send-with-nodejs",
+  )}`;
+}
+
+function getNotifiqueInstructions() {
+  return `${pc.bold("Notifique communication:")}\n${pc.cyan(
+    "•",
+  )} Keys are optional on first run — helpers throw only when called without NOTIFIQUE_API_KEY\n${pc.cyan(
+    "•",
+  )} Set NOTIFIQUE_API_KEY (sk_live_… / sk_test_…) in the server .env\n${pc.cyan(
+    "•",
+  )} Import sendSms / sendWhatsAppText / sendEmail from packages/notifique\n${pc.cyan(
+    "•",
+  )} Auth is Bearer only — do not send x-workspace-id\n${pc.dim(
+    "   https://docs.notifique.dev/skill.md",
   )}`;
 }
 

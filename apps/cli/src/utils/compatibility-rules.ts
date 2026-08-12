@@ -602,9 +602,9 @@ export function validateCommunicationCompatibility(
 ): ValidationResult {
   if (!communication || communication === "none") return Result.ok(undefined);
 
-  if (communication === "resend" && backend === "none") {
+  if ((communication === "resend" || communication === "notifique") && backend === "none") {
     return validationErr(
-      "Resend communication requires a server backend. Please choose a backend or use '--communication none'.",
+      `${communication === "notifique" ? "Notifique" : "Resend"} communication requires a server backend. Please choose a backend or use '--communication none'.`,
     );
   }
 
