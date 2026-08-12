@@ -234,7 +234,8 @@ ${getClerkSetupLines(frontend, backend, api, false).join("\n")}`
     : ""
 }
 ${payments === "abacatepay" ? generateAbacatePaySetup(options, packageManagerRunCmd, webPort) : ""}
-${observability === "getmonitor" ? generateGetMonitorSetup() : ""}
+${observability.includes("getmonitor") ? generateGetMonitorSetup() : ""}
+${observability.includes("himetrica") ? generateHimetricaSetup() : ""}
 ${communication === "resend" ? generateResendSetup() : ""}
 ${communication === "notifique" ? generateNotifiqueSetup() : ""}
 
@@ -438,6 +439,21 @@ See the [browser](https://github.com/get-monitor/getmonitor-js/tree/main/package
 `;
 }
 
+function generateHimetricaSetup(): string {
+  return `
+## Himetrica Setup
+
+This project includes the [Himetrica TypeScript tracker](https://www.himetrica.com/docs/web).
+
+1. Create a Himetrica project and copy its public tracker key (\`hm_pk_...\`).
+2. Set the generated web \`.env\` value ending in \`HIMETRICA_API_KEY\`.
+3. Page views, uncaught errors, and Web Vitals are collected automatically when the key is configured.
+4. Add product events with the SDK's \`track\` method; do not send secrets, source code, or raw user input.
+
+The generated integration is browser-only. Keep Himetrica secret keys out of client projects and use the Himetrica Server API from a server-only module for trusted backend events.
+`;
+}
+
 function generateProjectStructure(config: ProjectConfig): string {
   const { projectName, frontend, backend, addons, api, auth, database, orm, payments } = config;
   const isConvex = backend === "convex";
@@ -618,8 +634,12 @@ function generateFeaturesList(
 
   const features = ["- **TypeScript** - For type safety and improved developer experience"];
 
-  if (observability === "getmonitor") {
+  if (observability.includes("getmonitor")) {
     features.push("- **GetMonitor** - JavaScript error tracking for browser and server runtimes");
+  }
+
+  if (observability.includes("himetrica")) {
+    features.push("- **Himetrica** - Browser analytics, error tracking, and Web Vitals");
   }
 
   if (communication === "resend") {

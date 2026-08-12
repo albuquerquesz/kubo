@@ -33645,7 +33645,7 @@ export const env = createEnv({
 {{/if}}
 		CORS_ORIGIN: z.url(),
 		NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-	{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		GETMONITOR_API_KEY: z.string().min(1).optional(),
 	{{/if}}
 	{{#if (eq communication "resend")}}
@@ -33710,7 +33710,7 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	},
@@ -33722,14 +33722,14 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
 {{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
 	client: {
 		NUXT_PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	},
@@ -33737,7 +33737,7 @@ export const env = createEnv({
 	clientPrefix: "PUBLIC_",
 	client: {
 		PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	},
@@ -33752,7 +33752,7 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	},
@@ -33764,7 +33764,7 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	},
@@ -33772,13 +33772,13 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
 {{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
 	client: {
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	},
@@ -33788,7 +33788,7 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	},
@@ -33801,7 +33801,7 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	},
@@ -33810,14 +33810,14 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
 {{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
 	client: {
 		NUXT_PUBLIC_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	},
@@ -33825,7 +33825,7 @@ export const env = createEnv({
 	clientPrefix: "PUBLIC_",
 	client: {
 		PUBLIC_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	},
@@ -33837,7 +33837,7 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (eq observability "getmonitor")}}
+{{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	},
