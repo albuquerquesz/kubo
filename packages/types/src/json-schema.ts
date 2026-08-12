@@ -23,8 +23,8 @@ import {
   CreateInputSchema,
   AddInputSchema,
   ProjectConfigSchema,
-  BetterTStackConfigSchema,
-  BetterTStackConfigFileSchema,
+  KubojsConfigSchema,
+  KubojsConfigFileSchema,
   InitResultSchema,
 } from "./schemas";
 
@@ -117,12 +117,12 @@ export function getProjectConfigJsonSchema() {
   return z.toJSONSchema(ProjectConfigSchema);
 }
 
-export function getBetterTStackConfigJsonSchema() {
-  return z.toJSONSchema(BetterTStackConfigSchema);
+export function getKubojsConfigJsonSchema() {
+  return z.toJSONSchema(KubojsConfigSchema);
 }
 
-export function getBetterTStackConfigFileJsonSchema() {
-  return z.toJSONSchema(BetterTStackConfigFileSchema, { target: "draft-7" });
+export function getKubojsConfigFileJsonSchema() {
+  return z.toJSONSchema(KubojsConfigFileSchema, { target: "draft-7" });
 }
 
 export function getInitResultJsonSchema() {
@@ -154,8 +154,8 @@ export function getAllJsonSchemas() {
     createInput: getCreateInputJsonSchema(),
     addInput: getAddInputJsonSchema(),
     projectConfig: getProjectConfigJsonSchema(),
-    betterTStackConfig: getBetterTStackConfigJsonSchema(),
-    betterTStackConfigFile: getBetterTStackConfigFileJsonSchema(),
+    kubojsConfig: getKubojsConfigJsonSchema(),
+    kubojsConfigFile: getKubojsConfigFileJsonSchema(),
     initResult: getInitResultJsonSchema(),
   };
 }

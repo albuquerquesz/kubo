@@ -1,4 +1,4 @@
-import type { BetterTStackConfig, ProjectConfig } from "@kubojs/types";
+import type { KubojsConfig, ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "./core/virtual-fs";
 
@@ -14,7 +14,7 @@ export function writeKubojsConfigToVfs(
   version: string,
   reproducibleCommand?: string,
 ): void {
-  const kubojsConfig: BetterTStackConfig = {
+  const kubojsConfig: KubojsConfig = {
     version,
     createdAt: new Date().toISOString(),
     reproducibleCommand,

@@ -21,7 +21,7 @@ import {
   AuthSchema,
   type Backend,
   BackendSchema,
-  type BetterTStackConfig,
+  type KubojsConfig,
   type CLIInput,
   type CreateInput,
   CreateInputSchema,
@@ -85,8 +85,8 @@ export const SchemaNameSchema = z
     "createInput",
     "addInput",
     "projectConfig",
-    "betterTStackConfig",
-    "betterTStackConfigFile",
+    "kubojsConfig",
+    "kubojsConfigFile",
     "initResult",
   ])
   .default("all");
@@ -477,7 +477,7 @@ export async function createVirtual(
 export type {
   CreateInput,
   InitResult,
-  BetterTStackConfig,
+  KubojsConfig,
   Database,
   ORM,
   Backend,
