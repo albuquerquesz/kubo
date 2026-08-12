@@ -13,10 +13,6 @@ import type {
 } from "../../types";
 import { desktopWebFrontends } from "../../types";
 import { getDockerStatus } from "../../utils/docker-utils";
-import {
-  fetchSponsorsQuietly,
-  formatPostInstallSpecialSponsorsSection,
-} from "../../utils/sponsors";
 import { cliConsola } from "../../utils/terminal-output";
 
 function getDesktopStaticBuildNote(frontend: Frontend[]): string {
@@ -121,7 +117,9 @@ export async function displayPostInstallInstructions(
     serverDeploy,
     backend,
   );
-  const getMonitorInstructions = observability === "getmonitor" ? getGetMonitorInstructions() : "";
+  const getMonitorInstructions = observability.includes("getmonitor")
+    ? getGetMonitorInstructions()
+    : "";
   const resendInstructions = communication === "resend" ? getResendInstructions() : "";
   const notifiqueInstructions = communication === "notifique" ? getNotifiqueInstructions() : "";
 
@@ -243,15 +241,6 @@ export async function displayPostInstallInstructions(
 
   if (noOrmWarning) output += `\n${noOrmWarning.trim()}\n`;
   if (bunWebNativeWarning) output += `\n${bunWebNativeWarning.trim()}\n`;
-
-  const sponsorsResult = await fetchSponsorsQuietly();
-  const specialSponsorsSection = sponsorsResult.isOk()
-    ? formatPostInstallSpecialSponsorsSection(sponsorsResult.value)
-    : "";
-
-  if (specialSponsorsSection) {
-    output += `\n${specialSponsorsSection.trim()}\n`;
-  }
 
   output += `\n${pc.bold("Like kubojs?")} Please consider giving us a star\n   on GitHub:\n`;
   output += pc.cyan("https://github.com/albuquerquesz/kubo");
@@ -483,7 +472,7 @@ function getGetMonitorInstructions() {
     "•",
   )} Browser/Node capture is automatic; React trees include GetMonitorErrorBoundary\n${pc.cyan(
     "•",
-  )} Opt out next time with --observability none\n${pc.dim(
+  )} Opt out next time with --disable-observability\n${pc.dim(
     "   https://github.com/get-monitor/getmonitor-js",
   )}`;
 }

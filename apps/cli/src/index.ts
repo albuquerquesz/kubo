@@ -5,7 +5,7 @@ import { createCli, type TrpcCliMeta } from "trpc-cli";
 import z from "zod";
 
 import { historyHandler } from "./commands/history";
-import { openBuilderCommand, openDocsCommand, showSponsorsCommand } from "./commands/meta";
+import { openBuilderCommand, openDocsCommand } from "./commands/meta";
 import { addHandler, type AddResult } from "./helpers/core/add-handler";
 import { createProjectHandler } from "./helpers/core/command-handlers";
 import {
@@ -153,6 +153,10 @@ export const router = t.router({
           auth: AuthSchema.optional(),
           payments: PaymentsSchema.optional(),
           observability: ObservabilitySchema.optional(),
+          disableObservability: z
+            .boolean()
+            .optional()
+            .describe("Disable all observability providers"),
           communication: CommunicationSchema.optional(),
           frontend: z.array(FrontendSchema).optional(),
           addons: z.array(AddonsSchema).optional(),
@@ -218,9 +222,6 @@ export const router = t.router({
       }),
     )
     .query(({ input }) => getSchemaResult(input.name)),
-  sponsors: t.procedure
-    .meta({ description: "Show kubojs sponsors" })
-    .mutation(() => showSponsorsCommand()),
   docs: t.procedure
     .meta({ description: "Open kubojs documentation" })
     .mutation(() => openDocsCommand()),
@@ -356,10 +357,6 @@ export async function create(
   });
 }
 
-export async function sponsors() {
-  return showSponsorsCommand();
-}
-
 export async function docs() {
   return openDocsCommand();
 }
@@ -431,7 +428,7 @@ export async function createVirtual(
     examples: options.examples || [],
     auth: options.auth || "none",
     payments: options.payments || "none",
-    observability: options.observability || "none",
+    observability: options.disableObservability ? [] : options.observability || [],
     communication: options.communication || "none",
     git: options.git ?? false,
     packageManager: options.packageManager || "bun",
@@ -454,6 +451,7 @@ export async function createVirtual(
     "dbSetup",
     "payments",
     "observability",
+    "disableObservability",
     "communication",
     "api",
     "webDeploy",
