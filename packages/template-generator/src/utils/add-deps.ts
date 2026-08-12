@@ -174,6 +174,9 @@ export const dependencyVersionMap = {
   evlog: "^2.19.2",
   "@getmonitor/browser": "^0.1.0",
   "@getmonitor/node": "^0.1.0",
+  "@getmonitor/react": "^0.1.0",
+  "@getmonitor/nextjs-config": "^0.1.0",
+  "@getmonitor/nuxt": "^0.1.0",
 } as const;
 
 export type AvailableDependencies = keyof typeof dependencyVersionMap;

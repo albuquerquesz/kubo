@@ -31,14 +31,20 @@ const eventTarget = {
   addEventListener() {},
   removeEventListener() {},
 };
+const historyShim = {
+  pushState() {},
+  replaceState() {},
+};
 
 Object.assign(globalThis, {
   localStorage: storage,
   sessionStorage: storage,
   navigator: { doNotTrack: "0", globalPrivacyControl: false, sendBeacon: undefined },
+  history: historyShim,
   location: { protocol: "https:", hostname: "smoke.example.test", pathname: "/", search: "" },
   document: {
     cookie: "",
+    readyState: "complete",
     title: "Himetrica smoke",
     body: { scrollHeight: 1000, offsetHeight: 1000 },
     documentElement: { scrollHeight: 1000, offsetHeight: 1000 },
@@ -49,6 +55,7 @@ Object.assign(globalThis, {
     ...eventTarget,
     self: undefined,
     top: undefined,
+    history: historyShim,
     location: { hostname: "smoke.example.test", pathname: "/", search: "" },
     screen: { width: 1440, height: 900 },
     scrollY: 0,
@@ -80,24 +87,35 @@ globalThis.fetch = (async (input, init) => {
 const client = new HimetricaClient({
   apiKey: "hm_pk_smoke-test",
   apiUrl: "https://app.himetrica.com",
-  autoTrackPageViews: false,
+  autoTrackPageViews: true,
   autoTrackErrors: false,
   trackVitals: false,
 });
 
 client.track("builder_started", { source: "tmp-smoke" });
 client.captureMessage("SDK smoke test", "info", { source: "tmp-smoke" });
-client.trackPageView("/");
-client.flush();
 
 await new Promise((resolve) => setTimeout(resolve, 1_150));
 
-if (requests.length < 2) {
-  throw new Error(`Expected at least two requests, received ${requests.length}`);
+const pageViewRequests = requests.filter(({ body }) => "pageViewId" in body);
+const customEventRequests = requests.filter(({ body }) => body.eventName === "builder_started");
+
+if (pageViewRequests.length < 1) {
+  throw new Error("The automatic page view was not sent to the documented tracker endpoint");
 }
 
-if (!requests.some(({ url }) => url.endsWith("/api/t/e"))) {
-  throw new Error("The custom event was not sent to the documented tracker endpoint");
+if (customEventRequests.length < 1) {
+  throw new Error("The queued custom event was not drained after the automatic page view");
+}
+
+const pageViewIndex = requests.findIndex(({ body }) => "pageViewId" in body);
+const customEventIndex = requests.findIndex(({ body }) => body.eventName === "builder_started");
+if (customEventIndex <= pageViewIndex) {
+  throw new Error("The custom event was not sent after the automatic page view");
+}
+
+if (!pageViewRequests.every(({ url }) => url.endsWith("/api/t/e"))) {
+  throw new Error("The page view was not sent to the documented tracker endpoint");
 }
 
 if (!requests.some(({ url }) => url.endsWith("/api/t/ce"))) {

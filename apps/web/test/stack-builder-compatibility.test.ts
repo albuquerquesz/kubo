@@ -261,6 +261,14 @@ describe("stack builder D1 compatibility", () => {
     expect(command).toContain("--server-deploy guaracloud");
   });
 
+  test("default stack implies GetMonitor and short --yes command", () => {
+    expect(DEFAULT_STACK.observability).toBe("getmonitor");
+
+    const command = generateStackCommand(createStack({}));
+    expect(command).toMatch(/--yes\s*$/);
+    expect(command).not.toContain("--observability");
+  });
+
   test("emits --observability none for backend-less stacks (Stack Builder → CLI)", () => {
     const stack = createStack({
       projectName: "atscopilot",

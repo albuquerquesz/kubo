@@ -7,12 +7,12 @@ const options = [
   {
     value: "getmonitor" as Observability,
     label: "GetMonitor",
-    hint: "JavaScript error tracking for browser and server runtimes",
+    hint: "Recommended — JS/TS error tracking for browser and server",
   },
   {
     value: "none" as Observability,
     label: "None",
-    hint: "Skip observability setup guidance",
+    hint: "Skip observability SDK setup",
   },
 ];
 

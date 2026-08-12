@@ -211,16 +211,20 @@ function buildClientVars(
         : frontend.includes("svelte") || frontend.includes("astro")
           ? "PUBLIC_GETMONITOR_API_KEY"
           : "VITE_GETMONITOR_API_KEY";
-    const getMonitorHost = getMonitorKey.replace("_KEY", "_HOST");
-    vars.push(
-      { key: getMonitorKey, value: "", condition: true, comment: "GetMonitor public project key" },
-      {
-        key: getMonitorHost,
-        value: "https://ingest.getmonitor.com",
+    vars.push({
+      key: getMonitorKey,
+      value: "",
+      condition: true,
+      comment: "GetMonitor public project key (gm_xxx)",
+    });
+    if (hasNextJs || frontend.includes("nuxt")) {
+      vars.push({
+        key: "GETMONITOR_AUTH_TOKEN",
+        value: "",
         condition: true,
-        comment: "GetMonitor ingestion host",
-      },
-    );
+        comment: "GetMonitor source-map upload token (server/build only — never expose publicly)",
+      });
+    }
   }
 
   return vars;
@@ -521,13 +525,7 @@ function buildServerVars(
       key: "GETMONITOR_API_KEY",
       value: "",
       condition: observability === "getmonitor",
-      comment: "GetMonitor public project key",
-    },
-    {
-      key: "GETMONITOR_API_HOST",
-      value: "https://ingest.getmonitor.com",
-      condition: observability === "getmonitor",
-      comment: "GetMonitor ingestion host",
+      comment: "GetMonitor public project key (gm_xxx)",
     },
     {
       key: "DATABASE_URL",
