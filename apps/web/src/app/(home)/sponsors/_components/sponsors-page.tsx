@@ -401,7 +401,7 @@ export function SponsorsPage({
               <span>SEJA_PATROCINADOR.SH</span>
             </a>
             <p className="text-muted-foreground text-xs">
-              Patrocínios únicos também contam: cada US$ 100 únicos equivalem a um mês de destaque
+              Patrocínios únicos também contam: cada US$ 20 únicos equivalem a um mês de destaque
               especial
             </p>
           </div>

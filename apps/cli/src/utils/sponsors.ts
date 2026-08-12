@@ -7,7 +7,7 @@ import { CLIError } from "./errors";
 import { cliConsola } from "./terminal-output";
 
 export const SPONSORS_JSON_URL = "https://sponsors.kubojs.dev/sponsors.json";
-export const GITHUB_SPONSOR_URL = "https://github.com/sponsors/AmanVarshney01";
+export const GITHUB_SPONSOR_URL = "https://github.com/sponsors/albuquerquesz";
 
 export type SponsorSummary = {
   total_sponsors: number;
