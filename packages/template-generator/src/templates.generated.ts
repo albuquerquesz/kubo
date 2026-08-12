@@ -119,7 +119,7 @@ const webBuildDir =
 export default {
   app: {
     name: "{{projectName}}",
-    identifier: "dev.bettertstack.{{projectName}}.desktop",
+    identifier: "dev.kubo.{{projectName}}.desktop",
     version: "0.0.1",
   },
   runtime: {
@@ -5727,7 +5727,7 @@ return (
         <ExpoUIText
           textStyle=\\{{ color: theme.text, fontSize: 24, fontWeight: "bold", textAlign: "center" }}
         >
-          BETTER T STACK
+          Kubo
         </ExpoUIText>
       </Host>
 
@@ -6523,7 +6523,7 @@ export default function Home() {
     <Container>
       <ScrollView>
         <View style={styles.pageContainer}>
-          <Text style={styles.headerTitle}>BETTER T STACK</Text>
+          <Text style={styles.headerTitle}>Kubo</Text>
           {session?.user ? (
             <View style={styles.sessionInfoCard}>
               <View style={styles.sessionUserRow}>
@@ -7273,7 +7273,7 @@ return (
 <Container className="p-6">
   <View className="py-4 mb-6">
     <Text className="text-4xl font-bold text-foreground mb-2">
-      BETTER T STACK
+      Kubo
     </Text>
   </View>
 
@@ -14453,7 +14453,9 @@ export default defineConfig({
     format: 'esm',
     outDir: './dist',
     clean: true,
-    noExternal: [/@{{projectName}}\\/.*/]
+    deps: {
+        alwaysBundle: [/@{{projectName}}\\/.*/],
+    },
 });
 `],
   ["backend/server/elysia/src/index.ts.hbs", `import { env } from "@{{projectName}}/env/server";
@@ -15502,6 +15504,11 @@ coverage
 .cache
 tmp
 temp
+
+# Local SQLite (default DATABASE_URL file:../../local.db resolves to monorepo root
+# from apps/server and packages/db; also covers package-local turso db files)
+local.db
+local.db-*
 `],
   ["base/package.json.hbs", `{
   "name": "kubojs",
@@ -26823,7 +26830,7 @@ return (
         <ExpoUIText
           textStyle=\\{{ color: theme.text, fontSize: 24, fontWeight: "bold", textAlign: "center" }}
         >
-          BETTER T STACK
+          Kubo
         </ExpoUIText>
       </Host>
 
@@ -28083,7 +28090,7 @@ export default function Home() {
         showsVerticalScrollIndicator={false}
       >
         <Text style={styles.heroTitle}>
-          BETTER T STACK
+          Kubo
         </Text>
 
         {{#unless (and (eq backend "convex") (eq auth "better-auth"))}}
@@ -29409,7 +29416,7 @@ return (
 <Container className="px-4 pb-4">
   <View className="py-6 mb-5">
     <Text className="text-3xl font-semibold text-foreground tracking-tight">
-      Better T Stack
+      Kubo
     </Text>
     <Text className="text-muted text-sm mt-1">Full-stack TypeScript starter</Text>
   </View>

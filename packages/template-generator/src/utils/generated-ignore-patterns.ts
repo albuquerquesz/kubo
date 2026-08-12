@@ -44,6 +44,11 @@ export function getStackGeneratedIgnorePatterns(config: ProjectConfig): string[]
   }
 
   if (config.database === "sqlite" && config.dbSetup !== "d1" && config.orm !== "none") {
+    // DATABASE_URL=file:../../local.db is CWD-relative from both apps/server and
+    // packages/db, so the file lands at monorepo root. Also cover package-local
+    // turso `db:local` / accidental packages/db paths.
+    patterns.add("local.db");
+    patterns.add("local.db-*");
     patterns.add("packages/db/local.db*");
   }
 

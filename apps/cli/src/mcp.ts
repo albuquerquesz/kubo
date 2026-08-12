@@ -62,7 +62,7 @@ const McpCreateProjectInputSchema = CreateInputSchema.safeExtend({
   dbSetupOptions: DbSetupOptionsSchema.optional(),
   directoryConflict: DirectoryConflictSchema.optional(),
 }).describe(
-  "Explicit I dont know project configuration for MCP use. Provide the full stack config instead of relying on inferred defaults.",
+  "Explicit kubojs project configuration for MCP use. Provide the full stack config instead of relying on inferred defaults.",
 );
 
 type SchemaToolInput = {
@@ -193,12 +193,12 @@ export function createBtsMcpServer() {
   server.registerTool(
     "bts_get_stack_guidance",
     {
-      title: "Get I dont know MCP Guidance",
+      title: "Get kubojs MCP Guidance",
       description:
-        "Read MCP-specific guidance for choosing valid I dont know configurations. Use this before planning when user intent is ambiguous. This explains the full explicit config required by MCP project creation, plus important field semantics and ambiguity rules.",
+        "Read MCP-specific guidance for choosing valid kubojs configurations. Use this before planning when user intent is ambiguous. This explains the full explicit config required by MCP project creation, plus important field semantics and ambiguity rules.",
       outputSchema: ToolResponseSchema,
       annotations: {
-        title: "Get I dont know MCP Guidance",
+        title: "Get kubojs MCP Guidance",
         readOnlyHint: true,
         destructiveHint: false,
         idempotentHint: true,
@@ -217,13 +217,13 @@ export function createBtsMcpServer() {
   server.registerTool(
     "bts_get_schema",
     {
-      title: "Get I dont know Schemas",
+      title: "Get kubojs Schemas",
       description:
-        "Inspect I dont know CLI and input schemas so agents can plan valid create/add requests. Use this together with bts_get_stack_guidance before creating a project if any part of the request is ambiguous.",
+        "Inspect kubojs CLI and input schemas so agents can plan valid create/add requests. Use this together with bts_get_stack_guidance before creating a project if any part of the request is ambiguous.",
       inputSchema: SchemaToolInputSchema,
       outputSchema: ToolResponseSchema,
       annotations: {
-        title: "Get I dont know Schemas",
+        title: "Get kubojs Schemas",
         readOnlyHint: true,
         destructiveHint: false,
         idempotentHint: true,
@@ -242,13 +242,13 @@ export function createBtsMcpServer() {
   server.registerTool(
     "bts_plan_project",
     {
-      title: "Plan I dont know Project",
+      title: "Plan kubojs Project",
       description:
-        "Validate and preview an I dont know project creation without writing files or provisioning resources. Always use this before bts_create_project. This tool requires an explicit full stack config rather than a partial payload with inferred defaults.",
+        "Validate and preview a kubojs project creation without writing files or provisioning resources. Always use this before bts_create_project. This tool requires an explicit full stack config rather than a partial payload with inferred defaults.",
       inputSchema: McpCreateProjectInputSchema,
       outputSchema: ToolResponseSchema,
       annotations: {
-        title: "Plan I dont know Project",
+        title: "Plan kubojs Project",
         readOnlyHint: true,
         destructiveHint: false,
         idempotentHint: true,
@@ -288,13 +288,13 @@ export function createBtsMcpServer() {
   server.registerTool(
     "bts_create_project",
     {
-      title: "Create I dont know Project",
+      title: "Create kubojs Project",
       description:
-        "Create an I dont know project on disk using the same silent programmatic flow as the CLI JSON API. Call this only after bts_plan_project succeeds and the plan clearly matches the user's intent. This tool requires an explicit full stack config.",
+        "Create a kubojs project on disk using the same silent programmatic flow as the CLI JSON API. Call this only after bts_plan_project succeeds and the plan clearly matches the user's intent. This tool requires an explicit full stack config.",
       inputSchema: McpCreateProjectInputSchema,
       outputSchema: ToolResponseSchema,
       annotations: {
-        title: "Create I dont know Project",
+        title: "Create kubojs Project",
         ...getProjectToolAnnotations(),
       },
     },
@@ -323,13 +323,13 @@ export function createBtsMcpServer() {
   server.registerTool(
     "bts_plan_addons",
     {
-      title: "Plan I dont know Addons",
+      title: "Plan kubojs Addons",
       description:
-        "Validate and preview addon installation for an existing I dont know project without writing files. Always use this before bts_add_addons when the addon set or nested options are uncertain.",
+        "Validate and preview addon installation for an existing kubojs project without writing files. Always use this before bts_add_addons when the addon set or nested options are uncertain.",
       inputSchema: AddInputSchema,
       outputSchema: ToolResponseSchema,
       annotations: {
-        title: "Plan I dont know Addons",
+        title: "Plan kubojs Addons",
         readOnlyHint: true,
         destructiveHint: false,
         idempotentHint: true,
@@ -357,13 +357,13 @@ export function createBtsMcpServer() {
   server.registerTool(
     "bts_add_addons",
     {
-      title: "Add I dont know Addons",
+      title: "Add kubojs Addons",
       description:
-        "Install addons into an existing I dont know project using the same silent flow as add-json. Call this only after bts_plan_addons succeeds and the planned changes match the user's intent.",
+        "Install addons into an existing kubojs project using the same silent flow as add-json. Call this only after bts_plan_addons succeeds and the planned changes match the user's intent.",
       inputSchema: AddInputSchema,
       outputSchema: ToolResponseSchema,
       annotations: {
-        title: "Add I dont know Addons",
+        title: "Add kubojs Addons",
         destructiveHint: true,
         idempotentHint: false,
         openWorldHint: true,

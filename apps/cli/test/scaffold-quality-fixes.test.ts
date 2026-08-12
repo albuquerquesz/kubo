@@ -133,6 +133,27 @@ describe("scaffold quality fixes", () => {
     expect(await fs.pathExists(path.join(projectPath, "apps/web/src/routeTree.gen.ts"))).toBe(true);
     const gitignore = await readFile(path.join(projectPath, ".gitignore"), "utf8");
     expect(gitignore).not.toContain("routeTree.gen.ts");
+    // root local.db (file:../../local.db from apps/server + packages/db)
+    expect(gitignore).toMatch(/^local\.db$/m);
+    expect(gitignore).toMatch(/^local\.db-\*$/m);
+
+    // server build: tsdown needs unrun peer; pin avoids Node 20 break on 0.22.14+
+    const serverPkg = JSON.parse(
+      await readFile(path.join(projectPath, "apps/server/package.json"), "utf8"),
+    ) as { devDependencies?: Record<string, string> };
+    expect(serverPkg.devDependencies?.unrun).toBeDefined();
+    expect(serverPkg.devDependencies?.tsdown).toBe("0.22.0");
+    const tsdownConfig = await readFile(
+      path.join(projectPath, "apps/server/tsdown.config.ts"),
+      "utf8",
+    );
+    expect(tsdownConfig).toContain("alwaysBundle");
+    expect(tsdownConfig).not.toContain("noExternal");
+
+    // README: plain sqlite is "SQLite", not "SQLite/Turso"
+    const readme = await readFile(path.join(projectPath, "README.md"), "utf8");
+    expect(readme).toMatch(/\*\*SQLite\*\*/);
+    expect(readme).not.toContain("SQLite/Turso");
   });
 
   it("add oxlint replaces biome exclusively", async () => {

@@ -50,3 +50,8 @@ coverage
 .cache
 tmp
 temp
+
+# Local SQLite (default DATABASE_URL file:../../local.db resolves to monorepo root
+# from apps/server and packages/db; also covers package-local turso db files)
+local.db
+local.db-*

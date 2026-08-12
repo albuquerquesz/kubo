@@ -547,6 +547,8 @@ describe("Addon Configurations", () => {
       expect(rootViteConfig).not.toContain('"apps/web/src/routeTree.gen.ts"');
       expect(rootViteConfig).toContain('"apps/server/dist/**"');
       expect(rootViteConfig).toContain('"packages/db/dist/**"');
+      expect(rootViteConfig).toContain('"local.db"');
+      expect(rootViteConfig).toContain('"local.db-*"');
       expect(rootViteConfig).toContain('"packages/db/local.db*"');
       expect(rootViteConfig).not.toContain('"apps/web/.next/**"');
       expect(rootViteConfig).not.toContain('"apps/web/.nuxt/**"');
@@ -711,6 +713,8 @@ describe("Addon Configurations", () => {
       expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/apps/web/dist/**");
       expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/apps/server/dist/**");
       expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/packages/db/dist/**");
+      expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/local.db");
+      expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/local.db-*");
       expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/packages/db/local.db*");
     });
 

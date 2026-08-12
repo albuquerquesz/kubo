@@ -94,7 +94,7 @@ function getAddonDisplay(addon: Addons): { label: string; hint: string } {
       break;
     case "mcp":
       label = "MCP";
-      hint = "Install MCP servers, including I dont know, via add-mcp";
+      hint = "Install MCP servers, including kubojs, via add-mcp";
       break;
     case "evlog":
       label = "evlog";

@@ -152,7 +152,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
       vfs,
       packagePath: "apps/server/package.json",
       dependencies: commonDeps,
-      devDependencies: ["typescript", "tsdown"],
+      devDependencies: ["typescript", "tsdown", "unrun"],
       customDependencies: serverDeps,
       customDevDependencies: configDep,
     });

@@ -25,7 +25,7 @@ async function openExternalUrl(url: string, successMessage: string) {
 
 export async function showSponsorsCommand() {
   renderTitle();
-  intro(pc.magenta("I dont know Sponsors"));
+  intro(pc.magenta("kubojs Sponsors"));
 
   const sponsorsResult = await fetchSponsors();
   if (sponsorsResult.isErr()) {
