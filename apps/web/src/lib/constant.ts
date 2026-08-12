@@ -522,11 +522,11 @@ export const TECH_OPTIONS: Record<
       default: true,
     },
     {
-      id: "none",
-      name: "Sem observabilidade",
-      description: "Sem SDK de observabilidade",
-      icon: "",
-      color: "from-gray-400 to-gray-600",
+      id: "himetrica",
+      name: "Himetrica",
+      description: "Analytics de produto, erros e Web Vitals para web apps",
+      icon: "https://www.himetrica.com/favicon.ico",
+      color: "from-violet-400 to-purple-700",
     },
   ],
   communication: [
@@ -548,7 +548,7 @@ export const TECH_OPTIONS: Record<
     {
       id: "notifique",
       name: "Notifique",
-      description: "Mensageria omnichannel (WhatsApp, SMS, e-mail, …)",
+      description: "Mensageria omnichannel",
       icon: "https://notifique.dev/favicon.ico",
       color: "from-amber-400 to-orange-600",
     },
@@ -795,7 +795,7 @@ export const PRESET_TEMPLATES = [
       dbSetup: "mongodb-atlas",
       auth: "better-auth",
       payments: "none",
-      observability: "getmonitor",
+      observability: ["getmonitor"],
       communication: "none",
       packageManager: "bun",
       addons: ["turborepo"],
@@ -823,7 +823,7 @@ export const PRESET_TEMPLATES = [
       dbSetup: "none",
       auth: "better-auth",
       payments: "none",
-      observability: "getmonitor",
+      observability: ["getmonitor"],
       communication: "none",
       packageManager: "bun",
       addons: ["turborepo"],
@@ -851,7 +851,7 @@ export const PRESET_TEMPLATES = [
       dbSetup: "none",
       auth: "better-auth",
       payments: "none",
-      observability: "getmonitor",
+      observability: ["getmonitor"],
       communication: "none",
       packageManager: "bun",
       addons: ["biome", "turborepo"],
@@ -879,7 +879,7 @@ export const PRESET_TEMPLATES = [
       dbSetup: "none",
       auth: "none",
       payments: "none",
-      observability: "none",
+      observability: [],
       communication: "none",
       packageManager: "bun",
       addons: ["none"],
@@ -905,7 +905,7 @@ export type StackState = {
   dbSetup: string;
   auth: string;
   payments: string;
-  observability: string;
+  observability: string[];
   communication: string;
   packageManager: string;
   addons: string[];
@@ -929,7 +929,7 @@ export const DEFAULT_STACK: StackState = {
   dbSetup: "none",
   auth: "better-auth",
   payments: "none",
-  observability: "getmonitor",
+  observability: ["getmonitor"],
   communication: "none",
   packageManager: "bun",
   addons: ["turborepo"],

@@ -196,7 +196,8 @@ export function useStackBuilder() {
         catKey === "webFrontend" ||
         catKey === "nativeFrontend" ||
         catKey === "addons" ||
-        catKey === "examples"
+        catKey === "examples" ||
+        catKey === "observability"
       ) {
         if (catKey === "webFrontend" || catKey === "nativeFrontend") {
           const selectedOption = options[Math.floor(Math.random() * options.length)]?.id;
@@ -206,9 +207,12 @@ export function useStackBuilder() {
           continue;
         }
 
-        const numToPick = Math.floor(Math.random() * Math.min(options.length, 4));
+        const numToPick = Math.floor(
+          Math.random() * Math.min(options.length, catKey === "observability" ? 3 : 4),
+        );
         if (numToPick === 0) {
-          randomStack[catKey as "addons" | "examples"] = ["none"];
+          randomStack[catKey as "addons" | "examples" | "observability"] =
+            catKey === "observability" ? [] : ["none"];
           continue;
         }
 
@@ -217,7 +221,9 @@ export function useStackBuilder() {
           .sort(() => 0.5 - Math.random())
           .slice(0, numToPick);
 
-        randomStack[catKey as "addons" | "examples"] = shuffledOptions.map((opt) => opt.id);
+        randomStack[catKey as "addons" | "examples" | "observability"] = shuffledOptions.map(
+          (opt) => opt.id,
+        );
         continue;
       }
 
@@ -256,7 +262,8 @@ export function useStackBuilder() {
           catKey === "webFrontend" ||
           catKey === "nativeFrontend" ||
           catKey === "addons" ||
-          catKey === "examples"
+          catKey === "examples" ||
+          catKey === "observability"
         ) {
           const currentArray = Array.isArray(currentValue) ? [...currentValue] : [];
           let nextArray = [...currentArray];
@@ -277,6 +284,10 @@ export function useStackBuilder() {
             } else {
               nextArray = [techId];
             }
+          } else if (catKey === "observability") {
+            nextArray = isSelected
+              ? nextArray.filter((id) => id !== techId)
+              : [...nextArray, techId];
           } else {
             nextArray = isSelected
               ? nextArray.filter((id) => id !== techId)
