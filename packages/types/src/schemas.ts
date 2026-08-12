@@ -98,8 +98,8 @@ export const ObservabilitySchema = z
   .describe("Observability provider");
 
 export const CommunicationSchema = z
-  .enum(["none", "resend"])
-  .describe("Communication provider (transactional email)");
+  .enum(["none", "resend", "notifique"])
+  .describe("Communication provider (email / messaging)");
 
 export const WebDeploySchema = z
   .enum(["cloudflare", "docker", "vercel", "guaracloud", "none"])
