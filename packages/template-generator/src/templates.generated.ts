@@ -23,7 +23,7 @@ export const EMBEDDED_TEMPLATES: Map<string, string> = new Map([
 			"!**/routeTree.gen.ts",
 			"!**/src-tauri",
 			"!**/.nuxt",
-			"!bts.jsonc",
+			"!kubojs.jsonrc",
 			"!**/.expo",
 			"!**/.wrangler",
 			"!**/.alchemy",
