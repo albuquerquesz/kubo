@@ -351,7 +351,7 @@ export async function setupSkills(
 
   const { packageManager, projectDir } = config;
 
-  // Load full config from bts.jsonc to get all addons (existing + new)
+  // Load full config from kubojs.jsonrc to get all addons (existing + new)
   const btsConfig = await readBtsConfig(projectDir);
   const fullConfig: ProjectConfig = btsConfig
     ? {

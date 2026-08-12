@@ -218,7 +218,7 @@ async function addHandlerInternal(
   if (!existingConfig) {
     return Result.err(
       new CLIError({
-        message: `No I dont know project found in ${projectDir}. Make sure bts.jsonc exists.`,
+        message: `No kubojs project found in ${projectDir}. Make sure kubojs.jsonrc exists.`,
       }),
     );
   }
@@ -442,7 +442,7 @@ async function addHandlerInternal(
     return Result.err(setupResult.error);
   }
 
-  // Update bts.jsonc with new addons
+  // Update kubojs.jsonrc with new addons
   await updateBtsConfig(projectDir, {
     addons: updatedAddons,
     addonOptions: updatedConfig.addonOptions,

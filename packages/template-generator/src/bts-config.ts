@@ -2,7 +2,7 @@ import type { BetterTStackConfig, ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "./core/virtual-fs";
 
-const BTS_CONFIG_FILE = "bts.jsonc";
+const BTS_CONFIG_FILE = "kubojs.jsonrc";
 
 /**
  * Writes the BTS configuration file to the VFS (for new project creation).
