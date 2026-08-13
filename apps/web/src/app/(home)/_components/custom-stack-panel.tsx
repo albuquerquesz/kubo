@@ -44,15 +44,14 @@ export default function CustomStackPanel({
         }
       : variant === "integrations"
         ? {
-            title: "Explorar Integrações",
+            title: "Monte sua stack",
             imageSrc: "/assets/kubo-bg.png",
             description: (
               <>
-                Construa com as melhores ferramentas e descubra o diferencial das{" "}
-                <span className="text-foreground">integrações brasileiras</span>.
+                Escolha cada camada e gere uma base TypeScript pronta para evoluir com seu projeto.
               </>
             ),
-            cta: "Explorar Integrações",
+            cta: "Monte sua stack",
             href: "/new",
             imageAlt: "Integrações brasileiras disponíveis no Stack Builder do Kubo",
           }
