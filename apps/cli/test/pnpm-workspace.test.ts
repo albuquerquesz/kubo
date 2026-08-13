@@ -107,7 +107,7 @@ describe("pnpm workspace", () => {
       orm: "drizzle",
       auth: "better-auth",
       payments: "none",
-      addons: ["evlog", "husky", "oxlint", "ultracite", "vite-plus"],
+      addons: ["evlog", "husky", "oxlint", "vite-plus"],
       examples: ["none"],
       dbSetup: "none",
       webDeploy: "none",
