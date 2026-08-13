@@ -31,38 +31,19 @@ type KuboMarkMotionProps = {
 export const KuboMarkMotion = forwardRef<KuboMarkMotionHandle, KuboMarkMotionProps>(
   function KuboMarkMotion({ className }, ref) {
     const punchLayerRef = useRef<SVGGElement>(null);
-    const eyeMaskLeftRef = useRef<SVGRectElement>(null);
-    const eyeMaskRightRef = useRef<SVGRectElement>(null);
     const eyeLeftRef = useRef<SVGRectElement>(null);
     const eyeRightRef = useRef<SVGRectElement>(null);
-    const blinkLeftRef = useRef<SVGPathElement>(null);
-    const blinkRightRef = useRef<SVGPathElement>(null);
 
     useGsapContext(() => {
-      if (
-        prefersReducedMotion() ||
-        !eyeMaskLeftRef.current ||
-        !eyeMaskRightRef.current ||
-        !eyeLeftRef.current ||
-        !eyeRightRef.current ||
-        !blinkLeftRef.current ||
-        !blinkRightRef.current
-      )
-        return;
+      if (prefersReducedMotion() || !eyeLeftRef.current || !eyeRightRef.current) return;
 
-      // Pixel-stepped eyelids match the closed-eye expression from the launch artwork.
-      const eyeMasks = [eyeMaskLeftRef.current, eyeMaskRightRef.current];
-      const eyeTargets = [eyeLeftRef.current, eyeRightRef.current];
-      const blinkTargets = [blinkLeftRef.current, blinkRightRef.current];
+      // Match the launch-video character: a short, centered, pixel-stepped blink.
+      const blinkTargets = [eyeLeftRef.current, eyeRightRef.current].filter(Boolean);
       const blink = gsap.timeline({ repeat: -1, repeatDelay: 2.5, delay: 1.5 });
       blink
-        .to(eyeTargets, { attr: { height: 0, y: 331 }, duration: 0.05 })
-        .to(eyeMasks, { opacity: 0, duration: 0.01 }, "<")
-        .to(blinkTargets, { opacity: 1, duration: 0.01 }, "<")
+        .to(blinkTargets, { attr: { height: 8, y: 331 }, duration: 0.05 })
         .to({}, { duration: 0.08 })
-        .set(blinkTargets, { opacity: 0 })
-        .set(eyeMasks, { opacity: 1 })
-        .set(eyeTargets, { attr: { height: 86, y: 292 } });
+        .set(blinkTargets, { attr: { height: 86, y: 292 } });
 
       return () => {
         blink.kill();
@@ -90,24 +71,11 @@ export const KuboMarkMotion = forwardRef<KuboMarkMotionHandle, KuboMarkMotionPro
       >
         <g ref={punchLayerRef}>
           <path fill={KUBO_MARK_FILL} fillRule="evenodd" d={KUBO_MARK_FULL_PATH} />
-          <rect ref={eyeMaskLeftRef} {...KUBO_MARK_EYE_LEFT} fill={KUBO_MARK_FILL} />
-          <rect ref={eyeMaskRightRef} {...KUBO_MARK_EYE_RIGHT} fill={KUBO_MARK_FILL} />
+          {/* Solid eyes on top of the evenodd cutouts for blink animation. */}
+          <rect {...KUBO_MARK_EYE_LEFT} fill={KUBO_MARK_FILL} />
+          <rect {...KUBO_MARK_EYE_RIGHT} fill={KUBO_MARK_FILL} />
           <rect ref={eyeLeftRef} {...KUBO_MARK_EYE_LEFT} fill={KUBO_MARK_EYE_FILL} />
           <rect ref={eyeRightRef} {...KUBO_MARK_EYE_RIGHT} fill={KUBO_MARK_EYE_FILL} />
-          <path
-            ref={blinkLeftRef}
-            d="M213 331H229V339H281V331H298V339H289V347H221V339H213Z"
-            fill={KUBO_MARK_EYE_FILL}
-            opacity={0}
-            shapeRendering="crispEdges"
-          />
-          <path
-            ref={blinkRightRef}
-            d="M468 331H484V339H536V331H553V339H544V347H476V339H468Z"
-            fill={KUBO_MARK_EYE_FILL}
-            opacity={0}
-            shapeRendering="crispEdges"
-          />
         </g>
       </svg>
     );
