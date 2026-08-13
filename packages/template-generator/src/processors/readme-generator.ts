@@ -173,6 +173,7 @@ function generateReadmeContent(options: ProjectConfig): string {
   const hasReactWeb = frontend.some((f) =>
     ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
   );
+  const hasReactRouter = frontend.includes("react-router");
   const packageManagerRunCmd = `${packageManager} run`;
   // TanStack Router/Start, Next, Nuxt and Solid all dev on 3001; only React Router and SvelteKit use Vite's default 5173.
   const webPort = getWebPort(frontend);
@@ -235,6 +236,7 @@ ${observability.includes("getmonitor") ? generateGetMonitorSetup() : ""}
 ${observability.includes("himetrica") ? generateHimetricaSetup() : ""}
 ${communication === "resend" ? generateResendSetup() : ""}
 ${communication === "notifique" ? generateNotifiqueSetup() : ""}
+${communication === "arara" ? generateAraraSetup(options) : ""}
 
 Then, run the development server:
 
@@ -607,6 +609,35 @@ Agent skill / API map:
 `;
 }
 
+function generateAraraSetup(config: ProjectConfig): string {
+  const envPath = config.backend === "convex" ? "packages/backend/.env.local" : "the server .env";
+  const importPath = `@${config.projectName}/arara`;
+  return `
+## AraraHQ Setup
+
+This project includes the official [AraraHQ Node SDK](https://docs.ararahq.com/sdks/node) for WhatsApp messaging.
+
+1. Create an AraraHQ API key.
+2. Set \`ARARA_API_KEY\` in \`${envPath}\`.
+3. Use the SDK only from server code. AraraHQ is not generated for browser code or Edge/Workers runtimes.
+4. With Convex, call the generated \`api.arara.execute\` Node Action.
+
+\`\`\`ts
+import { arara } from "${importPath}";
+
+await arara.sendMessage({
+  receiver: "whatsapp:+5511999999999",
+  body: "Olá!",
+});
+
+await arara.getMessage("ara_msg_xxx");
+await arara.listTemplates();
+\`\`\`
+
+The package also exposes template creation and template-status helpers. See the [official SDK docs](https://docs.ararahq.com/sdks/node).
+`;
+}
+
 function generateFeaturesList(
   database: ProjectConfig["database"],
   auth: ProjectConfig["auth"],
@@ -647,6 +678,10 @@ function generateFeaturesList(
     features.push(
       "- **Notifique** - Omnichannel messaging (SMS, WhatsApp, email) via packages/notifique",
     );
+  }
+
+  if (communication === "arara") {
+    features.push("- **AraraHQ** - WhatsApp messaging through the official Node SDK");
   }
 
   const frontendFeatures: Record<string, string> = {

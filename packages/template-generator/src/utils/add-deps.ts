@@ -183,6 +183,7 @@ export const dependencyVersionMap = {
   "@getmonitor/nuxt": "^0.1.0",
 
   resend: "^6.19.0",
+  "@ararahq/sdk": "^1.8.1",
 } as const;
 
 export type AvailableDependencies = keyof typeof dependencyVersionMap;

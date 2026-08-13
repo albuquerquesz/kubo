@@ -92,5 +92,27 @@ export async function processCommunicationTemplates(
       "packages/notifique/src/lib/email.ts",
       config,
     );
+    return;
+  }
+
+  if (config.communication === "arara") {
+    for (const path of [
+      "packages/arara/package.json",
+      "packages/arara/tsconfig.json",
+      "packages/arara/src/index.ts",
+      "packages/arara/src/lib/client.ts",
+    ]) {
+      processSingleTemplate(vfs, templates, path, path, config);
+    }
+
+    if (config.backend === "convex") {
+      processSingleTemplate(
+        vfs,
+        templates,
+        "backend/convex/packages/backend/convex/arara.ts",
+        "packages/backend/convex/arara.ts",
+        config,
+      );
+    }
   }
 }

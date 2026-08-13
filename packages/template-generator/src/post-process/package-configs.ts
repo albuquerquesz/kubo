@@ -42,6 +42,7 @@ export function processPackageConfigs(vfs: VirtualFileSystem, config: ProjectCon
   updatePaymentsPackageJson(vfs, config);
   updateEmailPackageJson(vfs, config);
   updateNotifiquePackageJson(vfs, config);
+  updateAraraPackageJson(vfs, config);
   updateUiPackageJson(vfs, config);
   updateInfraPackageJson(vfs, config);
   updateDesktopPackageJson(vfs, config);
@@ -678,6 +679,14 @@ function updateNotifiquePackageJson(vfs: VirtualFileSystem, config: ProjectConfi
 
   pkgJson.name = `@${config.projectName}/notifique`;
   vfs.writeJson("packages/notifique/package.json", pkgJson);
+}
+
+function updateAraraPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
+  const pkgJson = vfs.readJson<PackageJson>("packages/arara/package.json");
+  if (!pkgJson) return;
+
+  pkgJson.name = `@${config.projectName}/arara`;
+  vfs.writeJson("packages/arara/package.json", pkgJson);
 }
 
 function updateUiPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {

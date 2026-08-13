@@ -1,0 +1,49 @@
+"use node";
+
+import { v } from "convex/values";
+import { action } from "./_generated/server";
+import { createAraraClient } from "@{{projectName}}/arara";
+
+const messageInput = v.object({
+  receiver: v.string(),
+  body: v.optional(v.string()),
+  templateName: v.optional(v.string()),
+  templateVariables: v.optional(v.array(v.string())),
+});
+
+export const execute = action({
+  args: {
+    operation: v.union(
+      v.literal("send"),
+      v.literal("status"),
+      v.literal("listTemplates"),
+      v.literal("createTemplate"),
+      v.literal("templateStatus"),
+    ),
+    message: v.optional(messageInput),
+    messageId: v.optional(v.string()),
+    templateName: v.optional(v.string()),
+    template: v.optional(v.any()),
+  },
+  handler: async (ctx, args) => {
+    void ctx;
+    const client = createAraraClient(process.env.ARARA_API_KEY);
+
+    switch (args.operation) {
+      case "send":
+        if (!args.message) throw new Error("message is required for send");
+        return client.messages.send(args.message);
+      case "status":
+        if (!args.messageId) throw new Error("messageId is required for status");
+        return client.messages.get(args.messageId);
+      case "listTemplates":
+        return client.templates.list();
+      case "createTemplate":
+        if (!args.template) throw new Error("template is required for createTemplate");
+        return client.templates.create(args.template);
+      case "templateStatus":
+        if (!args.templateName) throw new Error("templateName is required for templateStatus");
+        return client.templates.getStatus(args.templateName);
+    }
+  },
+});

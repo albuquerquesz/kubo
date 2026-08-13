@@ -303,6 +303,7 @@ function buildConvexBackendVars(
   auth: ProjectConfig["auth"],
   _payments: ProjectConfig["payments"],
   examples: ProjectConfig["examples"],
+  communication: ProjectConfig["communication"],
 ): EnvVariable[] {
   const hasReactRouter = frontend.includes("react-router");
   const hasTanStackRouter = frontend.includes("tanstack-router");
@@ -330,6 +331,15 @@ function buildConvexBackendVars(
           : "http://localhost:3001";
 
   const vars: EnvVariable[] = [];
+
+  if (communication === "arara") {
+    vars.push({
+      key: "ARARA_API_KEY",
+      value: "",
+      condition: true,
+      comment: "AraraHQ server API key (Node Action only)",
+    });
+  }
 
   if (examples?.includes("ai")) {
     vars.push({
@@ -581,6 +591,12 @@ function buildServerVars(
       comment: "Optional default From (must use a VERIFIED domain)",
     },
     {
+      key: "ARARA_API_KEY",
+      value: "",
+      condition: communication === "arara",
+      comment: "AraraHQ API key — used only by server-side Node SDK code",
+    },
+    {
       key: "DATABASE_URL",
       value: databaseUrl,
       condition: database !== "none" && dbSetup === "none",
@@ -723,7 +739,13 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
       }
 
       // Then add variables
-      const convexBackendVars = buildConvexBackendVars(frontend, auth, payments, examples);
+      const convexBackendVars = buildConvexBackendVars(
+        frontend,
+        auth,
+        payments,
+        examples,
+        communication,
+      );
       if (convexBackendVars.length > 0) {
         let existingContent = "";
         if (vfs.exists(envLocalPath)) {

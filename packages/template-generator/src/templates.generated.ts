@@ -14183,6 +14183,56 @@ export const action = actionGeneric;
 export const internalAction = internalActionGeneric;
 export const httpAction = httpActionGeneric;
 `],
+  ["backend/convex/packages/backend/convex/arara.ts.hbs", `"use node";
+
+import { v } from "convex/values";
+import { action } from "./_generated/server";
+import { createAraraClient } from "@{{projectName}}/arara";
+
+const messageInput = v.object({
+  receiver: v.string(),
+  body: v.optional(v.string()),
+  templateName: v.optional(v.string()),
+  templateVariables: v.optional(v.array(v.string())),
+});
+
+export const execute = action({
+  args: {
+    operation: v.union(
+      v.literal("send"),
+      v.literal("status"),
+      v.literal("listTemplates"),
+      v.literal("createTemplate"),
+      v.literal("templateStatus"),
+    ),
+    message: v.optional(messageInput),
+    messageId: v.optional(v.string()),
+    templateName: v.optional(v.string()),
+    template: v.optional(v.any()),
+  },
+  handler: async (ctx, args) => {
+    void ctx;
+    const client = createAraraClient(process.env.ARARA_API_KEY);
+
+    switch (args.operation) {
+      case "send":
+        if (!args.message) throw new Error("message is required for send");
+        return client.messages.send(args.message);
+      case "status":
+        if (!args.messageId) throw new Error("messageId is required for status");
+        return client.messages.get(args.messageId);
+      case "listTemplates":
+        return client.templates.list();
+      case "createTemplate":
+        if (!args.template) throw new Error("template is required for createTemplate");
+        return client.templates.create(args.template);
+      case "templateStatus":
+        if (!args.templateName) throw new Error("templateName is required for templateStatus");
+        return client.templates.getStatus(args.templateName);
+    }
+  },
+});
+`],
   ["backend/convex/packages/backend/convex/convex.config.ts.hbs", `import { defineApp } from "convex/server";
 {{#if (eq auth "better-auth")}}
 import betterAuth from "@convex-dev/better-auth/convex.config";
@@ -33296,6 +33346,61 @@ export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
 });
 `],
+  ["packages/arara/package.json.hbs", `{
+  "name": "@{{projectName}}/arara",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "devDependencies": {}
+}
+`],
+  ["packages/arara/src/index.ts.hbs", `export * from "./lib/client";
+`],
+  ["packages/arara/src/lib/client.ts.hbs", `import { NodeSDK } from "@ararahq/sdk";
+
+export type AraraClient = NodeSDK;
+
+export function createAraraClient(apiKey = process.env.ARARA_API_KEY): AraraClient {
+  if (!apiKey) {
+    throw new Error("ARARA_API_KEY is not set. Add it to your server environment before using AraraHQ.");
+  }
+
+  return new NodeSDK({ apiKey });
+}
+
+export function getAraraClient(): AraraClient {
+  return createAraraClient();
+}
+
+export const arara = {
+  client: getAraraClient,
+  sendMessage: (input: Parameters<AraraClient["messages"]["send"]>[0]) =>
+    getAraraClient().messages.send(input),
+  getMessage: (messageId: string) => getAraraClient().messages.get(messageId),
+  listTemplates: () => getAraraClient().templates.list(),
+  createTemplate: (input: Parameters<AraraClient["templates"]["create"]>[0]) =>
+    getAraraClient().templates.create(input),
+  getTemplateStatus: (name: string) => getAraraClient().templates.getStatus(name),
+};
+`],
+  ["packages/arara/tsconfig.json.hbs", `{
+  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "composite": true
+  }
+}
+`],
   ["packages/config/package.json.hbs", `{
   "name": "@{{projectName}}/config",
   "version": "0.0.0",
@@ -38063,4 +38168,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 559;
+export const TEMPLATE_COUNT = 564;

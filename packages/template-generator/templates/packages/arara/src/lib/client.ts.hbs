@@ -1,0 +1,26 @@
+import { NodeSDK } from "@ararahq/sdk";
+
+export type AraraClient = NodeSDK;
+
+export function createAraraClient(apiKey = process.env.ARARA_API_KEY): AraraClient {
+  if (!apiKey) {
+    throw new Error("ARARA_API_KEY is not set. Add it to your server environment before using AraraHQ.");
+  }
+
+  return new NodeSDK({ apiKey });
+}
+
+export function getAraraClient(): AraraClient {
+  return createAraraClient();
+}
+
+export const arara = {
+  client: getAraraClient,
+  sendMessage: (input: Parameters<AraraClient["messages"]["send"]>[0]) =>
+    getAraraClient().messages.send(input),
+  getMessage: (messageId: string) => getAraraClient().messages.get(messageId),
+  listTemplates: () => getAraraClient().templates.list(),
+  createTemplate: (input: Parameters<AraraClient["templates"]["create"]>[0]) =>
+    getAraraClient().templates.create(input),
+  getTemplateStatus: (name: string) => getAraraClient().templates.getStatus(name),
+};

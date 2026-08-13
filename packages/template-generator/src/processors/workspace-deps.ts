@@ -26,6 +26,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     payments: vfs.exists("packages/payments/package.json"),
     email: vfs.exists("packages/email/package.json"),
     notifique: vfs.exists("packages/notifique/package.json"),
+    arara: vfs.exists("packages/arara/package.json"),
     api: vfs.exists("packages/api/package.json"),
     ui: vfs.exists("packages/ui/package.json"),
     backend: vfs.exists("packages/backend/package.json"),
@@ -142,6 +143,16 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     });
   }
 
+  if (packages.arara) {
+    addPackageDependency({
+      vfs,
+      packagePath: "packages/arara/package.json",
+      dependencies: ["@ararahq/sdk"],
+      devDependencies: ["typescript"],
+      customDevDependencies: configDep,
+    });
+  }
+
   if (packages.api) {
     const apiPackageDeps: Record<string, string> = { ...envDep };
     if (auth !== "none" && packages.auth) {
@@ -161,11 +172,16 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   }
 
   if (packages.backend) {
+    const backendDeps: Record<string, string> = {};
+    if (config.communication === "arara" && packages.arara) {
+      backendDeps[`@${projectName}/arara`] = workspaceVersion;
+    }
     addPackageDependency({
       vfs,
       packagePath: "packages/backend/package.json",
       dependencies: commonDeps,
       devDependencies: ["typescript"],
+      customDependencies: backendDeps,
       customDevDependencies: configDep,
     });
   }
@@ -178,6 +194,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     if (packages.payments) serverDeps[`@${projectName}/payments`] = workspaceVersion;
     if (packages.email) serverDeps[`@${projectName}/email`] = workspaceVersion;
     if (packages.notifique) serverDeps[`@${projectName}/notifique`] = workspaceVersion;
+    if (packages.arara) serverDeps[`@${projectName}/arara`] = workspaceVersion;
     addPackageDependency({
       vfs,
       packagePath: "apps/server/package.json",
@@ -203,6 +220,9 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     }
     if (backend === "self" && packages.notifique) {
       webPackageDeps[`@${projectName}/notifique`] = workspaceVersion;
+    }
+    if (backend === "self" && packages.arara) {
+      webPackageDeps[`@${projectName}/arara`] = workspaceVersion;
     }
     if (backend === "convex" && packages.backend)
       webPackageDeps[`@${projectName}/backend`] = workspaceVersion;
