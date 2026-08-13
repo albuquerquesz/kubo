@@ -1,6 +1,6 @@
 "use client";
 
-import { Star } from "lucide-react";
+import { Star } from "lucide-react-motion";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -300,14 +300,14 @@ export function CTASection({ className }: CTASectionProps) {
             target="_blank"
             rel="noreferrer"
             className={cn(
-              "inline-flex size-12 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-background/70 text-foreground transition-all duration-300",
+              "inline-flex size-14 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-background/70 text-foreground transition-all duration-300",
               "hover:scale-105 hover:bg-background/70 hover:ring-4 hover:ring-foreground/10 active:scale-95",
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
             )}
             aria-label="Abrir o repositório Kubo no GitHub para dar uma estrela"
             title="Dar uma estrela no GitHub"
           >
-            <Star aria-hidden className="size-5" strokeWidth={1.8} />
+            <Star aria-hidden className="size-6" strokeWidth={1.8} />
           </a>
         </div>
       </div>

@@ -137,6 +137,7 @@
         "fumadocs-ui": "npm:@fumadocs/base-ui@16.8.10",
         "gsap": "^3.15.0",
         "lucide-react": "^1.14.0",
+        "lucide-react-motion": "^0.5.1",
         "motion": "^12.38.0",
         "next": "^16.2.6",
         "next-themes": "^0.4.6",
@@ -2158,6 +2159,8 @@
     "lru-cache": ["lru-cache@6.0.0", "", { "dependencies": { "yallist": "^4.0.0" } }, "sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA=="],
 
     "lucide-react": ["lucide-react@1.14.0", "", { "peerDependencies": { "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-+1mdWcfSJVUsaTIjN9zoezmUhfXo5l0vP7ekBMPo3jcS/aIkxHnXqAPsByszMZx/Y8oQBRJxJx5xg+RH3urzxA=="],
+
+    "lucide-react-motion": ["lucide-react-motion@0.5.1", "", { "peerDependencies": { "motion": ">=11", "react": ">=18", "react-dom": ">=18" } }, "sha512-hoo9KBTw1x51XmCzvO5CotXo7BISLVkncqyiLGO53/HJPFjRbxlCrSCQdK05pgyPBe7336eYUZw2rzEYortWqQ=="],
 
     "luxon": ["luxon@3.7.2", "", {}, "sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew=="],
 
