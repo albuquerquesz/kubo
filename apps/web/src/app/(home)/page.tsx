@@ -31,7 +31,16 @@ export default async function HomePage() {
         variant="documentation"
         sectionId="documentation"
         titleId="custom-stack-title-secondary"
-        className="mt-0 border-t sm:mt-0 lg:mt-0"
+        className="mt-0 mb-0 sm:mt-0 sm:mb-0 lg:mt-0 lg:mb-0"
+        showSideBorders
+        showViewportTopRule={false}
+        showViewportBottomRule={false}
+      />
+      <CustomStackPanel
+        variant="integrations"
+        sectionId="integrations-panel"
+        titleId="custom-stack-title-integrations"
+        className="mt-0 sm:mt-0 lg:mt-0"
         showSideBorders
         showViewportTopRule={false}
       />

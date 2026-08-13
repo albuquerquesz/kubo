@@ -13,7 +13,7 @@ const stackFeatures = [
 ] as const;
 
 type CustomStackPanelProps = {
-  variant?: "stack-builder" | "documentation";
+  variant?: "stack-builder" | "documentation" | "integrations";
   sectionId?: string;
   titleId?: string;
   className?: string;
@@ -42,15 +42,32 @@ export default function CustomStackPanel({
           imageSrc: "/assets/kubo-bg-3.png",
           imageAlt: "Exemplo de código gerado pelo Kubo",
         }
-      : {
-          title: "Monte sua stack.",
-          imageSrc: "/assets/kubo-bg.png",
-          description:
-            "Escolha cada camada no Stack Builder e gere uma base TypeScript pronta para evoluir com o seu projeto.",
-          cta: "Abra o Stack Builder",
-          href: "/new",
-          imageAlt: "Interface do Stack Builder do Kubo",
-        };
+      : variant === "integrations"
+        ? {
+            title: "Monte sua stack",
+            imageSrc: "/assets/kubo-bg.png",
+            description: (
+              <>
+                Escolha cada camada e gere uma base TypeScript pronta para evoluir com seu projeto.
+              </>
+            ),
+            cta: "Monte sua stack",
+            href: "/new",
+            imageAlt: "Integrações brasileiras disponíveis no Stack Builder do Kubo",
+          }
+        : {
+            title: "Explorar Integrações",
+            imageSrc: "/assets/kubo-bg-4.png",
+            description: (
+              <>
+                Construa com as melhores ferramentas e descubra o diferencial das{" "}
+                <span className="text-foreground">integrações brasileiras</span>.
+              </>
+            ),
+            cta: "Explorar Integrações",
+            href: "/new",
+            imageAlt: "Interface do Stack Builder do Kubo",
+          };
 
   return (
     <section
