@@ -126,6 +126,7 @@ export async function displayPostInstallInstructions(
     : "";
   const resendInstructions = communication === "resend" ? getResendInstructions() : "";
   const notifiqueInstructions = communication === "notifique" ? getNotifiqueInstructions() : "";
+  const araraInstructions = communication === "arara" ? getAraraInstructions(backend) : "";
 
   const hasWeb = frontend?.some((f) => (desktopWebFrontends as readonly string[]).includes(f));
   const hasNative =
@@ -237,6 +238,7 @@ export async function displayPostInstallInstructions(
   if (getMonitorInstructions) output += `\n${getMonitorInstructions.trim()}\n`;
   if (resendInstructions) output += `\n${resendInstructions.trim()}\n`;
   if (notifiqueInstructions) output += `\n${notifiqueInstructions.trim()}\n`;
+  if (araraInstructions) output += `\n${araraInstructions.trim()}\n`;
   // Deploy steps come last so env sync happens after auth/payment keys exist
   if (alchemyDeployInstructions) output += `\n${alchemyDeployInstructions.trim()}\n`;
 
@@ -511,6 +513,19 @@ function getNotifiqueInstructions() {
     "•",
   )} Auth is Bearer only — do not send x-workspace-id\n${pc.dim(
     "   https://docs.notifique.dev/skill.md",
+  )}`;
+}
+
+function getAraraInstructions(backend: Backend) {
+  const envPath = backend === "convex" ? "packages/backend/.env.local" : "the server .env";
+  return `${pc.bold("AraraHQ communication:")}\n${pc.cyan(
+    "•",
+  )} Set ARARA_API_KEY in ${envPath}\n${pc.cyan(
+    "•",
+  )} Use @project/arara only from server code; the SDK does not run on Edge/Workers\n${pc.cyan(
+    "•",
+  )} Convex projects use the generated Node Action (api.arara.execute)\n${pc.dim(
+    "   https://docs.ararahq.com/sdks/node",
   )}`;
 }
 

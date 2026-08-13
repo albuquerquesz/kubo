@@ -96,6 +96,86 @@ describe("Resend communication", () => {
       backend: "hono",
     });
     expect(resendConfig.communication).toBe("resend");
+
+    const araraConfig = processFlags({
+      communication: "arara",
+      backend: "hono",
+    });
+    expect(araraConfig.communication).toBe("arara");
+  });
+
+  it("generates the AraraHQ SDK package and server integration", async () => {
+    const result = await createVirtual({
+      projectName: "arara-app",
+      frontend: ["tanstack-router"],
+      backend: "hono",
+      runtime: "bun",
+      database: "sqlite",
+      orm: "drizzle",
+      auth: "none",
+      payments: "none",
+      observability: "none",
+      communication: "arara",
+      addons: ["none"],
+      examples: ["none"],
+      dbSetup: "none",
+      api: "trpc",
+      webDeploy: "none",
+      serverDeploy: "none",
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+
+    const files = collectFiles(result.value.root, "/virtual");
+    const araraPackage = JSON.parse(files.get("packages/arara/package.json") ?? "{}");
+    const client = files.get("packages/arara/src/lib/client.ts") ?? "";
+    const serverEnv = files.get("apps/server/.env") ?? "";
+    const serverPackage = JSON.parse(files.get("apps/server/package.json") ?? "{}");
+    const readme = files.get("README.md") ?? "";
+
+    expect(araraPackage.dependencies?.["@ararahq/sdk"]).toBe("^1.8.1");
+    expect(client).toContain("NodeSDK");
+    expect(client).toContain("messages.send");
+    expect(client).toContain("templates.list");
+    expect(serverEnv).toContain("ARARA_API_KEY=");
+    expect(serverPackage.dependencies?.["@arara-app/arara"]).toBeTruthy();
+    expect(readme).toContain("docs.ararahq.com/sdks/node");
+  });
+
+  it("generates AraraHQ as a Convex Node Action with a backend-only key", async () => {
+    const result = await createVirtual({
+      projectName: "arara-convex-app",
+      frontend: ["tanstack-router"],
+      backend: "convex",
+      runtime: "none",
+      database: "none",
+      orm: "none",
+      auth: "none",
+      payments: "none",
+      observability: "none",
+      communication: "arara",
+      addons: ["none"],
+      examples: ["none"],
+      dbSetup: "none",
+      api: "none",
+      webDeploy: "none",
+      serverDeploy: "none",
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+
+    const files = collectFiles(result.value.root, "/virtual");
+    const action = files.get("packages/backend/convex/arara.ts") ?? "";
+    const env = files.get("packages/backend/.env.local") ?? "";
+    const backendPackage = JSON.parse(files.get("packages/backend/package.json") ?? "{}");
+
+    expect(action).toContain('"use node"');
+    expect(action).toContain("client.messages.send");
+    expect(action).toContain("client.templates.create");
+    expect(env).toContain("ARARA_API_KEY=");
+    expect(backendPackage.dependencies?.["@arara-convex-app/arara"]).toBe("workspace:*");
   });
 
   it("generates packages/notifique helpers aligned with the Notifique skill", async () => {
