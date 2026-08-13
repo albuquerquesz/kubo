@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM"],
+    "types": ["bun"],
+    "noEmit": true
+  },
+  "include": ["emails/**/*.tsx", "src/**/*.tsx", "src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
