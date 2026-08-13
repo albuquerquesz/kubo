@@ -42,6 +42,7 @@ export default async function HomePage() {
         titleId="custom-stack-title-integrations"
         className="mt-0 sm:mt-0 lg:mt-0"
         showSideBorders
+        showViewportTopRule={false}
       />
       <Testimonials tweets={tweets} videos={videos} />
       <Footer />
