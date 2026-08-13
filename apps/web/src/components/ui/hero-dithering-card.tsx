@@ -135,7 +135,8 @@ export function CTASection({ className }: CTASectionProps) {
   const markRef = useRef<KuboMarkMotionHandle>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
-  const ctaRef = useRef<HTMLButtonElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const ctaButtonRef = useRef<HTMLButtonElement>(null);
   const primary = useThemePrimary();
   const reducedMotion = usePrefersReducedMotion();
   const command = getCreateCommand(DEFAULT_PACKAGE_MANAGER);
@@ -204,7 +205,7 @@ export function CTASection({ className }: CTASectionProps) {
       await navigator.clipboard.writeText(command);
       setCopied(true);
 
-      const cta = ctaRef.current;
+      const cta = ctaButtonRef.current;
       if (cta) fireCtaConfetti(cta);
       markRef.current?.celebrate();
 
@@ -277,9 +278,9 @@ export function CTASection({ className }: CTASectionProps) {
           Limpo, preciso e do seu jeito.
         </p>
 
-        <div className="flex max-w-full flex-wrap items-center justify-center gap-3">
+        <div ref={ctaRef} className="flex max-w-full flex-wrap items-center justify-center gap-3">
           <button
-            ref={ctaRef}
+            ref={ctaButtonRef}
             type="button"
             onClick={copyCommand}
             className={cn(buttonVariants({ variant: "cta", size: "xl" }), "relative")}
@@ -300,7 +301,7 @@ export function CTASection({ className }: CTASectionProps) {
             rel="noreferrer"
             className={cn(
               "inline-flex size-12 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-background/70 text-foreground transition-all duration-300",
-              "hover:scale-105 hover:border-primary hover:bg-primary/10 hover:text-primary active:scale-95",
+              "hover:scale-105 hover:bg-background/70 hover:ring-4 hover:ring-foreground/10 active:scale-95",
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
             )}
             aria-label="Abrir o repositório Kubo no GitHub para dar uma estrela"
