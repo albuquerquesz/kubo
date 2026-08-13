@@ -47,8 +47,8 @@ describe("logo marquee metrics", () => {
     expect(logoMarqueeMetrics(LOGO_MARQUEE_BREAKPOINT_PX)).toEqual(LOGO_MARQUEE_DESKTOP);
   });
 
-  test("three BR integration cells", () => {
-    expect(LOGO_MARQUEE_CELL_COUNT).toBe(3);
+  test("five BR integration cells", () => {
+    expect(LOGO_MARQUEE_CELL_COUNT).toBe(5);
   });
 
   test("click slop is 6px", () => {
@@ -118,18 +118,23 @@ describe("shipped markup + assets", () => {
     expect(page).toMatch(/<HeroSection \/>\s*<LogoMarquee \/>/);
   });
 
-  test("component lists AbacatePay, Guara Cloud, GetMonitor", () => {
+  test("component lists the Brazilian integrations", () => {
     const src = readFileSync(join(webRoot, "src/app/(home)/_components/logo-marquee.tsx"), "utf8");
     expect(src).toContain("AbacatePay");
     expect(src).toContain("Guara Cloud");
     expect(src).toContain("GetMonitor");
+    expect(src).toContain("Himetrica");
+    expect(src).toContain("Notifique.dev");
     expect(src).toContain('href: "https://www.abacatepay.com"');
     expect(src).toContain('href: "https://guaracloud.com"');
     expect(src).toContain('href: "https://getmonitor.io"');
     expect(src).toContain("/integrations/abacatepay.svg");
     expect(src).toContain("/integrations/guaracloud.png");
     expect(src).toContain("https://getmonitor.io/logo.svg");
-    expect(src).toContain("TRACK_COPIES = 3");
+    expect(src).toContain('href: "https://www.himetrica.com"');
+    expect(src).toContain("https://www.himetrica.com/himetrica.png");
+    expect(src).toContain('href: "https://notifique.dev"');
+    expect(src).toContain("https://notifique.dev/logo-notifique.png");
     expect(src).toContain("LOGO_MARQUEE_AUTOPLAY_PX_PER_SEC");
     expect(src).toContain("requestAnimationFrame");
     expect(src).toContain("prefersReducedMotion");
@@ -151,7 +156,7 @@ describe("shipped markup + assets", () => {
     expect(css).toContain("width: 272px");
     expect(css).toContain("margin-left: -1px");
     expect(css).toContain("max-width: 112px");
-    expect(css).toContain("max-height: 60px");
+    expect(css).toContain("max-height: 56px");
     expect(css).toContain("filter: grayscale(1)");
     expect(css).toContain("500ms ease-in-out");
     expect(css).toContain("touch-action: pan-x");
