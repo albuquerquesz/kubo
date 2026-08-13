@@ -35,6 +35,14 @@ export default async function HomePage() {
         showSideBorders
         showViewportTopRule={false}
       />
+      <CustomStackPanel
+        variant="integrations"
+        sectionId="integrations-panel"
+        titleId="custom-stack-title-integrations"
+        className="mt-0 border-t sm:mt-0 lg:mt-0"
+        showSideBorders
+        showViewportTopRule={false}
+      />
       <Testimonials tweets={tweets} videos={videos} />
       <Footer />
     </main>
