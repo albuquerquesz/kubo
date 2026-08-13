@@ -1,6 +1,6 @@
 "use client";
 
-import { Star } from "lucide-react-motion";
+import { Star } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 
