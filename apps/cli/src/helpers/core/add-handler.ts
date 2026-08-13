@@ -342,6 +342,7 @@ async function addHandlerInternal(
 
   // Build config for addon setup (exclusive lint/task-runner slots replace siblings)
   const { updatedAddons, removedAddons } = mergeAddonsExclusive(existingConfig.addons, addonsToAdd);
+  const updatedTesting = existingConfig.testing ?? [];
   const addonsValidationResult = validateAddonsAgainstConfig(updatedAddons, existingConfig);
   if (addonsValidationResult.isErr()) {
     return Result.err(new CLIError({ message: addonsValidationResult.error.message }));
@@ -371,6 +372,7 @@ async function addHandlerInternal(
     payments: existingConfig.payments,
     observability: existingConfig.observability,
     communication: existingConfig.communication ?? "none",
+    testing: updatedTesting,
     git: false,
     packageManager: input.packageManager || existingConfig.packageManager,
     install: input.install ?? false,
@@ -514,6 +516,7 @@ async function addHandlerInternal(
   await updateKubojsConfig(projectDir, {
     addons: updatedAddons,
     addonOptions: updatedConfig.addonOptions,
+    testing: updatedTesting,
   });
 
   // Install dependencies if requested
