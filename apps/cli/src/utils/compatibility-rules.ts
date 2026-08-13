@@ -617,12 +617,30 @@ export function validateCommunicationCompatibility(
 ): ValidationResult {
   if (!communication || communication === "none") return Result.ok(undefined);
 
-  if ((communication === "resend" || communication === "notifique") && backend === "none") {
+  if (
+    (communication === "resend" || communication === "notifique" || communication === "arara") &&
+    backend === "none"
+  ) {
     return validationErr(
-      `${communication === "notifique" ? "Notifique" : "Resend"} communication requires a server backend. Please choose a backend or use '--communication none'.`,
+      `${communication === "notifique" ? "Notifique" : communication === "arara" ? "AraraHQ" : "Resend"} communication requires a server backend. Please choose a backend or use '--communication none'.`,
     );
   }
 
+  return Result.ok(undefined);
+}
+
+export function validateAraraRuntimeCompatibility(
+  communication: Communication | undefined,
+  backend: Backend | undefined,
+  runtime: Runtime | undefined,
+  serverDeploy: ServerDeploy | undefined,
+): ValidationResult {
+  if (communication !== "arara" || backend === "convex") return Result.ok(undefined);
+  if (runtime === "workers" || serverDeploy === "cloudflare") {
+    return validationErr(
+      "AraraHQ requires the official Node SDK and is not compatible with Edge/Workers runtimes. Use a Node/Bun server deployment or Convex Node Action.",
+    );
+  }
   return Result.ok(undefined);
 }
 

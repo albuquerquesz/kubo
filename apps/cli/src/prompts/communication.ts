@@ -30,6 +30,11 @@ export async function getCommunicationChoice(
       label: "Notifique",
       hint: "Omnichannel BR messaging API",
     },
+    {
+      value: "arara" as Communication,
+      label: "AraraHQ",
+      hint: "WhatsApp messaging via the official Node SDK",
+    },
   ];
 
   const response = await navigableSelect<Communication>({

@@ -117,7 +117,7 @@ export const ObservabilitySchema = z
   .describe("Selected observability providers");
 
 export const CommunicationSchema = z
-  .enum(["none", "resend", "notifique"])
+  .enum(["none", "resend", "notifique", "arara"])
   .describe("Communication provider (email / messaging)");
 
 export const WebDeploySchema = z

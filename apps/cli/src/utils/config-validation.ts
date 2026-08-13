@@ -13,6 +13,7 @@ import {
   validatePaymentsCompatibility,
   validateTestingAgainstFrontends,
   validateCommunicationCompatibility,
+  validateAraraRuntimeCompatibility,
   validateSelfBackendCompatibility,
   validateDockerServerDeploy,
   validateDockerWebDeployDesktopAddons,
@@ -571,6 +572,12 @@ export function validateFullConfig(
     );
 
     yield* validateCommunicationCompatibility(config.communication, config.backend);
+    yield* validateAraraRuntimeCompatibility(
+      config.communication,
+      config.backend,
+      config.runtime,
+      config.serverDeploy,
+    );
 
     return Result.ok(undefined);
   });
@@ -597,6 +604,12 @@ export function validateConfigForProgrammaticUse(config: Partial<ProjectConfig>)
     );
 
     yield* validateCommunicationCompatibility(config.communication, config.backend);
+    yield* validateAraraRuntimeCompatibility(
+      config.communication,
+      config.backend,
+      config.runtime,
+      config.serverDeploy,
+    );
 
     if (config.addons && config.addons.length > 0) {
       yield* validateAddonsAgainstFrontends(
