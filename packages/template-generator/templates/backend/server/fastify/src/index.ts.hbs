@@ -1,6 +1,9 @@
 import { env } from "@{{projectName}}/env/server";
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
+{{#if (eq payments "stripe")}}
+import fastifyRawBody from "fastify-raw-body";
+{{/if}}
 
 {{#if (eq api "trpc")}}
 import { fastifyTRPCPlugin, type FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
@@ -33,6 +36,9 @@ import {
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
+{{/if}}
+{{#if (eq payments "stripe")}}
+import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
 {{/if}}
 {{#if (eq auth "clerk")}}
 import { clerkPlugin } from "@clerk/fastify";
@@ -82,6 +88,9 @@ const fastify = Fastify({
 {{/if}}
 
 fastify.register(fastifyCors, baseCorsConfig);
+{{#if (eq payments "stripe")}}
+fastify.register(fastifyRawBody, { field: "rawBody", global: false, routes: ["/api/payments/stripe/webhook"] });
+{{/if}}
 {{#if (eq auth "clerk")}}
 fastify.register(clerkPlugin, {
 	publishableKey: env.CLERK_PUBLISHABLE_KEY,
@@ -268,6 +277,24 @@ fastify.post('/ai', async function (request) {
 	return createUIMessageStreamResponse({
 		stream: toUIMessageStream({ stream: result.stream }),
 	});
+});
+{{/if}}
+
+{{#if (eq payments "stripe")}}
+fastify.post("/api/payments/stripe/checkout", async (request) => ({
+	data: await createStripeEmbeddedCheckout(request.headers.origin ?? request.url), success: true, error: null,
+}));
+fastify.post("/api/payments/stripe/webhook", { config: { rawBody: true } }, async (request, reply) => {
+	const signature = request.headers["stripe-signature"];
+	if (typeof signature !== "string") return reply.status(400).send({ error: "Missing Stripe-Signature" });
+	const rawBody = (request as typeof request & { rawBody?: Buffer | string }).rawBody;
+	if (!rawBody) return reply.status(400).send({ error: "Missing raw webhook body" });
+	const result = await processStripeWebhook(typeof rawBody === "string" ? rawBody : rawBody.toString("utf8"), signature);
+	return reply.status(result.status).send(result.body);
+});
+fastify.get("/api/payments/stripe/checkout/:sessionId", async (request, reply) => {
+	try { return { data: await getStripeCheckoutSession((request.params as { sessionId: string }).sessionId), success: true, error: null }; }
+	catch { return reply.status(404).send({ error: "Checkout session not found" }); }
 });
 {{/if}}
 

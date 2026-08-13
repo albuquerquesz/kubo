@@ -1,0 +1,3 @@
+import { json } from '@sveltejs/kit';
+import { createStripeEmbeddedCheckout } from '@{{projectName}}/payments/lib/stripe';
+export const POST = ({ request }) => createStripeEmbeddedCheckout(request.url).then((data) => json({ data, success: true, error: null }));

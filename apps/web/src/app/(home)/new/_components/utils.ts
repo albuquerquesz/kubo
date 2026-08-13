@@ -1,4 +1,4 @@
-import { desktopWebFrontends } from "@kubojs/types";
+import { desktopWebFrontends, getPaymentCompatibilityIssue } from "@kubojs/types";
 
 import { DEFAULT_STACK, type StackState, type TECH_OPTIONS } from "@/lib/constant";
 import { CATEGORY_ORDER } from "@/lib/stack-utils";
@@ -192,6 +192,7 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
       api: "none",
       dbSetup: "none",
       serverDeploy: "none",
+      payments: "none",
     };
 
     for (const [key, value] of Object.entries(convexOverrides)) {
@@ -1192,25 +1193,30 @@ export const getDisabledReason = (
   // PAYMENTS CONSTRAINTS
   // ============================================
   if (category === "payments") {
-    if (optionId === "abacatepay") {
-      if (currentStack.backend === "convex") {
-        return "AbacatePay não é suportado com Convex";
-      }
-      if (!currentStack.webFrontend.some((f) => f !== "none")) {
-        return "AbacatePay exige um frontend web";
-      }
-      if (currentStack.nativeFrontend.some((f) => f !== "none")) {
-        return "AbacatePay v1 não suporta apps com frontend nativo";
-      }
-      if (
-        currentStack.database === "none" ||
-        currentStack.orm === "none" ||
-        currentStack.database === "mongodb" ||
-        currentStack.orm === "mongoose"
-      ) {
-        return "AbacatePay v1 exige um banco SQL com Prisma ou Drizzle";
-      }
+    const issue = getPaymentCompatibilityIssue({
+      provider: optionId,
+      backend: currentStack.backend,
+      frontends: [...currentStack.webFrontend, ...currentStack.nativeFrontend],
+      database: currentStack.database,
+      orm: currentStack.orm,
+    });
+    if (issue === "convex-unsupported") {
+      return optionId === "stripe"
+        ? "Stripe não é suportado com Convex"
+        : "AbacatePay não é suportado com Convex";
     }
+    if (issue === "requires-web-frontend") {
+      return optionId === "stripe"
+        ? "Stripe exige um frontend web"
+        : "AbacatePay exige um frontend web";
+    }
+    if (issue === "native-only-unsupported") {
+      return optionId === "stripe"
+        ? "Stripe v1 não suporta apps com frontend nativo"
+        : "AbacatePay v1 não suporta apps com frontend nativo";
+    }
+    if (issue === "sql-database-required")
+      return "AbacatePay v1 exige um banco SQL com Prisma ou Drizzle";
   }
 
   // ============================================

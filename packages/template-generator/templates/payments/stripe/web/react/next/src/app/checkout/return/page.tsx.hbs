@@ -1,0 +1,9 @@
+import { env } from "@{{projectName}}/env/web";
+
+export default async function CheckoutReturnPage({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
+	const { session_id: sessionId } = await searchParams;
+	const baseUrl = {{#if (eq backend "self")}}""{{else}}env.NEXT_PUBLIC_SERVER_URL{{/if}};
+	const response = sessionId ? await fetch(`${baseUrl}/api/payments/stripe/checkout/${sessionId}`, { cache: "no-store" }) : null;
+	const payload = response?.ok ? await response.json() as { data?: { paymentStatus?: string } } : null;
+	return <main><h1>Payment status</h1><p>{payload?.data?.paymentStatus ?? "pending"}</p></main>;
+}

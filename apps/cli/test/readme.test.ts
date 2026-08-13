@@ -62,6 +62,27 @@ describe("README generation", () => {
     expect(readme).toContain("`packages/payments/src/lib/abacatepay.ts`");
   });
 
+  it("documents the Stripe fulfillment contract for self + next projects", async () => {
+    const readme = await generateReadme({
+      frontend: ["next"],
+      backend: "self",
+      runtime: "none",
+      database: "none",
+      orm: "none",
+      auth: "none",
+      api: "none",
+      examples: ["none"],
+      payments: "stripe",
+    });
+
+    expect(readme).toContain("## Stripe Setup");
+    expect(readme).toContain("`STRIPE_SECRET_KEY`");
+    expect(readme).toContain("`NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`");
+    expect(readme).toContain("/api/payments/stripe/webhook");
+    expect(readme).toContain("Fulfillment and idempotency");
+    expect(readme).toContain("event.id");
+  });
+
   it("documents Clerk env setup for next + express", async () => {
     const readme = await generateReadme({
       frontend: ["next"],

@@ -31,6 +31,9 @@ import {
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
 {{/if}}
+{{#if (eq payments "stripe")}}
+import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+{{/if}}
 {{#if (eq auth "clerk")}}
 import { clerkMiddleware } from "@clerk/express";
 {{/if}}
@@ -49,6 +52,10 @@ app.use(
 {{/if}}
 	})
 );
+
+{{#if (eq payments "stripe")}}
+app.use("/api/payments/stripe/webhook", express.raw({ type: "*/*" }));
+{{/if}}
 
 {{#if (eq auth "clerk")}}
 app.use(clerkMiddleware());
@@ -189,6 +196,22 @@ app.use(async (req, res, next) => {
 {{/if}}
 
 app.use(express.json());
+
+{{#if (eq payments "stripe")}}
+app.post("/api/payments/stripe/checkout", async (req, res) => {
+	res.json({ data: await createStripeEmbeddedCheckout(req.get("origin") ?? `${req.protocol}://${req.get("host")}${req.originalUrl}`), success: true, error: null });
+});
+app.post("/api/payments/stripe/webhook", async (req, res) => {
+	const signature = req.header("Stripe-Signature");
+	if (!signature) { res.status(400).json({ error: "Missing Stripe-Signature" }); return; }
+	const result = await processStripeWebhook(Buffer.isBuffer(req.body) ? req.body.toString("utf8") : req.body, signature);
+	res.status(result.status).json(result.body);
+});
+app.get("/api/payments/stripe/checkout/:sessionId", async (req, res) => {
+	try { res.json({ data: await getStripeCheckoutSession(req.params.sessionId), success: true, error: null }); }
+	catch { res.status(404).json({ error: "Checkout session not found" }); }
+});
+{{/if}}
 
 {{#if (includes examples "ai")}}
 app.post("/ai", async (req, res) => {

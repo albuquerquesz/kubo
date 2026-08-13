@@ -1,3 +1,5 @@
+import { getPaymentCompatibilityIssue } from "@kubojs/types";
+
 import { DEFAULT_CONFIG } from "../constants";
 import type { Auth, Backend, Frontend, Payments } from "../types";
 import { UserCancelledError } from "../utils/errors";
@@ -27,34 +29,30 @@ export async function getPaymentsChoice(
       label: "AbacatePay",
       hint: "Hosted checkout with webhook reconciliation",
     },
+    {
+      value: "stripe" as Payments,
+      label: "Stripe",
+      hint: "Embedded Checkout with a fulfillment webhook",
+    },
   ];
 
-  const hasWebFrontend = frontends.some((frontend) =>
-    [
-      "tanstack-router",
-      "react-router",
-      "tanstack-start",
-      "next",
-      "nuxt",
-      "svelte",
-      "solid",
-      "astro",
-    ].includes(frontend),
-  );
-  const isConvex = backend === "convex";
-  const abacatePayDisabledReason = !hasWebFrontend
-    ? "Requires a web frontend"
-    : isConvex
-      ? "Not supported with Convex"
-      : undefined;
+  const getDisabledReason = (provider: Payments) => {
+    const issue = getPaymentCompatibilityIssue({ provider, backend, frontends });
+    if (issue === "requires-web-frontend") return "Requires a web frontend";
+    if (issue === "convex-unsupported") return "Not supported with Convex";
+    if (issue === "native-only-unsupported") return "Not supported with native-only frontends";
+    if (issue === "sql-database-required") return "Requires a SQL database with Prisma or Drizzle";
+    return undefined;
+  };
 
   const selectableOptions = options.map((option) => {
-    if (option.value !== "abacatepay") return option;
+    if (option.value === "none") return option;
 
+    const disabledReason = getDisabledReason(option.value);
     return {
       ...option,
-      hint: abacatePayDisabledReason ?? option.hint,
-      disabled: abacatePayDisabledReason !== undefined,
+      hint: disabledReason ?? option.hint,
+      disabled: disabledReason !== undefined,
     };
   });
 

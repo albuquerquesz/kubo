@@ -1,4 +1,4 @@
-import { getWebPort, type ProjectConfig } from "@kubojs/types";
+import { getStripePublicEnvKey, getWebPort, type ProjectConfig } from "@kubojs/types";
 import Handlebars from "handlebars";
 import isBinaryPath from "is-binary-path";
 
@@ -10,6 +10,9 @@ Handlebars.registerHelper("not", (a) => !a);
 Handlebars.registerHelper("includes", (arr, val) => Array.isArray(arr) && arr.includes(val));
 Handlebars.registerHelper("webPort", (frontend) => {
   return getWebPort(Array.isArray(frontend) ? frontend : []);
+});
+Handlebars.registerHelper("stripePublicEnvKey", (frontend) => {
+  return getStripePublicEnvKey(Array.isArray(frontend) ? frontend : []);
 });
 
 // Shared across every web client template (oRPC/tRPC/better-auth) so the

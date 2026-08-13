@@ -511,6 +511,13 @@ export const TECH_OPTIONS: Record<
       icon: "/integrations/abacatepay.svg",
       color: "from-emerald-400 to-lime-600",
     },
+    {
+      id: "stripe",
+      name: "Stripe",
+      description: "Embedded Checkout + webhook de fulfillment",
+      icon: "/integrations/stripe.svg",
+      color: "from-indigo-400 to-violet-600",
+    },
   ],
   observability: [
     {

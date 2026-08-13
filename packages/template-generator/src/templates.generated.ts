@@ -14543,6 +14543,9 @@ import {
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
 {{/if}}
+{{#if (eq payments "stripe")}}
+import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+{{/if}}
 
 {{#if (eq api "orpc")}}
 const rpcHandler = new RPCHandler(appRouter, {
@@ -14710,6 +14713,19 @@ const app = {{#if (eq runtime "node")}}new Elysia({ adapter: node() }){{else}}ne
 		});
 	})
 {{/if}}
+{{#if (eq payments "stripe")}}
+	.post("/api/payments/stripe/checkout", async ({ request }) => ({ data: await createStripeEmbeddedCheckout(request.headers.get("origin") ?? request.url), success: true, error: null }))
+	.post("/api/payments/stripe/webhook", async ({ request, status }) => {
+		const signature = request.headers.get("stripe-signature");
+		if (!signature) return status(400, { error: "Missing Stripe-Signature" });
+		const result = await processStripeWebhook(await request.text(), signature);
+		return status(result.status, result.body);
+	})
+	.get("/api/payments/stripe/checkout/:sessionId", async ({ params, status }) => {
+		try { return { data: await getStripeCheckoutSession(params.sessionId), success: true, error: null }; }
+		catch { return status(404, { error: "Checkout session not found" }); }
+	})
+{{/if}}
 	.get("/", () => "OK")
 {{#if (eq serverDeploy "vercel")}};
 
@@ -14761,6 +14777,9 @@ import {
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
 {{/if}}
+{{#if (eq payments "stripe")}}
+import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+{{/if}}
 {{#if (eq auth "clerk")}}
 import { clerkMiddleware } from "@clerk/express";
 {{/if}}
@@ -14779,6 +14798,10 @@ app.use(
 {{/if}}
 	})
 );
+
+{{#if (eq payments "stripe")}}
+app.use("/api/payments/stripe/webhook", express.raw({ type: "*/*" }));
+{{/if}}
 
 {{#if (eq auth "clerk")}}
 app.use(clerkMiddleware());
@@ -14920,6 +14943,22 @@ app.use(async (req, res, next) => {
 
 app.use(express.json());
 
+{{#if (eq payments "stripe")}}
+app.post("/api/payments/stripe/checkout", async (req, res) => {
+	res.json({ data: await createStripeEmbeddedCheckout(req.get("origin") ?? \`\${req.protocol}://\${req.get("host")}\${req.originalUrl}\`), success: true, error: null });
+});
+app.post("/api/payments/stripe/webhook", async (req, res) => {
+	const signature = req.header("Stripe-Signature");
+	if (!signature) { res.status(400).json({ error: "Missing Stripe-Signature" }); return; }
+	const result = await processStripeWebhook(Buffer.isBuffer(req.body) ? req.body.toString("utf8") : req.body, signature);
+	res.status(result.status).json(result.body);
+});
+app.get("/api/payments/stripe/checkout/:sessionId", async (req, res) => {
+	try { res.json({ data: await getStripeCheckoutSession(req.params.sessionId), success: true, error: null }); }
+	catch { res.status(404).json({ error: "Checkout session not found" }); }
+});
+{{/if}}
+
 {{#if (includes examples "ai")}}
 app.post("/ai", async (req, res) => {
 	const { messages = [] } = (req.body || {}) as { messages: UIMessage[] };
@@ -14949,6 +14988,9 @@ app.listen(3000, () => {
   ["backend/server/fastify/src/index.ts.hbs", `import { env } from "@{{projectName}}/env/server";
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
+{{#if (eq payments "stripe")}}
+import fastifyRawBody from "fastify-raw-body";
+{{/if}}
 
 {{#if (eq api "trpc")}}
 import { fastifyTRPCPlugin, type FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
@@ -14981,6 +15023,9 @@ import {
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
+{{/if}}
+{{#if (eq payments "stripe")}}
+import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
 {{/if}}
 {{#if (eq auth "clerk")}}
 import { clerkPlugin } from "@clerk/fastify";
@@ -15030,6 +15075,9 @@ const fastify = Fastify({
 {{/if}}
 
 fastify.register(fastifyCors, baseCorsConfig);
+{{#if (eq payments "stripe")}}
+fastify.register(fastifyRawBody, { field: "rawBody", global: false, routes: ["/api/payments/stripe/webhook"] });
+{{/if}}
 {{#if (eq auth "clerk")}}
 fastify.register(clerkPlugin, {
 	publishableKey: env.CLERK_PUBLISHABLE_KEY,
@@ -15219,6 +15267,24 @@ fastify.post('/ai', async function (request) {
 });
 {{/if}}
 
+{{#if (eq payments "stripe")}}
+fastify.post("/api/payments/stripe/checkout", async (request) => ({
+	data: await createStripeEmbeddedCheckout(request.headers.origin ?? request.url), success: true, error: null,
+}));
+fastify.post("/api/payments/stripe/webhook", { config: { rawBody: true } }, async (request, reply) => {
+	const signature = request.headers["stripe-signature"];
+	if (typeof signature !== "string") return reply.status(400).send({ error: "Missing Stripe-Signature" });
+	const rawBody = (request as typeof request & { rawBody?: Buffer | string }).rawBody;
+	if (!rawBody) return reply.status(400).send({ error: "Missing raw webhook body" });
+	const result = await processStripeWebhook(typeof rawBody === "string" ? rawBody : rawBody.toString("utf8"), signature);
+	return reply.status(result.status).send(result.body);
+});
+fastify.get("/api/payments/stripe/checkout/:sessionId", async (request, reply) => {
+	try { return { data: await getStripeCheckoutSession((request.params as { sessionId: string }).sessionId), success: true, error: null }; }
+	catch { return reply.status(404).send({ error: "Checkout session not found" }); }
+});
+{{/if}}
+
 fastify.get('/', async () => {
 	return 'OK';
 });
@@ -15259,6 +15325,13 @@ import {
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
+{{/if}}
+{{#if (eq payments "stripe")}}
+import {
+	createStripeEmbeddedCheckout,
+	getStripeCheckoutSession,
+	processStripeWebhook,
+} from "@{{projectName}}/payments/lib/stripe";
 {{/if}}
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -15343,6 +15416,27 @@ app.get("/api/payments/abacatepay/checkout/:checkoutId", async (c) => {
 	}
 
 	return c.json({ data: checkout, success: true, error: null });
+});
+{{/if}}
+{{#if (eq payments "stripe")}}
+app.post("/api/payments/stripe/checkout", async (c) => {
+	const checkout = await createStripeEmbeddedCheckout(c.req.header("Origin") ?? c.req.url);
+	return c.json({ data: checkout, success: true, error: null });
+});
+
+app.post("/api/payments/stripe/webhook", async (c) => {
+	const signature = c.req.header("Stripe-Signature");
+	if (!signature) return c.json({ error: "Missing Stripe-Signature" }, 400);
+	const result = await processStripeWebhook(await c.req.text(), signature);
+	return c.json(result.body, result.status);
+});
+
+app.get("/api/payments/stripe/checkout/:sessionId", async (c) => {
+	try {
+		return c.json({ data: await getStripeCheckoutSession(c.req.param("sessionId")), success: true, error: null });
+	} catch {
+		return c.json({ error: "Checkout session not found" }, 404);
+	}
 });
 {{/if}}
 
@@ -30222,12 +30316,13 @@ export default defineNuxtConfig({
   convex: {
     url: process.env.NUXT_PUBLIC_CONVEX_URL,
   },
-  {{else if (and (ne backend "self") (ne backend "none"))}}
+  {{else if (or (and (ne backend "self") (ne backend "none")) (eq payments "stripe"))}}
   runtimeConfig: {
     // server-side override for SSR fetches (NUXT_SERVER_URL); falls back to the public URL
     serverUrl: "",
     public: {
       serverUrl: process.env.NUXT_PUBLIC_SERVER_URL ?? "",
+      stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "",
     }
   },
   {{/if}}
@@ -33748,6 +33843,11 @@ export const env = createEnv({
 		ABACATEPAY_RETURN_URL: z.url(),
 		ABACATEPAY_COMPLETION_URL: z.url(),
 {{/if}}
+{{#if (eq payments "stripe")}}
+		STRIPE_SECRET_KEY: z.string().min(1),
+		STRIPE_PRICE_ID: z.string().min(1),
+		STRIPE_WEBHOOK_SECRET: z.string().min(1),
+{{/if}}
 		CORS_ORIGIN: z.url(),
 		NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 {{#if (includes observability "getmonitor")}}
@@ -33818,6 +33918,9 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
+{{#if (eq payments "stripe")}}
+		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
+{{/if}}
 	},
 	runtimeEnv: {
 		NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
@@ -33830,12 +33933,18 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
 {{/if}}
+	{{#if (eq payments "stripe")}}
+		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+	{{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
 	client: {
 		NUXT_PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
 {{#if (includes observability "getmonitor")}}
 		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
+{{#if (eq payments "stripe")}}
+		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
 {{else if (or (includes frontend "svelte") (includes frontend "astro"))}}
@@ -33844,6 +33953,9 @@ export const env = createEnv({
 		PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
 {{#if (includes observability "getmonitor")}}
 		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
+{{#if (eq payments "stripe")}}
+		PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
@@ -33860,6 +33972,9 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
+{{#if (eq payments "stripe")}}
+		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
+{{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
 {{/if}}
@@ -33872,6 +33987,9 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
+{{#if (eq payments "stripe")}}
+		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
+{{/if}}
 	},
 	runtimeEnv: {
 {{#if (eq auth "clerk")}}
@@ -33880,11 +33998,17 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
 {{/if}}
+	{{#if (eq payments "stripe")}}
+		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+	{{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
 	client: {
 {{#if (includes observability "getmonitor")}}
 		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
+{{#if (eq payments "stripe")}}
+		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
 {{else}}
@@ -33895,6 +34019,9 @@ export const env = createEnv({
 {{/if}}
 {{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
+{{/if}}
+{{#if (eq payments "stripe")}}
+		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
@@ -33909,6 +34036,9 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
+	{{#if (eq payments "stripe")}}
+		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
+	{{/if}}
 	},
 	runtimeEnv: {
 		NEXT_PUBLIC_SERVER_URL: process.env.NEXT_PUBLIC_SERVER_URL,
@@ -33918,6 +34048,9 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
 {{/if}}
+	{{#if (eq payments "stripe")}}
+		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+	{{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
 	client: {
@@ -33925,6 +34058,9 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
+	{{#if (eq payments "stripe")}}
+		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
+	{{/if}}
 	},
 {{else if (or (includes frontend "svelte") (includes frontend "astro"))}}
 	clientPrefix: "PUBLIC_",
@@ -33933,6 +34069,9 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
+	{{#if (eq payments "stripe")}}
+		PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
+	{{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
 {{else}}
@@ -33945,6 +34084,9 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
+	{{#if (eq payments "stripe")}}
+		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
+	{{/if}}
 	},
 	runtimeEnv: (import.meta as any).env,
 {{/if}}
@@ -34046,6 +34188,12 @@ export const server = await Worker("server", {
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
     {{/if}}
+    {{#if (eq payments "stripe")}}
+    STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
+    STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
+    STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
+    {{stripePublicEnvKey frontend}}: alchemy.env.{{stripePublicEnvKey frontend}}!,
+    {{/if}}
     {{#if (eq dbSetup "turso")}}
     DATABASE_AUTH_TOKEN: alchemy.secret.env.DATABASE_AUTH_TOKEN!,
     {{/if}}
@@ -34111,6 +34259,12 @@ export const web = await Nextjs("web", {
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
+    {{/if}}
+    {{#if (eq payments "stripe")}}
+    STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
+    STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
+    STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
+    {{stripePublicEnvKey frontend}}: alchemy.env.{{stripePublicEnvKey frontend}}!,
     {{/if}}
     {{#if (eq dbSetup "turso")}}
     DATABASE_AUTH_TOKEN: alchemy.secret.env.DATABASE_AUTH_TOKEN!,
@@ -34178,6 +34332,12 @@ export const web = await Nuxt("web", {
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
     {{/if}}
+    {{#if (eq payments "stripe")}}
+    STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
+    STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
+    STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
+    {{stripePublicEnvKey frontend}}: alchemy.env.{{stripePublicEnvKey frontend}}!,
+    {{/if}}
     {{#if (eq dbSetup "turso")}}
     DATABASE_AUTH_TOKEN: alchemy.secret.env.DATABASE_AUTH_TOKEN!,
     {{/if}}
@@ -34231,6 +34391,12 @@ export const web = await SvelteKit("web", {
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
+    {{/if}}
+    {{#if (eq payments "stripe")}}
+    STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
+    STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
+    STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
+    {{stripePublicEnvKey frontend}}: alchemy.env.{{stripePublicEnvKey frontend}}!,
     {{/if}}
     {{#if (eq dbSetup "turso")}}
     DATABASE_AUTH_TOKEN: alchemy.secret.env.DATABASE_AUTH_TOKEN!,
@@ -34295,6 +34461,12 @@ export const web = await TanStackStart("web", {
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
+    {{/if}}
+    {{#if (eq payments "stripe")}}
+    STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
+    STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
+    STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
+    {{stripePublicEnvKey frontend}}: alchemy.env.{{stripePublicEnvKey frontend}}!,
     {{/if}}
     {{#if (eq dbSetup "turso")}}
     DATABASE_AUTH_TOKEN: alchemy.secret.env.DATABASE_AUTH_TOKEN!,
@@ -34401,6 +34573,12 @@ export const web = await Astro("web", {
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
+    {{/if}}
+    {{#if (eq payments "stripe")}}
+    STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
+    STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
+    STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
+    {{stripePublicEnvKey frontend}}: alchemy.env.{{stripePublicEnvKey frontend}}!,
     {{/if}}
     {{#if (eq dbSetup "turso")}}
     DATABASE_AUTH_TOKEN: alchemy.secret.env.DATABASE_AUTH_TOKEN!,
@@ -34728,8 +34906,22 @@ export async function sendWhatsAppText(
   "devDependencies": {}
 }
 `],
+  ["packages/payments/src/client.ts.hbs", `export async function fetchStripeClientSecret(baseUrl: string): Promise<string> {
+	const response = await fetch(\`\${baseUrl}/api/payments/stripe/checkout\`, { method: "POST" });
+	const payload = (await response.json()) as { data?: { clientSecret?: string }; error?: string };
+
+	if (!response.ok || !payload.data?.clientSecret) {
+		throw new Error(payload.error ?? "Unable to create Stripe checkout session");
+	}
+
+	return payload.data.clientSecret;
+}
+`],
   ["packages/payments/src/index.ts.hbs", `{{#if (eq payments "abacatepay")}}
 export * from "./lib/abacatepay";
+{{/if}}
+{{#if (eq payments "stripe")}}
+export * from "./lib/stripe";
 {{/if}}
 export {};
 `],
@@ -38131,6 +38323,384 @@ function SuccessPage() {
 	{/if}
 </div>
 `],
+  ["payments/stripe/fullstack/astro/src/pages/api/payments/stripe/checkout/[sessionId].ts.hbs", `import type { APIRoute } from 'astro';
+import { getStripeCheckoutSession } from '@{{projectName}}/payments/lib/stripe';
+export const GET: APIRoute = async ({ params }) => { try { return Response.json({ data: await getStripeCheckoutSession(params.sessionId!), success: true, error: null }); } catch { return Response.json({ error: 'Checkout session not found' }, { status: 404 }); } };
+`],
+  ["payments/stripe/fullstack/astro/src/pages/api/payments/stripe/checkout/index.ts.hbs", `import type { APIRoute } from 'astro';
+import { createStripeEmbeddedCheckout } from '@{{projectName}}/payments/lib/stripe';
+export const POST: APIRoute = ({ request }) => createStripeEmbeddedCheckout(request.url).then((data) => Response.json({ data, success: true, error: null }));
+`],
+  ["payments/stripe/fullstack/astro/src/pages/api/payments/stripe/webhook.ts.hbs", `import type { APIRoute } from 'astro';
+import { processStripeWebhook } from '@{{projectName}}/payments/lib/stripe';
+export const POST: APIRoute = async ({ request }) => { const signature = request.headers.get('stripe-signature'); if (!signature) return Response.json({ error: 'Missing Stripe-Signature' }, { status: 400 }); const result = await processStripeWebhook(await request.text(), signature); return Response.json(result.body, { status: result.status }); };
+`],
+  ["payments/stripe/fullstack/next/src/app/api/payments/stripe/checkout/[sessionId]/route.ts.hbs", `import { NextResponse } from "next/server";
+import { getStripeCheckoutSession } from "@{{projectName}}/payments/lib/stripe";
+
+export async function GET(_request: Request, context: { params: Promise<{ sessionId: string }> }) {
+	try { return NextResponse.json({ data: await getStripeCheckoutSession((await context.params).sessionId), success: true, error: null }); }
+	catch { return NextResponse.json({ error: "Checkout session not found" }, { status: 404 }); }
+}
+`],
+  ["payments/stripe/fullstack/next/src/app/api/payments/stripe/checkout/route.ts.hbs", `import { NextResponse } from "next/server";
+import { createStripeEmbeddedCheckout } from "@{{projectName}}/payments/lib/stripe";
+
+export async function POST(request: Request) {
+	return NextResponse.json({ data: await createStripeEmbeddedCheckout(request.url), success: true, error: null });
+}
+`],
+  ["payments/stripe/fullstack/next/src/app/api/payments/stripe/webhook/route.ts.hbs", `import { processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+
+export async function POST(request: Request) {
+	const signature = request.headers.get("stripe-signature");
+	if (!signature) return Response.json({ error: "Missing Stripe-Signature" }, { status: 400 });
+	const result = await processStripeWebhook(await request.text(), signature);
+	return Response.json(result.body, { status: result.status });
+}
+`],
+  ["payments/stripe/fullstack/nuxt/server/api/payments/stripe/checkout.post.ts.hbs", `import { createStripeEmbeddedCheckout } from '@{{projectName}}/payments/lib/stripe';
+export default defineEventHandler((event) => createStripeEmbeddedCheckout(getRequestURL(event).toString()).then((data) => ({ data, success: true, error: null })));
+`],
+  ["payments/stripe/fullstack/nuxt/server/api/payments/stripe/checkout/[sessionId].get.ts.hbs", `import { getStripeCheckoutSession } from '@{{projectName}}/payments/lib/stripe';
+export default defineEventHandler(async (event) => { try { return { data: await getStripeCheckoutSession(getRouterParam(event, 'sessionId')!), success: true, error: null }; } catch { throw createError({ statusCode: 404, statusMessage: 'Checkout session not found' }); } });
+`],
+  ["payments/stripe/fullstack/nuxt/server/api/payments/stripe/webhook.post.ts.hbs", `import { processStripeWebhook } from '@{{projectName}}/payments/lib/stripe';
+export default defineEventHandler(async (event) => { const signature = getHeader(event, 'stripe-signature'); if (!signature) throw createError({ statusCode: 400, statusMessage: 'Missing Stripe-Signature' }); const result = await processStripeWebhook(await readRawBody(event) ?? '', signature); return setResponseStatus(event, result.status), result.body; });
+`],
+  ["payments/stripe/fullstack/svelte/src/routes/api/payments/stripe/checkout/[sessionId]/+server.ts.hbs", `import { json } from '@sveltejs/kit';
+import { getStripeCheckoutSession } from '@{{projectName}}/payments/lib/stripe';
+export const GET = async ({ params }) => { try { return json({ data: await getStripeCheckoutSession(params.sessionId), success: true, error: null }); } catch { return json({ error: 'Checkout session not found' }, { status: 404 }); } };
+`],
+  ["payments/stripe/fullstack/svelte/src/routes/api/payments/stripe/checkout/+server.ts.hbs", `import { json } from '@sveltejs/kit';
+import { createStripeEmbeddedCheckout } from '@{{projectName}}/payments/lib/stripe';
+export const POST = ({ request }) => createStripeEmbeddedCheckout(request.url).then((data) => json({ data, success: true, error: null }));
+`],
+  ["payments/stripe/fullstack/svelte/src/routes/api/payments/stripe/webhook/+server.ts.hbs", `import { json } from '@sveltejs/kit';
+import { processStripeWebhook } from '@{{projectName}}/payments/lib/stripe';
+export const POST = async ({ request }) => { const signature = request.headers.get('stripe-signature'); if (!signature) return json({ error: 'Missing Stripe-Signature' }, { status: 400 }); const result = await processStripeWebhook(await request.text(), signature); return json(result.body, { status: result.status }); };
+`],
+  ["payments/stripe/fullstack/tanstack-start/src/routes/api/payments/stripe/checkout.ts.hbs", `import { createFileRoute } from "@tanstack/react-router";
+import { createStripeEmbeddedCheckout } from "@{{projectName}}/payments/lib/stripe";
+export const Route = createFileRoute("/api/payments/stripe/checkout")({ server: { handlers: { POST: ({ request }) => createStripeEmbeddedCheckout(request.url).then((data) => Response.json({ data, success: true, error: null })) } } });
+`],
+  ["payments/stripe/fullstack/tanstack-start/src/routes/api/payments/stripe/checkout/$sessionId.ts.hbs", `import { createFileRoute } from "@tanstack/react-router";
+import { getStripeCheckoutSession } from "@{{projectName}}/payments/lib/stripe";
+export const Route = createFileRoute("/api/payments/stripe/checkout/$sessionId")({ server: { handlers: { GET: ({ params }) => getStripeCheckoutSession(params.sessionId).then((data) => Response.json({ data, success: true, error: null })).catch(() => Response.json({ error: "Checkout session not found" }, { status: 404 })) } } });
+`],
+  ["payments/stripe/fullstack/tanstack-start/src/routes/api/payments/stripe/webhook.ts.hbs", `import { createFileRoute } from "@tanstack/react-router";
+import { processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+export const Route = createFileRoute("/api/payments/stripe/webhook")({ server: { handlers: { POST: async ({ request }) => { const signature = request.headers.get('stripe-signature'); if (!signature) return Response.json({ error: 'Missing Stripe-Signature' }, { status: 400 }); const result = await processStripeWebhook(await request.text(), signature); return Response.json(result.body, { status: result.status }); } } } });
+`],
+  ["payments/stripe/server/base/src/lib/stripe.ts.hbs", `import Stripe from "stripe";
+import { env } from "@{{projectName}}/env/server";
+
+const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+	apiVersion: "2026-07-29.dahlia",
+});
+
+export type StripeWebhookEventHandler = (event: Stripe.Event) => void | Promise<void>;
+
+function createIntegrationIdentifier() {
+	const alphabet = "abcdefghijklmnopqrstuvwxyz";
+	const bytes = crypto.getRandomValues(new Uint8Array(8));
+	return \`kubo_\${Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join("")}\`;
+}
+
+function getOrigin(requestUrl?: string) {
+	return requestUrl ? new URL(requestUrl).origin : env.CORS_ORIGIN;
+}
+
+export async function createStripeEmbeddedCheckout(requestUrl?: string) {
+	const session = await stripe.checkout.sessions.create({
+		mode: "payment",
+		ui_mode: "embedded",
+		line_items: [{ price: env.STRIPE_PRICE_ID, quantity: 1 }],
+		return_url: \`\${getOrigin(requestUrl)}/checkout/return?session_id={CHECKOUT_SESSION_ID}\`,
+		integration_identifier: createIntegrationIdentifier(),
+	});
+
+	if (!session.client_secret) {
+		throw new Error("Stripe did not return a client secret for the embedded checkout session");
+	}
+
+	return { clientSecret: session.client_secret, sessionId: session.id };
+}
+
+export async function getStripeCheckoutSession(sessionId: string) {
+	const session = await stripe.checkout.sessions.retrieve(sessionId);
+	return {
+		id: session.id,
+		status: session.status,
+		paymentStatus: session.payment_status,
+	};
+}
+
+export async function processStripeWebhook(
+	rawBody: string,
+	signature: string,
+	onEvent?: StripeWebhookEventHandler,
+) {
+	let event: Stripe.Event;
+	try {
+		event = stripe.webhooks.constructEvent(rawBody, signature, env.STRIPE_WEBHOOK_SECRET);
+	} catch {
+		return { ok: false as const, status: 400, body: { error: "Invalid signature" } };
+	}
+
+	if (onEvent) {
+		try {
+			await onEvent(event);
+		} catch {
+			return { ok: false as const, status: 500, body: { error: "Stripe event handling failed" } };
+		}
+	}
+
+	const checkoutSessionId = event.type.startsWith("checkout.session.")
+		? (event.data.object as Stripe.Checkout.Session).id
+		: undefined;
+
+	return {
+		ok: true as const,
+		status: 200,
+		body: {
+			received: true,
+			eventId: event.id,
+			eventType: event.type,
+			...(checkoutSessionId ? { checkoutSessionId } : {}),
+		},
+	};
+}
+`],
+  ["payments/stripe/web/astro/src/pages/checkout.astro.hbs", `---
+---
+<main><h1>Checkout</h1><div id="checkout"></div></main>
+<script>
+  import { loadStripe } from '@stripe/stripe-js';
+  import { fetchStripeClientSecret } from '@{{projectName}}/payments/client';
+  const stripe = await loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  const element = document.querySelector('#checkout');
+  if (stripe && element) {
+    const baseUrl = {{#if (eq backend "self")}}""{{else}}import.meta.env.PUBLIC_SERVER_URL{{/if}};
+    const checkout = await stripe.initEmbeddedCheckout({ fetchClientSecret: () => fetchStripeClientSecret(baseUrl) });
+    checkout.mount(element);
+  }
+</script>
+`],
+  ["payments/stripe/web/astro/src/pages/checkout/return.astro.hbs", `---
+const sessionId = Astro.url.searchParams.get('session_id');
+const baseUrl = {{#if (eq backend "self")}}''{{else}}import.meta.env.PUBLIC_SERVER_URL{{/if}};
+const response = sessionId ? await fetch(\`\${baseUrl}/api/payments/stripe/checkout/\${sessionId}\`).catch(() => null) : null;
+const payload = response?.ok ? await response.json() as { data?: { paymentStatus?: string } } : null;
+const status = payload?.data?.paymentStatus ?? 'pending';
+---
+<main><h1>Payment status</h1><p>{status}</p></main>
+`],
+  ["payments/stripe/web/nuxt/app/pages/checkout.vue.hbs", `<script setup lang="ts">
+import { loadStripe } from '@stripe/stripe-js'
+import { fetchStripeClientSecret } from '@{{projectName}}/payments/client'
+const container = ref<HTMLElement | null>(null)
+onMounted(async () => {
+  const config = useRuntimeConfig()
+  const stripe = await loadStripe(config.public.stripePublishableKey)
+  if (!stripe || !container.value) return
+  const baseUrl = {{#if (eq backend "self")}}""{{else}}config.public.serverUrl{{/if}}
+  const checkout = await stripe.initEmbeddedCheckout({ fetchClientSecret: () => fetchStripeClientSecret(baseUrl) })
+  checkout.mount(container.value)
+})
+</script>
+<template><main><h1>Checkout</h1><div ref="container" /></main></template>
+`],
+  ["payments/stripe/web/nuxt/app/pages/checkout/return.vue.hbs", `<script setup lang="ts">
+const status = ref('pending')
+onMounted(async () => {
+  const sessionId = new URLSearchParams(window.location.search).get('session_id')
+  if (!sessionId) return
+  const config = useRuntimeConfig()
+  const baseUrl = {{#if (eq backend "self")}}''{{else}}config.public.serverUrl{{/if}}
+  const payload = await $fetch<{ data?: { paymentStatus?: string } }>(\`\${baseUrl}/api/payments/stripe/checkout/\${sessionId}\`).catch(() => null)
+  status.value = payload?.data?.paymentStatus ?? 'pending'
+})
+</script>
+<template><main><h1>Payment status</h1><p>{{ status }}</p></main></template>
+`],
+  ["payments/stripe/web/react/next/src/app/checkout/page.tsx.hbs", `"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { env } from "@{{projectName}}/env/web";
+import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+
+export default function CheckoutPage() {
+	const containerRef = useRef<HTMLDivElement>(null);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		let cancelled = false;
+		let embedded: { mount: (element: HTMLElement) => void; unmount?: () => void } | undefined;
+		void (async () => {
+			const stripe = await loadStripe(env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+			if (!stripe) throw new Error("Missing NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY");
+			const checkout = await stripe.initEmbeddedCheckout({
+				fetchClientSecret: async () => {
+					const baseUrl = {{#if (eq backend "self")}}""{{else}}env.NEXT_PUBLIC_SERVER_URL{{/if}};
+					return fetchStripeClientSecret(baseUrl);
+				},
+			});
+			if (!cancelled && containerRef.current) { embedded = checkout; embedded.mount(containerRef.current); }
+		})().catch((cause: unknown) => setError(cause instanceof Error ? cause.message : "Checkout failed"));
+		return () => { cancelled = true; embedded?.unmount?.(); };
+	}, []);
+
+	return <main><h1>Checkout</h1>{error ? <p>{error}</p> : <div ref={containerRef} />}</main>;
+}
+`],
+  ["payments/stripe/web/react/next/src/app/checkout/return/page.tsx.hbs", `import { env } from "@{{projectName}}/env/web";
+
+export default async function CheckoutReturnPage({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
+	const { session_id: sessionId } = await searchParams;
+	const baseUrl = {{#if (eq backend "self")}}""{{else}}env.NEXT_PUBLIC_SERVER_URL{{/if}};
+	const response = sessionId ? await fetch(\`\${baseUrl}/api/payments/stripe/checkout/\${sessionId}\`, { cache: "no-store" }) : null;
+	const payload = response?.ok ? await response.json() as { data?: { paymentStatus?: string } } : null;
+	return <main><h1>Payment status</h1><p>{payload?.data?.paymentStatus ?? "pending"}</p></main>;
+}
+`],
+  ["payments/stripe/web/react/react-router/src/routes/checkout-return.tsx.hbs", `import { useEffect, useState } from "react";
+import { env } from "@{{projectName}}/env/web";
+
+export default function CheckoutReturnPage() {
+	const [status, setStatus] = useState("pending");
+	useEffect(() => {
+		const sessionId = new URLSearchParams(window.location.search).get("session_id");
+		if (!sessionId) return;
+		const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
+		void fetch(\`\${baseUrl}/api/payments/stripe/checkout/\${sessionId}\`).then((response) => response.json()).then((payload: { data?: { paymentStatus?: string } }) => setStatus(payload.data?.paymentStatus ?? "pending"));
+	}, []);
+	return <main><h1>Payment status</h1><p>{status}</p></main>;
+}
+`],
+  ["payments/stripe/web/react/react-router/src/routes/checkout.tsx.hbs", `import { useEffect, useRef } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { env } from "@{{projectName}}/env/web";
+import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+
+export default function CheckoutPage() {
+	const ref = useRef<HTMLDivElement>(null);
+	useEffect(() => { void loadStripe(env.VITE_STRIPE_PUBLISHABLE_KEY).then(async (stripe) => {
+		if (!stripe || !ref.current) return;
+		const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
+		const checkout = await stripe.initEmbeddedCheckout({ fetchClientSecret: () => fetchStripeClientSecret(baseUrl) });
+		checkout.mount(ref.current);
+	}); }, []);
+	return <main><h1>Checkout</h1><div ref={ref} /></main>;
+}
+`],
+  ["payments/stripe/web/react/tanstack-router/src/routes/checkout-return.tsx.hbs", `import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { env } from "@{{projectName}}/env/web";
+
+export const Route = createFileRoute("/checkout/return")({ component: CheckoutReturnPage });
+function CheckoutReturnPage() {
+	const [status, setStatus] = useState("pending");
+	useEffect(() => { const sessionId = new URLSearchParams(window.location.search).get("session_id"); if (!sessionId) return; const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}}; void fetch(\`\${baseUrl}/api/payments/stripe/checkout/\${sessionId}\`).then((response) => response.json()).then((payload: { data?: { paymentStatus?: string } }) => setStatus(payload.data?.paymentStatus ?? "pending")); }, []);
+	return <main><h1>Payment status</h1><p>{status}</p></main>;
+}
+`],
+  ["payments/stripe/web/react/tanstack-router/src/routes/checkout.tsx.hbs", `import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { env } from "@{{projectName}}/env/web";
+import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+
+export const Route = createFileRoute("/checkout")({ component: CheckoutPage });
+function CheckoutPage() {
+	const ref = useRef<HTMLDivElement>(null);
+	useEffect(() => { void loadStripe(env.VITE_STRIPE_PUBLISHABLE_KEY).then(async (stripe) => {
+		if (!stripe || !ref.current) return;
+		const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
+		const checkout = await stripe.initEmbeddedCheckout({ fetchClientSecret: () => fetchStripeClientSecret(baseUrl) });
+		checkout.mount(ref.current);
+	}); }, []);
+	return <main><h1>Checkout</h1><div ref={ref} /></main>;
+}
+`],
+  ["payments/stripe/web/react/tanstack-start/src/routes/checkout-return.tsx.hbs", `import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { env } from "@{{projectName}}/env/web";
+
+export const Route = createFileRoute("/checkout/return")({ component: CheckoutReturnPage });
+function CheckoutReturnPage() {
+	const [status, setStatus] = useState("pending");
+	useEffect(() => { const sessionId = new URLSearchParams(window.location.search).get("session_id"); if (!sessionId) return; const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}}; void fetch(\`\${baseUrl}/api/payments/stripe/checkout/\${sessionId}\`).then((response) => response.json()).then((payload: { data?: { paymentStatus?: string } }) => setStatus(payload.data?.paymentStatus ?? "pending")); }, []);
+	return <main><h1>Payment status</h1><p>{status}</p></main>;
+}
+`],
+  ["payments/stripe/web/react/tanstack-start/src/routes/checkout.tsx.hbs", `import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { env } from "@{{projectName}}/env/web";
+import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+
+export const Route = createFileRoute("/checkout")({ component: CheckoutPage });
+function CheckoutPage() {
+	const ref = useRef<HTMLDivElement>(null);
+	useEffect(() => { void loadStripe(env.VITE_STRIPE_PUBLISHABLE_KEY).then(async (stripe) => {
+		if (!stripe || !ref.current) return;
+		const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
+		const checkout = await stripe.initEmbeddedCheckout({ fetchClientSecret: () => fetchStripeClientSecret(baseUrl) });
+		checkout.mount(ref.current);
+	}); }, []);
+	return <main><h1>Checkout</h1><div ref={ref} /></main>;
+}
+`],
+  ["payments/stripe/web/solid/src/routes/checkout-return.tsx.hbs", `import { createFileRoute } from "@tanstack/solid-router";
+import { createSignal, onMount } from "solid-js";
+import { env } from "@{{projectName}}/env/web";
+
+export const Route = createFileRoute("/checkout/return")({ component: CheckoutReturnPage });
+function CheckoutReturnPage() {
+	const [status, setStatus] = createSignal("pending");
+	onMount(() => { const sessionId = new URLSearchParams(window.location.search).get("session_id"); if (!sessionId) return; const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}}; void fetch(\`\${baseUrl}/api/payments/stripe/checkout/\${sessionId}\`).then((response) => response.json()).then((payload: { data?: { paymentStatus?: string } }) => setStatus(payload.data?.paymentStatus ?? "pending")); });
+	return <main><h1>Payment status</h1><p>{status()}</p></main>;
+}
+`],
+  ["payments/stripe/web/solid/src/routes/checkout.tsx.hbs", `import { createFileRoute } from "@tanstack/solid-router";
+import { onMount } from "solid-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { env } from "@{{projectName}}/env/web";
+import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+
+export const Route = createFileRoute("/checkout")({ component: CheckoutPage });
+function CheckoutPage() {
+	let container!: HTMLDivElement;
+	onMount(async () => { const stripe = await loadStripe(env.VITE_STRIPE_PUBLISHABLE_KEY); if (!stripe) return; const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}}; const checkout = await stripe.initEmbeddedCheckout({ fetchClientSecret: () => fetchStripeClientSecret(baseUrl) }); checkout.mount(container); });
+	return <main><h1>Checkout</h1><div ref={container} /></main>;
+}
+`],
+  ["payments/stripe/web/svelte/src/routes/checkout/+page.svelte.hbs", `<script lang="ts">
+	import { onMount } from 'svelte';
+	import { loadStripe } from '@stripe/stripe-js';
+	import { env } from '@{{projectName}}/env/web';
+	import { fetchStripeClientSecret } from '@{{projectName}}/payments/client';
+	let container: HTMLDivElement;
+	onMount(async () => {
+		const stripe = await loadStripe(env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
+		if (!stripe || !container) return;
+		const baseUrl = {{#if (eq backend "self")}}''{{else}}env.PUBLIC_SERVER_URL{{/if}};
+		const checkout = await stripe.initEmbeddedCheckout({ fetchClientSecret: () => fetchStripeClientSecret(baseUrl) });
+		checkout.mount(container);
+	});
+</script>
+<main><h1>Checkout</h1><div bind:this={container} /></main>
+`],
+  ["payments/stripe/web/svelte/src/routes/checkout/return/+page.svelte.hbs", `<script lang="ts">
+	import { onMount } from 'svelte';
+	import { env } from '@{{projectName}}/env/web';
+	let status = 'pending';
+	onMount(() => { const sessionId = new URLSearchParams(window.location.search).get('session_id'); if (!sessionId) return; const baseUrl = {{#if (eq backend "self")}}''{{else}}env.PUBLIC_SERVER_URL{{/if}}; void fetch(\`\${baseUrl}/api/payments/stripe/checkout/\${sessionId}\`).then((response) => response.json()).then((payload: { data?: { paymentStatus?: string } }) => { status = payload.data?.paymentStatus ?? 'pending'; }); });
+</script>
+<main><h1>Payment status</h1><p>{status}</p></main>
+`],
   ["testing/playwright/e2e/example.spec.ts.hbs", `import { expect, test } from "@playwright/test";
 
 test("homepage loads", async ({ page }) => {
@@ -38168,4 +38738,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 564;
+export const TEMPLATE_COUNT = 597;

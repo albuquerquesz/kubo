@@ -1,0 +1,3 @@
+import type { APIRoute } from 'astro';
+import { processStripeWebhook } from '@{{projectName}}/payments/lib/stripe';
+export const POST: APIRoute = async ({ request }) => { const signature = request.headers.get('stripe-signature'); if (!signature) return Response.json({ error: 'Missing Stripe-Signature' }, { status: 400 }); const result = await processStripeWebhook(await request.text(), signature); return Response.json(result.body, { status: result.status }); };

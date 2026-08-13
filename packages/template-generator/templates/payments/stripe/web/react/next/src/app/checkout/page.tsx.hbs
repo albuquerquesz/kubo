@@ -1,0 +1,30 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { env } from "@{{projectName}}/env/web";
+import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+
+export default function CheckoutPage() {
+	const containerRef = useRef<HTMLDivElement>(null);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		let cancelled = false;
+		let embedded: { mount: (element: HTMLElement) => void; unmount?: () => void } | undefined;
+		void (async () => {
+			const stripe = await loadStripe(env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+			if (!stripe) throw new Error("Missing NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY");
+			const checkout = await stripe.initEmbeddedCheckout({
+				fetchClientSecret: async () => {
+					const baseUrl = {{#if (eq backend "self")}}""{{else}}env.NEXT_PUBLIC_SERVER_URL{{/if}};
+					return fetchStripeClientSecret(baseUrl);
+				},
+			});
+			if (!cancelled && containerRef.current) { embedded = checkout; embedded.mount(containerRef.current); }
+		})().catch((cause: unknown) => setError(cause instanceof Error ? cause.message : "Checkout failed"));
+		return () => { cancelled = true; embedded?.unmount?.(); };
+	}, []);
+
+	return <main><h1>Checkout</h1>{error ? <p>{error}</p> : <div ref={containerRef} />}</main>;
+}

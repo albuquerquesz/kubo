@@ -232,6 +232,7 @@ ${getClerkSetupLines(frontend, backend, api, false).join("\n")}`
     : ""
 }
 ${payments === "abacatepay" ? generateAbacatePaySetup(options, packageManagerRunCmd, webPort) : ""}
+${payments === "stripe" ? generateStripeSetup(options, packageManagerRunCmd, webPort) : ""}
 ${observability.includes("getmonitor") ? generateGetMonitorSetup() : ""}
 ${observability.includes("himetrica") ? generateHimetricaSetup() : ""}
 ${communication === "resend" ? generateResendSetup() : ""}
@@ -416,6 +417,41 @@ ${setupSteps.join("\n\n")}
 ### Production note
 
 The scaffold keeps a placeholder \`prod_your_product_id\` in \`packages/payments/src/lib/abacatepay.ts\`. Replace that hardcoded product ID in code before using this integration for real transactions.
+`;
+}
+
+function generateStripeSetup(
+  config: ProjectConfig,
+  packageManagerRunCmd: string,
+  webPort: string,
+): string {
+  if (config.payments !== "stripe") return "";
+
+  const envPath = config.backend === "self" ? "apps/web/.env" : "apps/server/.env";
+  const localBaseUrl =
+    config.backend === "self" ? `http://localhost:${webPort}` : "http://localhost:3000";
+
+  return `
+## Stripe Setup
+
+This project includes Stripe Embedded Checkout and a signature-verified webhook endpoint.
+
+1. Configure these variables in \`${envPath}\`:
+   - \`STRIPE_SECRET_KEY\`: use a restricted server-side key (\`rk_...\`) whenever possible.
+   - \`STRIPE_PRICE_ID\`: the one-time Price ID configured in Stripe Dashboard.
+   - \`STRIPE_WEBHOOK_SECRET\`: the signing secret for the webhook endpoint (\`whsec_...\`).
+   - \`NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY\`, \`NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY\`, \`PUBLIC_STRIPE_PUBLISHABLE_KEY\` or \`VITE_STRIPE_PUBLISHABLE_KEY\`: the publishable key matching your frontend.
+2. Build after configuring the environment:
+\`\`\`bash
+${packageManagerRunCmd} build
+\`\`\`
+3. Start the app and open the generated \`/checkout\` page.
+4. Configure this webhook URL in Stripe:
+\`${localBaseUrl}/api/payments/stripe/webhook\`
+
+### Fulfillment and idempotency
+
+The generated webhook verifies Stripe's signature and exposes the event metadata. Pass a handler to \`processStripeWebhook\` from your route to fulfill the order. Persist \`event.id\` before applying business effects so Stripe retries remain idempotent. The scaffold does not guess your order model or silently mark payments as fulfilled.
 `;
 }
 
@@ -765,6 +801,10 @@ function generateFeaturesList(
 
   if (payments === "abacatepay") {
     features.push("- **AbacatePay** - Hosted checkout with webhook-driven payment reconciliation");
+  }
+
+  if (payments === "stripe") {
+    features.push("- **Stripe** - Embedded Checkout with a signature-verified fulfillment webhook");
   }
 
   const addonFeatures: Record<string, string> = {

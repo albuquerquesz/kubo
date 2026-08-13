@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
+import { getIsSelected } from "../src/app/(home)/new/_components/stack-builder/tech-categories";
 import {
   getCompatibilityAdjustmentKey,
   getCompatibilityAdjustmentState,
@@ -24,6 +25,14 @@ function createStack(overrides: Partial<StackState> = {}): StackState {
 }
 
 describe("stack builder D1 compatibility", () => {
+  test("renders observability providers as selected when present in the array", () => {
+    const stack = createStack({ observability: ["getmonitor", "himetrica"] });
+
+    expect(getIsSelected(stack, "observability", "getmonitor")).toBe(true);
+    expect(getIsSelected(stack, "observability", "himetrica")).toBe(true);
+    expect(getIsSelected(stack, "observability", "missing")).toBe(false);
+  });
+
   test("keeps self fullstack backends on the D1 + Cloudflare path", () => {
     const stack = createStack({
       backend: "self-next",
@@ -259,6 +268,49 @@ describe("stack builder D1 compatibility", () => {
     expect(command).toContain("--observability getmonitor");
     expect(command).toContain("--web-deploy guaracloud");
     expect(command).toContain("--server-deploy guaracloud");
+  });
+
+  test("allows Stripe without database setup and emits CLI flags", () => {
+    const stack = createStack({
+      webFrontend: ["next"],
+      nativeFrontend: ["none"],
+      backend: "hono",
+      runtime: "bun",
+      database: "none",
+      orm: "none",
+      payments: "stripe",
+    });
+
+    expect(getDisabledReason(stack, "payments", "stripe")).toBeNull();
+    expect(generateStackCommand(stack)).toContain("--payments stripe");
+  });
+
+  test("blocks Stripe for Convex and native-only stacks", () => {
+    const convex = createStack({ webFrontend: ["next"], backend: "convex", payments: "stripe" });
+    const native = createStack({
+      webFrontend: ["none"],
+      nativeFrontend: ["native-bare"],
+      backend: "hono",
+      payments: "stripe",
+    });
+    expect(getDisabledReason(convex, "payments", "stripe")).toBe(
+      "Stripe não é suportado com Convex",
+    );
+    expect(getDisabledReason(native, "payments", "stripe")).toBe("Stripe exige um frontend web");
+  });
+
+  test("clears incompatible payments when Convex is selected", () => {
+    const result = analyzeStackCompatibility(
+      createStack({ webFrontend: ["next"], backend: "convex", payments: "stripe" }),
+    );
+
+    expect(result.adjustedStack).toMatchObject({ backend: "convex", payments: "none" });
+    expect(result.changes).toContainEqual(
+      expect.objectContaining({
+        category: "backend",
+        message: expect.stringContaining("Pagamentos"),
+      }),
+    );
   });
 
   test("default stack implies GetMonitor and short --yes command", () => {

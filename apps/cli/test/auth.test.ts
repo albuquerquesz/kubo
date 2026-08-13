@@ -294,6 +294,56 @@ describe("Authentication Configurations", () => {
       expect(turboJson.tasks.build.env).toContain("CORS_ORIGIN");
     });
 
+    it("should scaffold Stripe Embedded Checkout with safe env and webhook contracts", async () => {
+      const result = await runTRPCTest({
+        projectName: "stripe-self-next-contract",
+        auth: "none",
+        payments: "stripe",
+        backend: "self",
+        runtime: "none",
+        database: "none",
+        orm: "none",
+        api: "none",
+        frontend: ["next"],
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+        install: false,
+      });
+
+      expectSuccess(result);
+      if (!result.projectDir) throw new Error("Expected projectDir to be defined");
+
+      const projectDir = result.projectDir;
+      const envWeb = await fs.readFile(path.join(projectDir, "packages/env/src/web.ts"), "utf8");
+      const clientHelper = await fs.readFile(
+        path.join(projectDir, "packages/payments/src/client.ts"),
+        "utf8",
+      );
+      const checkoutPage = await fs.readFile(
+        path.join(projectDir, "apps/web/src/app/checkout/page.tsx"),
+        "utf8",
+      );
+      const stripeHelper = await fs.readFile(
+        path.join(projectDir, "packages/payments/src/lib/stripe.ts"),
+        "utf8",
+      );
+      const readme = await fs.readFile(path.join(projectDir, "README.md"), "utf8");
+
+      expect(envWeb).toContain(
+        "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+      );
+      expect(clientHelper).toContain("response.ok");
+      expect(checkoutPage).toContain("fetchStripeClientSecret");
+      expect(checkoutPage).not.toContain("response.json()");
+      expect(stripeHelper).toContain("StripeWebhookEventHandler");
+      expect(stripeHelper).toContain("eventId: event.id");
+      expect(stripeHelper).toContain("Stripe did not return a client secret");
+      expect(readme).toContain("Fulfillment and idempotency");
+    });
+
     it("should scaffold Self + TanStack Start + Prisma with AbacatePay payments", async () => {
       const result = await runTRPCTest({
         projectName: "better-auth-self-tanstack-start-abacatepay",

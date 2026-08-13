@@ -21,12 +21,13 @@ export default defineNuxtConfig({
   convex: {
     url: process.env.NUXT_PUBLIC_CONVEX_URL,
   },
-  {{else if (and (ne backend "self") (ne backend "none"))}}
+  {{else if (or (and (ne backend "self") (ne backend "none")) (eq payments "stripe"))}}
   runtimeConfig: {
     // server-side override for SSR fetches (NUXT_SERVER_URL); falls back to the public URL
     serverUrl: "",
     public: {
       serverUrl: process.env.NUXT_PUBLIC_SERVER_URL ?? "",
+      stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "",
     }
   },
   {{/if}}

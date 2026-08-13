@@ -1,0 +1,15 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { loadStripe } from '@stripe/stripe-js';
+	import { env } from '@{{projectName}}/env/web';
+	import { fetchStripeClientSecret } from '@{{projectName}}/payments/client';
+	let container: HTMLDivElement;
+	onMount(async () => {
+		const stripe = await loadStripe(env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
+		if (!stripe || !container) return;
+		const baseUrl = {{#if (eq backend "self")}}''{{else}}env.PUBLIC_SERVER_URL{{/if}};
+		const checkout = await stripe.initEmbeddedCheckout({ fetchClientSecret: () => fetchStripeClientSecret(baseUrl) });
+		checkout.mount(container);
+	});
+</script>
+<main><h1>Checkout</h1><div bind:this={container} /></main>

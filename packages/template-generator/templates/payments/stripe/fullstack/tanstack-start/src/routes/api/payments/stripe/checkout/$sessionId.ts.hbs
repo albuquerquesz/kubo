@@ -1,0 +1,3 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { getStripeCheckoutSession } from "@{{projectName}}/payments/lib/stripe";
+export const Route = createFileRoute("/api/payments/stripe/checkout/$sessionId")({ server: { handlers: { GET: ({ params }) => getStripeCheckoutSession(params.sessionId).then((data) => Response.json({ data, success: true, error: null })).catch(() => Response.json({ error: "Checkout session not found" }, { status: 404 })) } } });

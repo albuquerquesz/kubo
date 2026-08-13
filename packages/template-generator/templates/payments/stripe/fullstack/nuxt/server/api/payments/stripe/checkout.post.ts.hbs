@@ -1,0 +1,2 @@
+import { createStripeEmbeddedCheckout } from '@{{projectName}}/payments/lib/stripe';
+export default defineEventHandler((event) => createStripeEmbeddedCheckout(getRequestURL(event).toString()).then((data) => ({ data, success: true, error: null })));

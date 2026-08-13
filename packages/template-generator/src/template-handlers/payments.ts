@@ -31,6 +31,15 @@ export async function processPaymentsTemplates(
     "packages/payments/src/index.ts",
     config,
   );
+  if (config.payments === "stripe") {
+    processSingleTemplate(
+      vfs,
+      templates,
+      "packages/payments/src/client.ts",
+      "packages/payments/src/client.ts",
+      config,
+    );
+  }
 
   const hasReactWeb = config.frontend.some((f) =>
     ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
@@ -82,7 +91,7 @@ export async function processPaymentsTemplates(
     );
   }
 
-  if (config.payments === "abacatepay" && config.backend === "self") {
+  if (["abacatepay", "stripe"].includes(config.payments) && config.backend === "self") {
     const fullstackFramework = config.frontend.find((f) =>
       ["next", "tanstack-start", "nuxt", "svelte", "astro"].includes(f),
     );

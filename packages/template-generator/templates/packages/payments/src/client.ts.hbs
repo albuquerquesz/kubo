@@ -1,0 +1,10 @@
+export async function fetchStripeClientSecret(baseUrl: string): Promise<string> {
+	const response = await fetch(`${baseUrl}/api/payments/stripe/checkout`, { method: "POST" });
+	const payload = (await response.json()) as { data?: { clientSecret?: string }; error?: string };
+
+	if (!response.ok || !payload.data?.clientSecret) {
+		throw new Error(payload.error ?? "Unable to create Stripe checkout session");
+	}
+
+	return payload.data.clientSecret;
+}

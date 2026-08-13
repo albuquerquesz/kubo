@@ -93,3 +93,30 @@ test("still rejects D1 when the remaining prompt flow cannot resolve it to a val
     );
   }
 });
+
+test("rejects Stripe with Convex before generation", () => {
+  const options = {
+    backend: "convex",
+    frontend: ["next"],
+    runtime: "none",
+    database: "none",
+    orm: "none",
+    dbSetup: "none",
+    api: "none",
+    auth: "none",
+    payments: "stripe",
+    addons: ["none"],
+    examples: ["none"],
+    webDeploy: "none",
+    serverDeploy: "none",
+  } as const;
+
+  const result = processAndValidateFlags(options, getProvidedFlags(options), "my-app");
+
+  expect(result.isErr()).toBe(true);
+  if (result.isErr()) {
+    expect(result.error.message).toContain(
+      "Stripe payments is not compatible with '--backend convex'",
+    );
+  }
+});

@@ -1,0 +1,7 @@
+import { NextResponse } from "next/server";
+import { getStripeCheckoutSession } from "@{{projectName}}/payments/lib/stripe";
+
+export async function GET(_request: Request, context: { params: Promise<{ sessionId: string }> }) {
+	try { return NextResponse.json({ data: await getStripeCheckoutSession((await context.params).sessionId), success: true, error: null }); }
+	catch { return NextResponse.json({ error: "Checkout session not found" }, { status: 404 }); }
+}

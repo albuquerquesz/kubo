@@ -33,6 +33,9 @@ import {
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
 {{/if}}
+{{#if (eq payments "stripe")}}
+import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+{{/if}}
 
 {{#if (eq api "orpc")}}
 const rpcHandler = new RPCHandler(appRouter, {
@@ -198,6 +201,19 @@ const app = {{#if (eq runtime "node")}}new Elysia({ adapter: node() }){{else}}ne
 		return createUIMessageStreamResponse({
 			stream: toUIMessageStream({ stream: result.stream }),
 		});
+	})
+{{/if}}
+{{#if (eq payments "stripe")}}
+	.post("/api/payments/stripe/checkout", async ({ request }) => ({ data: await createStripeEmbeddedCheckout(request.headers.get("origin") ?? request.url), success: true, error: null }))
+	.post("/api/payments/stripe/webhook", async ({ request, status }) => {
+		const signature = request.headers.get("stripe-signature");
+		if (!signature) return status(400, { error: "Missing Stripe-Signature" });
+		const result = await processStripeWebhook(await request.text(), signature);
+		return status(result.status, result.body);
+	})
+	.get("/api/payments/stripe/checkout/:sessionId", async ({ params, status }) => {
+		try { return { data: await getStripeCheckoutSession(params.sessionId), success: true, error: null }; }
+		catch { return status(404, { error: "Checkout session not found" }); }
 	})
 {{/if}}
 	.get("/", () => "OK")

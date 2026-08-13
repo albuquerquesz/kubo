@@ -1,0 +1,79 @@
+import Stripe from "stripe";
+import { env } from "@{{projectName}}/env/server";
+
+const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+	apiVersion: "2026-07-29.dahlia",
+});
+
+export type StripeWebhookEventHandler = (event: Stripe.Event) => void | Promise<void>;
+
+function createIntegrationIdentifier() {
+	const alphabet = "abcdefghijklmnopqrstuvwxyz";
+	const bytes = crypto.getRandomValues(new Uint8Array(8));
+	return `kubo_${Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join("")}`;
+}
+
+function getOrigin(requestUrl?: string) {
+	return requestUrl ? new URL(requestUrl).origin : env.CORS_ORIGIN;
+}
+
+export async function createStripeEmbeddedCheckout(requestUrl?: string) {
+	const session = await stripe.checkout.sessions.create({
+		mode: "payment",
+		ui_mode: "embedded",
+		line_items: [{ price: env.STRIPE_PRICE_ID, quantity: 1 }],
+		return_url: `${getOrigin(requestUrl)}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+		integration_identifier: createIntegrationIdentifier(),
+	});
+
+	if (!session.client_secret) {
+		throw new Error("Stripe did not return a client secret for the embedded checkout session");
+	}
+
+	return { clientSecret: session.client_secret, sessionId: session.id };
+}
+
+export async function getStripeCheckoutSession(sessionId: string) {
+	const session = await stripe.checkout.sessions.retrieve(sessionId);
+	return {
+		id: session.id,
+		status: session.status,
+		paymentStatus: session.payment_status,
+	};
+}
+
+export async function processStripeWebhook(
+	rawBody: string,
+	signature: string,
+	onEvent?: StripeWebhookEventHandler,
+) {
+	let event: Stripe.Event;
+	try {
+		event = stripe.webhooks.constructEvent(rawBody, signature, env.STRIPE_WEBHOOK_SECRET);
+	} catch {
+		return { ok: false as const, status: 400, body: { error: "Invalid signature" } };
+	}
+
+	if (onEvent) {
+		try {
+			await onEvent(event);
+		} catch {
+			return { ok: false as const, status: 500, body: { error: "Stripe event handling failed" } };
+		}
+	}
+
+	const checkoutSessionId = event.type.startsWith("checkout.session.")
+		? (event.data.object as Stripe.Checkout.Session).id
+		: undefined;
+
+	return {
+		ok: true as const,
+		status: 200,
+		body: {
+			received: true,
+			eventId: event.id,
+			eventType: event.type,
+			...(checkoutSessionId ? { checkoutSessionId } : {}),
+		},
+	};
+}

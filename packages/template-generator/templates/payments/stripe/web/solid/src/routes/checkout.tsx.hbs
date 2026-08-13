@@ -1,0 +1,12 @@
+import { createFileRoute } from "@tanstack/solid-router";
+import { onMount } from "solid-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { env } from "@{{projectName}}/env/web";
+import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+
+export const Route = createFileRoute("/checkout")({ component: CheckoutPage });
+function CheckoutPage() {
+	let container!: HTMLDivElement;
+	onMount(async () => { const stripe = await loadStripe(env.VITE_STRIPE_PUBLISHABLE_KEY); if (!stripe) return; const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}}; const checkout = await stripe.initEmbeddedCheckout({ fetchClientSecret: () => fetchStripeClientSecret(baseUrl) }); checkout.mount(container); });
+	return <main><h1>Checkout</h1><div ref={container} /></main>;
+}

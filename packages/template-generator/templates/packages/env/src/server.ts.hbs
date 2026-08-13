@@ -172,6 +172,11 @@ export const env = createEnv({
 		ABACATEPAY_RETURN_URL: z.url(),
 		ABACATEPAY_COMPLETION_URL: z.url(),
 {{/if}}
+{{#if (eq payments "stripe")}}
+		STRIPE_SECRET_KEY: z.string().min(1),
+		STRIPE_PRICE_ID: z.string().min(1),
+		STRIPE_WEBHOOK_SECRET: z.string().min(1),
+{{/if}}
 		CORS_ORIGIN: z.url(),
 		NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 {{#if (includes observability "getmonitor")}}

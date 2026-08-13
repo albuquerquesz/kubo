@@ -81,3 +81,9 @@ export type NativeFrontend = Extract<
   Frontend,
   "native-bare" | "native-uniwind" | "native-unistyles" | "none"
 >;
+
+export function isNativeFrontend(frontend: string): boolean {
+  return (
+    frontend === "native-bare" || frontend === "native-uniwind" || frontend === "native-unistyles"
+  );
+}

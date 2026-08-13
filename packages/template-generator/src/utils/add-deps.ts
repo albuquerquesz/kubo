@@ -95,6 +95,7 @@ export const dependencyVersionMap = {
 
   fastify: "^5.9.0",
   "@fastify/cors": "^11.2.0",
+  "fastify-raw-body": "^5.0.0",
 
   turbo: "^2.10.2",
   nx: "^23.0.1",
@@ -184,6 +185,8 @@ export const dependencyVersionMap = {
 
   resend: "^6.19.0",
   "@ararahq/sdk": "^1.8.1",
+  stripe: "^22.4.0",
+  "@stripe/stripe-js": "^7.9.0",
 } as const;
 
 export type AvailableDependencies = keyof typeof dependencyVersionMap;

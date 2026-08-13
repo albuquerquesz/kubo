@@ -93,7 +93,9 @@ export const AuthSchema = z
   .enum(["better-auth", "clerk", "none"])
   .describe("Authentication provider");
 
-export const PaymentsSchema = z.enum(["none", "abacatepay"]).describe("Payments provider");
+export const PaymentsSchema = z
+  .enum(["none", "abacatepay", "stripe"])
+  .describe("Payments provider");
 
 export const ObservabilityProviderSchema = z.enum(["getmonitor", "himetrica"]);
 

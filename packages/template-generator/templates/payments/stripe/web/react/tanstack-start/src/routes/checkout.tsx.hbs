@@ -1,0 +1,17 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { env } from "@{{projectName}}/env/web";
+import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+
+export const Route = createFileRoute("/checkout")({ component: CheckoutPage });
+function CheckoutPage() {
+	const ref = useRef<HTMLDivElement>(null);
+	useEffect(() => { void loadStripe(env.VITE_STRIPE_PUBLISHABLE_KEY).then(async (stripe) => {
+		if (!stripe || !ref.current) return;
+		const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
+		const checkout = await stripe.initEmbeddedCheckout({ fetchClientSecret: () => fetchStripeClientSecret(baseUrl) });
+		checkout.mount(ref.current);
+	}); }, []);
+	return <main><h1>Checkout</h1><div ref={ref} /></main>;
+}

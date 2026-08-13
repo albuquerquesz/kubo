@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubojs/types";
+import { getStripePublicEnvKey, type ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 
@@ -139,6 +139,7 @@ function buildClientVars(
   backend: ProjectConfig["backend"],
   auth: ProjectConfig["auth"],
   observability: ProjectConfig["observability"],
+  payments: ProjectConfig["payments"],
 ): EnvVariable[] {
   const hasNextJs = frontend.includes("next");
   const hasReactRouter = frontend.includes("react-router");
@@ -156,6 +157,16 @@ function buildClientVars(
       condition: backend === "convex" ? true : baseVar.write,
     },
   ];
+
+  if (payments === "stripe") {
+    const stripeKey = getStripePublicEnvKey(frontend);
+    vars.push({
+      key: stripeKey,
+      value: "",
+      condition: true,
+      comment: "Stripe publishable key (pk_...)",
+    });
+  }
 
   if (auth === "clerk") {
     if (hasNextJs) {
@@ -626,6 +637,24 @@ function buildServerVars(
       value: `${abacatePayBaseUrl}/success`,
       condition: payments === "abacatepay",
     },
+    {
+      key: "STRIPE_SECRET_KEY",
+      value: "",
+      condition: payments === "stripe",
+      comment: "Stripe restricted key (rk_...) or secret key (sk_...) — server only",
+    },
+    {
+      key: "STRIPE_PRICE_ID",
+      value: "price_your_price_id",
+      condition: payments === "stripe",
+      comment: "Stripe Price ID configured in the Dashboard",
+    },
+    {
+      key: "STRIPE_WEBHOOK_SECRET",
+      value: "",
+      condition: payments === "stripe",
+      comment: "Stripe webhook signing secret (whsec_...)",
+    },
   ];
 }
 
@@ -670,7 +699,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     const clientDir = "apps/web";
     if (vfs.directoryExists(clientDir)) {
       const envPath = `${clientDir}/.env`;
-      const clientVars = buildClientVars(frontend, backend, auth, observability);
+      const clientVars = buildClientVars(frontend, backend, auth, observability, payments);
       writeEnvFile(vfs, envPath, clientVars);
     }
   }

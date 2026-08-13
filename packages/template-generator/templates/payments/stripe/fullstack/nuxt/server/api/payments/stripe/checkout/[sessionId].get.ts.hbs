@@ -1,0 +1,2 @@
+import { getStripeCheckoutSession } from '@{{projectName}}/payments/lib/stripe';
+export default defineEventHandler(async (event) => { try { return { data: await getStripeCheckoutSession(getRouterParam(event, 'sessionId')!), success: true, error: null }; } catch { throw createError({ statusCode: 404, statusMessage: 'Checkout session not found' }); } });

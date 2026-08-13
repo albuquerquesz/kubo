@@ -1,0 +1,13 @@
+import { useEffect, useState } from "react";
+import { env } from "@{{projectName}}/env/web";
+
+export default function CheckoutReturnPage() {
+	const [status, setStatus] = useState("pending");
+	useEffect(() => {
+		const sessionId = new URLSearchParams(window.location.search).get("session_id");
+		if (!sessionId) return;
+		const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
+		void fetch(`${baseUrl}/api/payments/stripe/checkout/${sessionId}`).then((response) => response.json()).then((payload: { data?: { paymentStatus?: string } }) => setStatus(payload.data?.paymentStatus ?? "pending"));
+	}, []);
+	return <main><h1>Payment status</h1><p>{status}</p></main>;
+}

@@ -87,6 +87,12 @@ export const server = await Worker("server", {
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
     {{/if}}
+    {{#if (eq payments "stripe")}}
+    STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
+    STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
+    STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
+    {{stripePublicEnvKey frontend}}: alchemy.env.{{stripePublicEnvKey frontend}}!,
+    {{/if}}
     {{#if (eq dbSetup "turso")}}
     DATABASE_AUTH_TOKEN: alchemy.secret.env.DATABASE_AUTH_TOKEN!,
     {{/if}}
@@ -152,6 +158,12 @@ export const web = await Nextjs("web", {
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
+    {{/if}}
+    {{#if (eq payments "stripe")}}
+    STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
+    STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
+    STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
+    {{stripePublicEnvKey frontend}}: alchemy.env.{{stripePublicEnvKey frontend}}!,
     {{/if}}
     {{#if (eq dbSetup "turso")}}
     DATABASE_AUTH_TOKEN: alchemy.secret.env.DATABASE_AUTH_TOKEN!,
@@ -219,6 +231,12 @@ export const web = await Nuxt("web", {
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
     {{/if}}
+    {{#if (eq payments "stripe")}}
+    STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
+    STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
+    STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
+    {{stripePublicEnvKey frontend}}: alchemy.env.{{stripePublicEnvKey frontend}}!,
+    {{/if}}
     {{#if (eq dbSetup "turso")}}
     DATABASE_AUTH_TOKEN: alchemy.secret.env.DATABASE_AUTH_TOKEN!,
     {{/if}}
@@ -272,6 +290,12 @@ export const web = await SvelteKit("web", {
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
+    {{/if}}
+    {{#if (eq payments "stripe")}}
+    STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
+    STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
+    STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
+    {{stripePublicEnvKey frontend}}: alchemy.env.{{stripePublicEnvKey frontend}}!,
     {{/if}}
     {{#if (eq dbSetup "turso")}}
     DATABASE_AUTH_TOKEN: alchemy.secret.env.DATABASE_AUTH_TOKEN!,
@@ -336,6 +360,12 @@ export const web = await TanStackStart("web", {
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
+    {{/if}}
+    {{#if (eq payments "stripe")}}
+    STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
+    STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
+    STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
+    {{stripePublicEnvKey frontend}}: alchemy.env.{{stripePublicEnvKey frontend}}!,
     {{/if}}
     {{#if (eq dbSetup "turso")}}
     DATABASE_AUTH_TOKEN: alchemy.secret.env.DATABASE_AUTH_TOKEN!,
@@ -442,6 +472,12 @@ export const web = await Astro("web", {
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
+    {{/if}}
+    {{#if (eq payments "stripe")}}
+    STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
+    STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
+    STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
+    {{stripePublicEnvKey frontend}}: alchemy.env.{{stripePublicEnvKey frontend}}!,
     {{/if}}
     {{#if (eq dbSetup "turso")}}
     DATABASE_AUTH_TOKEN: alchemy.secret.env.DATABASE_AUTH_TOKEN!,

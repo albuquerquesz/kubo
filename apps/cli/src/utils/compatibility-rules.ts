@@ -1,3 +1,4 @@
+import { getPaymentCompatibilityIssue } from "@kubojs/types";
 import { Result } from "better-result";
 
 import { ADDON_COMPATIBILITY } from "../constants";
@@ -654,42 +655,33 @@ export function validatePaymentsCompatibility(
 ): ValidationResult {
   if (!payments || payments === "none") return Result.ok(undefined);
 
-  if (payments === "abacatepay") {
-    if (backend === "convex") {
-      return validationErr(
-        "AbacatePay payments is not compatible with '--backend convex'. Please use a server backend or backend 'self'.",
-      );
-    }
+  const issue = getPaymentCompatibilityIssue({
+    provider: payments,
+    backend,
+    frontends,
+    database,
+    orm,
+  });
 
-    const hasWebFrontend = frontends.some((frontend) => isWebFrontend(frontend));
-    if (!hasWebFrontend) {
-      return validationErr(
-        "AbacatePay payments requires a web frontend. Please choose next, tanstack-start, tanstack-router, react-router, nuxt, svelte, solid, or astro.",
-      );
-    }
-
-    const hasNativeOnly =
-      frontends.length > 0 &&
-      frontends.every((frontend) =>
-        ["native-bare", "native-uniwind", "native-unistyles"].includes(frontend),
-      );
-    if (hasNativeOnly) {
-      return validationErr(
-        "AbacatePay payments is not compatible with native-only frontends. Please add a supported web frontend or use '--payments none'.",
-      );
-    }
-
-    if (database === "none" || orm === "none") {
-      return validationErr(
-        "AbacatePay payments v1 requires a SQL database with Drizzle or Prisma. Database and ORM cannot be 'none'.",
-      );
-    }
-
-    if (database === "mongodb" || orm === "mongoose") {
-      return validationErr(
-        "AbacatePay payments v1 requires a SQL database with Drizzle or Prisma. MongoDB and Mongoose are not supported.",
-      );
-    }
+  if (issue === "convex-unsupported") {
+    return validationErr(
+      `${payments === "stripe" ? "Stripe" : "AbacatePay"} payments is not compatible with '--backend convex'. Please use a server backend or backend 'self'.`,
+    );
+  }
+  if (issue === "requires-web-frontend") {
+    return validationErr(
+      `${payments === "stripe" ? "Stripe" : "AbacatePay"} payments requires a web frontend. Please choose next, tanstack-start, tanstack-router, react-router, nuxt, svelte, solid, or astro.`,
+    );
+  }
+  if (issue === "native-only-unsupported") {
+    return validationErr(
+      `${payments === "stripe" ? "Stripe" : "AbacatePay"} payments is not compatible with native-only frontends. Please add a supported web frontend or use '--payments none'.`,
+    );
+  }
+  if (issue === "sql-database-required") {
+    return validationErr(
+      "AbacatePay payments v1 requires a SQL database with Drizzle or Prisma. MongoDB and Mongoose are not supported.",
+    );
   }
 
   return Result.ok(undefined);

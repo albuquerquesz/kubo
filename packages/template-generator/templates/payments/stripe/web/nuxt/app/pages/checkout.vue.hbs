@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { loadStripe } from '@stripe/stripe-js'
+import { fetchStripeClientSecret } from '@{{projectName}}/payments/client'
+const container = ref<HTMLElement | null>(null)
+onMounted(async () => {
+  const config = useRuntimeConfig()
+  const stripe = await loadStripe(config.public.stripePublishableKey)
+  if (!stripe || !container.value) return
+  const baseUrl = {{#if (eq backend "self")}}""{{else}}config.public.serverUrl{{/if}}
+  const checkout = await stripe.initEmbeddedCheckout({ fetchClientSecret: () => fetchStripeClientSecret(baseUrl) })
+  checkout.mount(container.value)
+})
+</script>
+<template><main><h1>Checkout</h1><div ref="container" /></main></template>

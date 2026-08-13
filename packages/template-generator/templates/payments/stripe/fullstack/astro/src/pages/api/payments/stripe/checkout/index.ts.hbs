@@ -1,0 +1,3 @@
+import type { APIRoute } from 'astro';
+import { createStripeEmbeddedCheckout } from '@{{projectName}}/payments/lib/stripe';
+export const POST: APIRoute = ({ request }) => createStripeEmbeddedCheckout(request.url).then((data) => Response.json({ data, success: true, error: null }));

@@ -1,0 +1,3 @@
+import type { APIRoute } from 'astro';
+import { getStripeCheckoutSession } from '@{{projectName}}/payments/lib/stripe';
+export const GET: APIRoute = async ({ params }) => { try { return Response.json({ data: await getStripeCheckoutSession(params.sessionId!), success: true, error: null }); } catch { return Response.json({ error: 'Checkout session not found' }, { status: 404 }); } };

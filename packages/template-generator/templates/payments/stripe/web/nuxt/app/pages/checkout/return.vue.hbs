@@ -1,0 +1,12 @@
+<script setup lang="ts">
+const status = ref('pending')
+onMounted(async () => {
+  const sessionId = new URLSearchParams(window.location.search).get('session_id')
+  if (!sessionId) return
+  const config = useRuntimeConfig()
+  const baseUrl = {{#if (eq backend "self")}}''{{else}}config.public.serverUrl{{/if}}
+  const payload = await $fetch<{ data?: { paymentStatus?: string } }>(`${baseUrl}/api/payments/stripe/checkout/${sessionId}`).catch(() => null)
+  status.value = payload?.data?.paymentStatus ?? 'pending'
+})
+</script>
+<template><main><h1>Payment status</h1><p>{{ status }}</p></main></template>

@@ -1,0 +1,3 @@
+import { json } from '@sveltejs/kit';
+import { getStripeCheckoutSession } from '@{{projectName}}/payments/lib/stripe';
+export const GET = async ({ params }) => { try { return json({ data: await getStripeCheckoutSession(params.sessionId), success: true, error: null }); } catch { return json({ error: 'Checkout session not found' }, { status: 404 }); } };

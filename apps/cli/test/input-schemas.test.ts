@@ -18,6 +18,12 @@ describe("Input schemas", () => {
     ).toBe(true);
   });
 
+  it("accepts Stripe as a payments provider", () => {
+    expect(CreateInputSchema.safeParse({ projectName: "app", payments: "stripe" }).success).toBe(
+      true,
+    );
+  });
+
   it("accepts Resend and Notifique as communication providers", () => {
     expect(CommunicationSchema.safeParse("resend").success).toBe(true);
     expect(CommunicationSchema.safeParse("notifique").success).toBe(true);

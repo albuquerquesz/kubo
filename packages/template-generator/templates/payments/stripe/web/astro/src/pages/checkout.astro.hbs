@@ -1,0 +1,14 @@
+---
+---
+<main><h1>Checkout</h1><div id="checkout"></div></main>
+<script>
+  import { loadStripe } from '@stripe/stripe-js';
+  import { fetchStripeClientSecret } from '@{{projectName}}/payments/client';
+  const stripe = await loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  const element = document.querySelector('#checkout');
+  if (stripe && element) {
+    const baseUrl = {{#if (eq backend "self")}}""{{else}}import.meta.env.PUBLIC_SERVER_URL{{/if}};
+    const checkout = await stripe.initEmbeddedCheckout({ fetchClientSecret: () => fetchStripeClientSecret(baseUrl) });
+    checkout.mount(element);
+  }
+</script>
