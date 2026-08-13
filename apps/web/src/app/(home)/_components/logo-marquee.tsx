@@ -40,6 +40,16 @@ const LOGOS: LogoItem[] = [
     href: "https://getmonitor.io",
     src: "https://getmonitor.io/logo.svg",
   },
+  {
+    name: "Himetrica",
+    href: "https://www.himetrica.com",
+    src: "https://www.himetrica.com/himetrica.png",
+  },
+  {
+    name: "Notifique.dev",
+    href: "https://notifique.dev",
+    src: "https://notifique.dev/logo-notifique.png",
+  },
 ];
 
 if (LOGOS.length !== LOGO_MARQUEE_CELL_COUNT) {

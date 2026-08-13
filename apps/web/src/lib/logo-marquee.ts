@@ -4,7 +4,7 @@
  */
 
 /** Unique BR integrations shown in the home logo marquee. */
-export const LOGO_MARQUEE_CELL_COUNT = 3;
+export const LOGO_MARQUEE_CELL_COUNT = 5;
 
 /** Compact (<768): 160px cells, no border overlap. */
 export const LOGO_MARQUEE_COMPACT = {
