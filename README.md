@@ -13,7 +13,6 @@
   <a href="https://www.npmjs.com/package/create-kubojs">
     <img alt="npm: create-kubojs" src="https://img.shields.io/npm/v/create-kubojs?style=flat-square&label=npm&color=CB3837" />
   </a>
-  &nbsp;|&nbsp;
   <a href="https://x.com/byalbuquerquesz">
     <img alt="X: @byalbuquerquesz" src="https://img.shields.io/badge/X-@byalbuquerquesz-000000?style=flat-square&logo=x&logoColor=white" />
   </a>
