@@ -1,3 +1,0 @@
-{
-  "extends": "@notifique-smoke/config/tsconfig.base.json"
-}
