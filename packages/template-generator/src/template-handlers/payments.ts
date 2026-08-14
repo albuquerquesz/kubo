@@ -8,7 +8,7 @@ export async function processPaymentsTemplates(
   templates: TemplateData,
   config: ProjectConfig,
 ): Promise<void> {
-  if (!config.payments || config.payments === "none") return;
+  if (!config.payments || config.payments.length === 0) return;
 
   processSingleTemplate(
     vfs,
@@ -31,7 +31,7 @@ export async function processPaymentsTemplates(
     "packages/payments/src/index.ts",
     config,
   );
-  if (config.payments === "stripe") {
+  if (config.payments.includes("stripe")) {
     processSingleTemplate(
       vfs,
       templates,
@@ -49,107 +49,108 @@ export async function processPaymentsTemplates(
   const hasSolidWeb = config.frontend.includes("solid");
   const hasAstroWeb = config.frontend.includes("astro");
 
-  if (config.backend === "convex") {
-    processTemplatesFromPrefix(
-      vfs,
-      templates,
-      `payments/${config.payments}/convex/backend`,
-      "packages/backend",
-      config,
-    );
-    return;
-  } else if (config.backend !== "none") {
-    processTemplatesFromPrefix(
-      vfs,
-      templates,
-      `payments/${config.payments}/server/base`,
-      "packages/payments",
-      config,
-    );
-
-    if (
-      config.payments === "abacatepay" &&
-      config.orm !== "none" &&
-      config.database !== "none" &&
-      config.database !== "mongodb"
-    ) {
+  for (const provider of config.payments) {
+    if (config.backend === "convex") {
       processTemplatesFromPrefix(
         vfs,
         templates,
-        `payments/${config.payments}/db/${config.orm}/${config.database}`,
-        "packages/db",
+        `payments/${provider}/convex/backend`,
+        "packages/backend",
+        config,
+      );
+    } else if (config.backend !== "none") {
+      processTemplatesFromPrefix(
+        vfs,
+        templates,
+        `payments/${provider}/server/base`,
+        "packages/payments",
+        config,
+      );
+
+      if (
+        provider === "abacatepay" &&
+        config.orm !== "none" &&
+        config.database !== "none" &&
+        config.database !== "mongodb"
+      ) {
+        processTemplatesFromPrefix(
+          vfs,
+          templates,
+          `payments/${provider}/db/${config.orm}/${config.database}`,
+          "packages/db",
+          config,
+        );
+      }
+    } else if (provider === "abacatepay") {
+      processTemplatesFromPrefix(
+        vfs,
+        templates,
+        `payments/${provider}/server/base`,
+        "packages/payments",
         config,
       );
     }
-  } else if (config.payments === "abacatepay") {
-    processTemplatesFromPrefix(
-      vfs,
-      templates,
-      `payments/${config.payments}/server/base`,
-      "packages/payments",
-      config,
-    );
-  }
 
-  if (["abacatepay", "stripe"].includes(config.payments) && config.backend === "self") {
-    const fullstackFramework = config.frontend.find((f) =>
-      ["next", "tanstack-start", "nuxt", "svelte", "astro"].includes(f),
-    );
-    if (fullstackFramework) {
+    if (config.backend === "self") {
+      const fullstackFramework = config.frontend.find((f) =>
+        ["next", "tanstack-start", "nuxt", "svelte", "astro"].includes(f),
+      );
+      if (fullstackFramework) {
+        processTemplatesFromPrefix(
+          vfs,
+          templates,
+          `payments/${provider}/fullstack/${fullstackFramework}`,
+          "apps/web",
+          config,
+        );
+      }
+    }
+
+    if (hasReactWeb) {
+      const reactFramework = config.frontend.find((f) =>
+        ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
+      );
+      if (reactFramework) {
+        processTemplatesFromPrefix(
+          vfs,
+          templates,
+          `payments/${provider}/web/react/${reactFramework}`,
+          "apps/web",
+          config,
+        );
+      }
+    } else if (hasNuxtWeb) {
       processTemplatesFromPrefix(
         vfs,
         templates,
-        `payments/${config.payments}/fullstack/${fullstackFramework}`,
+        `payments/${provider}/web/nuxt`,
+        "apps/web",
+        config,
+      );
+    } else if (hasSvelteWeb) {
+      processTemplatesFromPrefix(
+        vfs,
+        templates,
+        `payments/${provider}/web/svelte`,
+        "apps/web",
+        config,
+      );
+    } else if (hasSolidWeb) {
+      processTemplatesFromPrefix(
+        vfs,
+        templates,
+        `payments/${provider}/web/solid`,
+        "apps/web",
+        config,
+      );
+    } else if (hasAstroWeb) {
+      processTemplatesFromPrefix(
+        vfs,
+        templates,
+        `payments/${provider}/web/astro`,
         "apps/web",
         config,
       );
     }
-  }
-
-  if (hasReactWeb) {
-    const reactFramework = config.frontend.find((f) =>
-      ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-    );
-    if (reactFramework) {
-      processTemplatesFromPrefix(
-        vfs,
-        templates,
-        `payments/${config.payments}/web/react/${reactFramework}`,
-        "apps/web",
-        config,
-      );
-    }
-  } else if (hasNuxtWeb) {
-    processTemplatesFromPrefix(
-      vfs,
-      templates,
-      `payments/${config.payments}/web/nuxt`,
-      "apps/web",
-      config,
-    );
-  } else if (hasSvelteWeb) {
-    processTemplatesFromPrefix(
-      vfs,
-      templates,
-      `payments/${config.payments}/web/svelte`,
-      "apps/web",
-      config,
-    );
-  } else if (hasSolidWeb) {
-    processTemplatesFromPrefix(
-      vfs,
-      templates,
-      `payments/${config.payments}/web/solid`,
-      "apps/web",
-      config,
-    );
-  } else if (hasAstroWeb) {
-    processTemplatesFromPrefix(
-      vfs,
-      templates,
-      `payments/${config.payments}/web/astro`,
-      "apps/web",
-      config,
-    );
   }
 }

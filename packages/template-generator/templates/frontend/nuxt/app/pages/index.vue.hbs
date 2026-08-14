@@ -7,7 +7,7 @@ import { useConvexQuery } from "convex-vue";
 const { $orpc } = useNuxtApp()
 import { useQuery } from '@tanstack/vue-query'
   {{/unless}}
-  {{#if (eq payments "abacatepay")}}
+  {{#if (includes payments "abacatepay")}}
 const config = useRuntimeConfig()
   {{/if}}
 {{/if}}
@@ -41,7 +41,7 @@ onServerPrefetch(async () => {
 })
   {{/unless}}
 {{/if}}
-{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 
 async function openCheckout() {
   const baseUrl = {{#if (eq backend "self")}}""{{else}}config.public.serverUrl{{/if}}
@@ -117,7 +117,7 @@ async function openCheckout() {
         {{/unless}}
         {{/if}}
       </UCard>
-      {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+      {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
       <UCard>
         <template #header>
           <div class="font-medium">Hosted Checkout</div>

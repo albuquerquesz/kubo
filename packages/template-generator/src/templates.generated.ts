@@ -9079,7 +9079,7 @@ import Layout from "../layouts/Layout.astro";
               <p class="text-white">Loading...</p>
             </div>
           </div>
-          {{else if (eq payments "abacatepay")}}
+          {{else if (includes payments "abacatepay")}}
           <div class="rounded-lg bg-neutral-800/50 p-4">
             <p class="text-sm text-neutral-400 mb-2">Checkout</p>
             <div class="space-y-2">
@@ -9112,7 +9112,7 @@ import Layout from "../layouts/Layout.astro";
   {{#if (eq api "orpc")}}
   import { orpc } from "../lib/orpc";
   {{/if}}
-  {{#if (and (eq payments "abacatepay") (ne backend "self"))}}
+  {{#if (and (includes payments "abacatepay") (ne backend "self"))}}
   import { env } from "@{{projectName}}/env/web";
   {{/if}}
 
@@ -9182,7 +9182,7 @@ import Layout from "../layouts/Layout.astro";
       } catch (e) {
         console.error("Failed to load subscription info", e);
       }
-      {{else if (eq payments "abacatepay")}}
+      {{else if (includes payments "abacatepay")}}
       document.getElementById("open-checkout")?.addEventListener("click", async () => {
         try {
           const baseUrl = {{#if (eq backend "self")}}""{{else}}env.PUBLIC_SERVER_URL{{/if}};
@@ -9502,7 +9502,7 @@ onMounted(async () => {
 const hasProSubscription = computed(() => 
   (customerState.value?.activeSubscriptions?.length ?? 0) > 0
 )
-{{else if (eq payments "abacatepay")}}
+{{else if (includes payments "abacatepay")}}
 const openCheckout = async () => {
   const baseUrl = {{#if (eq backend "self")}}""{{else}}runtimeConfig.public.serverUrl{{/if}}
   const response = await fetch(\`\${baseUrl}/api/payments/abacatepay/checkout\`, {
@@ -9575,7 +9575,7 @@ const openCheckout = async () => {
           </UButton>
         </div>
       </UCard>
-      {{else if (eq payments "abacatepay")}}
+      {{else if (includes payments "abacatepay")}}
       <UCard>
         <template #header>
           <div class="font-medium">Checkout</div>
@@ -9665,7 +9665,7 @@ export const authClient = createAuthClient({
   ["auth/better-auth/web/react/next/src/app/dashboard/dashboard.tsx.hbs", `"use client";
 {{#if (eq payments "polar")}}
 import { Button } from "@{{projectName}}/ui/components/button";
-{{else if (eq payments "abacatepay")}}
+{{else if (includes payments "abacatepay")}}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -9720,7 +9720,7 @@ export default function Dashboard({
 					Upgrade to Pro
 				</Button>
 			)}
-			{{else if (eq payments "abacatepay")}}
+			{{else if (includes payments "abacatepay")}}
 			<Button
 				onClick={async () => {
 					const baseUrl = {{#if (eq backend "self")}}""{{else}}env.NEXT_PUBLIC_SERVER_URL{{/if}};
@@ -10528,7 +10528,7 @@ export default function UserMenu() {
 `],
   ["auth/better-auth/web/react/react-router/src/routes/dashboard.tsx.hbs", `{{#if (eq payments "polar")}}
 import { Button } from "@{{projectName}}/ui/components/button";
-{{else if (eq payments "abacatepay")}}
+{{else if (includes payments "abacatepay")}}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -10604,7 +10604,7 @@ export default function Dashboard() {
           Upgrade to Pro
         </Button>
       )}
-      {{else if (eq payments "abacatepay")}}
+      {{else if (includes payments "abacatepay")}}
       <Button
         onClick={async () => {
           const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
@@ -11003,7 +11003,7 @@ export default function UserMenu() {
   ["auth/better-auth/web/react/tanstack-router/src/routes/_auth/dashboard.tsx.hbs", `{{#if (eq payments "polar")}}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { authClient } from "@/lib/auth-client";
-{{else if (eq payments "abacatepay")}}
+{{else if (includes payments "abacatepay")}}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -11054,7 +11054,7 @@ function RouteComponent() {
 					Upgrade to Pro
 				</Button>
 			)}
-			{{else if (eq payments "abacatepay")}}
+			{{else if (includes payments "abacatepay")}}
 			<Button
 				onClick={async () => {
 					const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
@@ -11525,7 +11525,7 @@ export const authMiddleware = createMiddleware().server(
   ["auth/better-auth/web/react/tanstack-start/src/routes/_auth/dashboard.tsx.hbs", `{{#if (eq payments "polar") }}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { authClient } from "@/lib/auth-client";
-{{else if (eq payments "abacatepay") }}
+{{else if (includes payments "abacatepay") }}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -11590,7 +11590,7 @@ function RouteComponent() {
           Upgrade to Pro
         </Button>
       )}
-      {{else if (eq payments "abacatepay") }}
+      {{else if (includes payments "abacatepay") }}
       <Button
         onClick={async function handleCheckout() {
           const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
@@ -12030,7 +12030,7 @@ export const authClient = createAuthClient({
 		baseURL: new URL("/api/auth", getServerUrl(env.VITE_SERVER_URL)).toString(),
 });
 `],
-  ["auth/better-auth/web/solid/src/routes/dashboard.tsx.hbs", `{{#if (eq payments "abacatepay")}}
+  ["auth/better-auth/web/solid/src/routes/dashboard.tsx.hbs", `{{#if (includes payments "abacatepay")}}
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
 import { authClient } from "@/lib/auth-client";
@@ -12096,7 +12096,7 @@ function RouteComponent() {
 					Upgrade to Pro
 				</button>
 			)}
-			{{else if (eq payments "abacatepay")}}
+			{{else if (includes payments "abacatepay")}}
 			<button
 				onClick={async () => {
 					const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
@@ -12471,7 +12471,7 @@ export const authClient = createAuthClient({
   ["auth/better-auth/web/svelte/src/routes/dashboard/+page.svelte.hbs", `<script lang="ts">
 	import { goto } from '$app/navigation';
 	import { authClient } from '$lib/auth-client';
-	{{#if (eq payments "abacatepay")}}
+	{{#if (includes payments "abacatepay")}}
 	import { env } from '$env/dynamic/public';
 	{{/if}}
 	{{#if (eq api "orpc")}}
@@ -12502,7 +12502,7 @@ export const authClient = createAuthClient({
 			});
 		}
 	});
-	{{else if (eq payments "abacatepay")}}
+	{{else if (includes payments "abacatepay")}}
 	async function openCheckout() {
 		const baseUrl = {{#if (eq backend "self")}}''{{else}}env.PUBLIC_SERVER_URL{{/if}};
 		const response = await fetch(\`\${baseUrl}/api/payments/abacatepay/checkout\`, {
@@ -12540,7 +12540,7 @@ export const authClient = createAuthClient({
 				Upgrade to Pro
 			</button>
 		{/if}
-		{{else if (eq payments "abacatepay")}}
+		{{else if (includes payments "abacatepay")}}
 		<button onclick={openCheckout}>
 			Open Checkout
 		</button>
@@ -14536,14 +14536,14 @@ import { createContext } from "@{{projectName}}/api/context";
 {{#if (eq auth "better-auth")}}
 import { auth } from "@{{projectName}}/auth";
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
 {{/if}}
 
@@ -14617,7 +14617,7 @@ const app = {{#if (eq runtime "node")}}new Elysia({ adapter: node() }){{else}}ne
 		return status(405)
 	})
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 	.post("/api/payments/abacatepay/checkout", async ({ request, status }) => {
 		{{#if (eq auth "better-auth")}}
 		const session = await auth.api.getSession({
@@ -14713,7 +14713,7 @@ const app = {{#if (eq runtime "node")}}new Elysia({ adapter: node() }){{else}}ne
 		});
 	})
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 	.post("/api/payments/stripe/checkout", async ({ request }) => ({ data: await createStripeEmbeddedCheckout(request.headers.get("origin") ?? request.url), success: true, error: null }))
 	.post("/api/payments/stripe/webhook", async ({ request, status }) => {
 		const signature = request.headers.get("stripe-signature");
@@ -14770,14 +14770,14 @@ import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { auth } from "@{{projectName}}/auth";
 import { toNodeHandler } from "better-auth/node";
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
 {{/if}}
 {{#if (eq auth "clerk")}}
@@ -14799,7 +14799,7 @@ app.use(
 	})
 );
 
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 app.use("/api/payments/stripe/webhook", express.raw({ type: "*/*" }));
 {{/if}}
 
@@ -14811,7 +14811,7 @@ app.use(clerkMiddleware());
 app.all("/api/auth{/*path}", toNodeHandler(auth));
 {{/if}}
 
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 app.post("/api/payments/abacatepay/checkout", async (_req, res) => {
 	{{#if (eq auth "better-auth")}}
 	const headers = new Headers();
@@ -14943,7 +14943,7 @@ app.use(async (req, res, next) => {
 
 app.use(express.json());
 
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 app.post("/api/payments/stripe/checkout", async (req, res) => {
 	res.json({ data: await createStripeEmbeddedCheckout(req.get("origin") ?? \`\${req.protocol}://\${req.get("host")}\${req.originalUrl}\`), success: true, error: null });
 });
@@ -14988,7 +14988,7 @@ app.listen(3000, () => {
   ["backend/server/fastify/src/index.ts.hbs", `import { env } from "@{{projectName}}/env/server";
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 import fastifyRawBody from "fastify-raw-body";
 {{/if}}
 
@@ -15017,14 +15017,14 @@ import { devToolsMiddleware } from "@ai-sdk/devtools";
 {{#if (eq auth "better-auth")}}
 import { auth } from "@{{projectName}}/auth";
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
 {{/if}}
 {{#if (eq auth "clerk")}}
@@ -15075,7 +15075,7 @@ const fastify = Fastify({
 {{/if}}
 
 fastify.register(fastifyCors, baseCorsConfig);
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 fastify.register(fastifyRawBody, { field: "rawBody", global: false, routes: ["/api/payments/stripe/webhook"] });
 {{/if}}
 {{#if (eq auth "clerk")}}
@@ -15172,7 +15172,7 @@ fastify.route({
 });
 {{/if}}
 
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 fastify.post("/api/payments/abacatepay/checkout", async (request, reply) => {
 	{{#if (eq auth "better-auth")}}
 	const headers = new Headers();
@@ -15267,7 +15267,7 @@ fastify.post('/ai', async function (request) {
 });
 {{/if}}
 
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 fastify.post("/api/payments/stripe/checkout", async (request) => ({
 	data: await createStripeEmbeddedCheckout(request.headers.origin ?? request.url), success: true, error: null,
 }));
@@ -15319,14 +15319,14 @@ import { createAuth } from "@{{projectName}}/auth";
 import { auth } from "@{{projectName}}/auth";
 {{/if}}
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 import {
 	createStripeEmbeddedCheckout,
 	getStripeCheckoutSession,
@@ -15377,7 +15377,7 @@ app.on(
 );
 {{/if}}
 
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 app.post("/api/payments/abacatepay/checkout", async (c) => {
 	{{#if (eq auth "better-auth")}}
 	const session = await {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}createAuth(){{else}}auth{{/if}}.api.getSession({
@@ -15418,7 +15418,7 @@ app.get("/api/payments/abacatepay/checkout/:checkoutId", async (c) => {
 	return c.json({ data: checkout, success: true, error: null });
 });
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 app.post("/api/payments/stripe/checkout", async (c) => {
 	const checkout = await createStripeEmbeddedCheckout(c.req.header("Origin") ?? c.req.url);
 	return c.json({ data: checkout, success: true, error: null });
@@ -15802,7 +15802,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
   ["db/drizzle/base/src/schema/index.ts.hbs", `{{#if (eq auth "better-auth")}}
 export * from "./auth";
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 export * from "./abacatepay";
 {{/if}}
 {{#if (includes examples "todo")}}
@@ -26298,7 +26298,7 @@ const TITLE_TEXT = \`
         </div>
       </section>
       {{/if}}
-      {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+      {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
       <section class="rounded-lg border border-neutral-700 p-4">
         <h2 class="mb-2 font-medium text-white">Hosted Checkout</h2>
         <p class="mb-4 text-sm text-neutral-400">
@@ -26334,7 +26334,7 @@ const TITLE_TEXT = \`
   checkHealth();
 </script>
 {{/if}}
-{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 <script>
   const checkoutButton = document.getElementById("open-checkout");
 
@@ -30165,7 +30165,7 @@ import { useConvexQuery } from "convex-vue";
 const { $orpc } = useNuxtApp()
 import { useQuery } from '@tanstack/vue-query'
   {{/unless}}
-  {{#if (eq payments "abacatepay")}}
+  {{#if (includes payments "abacatepay")}}
 const config = useRuntimeConfig()
   {{/if}}
 {{/if}}
@@ -30199,7 +30199,7 @@ onServerPrefetch(async () => {
 })
   {{/unless}}
 {{/if}}
-{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 
 async function openCheckout() {
   const baseUrl = {{#if (eq backend "self")}}""{{else}}config.public.serverUrl{{/if}}
@@ -30275,7 +30275,7 @@ async function openCheckout() {
         {{/unless}}
         {{/if}}
       </UCard>
-      {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+      {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
       <UCard>
         <template #header>
           <div class="font-medium">Hosted Checkout</div>
@@ -30316,7 +30316,7 @@ export default defineNuxtConfig({
   convex: {
     url: process.env.NUXT_PUBLIC_CONVEX_URL,
   },
-  {{else if (or (and (ne backend "self") (ne backend "none")) (eq payments "stripe"))}}
+  {{else if (or (and (ne backend "self") (ne backend "none")) (includes payments "stripe"))}}
   runtimeConfig: {
     // server-side override for SSR fetches (NUXT_SERVER_URL); falls back to the public URL
     serverUrl: "",
@@ -30525,7 +30525,7 @@ export default function RootLayout({
 {{/if}}
 `],
   ["frontend/react/next/src/app/page.tsx.hbs", `"use client"
-{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
 {{#if (eq backend "convex")}}
@@ -30565,7 +30565,7 @@ export default function Home() {
   {{else if (eq api "trpc")}}
   const healthCheck = useQuery(trpc.healthCheck.queryOptions());
   {{/if}}
-  {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+  {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
   async function openCheckout() {
     const baseUrl = {{#if (eq backend "self")}}""{{else}}env.NEXT_PUBLIC_SERVER_URL{{/if}};
     const response = await fetch(\`\${baseUrl}/api/payments/abacatepay/checkout\`, {
@@ -30615,7 +30615,7 @@ export default function Home() {
             {{/unless}}
           {{/if}}
         </section>
-        {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+        {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Hosted Checkout</h2>
           <p className="mb-4 text-sm text-muted-foreground">
@@ -31240,7 +31240,7 @@ import { flatRoutes } from "@react-router/fs-routes";
 export default flatRoutes() satisfies RouteConfig;
 `],
   ["frontend/react/react-router/src/routes/_index.tsx.hbs", `import type { Route } from "./+types/_index";
-{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
 {{#if (eq backend "convex")}}
@@ -31284,7 +31284,7 @@ export default function Home() {
   {{else if (eq api "trpc")}}
   const healthCheck = useQuery(trpc.healthCheck.queryOptions());
   {{/if}}
-  {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+  {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
   async function openCheckout() {
     const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
     const response = await fetch(\`\${baseUrl}/api/payments/abacatepay/checkout\`, {
@@ -31336,7 +31336,7 @@ export default function Home() {
             {{/unless}}
           {{/if}}
         </section>
-        {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+        {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Hosted Checkout</h2>
           <p className="mb-4 text-sm text-muted-foreground">
@@ -31735,7 +31735,7 @@ function RootComponent() {
 }
 `],
   ["frontend/react/tanstack-router/src/routes/index.tsx.hbs", `import { createFileRoute } from "@tanstack/react-router";
-{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
 {{#if (eq api "orpc")}}
@@ -31781,7 +31781,7 @@ function HomeComponent() {
   {{#if (eq backend "convex")}}
   const healthCheck = useQuery(api.healthCheck.get);
   {{/if}}
-  {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+  {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
   async function openCheckout() {
     const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
     const response = await fetch(\`\${baseUrl}/api/payments/abacatepay/checkout\`, {
@@ -31831,7 +31831,7 @@ function HomeComponent() {
             {{/unless}}
           {{/if}}
         </section>
-        {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+        {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Hosted Checkout</h2>
           <p className="mb-4 text-sm text-muted-foreground">
@@ -32347,7 +32347,7 @@ function RootDocument() {
 }
 `],
   ["frontend/react/tanstack-start/src/routes/index.tsx.hbs", `import { createFileRoute } from "@tanstack/react-router";
-{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
 {{#if (eq backend "convex")}}
@@ -32393,7 +32393,7 @@ function HomeComponent() {
   {{else if (eq api "orpc")}}
   const healthCheck = useQuery(orpc.healthCheck.queryOptions());
   {{/if}}
-  {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+  {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
   async function openCheckout() {
     const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
     const response = await fetch(\`\${baseUrl}/api/payments/abacatepay/checkout\`, {
@@ -32443,7 +32443,7 @@ function HomeComponent() {
             {{/unless}}
           {{/if}}
         </section>
-        {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+        {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Hosted Checkout</h2>
           <p className="mb-4 text-sm text-muted-foreground">
@@ -32889,7 +32889,7 @@ function RootComponent() {
 }
 `],
   ["frontend/solid/src/routes/index.tsx.hbs", `import { createFileRoute } from "@tanstack/solid-router";
-{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
 {{#if (eq api "orpc")}}
@@ -32923,7 +32923,7 @@ function App() {
   {{#if (eq api "orpc")}}
   const healthCheck = useQuery(() => orpc.healthCheck.queryOptions());
   {{/if}}
-  {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+  {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
   async function openCheckout() {
     const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
     const response = await fetch(\`\${baseUrl}/api/payments/abacatepay/checkout\`, {
@@ -32972,7 +32972,7 @@ function App() {
           </Switch>
         </section>
         {{/if}}
-        {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+        {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section class="rounded-lg border p-4">
           <h2 class="mb-2 font-medium">Hosted Checkout</h2>
           <p class="mb-4 text-sm text-muted-foreground">
@@ -33295,7 +33295,7 @@ import { orpc } from "$lib/orpc";
 import { createQuery } from "@tanstack/svelte-query";
 const healthCheck = createQuery(() => orpc.healthCheck.queryOptions());
 {{/if}}
-{{#if (and (eq payments "abacatepay") (ne backend "self"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "self"))}}
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
 
@@ -33315,7 +33315,7 @@ const TITLE_TEXT = \`
       ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
    \`;
 
-{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 async function openCheckout() {
 	const baseUrl = {{#if (eq backend "self")}}""{{else}}env.PUBLIC_SERVER_URL{{/if}};
 	const response = await fetch(\`\${baseUrl}/api/payments/abacatepay/checkout\`, {
@@ -33350,7 +33350,7 @@ async function openCheckout() {
 			</div>
 		</section>
 	    {{/if}}
-		{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+		{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 		<section class="rounded-lg border p-4">
 			<h2 class="mb-2 font-medium">Hosted Checkout</h2>
 			<p class="text-muted-foreground mb-4 text-sm">
@@ -33836,14 +33836,14 @@ export const env = createEnv({
 		POLAR_ACCESS_TOKEN: z.string().min(1),
 		POLAR_SUCCESS_URL: z.url(),
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 		ABACATEPAY_API_KEY: z.string().min(1),
 		ABACATEPAY_WEBHOOK_SECRET: z.string().min(1),
 		ABACATEPAY_PUBLIC_KEY: z.string().min(1),
 		ABACATEPAY_RETURN_URL: z.url(),
 		ABACATEPAY_COMPLETION_URL: z.url(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		STRIPE_SECRET_KEY: z.string().min(1),
 		STRIPE_PRICE_ID: z.string().min(1),
 		STRIPE_WEBHOOK_SECRET: z.string().min(1),
@@ -33918,7 +33918,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -33933,7 +33933,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 	{{/if}}
 	},
@@ -33943,7 +33943,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -33954,7 +33954,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -33972,7 +33972,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -33987,7 +33987,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -33998,7 +33998,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 	{{/if}}
 	},
@@ -34007,7 +34007,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -34020,7 +34020,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -34036,7 +34036,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
 	},
@@ -34048,7 +34048,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 	{{/if}}
 	},
@@ -34058,7 +34058,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
 	},
@@ -34069,7 +34069,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
 	},
@@ -34084,7 +34084,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
 	},
@@ -34181,14 +34181,14 @@ export const server = await Worker("server", {
     POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
     POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
     {{/if}}
-    {{#if (eq payments "abacatepay")}}
+    {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
     {{/if}}
-    {{#if (eq payments "stripe")}}
+    {{#if (includes payments "stripe")}}
     STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
     STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
     STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
@@ -34253,14 +34253,14 @@ export const web = await Nextjs("web", {
     POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
     POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
     {{/if}}
-    {{#if (eq payments "abacatepay")}}
+    {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
     {{/if}}
-    {{#if (eq payments "stripe")}}
+    {{#if (includes payments "stripe")}}
     STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
     STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
     STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
@@ -34325,14 +34325,14 @@ export const web = await Nuxt("web", {
     POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
     POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
     {{/if}}
-    {{#if (eq payments "abacatepay")}}
+    {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
     {{/if}}
-    {{#if (eq payments "stripe")}}
+    {{#if (includes payments "stripe")}}
     STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
     STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
     STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
@@ -34385,14 +34385,14 @@ export const web = await SvelteKit("web", {
     POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
     POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
     {{/if}}
-    {{#if (eq payments "abacatepay")}}
+    {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
     {{/if}}
-    {{#if (eq payments "stripe")}}
+    {{#if (includes payments "stripe")}}
     STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
     STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
     STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
@@ -34455,14 +34455,14 @@ export const web = await TanStackStart("web", {
     POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
     POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
     {{/if}}
-    {{#if (eq payments "abacatepay")}}
+    {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
     {{/if}}
-    {{#if (eq payments "stripe")}}
+    {{#if (includes payments "stripe")}}
     STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
     STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
     STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
@@ -34567,14 +34567,14 @@ export const web = await Astro("web", {
     POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
     POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
     {{/if}}
-    {{#if (eq payments "abacatepay")}}
+    {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
     ABACATEPAY_PUBLIC_KEY: alchemy.secret.env.ABACATEPAY_PUBLIC_KEY!,
     ABACATEPAY_RETURN_URL: alchemy.env.ABACATEPAY_RETURN_URL!,
     ABACATEPAY_COMPLETION_URL: alchemy.env.ABACATEPAY_COMPLETION_URL!,
     {{/if}}
-    {{#if (eq payments "stripe")}}
+    {{#if (includes payments "stripe")}}
     STRIPE_SECRET_KEY: alchemy.secret.env.STRIPE_SECRET_KEY!,
     STRIPE_PRICE_ID: alchemy.env.STRIPE_PRICE_ID!,
     STRIPE_WEBHOOK_SECRET: alchemy.secret.env.STRIPE_WEBHOOK_SECRET!,
@@ -34917,10 +34917,10 @@ export async function sendWhatsAppText(
 	return payload.data.clientSecret;
 }
 `],
-  ["packages/payments/src/index.ts.hbs", `{{#if (eq payments "abacatepay")}}
+  ["packages/payments/src/index.ts.hbs", `{{#if (includes payments "abacatepay")}}
 export * from "./lib/abacatepay";
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 export * from "./lib/stripe";
 {{/if}}
 export {};

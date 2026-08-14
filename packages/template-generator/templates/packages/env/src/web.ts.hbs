@@ -45,7 +45,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -60,7 +60,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 	{{/if}}
 	},
@@ -70,7 +70,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -81,7 +81,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -99,7 +99,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -114,7 +114,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -125,7 +125,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 	{{/if}}
 	},
@@ -134,7 +134,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -147,7 +147,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 	},
@@ -163,7 +163,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
 	},
@@ -175,7 +175,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 	{{/if}}
 	},
@@ -185,7 +185,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
 	},
@@ -196,7 +196,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
 	},
@@ -211,7 +211,7 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
-	{{#if (eq payments "stripe")}}
+	{{#if (includes payments "stripe")}}
 		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
 	},

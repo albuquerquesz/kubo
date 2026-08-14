@@ -1,7 +1,7 @@
 "use client";
 {{#if (eq payments "polar")}}
 import { Button } from "@{{projectName}}/ui/components/button";
-{{else if (eq payments "abacatepay")}}
+{{else if (includes payments "abacatepay")}}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -56,7 +56,7 @@ export default function Dashboard({
 					Upgrade to Pro
 				</Button>
 			)}
-			{{else if (eq payments "abacatepay")}}
+			{{else if (includes payments "abacatepay")}}
 			<Button
 				onClick={async () => {
 					const baseUrl = {{#if (eq backend "self")}}""{{else}}env.NEXT_PUBLIC_SERVER_URL{{/if}};

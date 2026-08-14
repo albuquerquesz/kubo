@@ -231,8 +231,8 @@ ${
 ${getClerkSetupLines(frontend, backend, api, false).join("\n")}`
     : ""
 }
-${payments === "abacatepay" ? generateAbacatePaySetup(options, packageManagerRunCmd, webPort) : ""}
-${payments === "stripe" ? generateStripeSetup(options, packageManagerRunCmd, webPort) : ""}
+${payments.includes("abacatepay") ? generateAbacatePaySetup(options, packageManagerRunCmd, webPort) : ""}
+${payments.includes("stripe") ? generateStripeSetup(options, packageManagerRunCmd, webPort) : ""}
 ${observability.includes("getmonitor") ? generateGetMonitorSetup() : ""}
 ${observability.includes("himetrica") ? generateHimetricaSetup() : ""}
 ${communication === "resend" ? generateResendSetup() : ""}
@@ -376,7 +376,7 @@ function generateAbacatePaySetup(
   webPort: string,
 ): string {
   const { backend, database, dbSetup, payments } = config;
-  if (payments !== "abacatepay") return "";
+  if (!payments.includes("abacatepay")) return "";
 
   const envPath = backend === "self" ? "apps/web/.env" : "apps/server/.env";
   const localBaseUrl = backend === "self" ? `http://localhost:${webPort}` : "http://localhost:3000";
@@ -425,7 +425,7 @@ function generateStripeSetup(
   packageManagerRunCmd: string,
   webPort: string,
 ): string {
-  if (config.payments !== "stripe") return "";
+  if (!config.payments.includes("stripe")) return "";
 
   const envPath = config.backend === "self" ? "apps/web/.env" : "apps/server/.env";
   const localBaseUrl =
@@ -562,12 +562,12 @@ function generateProjectStructure(config: ProjectConfig): string {
       }
       if (hasDbPackage) {
         structure.push(
-          payments === "abacatepay"
+          payments.includes("abacatepay")
             ? "│   ├── db/          # Database schema & queries"
             : "│   └── db/          # Database schema & queries",
         );
       }
-      if (payments === "abacatepay") {
+      if (payments.includes("abacatepay")) {
         structure.push("│   └── payments/    # AbacatePay runtime and webhook helpers");
       }
     }
@@ -799,11 +799,11 @@ function generateFeaturesList(
     features.push(`- **Authentication** - ${authLabel}`);
   }
 
-  if (payments === "abacatepay") {
+  if (payments.includes("abacatepay")) {
     features.push("- **AbacatePay** - Hosted checkout with webhook-driven payment reconciliation");
   }
 
-  if (payments === "stripe") {
+  if (payments.includes("stripe")) {
     features.push("- **Stripe** - Embedded Checkout with a signature-verified fulfillment webhook");
   }
 

@@ -49,7 +49,7 @@ import { orpc } from "$lib/orpc";
 import { createQuery } from "@tanstack/svelte-query";
 const healthCheck = createQuery(() => orpc.healthCheck.queryOptions());
 {{/if}}
-{{#if (and (eq payments "abacatepay") (ne backend "self"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "self"))}}
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
 
@@ -69,7 +69,7 @@ const TITLE_TEXT = `
       ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
    `;
 
-{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 async function openCheckout() {
 	const baseUrl = {{#if (eq backend "self")}}""{{else}}env.PUBLIC_SERVER_URL{{/if}};
 	const response = await fetch(`${baseUrl}/api/payments/abacatepay/checkout`, {
@@ -104,7 +104,7 @@ async function openCheckout() {
 			</div>
 		</section>
 	    {{/if}}
-		{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+		{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 		<section class="rounded-lg border p-4">
 			<h2 class="mb-2 font-medium">Hosted Checkout</h2>
 			<p class="text-muted-foreground mb-4 text-sm">

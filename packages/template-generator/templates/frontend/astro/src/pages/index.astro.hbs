@@ -31,7 +31,7 @@ const TITLE_TEXT = `
         </div>
       </section>
       {{/if}}
-      {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+      {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
       <section class="rounded-lg border border-neutral-700 p-4">
         <h2 class="mb-2 font-medium text-white">Hosted Checkout</h2>
         <p class="mb-4 text-sm text-neutral-400">
@@ -67,7 +67,7 @@ const TITLE_TEXT = `
   checkHealth();
 </script>
 {{/if}}
-{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+{{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
 <script>
   const checkoutButton = document.getElementById("open-checkout");
 

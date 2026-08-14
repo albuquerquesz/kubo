@@ -5,9 +5,9 @@ import { addPackageDependency } from "../utils/add-deps";
 
 export function processPaymentsDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { payments } = config;
-  if (!payments || payments === "none") return;
+  if (!payments || payments.length === 0) return;
 
-  if (payments === "stripe") {
+  if (payments.includes("stripe")) {
     addPackageDependency({
       vfs,
       packagePath: "packages/payments/package.json",

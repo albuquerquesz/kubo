@@ -165,14 +165,14 @@ export const env = createEnv({
 		POLAR_ACCESS_TOKEN: z.string().min(1),
 		POLAR_SUCCESS_URL: z.url(),
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 		ABACATEPAY_API_KEY: z.string().min(1),
 		ABACATEPAY_WEBHOOK_SECRET: z.string().min(1),
 		ABACATEPAY_PUBLIC_KEY: z.string().min(1),
 		ABACATEPAY_RETURN_URL: z.url(),
 		ABACATEPAY_COMPLETION_URL: z.url(),
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 		STRIPE_SECRET_KEY: z.string().min(1),
 		STRIPE_PRICE_ID: z.string().min(1),
 		STRIPE_WEBHOOK_SECRET: z.string().min(1),

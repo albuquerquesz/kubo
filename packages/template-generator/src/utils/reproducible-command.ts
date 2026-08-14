@@ -42,7 +42,13 @@ export function generateReproducibleCommand(config: ProjectConfig): string {
   flags.push(`--orm ${config.orm}`);
   flags.push(`--api ${config.api}`);
   flags.push(`--auth ${config.auth}`);
-  flags.push(`--payments ${config.payments}`);
+  const rawPayments: unknown = config.payments;
+  const payments = Array.isArray(rawPayments)
+    ? rawPayments
+    : rawPayments === "none" || rawPayments === undefined
+      ? []
+      : [rawPayments];
+  flags.push(`--payments ${payments.join(" ") || "none"}`);
   const observability = Array.isArray(config.observability)
     ? config.observability
     : config.observability === "none"

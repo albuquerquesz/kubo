@@ -1,4 +1,4 @@
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
 import { authClient } from "@/lib/auth-client";
@@ -64,7 +64,7 @@ function RouteComponent() {
 					Upgrade to Pro
 				</button>
 			)}
-			{{else if (eq payments "abacatepay")}}
+			{{else if (includes payments "abacatepay")}}
 			<button
 				onClick={async () => {
 					const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};

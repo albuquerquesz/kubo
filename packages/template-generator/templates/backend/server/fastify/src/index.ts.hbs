@@ -1,7 +1,7 @@
 import { env } from "@{{projectName}}/env/server";
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 import fastifyRawBody from "fastify-raw-body";
 {{/if}}
 
@@ -30,14 +30,14 @@ import { devToolsMiddleware } from "@ai-sdk/devtools";
 {{#if (eq auth "better-auth")}}
 import { auth } from "@{{projectName}}/auth";
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
 {{/if}}
 {{#if (eq auth "clerk")}}
@@ -88,7 +88,7 @@ const fastify = Fastify({
 {{/if}}
 
 fastify.register(fastifyCors, baseCorsConfig);
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 fastify.register(fastifyRawBody, { field: "rawBody", global: false, routes: ["/api/payments/stripe/webhook"] });
 {{/if}}
 {{#if (eq auth "clerk")}}
@@ -185,7 +185,7 @@ fastify.route({
 });
 {{/if}}
 
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 fastify.post("/api/payments/abacatepay/checkout", async (request, reply) => {
 	{{#if (eq auth "better-auth")}}
 	const headers = new Headers();
@@ -280,7 +280,7 @@ fastify.post('/ai', async function (request) {
 });
 {{/if}}
 
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 fastify.post("/api/payments/stripe/checkout", async (request) => ({
 	data: await createStripeEmbeddedCheckout(request.headers.origin ?? request.url), success: true, error: null,
 }));

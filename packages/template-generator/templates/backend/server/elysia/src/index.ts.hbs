@@ -26,14 +26,14 @@ import { createContext } from "@{{projectName}}/api/context";
 {{#if (eq auth "better-auth")}}
 import { auth } from "@{{projectName}}/auth";
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
 {{/if}}
 
@@ -107,7 +107,7 @@ const app = {{#if (eq runtime "node")}}new Elysia({ adapter: node() }){{else}}ne
 		return status(405)
 	})
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 	.post("/api/payments/abacatepay/checkout", async ({ request, status }) => {
 		{{#if (eq auth "better-auth")}}
 		const session = await auth.api.getSession({
@@ -203,7 +203,7 @@ const app = {{#if (eq runtime "node")}}new Elysia({ adapter: node() }){{else}}ne
 		});
 	})
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 	.post("/api/payments/stripe/checkout", async ({ request }) => ({ data: await createStripeEmbeddedCheckout(request.headers.get("origin") ?? request.url), success: true, error: null }))
 	.post("/api/payments/stripe/webhook", async ({ request, status }) => {
 		const signature = request.headers.get("stripe-signature");

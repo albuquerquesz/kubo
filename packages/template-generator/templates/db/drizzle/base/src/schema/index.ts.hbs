@@ -1,7 +1,7 @@
 {{#if (eq auth "better-auth")}}
 export * from "./auth";
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 export * from "./abacatepay";
 {{/if}}
 {{#if (includes examples "todo")}}

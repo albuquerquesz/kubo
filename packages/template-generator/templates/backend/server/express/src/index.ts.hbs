@@ -24,14 +24,14 @@ import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { auth } from "@{{projectName}}/auth";
 import { toNodeHandler } from "better-auth/node";
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
 {{/if}}
 {{#if (eq auth "clerk")}}
@@ -53,7 +53,7 @@ app.use(
 	})
 );
 
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 app.use("/api/payments/stripe/webhook", express.raw({ type: "*/*" }));
 {{/if}}
 
@@ -65,7 +65,7 @@ app.use(clerkMiddleware());
 app.all("/api/auth{/*path}", toNodeHandler(auth));
 {{/if}}
 
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 app.post("/api/payments/abacatepay/checkout", async (_req, res) => {
 	{{#if (eq auth "better-auth")}}
 	const headers = new Headers();
@@ -197,7 +197,7 @@ app.use(async (req, res, next) => {
 
 app.use(express.json());
 
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 app.post("/api/payments/stripe/checkout", async (req, res) => {
 	res.json({ data: await createStripeEmbeddedCheckout(req.get("origin") ?? `${req.protocol}://${req.get("host")}${req.originalUrl}`), success: true, error: null });
 });

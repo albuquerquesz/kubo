@@ -33,7 +33,7 @@ onMounted(async () => {
 const hasProSubscription = computed(() => 
   (customerState.value?.activeSubscriptions?.length ?? 0) > 0
 )
-{{else if (eq payments "abacatepay")}}
+{{else if (includes payments "abacatepay")}}
 const openCheckout = async () => {
   const baseUrl = {{#if (eq backend "self")}}""{{else}}runtimeConfig.public.serverUrl{{/if}}
   const response = await fetch(`${baseUrl}/api/payments/abacatepay/checkout`, {
@@ -106,7 +106,7 @@ const openCheckout = async () => {
           </UButton>
         </div>
       </UCard>
-      {{else if (eq payments "abacatepay")}}
+      {{else if (includes payments "abacatepay")}}
       <UCard>
         <template #header>
           <div class="font-medium">Checkout</div>

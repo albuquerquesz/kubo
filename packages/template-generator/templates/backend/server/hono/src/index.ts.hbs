@@ -20,14 +20,14 @@ import { createAuth } from "@{{projectName}}/auth";
 import { auth } from "@{{projectName}}/auth";
 {{/if}}
 {{/if}}
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
 } from "@{{projectName}}/payments/lib/abacatepay";
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 import {
 	createStripeEmbeddedCheckout,
 	getStripeCheckoutSession,
@@ -78,7 +78,7 @@ app.on(
 );
 {{/if}}
 
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 app.post("/api/payments/abacatepay/checkout", async (c) => {
 	{{#if (eq auth "better-auth")}}
 	const session = await {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}createAuth(){{else}}auth{{/if}}.api.getSession({
@@ -119,7 +119,7 @@ app.get("/api/payments/abacatepay/checkout/:checkoutId", async (c) => {
 	return c.json({ data: checkout, success: true, error: null });
 });
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 app.post("/api/payments/stripe/checkout", async (c) => {
 	const checkout = await createStripeEmbeddedCheckout(c.req.header("Origin") ?? c.req.url);
 	return c.json({ data: checkout, success: true, error: null });

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { authClient } from '$lib/auth-client';
-	{{#if (eq payments "abacatepay")}}
+	{{#if (includes payments "abacatepay")}}
 	import { env } from '$env/dynamic/public';
 	{{/if}}
 	{{#if (eq api "orpc")}}
@@ -32,7 +32,7 @@
 			});
 		}
 	});
-	{{else if (eq payments "abacatepay")}}
+	{{else if (includes payments "abacatepay")}}
 	async function openCheckout() {
 		const baseUrl = {{#if (eq backend "self")}}''{{else}}env.PUBLIC_SERVER_URL{{/if}};
 		const response = await fetch(`${baseUrl}/api/payments/abacatepay/checkout`, {
@@ -70,7 +70,7 @@
 				Upgrade to Pro
 			</button>
 		{/if}
-		{{else if (eq payments "abacatepay")}}
+		{{else if (includes payments "abacatepay")}}
 		<button onclick={openCheckout}>
 			Open Checkout
 		</button>

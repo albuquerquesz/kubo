@@ -33,7 +33,7 @@ import Layout from "../layouts/Layout.astro";
               <p class="text-white">Loading...</p>
             </div>
           </div>
-          {{else if (eq payments "abacatepay")}}
+          {{else if (includes payments "abacatepay")}}
           <div class="rounded-lg bg-neutral-800/50 p-4">
             <p class="text-sm text-neutral-400 mb-2">Checkout</p>
             <div class="space-y-2">
@@ -66,7 +66,7 @@ import Layout from "../layouts/Layout.astro";
   {{#if (eq api "orpc")}}
   import { orpc } from "../lib/orpc";
   {{/if}}
-  {{#if (and (eq payments "abacatepay") (ne backend "self"))}}
+  {{#if (and (includes payments "abacatepay") (ne backend "self"))}}
   import { env } from "@{{projectName}}/env/web";
   {{/if}}
 
@@ -136,7 +136,7 @@ import Layout from "../layouts/Layout.astro";
       } catch (e) {
         console.error("Failed to load subscription info", e);
       }
-      {{else if (eq payments "abacatepay")}}
+      {{else if (includes payments "abacatepay")}}
       document.getElementById("open-checkout")?.addEventListener("click", async () => {
         try {
           const baseUrl = {{#if (eq backend "self")}}""{{else}}env.PUBLIC_SERVER_URL{{/if}};

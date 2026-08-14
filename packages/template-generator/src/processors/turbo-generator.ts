@@ -157,7 +157,7 @@ function getBuildEnv(config: ProjectConfig): string[] {
     }
   }
 
-  if (config.payments === "abacatepay") {
+  if (config.payments.includes("abacatepay")) {
     buildEnv.add("ABACATEPAY_API_KEY");
     buildEnv.add("ABACATEPAY_WEBHOOK_SECRET");
     buildEnv.add("ABACATEPAY_PUBLIC_KEY");

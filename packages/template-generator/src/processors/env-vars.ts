@@ -158,7 +158,7 @@ function buildClientVars(
     },
   ];
 
-  if (payments === "stripe") {
+  if (payments.includes("stripe")) {
     const stripeKey = getStripePublicEnvKey(frontend);
     vars.push({
       key: stripeKey,
@@ -615,44 +615,44 @@ function buildServerVars(
     {
       key: "ABACATEPAY_API_KEY",
       value: "",
-      condition: payments === "abacatepay",
+      condition: payments.includes("abacatepay"),
     },
     {
       key: "ABACATEPAY_WEBHOOK_SECRET",
       value: "",
-      condition: payments === "abacatepay",
+      condition: payments.includes("abacatepay"),
     },
     {
       key: "ABACATEPAY_PUBLIC_KEY",
       value: "",
-      condition: payments === "abacatepay",
+      condition: payments.includes("abacatepay"),
     },
     {
       key: "ABACATEPAY_RETURN_URL",
       value: `${abacatePayBaseUrl}/dashboard`,
-      condition: payments === "abacatepay",
+      condition: payments.includes("abacatepay"),
     },
     {
       key: "ABACATEPAY_COMPLETION_URL",
       value: `${abacatePayBaseUrl}/success`,
-      condition: payments === "abacatepay",
+      condition: payments.includes("abacatepay"),
     },
     {
       key: "STRIPE_SECRET_KEY",
       value: "",
-      condition: payments === "stripe",
+      condition: payments.includes("stripe"),
       comment: "Stripe restricted key (rk_...) or secret key (sk_...) — server only",
     },
     {
       key: "STRIPE_PRICE_ID",
       value: "price_your_price_id",
-      condition: payments === "stripe",
+      condition: payments.includes("stripe"),
       comment: "Stripe Price ID configured in the Dashboard",
     },
     {
       key: "STRIPE_WEBHOOK_SECRET",
       value: "",
-      condition: payments === "stripe",
+      condition: payments.includes("stripe"),
       comment: "Stripe webhook signing secret (whsec_...)",
     },
   ];

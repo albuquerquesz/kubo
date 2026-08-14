@@ -1,7 +1,7 @@
-{{#if (eq payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 export * from "./lib/abacatepay";
 {{/if}}
-{{#if (eq payments "stripe")}}
+{{#if (includes payments "stripe")}}
 export * from "./lib/stripe";
 {{/if}}
 export {};
