@@ -1,0 +1,33 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "stream",
+  "tasks": {
+    "transit": {
+      "dependsOn": ["^transit"]
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "templates-binary/**"]
+    },
+    "lint": {
+      "dependsOn": ["transit"]
+    },
+    "check": {
+      "dependsOn": ["transit"]
+    },
+    "generate-schema": {
+      "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "deploy": {
+      "cache": false
+    },
+    "deploy:convex": {
+      "cache": false
+    }
+  }
+}

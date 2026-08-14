@@ -1,0 +1,40 @@
+import { defineConfig } from "{{#if (includes addons "vite-plus")}}vite-plus{{else}}vite{{/if}}";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+{{#if (or (eq webDeploy "docker") (eq webDeploy "vercel"))}}
+import { nitro } from "nitro/vite";
+{{/if}}
+import tailwindcss from "@tailwindcss/vite";
+import viteReact from "@vitejs/plugin-react";
+
+export default defineConfig({
+  server: {
+    port: 3001,
+  },
+  resolve: {
+    tsconfigPaths: true,
+  },
+  plugins: [
+    tailwindcss(),
+    tanstackStart({{#if (or (includes addons "tauri") (and (includes addons "electrobun") (or (ne backend "convex") (ne auth "better-auth"))))}}
+      {
+        prerender: {
+          enabled: true,
+        },
+      },
+{{/if}}),
+{{#if (or (eq webDeploy "docker") (eq webDeploy "vercel"))}}
+    nitro(),
+{{/if}}
+    viteReact(),
+  ],
+{{#if (eq webDeploy "vercel")}}
+  // Bundle all SSR deps: Vercel functions have no node_modules at runtime
+  ssr: {
+    noExternal: true,
+  },
+{{else if (and (eq backend "convex") (eq auth "better-auth"))}}
+  ssr: {
+    noExternal: ["@convex-dev/better-auth"],
+  },
+{{/if}}
+});

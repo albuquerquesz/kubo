@@ -1,0 +1,66 @@
+{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
+import { env } from "@{{projectName}}/env/server";
+{{/if}}
+import { createPrismaClient{{#if (and (ne serverDeploy "cloudflare") (or (ne backend "self") (ne webDeploy "cloudflare")))}}, default as prisma{{/if}} } from "./index";
+
+function getPrisma() {
+{{#if (and (ne serverDeploy "cloudflare") (or (ne backend "self") (ne webDeploy "cloudflare")))}}
+	return prisma;
+{{else if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
+	return createPrismaClient(env);
+{{else}}
+	return createPrismaClient();
+{{/if}}
+}
+
+export async function createAbacatePayCheckout(input: {
+	localOrderId: string;
+	userId: string | null;
+	customerEmail: string | null;
+	abacatepayCheckoutId: string;
+	checkoutUrl: string;
+	amountInCents: number;
+	status: string;
+}) {
+	await getPrisma().abacatePayCheckout.create({ data: input });
+	return input;
+}
+
+export async function getAbacatePayCheckoutByCheckoutId(checkoutId: string) {
+	return (
+		(await getPrisma().abacatePayCheckout.findUnique({
+			where: { abacatepayCheckoutId: checkoutId },
+		})) ?? null
+	);
+}
+
+export async function hasAbacatePayWebhookEvent(eventId: string) {
+	const record = await getPrisma().abacatePayWebhookEvent.findUnique({
+		where: { eventId },
+		select: { eventId: true },
+	});
+
+	return Boolean(record);
+}
+
+export async function recordAbacatePayWebhookEvent(input: {
+	eventId: string;
+	eventType: string;
+	payload: string;
+}) {
+	await getPrisma().abacatePayWebhookEvent.create({ data: input });
+}
+
+export async function markAbacatePayCheckoutCompleted(input: {
+	checkoutId: string;
+	eventId: string;
+	status: string;
+}) {
+	await getPrisma().abacatePayCheckout.update({
+		where: { abacatepayCheckoutId: input.checkoutId },
+		data: {
+			status: input.status,
+			eventId: input.eventId,
+		},
+	});
+}

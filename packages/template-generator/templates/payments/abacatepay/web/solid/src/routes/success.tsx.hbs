@@ -1,0 +1,35 @@
+import { env } from "@{{projectName}}/env/web";
+import { createFileRoute } from "@tanstack/solid-router";
+import { Show, createResource } from "solid-js";
+
+export const Route = createFileRoute("/success")({
+	component: SuccessPage,
+	validateSearch: (search) => ({
+		checkout_id: search.checkout_id as string,
+	}),
+});
+
+function SuccessPage() {
+	const searchParams = Route.useSearch();
+	const checkoutId = () => searchParams().checkout_id;
+	const [status] = createResource(checkoutId, async (value) => {
+		if (!value) return null;
+		const baseUrl = {{#if (eq backend "self")}}""{{else}}env.PUBLIC_SERVER_URL{{/if}};
+		const response = await fetch(`${baseUrl}/api/payments/abacatepay/checkout/${value}`);
+		if (!response.ok) return null;
+		const payload = (await response.json()) as { data?: { status?: string } };
+		return payload.data?.status ?? null;
+	});
+
+	return (
+		<div class="container mx-auto px-4 py-8">
+			<h1>Checkout Status</h1>
+			<Show when={checkoutId()} fallback={<p>Missing checkout_id.</p>}>
+				<p>Checkout ID: {checkoutId()}</p>
+			</Show>
+			<Show when={status()} fallback={<p>Waiting for local confirmation.</p>}>
+				<p>Status: {status()}</p>
+			</Show>
+		</div>
+	);
+}

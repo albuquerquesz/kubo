@@ -1,0 +1,39 @@
+import { env } from "@{{projectName}}/env/web";
+
+async function getCheckoutStatus(checkoutId: string) {
+	const baseUrl = {{#if (eq backend "self")}}""{{else}}env.NEXT_PUBLIC_SERVER_URL{{/if}};
+	const response = await fetch(`${baseUrl}/api/payments/abacatepay/checkout/${checkoutId}`, {
+		cache: "no-store",
+	});
+
+	if (!response.ok) {
+		return null;
+	}
+
+	const payload = (await response.json()) as {
+		data?: {
+			status?: string;
+			localOrderId?: string;
+		};
+	};
+
+	return payload.data ?? null;
+}
+
+export default async function SuccessPage({
+	searchParams,
+}: {
+	searchParams: Promise<{ checkout_id?: string }>;
+}) {
+	const params = await searchParams;
+	const checkoutId = params.checkout_id ?? "";
+	const checkout = checkoutId ? await getCheckoutStatus(checkoutId) : null;
+
+	return (
+		<div className="px-4 py-8">
+			<h1>Checkout Status</h1>
+			{checkoutId ? <p>Checkout ID: {checkoutId}</p> : <p>Missing checkout_id.</p>}
+			{checkout ? <p>Status: {checkout.status}</p> : <p>Waiting for local confirmation.</p>}
+		</div>
+	);
+}

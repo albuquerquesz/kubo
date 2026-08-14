@@ -1,0 +1,22 @@
+---
+const checkoutId = Astro.url.searchParams.get("checkout_id");
+const baseUrl = {{#if (eq backend "self")}}""{{else}}"${import.meta.env.PUBLIC_SERVER_URL}"{{/if}};
+
+let status: string | null = null;
+
+if (checkoutId) {
+  const response = await fetch(`${baseUrl}/api/payments/abacatepay/checkout/${checkoutId}`).catch(
+    () => null,
+  );
+  if (response?.ok) {
+    const payload = (await response.json()) as { data?: { status?: string } };
+    status = payload.data?.status ?? null;
+  }
+}
+---
+
+<div class="container mx-auto px-4 py-8">
+  <h1>Checkout Status</h1>
+  {checkoutId ? <p>Checkout ID: {checkoutId}</p> : <p>Missing checkout_id.</p>}
+  {status ? <p>Status: {status}</p> : <p>Waiting for local confirmation.</p>}
+</div>

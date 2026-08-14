@@ -1,0 +1,86 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const TITLE_TEXT = `
+ ██████╗ ███████╗████████╗████████╗███████╗██████╗
+ ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
+ ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
+ ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
+ ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
+ ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
+
+ ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
+ ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
+    ██║       ███████╗   ██║   ███████║██║     █████╔╝
+    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
+    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
+    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
+ `;
+---
+
+<Layout title="{{projectName}}">
+  <div class="container mx-auto max-w-3xl px-4 py-2">
+    <pre class="overflow-x-auto font-mono text-sm text-white">{TITLE_TEXT}</pre>
+    <div class="grid gap-6">
+      {{#if (eq api "orpc")}}
+      <section class="rounded-lg border border-neutral-700 p-4">
+        <h2 class="mb-2 font-medium text-white">API Status</h2>
+        <div class="flex items-center gap-2" id="api-status">
+          <div class="h-2 w-2 rounded-full bg-orange-400" id="status-dot"></div>
+          <span class="text-sm text-neutral-400" id="status-text">Checking...</span>
+        </div>
+      </section>
+      {{/if}}
+      {{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+      <section class="rounded-lg border border-neutral-700 p-4">
+        <h2 class="mb-2 font-medium text-white">Hosted Checkout</h2>
+        <p class="mb-4 text-sm text-neutral-400">
+          Launch a sample AbacatePay checkout without requiring sign-in.
+        </p>
+        <button class="rounded-md border border-neutral-700 px-4 py-2 text-sm text-white" id="open-checkout">
+          Open Checkout
+        </button>
+      </section>
+      {{/if}}
+    </div>
+  </div>
+</Layout>
+
+{{#if (eq api "orpc")}}
+<script>
+  import { orpc } from "../lib/orpc";
+
+  const statusDot = document.getElementById("status-dot")!;
+  const statusText = document.getElementById("status-text")!;
+
+  async function checkHealth() {
+    try {
+      const data = await orpc.healthCheck();
+      statusDot.className = "h-2 w-2 rounded-full bg-green-500";
+      statusText.textContent = "Connected";
+    } catch (error) {
+      statusDot.className = "h-2 w-2 rounded-full bg-red-500";
+      statusText.textContent = "Disconnected";
+    }
+  }
+
+  checkHealth();
+</script>
+{{/if}}
+{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+<script>
+  const checkoutButton = document.getElementById("open-checkout");
+
+  checkoutButton?.addEventListener("click", async () => {
+    const baseUrl = {{#if (eq backend "self")}}""{{else}}"${import.meta.env.PUBLIC_SERVER_URL}"{{/if}};
+    const response = await fetch(`${baseUrl}/api/payments/abacatepay/checkout`, {
+      method: "POST",
+    });
+    if (!response.ok) return;
+    const payload = await response.json();
+    if (payload?.data?.url) {
+      window.location.href = payload.data.url;
+    }
+  });
+</script>
+{{/if}}

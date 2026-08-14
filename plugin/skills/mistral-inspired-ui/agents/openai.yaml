@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mistral-Inspired UI"
+  short_description: "Design editorial AI product interfaces"
+  default_prompt: "Use $mistral-inspired-ui to design an original AI product interface with a grid-led editorial system."

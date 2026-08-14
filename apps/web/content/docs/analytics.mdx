@@ -1,0 +1,53 @@
+---
+title: Analytics & Telemetry
+description: What we collect, how to disable it, and where to view aggregated insights
+---
+
+## What is collected
+
+On successful project creation, the CLI sends a single event (`project_created`) with:
+
+- Selected options (stack choices), including: `frontend`, `backend`, `runtime`, `database`, `orm`, `api`, `auth`, `payments`, `addons`, `examples`, `dbSetup`, `webDeploy`, `serverDeploy`, `packageManager`, `git`, `install`
+- Environment data: `cli_version`, `node_version`, `platform`
+
+Not collected:
+
+- Project name, path, or file contents (explicitly omitted)
+- Secrets or environment variables from your machine
+
+## Disable telemetry
+
+Telemetry is enabled by default. To disable:
+
+```bash
+BTS_TELEMETRY_DISABLED=1 npx create-better-t-stack@latest
+```
+
+<Callout title="Note">The above command disables it for a single run.</Callout>
+
+Add `export BTS_TELEMETRY_DISABLED=1` to your shell profile to make it permanent.
+
+## Where to view analytics
+
+- Charts: [`/analytics`](/analytics)
+- Shared website analytics: [Umami dashboard](https://umami.amanv.cloud/share/pHvqHleyOl9PBfaK) (self-hosted on a Hostinger VPS)
+- Raw JSON snapshot: `https://r2.better-t-stack.dev/analytics-data.json`
+- CSV export: `https://r2.better-t-stack.dev/export.csv`
+
+Notes:
+
+- Aggregates are periodically regenerated from incoming events
+- Raw data is not publicly exposed; the `/analytics` page presents only summary statistics
+
+## Full transparency
+
+Single event per scaffold; no IP or project identifiers. See source code below.
+
+If in doubt, set `BTS_TELEMETRY_DISABLED=1` and proceed. You can still use all CLI features.
+
+## Source code
+
+- CLI event sender: [`apps/cli/src/utils/analytics.ts`](https://github.com/AmanVarshney01/create-better-t-stack/blob/main/apps/cli/src/utils/analytics.ts)
+- Telemetry toggle logic: [`apps/cli/src/utils/telemetry.ts`](https://github.com/AmanVarshney01/create-better-t-stack/blob/main/apps/cli/src/utils/telemetry.ts)
+- Ingest endpoint: [`packages/backend/convex/http.ts`](https://github.com/AmanVarshney01/create-better-t-stack/blob/main/packages/backend/convex/http.ts)
+- Analytics backend (ingest + aggregation): [`packages/backend/convex/analytics.ts`](https://github.com/AmanVarshney01/create-better-t-stack/blob/main/packages/backend/convex/analytics.ts)

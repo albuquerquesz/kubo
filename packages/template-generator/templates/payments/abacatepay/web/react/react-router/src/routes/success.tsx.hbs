@@ -1,0 +1,42 @@
+import { env } from "@{{projectName}}/env/web";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
+
+type CheckoutStatus = {
+	status?: string;
+	localOrderId?: string;
+};
+
+export default function SuccessPage() {
+	const [searchParams] = useSearchParams();
+	const checkoutId = searchParams.get("checkout_id") ?? "";
+	const [checkout, setCheckout] = useState<CheckoutStatus | null>(null);
+
+	useEffect(() => {
+		if (!checkoutId) return;
+
+		const controller = new AbortController();
+		const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
+		void fetch(`${baseUrl}/api/payments/abacatepay/checkout/${checkoutId}`, {
+			signal: controller.signal,
+		})
+			.then(async (response) => {
+				if (!response.ok) return null;
+				const payload = (await response.json()) as { data?: CheckoutStatus };
+				return payload.data ?? null;
+			})
+			.then((data) => {
+				if (data) setCheckout(data);
+			});
+
+		return () => controller.abort();
+	}, [checkoutId]);
+
+	return (
+		<div className="container mx-auto px-4 py-8">
+			<h1>Checkout Status</h1>
+			{checkoutId ? <p>Checkout ID: {checkoutId}</p> : <p>Missing checkout_id.</p>}
+			{checkout ? <p>Status: {checkout.status}</p> : <p>Waiting for local confirmation.</p>}
+		</div>
+	);
+}

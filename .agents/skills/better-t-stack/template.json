@@ -1,0 +1,18 @@
+{
+  "name": "better-t-stack",
+  "version": "1.0.0",
+  "entry": "SKILL.md",
+  "routing": "router-only",
+  "commands": [
+    {
+      "name": "document",
+      "description": "Create or update repository documentation from verified project evidence.",
+      "skill": "workflows/document/SKILL.md"
+    },
+    {
+      "name": "review",
+      "description": "Review a scoped change for correctness, regressions, and missing verification.",
+      "skill": "workflows/review/SKILL.md"
+    }
+  ]
+}

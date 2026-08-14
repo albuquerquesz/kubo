@@ -1,0 +1,17 @@
+import { getStoredAbacatePayCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/api/payments/abacatepay/checkout/$checkoutId")({
+	server: {
+		handlers: {
+			GET: async ({ params }) => {
+				const checkout = await getStoredAbacatePayCheckout(params.checkoutId);
+				if (!checkout) {
+					return Response.json({ error: "Checkout not found" }, { status: 404 });
+				}
+
+				return Response.json({ data: checkout, success: true, error: null });
+			},
+		},
+	},
+});

@@ -1,0 +1,207 @@
+import { DEFAULT_CONFIG } from "../constants";
+import type {
+  Addons,
+  API,
+  Auth,
+  Backend,
+  Database,
+  DatabaseSetup,
+  Examples,
+  Frontend,
+  ORM,
+  Observability,
+  PackageManager,
+  Payments,
+  ProjectConfig,
+  Runtime,
+  ServerDeploy,
+  WebDeploy,
+} from "../types";
+import { isSilent } from "../utils/context";
+import { UserCancelledError } from "../utils/errors";
+import { getAddonsChoice } from "./addons";
+import { getApiChoice } from "./api";
+import { getAuthChoice } from "./auth";
+import { getBackendFrameworkChoice } from "./backend";
+import { getDatabaseChoice } from "./database";
+import { getDBSetupChoice } from "./database-setup";
+import { getExamplesChoice } from "./examples";
+import { getFrontendChoice } from "./frontend";
+import { getGitChoice } from "./git";
+import { getinstallChoice } from "./install";
+import { navigableGroup } from "./navigable-group";
+import { getObservabilityChoice } from "./observability";
+import { getORMChoice } from "./orm";
+import { getPackageManagerChoice } from "./package-manager";
+import { getPaymentsChoice } from "./payments";
+import { getRuntimeChoice } from "./runtime";
+import { getServerDeploymentChoice } from "./server-deploy";
+import { getDeploymentChoice } from "./web-deploy";
+
+type PromptGroupResults = {
+  frontend: Frontend[];
+  backend: Backend;
+  runtime: Runtime;
+  database: Database;
+  orm: ORM;
+  api: API;
+  auth: Auth;
+  payments: Payments;
+  observability: Observability;
+  addons: Addons[];
+  examples: Examples[];
+  dbSetup: DatabaseSetup;
+  git: boolean;
+  packageManager: PackageManager;
+  install: boolean;
+  webDeploy: WebDeploy;
+  serverDeploy: ServerDeploy;
+};
+
+export async function gatherConfig(
+  flags: Partial<ProjectConfig>,
+  projectName: string,
+  projectDir: string,
+  relativePath: string,
+) {
+  if (isSilent()) {
+    return {
+      projectName,
+      projectDir,
+      relativePath,
+      addonOptions: flags.addonOptions,
+      dbSetupOptions: flags.dbSetupOptions,
+      frontend: flags.frontend ?? [...DEFAULT_CONFIG.frontend],
+      backend: flags.backend ?? DEFAULT_CONFIG.backend,
+      runtime: flags.runtime ?? DEFAULT_CONFIG.runtime,
+      database: flags.database ?? DEFAULT_CONFIG.database,
+      orm: flags.orm ?? DEFAULT_CONFIG.orm,
+      auth: flags.auth ?? DEFAULT_CONFIG.auth,
+      payments: flags.payments ?? DEFAULT_CONFIG.payments,
+      observability: flags.observability ?? DEFAULT_CONFIG.observability,
+      addons: flags.addons ?? [...DEFAULT_CONFIG.addons],
+      examples: flags.examples ?? [...DEFAULT_CONFIG.examples],
+      git: flags.git ?? DEFAULT_CONFIG.git,
+      packageManager: flags.packageManager ?? DEFAULT_CONFIG.packageManager,
+      install: flags.install ?? DEFAULT_CONFIG.install,
+      dbSetup: flags.dbSetup ?? DEFAULT_CONFIG.dbSetup,
+      api: flags.api ?? DEFAULT_CONFIG.api,
+      webDeploy: flags.webDeploy ?? DEFAULT_CONFIG.webDeploy,
+      serverDeploy: flags.serverDeploy ?? DEFAULT_CONFIG.serverDeploy,
+    };
+  }
+
+  const result = await navigableGroup<PromptGroupResults>(
+    {
+      frontend: ({ previousAnswer }) =>
+        getFrontendChoice(flags.frontend, flags.backend, flags.auth, previousAnswer),
+      backend: ({ results, previousAnswer }) =>
+        getBackendFrameworkChoice(flags.backend, results.frontend, previousAnswer),
+      runtime: ({ results, previousAnswer }) =>
+        getRuntimeChoice(flags.runtime, results.backend, previousAnswer),
+      database: ({ results, previousAnswer }) =>
+        getDatabaseChoice(flags.database, results.backend, results.runtime, previousAnswer),
+      orm: ({ results, previousAnswer }) =>
+        getORMChoice(
+          flags.orm,
+          results.database !== "none",
+          results.database,
+          results.backend,
+          results.runtime,
+          previousAnswer,
+        ),
+      api: ({ results, previousAnswer }) =>
+        getApiChoice(flags.api, results.frontend, results.backend, previousAnswer) as Promise<API>,
+      auth: ({ results, previousAnswer }) =>
+        getAuthChoice(flags.auth, results.backend, results.frontend, previousAnswer),
+      payments: ({ results, previousAnswer }) =>
+        getPaymentsChoice(
+          flags.payments,
+          results.auth,
+          results.backend,
+          results.frontend,
+          previousAnswer,
+        ),
+      observability: ({ previousAnswer }) =>
+        getObservabilityChoice(flags.observability, previousAnswer),
+      addons: ({ results, previousAnswer }) =>
+        getAddonsChoice(
+          flags.addons,
+          results.frontend,
+          results.auth,
+          results.backend,
+          results.runtime,
+          previousAnswer,
+        ),
+      examples: ({ results, previousAnswer }) =>
+        getExamplesChoice(
+          flags.examples,
+          results.database,
+          results.frontend,
+          results.backend,
+          results.api,
+          previousAnswer,
+        ) as Promise<Examples[]>,
+      dbSetup: ({ results, previousAnswer }) =>
+        getDBSetupChoice(
+          results.database ?? "none",
+          flags.dbSetup,
+          results.orm,
+          results.backend,
+          results.runtime,
+          previousAnswer,
+        ),
+      webDeploy: ({ results, previousAnswer }) =>
+        getDeploymentChoice(
+          flags.webDeploy,
+          results.runtime,
+          results.backend,
+          results.frontend,
+          results.dbSetup,
+          previousAnswer,
+        ),
+      serverDeploy: ({ results, previousAnswer }) =>
+        getServerDeploymentChoice(
+          flags.serverDeploy,
+          results.runtime,
+          results.backend,
+          results.webDeploy,
+          previousAnswer,
+        ),
+      git: ({ previousAnswer }) => getGitChoice(flags.git, previousAnswer),
+      packageManager: ({ previousAnswer }) =>
+        getPackageManagerChoice(flags.packageManager, previousAnswer),
+      install: ({ previousAnswer }) => getinstallChoice(flags.install, previousAnswer),
+    },
+    {
+      onCancel: () => {
+        throw new UserCancelledError({ message: "Operation cancelled" });
+      },
+    },
+  );
+
+  return {
+    projectName: projectName,
+    projectDir: projectDir,
+    relativePath: relativePath,
+    addonOptions: flags.addonOptions,
+    dbSetupOptions: flags.dbSetupOptions,
+    frontend: result.frontend,
+    backend: result.backend,
+    runtime: result.runtime,
+    database: result.database,
+    orm: result.orm,
+    auth: result.auth,
+    payments: result.payments,
+    observability: result.observability,
+    addons: result.addons,
+    examples: result.examples,
+    git: result.git,
+    packageManager: result.packageManager,
+    install: result.install,
+    dbSetup: result.dbSetup,
+    api: result.api,
+    webDeploy: result.webDeploy,
+    serverDeploy: result.serverDeploy,
+  };
+}

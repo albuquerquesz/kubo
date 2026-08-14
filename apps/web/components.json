@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "base-lyra",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/app/global.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "menuColor": "default",
+  "menuAccent": "subtle",
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks"
+  },
+  "registries": {
+    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json",
+    "@magicui": "https://magicui.design/r/{name}.json",
+    "@bklit": "https://bklit.com/r/{name}.json"
+  }
+}

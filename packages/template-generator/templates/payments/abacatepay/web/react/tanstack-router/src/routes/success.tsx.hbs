@@ -1,0 +1,48 @@
+import { env } from "@{{projectName}}/env/web";
+import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+
+type CheckoutStatus = {
+	status?: string;
+	localOrderId?: string;
+};
+
+export const Route = createFileRoute("/success")({
+	component: SuccessPage,
+	validateSearch: (search) => ({
+		checkout_id: search.checkout_id as string,
+	}),
+});
+
+function SuccessPage() {
+	const { checkout_id } = useSearch({ from: "/success" });
+	const [checkout, setCheckout] = useState<CheckoutStatus | null>(null);
+
+	useEffect(() => {
+		if (!checkout_id) return;
+
+		const controller = new AbortController();
+		const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
+		void fetch(`${baseUrl}/api/payments/abacatepay/checkout/${checkout_id}`, {
+			signal: controller.signal,
+		})
+			.then(async (response) => {
+				if (!response.ok) return null;
+				const payload = (await response.json()) as { data?: CheckoutStatus };
+				return payload.data ?? null;
+			})
+			.then((data) => {
+				if (data) setCheckout(data);
+			});
+
+		return () => controller.abort();
+	}, [checkout_id]);
+
+	return (
+		<div className="container mx-auto px-4 py-8">
+			<h1>Checkout Status</h1>
+			{checkout_id ? <p>Checkout ID: {checkout_id}</p> : <p>Missing checkout_id.</p>}
+			{checkout ? <p>Status: {checkout.status}</p> : <p>Waiting for local confirmation.</p>}
+		</div>
+	);
+}

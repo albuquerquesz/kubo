@@ -1,0 +1,13 @@
+import { getStoredAbacatePayCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+import type { APIRoute } from "astro";
+
+export const prerender = false;
+
+export const GET: APIRoute = async ({ params }) => {
+  const checkout = await getStoredAbacatePayCheckout(params.checkoutId ?? "");
+  if (!checkout) {
+    return Response.json({ error: "Checkout not found" }, { status: 404 });
+  }
+
+  return Response.json({ data: checkout, success: true, error: null });
+};

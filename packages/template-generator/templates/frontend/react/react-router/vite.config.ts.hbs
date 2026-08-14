@@ -1,0 +1,18 @@
+import { reactRouter } from "@react-router/dev/vite";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "{{#if (includes addons "vite-plus")}}vite-plus{{else}}vite{{/if}}";
+import tsconfigPaths from "vite-tsconfig-paths";
+
+export default defineConfig({
+  plugins: [
+    tailwindcss(),
+    reactRouter(),
+    tsconfigPaths(),
+  ],
+{{#if (and (eq webDeploy "vercel") (not (or (includes addons "tauri") (includes addons "electrobun"))))}}
+  ssr: {
+    // Vercel functions have no node_modules; bundle all deps into the server build
+    noExternal: true,
+  },
+{{/if}}
+});

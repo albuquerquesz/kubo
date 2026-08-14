@@ -1,0 +1,4 @@
+[     432ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3333/_next/static/chunks/05g1_next_dist_0ate1xo._.js:2477
+[     479ms] [LOG] [HMR] connected @ http://localhost:3333/_next/static/chunks/05g1_next_dist_0ate1xo._.js:2477
+[   24080ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3333/_next/static/chunks/05g1_next_dist_0ate1xo._.js:2477
+[   34191ms] [WARNING] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior @ http://localhost:3333/_next/static/chunks/05g1_next_dist_0ate1xo._.js:2477

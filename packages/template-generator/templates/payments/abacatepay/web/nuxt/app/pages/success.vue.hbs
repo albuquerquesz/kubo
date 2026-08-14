@@ -1,0 +1,26 @@
+<script setup lang="ts">
+const route = useRoute()
+const checkoutId = computed(() => route.query.checkout_id as string | undefined)
+const checkout = ref<{ status?: string } | null>(null)
+
+onMounted(async () => {
+  if (!checkoutId.value) return
+
+  const baseUrl = {{#if (eq backend "self")}}""{{else}}useRuntimeConfig().public.serverUrl{{/if}}
+  const payload = await $fetch<{ data?: { status?: string } }>(
+    `${baseUrl}/api/payments/abacatepay/checkout/${checkoutId.value}`,
+  ).catch(() => null)
+
+  checkout.value = payload?.data ?? null
+})
+</script>
+
+<template>
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-4">Checkout Status</h1>
+    <p v-if="checkoutId">Checkout ID: \{{ checkoutId }}</p>
+    <p v-else>Missing checkout_id.</p>
+    <p v-if="checkout">Status: \{{ checkout.status }}</p>
+    <p v-else>Waiting for local confirmation.</p>
+  </div>
+</template>

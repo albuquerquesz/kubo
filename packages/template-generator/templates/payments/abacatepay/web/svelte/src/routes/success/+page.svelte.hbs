@@ -1,0 +1,36 @@
+<script lang="ts">
+	import { env } from '@{{projectName}}/env/web';
+	import { page } from '$app/state';
+
+	const checkoutId = $derived(page.url.searchParams.get('checkout_id'));
+	let status = $state<string | null>(null);
+
+	$effect(() => {
+		if (!checkoutId) return;
+		const baseUrl = {{#if (eq backend "self")}}''{{else}}env.PUBLIC_SERVER_URL{{/if}};
+
+		void fetch(`${baseUrl}/api/payments/abacatepay/checkout/${checkoutId}`)
+			.then(async (response) => {
+				if (!response.ok) return null;
+				const payload = (await response.json()) as { data?: { status?: string } };
+				return payload.data?.status ?? null;
+			})
+			.then((nextStatus) => {
+				status = nextStatus;
+			});
+	});
+</script>
+
+<div class="container mx-auto px-4 py-8">
+	<h1>Checkout Status</h1>
+	{#if checkoutId}
+		<p>Checkout ID: {checkoutId}</p>
+	{:else}
+		<p>Missing checkout_id.</p>
+	{/if}
+	{#if status}
+		<p>Status: {status}</p>
+	{:else}
+		<p>Waiting for local confirmation.</p>
+	{/if}
+</div>

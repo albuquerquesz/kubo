@@ -1,0 +1,24 @@
+model AbacatePayCheckout {
+  localOrderId         String   @id
+  userId               String?
+  customerEmail        String?
+  abacatepayCheckoutId String   @unique
+  checkoutUrl          String
+  amountInCents        Int
+  status               String
+  eventId              String?  @unique
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([abacatepayCheckoutId])
+  @@map("abacatepay_checkout")
+}
+
+model AbacatePayWebhookEvent {
+  eventId   String   @id
+  eventType String
+  payload   String
+  createdAt DateTime @default(now())
+
+  @@map("abacatepay_webhook_event")
+}

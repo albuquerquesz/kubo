@@ -1,0 +1,707 @@
+- generic [active] [ref=e1]:
+    - banner [ref=e2]:
+        - generic [ref=e3]:
+            - link "Go to homepage" [ref=e4] [cursor=pointer]:
+                - /url: /
+            - generic [ref=e24]:
+                - generic [ref=e25]:
+                    - link [ref=e27] [cursor=pointer]:
+                        - /url: /contact/
+                        - paragraph [ref=e28]: Contact sales
+                    - paragraph [ref=e37]: Menu
+                - button "Toggle menu" [ref=e38]
+            - generic [ref=e50]:
+                - generic [ref=e51]:
+                    - generic [ref=e52]:
+                        - button [ref=e53]:
+                            - paragraph [ref=e54]: Products
+                        - button [ref=e62]:
+                            - paragraph [ref=e63]: Solutions
+                        - button [ref=e71]:
+                            - paragraph [ref=e72]: Research
+                        - button [ref=e80]:
+                            - paragraph [ref=e81]: Developers
+                        - button [ref=e89]:
+                            - paragraph [ref=e90]: Blog
+                        - button [ref=e98]:
+                            - paragraph [ref=e99]: Customers
+                        - button [ref=e107]:
+                            - paragraph [ref=e108]: Company
+                    - generic [ref=e116]:
+                        - link [ref=e117] [cursor=pointer]:
+                            - /url: /contact
+                            - paragraph [ref=e126]: Contact sales
+                        - link [ref=e134] [cursor=pointer]:
+                            - /url: https://console.mistral.ai
+                            - paragraph [ref=e143]: Start building
+                - generic [ref=e151]:
+                    - generic [ref=e152]:
+                        - link [ref=e153] [cursor=pointer]:
+                            - /url: /products/studio/
+                            - generic [ref=e161]:
+                                - paragraph [ref=e162]: Studio
+                                - paragraph [ref=e163]: Build, test, and run AI agents and apps.
+                        - link [ref=e171] [cursor=pointer]:
+                            - /url: /products/forge/
+                            - generic [ref=e179]:
+                                - paragraph [ref=e180]: Forge
+                                - paragraph [ref=e181]: Train, align, and evaluate custom AI models.
+                        - link [ref=e189] [cursor=pointer]:
+                            - /url: /products/vibe/
+                            - generic [ref=e197]:
+                                - paragraph [ref=e198]: Vibe
+                                - paragraph [ref=e199]: AI agent for long-horizon work.
+                        - link [ref=e207] [cursor=pointer]:
+                            - /url: /products/vibe/code/
+                            - generic [ref=e215]:
+                                - paragraph [ref=e216]: Vibe for code
+                                - paragraph [ref=e217]: Coding agents in the terminal, IDE, and background.
+                        - link [ref=e225] [cursor=pointer]:
+                            - /url: /products/compute/
+                            - generic [ref=e233]:
+                                - paragraph [ref=e234]: Compute
+                                - paragraph [ref=e235]: Frontier-scale infrastructure for training and inference.
+                    - generic [ref=e243]:
+                        - generic [ref=e244]: Pricing
+                        - link [ref=e245] [cursor=pointer]:
+                            - /url: /pricing/
+                            - paragraph [ref=e246]: Plans
+                        - link [ref=e254] [cursor=pointer]:
+                            - /url: /pricing/api/
+                            - paragraph [ref=e255]: API pricing
+                        - link [ref=e263] [cursor=pointer]:
+                            - /url: /pricing/enterprise-deployments/
+                            - paragraph [ref=e264]: For enterprises
+                - generic [ref=e272]:
+                    - generic [ref=e273]:
+                        - generic [ref=e274]: Services
+                        - link [ref=e275] [cursor=pointer]:
+                            - /url: /services/
+                            - paragraph [ref=e284]: Delivery methodology
+                        - link [ref=e292] [cursor=pointer]:
+                            - /url: /solutions/custom-model-training/
+                            - paragraph [ref=e301]: Model customization
+                    - generic [ref=e309]:
+                        - generic [ref=e310]: Industries
+                        - link [ref=e311] [cursor=pointer]:
+                            - /url: /industry/finance/
+                            - paragraph [ref=e312]: Financial services
+                        - link [ref=e320] [cursor=pointer]:
+                            - /url: /industry/public-sector/
+                            - paragraph [ref=e321]: Public sector & government
+                        - link [ref=e329] [cursor=pointer]:
+                            - /url: /industry/manufacturing/
+                            - paragraph [ref=e330]: Manufacturing
+                    - generic [ref=e338]:
+                        - generic [ref=e339]: Use cases
+                        - link [ref=e340] [cursor=pointer]:
+                            - /url: /solutions/
+                            - paragraph [ref=e341]: Use case overview
+                        - link [ref=e349] [cursor=pointer]:
+                            - /url: /solutions/coding/
+                            - paragraph [ref=e350]: Coding
+                        - link [ref=e358] [cursor=pointer]:
+                            - /url: /solutions/document-ai/
+                            - paragraph [ref=e359]: Document intelligence
+                        - link [ref=e367] [cursor=pointer]:
+                            - /url: /solutions/speech/
+                            - paragraph [ref=e368]: Speech
+                - generic [ref=e377]:
+                    - generic [ref=e378]: Latest models
+                    - link [ref=e379] [cursor=pointer]:
+                        - /url: /news/ocr-4/
+                        - paragraph [ref=e388]: Mistral OCR 4
+                    - link [ref=e396] [cursor=pointer]:
+                        - /url: /news/vibe-remote-agents-mistral-medium-3-5/
+                        - img "2a1ffaf3-f171-460b-be1b-fc734aa776aa"
+                        - paragraph [ref=e405]: Mistral Medium 3.5
+                    - link [ref=e413] [cursor=pointer]:
+                        - /url: /news/mistral-small-4/
+                        - paragraph [ref=e422]: Mistral Small 4
+                    - link [ref=e430] [cursor=pointer]:
+                        - /url: /news/voxtral-tts/
+                        - paragraph [ref=e439]: Voxtral TTS
+                    - link [ref=e448] [cursor=pointer]:
+                        - /url: https://docs.mistral.ai/models/overview
+                        - paragraph [ref=e457]: See all models
+                - generic [ref=e466]:
+                    - link [ref=e467] [cursor=pointer]:
+                        - /url: https://docs.mistral.ai
+                        - paragraph [ref=e476]: Docs
+                    - link [ref=e484] [cursor=pointer]:
+                        - /url: https://docs.mistral.ai/api/
+                        - paragraph [ref=e493]: API Reference
+                    - link [ref=e501] [cursor=pointer]:
+                        - /url: https://docs.mistral.ai/resources/cookbooks
+                        - paragraph [ref=e510]: Cookbooks
+                - generic [ref=e518]:
+                    - generic [ref=e519]:
+                        - paragraph [ref=e521]: Latest posts
+                        - generic [ref=e522]:
+                            - link [ref=e523] [cursor=pointer]:
+                                - /url: /news/manage-prompts-and-skills-in-studio
+                                - paragraph [ref=e532]: Your Prompts and Skills need a system of record.
+                            - link [ref=e540] [cursor=pointer]:
+                                - /url: /news/robostral-navigate
+                                - paragraph [ref=e549]: Introducing Robostral Navigate
+                            - link [ref=e557] [cursor=pointer]:
+                                - /url: /news/leanstral-1-5
+                                - paragraph [ref=e566]: "Leanstral 1.5: Proof Abundance for All"
+                        - contentinfo [ref=e574]:
+                            - link [ref=e575] [cursor=pointer]:
+                                - /url: /news
+                                - paragraph [ref=e584]: Read all news
+                    - generic [ref=e592]:
+                        - generic [ref=e593]: Categories
+                        - link [ref=e594] [cursor=pointer]:
+                            - /url: /news?categories=product
+                            - paragraph [ref=e595]: Product
+                        - link [ref=e603] [cursor=pointer]:
+                            - /url: /news?categories=research
+                            - paragraph [ref=e604]: Research
+                        - link [ref=e612] [cursor=pointer]:
+                            - /url: /news?categories=engineering
+                            - paragraph [ref=e613]: Engineering
+                        - link [ref=e621] [cursor=pointer]:
+                            - /url: /news?categories=solutions
+                            - paragraph [ref=e622]: Solutions
+                        - link [ref=e630] [cursor=pointer]:
+                            - /url: /news?categories=company
+                            - paragraph [ref=e631]: Company
+                - generic [ref=e640]:
+                    - generic [ref=e641]: Featured stories
+                    - link [ref=e642] [cursor=pointer]:
+                        - /url: /customers/asml/
+                        - paragraph [ref=e651]: ASML
+                    - link [ref=e659] [cursor=pointer]:
+                        - /url: /customers/cma-cgm/
+                        - paragraph [ref=e668]: CMA CGM
+                    - link [ref=e676] [cursor=pointer]:
+                        - /url: /customers/hsbc/
+                        - paragraph [ref=e685]: HSBC
+                    - link [ref=e693] [cursor=pointer]:
+                        - /url: /customers/bmw/
+                        - paragraph [ref=e702]: BMW
+                    - link [ref=e711] [cursor=pointer]:
+                        - /url: /customers/
+                        - paragraph [ref=e720]: See all
+                - generic [ref=e728]:
+                    - generic [ref=e729]:
+                        - generic [ref=e730]: Who we are
+                        - link [ref=e731] [cursor=pointer]:
+                            - /url: /about/
+                            - paragraph [ref=e740]: About us
+                        - link [ref=e748] [cursor=pointer]:
+                            - /url: /careers/
+                            - paragraph [ref=e757]: Careers
+                        - link [ref=e765] [cursor=pointer]:
+                            - /url: /brand/
+                            - paragraph [ref=e774]: Brand
+                    - generic [ref=e782]:
+                        - generic [ref=e783]: Connect
+                        - link [ref=e784] [cursor=pointer]:
+                            - /url: https://discord.com/invite/mistralai
+                            - paragraph [ref=e785]: Community
+                        - link [ref=e792] [cursor=pointer]:
+                            - /url: /partners/
+                            - paragraph [ref=e793]: Partners
+                        - link [ref=e801] [cursor=pointer]:
+                            - /url: https://help.mistral.ai/
+                            - paragraph [ref=e802]: Help center
+    - main [ref=e809]:
+        - generic [ref=e810]:
+            - generic [ref=e815]:
+                - paragraph [ref=e817]:
+                    - generic [ref=e818]:
+                        - generic [ref=e819]:
+                            - generic [ref=e820]: F F
+                            - generic [ref=e821]: r
+                            - generic [ref=e822]: o
+                            - generic [ref=e823]: "n"
+                            - generic [ref=e824]: t
+                            - generic [ref=e825]: i i
+                            - generic [ref=e826]: e
+                            - generic [ref=e827]: r
+                        - generic [ref=e828]:
+                            - generic [ref=e829]: A A
+                            - generic [ref=e830]: I
+                            - generic [ref=e831]: . .
+                    - generic [ref=e832]:
+                        - generic [ref=e833]: I I
+                        - generic [ref=e834]: "n"
+                    - generic [ref=e835]:
+                        - generic [ref=e836]: "y"
+                        - generic [ref=e837]: o
+                        - generic [ref=e838]: u
+                        - generic [ref=e839]: r r
+                    - generic [ref=e840]:
+                        - generic [ref=e841]: h
+                        - generic [ref=e842]: a
+                        - generic [ref=e843]: n n
+                        - generic [ref=e844]: d
+                        - generic [ref=e845]: s s
+                        - generic [ref=e846]: .
+                - generic [ref=e847]:
+                    - paragraph [ref=e848]: We help organizations build
+                    - paragraph [ref=e849]: tailored AI systems to solve the
+                    - paragraph [ref=e850]: world’s hardest problems.
+                - generic [ref=e851]:
+                    - paragraph [ref=e853]: Featured news
+                    - generic [ref=e856]:
+                        - link [ref=e857] [cursor=pointer]:
+                            - /url: /news/robostral-navigate
+                            - paragraph [ref=e859]: Introducing Robostral Navigate
+                            - button [ref=e860]
+                        - link [ref=e876] [cursor=pointer]:
+                            - /url: /news/ocr-4
+                            - paragraph [ref=e878]: Introducing Mistral OCR 4
+                            - button [ref=e879]
+                        - link [ref=e895] [cursor=pointer]:
+                            - /url: /news/vibe-agent
+                            - paragraph [ref=e897]: Vibe gets to work.
+                            - button [ref=e898]
+            - generic [ref=e922]:
+                - generic [ref=e923]:
+                    - generic [ref=e924]:
+                        - img "HTX"
+                    - generic [ref=e925]:
+                        - img "AXA Logo"
+                    - generic [ref=e926]:
+                        - img "Orange"
+                    - generic [ref=e927]:
+                        - img "IBM"
+                    - generic [ref=e928]:
+                        - img "ASML (black)"
+                    - generic [ref=e929]:
+                        - img "French Ministry of Defense logo"
+                    - generic [ref=e930]:
+                        - img "Cisco logo"
+                    - generic [ref=e932]:
+                        - img "Total Energies logo"
+                    - generic [ref=e933]:
+                        - img "SAP"
+                    - generic [ref=e935]:
+                        - img "CMA CGM"
+                - generic [ref=e936]:
+                    - generic [ref=e937]:
+                        - img "HTX"
+                    - generic [ref=e938]:
+                        - img "AXA Logo"
+                    - generic [ref=e939]:
+                        - img "Orange"
+                    - generic [ref=e940]:
+                        - img "IBM"
+                    - generic [ref=e941]:
+                        - img "ASML (black)"
+                    - generic [ref=e942]:
+                        - img "French Ministry of Defense logo"
+                    - generic [ref=e943]:
+                        - img "Cisco logo"
+                    - generic [ref=e945]:
+                        - img "Total Energies logo"
+                    - generic [ref=e946]:
+                        - img "SAP"
+                    - generic [ref=e948]:
+                        - img "CMA CGM"
+                - generic [ref=e949]:
+                    - generic [ref=e950]:
+                        - img "HTX"
+                    - generic [ref=e951]:
+                        - img "AXA Logo"
+                    - generic [ref=e952]:
+                        - img "Orange"
+                    - generic [ref=e953]:
+                        - img "IBM"
+                    - generic [ref=e954]:
+                        - img "ASML (black)"
+                    - generic [ref=e955]:
+                        - img "French Ministry of Defense logo"
+                    - generic [ref=e956]:
+                        - img "Cisco logo"
+                    - generic [ref=e958]:
+                        - img "Total Energies logo"
+                    - generic [ref=e959]:
+                        - img "SAP"
+                    - generic [ref=e961]:
+                        - img "CMA CGM"
+            - generic [ref=e962]:
+                - generic [ref=e964]:
+                    - link [ref=e965] [cursor=pointer]:
+                        - /url: /customers/hsbc
+                        - generic [ref=e966]:
+                            - paragraph [ref=e968]: Financial services
+                            - paragraph [ref=e971]: HSBC boosts productivity with Mistral.
+                            - button [ref=e972]:
+                                - paragraph [ref=e981]: Learn more
+                    - link [ref=e992] [cursor=pointer]:
+                        - /url: /customers/asml
+                        - generic [ref=e993]:
+                            - paragraph [ref=e995]: Technology and Software
+                            - paragraph [ref=e998]: ASML accelerates advanced semiconductor lithography with Mistral.
+                            - button [ref=e999]:
+                                - paragraph [ref=e1008]: Learn more
+                        - img "ASML showcase chip" [ref=e1019]
+                    - link [ref=e1020] [cursor=pointer]:
+                        - /url: /customers/cma-cgm
+                        - generic [ref=e1021]:
+                            - paragraph [ref=e1023]: Transportation and Logistics
+                            - paragraph [ref=e1026]: CMA CGM streamlines global maritime operations with Mistral.
+                            - button [ref=e1027]:
+                                - paragraph [ref=e1036]: Learn more
+                        - img "CMA CGM showcase ship" [ref=e1047]
+                    - link [ref=e1048] [cursor=pointer]:
+                        - /url: /customers/austrian-academy-of-sciences
+                        - generic [ref=e1049]:
+                            - paragraph [ref=e1051]: Public sector
+                            - generic [ref=e1052]:
+                                - img "Austrian Academy of Sciences logo white" [ref=e1053]
+                                - paragraph [ref=e1055]: Austrian Academy of Sciences unlocks Ancient Greek with Mistral.
+                            - button [ref=e1056]:
+                                - paragraph [ref=e1065]: Learn more
+                        - img "Austrian Academy of Sciences showcase wreath" [ref=e1076]
+                    - link [ref=e1077] [cursor=pointer]:
+                        - /url: /customers/epo
+                        - generic [ref=e1078]:
+                            - paragraph [ref=e1080]: Public sector
+                            - paragraph [ref=e1083]: The European Patent Office accelerates innovation with Mistral.
+                            - button [ref=e1084]:
+                                - paragraph [ref=e1093]: Learn more
+                        - img "European Patent Office showcase lightbulb" [ref=e1104]
+                    - link [ref=e1105] [cursor=pointer]:
+                        - /url: /customers/stellantis
+                        - generic [ref=e1106]:
+                            - paragraph [ref=e1108]: Manufacturing
+                            - paragraph [ref=e1111]: Stellantis accelerates automotive innovation with Mistral.
+                            - button [ref=e1112]:
+                                - paragraph [ref=e1121]: Learn more
+                        - img "Stellantis showcase road" [ref=e1132]
+                - generic [ref=e1140]:
+                    - button "Previous slide" [disabled]
+                    - button "Next slide" [ref=e1141]
+            - paragraph [ref=e1162]: Do it all with Mistral.
+            - generic [ref=e1164]:
+                - link [ref=e1166] [cursor=pointer]:
+                    - /url: /products/vibe
+                    - generic [ref=e1172]:
+                        - paragraph [ref=e1173]: Vibe
+                        - paragraph [ref=e1174]: AI agent for long-horizon work.
+                - generic [ref=e1175]:
+                    - link [ref=e1176] [cursor=pointer]:
+                        - /url: /products/studio
+                        - generic [ref=e1182]:
+                            - paragraph [ref=e1183]: Studio
+                            - paragraph [ref=e1184]: Build, test, and run AI agents and apps.
+                    - link [ref=e1185] [cursor=pointer]:
+                        - /url: /products/forge
+                        - generic [ref=e1191]:
+                            - paragraph [ref=e1192]: Forge
+                            - paragraph [ref=e1193]: Train, align, and evaluate custom AI models.
+                    - link [ref=e1194] [cursor=pointer]:
+                        - /url: /solutions
+                        - paragraph [ref=e1213]: Applied AI services
+                - generic [ref=e1214]:
+                    - link [ref=e1215] [cursor=pointer]:
+                        - /url: /models
+                        - paragraph [ref=e1333]: Frontier models
+                    - link [ref=e1334] [cursor=pointer]:
+                        - /url: /products/compute
+                        - generic [ref=e1340]:
+                            - paragraph [ref=e1341]: Compute
+                            - paragraph [ref=e1342]: Frontier-scale infrastructure for training and inference.
+            - generic [ref=e1345]:
+                - list [ref=e1351]:
+                    - listitem [ref=e1352]:
+                        - link "69f0d5c04a1c5e416b03f29e" [ref=e1353] [cursor=pointer]:
+                            - /url: "#69f0d5c04a1c5e416b03f29e"
+                    - listitem [ref=e1360]:
+                        - link "69f0db834a1c5e416b03f2af" [ref=e1361] [cursor=pointer]:
+                            - /url: "#69f0db834a1c5e416b03f2af"
+                    - listitem [ref=e1380]:
+                        - link "69f0dc334a1c5e416b03f2b0" [ref=e1381] [cursor=pointer]:
+                            - /url: "#69f0dc334a1c5e416b03f2b0"
+                    - listitem [ref=e1386]:
+                        - link "69f3da5888c5033bfa0090fe" [ref=e1387] [cursor=pointer]:
+                            - /url: "#69f3da5888c5033bfa0090fe"
+                    - listitem [ref=e1395]:
+                        - link "6a1752412b2b9241d2860884" [ref=e1396] [cursor=pointer]:
+                            - /url: "#6a1752412b2b9241d2860884"
+                    - listitem [ref=e1425]:
+                        - link "69f3dec488c5033bfa0090ff" [ref=e1426] [cursor=pointer]:
+                            - /url: "#69f3dec488c5033bfa0090ff"
+                - generic [ref=e1460]:
+                    - generic [ref=e1462]:
+                        - generic [ref=e1465]:
+                            - paragraph [ref=e1466]: Autonomous work.
+                            - paragraph
+                        - generic [ref=e1467]:
+                            - paragraph [ref=e1468]: AI agent for long-horizon tasks, fluent in your knowledge and tools.
+                            - link [ref=e1470] [cursor=pointer]:
+                                - /url: /products/vibe/
+                                - paragraph [ref=e1479]: Discover Vibe
+                            - generic [ref=e1489]:
+                                - paragraph [ref=e1490]: Enterprise knowledge search
+                                - paragraph [ref=e1491]: Structured data analysis
+                                - paragraph [ref=e1492]: Document and report synthesis
+                                - paragraph [ref=e1493]: Multi-step task scheduling
+                                - paragraph [ref=e1494]: Persistent memory and reusable skills
+                    - generic [ref=e1496]:
+                        - generic [ref=e1499]:
+                            - paragraph [ref=e1500]: Autonomous coding.
+                            - paragraph
+                        - generic [ref=e1501]:
+                            - paragraph [ref=e1502]: Ship faster with a stack that meets devs where they work.
+                            - link [ref=e1504] [cursor=pointer]:
+                                - /url: /products/vibe/code/
+                                - paragraph [ref=e1513]: Discover Vibe for code
+                            - generic [ref=e1523]:
+                                - paragraph [ref=e1524]: Async code generation
+                                - paragraph [ref=e1525]: Architecture-aware reasoning
+                                - paragraph [ref=e1526]: Legacy code translation
+                                - paragraph [ref=e1527]: Automated CI/CD and code reviews
+                                - paragraph [ref=e1528]: Test and documentation authoring
+                    - generic [ref=e1530]:
+                        - generic [ref=e1533]:
+                            - paragraph [ref=e1534]: AI application development.
+                            - paragraph
+                        - generic [ref=e1535]:
+                            - paragraph [ref=e1536]: "Build and deploy AI apps with complete control: build custom agents, and run production AI anywhere—from edge to cloud—with enterprise-grade tooling."
+                            - link [ref=e1538] [cursor=pointer]:
+                                - /url: /products/studio/
+                                - paragraph [ref=e1547]: Discover Studio
+                            - generic [ref=e1557]:
+                                - paragraph [ref=e1558]: Agent orchestration
+                                - paragraph [ref=e1559]: End-to-end observability
+                                - paragraph [ref=e1560]: Unified AI registry
+                                - paragraph [ref=e1561]: Evals, judges, and guardrails
+                                - paragraph [ref=e1562]: Full deployment portability
+                    - generic [ref=e1564]:
+                        - generic [ref=e1567]:
+                            - paragraph [ref=e1568]: Custom model development.
+                            - paragraph
+                        - generic [ref=e1569]:
+                            - paragraph [ref=e1570]: Turn proprietary knowledge into model intelligence by training and aligning your own models.
+                            - link [ref=e1572] [cursor=pointer]:
+                                - /url: /products/forge/
+                                - paragraph [ref=e1581]: Discover Forge
+                            - generic [ref=e1591]:
+                                - paragraph [ref=e1592]: Enterprise domain adaptation
+                                - paragraph [ref=e1593]: End-to-end model training
+                                - paragraph [ref=e1594]: Reinforcement learning and distillation
+                                - paragraph [ref=e1595]: Synthetic data generation
+                                - paragraph [ref=e1596]: Evaluation and lifecycle management
+                    - generic [ref=e1598]:
+                        - paragraph [ref=e1602]: Infrastructure for training and inference.
+                        - generic [ref=e1603]:
+                            - paragraph [ref=e1604]: The frontier-grade infrastructure and orchestration platform behind Mistral's own models is now yours to build on.
+                            - link [ref=e1606] [cursor=pointer]:
+                                - /url: /products/compute/
+                                - paragraph [ref=e1615]: Discover Compute
+                            - paragraph [ref=e1626]: Dedicated GPU clusters
+                    - generic [ref=e1628]:
+                        - generic [ref=e1631]:
+                            - paragraph [ref=e1632]: Advanced R&D
+                            - paragraph
+                        - generic [ref=e1633]:
+                            - paragraph [ref=e1634]: "Tailored, domain-specialized AI: from custom pre-training with your data to scaled deployment—with expert guidance throughout."
+                            - link [ref=e1636] [cursor=pointer]:
+                                - /url: /solutions/custom-model-training/
+                                - paragraph [ref=e1645]: Discover applied AI
+                            - generic [ref=e1655]:
+                                - paragraph [ref=e1656]: Model customization
+                                - paragraph [ref=e1657]: Value realization
+                                - paragraph [ref=e1658]: Deployment services
+                                - paragraph [ref=e1659]: Use case acceleration
+                                - paragraph [ref=e1660]: Enterprise activation
+            - generic [ref=e1665]:
+                - paragraph [ref=e1666]: Supported by expert partnership.
+                - generic [ref=e1667]:
+                    - paragraph [ref=e1668]: Work with world-class AI scientists to enable transformation that drives impact.
+                    - link [ref=e1669] [cursor=pointer]:
+                        - /url: /services/
+                        - paragraph [ref=e1678]: Our services
+            - generic [ref=e1692]:
+                - generic [ref=e1694]:
+                    - generic [ref=e1697]:
+                        - paragraph [ref=e1698]: Use case acceleration.
+                        - paragraph [ref=e1701]: Prioritize high-value use cases and take them to production fast.
+                    - generic [ref=e1704]:
+                        - paragraph [ref=e1705]: Elite AI expertise.
+                        - paragraph [ref=e1708]: A cross-functional team that takes initiatives from kickoff to production at scale.
+                    - generic [ref=e1711]:
+                        - paragraph [ref=e1712]: Deep customization.
+                        - paragraph [ref=e1715]: Customize and optimize models for your domain.
+                    - generic [ref=e1718]:
+                        - paragraph [ref=e1719]: Enterprise activation.
+                        - paragraph [ref=e1722]: Deploy AI in your environment with full control.
+                - generic [ref=e1728]:
+                    - button "Previous slide" [disabled]
+                    - button "Next slide" [ref=e1729]
+            - generic [ref=e1748]:
+                - paragraph [ref=e1749]: AI deployments designed for privacy.
+                - paragraph [ref=e1755]: Deploy frontier AI in your environment, or consume as a service or from one of our cloud partners.
+            - generic [ref=e1759]:
+                - generic [ref=e1760]:
+                    - paragraph [ref=e1767]: Self-hosted.
+                    - paragraph [ref=e1770]: Deploy Studio on virtual cloud, edge, or on-premises. Self-hosted deployments offer more advanced levels of customization and control. Your data stays within your walls.
+                - generic [ref=e1771]:
+                    - paragraph [ref=e1780]: Mistral cloud.
+                    - paragraph [ref=e1783]: Get started with Studio hosted on Mistral’s infrastructure and build your own applications and services with our APIs. Our servers are hosted in the EU.
+                - generic [ref=e1784]:
+                    - paragraph [ref=e1799]: Cloud providers.
+                    - paragraph [ref=e1802]: Access the power of Studio via your preferred cloud provider (Google Cloud, AWS, Azure, SAP, IBM, Snowflake, NVIDIA, Outscale) using your cloud credits.
+            - generic [ref=e1805]:
+                - generic [ref=e1806]:
+                    - paragraph [ref=e1807]: Own your own AI future.
+                    - paragraph [ref=e1808]: Build, customize, and deploy tailored AI solutions with complete control.
+                - generic [ref=e1810]:
+                    - link [ref=e1811] [cursor=pointer]:
+                        - /url: https://console.mistral.ai/
+                        - paragraph [ref=e1820]: Start building
+                    - link [ref=e1828] [cursor=pointer]:
+                        - /url: /contact/
+                        - paragraph [ref=e1837]: Contact sales
+    - contentinfo [ref=e1846]:
+        - generic [ref=e1848]:
+            - generic [ref=e1849]:
+                - heading "Products" [level=3] [ref=e1850]
+                - list [ref=e1851]:
+                    - listitem [ref=e1852]:
+                        - link [ref=e1853] [cursor=pointer]:
+                            - /url: /products/vibe/
+                            - paragraph [ref=e1854]: Vibe
+                    - listitem [ref=e1855]:
+                        - link [ref=e1856] [cursor=pointer]:
+                            - /url: /products/vibe/code/
+                            - paragraph [ref=e1857]: Vibe Code
+                    - listitem [ref=e1858]:
+                        - link [ref=e1859] [cursor=pointer]:
+                            - /url: /products/studio/
+                            - paragraph [ref=e1860]: Studio
+                    - listitem [ref=e1861]:
+                        - link [ref=e1862] [cursor=pointer]:
+                            - /url: /products/forge/
+                            - paragraph [ref=e1863]: Forge
+                    - listitem [ref=e1864]:
+                        - link [ref=e1865] [cursor=pointer]:
+                            - /url: /products/compute/
+                            - paragraph [ref=e1866]: Compute
+                    - listitem [ref=e1867]:
+                        - link [ref=e1868] [cursor=pointer]:
+                            - /url: /pricing
+                            - paragraph [ref=e1869]: Pricing
+            - generic [ref=e1870]:
+                - heading "Solutions" [level=3] [ref=e1871]
+                - list [ref=e1872]:
+                    - listitem [ref=e1873]:
+                        - link [ref=e1874] [cursor=pointer]:
+                            - /url: /solutions/
+                            - paragraph [ref=e1875]: Delivery methodology
+                    - listitem [ref=e1876]:
+                        - link [ref=e1877] [cursor=pointer]:
+                            - /url: /solutions/custom-model-training/
+                            - paragraph [ref=e1878]: Model customization
+                    - listitem [ref=e1879]:
+                        - link [ref=e1880] [cursor=pointer]:
+                            - /url: /solutions/coding/
+                            - paragraph [ref=e1881]: Coding
+                    - listitem [ref=e1882]:
+                        - link [ref=e1883] [cursor=pointer]:
+                            - /url: /solutions/document-ai/
+                            - paragraph [ref=e1884]: Document intelligence
+                    - listitem [ref=e1885]:
+                        - link [ref=e1886] [cursor=pointer]:
+                            - /url: /solutions/speech/
+                            - paragraph [ref=e1887]: Speech
+                    - listitem [ref=e1888]:
+                        - link [ref=e1889] [cursor=pointer]:
+                            - /url: /industry/finance/
+                            - paragraph [ref=e1890]: Mistral for finance
+                    - listitem [ref=e1891]:
+                        - link [ref=e1892] [cursor=pointer]:
+                            - /url: /industry/public-sector/
+                            - paragraph [ref=e1893]: Mistral for public institutions
+                    - listitem [ref=e1894]:
+                        - link [ref=e1895] [cursor=pointer]:
+                            - /url: /industry/manufacturing/
+                            - paragraph [ref=e1896]: Mistral for manufacturing
+            - generic [ref=e1897]:
+                - heading "Why Mistral" [level=3] [ref=e1898]
+                - list [ref=e1899]:
+                    - listitem [ref=e1900]:
+                        - link [ref=e1901] [cursor=pointer]:
+                            - /url: /about/
+                            - paragraph [ref=e1902]: About us
+                    - listitem [ref=e1903]:
+                        - link [ref=e1904] [cursor=pointer]:
+                            - /url: /careers/
+                            - paragraph [ref=e1905]: Careers
+                    - listitem [ref=e1906]:
+                        - link [ref=e1907] [cursor=pointer]:
+                            - /url: /partners/
+                            - paragraph [ref=e1908]: Partners
+                    - listitem [ref=e1909]:
+                        - link [ref=e1910] [cursor=pointer]:
+                            - /url: /customers
+                            - paragraph [ref=e1911]: Our customers
+                    - listitem [ref=e1912]:
+                        - link [ref=e1913] [cursor=pointer]:
+                            - /url: /models/
+                            - paragraph [ref=e1914]: Our models
+                    - listitem [ref=e1915]:
+                        - link [ref=e1916] [cursor=pointer]:
+                            - /url: /brand
+                            - paragraph [ref=e1917]: Brand
+            - generic [ref=e1918]:
+                - heading "Legal" [level=3] [ref=e1919]
+                - list [ref=e1920]:
+                    - listitem [ref=e1921]:
+                        - link [ref=e1922] [cursor=pointer]:
+                            - /url: https://legal.mistral.ai/terms
+                            - paragraph [ref=e1923]: Terms of Service
+                    - listitem [ref=e1924]:
+                        - link [ref=e1925] [cursor=pointer]:
+                            - /url: https://legal.mistral.ai/terms/privacy-policy?language=en-US
+                            - paragraph [ref=e1926]: Privacy Policy
+                    - listitem [ref=e1927]:
+                        - link [ref=e1928] [cursor=pointer]:
+                            - /url: javascript:openAxeptioCookies()
+                            - paragraph [ref=e1929]: Privacy choices
+                    - listitem [ref=e1930]:
+                        - link [ref=e1931] [cursor=pointer]:
+                            - /url: https://legal.mistral.ai/terms/data-processing-addendum
+                            - paragraph [ref=e1932]: Data processing agreement
+                    - listitem [ref=e1933]:
+                        - link [ref=e1934] [cursor=pointer]:
+                            - /url: /legal/
+                            - paragraph [ref=e1935]: Legal notice
+        - generic [ref=e1936]:
+            - generic [ref=e1937]:
+                - navigation [ref=e1938]:
+                    - link "LinkedIn" [ref=e1939] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/company/mistralai/
+                    - link "X" [ref=e1942] [cursor=pointer]:
+                        - /url: https://x.com/mistralai
+                    - link "YouTube" [ref=e1945] [cursor=pointer]:
+                        - /url: https://www.youtube.com/@MistralAIOfficial
+                    - link "Discord" [ref=e1948] [cursor=pointer]:
+                        - /url: https://discord.gg/mistralai
+                    - link "Reddit" [ref=e1951] [cursor=pointer]:
+                        - /url: https://www.reddit.com/r/MistralAI/
+                - navigation [ref=e1954]:
+                    - paragraph [ref=e1955]: Get Mistral Vibe
+                    - generic [ref=e1956]:
+                        - link "Download on the App Store" [ref=e1957] [cursor=pointer]:
+                            - /url: https://apps.apple.com/us/app/le-chat-by-mistral-ai/id6740410176
+                        - link "Get it on Google Play" [ref=e1985] [cursor=pointer]:
+                            - /url: https://play.google.com/store/apps/details?id=ai.mistral.chat
+            - generic [ref=e2009]:
+                - paragraph [ref=e2010]: Mistral AI © 2026
+                - generic [ref=e2011]:
+                    - paragraph [ref=e2012]: Select language
+                    - generic [ref=e2014]:
+                        - generic:
+                            - paragraph: English
+                        - combobox "Language switcher" [ref=e2015] [cursor=pointer]:
+                            - option "English" [selected]
+                            - option "Français"
+                            - option "Italiano"

@@ -1,0 +1,25 @@
+import { pgTable, text, integer, timestamp, index } from "drizzle-orm/pg-core";
+
+export const abacatePayCheckout = pgTable(
+	"abacatepay_checkout",
+	{
+		localOrderId: text("local_order_id").primaryKey(),
+		userId: text("user_id"),
+		customerEmail: text("customer_email"),
+		abacatepayCheckoutId: text("abacatepay_checkout_id").notNull().unique(),
+		checkoutUrl: text("checkout_url").notNull(),
+		amountInCents: integer("amount_in_cents").notNull(),
+		status: text("status").notNull(),
+		eventId: text("event_id").unique(),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()).notNull(),
+	},
+	(table) => [index("abacatepay_checkout_checkout_id_idx").on(table.abacatepayCheckoutId)],
+);
+
+export const abacatePayWebhookEvent = pgTable("abacatepay_webhook_event", {
+	eventId: text("event_id").primaryKey(),
+	eventType: text("event_type").notNull(),
+	payload: text("payload").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});

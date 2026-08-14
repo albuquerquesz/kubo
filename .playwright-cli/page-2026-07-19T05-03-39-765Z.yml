@@ -1,0 +1,12 @@
+- generic [active] [ref=f2e1]:
+    - banner [ref=f2e2]:
+        - generic [ref=f2e3]:
+            - link "Better T Stack home" [ref=f2e4] [cursor=pointer]:
+                - /url: /
+                - generic [ref=f2e5]: B_
+            - link "Better T Stack on GitHub" [ref=f2e7] [cursor=pointer]:
+                - /url: https://github.com/AmanVarshney01/create-better-t-stack
+            - button "Open navigation" [ref=f2e10]
+    - region "Notifications alt+T"
+    - button "Open Next.js Dev Tools" [ref=f2e17] [cursor=pointer]
+    - alert [ref=f2e21]

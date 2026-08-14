@@ -1,0 +1,120 @@
+{{#if (eq backend "convex")}}
+<script lang="ts">
+import { useQuery } from 'convex-svelte';
+import { api } from "@{{projectName}}/backend/convex/_generated/api";
+
+const healthCheck = useQuery(api.healthCheck.get, {});
+
+const TITLE_TEXT = `
+   ██████╗ ███████╗████████╗████████╗███████╗██████╗
+   ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
+   ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
+   ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
+   ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
+   ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
+
+   ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
+   ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
+      ██║       ███████╗   ██║   ███████║██║     █████╔╝
+      ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
+      ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
+      ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
+   `;
+</script>
+
+<div class="container mx-auto max-w-3xl px-4 py-2">
+	<pre class="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
+	<div class="grid gap-6">
+		<section class="rounded-lg border p-4">
+			<h2 class="mb-2 font-medium">API Status</h2>
+			<div class="flex items-center gap-2">
+				<div
+					class={`h-2 w-2 rounded-full ${healthCheck.data ? "bg-green-500" : "bg-red-500"}`}
+				></div>
+				<span class="text-muted-foreground text-sm">
+					{healthCheck.isLoading
+						? "Checking..."
+						: healthCheck.data
+							? "Connected"
+							: "Disconnected"}
+				</span>
+			</div>
+		</section>
+	</div>
+</div>
+{{else}}
+<script lang="ts">
+{{#if (eq api "orpc")}}
+import { orpc } from "$lib/orpc";
+import { createQuery } from "@tanstack/svelte-query";
+const healthCheck = createQuery(() => orpc.healthCheck.queryOptions());
+{{/if}}
+{{#if (and (eq payments "abacatepay") (ne backend "self"))}}
+import { env } from "@{{projectName}}/env/web";
+{{/if}}
+
+const TITLE_TEXT = `
+   ██████╗ ███████╗████████╗████████╗███████╗██████╗
+   ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
+   ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
+   ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
+   ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
+   ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
+
+   ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
+   ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
+      ██║       ███████╗   ██║   ███████║██║     █████╔╝
+      ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
+      ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
+      ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
+   `;
+
+{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+async function openCheckout() {
+	const baseUrl = {{#if (eq backend "self")}}""{{else}}env.PUBLIC_SERVER_URL{{/if}};
+	const response = await fetch(`${baseUrl}/api/payments/abacatepay/checkout`, {
+		method: "POST",
+	});
+	if (!response.ok) return;
+	const payload = (await response.json()) as { data?: { url?: string } };
+	if (payload.data?.url) {
+		window.location.href = payload.data.url;
+	}
+}
+{{/if}}
+</script>
+
+<div class="container mx-auto max-w-3xl px-4 py-2">
+	<pre class="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
+	<div class="grid gap-6">
+	    {{#if (eq api "orpc")}}
+		<section class="rounded-lg border p-4">
+			<h2 class="mb-2 font-medium">API Status</h2>
+			<div class="flex items-center gap-2">
+				<div
+					class={`h-2 w-2 rounded-full ${healthCheck.data ? "bg-green-500" : "bg-red-500"}`}
+				></div>
+				<span class="text-muted-foreground text-sm">
+					{healthCheck.isLoading
+						? "Checking..."
+						: healthCheck.data
+							? "Connected"
+							: "Disconnected"}
+				</span>
+			</div>
+		</section>
+	    {{/if}}
+		{{#if (and (eq payments "abacatepay") (ne backend "convex"))}}
+		<section class="rounded-lg border p-4">
+			<h2 class="mb-2 font-medium">Hosted Checkout</h2>
+			<p class="text-muted-foreground mb-4 text-sm">
+				Launch a sample AbacatePay checkout without requiring sign-in.
+			</p>
+			<button class="rounded-md border px-4 py-2 text-sm font-medium" on:click={openCheckout}>
+				Open Checkout
+			</button>
+		</section>
+		{{/if}}
+	</div>
+</div>
+{{/if}}

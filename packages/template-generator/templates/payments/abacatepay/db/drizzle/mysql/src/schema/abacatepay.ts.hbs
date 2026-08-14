@@ -1,0 +1,25 @@
+import { mysqlTable, varchar, text, int, timestamp, index } from "drizzle-orm/mysql-core";
+
+export const abacatePayCheckout = mysqlTable(
+	"abacatepay_checkout",
+	{
+		localOrderId: varchar("local_order_id", { length: 191 }).primaryKey(),
+		userId: varchar("user_id", { length: 191 }),
+		customerEmail: varchar("customer_email", { length: 255 }),
+		abacatepayCheckoutId: varchar("abacatepay_checkout_id", { length: 191 }).notNull().unique(),
+		checkoutUrl: text("checkout_url").notNull(),
+		amountInCents: int("amount_in_cents").notNull(),
+		status: varchar("status", { length: 32 }).notNull(),
+		eventId: varchar("event_id", { length: 191 }).unique(),
+		createdAt: timestamp("created_at", { fsp: 3 }).defaultNow().notNull(),
+		updatedAt: timestamp("updated_at", { fsp: 3 }).defaultNow().$onUpdate(() => new Date()).notNull(),
+	},
+	(table) => [index("abacatepay_checkout_checkout_id_idx").on(table.abacatepayCheckoutId)],
+);
+
+export const abacatePayWebhookEvent = mysqlTable("abacatepay_webhook_event", {
+	eventId: varchar("event_id", { length: 191 }).primaryKey(),
+	eventType: varchar("event_type", { length: 64 }).notNull(),
+	payload: text("payload").notNull(),
+	createdAt: timestamp("created_at", { fsp: 3 }).defaultNow().notNull(),
+});

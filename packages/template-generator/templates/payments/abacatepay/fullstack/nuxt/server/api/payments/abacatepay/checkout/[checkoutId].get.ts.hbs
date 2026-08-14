@@ -1,0 +1,15 @@
+import { getStoredAbacatePayCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+
+export default defineEventHandler(async (event) => {
+  const checkoutId = getRouterParam(event, "checkoutId");
+  if (!checkoutId) {
+    throw createError({ statusCode: 400, statusMessage: "Missing checkoutId" });
+  }
+
+  const checkout = await getStoredAbacatePayCheckout(checkoutId);
+  if (!checkout) {
+    throw createError({ statusCode: 404, statusMessage: "Checkout not found" });
+  }
+
+  return { data: checkout, success: true, error: null };
+});

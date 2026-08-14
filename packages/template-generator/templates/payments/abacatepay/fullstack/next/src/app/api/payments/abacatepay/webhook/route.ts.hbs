@@ -1,0 +1,18 @@
+import { env } from "@{{projectName}}/env/server";
+import { processAbacatePayWebhook } from "@{{projectName}}/payments/lib/abacatepay";
+
+export async function POST(request: Request) {
+	const requestUrl = new URL(request.url);
+	if (requestUrl.searchParams.get("webhookSecret") !== env.ABACATEPAY_WEBHOOK_SECRET) {
+		return Response.json({ error: "Unauthorized" }, { status: 401 });
+	}
+
+	const signature = request.headers.get("X-Webhook-Signature");
+	if (!signature) {
+		return Response.json({ error: "Missing X-Webhook-Signature" }, { status: 400 });
+	}
+
+	const rawBody = await request.text();
+	const result = await processAbacatePayWebhook(rawBody, signature);
+	return Response.json(result.body, { status: result.status });
+}

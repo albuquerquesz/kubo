@@ -1,0 +1,33 @@
+import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
+
+export const abacatePayCheckout = sqliteTable(
+	"abacatepay_checkout",
+	{
+		localOrderId: text("local_order_id").primaryKey(),
+		userId: text("user_id"),
+		customerEmail: text("customer_email"),
+		abacatepayCheckoutId: text("abacatepay_checkout_id").notNull().unique(),
+		checkoutUrl: text("checkout_url").notNull(),
+		amountInCents: integer("amount_in_cents").notNull(),
+		status: text("status").notNull(),
+		eventId: text("event_id").unique(),
+		createdAt: integer("created_at", { mode: "timestamp_ms" })
+			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+			.notNull(),
+		updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => [index("abacatepay_checkout_checkout_id_idx").on(table.abacatepayCheckoutId)],
+);
+
+export const abacatePayWebhookEvent = sqliteTable("abacatepay_webhook_event", {
+	eventId: text("event_id").primaryKey(),
+	eventType: text("event_type").notNull(),
+	payload: text("payload").notNull(),
+	createdAt: integer("created_at", { mode: "timestamp_ms" })
+		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+		.notNull(),
+});

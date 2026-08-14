@@ -1,0 +1,66 @@
+// TechCategory for the stack builder UI
+export type TechCategory =
+  | "api"
+  | "webFrontend"
+  | "nativeFrontend"
+  | "runtime"
+  | "backend"
+  | "database"
+  | "orm"
+  | "dbSetup"
+  | "webDeploy"
+  | "serverDeploy"
+  | "auth"
+  | "payments"
+  | "observability"
+  | "packageManager"
+  | "addons"
+  | "examples"
+  | "git"
+  | "install";
+
+export type TechEdge = {
+  id: string;
+  source: string;
+  target: string;
+  type?: string;
+  animated?: boolean;
+};
+
+export type Sponsor = {
+  name: string;
+  githubId: string;
+  avatarUrl: string;
+  websiteUrl?: string | null;
+  // Optional display text for the website link. When set, show this label
+  // instead of the URL while still linking to websiteUrl (e.g. show
+  // "CodeRabbit.ai" but link to a redirect URL).
+  websiteLabel?: string | null;
+  githubUrl: string;
+  tierName: string;
+  totalProcessedAmount: number;
+  sinceWhen: string;
+  transactionCount: number;
+  formattedAmount: string;
+};
+
+export type SponsorsData = {
+  generated_at: string;
+  summary: {
+    total_sponsors: number;
+    total_lifetime_amount: number;
+    total_current_monthly: number;
+    special_sponsors: number;
+    current_sponsors: number;
+    past_sponsors: number;
+    backers: number;
+    top_sponsor: {
+      name: string;
+      amount: number;
+    } | null;
+  };
+  specialSponsors: Sponsor[];
+  sponsors: Sponsor[];
+  pastSponsors: Sponsor[];
+  backers: Sponsor[];
+};

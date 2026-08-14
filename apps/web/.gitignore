@@ -1,0 +1,34 @@
+# deps
+/node_modules
+
+# generated content
+.contentlayer
+.content-collections
+.source
+public/analytics-minimal.json
+
+# test & build
+/coverage
+/.next/
+/out/
+/build
+*.tsbuildinfo
+/.open-next/
+/.wrangler/
+.alchemy
+
+# misc
+.DS_Store
+*.pem
+/.pnp
+.pnp.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# others
+.env*.local
+.vercel
+next-env.d.ts
+.dev.vars
+.dev.vars.prod

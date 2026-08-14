@@ -1,0 +1,139 @@
+import { Activity, DatabaseZap, Terminal } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+import { formatCompactNumber } from "./analytics-helpers";
+
+// Feb-Nov 2025 PostHog era, estimated from npm downloads (92.8k) times the
+// tracked era's projects-per-download ratio (~0.64)
+const UNTRACKED_ERA_PROJECT_ESTIMATE = 59_000;
+
+const utcDateTimeFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  timeZone: "UTC",
+});
+
+function formatUtcDateTime(value: string) {
+  return `${utcDateTimeFormatter.format(new Date(value))} UTC`;
+}
+
+function HeaderStat({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value: string | number;
+  detail: string;
+}) {
+  return (
+    <div className="rounded border border-border bg-fd-background p-4">
+      <div className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
+        {label}
+      </div>
+      <div className="mt-3 font-semibold text-2xl">{value}</div>
+      <p className="mt-2 text-muted-foreground text-xs leading-5">{detail}</p>
+    </div>
+  );
+}
+
+export function AnalyticsHeader({
+  lastUpdated,
+  liveTotal,
+  trackingDays,
+  connectionStatus,
+}: {
+  lastUpdated: string | null;
+  liveTotal: number;
+  trackingDays: number;
+  connectionStatus: "online" | "connecting" | "reconnecting" | "offline";
+}) {
+  const formattedDate = lastUpdated ? formatUtcDateTime(lastUpdated) : null;
+  const statusMeta = {
+    online: {
+      label: "Streaming",
+      textClass: "text-primary",
+      dotClass: "bg-primary",
+    },
+    connecting: {
+      label: "Connecting",
+      textClass: "text-muted-foreground",
+      dotClass: "bg-muted-foreground",
+    },
+    reconnecting: {
+      label: "Reconnecting",
+      textClass: "text-chart-3",
+      dotClass: "bg-chart-3",
+    },
+    offline: {
+      label: "Offline",
+      textClass: "text-destructive",
+      dotClass: "bg-destructive",
+    },
+  }[connectionStatus];
+
+  return (
+    <section className="space-y-5">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-3 sm:flex-nowrap">
+        <div className="flex min-w-0 items-center gap-2">
+          <Terminal className="h-5 w-5 shrink-0 text-primary" />
+          <div className="min-w-0">
+            <h1 className="font-bold font-mono text-lg sm:text-xl">ANALYTICS.SH</h1>
+            <p className="text-muted-foreground text-sm">
+              Aggregate CLI telemetry for create-better-t-stack.
+            </p>
+          </div>
+        </div>
+        <div className="hidden h-px flex-1 bg-border sm:block" />
+        <div className="flex items-center gap-2 rounded border border-border bg-fd-background px-3 py-2 font-mono text-xs">
+          <Activity className={cn("h-3.5 w-3.5", statusMeta.textClass)} />
+          <span className={cn("h-2 w-2 rounded-full", statusMeta.dotClass)} />
+          <span className={statusMeta.textClass}>{statusMeta.label}</span>
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <HeaderStat
+          label="Live projects"
+          value={formatCompactNumber(liveTotal)}
+          detail="Project creations tracked in the current Convex stream."
+        />
+        <HeaderStat
+          label="Tracked span"
+          value={trackingDays}
+          detail="Calendar days represented in the live telemetry dataset."
+        />
+      </div>
+
+      <div className="rounded border border-border bg-fd-background p-4">
+        <div className="flex items-start gap-2 text-sm">
+          <span className="text-primary">$</span>
+          <span className="text-muted-foreground">
+            These numbers undercount real usage. The CLI shipped in Feb 2025, but this dataset only
+            goes back to Dec 2025. Earlier telemetry lived in PostHog and isn't included. Counting
+            that period via npm download volume, estimated all-time usage is around{" "}
+            {formatCompactNumber(liveTotal + UNTRACKED_ERA_PROJECT_ESTIMATE)} projects.
+          </span>
+        </div>
+      </div>
+
+      <div className="rounded border border-border bg-fd-background p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+          <div className="flex items-center gap-2">
+            <DatabaseZap className="h-4 w-4 text-primary" />
+            <span className="font-mono text-xs text-muted-foreground uppercase">Telemetry</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">Latest event</span>
+            <span className="font-medium">{formattedDate ?? "Waiting"}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

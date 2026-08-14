@@ -1,0 +1,15 @@
+import { getStoredAbacatePayCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+
+export async function GET(
+	_request: Request,
+	{ params }: { params: Promise<{ checkoutId: string }> },
+) {
+	const { checkoutId } = await params;
+	const checkout = await getStoredAbacatePayCheckout(checkoutId);
+
+	if (!checkout) {
+		return Response.json({ error: "Checkout not found" }, { status: 404 });
+	}
+
+	return Response.json({ data: checkout, success: true, error: null });
+}

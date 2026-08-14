@@ -1,0 +1,24 @@
+{{#if (eq auth "better-auth")}}
+import { headers } from "next/headers";
+{{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
+import { createAuth } from "@{{projectName}}/auth";
+{{else}}
+import { auth } from "@{{projectName}}/auth";
+{{/if}}
+{{/if}}
+import { createAbacatePayHostedCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+
+export async function POST() {
+	{{#if (eq auth "better-auth")}}
+	const session = await {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}createAuth(){{else}}auth{{/if}}.api.getSession({
+		headers: await headers(),
+	});
+	const checkout = await createAbacatePayHostedCheckout({
+		userId: session?.user?.id ?? null,
+		customerEmail: session?.user?.email ?? null,
+	});
+	{{else}}
+	const checkout = await createAbacatePayHostedCheckout();
+	{{/if}}
+	return Response.json({ data: checkout, success: true, error: null });
+}

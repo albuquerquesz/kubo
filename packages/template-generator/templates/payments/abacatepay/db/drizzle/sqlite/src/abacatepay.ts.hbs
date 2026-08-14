@@ -1,0 +1,72 @@
+import { eq } from "drizzle-orm";
+{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
+import { env } from "@{{projectName}}/env/server";
+{{/if}}
+import { createDb{{#if (and (ne serverDeploy "cloudflare") (or (ne backend "self") (ne webDeploy "cloudflare")))}}, db{{/if}} } from "./index";
+import { abacatePayCheckout, abacatePayWebhookEvent } from "./schema/abacatepay";
+
+function getDb() {
+{{#if (and (ne serverDeploy "cloudflare") (or (ne backend "self") (ne webDeploy "cloudflare")))}}
+	return db;
+{{else if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
+	return createDb(env);
+{{else}}
+	return createDb();
+{{/if}}
+}
+
+export async function createAbacatePayCheckout(input: {
+	localOrderId: string;
+	userId: string | null;
+	customerEmail: string | null;
+	abacatepayCheckoutId: string;
+	checkoutUrl: string;
+	amountInCents: number;
+	status: string;
+}) {
+	await getDb().insert(abacatePayCheckout).values(input);
+	return input;
+}
+
+export async function getAbacatePayCheckoutByCheckoutId(checkoutId: string) {
+	const [record] = await getDb()
+		.select()
+		.from(abacatePayCheckout)
+		.where(eq(abacatePayCheckout.abacatepayCheckoutId, checkoutId))
+		.limit(1);
+
+	return record ?? null;
+}
+
+export async function hasAbacatePayWebhookEvent(eventId: string) {
+	const [record] = await getDb()
+		.select({ eventId: abacatePayWebhookEvent.eventId })
+		.from(abacatePayWebhookEvent)
+		.where(eq(abacatePayWebhookEvent.eventId, eventId))
+		.limit(1);
+
+	return Boolean(record);
+}
+
+export async function recordAbacatePayWebhookEvent(input: {
+	eventId: string;
+	eventType: string;
+	payload: string;
+}) {
+	await getDb().insert(abacatePayWebhookEvent).values(input);
+}
+
+export async function markAbacatePayCheckoutCompleted(input: {
+	checkoutId: string;
+	eventId: string;
+	status: string;
+}) {
+	await getDb()
+		.update(abacatePayCheckout)
+		.set({
+			status: input.status,
+			eventId: input.eventId,
+			updatedAt: new Date(),
+		})
+		.where(eq(abacatePayCheckout.abacatepayCheckoutId, input.checkoutId));
+}

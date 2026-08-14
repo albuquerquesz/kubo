@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-18T23:39:35Z",
+  "title": "Design System: Better T Stack",
+  "extensions": {
+    "colorMeta": {
+      "midnight-canvas": {
+        "role": "neutral",
+        "displayName": "Midnight Canvas",
+        "canonical": "oklch(0.125 0.014 286)",
+        "tonalRamp": [
+          "oklch(0.12 0.014 286)",
+          "oklch(0.18 0.014 286)",
+          "oklch(0.26 0.013 286)",
+          "oklch(0.38 0.012 286)",
+          "oklch(0.52 0.011 286)",
+          "oklch(0.68 0.01 286)",
+          "oklch(0.82 0.008 286)",
+          "oklch(0.95 0.006 286)"
+        ]
+      },
+      "builder-violet": {
+        "role": "primary",
+        "displayName": "Builder Violet",
+        "canonical": "oklch(0.75 0.19 308)",
+        "tonalRamp": [
+          "oklch(0.18 0.07 308)",
+          "oklch(0.28 0.11 308)",
+          "oklch(0.4 0.15 308)",
+          "oklch(0.52 0.18 308)",
+          "oklch(0.64 0.19 308)",
+          "oklch(0.75 0.19 308)",
+          "oklch(0.86 0.13 308)",
+          "oklch(0.95 0.05 308)"
+        ]
+      },
+      "signal-cyan": {
+        "role": "secondary",
+        "displayName": "Signal Cyan",
+        "canonical": "oklch(0.8 0.13 200)",
+        "tonalRamp": [
+          "oklch(0.18 0.05 200)",
+          "oklch(0.28 0.08 200)",
+          "oklch(0.4 0.1 200)",
+          "oklch(0.52 0.12 200)",
+          "oklch(0.64 0.13 200)",
+          "oklch(0.76 0.13 200)",
+          "oklch(0.86 0.09 200)",
+          "oklch(0.95 0.03 200)"
+        ]
+      },
+      "signal-lime": {
+        "role": "secondary",
+        "displayName": "Signal Lime",
+        "canonical": "oklch(0.84 0.16 132)",
+        "tonalRamp": [
+          "oklch(0.18 0.05 132)",
+          "oklch(0.28 0.08 132)",
+          "oklch(0.4 0.11 132)",
+          "oklch(0.52 0.14 132)",
+          "oklch(0.64 0.16 132)",
+          "oklch(0.76 0.16 132)",
+          "oklch(0.86 0.12 132)",
+          "oklch(0.95 0.04 132)"
+        ]
+      },
+      "signal-amber": {
+        "role": "secondary",
+        "displayName": "Signal Amber",
+        "canonical": "oklch(0.82 0.15 76)",
+        "tonalRamp": [
+          "oklch(0.18 0.05 76)",
+          "oklch(0.28 0.08 76)",
+          "oklch(0.4 0.11 76)",
+          "oklch(0.52 0.14 76)",
+          "oklch(0.64 0.15 76)",
+          "oklch(0.76 0.15 76)",
+          "oklch(0.86 0.1 76)",
+          "oklch(0.95 0.035 76)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display Statement",
+        "purpose": "One short dominant statement per major viewport."
+      },
+      "headline": {
+        "displayName": "Section Headline",
+        "purpose": "Orient and convert at section scale."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Explain product behavior in lines capped near 70 characters."
+      },
+      "label": {
+        "displayName": "Technical Label",
+        "purpose": "Configuration metadata, indexes, commands, and chips."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "state-fast",
+        "value": "150ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Color and opacity feedback on controls."
+      },
+      {
+        "name": "directional",
+        "value": "200ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Small arrow or icon translations that communicate direction."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "narrow-check",
+        "value": "390px"
+      },
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "wide-check",
+        "value": "1440px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "High-commitment action with compact geometry and decisive violet fill.",
+      "html": "<button class=\"ds-btn-primary\">BUILD A STACK <span aria-hidden=\"true\">↗</span></button>",
+      "css": ".ds-btn-primary { min-height: 48px; border: 1px solid var(--primary); border-radius: var(--ui-radius-control); background: var(--primary); color: var(--primary-foreground); padding: 12px 20px; font: 500 14px/1 var(--font-archivo); transition: background-color 150ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { background: color-mix(in oklch, var(--primary) 85%, var(--background)); } .ds-btn-primary:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Low-commitment action on a graphite surface.",
+      "html": "<button class=\"ds-btn-secondary\">READ THE DOCS <span aria-hidden=\"true\">↓</span></button>",
+      "css": ".ds-btn-secondary { min-height: 48px; border: 1px solid var(--rule); border-radius: var(--ui-radius-control); background: var(--surface-raised); color: var(--foreground); padding: 12px 20px; font: 500 14px/1 var(--font-archivo); transition: background-color 150ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-secondary:hover { background: var(--surface); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Navigation Cell",
+      "kind": "nav",
+      "description": "Fixed-header destination rendered as one adjoining ruled cell.",
+      "html": "<a class=\"ds-nav-cell\" href=\"#\">BUILDER</a>",
+      "css": ".ds-nav-cell { display: inline-flex; min-height: 64px; align-items: center; justify-content: center; border-right: 1px solid var(--rule); background: var(--background); color: var(--muted-foreground); padding: 0 20px; font: 500 11px/1 var(--font-azeret-mono); letter-spacing: .08em; text-decoration: none; } .ds-nav-cell:hover { background: var(--muted); color: var(--foreground); } .ds-nav-cell:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }"
+    },
+    {
+      "name": "Metadata Chip",
+      "kind": "chip",
+      "refersTo": "metadata-chip",
+      "description": "Quiet technical summary used after explanatory content.",
+      "html": "<span class=\"ds-chip\"><span aria-hidden=\"true\"></span> COMPATIBILITY CHECKS</span>",
+      "css": ".ds-chip { display: inline-flex; min-height: 32px; align-items: center; gap: 8px; border-radius: var(--ui-radius-control); background: var(--surface); color: var(--muted-foreground); padding: 8px 12px; font: 500 11px/1.45 var(--font-azeret-mono); letter-spacing: .12em; } .ds-chip span { width: 6px; height: 6px; background: var(--primary); }"
+    },
+    {
+      "name": "Framed Product Panel",
+      "kind": "card",
+      "refersTo": "framed-panel",
+      "description": "Square product-explanation surface joined to the shared grid.",
+      "html": "<article class=\"ds-panel\"><small>01 / FRONTEND</small><strong>Next.js</strong><p>React framework with hybrid rendering.</p></article>",
+      "css": ".ds-panel { border: 1px solid var(--rule); border-radius: 0; background: var(--background); color: var(--foreground); padding: 20px; } .ds-panel small { display: block; color: var(--muted-foreground); font: 500 11px/1.45 var(--font-azeret-mono); letter-spacing: .12em; } .ds-panel strong { display: block; margin-top: 40px; font: 600 24px/1.1 var(--font-archivo); } .ds-panel p { max-width: 48ch; color: var(--muted-foreground); font: 400 14px/1.7 var(--font-archivo); } .ds-panel:focus-within { outline: 2px solid var(--ring); outline-offset: -2px; }"
+    },
+    {
+      "name": "Configuration Input",
+      "kind": "input",
+      "description": "Compact field for project names and explicit configuration.",
+      "html": "<label class=\"ds-field\">PROJECT NAME<input value=\"my-better-t-app\" /></label>",
+      "css": ".ds-field { display: grid; gap: 8px; color: var(--muted-foreground); font: 500 11px/1.45 var(--font-azeret-mono); letter-spacing: .12em; } .ds-field input { min-height: 44px; border: 1px solid var(--rule); border-radius: var(--ui-radius-control); background: var(--background); color: var(--foreground); padding: 10px 12px; font: 400 14px/1 var(--font-azeret-mono); } .ds-field input:focus-visible { border-color: var(--ring); outline: 2px solid color-mix(in oklch, var(--ring) 35%, transparent); outline-offset: 1px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The System Manual",
+    "overview": "Better T Stack should feel like a well-made infrastructure manual brought to life: exact, independent, and kinetic. A visible grid, explicit states, and compact technical metadata make complex architecture choices feel inspectable. The interface is dark-only because it lives beside editors and terminals in a developer's working environment, not because developer tools are expected to look neon or theatrical.",
+    "keyCharacteristics": [
+      "Dark-only, tinted neutral canvas",
+      "Contiguous grid cells separated by a shared 1 px rule",
+      "Large, compressed Archivo statements paired with compact Azeret Mono metadata",
+      "Violet as the primary action color, with cyan, lime, and amber isolated by module",
+      "Product UI and CSS diagrams instead of stock imagery or decorative gradients",
+      "Mobile layouts recomposed into a single reading order with 44 px targets"
+    ],
+    "rules": [
+      {
+        "name": "The Isolated Signal Rule",
+        "body": "A module owns one vivid family. Adjacent reading surfaces remain neutral so color continues to communicate state and category.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Statement Rule",
+        "body": "Display type is for a single declarative message. Feature detail moves into body copy and metadata instead of competing in the same scale.",
+        "section": "typography"
+      },
+      {
+        "name": "The Structural Depth Rule",
+        "body": "If a surface needs hierarchy, change its position, rule, or tone. Do not add a shadow to compensate for weak structure.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use the 1 px Structural Rule to join sections, controls, diagrams, and footer groups into one frame.",
+      "Do use semantic tokens from apps/web/src/app/global.css instead of raw Tailwind palette colors.",
+      "Do keep primary narrow-layout targets at least 44 px high.",
+      "Do place explanatory copy before product visuals when the layout collapses.",
+      "Do preserve visible focus, semantic headings, reduced-motion behavior, and keyboard access.",
+      "Do use commands, configuration, diagrams, and real output to explain the product."
+    ],
+    "donts": [
+      "Don't copy Mistral's identity, logo, navigation, copy, color arrangement, pixel artwork, or proprietary imagery.",
+      "Don't use generic purple gradients, glowing glass cards, decorative terminal chrome, excessive shadows, or rounded-card grids as shorthand for developer tooling.",
+      "Don't split the product into unrelated light and dark visual systems or add a theme toggle.",
+      "Don't hide essential navigation or product information behind hover-only interaction.",
+      "Don't use gradient text or colored side-stripe borders greater than 1 px.",
+      "Don't wrap every section in an isolated card when a shared rule and clear spatial rhythm communicate the hierarchy."
+    ]
+  }
+}

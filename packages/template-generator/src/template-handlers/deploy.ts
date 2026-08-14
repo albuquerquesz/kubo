@@ -1,0 +1,70 @@
+import type { ProjectConfig } from "@better-t-stack/types";
+
+import type { VirtualFileSystem } from "../core/virtual-fs";
+import { type TemplateData, processTemplatesFromPrefix } from "./utils";
+
+export async function processDeployTemplates(
+  vfs: VirtualFileSystem,
+  templates: TemplateData,
+  config: ProjectConfig,
+): Promise<void> {
+  const isBackendSelf = config.backend === "self";
+
+  if (config.webDeploy === "cloudflare" || config.serverDeploy === "cloudflare") {
+    processTemplatesFromPrefix(vfs, templates, "packages/infra", "packages/infra", config);
+  }
+
+  if (config.webDeploy === "docker" || config.serverDeploy === "docker") {
+    processTemplatesFromPrefix(vfs, templates, "deploy/docker/compose", "", config);
+  }
+
+  if (config.webDeploy === "vercel" || config.serverDeploy === "vercel") {
+    processTemplatesFromPrefix(vfs, templates, "deploy/vercel", "", config);
+  }
+
+  if (
+    config.webDeploy !== "none" &&
+    config.webDeploy !== "cloudflare" &&
+    config.webDeploy !== "vercel"
+  ) {
+    const templateMap: Record<string, string> = {
+      "tanstack-router": "react/tanstack-router",
+      "tanstack-start": "react/tanstack-start",
+      "react-router": "react/react-router",
+      solid: "solid",
+      next: "react/next",
+      nuxt: "nuxt",
+      svelte: "svelte",
+      astro: "astro",
+    };
+
+    for (const f of config.frontend) {
+      if (templateMap[f]) {
+        const webTemplateRoot =
+          config.webDeploy === "guaracloud"
+            ? "deploy/docker/web"
+            : `deploy/${config.webDeploy}/web`;
+        processTemplatesFromPrefix(
+          vfs,
+          templates,
+          `${webTemplateRoot}/${templateMap[f]}`,
+          "apps/web",
+          config,
+        );
+      }
+    }
+  }
+
+  if (
+    config.serverDeploy !== "none" &&
+    config.serverDeploy !== "cloudflare" &&
+    config.serverDeploy !== "vercel" &&
+    !isBackendSelf
+  ) {
+    const serverTemplateRoot =
+      config.serverDeploy === "guaracloud"
+        ? "deploy/docker/server"
+        : `deploy/${config.serverDeploy}/server`;
+    processTemplatesFromPrefix(vfs, templates, serverTemplateRoot, "apps/server", config);
+  }
+}

@@ -1,0 +1,172 @@
+import crypto from "node:crypto";
+import { env } from "@{{projectName}}/env/server";
+import {
+	createAbacatePayCheckout,
+	getAbacatePayCheckoutByCheckoutId,
+	hasAbacatePayWebhookEvent,
+	markAbacatePayCheckoutCompleted,
+	recordAbacatePayWebhookEvent,
+} from "@{{projectName}}/db/abacatepay";
+
+const ABACATEPAY_API_BASE_URL = "https://api.abacatepay.com/v2";
+const ABACATEPAY_PRODUCT_ID = "prod_your_product_id";
+
+type AbacatePayEnvelope<T> = {
+	data: T;
+	success: boolean;
+	error: string | null;
+};
+
+type AbacatePayCheckoutResponse = {
+	id: string;
+	url: string;
+	amount: number;
+	status: string;
+};
+
+type AbacatePayWebhookPayload = {
+	id?: string;
+	event?: string;
+	data?: {
+		id?: string;
+		checkout?: {
+			id?: string;
+			status?: string;
+		};
+		billing?: {
+			id?: string;
+			status?: string;
+		};
+		status?: string;
+	};
+};
+
+type AbacatePayCheckoutIdentity = {
+	userId?: string | null;
+	customerEmail?: string | null;
+};
+
+async function abacatePayFetch<T>(path: string, init: RequestInit): Promise<T> {
+	const response = await fetch(`${ABACATEPAY_API_BASE_URL}${path}`, {
+		...init,
+		headers: {
+			Authorization: `Bearer ${env.ABACATEPAY_API_KEY}`,
+			"Content-Type": "application/json",
+			...(init.headers ?? {}),
+		},
+	});
+
+	if (!response.ok) {
+		throw new Error(`AbacatePay request failed with status ${response.status}`);
+	}
+
+	const payload = (await response.json()) as AbacatePayEnvelope<T> | { error?: string };
+	if (!("success" in payload) || !payload.success || !payload.data) {
+		throw new Error(payload.error ?? "AbacatePay request failed");
+	}
+
+	return payload.data;
+}
+
+function getCheckoutIdFromWebhook(payload: AbacatePayWebhookPayload) {
+	return payload.data?.id ?? payload.data?.checkout?.id ?? payload.data?.billing?.id;
+}
+
+function getCheckoutStatusFromWebhook(payload: AbacatePayWebhookPayload) {
+	return payload.data?.status ?? payload.data?.checkout?.status ?? payload.data?.billing?.status;
+}
+
+export async function createAbacatePayHostedCheckout(identity: AbacatePayCheckoutIdentity = {}) {
+	const localOrderId = crypto.randomUUID();
+	const userId = identity.userId ?? null;
+	const customerEmail = identity.customerEmail ?? null;
+	const checkout = await abacatePayFetch<AbacatePayCheckoutResponse>("/checkouts/create", {
+		method: "POST",
+		body: JSON.stringify({
+			items: [{ id: ABACATEPAY_PRODUCT_ID, quantity: 1 }],
+			externalId: localOrderId,
+			returnUrl: env.ABACATEPAY_RETURN_URL,
+			completionUrl: env.ABACATEPAY_COMPLETION_URL,
+			metadata: {
+				localOrderId,
+				...(userId ? { userId } : {}),
+				...(customerEmail ? { customerEmail } : {}),
+			},
+		}),
+	});
+
+	await createAbacatePayCheckout({
+		localOrderId,
+		userId,
+		customerEmail,
+		abacatepayCheckoutId: checkout.id,
+		checkoutUrl: checkout.url,
+		amountInCents: checkout.amount,
+		status: checkout.status,
+	});
+
+	return {
+		localOrderId,
+		checkoutId: checkout.id,
+		url: checkout.url,
+		status: checkout.status,
+		amountInCents: checkout.amount,
+	};
+}
+
+export async function getStoredAbacatePayCheckout(checkoutId: string) {
+	return getAbacatePayCheckoutByCheckoutId(checkoutId);
+}
+
+export function verifyAbacatePayWebhookSignature(rawBody: string, signatureFromHeader: string) {
+	const expectedSig = crypto
+		.createHmac("sha256", env.ABACATEPAY_PUBLIC_KEY)
+		.update(Buffer.from(rawBody, "utf8"))
+		.digest("base64");
+
+	const expected = Buffer.from(expectedSig);
+	const received = Buffer.from(signatureFromHeader);
+
+	return (
+		expected.length === received.length && crypto.timingSafeEqual(expected, received)
+	);
+}
+
+export async function processAbacatePayWebhook(rawBody: string, signatureFromHeader: string) {
+	if (!verifyAbacatePayWebhookSignature(rawBody, signatureFromHeader)) {
+		return { ok: false as const, status: 401, body: { error: "Invalid signature" } };
+	}
+
+	const payload = JSON.parse(rawBody) as AbacatePayWebhookPayload;
+	if (!payload.id) {
+		return { ok: false as const, status: 400, body: { error: "Missing event id" } };
+	}
+
+	const alreadyProcessed = await hasAbacatePayWebhookEvent(payload.id);
+	if (alreadyProcessed) {
+		return { ok: true as const, status: 200, body: { ok: true, duplicate: true } };
+	}
+
+	await recordAbacatePayWebhookEvent({
+		eventId: payload.id,
+		eventType: payload.event ?? "unknown",
+		payload: rawBody,
+	});
+
+	if (payload.event !== "checkout.completed") {
+		return { ok: true as const, status: 200, body: { ok: true, ignored: true } };
+	}
+
+	const checkoutId = getCheckoutIdFromWebhook(payload);
+	if (!checkoutId) {
+		return { ok: true as const, status: 200, body: { ok: true, ignored: true } };
+	}
+
+	await markAbacatePayCheckoutCompleted({
+		checkoutId,
+		eventId: payload.id,
+		status: getCheckoutStatusFromWebhook(payload) ?? "PAID",
+	});
+
+	return { ok: true as const, status: 200, body: { ok: true } };
+}

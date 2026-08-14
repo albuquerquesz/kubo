@@ -1,0 +1,22 @@
+{
+  "name": "@better-t-stack/backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "scripts": {
+    "dev": "convex dev",
+    "dev:setup": "convex dev --configure --until-success",
+    "deploy": "convex deploy"
+  },
+  "dependencies": {
+    "@convex-dev/crons": "^0.2.0",
+    "@erquhart/convex-oss-stats": "catalog:",
+    "convex": "catalog:",
+    "convex-helpers": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}
