@@ -8,9 +8,7 @@ import { createAuth } from "@{{projectName}}/auth";
 import { auth } from "@{{projectName}}/auth";
 {{/if}}
 {{/if}}
-{{#if (or (ne backend "self") (eq payments "polar"))}}
-import { authClient } from "@/lib/auth-client";
-{{/if}}
+
 
 export default async function DashboardPage() {
 	{{#if (eq backend "self")}}
@@ -30,19 +28,13 @@ export default async function DashboardPage() {
 		redirect("/login");
 	}
 
-	{{#if (eq payments "polar")}}
-	const { data: customerState } = await authClient.customer.state({
-		fetchOptions: {
-			headers: await headers(),
-		},
-	});
-	{{/if}}
+
 
 	return (
 		<div>
 			<h1>Dashboard</h1>
 			<p>Welcome {session.user.name}</p>
-			<Dashboard session={session} {{#if (eq payments "polar")}}customerState={customerState}{{/if}} />
+			<Dashboard session={session}  />
 		</div>
 	);
 }

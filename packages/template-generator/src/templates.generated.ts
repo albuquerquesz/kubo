@@ -2341,56 +2341,18 @@ export const getCurrentUser = query({
 `],
   ["auth/better-auth/convex/backend/convex/http.ts.hbs", `import { httpRouter } from "convex/server";
 import { authComponent, createAuth } from "./auth";
-{{#if (and (eq payments "polar") (or (includes frontend "native-bare") (includes frontend "native-uniwind") (includes frontend "native-unistyles")))}}
-import { httpAction } from "./_generated/server";
-{{/if}}
-{{#if (eq payments "polar")}}
-import { polar } from "./polar";
-{{/if}}
+
+
 
 const http = httpRouter();
 
-{{#if (and (eq payments "polar") (or (includes frontend "native-bare") (includes frontend "native-uniwind") (includes frontend "native-unistyles")))}}
-const nativeAppUrl = process.env.NATIVE_APP_URL || "{{projectName}}://";
-const allowedNativeProtocols = new Set(["exp:", new URL(nativeAppUrl).protocol]);
 
-http.route({
-  path: "/polar/success",
-  method: "GET",
-  handler: httpAction(async (_ctx, request) => {
-    const requestUrl = new URL(request.url);
-    const returnUrl = requestUrl.searchParams.get("returnUrl") || nativeAppUrl;
-
-    let redirectUrl: URL;
-    try {
-      redirectUrl = new URL(returnUrl);
-    } catch {
-      return new Response("Invalid return URL", { status: 400 });
-    }
-
-    if (!allowedNativeProtocols.has(redirectUrl.protocol)) {
-      return new Response("Invalid return URL", { status: 400 });
-    }
-
-    return new Response(null, {
-      status: 302,
-      headers: {
-        Location: redirectUrl.toString(),
-      },
-    });
-  }),
-});
-
-{{/if}}
 {{#if (or (includes frontend "native-bare") (includes frontend "native-uniwind") (includes frontend "native-unistyles") (includes frontend "tanstack-router") (includes frontend "react-router") (includes frontend "nuxt") (includes frontend "svelte") (includes frontend "solid"))}}
 authComponent.registerRoutes(http, createAuth, { cors: true });
 {{else}}
 authComponent.registerRoutes(http, createAuth);
 {{/if}}
-{{#if (eq payments "polar")}}
 
-polar.registerRoutes(http);
-{{/if}}
 
 export default http;
 `],
@@ -3711,10 +3673,7 @@ export const { GET, POST } = handler;
 import SignInForm from "@/components/sign-in-form";
 import SignUpForm from "@/components/sign-up-form";
 import UserMenu from "@/components/user-menu";
-{{#if (eq payments "polar")}}
-import { CheckoutLink, CustomerPortalLink } from "@convex-dev/polar/react";
-import { buttonVariants } from "@{{projectName}}/ui/components/button";
-{{/if}}
+
 import { api } from "@{{projectName}}/backend/convex/_generated/api";
 import {
     Authenticated,
@@ -3726,44 +3685,13 @@ import { useState } from "react";
 
 function DashboardContent() {
     const privateData = useQuery(api.privateData.get);
-    {{#if (eq payments "polar")}}
-    const products = useQuery(api.polar.listAllProducts);
-    const subscription = useQuery(api.polar.getCurrentSubscription);
 
-    const product = products?.find((product: { isRecurring?: boolean }) => product.isRecurring);
-    const hasActiveSubscription = Boolean(subscription);
-    {{/if}}
 
     return (
         <div>
             <h1>Dashboard</h1>
             <p>privateData: {privateData?.message}</p>
-            {{#if (eq payments "polar")}}
-            <p>Plan: {hasActiveSubscription ? "Active" : "Free"}</p>
-            {subscription === undefined ? (
-                <p>Loading subscription options...</p>
-            ) : hasActiveSubscription ? (
-                <CustomerPortalLink
-                    polarApi={api.polar}
-                    className={buttonVariants({ variant: "outline" })}
-                >
-                    Manage Subscription
-                </CustomerPortalLink>
-            ) : products === undefined ? (
-                <p>Loading subscription options...</p>
-            ) : product ? (
-                <CheckoutLink
-                    polarApi={api.polar}
-                    productIds={[product.id]}
-                    embed={false}
-                    className={buttonVariants({ variant: "default" })}
-                >
-                    Upgrade
-                </CheckoutLink>
-            ) : (
-                <p>No recurring plans available.</p>
-            )}
-            {{/if}}
+
             <UserMenu />
         </div>
     );
@@ -4501,10 +4429,7 @@ export const authClient = createAuthClient({
   ["auth/better-auth/convex/web/react/react-router/src/routes/dashboard.tsx.hbs", `import SignInForm from "@/components/sign-in-form";
 import SignUpForm from "@/components/sign-up-form";
 import UserMenu from "@/components/user-menu";
-{{#if (eq payments "polar")}}
-import { CheckoutLink, CustomerPortalLink } from "@convex-dev/polar/react";
-import { buttonVariants } from "@{{projectName}}/ui/components/button";
-{{/if}}
+
 import { api } from "@{{projectName}}/backend/convex/_generated/api";
 import {
   Authenticated,
@@ -4516,44 +4441,13 @@ import { useState } from "react";
 
 function PrivateDashboardContent() {
   const privateData = useQuery(api.privateData.get);
-  {{#if (eq payments "polar")}}
-  const products = useQuery(api.polar.listAllProducts);
-  const subscription = useQuery(api.polar.getCurrentSubscription);
 
-  const product = products?.find((product: { isRecurring?: boolean }) => product.isRecurring);
-  const hasActiveSubscription = Boolean(subscription);
-  {{/if}}
 
   return (
     <div>
       <h1>Dashboard</h1>
       <p>privateData: {privateData?.message}</p>
-      {{#if (eq payments "polar")}}
-      <p>Plan: {hasActiveSubscription ? "Active" : "Free"}</p>
-      {subscription === undefined ? (
-        <p>Loading subscription options...</p>
-      ) : hasActiveSubscription ? (
-        <CustomerPortalLink
-          polarApi={api.polar}
-          className={buttonVariants({ variant: "outline" })}
-        >
-          Manage Subscription
-        </CustomerPortalLink>
-      ) : products === undefined ? (
-        <p>Loading subscription options...</p>
-      ) : product ? (
-        <CheckoutLink
-          polarApi={api.polar}
-          productIds={[product.id]}
-          embed={false}
-          className={buttonVariants({ variant: "default" })}
-        >
-          Upgrade
-        </CheckoutLink>
-      ) : (
-        <p>No recurring plans available.</p>
-      )}
-      {{/if}}
+
       <UserMenu />
     </div>
   );
@@ -4940,10 +4834,7 @@ export const authClient = createAuthClient({
 });
 `],
   ["auth/better-auth/convex/web/react/tanstack-router/src/routes/_auth/dashboard.tsx.hbs", `import UserMenu from "@/components/user-menu";
-{{#if (eq payments "polar")}}
-import { CheckoutLink, CustomerPortalLink } from "@convex-dev/polar/react";
-import { buttonVariants } from "@{{projectName}}/ui/components/button";
-{{/if}}
+
 import { api } from "@{{projectName}}/backend/convex/_generated/api";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
@@ -4954,44 +4845,13 @@ export const Route = createFileRoute("/_auth/dashboard")({
 
 function DashboardContent() {
   const privateData = useQuery(api.privateData.get);
-  {{#if (eq payments "polar")}}
-  const products = useQuery(api.polar.listAllProducts);
-  const subscription = useQuery(api.polar.getCurrentSubscription);
 
-  const product = products?.find((product: { isRecurring?: boolean }) => product.isRecurring);
-  const hasActiveSubscription = Boolean(subscription);
-  {{/if}}
 
   return (
     <div>
       <h1>Dashboard</h1>
       <p>privateData: {privateData?.message}</p>
-      {{#if (eq payments "polar")}}
-      <p>Plan: {hasActiveSubscription ? "Active" : "Free"}</p>
-      {subscription === undefined ? (
-        <p>Loading subscription options...</p>
-      ) : hasActiveSubscription ? (
-        <CustomerPortalLink
-          polarApi={api.polar}
-          className={buttonVariants({ variant: "outline" })}
-        >
-          Manage Subscription
-        </CustomerPortalLink>
-      ) : products === undefined ? (
-        <p>Loading subscription options...</p>
-      ) : product ? (
-        <CheckoutLink
-          polarApi={api.polar}
-          productIds={[product.id]}
-          embed={false}
-          className={buttonVariants({ variant: "default" })}
-        >
-          Upgrade
-        </CheckoutLink>
-      ) : (
-        <p>No recurring plans available.</p>
-      )}
-      {{/if}}
+
       <UserMenu />
     </div>
   );
@@ -5391,10 +5251,7 @@ export const {
 });
 `],
   ["auth/better-auth/convex/web/react/tanstack-start/src/routes/_auth/dashboard.tsx.hbs", `import UserMenu from "@/components/user-menu";
-{{#if (eq payments "polar")}}
-import { CheckoutLink, CustomerPortalLink } from "@convex-dev/polar/react";
-import { buttonVariants } from "@{{projectName}}/ui/components/button";
-{{/if}}
+
 import { api } from "@{{projectName}}/backend/convex/_generated/api";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
@@ -5405,44 +5262,13 @@ export const Route = createFileRoute("/_auth/dashboard")({
 
 function DashboardContent() {
   const privateData = useQuery(api.privateData.get);
-  {{#if (eq payments "polar")}}
-  const products = useQuery(api.polar.listAllProducts);
-  const subscription = useQuery(api.polar.getCurrentSubscription);
 
-  const product = products?.find((product: { isRecurring?: boolean }) => product.isRecurring);
-  const hasActiveSubscription = Boolean(subscription);
-  {{/if}}
 
   return (
     <div>
       <h1>Dashboard</h1>
       <p>privateData: {privateData?.message}</p>
-      {{#if (eq payments "polar")}}
-      <p>Plan: {hasActiveSubscription ? "Active" : "Free"}</p>
-      {subscription === undefined ? (
-        <p>Loading subscription options...</p>
-      ) : hasActiveSubscription ? (
-        <CustomerPortalLink
-          polarApi={api.polar}
-          className={buttonVariants({ variant: "outline" })}
-        >
-          Manage Subscription
-        </CustomerPortalLink>
-      ) : products === undefined ? (
-        <p>Loading subscription options...</p>
-      ) : product ? (
-        <CheckoutLink
-          polarApi={api.polar}
-          productIds={[product.id]}
-          embed={false}
-          className={buttonVariants({ variant: "default" })}
-        >
-          Upgrade
-        </CheckoutLink>
-      ) : (
-        <p>No recurring plans available.</p>
-      )}
-      {{/if}}
+
       <UserMenu />
     </div>
   );
@@ -5639,16 +5465,12 @@ export const Route = createFileRoute('/api/auth/$')({
 })
 `],
   ["auth/better-auth/native/bare/app/(drawer)/index.tsx.hbs", `import { Button, Column, Host, Text as ExpoUIText } from "@expo/ui";
-import { View, ScrollView, StyleSheet{{#if (eq payments "polar")}}, Alert{{/if}} } from "react-native";
-{{#if (eq payments "polar")}}
-import * as Linking from "expo-linking";
-import * as WebBrowser from "expo-web-browser";
-import { env } from "@{{projectName}}/env/native";
-{{/if}}
+import { View, ScrollView, StyleSheet } from "react-native";
+
 import { Container } from "@/components/container";
 import { useColorScheme } from "@/lib/use-color-scheme";
 import { NAV_THEME } from "@/lib/constants";
-import { authClient{{#if (eq payments "polar")}}, polarNativeClient{{/if}} } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { SignIn } from "@/components/sign-in";
 import { SignUp } from "@/components/sign-up";
 {{#if (eq api "orpc")}}
@@ -5676,48 +5498,7 @@ const isConnected = healthCheck?.data === "OK";
 const isLoading = healthCheck?.isLoading;
 {{/if}}
 const { data: session } = authClient.useSession();
-{{#if (eq payments "polar")}}
 
-const openPolarLink = async (url: string, returnUrl: string) => {
-	await WebBrowser.openAuthSessionAsync(url, returnUrl);
-};
-
-const getPolarReturnUrl = (returnUrl: string) => {
-	const url = new URL("/polar/success", env.EXPO_PUBLIC_SERVER_URL);
-	url.searchParams.set("returnUrl", returnUrl);
-	return url.toString();
-};
-
-const handlePolarCheckout = async () => {
-	const returnUrl = Linking.createURL("/");
-	const polarReturnUrl = getPolarReturnUrl(returnUrl);
-	const { data, error } = await polarNativeClient.checkout({
-		slug: "pro",
-		redirect: false,
-		successUrl: polarReturnUrl,
-		returnUrl: polarReturnUrl,
-	});
-
-	if (error || !data?.url) {
-		Alert.alert("Checkout unavailable", error?.message ?? "Unable to create a checkout session.");
-		return;
-	}
-
-	await openPolarLink(data.url, returnUrl);
-};
-
-const handlePolarPortal = async () => {
-	const returnUrl = Linking.createURL("/");
-	const { data, error } = await polarNativeClient.customer.portal({ redirect: false });
-
-	if (error || !data?.url) {
-		Alert.alert("Portal unavailable", error?.message ?? "Unable to open the customer portal.");
-		return;
-	}
-
-	await openPolarLink(data.url, returnUrl);
-};
-{{/if}}
 
 return (
 <Container>
@@ -5761,18 +5542,7 @@ return (
             }}
           />
         </Host>
-        {{#if (eq payments "polar")}}
-        <Host style={styles.paymentActions} matchContents=\\{{ vertical: true }}>
-          <Column spacing={8}>
-            <Button label="Upgrade to Pro" onPress={handlePolarCheckout} />
-            <Button
-              label="Manage Subscription"
-              variant="outlined"
-              onPress={handlePolarPortal}
-            />
-          </Column>
-        </Host>
-        {{/if}}
+
       </View>
       ) : null}
 
@@ -6406,7 +6176,6 @@ import { createAuthClient } from "better-auth/react";
 import * as SecureStore from "expo-secure-store";
 import Constants from "expo-constants";
 import { env } from "@{{projectName}}/env/native";
-
 export const authClient = createAuthClient({
 	baseURL: env.EXPO_PUBLIC_SERVER_URL,
 	plugins: [
@@ -6417,41 +6186,10 @@ export const authClient = createAuthClient({
 		}),
 	],
 });
-{{#if (eq payments "polar")}}
-
-type PolarLinkResponse = {
-	url: string;
-	redirect: boolean;
-};
-
-type PolarClientResponse<T> = Promise<{
-	data: T | null;
-	error: { message?: string } | null;
-}>;
-
-type PolarNativeClient = typeof authClient & {
-	checkout: (data: {
-		slug?: string;
-		products?: string[] | string;
-		redirect?: boolean;
-		successUrl?: string;
-		returnUrl?: string;
-	}) => PolarClientResponse<PolarLinkResponse>;
-	customer: {
-		portal: (data?: { redirect?: boolean }) => PolarClientResponse<PolarLinkResponse>;
-	};
-};
-
-export const polarNativeClient = authClient as PolarNativeClient;
-{{/if}}
 `],
-  ["auth/better-auth/native/unistyles/app/(drawer)/index.tsx.hbs", `import { authClient{{#if (eq payments "polar")}}, polarNativeClient{{/if}} } from "@/lib/auth-client";
-import { ScrollView, Text, TouchableOpacity, View{{#if (eq payments "polar")}}, Alert{{/if}} } from "react-native";
-{{#if (eq payments "polar")}}
-import * as Linking from "expo-linking";
-import * as WebBrowser from "expo-web-browser";
-import { env } from "@{{projectName}}/env/native";
-{{/if}}
+  ["auth/better-auth/native/unistyles/app/(drawer)/index.tsx.hbs", `import { authClient } from "@/lib/auth-client";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+
 import { StyleSheet } from "react-native-unistyles";
 
 import { Container } from "@/components/container";
@@ -6476,48 +6214,7 @@ export default function Home() {
     const privateData = useQuery(trpc.privateData.queryOptions());
     {{/if}}
   const { data: session } = authClient.useSession();
-  {{#if (eq payments "polar")}}
 
-  const openPolarLink = async (url: string, returnUrl: string) => {
-    await WebBrowser.openAuthSessionAsync(url, returnUrl);
-  };
-
-  const getPolarReturnUrl = (returnUrl: string) => {
-    const url = new URL("/polar/success", env.EXPO_PUBLIC_SERVER_URL);
-    url.searchParams.set("returnUrl", returnUrl);
-    return url.toString();
-  };
-
-  const handlePolarCheckout = async () => {
-    const returnUrl = Linking.createURL("/");
-    const polarReturnUrl = getPolarReturnUrl(returnUrl);
-    const { data, error } = await polarNativeClient.checkout({
-      slug: "pro",
-      redirect: false,
-      successUrl: polarReturnUrl,
-      returnUrl: polarReturnUrl,
-    });
-
-    if (error || !data?.url) {
-      Alert.alert("Checkout unavailable", error?.message ?? "Unable to create a checkout session.");
-      return;
-    }
-
-    await openPolarLink(data.url, returnUrl);
-  };
-
-  const handlePolarPortal = async () => {
-    const returnUrl = Linking.createURL("/");
-    const { data, error } = await polarNativeClient.customer.portal({ redirect: false });
-
-    if (error || !data?.url) {
-      Alert.alert("Portal unavailable", error?.message ?? "Unable to open the customer portal.");
-      return;
-    }
-
-    await openPolarLink(data.url, returnUrl);
-  };
-  {{/if}}
 
   return (
     <Container>
@@ -6548,22 +6245,7 @@ export default function Home() {
               >
                 <Text style={styles.signOutButtonText}>Sign Out</Text>
               </TouchableOpacity>
-              {{#if (eq payments "polar")}}
-              <View style={styles.paymentActions}>
-                <TouchableOpacity
-                  style={styles.polarPrimaryButton}
-                  onPress={handlePolarCheckout}
-                >
-                  <Text style={styles.polarPrimaryButtonText}>Upgrade to Pro</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.polarSecondaryButton}
-                  onPress={handlePolarPortal}
-                >
-                  <Text style={styles.polarSecondaryButtonText}>Manage Subscription</Text>
-                </TouchableOpacity>
-              </View>
-              {{/if}}
+
             </View>
           ) : null}
           {{#unless (eq api "none")}}
@@ -6660,27 +6342,6 @@ const styles = StyleSheet.create((theme) => ({
     marginTop: 12,
     gap: 8,
     alignItems: "flex-start",
-  },
-  polarPrimaryButton: {
-    backgroundColor: theme?.colors?.primary,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-  },
-  polarPrimaryButtonText: {
-    color: theme?.colors?.primaryForeground,
-    fontWeight: "500",
-  },
-  polarSecondaryButton: {
-    borderWidth: 1,
-    borderColor: theme?.colors?.border,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-  },
-  polarSecondaryButtonText: {
-    color: theme?.colors?.typography,
-    fontWeight: "500",
   },
   apiStatusCard: {
     marginBottom: 24,
@@ -7186,14 +6847,10 @@ const styles = StyleSheet.create((theme) => ({
   },
 }));
 `],
-  ["auth/better-auth/native/uniwind/app/(drawer)/index.tsx.hbs", `import { Text, View, Pressable{{#if (eq payments "polar")}}, Alert{{/if}} } from "react-native";
-{{#if (eq payments "polar")}}
-import * as Linking from "expo-linking";
-import * as WebBrowser from "expo-web-browser";
-import { env } from "@{{projectName}}/env/native";
-{{/if}}
+  ["auth/better-auth/native/uniwind/app/(drawer)/index.tsx.hbs", `import { Text, View, Pressable } from "react-native";
+
 import { Container } from "@/components/container";
-import { authClient{{#if (eq payments "polar")}}, polarNativeClient{{/if}} } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { Ionicons } from "@expo/vector-icons";
 import { Card, Chip, useThemeColor } from "heroui-native";
 import { SignIn } from "@/components/sign-in";
@@ -7221,48 +6878,7 @@ const isConnected = healthCheck?.data === "OK";
 const isLoading = healthCheck?.isLoading;
 {{/if}}
 const { data: session } = authClient.useSession();
-{{#if (eq payments "polar")}}
 
-const openPolarLink = async (url: string, returnUrl: string) => {
-  await WebBrowser.openAuthSessionAsync(url, returnUrl);
-};
-
-const getPolarReturnUrl = (returnUrl: string) => {
-  const url = new URL("/polar/success", env.EXPO_PUBLIC_SERVER_URL);
-  url.searchParams.set("returnUrl", returnUrl);
-  return url.toString();
-};
-
-const handlePolarCheckout = async () => {
-  const returnUrl = Linking.createURL("/");
-  const polarReturnUrl = getPolarReturnUrl(returnUrl);
-  const { data, error } = await polarNativeClient.checkout({
-    slug: "pro",
-    redirect: false,
-    successUrl: polarReturnUrl,
-    returnUrl: polarReturnUrl,
-  });
-
-  if (error || !data?.url) {
-    Alert.alert("Checkout unavailable", error?.message ?? "Unable to create a checkout session.");
-    return;
-  }
-
-  await openPolarLink(data.url, returnUrl);
-};
-
-const handlePolarPortal = async () => {
-  const returnUrl = Linking.createURL("/");
-  const { data, error } = await polarNativeClient.customer.portal({ redirect: false });
-
-  if (error || !data?.url) {
-    Alert.alert("Portal unavailable", error?.message ?? "Unable to open the customer portal.");
-    return;
-  }
-
-  await openPolarLink(data.url, returnUrl);
-};
-{{/if}}
 
 const mutedColor = useThemeColor("muted");
 const successColor = useThemeColor("success");
@@ -7297,22 +6913,7 @@ return (
       >
       <Text className="text-foreground font-medium">Sign Out</Text>
     </Pressable>
-    {{#if (eq payments "polar")}}
-    <View className="mt-4 gap-3">
-      <Pressable
-        className="bg-primary py-3 px-4 rounded-lg self-start active:opacity-70"
-        onPress={handlePolarCheckout}
-      >
-        <Text className="text-foreground font-medium">Upgrade to Pro</Text>
-      </Pressable>
-      <Pressable
-        className="border border-border py-3 px-4 rounded-lg self-start active:opacity-70"
-        onPress={handlePolarPortal}
-      >
-        <Text className="text-foreground font-medium">Manage Subscription</Text>
-      </Pressable>
-    </View>
-    {{/if}}
+
   </Card>
   ) : null}
 
@@ -7806,14 +7407,7 @@ import type {} from "@{{projectName}}/env/server";
 {{else}}
 import { env } from "@{{projectName}}/env/server";
 {{/if}}
-{{#if (eq payments "polar")}}
-import { polar, checkout, portal } from "@polar-sh/better-auth";
-{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { createPolarClient } from "./lib/payments";
-{{else}}
-import { polarClient } from "./lib/payments";
-{{/if}}
-{{/if}}
+
 import { createPrismaClient } from "@{{projectName}}/db";
 
 export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
@@ -7850,26 +7444,7 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 		},
 {{/if}}
 		plugins: [
-{{#if (eq payments "polar")}}
-			polar({
-				client: {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}createPolarClient(env){{else}}polarClient{{/if}},
-				createCustomerOnSignUp: true,
-				enableCustomerPortal: true,
-				use: [
-					checkout({
-						products: [
-							{
-								productId: "your-product-id",
-								slug: "pro",
-							},
-						],
-						successUrl: env.POLAR_SUCCESS_URL,
-						authenticatedUsersOnly: true,
-					}),
-					portal(),
-				],
-			}),
-{{/if}}
+
 		],
 	});
 }
@@ -7888,14 +7463,7 @@ import type {} from "@{{projectName}}/env/server";
 {{else}}
 import { env } from "@{{projectName}}/env/server";
 {{/if}}
-{{#if (eq payments "polar")}}
-import { polar, checkout, portal } from "@polar-sh/better-auth";
-{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { createPolarClient } from "./lib/payments";
-{{else}}
-import { polarClient } from "./lib/payments";
-{{/if}}
-{{/if}}
+
 import { createDb } from "@{{projectName}}/db";
 import * as schema from "@{{projectName}}/db/schema/auth";
 
@@ -7933,26 +7501,7 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 		},
 {{/if}}
 		plugins: [
-{{#if (eq payments "polar")}}
-			polar({
-				client: {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}createPolarClient(env){{else}}polarClient{{/if}},
-				createCustomerOnSignUp: true,
-				enableCustomerPortal: true,
-				use: [
-					checkout({
-						products: [
-							{
-								productId: "your-product-id",
-								slug: "pro",
-							},
-						],
-						successUrl: env.POLAR_SUCCESS_URL,
-						authenticatedUsersOnly: true,
-					}),
-					portal(),
-				],
-			}),
-{{/if}}
+
 		],
 	});
 }
@@ -7966,10 +7515,7 @@ export const auth = createAuth();
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { env } from "@{{projectName}}/env/server";
-{{#if (eq payments "polar")}}
-import { polar, checkout, portal } from "@polar-sh/better-auth";
-import { polarClient } from "./lib/payments";
-{{/if}}
+
 import { createDb } from "@{{projectName}}/db";
 import * as schema from "@{{projectName}}/db/schema/auth";
 
@@ -8017,28 +7563,7 @@ export function createAuth() {
 			//   domain: "<your-workers-subdomain>",
 			// },
 		},
-{{#if (eq payments "polar")}}
-		plugins: [
-			polar({
-				client: polarClient,
-				createCustomerOnSignUp: true,
-				enableCustomerPortal: true,
-				use: [
-					checkout({
-						products: [
-							{
-								productId: "your-product-id",
-								slug: "pro",
-							},
-						],
-						successUrl: env.POLAR_SUCCESS_URL,
-						authenticatedUsersOnly: true,
-					}),
-					portal(),
-				],
-			}),
-		],
-{{/if}}
+
 	});
 }
 {{/if}}
@@ -8052,14 +7577,7 @@ import type {} from "@{{projectName}}/env/server";
 {{else}}
 import { env } from "@{{projectName}}/env/server";
 {{/if}}
-{{#if (eq payments "polar")}}
-import { polar, checkout, portal } from "@polar-sh/better-auth";
-{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { createPolarClient } from "./lib/payments";
-{{else}}
-import { polarClient } from "./lib/payments";
-{{/if}}
-{{/if}}
+
 import { client } from "@{{projectName}}/db";
 
 export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
@@ -8087,28 +7605,7 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 			},
 		},
 {{/if}}
-{{#if (eq payments "polar")}}
-		plugins: [
-			polar({
-				client: {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}createPolarClient(env){{else}}polarClient{{/if}},
-				createCustomerOnSignUp: true,
-				enableCustomerPortal: true,
-				use: [
-					checkout({
-						products: [
-							{
-								productId: "your-product-id",
-								slug: "pro",
-							},
-						],
-						successUrl: env.POLAR_SUCCESS_URL,
-						authenticatedUsersOnly: true,
-					}),
-					portal(),
-				],
-			}),
-		],
-{{/if}}
+
 	});
 }
 
@@ -8124,14 +7621,7 @@ import type {} from "@{{projectName}}/env/server";
 {{else}}
 import { env } from "@{{projectName}}/env/server";
 {{/if}}
-{{#if (eq payments "polar")}}
-import { polar, checkout, portal } from "@polar-sh/better-auth";
-{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { createPolarClient } from "./lib/payments";
-{{else}}
-import { polarClient } from "./lib/payments";
-{{/if}}
-{{/if}}
+
 
 
 export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
@@ -8159,28 +7649,7 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 			},
 		},
 {{/if}}
-{{#if (eq payments "polar")}}
-		plugins: [
-			polar({
-				client: {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}createPolarClient(env){{else}}polarClient{{/if}},
-				createCustomerOnSignUp: true,
-				enableCustomerPortal: true,
-				use: [
-					checkout({
-						products: [
-							{
-								productId: "your-product-id",
-								slug: "pro",
-							},
-						],
-						successUrl: env.POLAR_SUCCESS_URL,
-						authenticatedUsersOnly: true,
-					}),
-					portal(),
-				],
-			}),
-		],
-{{/if}}
+
 	});
 }
 
@@ -9053,13 +8522,13 @@ import Layout from "../layouts/Layout.astro";
     <main class="mx-auto max-w-4xl px-4 py-8">
       <div class="rounded-xl border border-neutral-800 bg-neutral-900/50 p-8">
         <h1 class="text-3xl font-bold text-white mb-6">Dashboard</h1>
-        
+
         <div class="space-y-4">
           <div class="rounded-lg bg-neutral-800/50 p-4">
             <p class="text-sm text-neutral-400">Welcome back,</p>
             <p id="user-name" class="text-xl font-medium text-white">Loading...</p>
           </div>
-          
+
           <div class="rounded-lg bg-neutral-800/50 p-4">
             <p class="text-sm text-neutral-400 mb-2">Email</p>
             <p id="user-email" class="text-white">Loading...</p>
@@ -9072,14 +8541,7 @@ import Layout from "../layouts/Layout.astro";
           </div>
           {{/if}}
 
-          {{#if (eq payments "polar")}}
-          <div class="rounded-lg bg-neutral-800/50 p-4">
-            <p class="text-sm text-neutral-400 mb-2">Subscription</p>
-            <div id="subscription-info" class="space-y-2">
-              <p class="text-white">Loading...</p>
-            </div>
-          </div>
-          {{else if (includes payments "abacatepay")}}
+          {{#if (includes payments "abacatepay")}}
           <div class="rounded-lg bg-neutral-800/50 p-4">
             <p class="text-sm text-neutral-400 mb-2">Checkout</p>
             <div class="space-y-2">
@@ -9128,7 +8590,7 @@ import Layout from "../layouts/Layout.astro";
   async function init() {
     try {
       const { data: session } = await authClient.getSession();
-      
+
       if (!session?.user) {
         loading.classList.add("hidden");
         redirect.classList.remove("hidden");
@@ -9148,41 +8610,7 @@ import Layout from "../layouts/Layout.astro";
       }
       {{/if}}
 
-      {{#if (eq payments "polar")}}
-      try {
-        const { data: customerState } = await authClient.customer.state();
-        const subscriptionInfo = document.getElementById("subscription-info")!;
-        if (customerState?.activeSubscriptions?.length > 0) {
-          subscriptionInfo.innerHTML = \`
-            <p class="text-white">Plan: <span class="text-green-400">Pro</span></p>
-            <button
-              id="manage-subscription"
-              class="mt-2 rounded px-3 py-1.5 text-sm bg-neutral-700 hover:bg-neutral-600 text-white transition-colors"
-            >
-              Manage Subscription
-            </button>
-          \`;
-          document.getElementById("manage-subscription")?.addEventListener("click", async () => {
-            await authClient.customer.portal();
-          });
-        } else {
-          subscriptionInfo.innerHTML = \`
-            <p class="text-white">Plan: <span class="text-neutral-400">Free</span></p>
-            <button
-              id="upgrade-button"
-              class="mt-2 rounded px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white transition-colors"
-            >
-              Upgrade to Pro
-            </button>
-          \`;
-          document.getElementById("upgrade-button")?.addEventListener("click", async () => {
-            await authClient.checkout({ slug: "pro" });
-          });
-        }
-      } catch (e) {
-        console.error("Failed to load subscription info", e);
-      }
-      {{else if (includes payments "abacatepay")}}
+      {{#if (includes payments "abacatepay")}}
       document.getElementById("open-checkout")?.addEventListener("click", async () => {
         try {
           const baseUrl = {{#if (eq backend "self")}}""{{else}}env.PUBLIC_SERVER_URL{{/if}};
@@ -9480,9 +8908,7 @@ definePageMeta({
 
 const session = $authClient.useSession()
 
-{{#if (eq payments "polar")}}
-const customerState = ref<any>(null)
-{{/if}}
+
 
 {{#if (eq api "orpc")}}
 const privateData = useQuery({
@@ -9491,18 +8917,7 @@ const privateData = useQuery({
 })
 {{/if}}
 
-{{#if (eq payments "polar")}}
-onMounted(async () => {
-  if (session.value?.data) {
-    const { data } = await $authClient.customer.state()
-    customerState.value = data
-  }
-})
-
-const hasProSubscription = computed(() => 
-  (customerState.value?.activeSubscriptions?.length ?? 0) > 0
-)
-{{else if (includes payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 const openCheckout = async () => {
   const baseUrl = {{#if (eq backend "self")}}""{{else}}runtimeConfig.public.serverUrl{{/if}}
   const response = await fetch(\`\${baseUrl}/api/payments/abacatepay/checkout\`, {
@@ -9549,33 +8964,7 @@ const openCheckout = async () => {
       </UCard>
       {{/if}}
 
-      {{#if (eq payments "polar")}}
-      <UCard>
-        <template #header>
-          <div class="font-medium">Subscription</div>
-        </template>
-
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <UIcon :name="hasProSubscription ? 'i-lucide-crown' : 'i-lucide-user'" :class="hasProSubscription ? 'text-warning' : 'text-muted'" />
-            <span>Plan: \\{{ hasProSubscription ? "Pro" : "Free" }}</span>
-          </div>
-          <UButton 
-            v-if="hasProSubscription"
-            variant="outline"
-            @click="() => { $authClient.customer.portal() }"
-          >
-            Manage Subscription
-          </UButton>
-          <UButton 
-            v-else
-            @click="() => { $authClient.checkout({ slug: 'pro' }) }"
-          >
-            Upgrade to Pro
-          </UButton>
-        </div>
-      </UCard>
-      {{else if (includes payments "abacatepay")}}
+      {{#if (includes payments "abacatepay")}}
       <UCard>
         <template #header>
           <div class="font-medium">Checkout</div>
@@ -9663,9 +9052,7 @@ export const authClient = createAuthClient({
 });
 `],
   ["auth/better-auth/web/react/next/src/app/dashboard/dashboard.tsx.hbs", `"use client";
-{{#if (eq payments "polar")}}
-import { Button } from "@{{projectName}}/ui/components/button";
-{{else if (includes payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -9680,14 +9067,10 @@ import { trpc } from "@/utils/trpc";
 {{/if}}
 
 export default function Dashboard({
-	{{#if (eq payments "polar")}}
-	customerState,
-	{{/if}}
+
 	session
 }: {
-	{{#if (eq payments "polar")}}
-	customerState: ReturnType<typeof authClient.customer.state>;
-	{{/if}}
+
 	session: typeof authClient.$Infer.Session;
 }) {
 	{{#if (eq api "orpc")}}
@@ -9697,9 +9080,7 @@ export default function Dashboard({
 	const privateData = useQuery(trpc.privateData.queryOptions());
 	{{/if}}
 
-	{{#if (eq payments "polar")}}
-	const hasProSubscription = (customerState?.activeSubscriptions?.length ?? 0) > 0;
-	{{/if}}
+
 
 	return (
 		<>
@@ -9709,18 +9090,7 @@ export default function Dashboard({
 			{{#if (eq api "trpc")}}
 			<p>API: {privateData.data?.message}</p>
 			{{/if}}
-			{{#if (eq payments "polar")}}
-			<p>Plan: {hasProSubscription ? "Pro" : "Free"}</p>
-			{hasProSubscription ? (
-				<Button onClick={async () => await authClient.customer.portal()}>
-					Manage Subscription
-				</Button>
-			) : (
-				<Button onClick={async () => await authClient.checkout({ slug: "pro" })}>
-					Upgrade to Pro
-				</Button>
-			)}
-			{{else if (includes payments "abacatepay")}}
+			{{#if (includes payments "abacatepay")}}
 			<Button
 				onClick={async () => {
 					const baseUrl = {{#if (eq backend "self")}}""{{else}}env.NEXT_PUBLIC_SERVER_URL{{/if}};
@@ -9751,9 +9121,7 @@ import { createAuth } from "@{{projectName}}/auth";
 import { auth } from "@{{projectName}}/auth";
 {{/if}}
 {{/if}}
-{{#if (or (ne backend "self") (eq payments "polar"))}}
-import { authClient } from "@/lib/auth-client";
-{{/if}}
+
 
 export default async function DashboardPage() {
 	{{#if (eq backend "self")}}
@@ -9773,19 +9141,13 @@ export default async function DashboardPage() {
 		redirect("/login");
 	}
 
-	{{#if (eq payments "polar")}}
-	const { data: customerState } = await authClient.customer.state({
-		fetchOptions: {
-			headers: await headers(),
-		},
-	});
-	{{/if}}
+
 
 	return (
 		<div>
 			<h1>Dashboard</h1>
 			<p>Welcome {session.user.name}</p>
-			<Dashboard session={session} {{#if (eq payments "polar")}}customerState={customerState}{{/if}} />
+			<Dashboard session={session}  />
 		</div>
 	);
 }
@@ -10526,9 +9888,7 @@ export default function UserMenu() {
   );
 }
 `],
-  ["auth/better-auth/web/react/react-router/src/routes/dashboard.tsx.hbs", `{{#if (eq payments "polar")}}
-import { Button } from "@{{projectName}}/ui/components/button";
-{{else if (includes payments "abacatepay")}}
+  ["auth/better-auth/web/react/react-router/src/routes/dashboard.tsx.hbs", `{{#if (includes payments "abacatepay")}}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -10548,9 +9908,7 @@ import { useNavigate } from "react-router";
 export default function Dashboard() {
   const { data: session, isPending } = authClient.useSession();
   const navigate = useNavigate();
-  {{#if (eq payments "polar")}}
-  const [customerState, setCustomerState] = useState<any>(null);
-  {{/if}}
+
 
   {{#if (eq api "orpc")}}
   const privateData = useQuery(orpc.privateData.queryOptions());
@@ -10565,26 +9923,13 @@ export default function Dashboard() {
     }
   }, [session, isPending, navigate]);
 
-  {{#if (eq payments "polar")}}
-  useEffect(() => {
-    async function fetchCustomerState() {
-      if (session) {
-        const { data } = await authClient.customer.state();
-        setCustomerState(data);
-      }
-    }
 
-    fetchCustomerState();
-  }, [session]);
-  {{/if}}
 
   if (isPending) {
     return <div>Loading...</div>;
   }
 
-  {{#if (eq payments "polar")}}
-  const hasProSubscription = (customerState?.activeSubscriptions?.length ?? 0) > 0;
-  {{/if}}
+
 
   return (
     <div>
@@ -10593,18 +9938,7 @@ export default function Dashboard() {
       {{#if (or (eq api "orpc") (eq api "trpc"))}}
       <p>API: {privateData.data?.message}</p>
       {{/if}}
-      {{#if (eq payments "polar")}}
-      <p>Plan: {hasProSubscription ? "Pro" : "Free"}</p>
-      {hasProSubscription ? (
-        <Button onClick={async () => await authClient.customer.portal()}>
-          Manage Subscription
-        </Button>
-      ) : (
-        <Button onClick={async () => await authClient.checkout({ slug: "pro" })}>
-          Upgrade to Pro
-        </Button>
-      )}
-      {{else if (includes payments "abacatepay")}}
+      {{#if (includes payments "abacatepay")}}
       <Button
         onClick={async () => {
           const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
@@ -11000,10 +10334,7 @@ export default function UserMenu() {
   );
 }
 `],
-  ["auth/better-auth/web/react/tanstack-router/src/routes/_auth/dashboard.tsx.hbs", `{{#if (eq payments "polar")}}
-import { Button } from "@{{projectName}}/ui/components/button";
-import { authClient } from "@/lib/auth-client";
-{{else if (includes payments "abacatepay")}}
+  ["auth/better-auth/web/react/tanstack-router/src/routes/_auth/dashboard.tsx.hbs", `{{#if (includes payments "abacatepay")}}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -11023,7 +10354,7 @@ export const Route = createFileRoute("/_auth/dashboard")({
 });
 
 function RouteComponent() {
-	const { session{{#if (eq payments "polar")}}, customerState{{/if}} } = Route.useRouteContext();
+	const { session } = Route.useRouteContext();
 
 	{{#if (eq api "orpc")}}
 	const privateData = useQuery(orpc.privateData.queryOptions());
@@ -11032,9 +10363,7 @@ function RouteComponent() {
 	const privateData = useQuery(trpc.privateData.queryOptions());
 	{{/if}}
 
-	{{#if (eq payments "polar")}}
-	const hasProSubscription = (customerState?.activeSubscriptions?.length ?? 0) > 0;
-	{{/if}}
+
 
 	return (
 		<div>
@@ -11043,18 +10372,7 @@ function RouteComponent() {
 			{{#if (or (eq api "orpc") (eq api "trpc"))}}
 			<p>API: {privateData.data?.message}</p>
 			{{/if}}
-			{{#if (eq payments "polar")}}
-			<p>Plan: {hasProSubscription ? "Pro" : "Free"}</p>
-			{hasProSubscription ? (
-				<Button onClick={async () => await authClient.customer.portal()}>
-					Manage Subscription
-				</Button>
-			) : (
-				<Button onClick={async () => await authClient.checkout({ slug: "pro" })}>
-					Upgrade to Pro
-				</Button>
-			)}
-			{{else if (includes payments "abacatepay")}}
+			{{#if (includes payments "abacatepay")}}
 			<Button
 				onClick={async () => {
 					const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
@@ -11087,12 +10405,9 @@ export const Route = createFileRoute("/_auth")({
 				to: "/login",
 			});
 		}
-		{{#if (eq payments "polar")}}
-		const { data: customerState } = await authClient.customer.state();
-		return { session, customerState };
-		{{else}}
+
 		return { session };
-		{{/if}}
+
 	},
 });
 
@@ -11522,10 +10837,7 @@ export const authMiddleware = createMiddleware().server(
 );
 {{/if}}
 `],
-  ["auth/better-auth/web/react/tanstack-start/src/routes/_auth/dashboard.tsx.hbs", `{{#if (eq payments "polar") }}
-import { Button } from "@{{projectName}}/ui/components/button";
-import { authClient } from "@/lib/auth-client";
-{{else if (includes payments "abacatepay") }}
+  ["auth/better-auth/web/react/tanstack-start/src/routes/_auth/dashboard.tsx.hbs", `{{#if (includes payments "abacatepay") }}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -11544,7 +10856,7 @@ export const Route = createFileRoute("/_auth/dashboard")({
 });
 
 function RouteComponent() {
-  const { session{{#if (eq payments "polar") }}, customerState{{/if}} } = Route.useRouteContext();
+  const { session } = Route.useRouteContext();
 
   {{#if (eq api "trpc") }}
   const trpc = useTRPC();
@@ -11554,9 +10866,7 @@ function RouteComponent() {
   const privateData = useQuery(orpc.privateData.queryOptions());
   {{/if}}
 
-  {{#if (eq payments "polar") }}
-  const hasProSubscription = (customerState?.activeSubscriptions?.length ?? 0) > 0;
-  {{/if}}
+
 
   return (
     <div>
@@ -11571,26 +10881,7 @@ function RouteComponent() {
       {{else if (eq api "orpc") }}
       <p>API: {privateData.data?.message}</p>
       {{/if}}
-      {{#if (eq payments "polar") }}
-      <p>Plan: {hasProSubscription ? "Pro" : "Free"}</p>
-      {hasProSubscription ? (
-        <Button
-          onClick={async function handlePortal() {
-            await authClient.customer.portal();
-          }}
-        >
-          Manage Subscription
-        </Button>
-      ) : (
-        <Button
-          onClick={async function handleUpgrade() {
-            await authClient.checkout({ slug: "pro" });
-          }}
-        >
-          Upgrade to Pro
-        </Button>
-      )}
-      {{else if (includes payments "abacatepay") }}
+      {{#if (includes payments "abacatepay") }}
       <Button
         onClick={async function handleCheckout() {
           const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
@@ -11616,9 +10907,7 @@ import { getUser } from "@/functions/get-user";
 {{else}}
 import { authClient } from "@/lib/auth-client";
 {{/if}}
-{{#if (and (eq backend "self") (eq payments "polar"))}}
-import { getPayment } from "@/functions/get-payment";
-{{/if}}
+
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth")({
@@ -11634,12 +10923,9 @@ export const Route = createFileRoute("/_auth")({
         to: "/login",
       });
     }
-    {{#if (eq payments "polar") }}
-    const customerState = await getPayment();
-    return { session, customerState };
-    {{else}}
+
     return { session };
-    {{/if}}
+
     {{else}}
     const session = await authClient.getSession();
     if (!session.data) {
@@ -11647,12 +10933,9 @@ export const Route = createFileRoute("/_auth")({
         to: "/login",
       });
     }
-    {{#if (eq payments "polar") }}
-    const { data: customerState } = await authClient.customer.state();
-    return { session, customerState };
-    {{else}}
+
     return { session };
-    {{/if}}
+
     {{/if}}
   },
   {{#if (eq backend "self")}}
@@ -12050,12 +11333,9 @@ export const Route = createFileRoute("/dashboard")({
 				throw: true,
 			});
 		}
-		{{#if (eq payments "polar")}}
-		const { data: customerState } = await authClient.customer.state();
-		return { session, customerState };
-		{{else}}
+
 		return { session };
-		{{/if}}
+
 	},
 });
 
@@ -12063,18 +11343,13 @@ function RouteComponent() {
 	const context = Route.useRouteContext();
 
 	const session = context().session;
-	{{#if (eq payments "polar")}}
-	const customerState = context().customerState;
-	{{/if}}
+
 
 	{{#if (eq api "orpc")}}
 	const privateData = useQuery(() => orpc.privateData.queryOptions());
 	{{/if}}
 
-	{{#if (eq payments "polar")}}
-	const hasProSubscription = () =>
-		(customerState?.activeSubscriptions?.length ?? 0) > 0;
-	{{/if}}
+
 
 	return (
 		<div>
@@ -12083,20 +11358,7 @@ function RouteComponent() {
 			{{#if (eq api "orpc")}}
 			<p>API: {privateData.data?.message}</p>
 			{{/if}}
-			{{#if (eq payments "polar")}}
-			<p>Plan: {hasProSubscription() ? "Pro" : "Free"}</p>
-			{hasProSubscription() ? (
-				<button onClick={async () => await authClient.customer.portal()}>
-					Manage Subscription
-				</button>
-			) : (
-				<button
-					onClick={async () => await authClient.checkout({ slug: "pro" })}
-				>
-					Upgrade to Pro
-				</button>
-			)}
-			{{else if (includes payments "abacatepay")}}
+			{{#if (includes payments "abacatepay")}}
 			<button
 				onClick={async () => {
 					const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};
@@ -12478,9 +11740,7 @@ export const authClient = createAuthClient({
 	import { orpc } from '$lib/orpc';
 	import { createQuery } from '@tanstack/svelte-query';
 	{{/if}}
-	{{#if (eq payments "polar")}}
-	let customerState = $state<{ activeSubscriptions?: unknown[] } | null>(null);
-	{{/if}}
+
 
 	const sessionQuery = authClient.useSession();
 
@@ -12494,15 +11754,7 @@ export const authClient = createAuthClient({
 		}
 	});
 
-	{{#if (eq payments "polar")}}
-	$effect(() => {
-		if ($sessionQuery.data) {
-			authClient.customer.state().then(({ data }) => {
-				customerState = data;
-			});
-		}
-	});
-	{{else if (includes payments "abacatepay")}}
+	{{#if (includes payments "abacatepay")}}
 	async function openCheckout() {
 		const baseUrl = {{#if (eq backend "self")}}''{{else}}env.PUBLIC_SERVER_URL{{/if}};
 		const response = await fetch(\`\${baseUrl}/api/payments/abacatepay/checkout\`, {
@@ -12529,18 +11781,7 @@ export const authClient = createAuthClient({
 		{{#if (eq api "orpc")}}
 		<p>API: {privateDataQuery.data?.message}</p>
 		{{/if}}
-		{{#if (eq payments "polar")}}
-		<p>Plan: {customerState?.activeSubscriptions?.length > 0 ? "Pro" : "Free"}</p>
-		{#if customerState?.activeSubscriptions?.length > 0}
-			<button onclick={async () => await authClient.customer.portal()}>
-				Manage Subscription
-			</button>
-		{:else}
-			<button onclick={async () => await authClient.checkout({ slug: "pro" })}>
-				Upgrade to Pro
-			</button>
-		{/if}
-		{{else if (includes payments "abacatepay")}}
+		{{#if (includes payments "abacatepay")}}
 		<button onclick={openCheckout}>
 			Open Checkout
 		</button>
@@ -14237,9 +13478,7 @@ export const execute = action({
 {{#if (eq auth "better-auth")}}
 import betterAuth from "@convex-dev/better-auth/convex.config";
 {{/if}}
-{{#if (eq payments "polar")}}
-import polar from "@convex-dev/polar/convex.config.js";
-{{/if}}
+
 {{#if (includes examples "ai")}}
 import agent from "@convex-dev/agent/convex.config";
 {{/if}}
@@ -14248,9 +13487,7 @@ const app = defineApp();
 {{#if (eq auth "better-auth")}}
 app.use(betterAuth);
 {{/if}}
-{{#if (eq payments "polar")}}
-app.use(polar);
-{{/if}}
+
 {{#if (includes examples "ai")}}
 app.use(agent);
 {{/if}}
@@ -14582,32 +13819,7 @@ const app = {{#if (eq runtime "node")}}new Elysia({ adapter: node() }){{else}}ne
 {{/if}}
 		}),
 	)
-{{#if (and (eq auth "better-auth") (eq payments "polar") (or (includes frontend "native-bare") (includes frontend "native-uniwind") (includes frontend "native-unistyles")))}}
-	.get("/polar/success", ({ request, status }) => {
-		const nativeAppUrl = "{{projectName}}://";
-		const allowedNativeProtocols = new Set(["exp:", new URL(nativeAppUrl).protocol]);
-		const requestUrl = new URL(request.url);
-		const returnUrl = requestUrl.searchParams.get("returnUrl") || nativeAppUrl;
 
-		let redirectUrl: URL;
-		try {
-			redirectUrl = new URL(returnUrl);
-		} catch {
-			return status(400, "Invalid return URL");
-		}
-
-		if (!allowedNativeProtocols.has(redirectUrl.protocol)) {
-			return status(400, "Invalid return URL");
-		}
-
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: redirectUrl.toString(),
-			},
-		});
-	})
-{{/if}}
 {{#if (eq auth "better-auth")}}
 	.all("/api/auth/*", async (context) => {
 		const { request, status } = context;
@@ -14868,31 +14080,7 @@ app.get("/api/payments/abacatepay/checkout/:checkoutId", async (req, res) => {
 });
 {{/if}}
 
-{{#if (and (eq auth "better-auth") (eq payments "polar") (or (includes frontend "native-bare") (includes frontend "native-uniwind") (includes frontend "native-unistyles")))}}
-const nativeAppUrl = "{{projectName}}://";
-const allowedNativeProtocols = new Set(["exp:", new URL(nativeAppUrl).protocol]);
 
-app.get("/polar/success", (req, res) => {
-	const requestUrl = new URL(req.url, env.BETTER_AUTH_URL);
-	const returnUrl = requestUrl.searchParams.get("returnUrl") || nativeAppUrl;
-
-	let redirectUrl: URL;
-	try {
-		redirectUrl = new URL(returnUrl);
-	} catch {
-		res.status(400).send("Invalid return URL");
-		return;
-	}
-
-	if (!allowedNativeProtocols.has(redirectUrl.protocol)) {
-		res.status(400).send("Invalid return URL");
-		return;
-	}
-
-	res.redirect(302, redirectUrl.toString());
-});
-
-{{/if}}
 {{#if (eq api "trpc")}}
 app.use(
 	"/trpc",
@@ -15085,31 +14273,7 @@ fastify.register(clerkPlugin, {
 });
 {{/if}}
 
-{{#if (and (eq auth "better-auth") (eq payments "polar") (or (includes frontend "native-bare") (includes frontend "native-uniwind") (includes frontend "native-unistyles")))}}
-const nativeAppUrl = "{{projectName}}://";
-const allowedNativeProtocols = new Set(["exp:", new URL(nativeAppUrl).protocol]);
 
-fastify.get("/polar/success", async (request, reply) => {
-	const requestUrl = new URL(request.url, env.BETTER_AUTH_URL);
-	const returnUrl = requestUrl.searchParams.get("returnUrl") || nativeAppUrl;
-
-	let redirectUrl: URL;
-	try {
-		redirectUrl = new URL(returnUrl);
-	} catch {
-		reply.status(400).send("Invalid return URL");
-		return;
-	}
-
-	if (!allowedNativeProtocols.has(redirectUrl.protocol)) {
-		reply.status(400).send("Invalid return URL");
-		return;
-	}
-
-	reply.status(302).header("Location", redirectUrl.toString()).send();
-});
-
-{{/if}}
 {{#if (eq api "orpc")}}
 fastify.register(async (rpcApp) => {
 	// Fully utilize oRPC features by letting oRPC parse the request body.
@@ -15440,29 +14604,7 @@ app.get("/api/payments/stripe/checkout/:sessionId", async (c) => {
 });
 {{/if}}
 
-{{#if (and (eq auth "better-auth") (eq payments "polar") (or (includes frontend "native-bare") (includes frontend "native-uniwind") (includes frontend "native-unistyles")))}}
-const nativeAppUrl = "{{projectName}}://";
-const allowedNativeProtocols = new Set(["exp:", new URL(nativeAppUrl).protocol]);
 
-app.get("/polar/success", (c) => {
-	const requestUrl = new URL(c.req.url);
-	const returnUrl = requestUrl.searchParams.get("returnUrl") || nativeAppUrl;
-
-	let redirectUrl: URL;
-	try {
-		redirectUrl = new URL(returnUrl);
-	} catch {
-		return c.text("Invalid return URL", 400);
-	}
-
-	if (!allowedNativeProtocols.has(redirectUrl.protocol)) {
-		return c.text("Invalid return URL", 400);
-	}
-
-	return c.redirect(redirectUrl.toString(), 302);
-});
-
-{{/if}}
 {{#if (eq api "orpc")}}
 export const apiHandler = new OpenAPIHandler(appRouter, {
 	plugins: [
@@ -26853,12 +25995,8 @@ const styles = StyleSheet.create({
 });
 `],
   ["frontend/native/bare/app/(drawer)/index.tsx.hbs", `import { {{#if (or (eq auth "clerk") (eq auth "better-auth"))}}Button, {{/if}}Column, Host, Text as ExpoUIText } from "@expo/ui";
-import { View, ScrollView, StyleSheet{{#if (and (eq backend "convex") (eq auth "better-auth") (eq payments "polar"))}}, Alert{{/if}} } from "react-native";
-{{#if (and (eq backend "convex") (eq auth "better-auth") (eq payments "polar"))}}
-import * as Linking from "expo-linking";
-import * as WebBrowser from "expo-web-browser";
-import { env } from "@{{projectName}}/env/native";
-{{/if}}
+import { View, ScrollView, StyleSheet } from "react-native";
+
 import { Container } from "@/components/container";
 import { useColorScheme } from "@/lib/use-color-scheme";
 import { NAV_THEME } from "@/lib/constants";
@@ -26881,7 +26019,7 @@ import { router } from "expo-router";
 import { useAuth, useUser } from "@clerk/expo";
 import { SignOutButton } from "@/components/sign-out-button";
 {{else if (and (eq backend "convex") (eq auth "better-auth"))}}
-import { {{#if (eq payments "polar")}}useAction, {{/if}}useConvexAuth, useQuery } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import { api } from "@{{ projectName }}/backend/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { SignIn } from "@/components/sign-in";
@@ -26911,57 +26049,7 @@ const { user } = useUser();
 const healthCheck = useQuery(api.healthCheck.get);
 const { isAuthenticated } = useConvexAuth();
 const user = useQuery(api.auth.getCurrentUser, isAuthenticated ? {} : "skip");
-{{#if (eq payments "polar")}}
-const products = useQuery(api.polar.listAllProducts);
-const subscription = useQuery(api.polar.getCurrentSubscription);
-const generateCheckoutLink = useAction(api.polar.generateCheckoutLink);
-const generateCustomerPortalUrl = useAction(api.polar.generateCustomerPortalUrl);
-const recurringProduct = products?.find((product) => product.isRecurring);
 
-const openPolarLink = async (url: string, returnUrl: string) => {
-	await WebBrowser.openAuthSessionAsync(url, returnUrl);
-};
-
-const getPolarReturnUrl = (returnUrl: string) => {
-	const url = new URL("/polar/success", env.EXPO_PUBLIC_CONVEX_SITE_URL);
-	url.searchParams.set("returnUrl", returnUrl);
-	return url.toString();
-};
-
-const handlePolarCheckout = async () => {
-	try {
-		if (!recurringProduct) {
-			Alert.alert("Checkout unavailable", "No recurring Polar product is available yet.");
-			return;
-		}
-
-		const returnUrl = Linking.createURL("/");
-		const polarReturnUrl = getPolarReturnUrl(returnUrl);
-		const { url } = await generateCheckoutLink({
-			productIds: [recurringProduct.id],
-			origin: env.EXPO_PUBLIC_CONVEX_SITE_URL,
-			successUrl: polarReturnUrl,
-		});
-
-		await openPolarLink(url, returnUrl);
-	} catch {
-		Alert.alert("Checkout failed", "Unable to open Polar checkout. Please try again.");
-	}
-};
-
-const handlePolarPortal = async () => {
-	try {
-		const returnUrl = Linking.createURL("/");
-		const { url } = await generateCustomerPortalUrl({
-			returnUrl: getPolarReturnUrl(returnUrl),
-		});
-
-		await openPolarLink(url, returnUrl);
-	} catch {
-		Alert.alert("Portal unavailable", "Unable to open the customer portal. Please try again.");
-	}
-};
-{{/if}}
 {{else if (eq backend "convex")}}
 const healthCheck = useQuery(api.healthCheck.get);
 {{/if}}
@@ -27169,21 +26257,7 @@ return (
             }}
           />
         </Host>
-        {{#if (eq payments "polar")}}
-        <Host style={styles.paymentActions} matchContents=\\{{ vertical: true }}>
-          <Column spacing={8}>
-            {subscription ? (
-            <Button
-              label="Manage Subscription"
-              variant="outlined"
-              onPress={handlePolarPortal}
-            />
-            ) : (
-            <Button label="Upgrade to Pro" onPress={handlePolarCheckout} />
-            )}
-          </Column>
-        </Host>
-        {{/if}}
+
       </View>
       ) : (
       <>
@@ -28116,12 +27190,8 @@ const styles = StyleSheet.create((theme) => ({
 `],
   ["frontend/native/unistyles/app/(drawer)/index.tsx.hbs", `import "@/unistyles";
 
-import { ScrollView, Text, View, TouchableOpacity{{#if (and (eq backend "convex") (eq auth "better-auth") (eq payments "polar"))}}, Alert{{/if}} } from "react-native";
-{{#if (and (eq backend "convex") (eq auth "better-auth") (eq payments "polar"))}}
-import * as Linking from "expo-linking";
-import * as WebBrowser from "expo-web-browser";
-import { env } from "@{{projectName}}/env/native";
-{{/if}}
+import { ScrollView, Text, View, TouchableOpacity } from "react-native";
+
 import { StyleSheet } from "react-native-unistyles";
 import { Container } from "@/components/container";
 
@@ -28144,7 +27214,7 @@ import { Link } from "expo-router";
 import { useAuth, useUser } from "@clerk/expo";
 import { SignOutButton } from "@/components/sign-out-button";
 {{else if (and (eq backend "convex") (eq auth "better-auth"))}}
-import { {{#if (eq payments "polar")}}useAction, {{/if}}useConvexAuth, useQuery } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import { api } from "@{{ projectName }}/backend/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { SignIn } from "@/components/sign-in";
@@ -28172,57 +27242,7 @@ export default function Home() {
   const healthCheck = useQuery(api.healthCheck.get);
   const { isAuthenticated } = useConvexAuth();
   const user = useQuery(api.auth.getCurrentUser, isAuthenticated ? {} : "skip");
-  {{#if (eq payments "polar")}}
-  const products = useQuery(api.polar.listAllProducts);
-  const subscription = useQuery(api.polar.getCurrentSubscription);
-  const generateCheckoutLink = useAction(api.polar.generateCheckoutLink);
-  const generateCustomerPortalUrl = useAction(api.polar.generateCustomerPortalUrl);
-  const recurringProduct = products?.find((product) => product.isRecurring);
 
-  const openPolarLink = async (url: string, returnUrl: string) => {
-    await WebBrowser.openAuthSessionAsync(url, returnUrl);
-  };
-
-  const getPolarReturnUrl = (returnUrl: string) => {
-    const url = new URL("/polar/success", env.EXPO_PUBLIC_CONVEX_SITE_URL);
-    url.searchParams.set("returnUrl", returnUrl);
-    return url.toString();
-  };
-
-  const handlePolarCheckout = async () => {
-    try {
-      if (!recurringProduct) {
-        Alert.alert("Checkout unavailable", "No recurring Polar product is available yet.");
-        return;
-      }
-
-      const returnUrl = Linking.createURL("/");
-      const polarReturnUrl = getPolarReturnUrl(returnUrl);
-      const { url } = await generateCheckoutLink({
-        productIds: [recurringProduct.id],
-        origin: env.EXPO_PUBLIC_CONVEX_SITE_URL,
-        successUrl: polarReturnUrl,
-      });
-
-      await openPolarLink(url, returnUrl);
-    } catch {
-      Alert.alert("Checkout failed", "Unable to open Polar checkout. Please try again.");
-    }
-  };
-
-  const handlePolarPortal = async () => {
-    try {
-      const returnUrl = Linking.createURL("/");
-      const { url } = await generateCustomerPortalUrl({
-        returnUrl: getPolarReturnUrl(returnUrl),
-      });
-
-      await openPolarLink(url, returnUrl);
-    } catch {
-      Alert.alert("Portal unavailable", "Unable to open the customer portal. Please try again.");
-    }
-  };
-  {{/if}}
   {{else if (eq backend "convex")}}
   const healthCheck = useQuery(api.healthCheck.get);
   {{/if}}
@@ -28365,25 +27385,7 @@ export default function Home() {
             >
               <Text style={styles.signOutText}>Sign Out</Text>
             </TouchableOpacity>
-            {{#if (eq payments "polar")}}
-            <View style={styles.paymentActions}>
-              {subscription ? (
-                <TouchableOpacity
-                  style={styles.polarSecondaryButton}
-                  onPress={handlePolarPortal}
-                >
-                  <Text style={styles.polarSecondaryButtonText}>Manage Subscription</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  style={styles.polarPrimaryButton}
-                  onPress={handlePolarCheckout}
-                >
-                  <Text style={styles.polarPrimaryButtonText}>Upgrade to Pro</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-            {{/if}}
+
           </View>
         ) : null}
         <View style={styles.apiStatusCard}>
@@ -28539,27 +27541,6 @@ const styles = StyleSheet.create((theme) => ({
   paymentActions: {
     marginTop: theme.spacing.sm,
     alignItems: "flex-start",
-  },
-  polarPrimaryButton: {
-    backgroundColor: theme.colors.primary,
-    paddingVertical: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
-  },
-  polarPrimaryButtonText: {
-    color: theme.colors.primaryForeground,
-    fontWeight: "500",
-  },
-  polarSecondaryButton: {
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    paddingVertical: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
-  },
-  polarSecondaryButtonText: {
-    color: theme.colors.foreground,
-    fontWeight: "500",
   },
   apiStatusCard: {
     marginBottom: theme.spacing.md,
@@ -29429,12 +28410,8 @@ export default function TabTwo() {
 	);
 }
 `],
-  ["frontend/native/uniwind/app/(drawer)/index.tsx.hbs", `import { Text, View{{#if (and (eq backend "convex") (eq auth "better-auth") (eq payments "polar"))}}, Alert{{/if}} } from "react-native";
-{{#if (and (eq backend "convex") (eq auth "better-auth") (eq payments "polar"))}}
-import * as Linking from "expo-linking";
-import * as WebBrowser from "expo-web-browser";
-import { env } from "@{{projectName}}/env/native";
-{{/if}}
+  ["frontend/native/uniwind/app/(drawer)/index.tsx.hbs", `import { Text, View } from "react-native";
+
 import { Container } from "@/components/container";
 {{#if (eq api "orpc")}}
 import { useQuery } from "@tanstack/react-query";
@@ -29455,7 +28432,7 @@ import { Link } from "expo-router";
 import { useAuth, useUser } from "@clerk/expo";
 import { SignOutButton } from "@/components/sign-out-button";
 {{else if (and (eq backend "convex") (eq auth "better-auth"))}}
-import { {{#if (eq payments "polar")}}useAction, {{/if}}useConvexAuth, useQuery } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import { api } from "@{{projectName}}/backend/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { SignIn } from "@/components/sign-in";
@@ -29487,57 +28464,7 @@ const { user } = useUser();
 const healthCheck = useQuery(api.healthCheck.get);
 const { isAuthenticated } = useConvexAuth();
 const user = useQuery(api.auth.getCurrentUser, isAuthenticated ? {} : "skip");
-{{#if (eq payments "polar")}}
-const products = useQuery(api.polar.listAllProducts);
-const subscription = useQuery(api.polar.getCurrentSubscription);
-const generateCheckoutLink = useAction(api.polar.generateCheckoutLink);
-const generateCustomerPortalUrl = useAction(api.polar.generateCustomerPortalUrl);
-const recurringProduct = products?.find((product) => product.isRecurring);
 
-const openPolarLink = async (url: string, returnUrl: string) => {
-  await WebBrowser.openAuthSessionAsync(url, returnUrl);
-};
-
-const getPolarReturnUrl = (returnUrl: string) => {
-  const url = new URL("/polar/success", env.EXPO_PUBLIC_CONVEX_SITE_URL);
-  url.searchParams.set("returnUrl", returnUrl);
-  return url.toString();
-};
-
-const handlePolarCheckout = async () => {
-  try {
-    if (!recurringProduct) {
-      Alert.alert("Checkout unavailable", "No recurring Polar product is available yet.");
-      return;
-    }
-
-    const returnUrl = Linking.createURL("/");
-    const polarReturnUrl = getPolarReturnUrl(returnUrl);
-    const { url } = await generateCheckoutLink({
-      productIds: [recurringProduct.id],
-      origin: env.EXPO_PUBLIC_CONVEX_SITE_URL,
-      successUrl: polarReturnUrl,
-    });
-
-    await openPolarLink(url, returnUrl);
-  } catch {
-    Alert.alert("Checkout failed", "Unable to open Polar checkout. Please try again.");
-  }
-};
-
-const handlePolarPortal = async () => {
-  try {
-    const returnUrl = Linking.createURL("/");
-    const { url } = await generateCustomerPortalUrl({
-      returnUrl: getPolarReturnUrl(returnUrl),
-    });
-
-    await openPolarLink(url, returnUrl);
-  } catch {
-    Alert.alert("Portal unavailable", "Unable to open the customer portal. Please try again.");
-  }
-};
-{{/if}}
 {{else if (eq backend "convex")}}
 const healthCheck = useQuery(api.healthCheck.get);
 {{/if}}
@@ -29689,19 +28616,7 @@ return (
         Sign Out
       </Button>
     </View>
-    {{#if (eq payments "polar")}}
-    <View className="mt-4 gap-3">
-      {subscription ? (
-      <Button variant="secondary" onPress={handlePolarPortal}>
-        Manage Subscription
-      </Button>
-      ) : (
-      <Button onPress={handlePolarCheckout}>
-        Upgrade to Pro
-      </Button>
-      )}
-    </View>
-    {{/if}}
+
   </Surface>
   ) : null}
   <Surface variant="secondary" className="p-4 rounded-xl">
@@ -33832,10 +32747,7 @@ export const env = createEnv({
 		CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 {{/if}}
-{{#if (eq payments "polar")}}
-		POLAR_ACCESS_TOKEN: z.string().min(1),
-		POLAR_SUCCESS_URL: z.url(),
-{{/if}}
+
 {{#if (includes payments "abacatepay")}}
 		ABACATEPAY_API_KEY: z.string().min(1),
 		ABACATEPAY_WEBHOOK_SECRET: z.string().min(1),
@@ -34177,10 +33089,7 @@ export const server = await Worker("server", {
     {{#if (includes examples "ai")}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
-    {{#if (eq payments "polar")}}
-    POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
-    POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
-    {{/if}}
+
     {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
@@ -34249,10 +33158,7 @@ export const web = await Nextjs("web", {
     {{#if (and (includes examples "ai") (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
-    {{#if (eq payments "polar")}}
-    POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
-    POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
-    {{/if}}
+
     {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
@@ -34321,10 +33227,7 @@ export const web = await Nuxt("web", {
     {{#if (and (includes examples "ai") (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
-    {{#if (eq payments "polar")}}
-    POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
-    POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
-    {{/if}}
+
     {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
@@ -34381,10 +33284,7 @@ export const web = await SvelteKit("web", {
     {{#if (and (includes examples "ai") (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
-    {{#if (eq payments "polar")}}
-    POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
-    POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
-    {{/if}}
+
     {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
@@ -34451,10 +33351,7 @@ export const web = await TanStackStart("web", {
     {{#if (and (includes examples "ai") (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
-    {{#if (eq payments "polar")}}
-    POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
-    POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
-    {{/if}}
+
     {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
@@ -34563,10 +33460,7 @@ export const web = await Astro("web", {
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
     {{/if}}
-    {{#if (eq payments "polar")}}
-    POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
-    POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
-    {{/if}}
+
     {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
@@ -38102,227 +36996,6 @@ function SuccessPage() {
 	{/if}
 </div>
 `],
-  ["payments/polar/convex/backend/convex/polar.ts.hbs", `import { Polar } from "@convex-dev/polar";
-
-import { api, components } from "./_generated/api";
-import type { DataModel } from "./_generated/dataModel";
-import { action, query } from "./_generated/server";
-
-type CurrentSubscription = Awaited<ReturnType<Polar<DataModel>["getCurrentSubscription"]>>;
-
-export const polar: Polar<DataModel> = new Polar<DataModel>(components.polar, {
-  getUserInfo: async (ctx) => {
-    const user = await ctx.runQuery(api.auth.getCurrentUser);
-
-    if (!user) {
-      throw new Error("Not authenticated");
-    }
-
-    if (!user.email) {
-      throw new Error("Authenticated user is missing an email address");
-    }
-
-    return {
-      userId: user._id,
-      email: user.email,
-    };
-  },
-});
-
-export const {
-  changeCurrentSubscription,
-  cancelCurrentSubscription,
-  getConfiguredProducts,
-  listAllProducts,
-  listAllSubscriptions,
-  generateCheckoutLink,
-  generateCustomerPortalUrl,
-} = polar.api();
-
-export const getCurrentSubscription = query({
-  args: {},
-  handler: async (ctx): Promise<CurrentSubscription | null> => {
-    const user = await ctx.runQuery(api.auth.getCurrentUser);
-
-    if (!user) {
-      return null;
-    }
-
-    return await polar.getCurrentSubscription(ctx, {
-      userId: user._id,
-    });
-  },
-});
-
-export const syncProducts = action({
-  args: {},
-  handler: async (ctx): Promise<void> => {
-    const user = await ctx.runQuery(api.auth.getCurrentUser);
-
-    if (!user) {
-      throw new Error("Not authenticated");
-    }
-
-    await polar.syncProducts(ctx);
-  },
-});
-`],
-  ["payments/polar/server/base/src/lib/payments.ts.hbs", `import { Polar } from "@polar-sh/sdk";
-{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
-{{else}}
-import { env } from "@{{projectName}}/env/server";
-{{/if}}
-
-{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-export function createPolarClient({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
-	return new Polar({
-		accessToken: env.POLAR_ACCESS_TOKEN,
-		server: "sandbox",
-	});
-}
-{{else}}
-export const polarClient = new Polar({
-	accessToken: env.POLAR_ACCESS_TOKEN,
-	server: "sandbox",
-});
-{{/if}}
-`],
-  ["payments/polar/web/nuxt/app/pages/success.vue.hbs", `<script setup lang="ts">
-const route = useRoute()
-const checkout_id = route.query.checkout_id as string
-</script>
-
-<template>
-  <div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold mb-4">Payment Successful!</h1>
-    <p v-if="checkout_id">Checkout ID: \\{{ checkout_id }}</p>
-  </div>
-</template>
-`],
-  ["payments/polar/web/react/next/src/app/success/page.tsx.hbs", `export default async function SuccessPage({
-    searchParams,
-}: {
-    searchParams: Promise<{ checkout_id: string }>
-}) {
-    const params = await searchParams;
-    const checkout_id = params.checkout_id;
-
-    return (
-        <div className="px-4 py-8">
-            <h1>Payment Successful!</h1>
-            {checkout_id && <p>Checkout ID: {checkout_id}</p>}
-        </div>
-    );
-}
-`],
-  ["payments/polar/web/react/react-router/src/routes/success.tsx.hbs", `import { useSearchParams } from "react-router";
-
-export default function SuccessPage() {
-    const [searchParams] = useSearchParams();
-    const checkout_id = searchParams.get("checkout_id");
-
-    return (
-        <div className="container mx-auto px-4 py-8">
-            <h1>Payment Successful!</h1>
-            {checkout_id && <p>Checkout ID: {checkout_id}</p>}
-        </div>
-    );
-}
-`],
-  ["payments/polar/web/react/tanstack-router/src/routes/success.tsx.hbs", `import { createFileRoute, useSearch } from "@tanstack/react-router";
-
-export const Route = createFileRoute("/success")({
-	component: SuccessPage,
-	validateSearch: (search) => ({
-		checkout_id: search.checkout_id as string,
-	}),
-});
-
-function SuccessPage() {
-	const { checkout_id } = useSearch({ from: "/success" });
-
-	return (
-		<div className="container mx-auto px-4 py-8">
-			<h1>Payment Successful!</h1>
-			{checkout_id && <p>Checkout ID: {checkout_id}</p>}
-		</div>
-	);
-}
-`],
-  ["payments/polar/web/react/tanstack-start/src/functions/get-payment.ts.hbs", `import { authClient } from "@/lib/auth-client";
-import { authMiddleware } from "@/middleware/auth";
-import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeaders } from "@tanstack/react-start/server";
-
-export const getPayment = createServerFn({ method: "GET" })
-    .middleware([authMiddleware])
-    .handler(async () => {
-        const { data: customerState } = await authClient.customer.state({
-            fetchOptions: {
-                headers: getRequestHeaders()
-            }
-        });
-        return customerState;
-    });
-`],
-  ["payments/polar/web/react/tanstack-start/src/routes/success.tsx.hbs", `import { createFileRoute, useSearch } from "@tanstack/react-router";
-
-export const Route = createFileRoute("/success")({
-	component: SuccessPage,
-	validateSearch: (search) => ({
-		checkout_id: search.checkout_id as string,
-	}),
-});
-
-function SuccessPage() {
-	const { checkout_id } = useSearch({ from: "/success" });
-
-	return (
-		<div className="container mx-auto px-4 py-8">
-			<h1>Payment Successful!</h1>
-			{checkout_id && <p>Checkout ID: {checkout_id}</p>}
-		</div>
-	);
-}
-`],
-  ["payments/polar/web/solid/src/routes/success.tsx.hbs", `import { createFileRoute } from "@tanstack/solid-router";
-import { Show } from "solid-js";
-
-export const Route = createFileRoute("/success")({
-	component: SuccessPage,
-	validateSearch: (search) => ({
-		checkout_id: search.checkout_id as string,
-	}),
-});
-
-function SuccessPage() {
-	const searchParams = Route.useSearch();
-	const checkout_id = searchParams().checkout_id;
-
-	return (
-		<div class="container mx-auto px-4 py-8">
-			<h1>Payment Successful!</h1>
-			<Show when={checkout_id}>
-				<p>Checkout ID: {checkout_id}</p>
-			</Show>
-		</div>
-	);
-}
-`],
-  ["payments/polar/web/svelte/src/routes/success/+page.svelte.hbs", `<script lang="ts">
-	import { page } from '$app/state';
-	
-	const checkout_id = $derived(page.url.searchParams.get('checkout_id'));
-</script>
-
-<div class="container mx-auto px-4 py-8">
-	<h1>Payment Successful!</h1>
-	{#if checkout_id}
-		<p>Checkout ID: {checkout_id}</p>
-	{/if}
-</div>
-`],
   ["payments/stripe/fullstack/astro/src/pages/api/payments/stripe/checkout/[sessionId].ts.hbs", `import type { APIRoute } from 'astro';
 import { getStripeCheckoutSession } from '@{{projectName}}/payments/lib/stripe';
 export const GET: APIRoute = async ({ params }) => { try { return Response.json({ data: await getStripeCheckoutSession(params.sessionId!), success: true, error: null }); } catch { return Response.json({ error: 'Checkout session not found' }, { status: 404 }); } };
@@ -38738,4 +37411,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 597;
+export const TEMPLATE_COUNT = 587;

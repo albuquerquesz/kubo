@@ -76,10 +76,7 @@ export const server = await Worker("server", {
     {{#if (includes examples "ai")}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
-    {{#if (eq payments "polar")}}
-    POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
-    POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
-    {{/if}}
+
     {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
@@ -148,10 +145,7 @@ export const web = await Nextjs("web", {
     {{#if (and (includes examples "ai") (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
-    {{#if (eq payments "polar")}}
-    POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
-    POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
-    {{/if}}
+
     {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
@@ -220,10 +214,7 @@ export const web = await Nuxt("web", {
     {{#if (and (includes examples "ai") (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
-    {{#if (eq payments "polar")}}
-    POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
-    POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
-    {{/if}}
+
     {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
@@ -280,10 +271,7 @@ export const web = await SvelteKit("web", {
     {{#if (and (includes examples "ai") (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
-    {{#if (eq payments "polar")}}
-    POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
-    POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
-    {{/if}}
+
     {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
@@ -350,10 +338,7 @@ export const web = await TanStackStart("web", {
     {{#if (and (includes examples "ai") (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
-    {{#if (eq payments "polar")}}
-    POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
-    POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
-    {{/if}}
+
     {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,
@@ -462,10 +447,7 @@ export const web = await Astro("web", {
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
     {{/if}}
-    {{#if (eq payments "polar")}}
-    POLAR_ACCESS_TOKEN: alchemy.secret.env.POLAR_ACCESS_TOKEN!,
-    POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
-    {{/if}}
+
     {{#if (includes payments "abacatepay")}}
     ABACATEPAY_API_KEY: alchemy.secret.env.ABACATEPAY_API_KEY!,
     ABACATEPAY_WEBHOOK_SECRET: alchemy.secret.env.ABACATEPAY_WEBHOOK_SECRET!,

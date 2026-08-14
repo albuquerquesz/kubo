@@ -1,7 +1,4 @@
-{{#if (eq payments "polar")}}
-import { Button } from "@{{projectName}}/ui/components/button";
-import { authClient } from "@/lib/auth-client";
-{{else if (includes payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -21,7 +18,7 @@ export const Route = createFileRoute("/_auth/dashboard")({
 });
 
 function RouteComponent() {
-	const { session{{#if (eq payments "polar")}}, customerState{{/if}} } = Route.useRouteContext();
+	const { session } = Route.useRouteContext();
 
 	{{#if (eq api "orpc")}}
 	const privateData = useQuery(orpc.privateData.queryOptions());
@@ -30,9 +27,7 @@ function RouteComponent() {
 	const privateData = useQuery(trpc.privateData.queryOptions());
 	{{/if}}
 
-	{{#if (eq payments "polar")}}
-	const hasProSubscription = (customerState?.activeSubscriptions?.length ?? 0) > 0;
-	{{/if}}
+
 
 	return (
 		<div>
@@ -41,18 +36,7 @@ function RouteComponent() {
 			{{#if (or (eq api "orpc") (eq api "trpc"))}}
 			<p>API: {privateData.data?.message}</p>
 			{{/if}}
-			{{#if (eq payments "polar")}}
-			<p>Plan: {hasProSubscription ? "Pro" : "Free"}</p>
-			{hasProSubscription ? (
-				<Button onClick={async () => await authClient.customer.portal()}>
-					Manage Subscription
-				</Button>
-			) : (
-				<Button onClick={async () => await authClient.checkout({ slug: "pro" })}>
-					Upgrade to Pro
-				</Button>
-			)}
-			{{else if (includes payments "abacatepay")}}
+			{{#if (includes payments "abacatepay")}}
 			<Button
 				onClick={async () => {
 					const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};

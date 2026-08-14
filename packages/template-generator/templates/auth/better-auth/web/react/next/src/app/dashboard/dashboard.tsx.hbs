@@ -1,7 +1,5 @@
 "use client";
-{{#if (eq payments "polar")}}
-import { Button } from "@{{projectName}}/ui/components/button";
-{{else if (includes payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -16,14 +14,10 @@ import { trpc } from "@/utils/trpc";
 {{/if}}
 
 export default function Dashboard({
-	{{#if (eq payments "polar")}}
-	customerState,
-	{{/if}}
+
 	session
 }: {
-	{{#if (eq payments "polar")}}
-	customerState: ReturnType<typeof authClient.customer.state>;
-	{{/if}}
+
 	session: typeof authClient.$Infer.Session;
 }) {
 	{{#if (eq api "orpc")}}
@@ -33,9 +27,7 @@ export default function Dashboard({
 	const privateData = useQuery(trpc.privateData.queryOptions());
 	{{/if}}
 
-	{{#if (eq payments "polar")}}
-	const hasProSubscription = (customerState?.activeSubscriptions?.length ?? 0) > 0;
-	{{/if}}
+
 
 	return (
 		<>
@@ -45,18 +37,7 @@ export default function Dashboard({
 			{{#if (eq api "trpc")}}
 			<p>API: {privateData.data?.message}</p>
 			{{/if}}
-			{{#if (eq payments "polar")}}
-			<p>Plan: {hasProSubscription ? "Pro" : "Free"}</p>
-			{hasProSubscription ? (
-				<Button onClick={async () => await authClient.customer.portal()}>
-					Manage Subscription
-				</Button>
-			) : (
-				<Button onClick={async () => await authClient.checkout({ slug: "pro" })}>
-					Upgrade to Pro
-				</Button>
-			)}
-			{{else if (includes payments "abacatepay")}}
+			{{#if (includes payments "abacatepay")}}
 			<Button
 				onClick={async () => {
 					const baseUrl = {{#if (eq backend "self")}}""{{else}}env.NEXT_PUBLIC_SERVER_URL{{/if}};

@@ -1,6 +1,4 @@
-{{#if (eq payments "polar")}}
-import { Button } from "@{{projectName}}/ui/components/button";
-{{else if (includes payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 import { Button } from "@{{projectName}}/ui/components/button";
 import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -20,9 +18,7 @@ import { useNavigate } from "react-router";
 export default function Dashboard() {
   const { data: session, isPending } = authClient.useSession();
   const navigate = useNavigate();
-  {{#if (eq payments "polar")}}
-  const [customerState, setCustomerState] = useState<any>(null);
-  {{/if}}
+
 
   {{#if (eq api "orpc")}}
   const privateData = useQuery(orpc.privateData.queryOptions());
@@ -37,26 +33,13 @@ export default function Dashboard() {
     }
   }, [session, isPending, navigate]);
 
-  {{#if (eq payments "polar")}}
-  useEffect(() => {
-    async function fetchCustomerState() {
-      if (session) {
-        const { data } = await authClient.customer.state();
-        setCustomerState(data);
-      }
-    }
 
-    fetchCustomerState();
-  }, [session]);
-  {{/if}}
 
   if (isPending) {
     return <div>Loading...</div>;
   }
 
-  {{#if (eq payments "polar")}}
-  const hasProSubscription = (customerState?.activeSubscriptions?.length ?? 0) > 0;
-  {{/if}}
+
 
   return (
     <div>
@@ -65,18 +48,7 @@ export default function Dashboard() {
       {{#if (or (eq api "orpc") (eq api "trpc"))}}
       <p>API: {privateData.data?.message}</p>
       {{/if}}
-      {{#if (eq payments "polar")}}
-      <p>Plan: {hasProSubscription ? "Pro" : "Free"}</p>
-      {hasProSubscription ? (
-        <Button onClick={async () => await authClient.customer.portal()}>
-          Manage Subscription
-        </Button>
-      ) : (
-        <Button onClick={async () => await authClient.checkout({ slug: "pro" })}>
-          Upgrade to Pro
-        </Button>
-      )}
-      {{else if (includes payments "abacatepay")}}
+      {{#if (includes payments "abacatepay")}}
       <Button
         onClick={async () => {
           const baseUrl = {{#if (eq backend "self")}}""{{else}}env.VITE_SERVER_URL{{/if}};

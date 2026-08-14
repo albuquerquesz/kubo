@@ -6,14 +6,7 @@ import type {} from "@{{projectName}}/env/server";
 {{else}}
 import { env } from "@{{projectName}}/env/server";
 {{/if}}
-{{#if (eq payments "polar")}}
-import { polar, checkout, portal } from "@polar-sh/better-auth";
-{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { createPolarClient } from "./lib/payments";
-{{else}}
-import { polarClient } from "./lib/payments";
-{{/if}}
-{{/if}}
+
 import { createPrismaClient } from "@{{projectName}}/db";
 
 export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
@@ -50,26 +43,7 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 		},
 {{/if}}
 		plugins: [
-{{#if (eq payments "polar")}}
-			polar({
-				client: {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}createPolarClient(env){{else}}polarClient{{/if}},
-				createCustomerOnSignUp: true,
-				enableCustomerPortal: true,
-				use: [
-					checkout({
-						products: [
-							{
-								productId: "your-product-id",
-								slug: "pro",
-							},
-						],
-						successUrl: env.POLAR_SUCCESS_URL,
-						authenticatedUsersOnly: true,
-					}),
-					portal(),
-				],
-			}),
-{{/if}}
+
 		],
 	});
 }
@@ -88,14 +62,7 @@ import type {} from "@{{projectName}}/env/server";
 {{else}}
 import { env } from "@{{projectName}}/env/server";
 {{/if}}
-{{#if (eq payments "polar")}}
-import { polar, checkout, portal } from "@polar-sh/better-auth";
-{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { createPolarClient } from "./lib/payments";
-{{else}}
-import { polarClient } from "./lib/payments";
-{{/if}}
-{{/if}}
+
 import { createDb } from "@{{projectName}}/db";
 import * as schema from "@{{projectName}}/db/schema/auth";
 
@@ -133,26 +100,7 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 		},
 {{/if}}
 		plugins: [
-{{#if (eq payments "polar")}}
-			polar({
-				client: {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}createPolarClient(env){{else}}polarClient{{/if}},
-				createCustomerOnSignUp: true,
-				enableCustomerPortal: true,
-				use: [
-					checkout({
-						products: [
-							{
-								productId: "your-product-id",
-								slug: "pro",
-							},
-						],
-						successUrl: env.POLAR_SUCCESS_URL,
-						authenticatedUsersOnly: true,
-					}),
-					portal(),
-				],
-			}),
-{{/if}}
+
 		],
 	});
 }
@@ -166,10 +114,7 @@ export const auth = createAuth();
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { env } from "@{{projectName}}/env/server";
-{{#if (eq payments "polar")}}
-import { polar, checkout, portal } from "@polar-sh/better-auth";
-import { polarClient } from "./lib/payments";
-{{/if}}
+
 import { createDb } from "@{{projectName}}/db";
 import * as schema from "@{{projectName}}/db/schema/auth";
 
@@ -217,28 +162,7 @@ export function createAuth() {
 			//   domain: "<your-workers-subdomain>",
 			// },
 		},
-{{#if (eq payments "polar")}}
-		plugins: [
-			polar({
-				client: polarClient,
-				createCustomerOnSignUp: true,
-				enableCustomerPortal: true,
-				use: [
-					checkout({
-						products: [
-							{
-								productId: "your-product-id",
-								slug: "pro",
-							},
-						],
-						successUrl: env.POLAR_SUCCESS_URL,
-						authenticatedUsersOnly: true,
-					}),
-					portal(),
-				],
-			}),
-		],
-{{/if}}
+
 	});
 }
 {{/if}}
@@ -252,14 +176,7 @@ import type {} from "@{{projectName}}/env/server";
 {{else}}
 import { env } from "@{{projectName}}/env/server";
 {{/if}}
-{{#if (eq payments "polar")}}
-import { polar, checkout, portal } from "@polar-sh/better-auth";
-{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { createPolarClient } from "./lib/payments";
-{{else}}
-import { polarClient } from "./lib/payments";
-{{/if}}
-{{/if}}
+
 import { client } from "@{{projectName}}/db";
 
 export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
@@ -287,28 +204,7 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 			},
 		},
 {{/if}}
-{{#if (eq payments "polar")}}
-		plugins: [
-			polar({
-				client: {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}createPolarClient(env){{else}}polarClient{{/if}},
-				createCustomerOnSignUp: true,
-				enableCustomerPortal: true,
-				use: [
-					checkout({
-						products: [
-							{
-								productId: "your-product-id",
-								slug: "pro",
-							},
-						],
-						successUrl: env.POLAR_SUCCESS_URL,
-						authenticatedUsersOnly: true,
-					}),
-					portal(),
-				],
-			}),
-		],
-{{/if}}
+
 	});
 }
 
@@ -324,14 +220,7 @@ import type {} from "@{{projectName}}/env/server";
 {{else}}
 import { env } from "@{{projectName}}/env/server";
 {{/if}}
-{{#if (eq payments "polar")}}
-import { polar, checkout, portal } from "@polar-sh/better-auth";
-{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { createPolarClient } from "./lib/payments";
-{{else}}
-import { polarClient } from "./lib/payments";
-{{/if}}
-{{/if}}
+
 
 
 export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
@@ -359,28 +248,7 @@ export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudfl
 			},
 		},
 {{/if}}
-{{#if (eq payments "polar")}}
-		plugins: [
-			polar({
-				client: {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}createPolarClient(env){{else}}polarClient{{/if}},
-				createCustomerOnSignUp: true,
-				enableCustomerPortal: true,
-				use: [
-					checkout({
-						products: [
-							{
-								productId: "your-product-id",
-								slug: "pro",
-							},
-						],
-						successUrl: env.POLAR_SUCCESS_URL,
-						authenticatedUsersOnly: true,
-					}),
-					portal(),
-				],
-			}),
-		],
-{{/if}}
+
 	});
 }
 

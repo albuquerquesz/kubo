@@ -7,13 +7,13 @@ import Layout from "../layouts/Layout.astro";
     <main class="mx-auto max-w-4xl px-4 py-8">
       <div class="rounded-xl border border-neutral-800 bg-neutral-900/50 p-8">
         <h1 class="text-3xl font-bold text-white mb-6">Dashboard</h1>
-        
+
         <div class="space-y-4">
           <div class="rounded-lg bg-neutral-800/50 p-4">
             <p class="text-sm text-neutral-400">Welcome back,</p>
             <p id="user-name" class="text-xl font-medium text-white">Loading...</p>
           </div>
-          
+
           <div class="rounded-lg bg-neutral-800/50 p-4">
             <p class="text-sm text-neutral-400 mb-2">Email</p>
             <p id="user-email" class="text-white">Loading...</p>
@@ -26,14 +26,7 @@ import Layout from "../layouts/Layout.astro";
           </div>
           {{/if}}
 
-          {{#if (eq payments "polar")}}
-          <div class="rounded-lg bg-neutral-800/50 p-4">
-            <p class="text-sm text-neutral-400 mb-2">Subscription</p>
-            <div id="subscription-info" class="space-y-2">
-              <p class="text-white">Loading...</p>
-            </div>
-          </div>
-          {{else if (includes payments "abacatepay")}}
+          {{#if (includes payments "abacatepay")}}
           <div class="rounded-lg bg-neutral-800/50 p-4">
             <p class="text-sm text-neutral-400 mb-2">Checkout</p>
             <div class="space-y-2">
@@ -82,7 +75,7 @@ import Layout from "../layouts/Layout.astro";
   async function init() {
     try {
       const { data: session } = await authClient.getSession();
-      
+
       if (!session?.user) {
         loading.classList.add("hidden");
         redirect.classList.remove("hidden");
@@ -102,41 +95,7 @@ import Layout from "../layouts/Layout.astro";
       }
       {{/if}}
 
-      {{#if (eq payments "polar")}}
-      try {
-        const { data: customerState } = await authClient.customer.state();
-        const subscriptionInfo = document.getElementById("subscription-info")!;
-        if (customerState?.activeSubscriptions?.length > 0) {
-          subscriptionInfo.innerHTML = `
-            <p class="text-white">Plan: <span class="text-green-400">Pro</span></p>
-            <button
-              id="manage-subscription"
-              class="mt-2 rounded px-3 py-1.5 text-sm bg-neutral-700 hover:bg-neutral-600 text-white transition-colors"
-            >
-              Manage Subscription
-            </button>
-          `;
-          document.getElementById("manage-subscription")?.addEventListener("click", async () => {
-            await authClient.customer.portal();
-          });
-        } else {
-          subscriptionInfo.innerHTML = `
-            <p class="text-white">Plan: <span class="text-neutral-400">Free</span></p>
-            <button
-              id="upgrade-button"
-              class="mt-2 rounded px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white transition-colors"
-            >
-              Upgrade to Pro
-            </button>
-          `;
-          document.getElementById("upgrade-button")?.addEventListener("click", async () => {
-            await authClient.checkout({ slug: "pro" });
-          });
-        }
-      } catch (e) {
-        console.error("Failed to load subscription info", e);
-      }
-      {{else if (includes payments "abacatepay")}}
+      {{#if (includes payments "abacatepay")}}
       document.getElementById("open-checkout")?.addEventListener("click", async () => {
         try {
           const baseUrl = {{#if (eq backend "self")}}""{{else}}env.PUBLIC_SERVER_URL{{/if}};

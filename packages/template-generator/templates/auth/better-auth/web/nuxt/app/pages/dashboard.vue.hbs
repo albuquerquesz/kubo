@@ -11,9 +11,7 @@ definePageMeta({
 
 const session = $authClient.useSession()
 
-{{#if (eq payments "polar")}}
-const customerState = ref<any>(null)
-{{/if}}
+
 
 {{#if (eq api "orpc")}}
 const privateData = useQuery({
@@ -22,18 +20,7 @@ const privateData = useQuery({
 })
 {{/if}}
 
-{{#if (eq payments "polar")}}
-onMounted(async () => {
-  if (session.value?.data) {
-    const { data } = await $authClient.customer.state()
-    customerState.value = data
-  }
-})
-
-const hasProSubscription = computed(() => 
-  (customerState.value?.activeSubscriptions?.length ?? 0) > 0
-)
-{{else if (includes payments "abacatepay")}}
+{{#if (includes payments "abacatepay")}}
 const openCheckout = async () => {
   const baseUrl = {{#if (eq backend "self")}}""{{else}}runtimeConfig.public.serverUrl{{/if}}
   const response = await fetch(`${baseUrl}/api/payments/abacatepay/checkout`, {
@@ -80,33 +67,7 @@ const openCheckout = async () => {
       </UCard>
       {{/if}}
 
-      {{#if (eq payments "polar")}}
-      <UCard>
-        <template #header>
-          <div class="font-medium">Subscription</div>
-        </template>
-
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <UIcon :name="hasProSubscription ? 'i-lucide-crown' : 'i-lucide-user'" :class="hasProSubscription ? 'text-warning' : 'text-muted'" />
-            <span>Plan: \{{ hasProSubscription ? "Pro" : "Free" }}</span>
-          </div>
-          <UButton 
-            v-if="hasProSubscription"
-            variant="outline"
-            @click="() => { $authClient.customer.portal() }"
-          >
-            Manage Subscription
-          </UButton>
-          <UButton 
-            v-else
-            @click="() => { $authClient.checkout({ slug: 'pro' }) }"
-          >
-            Upgrade to Pro
-          </UButton>
-        </div>
-      </UCard>
-      {{else if (includes payments "abacatepay")}}
+      {{#if (includes payments "abacatepay")}}
       <UCard>
         <template #header>
           <div class="font-medium">Checkout</div>

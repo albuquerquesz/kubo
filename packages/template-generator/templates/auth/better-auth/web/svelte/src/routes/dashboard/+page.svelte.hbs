@@ -8,9 +8,7 @@
 	import { orpc } from '$lib/orpc';
 	import { createQuery } from '@tanstack/svelte-query';
 	{{/if}}
-	{{#if (eq payments "polar")}}
-	let customerState = $state<{ activeSubscriptions?: unknown[] } | null>(null);
-	{{/if}}
+
 
 	const sessionQuery = authClient.useSession();
 
@@ -24,15 +22,7 @@
 		}
 	});
 
-	{{#if (eq payments "polar")}}
-	$effect(() => {
-		if ($sessionQuery.data) {
-			authClient.customer.state().then(({ data }) => {
-				customerState = data;
-			});
-		}
-	});
-	{{else if (includes payments "abacatepay")}}
+	{{#if (includes payments "abacatepay")}}
 	async function openCheckout() {
 		const baseUrl = {{#if (eq backend "self")}}''{{else}}env.PUBLIC_SERVER_URL{{/if}};
 		const response = await fetch(`${baseUrl}/api/payments/abacatepay/checkout`, {
@@ -59,18 +49,7 @@
 		{{#if (eq api "orpc")}}
 		<p>API: {privateDataQuery.data?.message}</p>
 		{{/if}}
-		{{#if (eq payments "polar")}}
-		<p>Plan: {customerState?.activeSubscriptions?.length > 0 ? "Pro" : "Free"}</p>
-		{#if customerState?.activeSubscriptions?.length > 0}
-			<button onclick={async () => await authClient.customer.portal()}>
-				Manage Subscription
-			</button>
-		{:else}
-			<button onclick={async () => await authClient.checkout({ slug: "pro" })}>
-				Upgrade to Pro
-			</button>
-		{/if}
-		{{else if (includes payments "abacatepay")}}
+		{{#if (includes payments "abacatepay")}}
 		<button onclick={openCheckout}>
 			Open Checkout
 		</button>

@@ -161,10 +161,7 @@ export const env = createEnv({
 		CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
 {{/if}}
-{{#if (eq payments "polar")}}
-		POLAR_ACCESS_TOKEN: z.string().min(1),
-		POLAR_SUCCESS_URL: z.url(),
-{{/if}}
+
 {{#if (includes payments "abacatepay")}}
 		ABACATEPAY_API_KEY: z.string().min(1),
 		ABACATEPAY_WEBHOOK_SECRET: z.string().min(1),
