@@ -1,5 +1,5 @@
 import { isDesktopWebFrontend } from "./constants";
-import type { PaymentProvider } from "./types";
+import type { PaymentProvider, Payments } from "./types";
 
 export type PaymentCompatibilityIssue =
   | "convex-unsupported"
@@ -37,6 +37,26 @@ export const PAYMENT_PROVIDER_CAPABILITIES = {
   },
 } as const;
 
+const PAYMENT_PROVIDERS = ["abacatepay", "stripe"] as const satisfies readonly PaymentProvider[];
+
+export function isPaymentProvider(value: unknown): value is PaymentProvider {
+  return typeof value === "string" && PAYMENT_PROVIDERS.some((provider) => provider === value);
+}
+
+export function normalizePayments(value: unknown): Payments {
+  if (value === undefined || value === "none") return [];
+
+  const values = Array.isArray(value) ? value : [value];
+  const providers = values.filter((item) => item !== "none");
+  const unsupported = providers.filter((item) => !isPaymentProvider(item));
+
+  if (unsupported.length > 0) {
+    throw new Error(`Unsupported payment provider(s): ${unsupported.join(", ")}`);
+  }
+
+  return [...new Set(providers.filter(isPaymentProvider))];
+}
+
 export function getStripePublicEnvKey(frontends: readonly string[] = []): string {
   if (frontends.includes("next")) return stripePublicEnvKeys.next;
   if (frontends.includes("nuxt")) return stripePublicEnvKeys.nuxt;
@@ -53,10 +73,8 @@ export function getPaymentCompatibilityIssue({
   database,
   orm,
 }: PaymentCompatibilityInput): PaymentCompatibilityIssue | null {
-  if (!provider || provider === "none") return null;
-  const capabilities =
-    PAYMENT_PROVIDER_CAPABILITIES[provider as keyof typeof PAYMENT_PROVIDER_CAPABILITIES];
-  if (!capabilities) return null;
+  if (!provider || provider === "none" || !isPaymentProvider(provider)) return null;
+  const capabilities = PAYMENT_PROVIDER_CAPABILITIES[provider];
 
   if (backend === "convex" && !capabilities.supportsConvex) return "convex-unsupported";
 

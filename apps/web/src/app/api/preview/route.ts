@@ -1,6 +1,6 @@
 import { generate, type VirtualNode } from "@kubojs/template-generator";
 import { EMBEDDED_TEMPLATES } from "@kubojs/template-generator";
-import type { ProjectConfig } from "@kubojs/types";
+import { normalizePayments, type ProjectConfig } from "@kubojs/types";
 import { NextResponse } from "next/server";
 
 import type { StackState } from "@/lib/constant";
@@ -111,11 +111,7 @@ function stackStateToConfig(state: StackState): ProjectConfig {
     examples: (state.examples || []).filter((e) => e !== "none") as ProjectConfig["examples"],
     testing: (state.testing || []).filter((t) => t !== "none") as ProjectConfig["testing"],
     auth: (state.auth || "none") as ProjectConfig["auth"],
-    payments: Array.isArray(state.payments)
-      ? state.payments.filter((payment) => payment !== "none")
-      : state.payments && state.payments !== "none"
-        ? [state.payments]
-        : [],
+    payments: normalizePayments(state.payments),
     observability: state.observability as ProjectConfig["observability"],
     communication: (state.communication || "none") as ProjectConfig["communication"],
     git,

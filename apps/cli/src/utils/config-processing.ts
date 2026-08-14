@@ -1,5 +1,6 @@
 import path from "node:path";
 
+import { normalizePayments } from "@kubojs/types";
 import { Result } from "better-result";
 
 import type {
@@ -13,7 +14,6 @@ import type {
   Communication,
   ORM,
   PackageManager,
-  Payments,
   ProjectConfig,
   Runtime,
   ServerDeploy,
@@ -140,16 +140,6 @@ export function normalizeObservability(value: unknown): Observability {
       values.filter(
         (item): item is Observability[number] => item === "getmonitor" || item === "himetrica",
       ),
-    ),
-  ];
-}
-
-export function normalizePayments(value: unknown): Payments {
-  if (value === "none" || value === undefined) return [];
-  const values = Array.isArray(value) ? value : [value];
-  return [
-    ...new Set(
-      values.filter((item): item is Payments[number] => item === "abacatepay" || item === "stripe"),
     ),
   ];
 }

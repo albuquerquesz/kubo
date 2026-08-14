@@ -22,13 +22,13 @@ import { ValidationError } from "./errors";
 
 type ValidationResult = Result<void, ValidationError>;
 type AddonCompatibilityConfig = Pick<ProjectConfig, "frontend" | "auth" | "backend" | "runtime">;
-const TASK_RUNNER_ADDONS = ["turborepo", "nx", "vite-plus"] as const satisfies readonly Addons[];
+const TASK_RUNNER_ADDONS: readonly Addons[] = ["turborepo", "nx", "vite-plus"];
 /** Mutually exclusive code-quality linters (one slot). */
-export const LINTER_ADDONS = ["biome", "oxlint", "ultracite"] as const satisfies readonly Addons[];
-const STATIC_DESKTOP_ADDONS = ["tauri", "electrobun"] as const satisfies readonly Addons[];
+export const LINTER_ADDONS: readonly Addons[] = ["biome", "oxlint", "ultracite"];
+const STATIC_DESKTOP_ADDONS: readonly Addons[] = ["tauri", "electrobun"];
 
 export function isLinterAddon(addon: string): boolean {
-  return (LINTER_ADDONS as readonly string[]).includes(addon);
+  return LINTER_ADDONS.includes(addon as Addons);
 }
 
 /**
@@ -43,15 +43,13 @@ export function mergeAddonsExclusive(
   let result = [...existingAddons];
 
   for (const addon of addonsToAdd) {
-    if ((LINTER_ADDONS as readonly Addons[]).includes(addon)) {
+    if (LINTER_ADDONS.includes(addon)) {
       for (const current of result) {
-        if ((LINTER_ADDONS as readonly Addons[]).includes(current) && current !== addon) {
+        if (LINTER_ADDONS.includes(current) && current !== addon) {
           removed.add(current);
         }
       }
-      result = result.filter(
-        (current) => !(LINTER_ADDONS as readonly Addons[]).includes(current) || current === addon,
-      );
+      result = result.filter((current) => !LINTER_ADDONS.includes(current) || current === addon);
     }
 
     if (!result.includes(addon) && addon !== "none") {
@@ -61,7 +59,7 @@ export function mergeAddonsExclusive(
 
   return { updatedAddons: result, removedAddons: [...removed] };
 }
-const TAURI_STATIC_EXPORT_FRONTENDS = [
+const TAURI_STATIC_EXPORT_FRONTENDS: readonly Frontend[] = [
   "next",
   "tanstack-start",
 ] as const satisfies readonly Frontend[];
@@ -432,7 +430,7 @@ export function validateGuaraCloudServerDeploy(
 }
 
 // Frontends whose docker image needs server output, which desktop addons replace with a static export
-const DOCKER_SERVER_OUTPUT_FRONTENDS = [
+const DOCKER_SERVER_OUTPUT_FRONTENDS: readonly Frontend[] = [
   "next",
   "svelte",
   "astro",
@@ -448,14 +446,10 @@ export function validateDockerWebDeployDesktopAddons(
 ): ValidationResult {
   if (webDeploy !== "docker" || !addons || !frontend) return Result.ok(undefined);
 
-  const desktopAddons = addons.filter((addon) =>
-    (STATIC_DESKTOP_ADDONS as readonly string[]).includes(addon),
-  );
+  const desktopAddons = addons.filter((addon) => STATIC_DESKTOP_ADDONS.includes(addon));
   if (desktopAddons.length === 0) return Result.ok(undefined);
 
-  const affected = frontend.find((f) =>
-    (DOCKER_SERVER_OUTPUT_FRONTENDS as readonly string[]).includes(f),
-  );
+  const affected = frontend.find((f) => DOCKER_SERVER_OUTPUT_FRONTENDS.includes(f));
   if (!affected) return Result.ok(undefined);
 
   // next + electrobun keeps standalone output when Convex Better Auth forces server bootstrap
@@ -486,7 +480,7 @@ export function validateAddonCompatibility(
   }
 
   if (
-    (STATIC_DESKTOP_ADDONS as readonly string[]).includes(addon) &&
+    STATIC_DESKTOP_ADDONS.includes(addon) &&
     auth === "clerk" &&
     frontend.includes("react-router")
   ) {
@@ -496,7 +490,7 @@ export function validateAddonCompatibility(
     };
   }
 
-  if (backend === "self" && (STATIC_DESKTOP_ADDONS as readonly string[]).includes(addon)) {
+  if (backend === "self" && STATIC_DESKTOP_ADDONS.includes(addon)) {
     return {
       isCompatible: false,
       reason: `${addon} addon requires a separate backend or no backend because backend 'self' emits server routes that cannot be bundled as static desktop assets.`,
@@ -507,7 +501,7 @@ export function validateAddonCompatibility(
     addon === "tauri" &&
     backend === "convex" &&
     auth === "better-auth" &&
-    frontend.some((f) => (TAURI_STATIC_EXPORT_FRONTENDS as readonly string[]).includes(f))
+    frontend.some((f) => TAURI_STATIC_EXPORT_FRONTENDS.includes(f))
   ) {
     return {
       isCompatible: false,
@@ -520,7 +514,7 @@ export function validateAddonCompatibility(
 
   if (compatibleFrontends.length > 0) {
     const hasCompatibleFrontend = frontend.some((f) =>
-      (compatibleFrontends as readonly string[]).includes(f),
+      compatibleFrontends.some((compatibleFrontend) => compatibleFrontend === f),
     );
 
     if (!hasCompatibleFrontend) {
@@ -549,10 +543,8 @@ export function getCompatibleAddons(
     if (addon === "none") return false;
 
     if (
-      (TASK_RUNNER_ADDONS as readonly Addons[]).includes(addon) &&
-      existingAddons.some((existingAddon) =>
-        (TASK_RUNNER_ADDONS as readonly Addons[]).includes(existingAddon),
-      )
+      TASK_RUNNER_ADDONS.includes(addon) &&
+      existingAddons.some((existingAddon) => TASK_RUNNER_ADDONS.includes(existingAddon))
     ) {
       return false;
     }
@@ -569,18 +561,14 @@ export function validateAddonsAgainstFrontends(
   backend?: Backend,
   runtime?: Runtime,
 ): ValidationResult {
-  const selectedTaskRunners = addons.filter((addon) =>
-    (TASK_RUNNER_ADDONS as readonly Addons[]).includes(addon),
-  );
+  const selectedTaskRunners = addons.filter((addon) => TASK_RUNNER_ADDONS.includes(addon));
   if (selectedTaskRunners.length > 1) {
     return validationErr(
       "Cannot combine 'turborepo', 'nx', and 'vite-plus' addons. Choose one task runner.",
     );
   }
 
-  const selectedLinters = [
-    ...new Set(addons.filter((addon) => (LINTER_ADDONS as readonly Addons[]).includes(addon))),
-  ];
+  const selectedLinters = [...new Set(addons.filter((addon) => LINTER_ADDONS.includes(addon)))];
   if (selectedLinters.length > 1) {
     return validationErr(
       "Cannot combine 'biome', 'oxlint', and 'ultracite' addons. Choose one code-quality linter.",
@@ -681,7 +669,7 @@ export function validatePaymentsCompatibility(
     }
     if (issue === "native-only-unsupported") {
       return validationErr(
-        `${label} payments is not compatible with native-only frontends. Please add a supported web frontend or use '--payments none'.`,
+        `${label} payments is not compatible with native-only frontends. Please add a supported web frontend or leave payments unselected.`,
       );
     }
     if (issue === "sql-database-required") {
