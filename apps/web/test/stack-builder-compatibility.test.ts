@@ -25,6 +25,14 @@ function createStack(overrides: Partial<StackState> = {}): StackState {
 }
 
 describe("stack builder D1 compatibility", () => {
+  test("supports selecting multiple payment providers and emits both CLI values", () => {
+    const stack = createStack({ payments: ["abacatepay", "stripe"] });
+
+    expect(getIsSelected(stack, "payments", "abacatepay")).toBe(true);
+    expect(getIsSelected(stack, "payments", "stripe")).toBe(true);
+    expect(generateStackCommand(stack)).toContain("--payments abacatepay stripe");
+  });
+
   test("renders observability providers as selected when present in the array", () => {
     const stack = createStack({ observability: ["getmonitor", "himetrica"] });
 
@@ -216,7 +224,7 @@ describe("stack builder D1 compatibility", () => {
       runtime: "bun",
       database: "sqlite",
       orm: "drizzle",
-      payments: "abacatepay",
+      payments: ["abacatepay"],
     });
 
     expect(getDisabledReason(stack, "payments", "abacatepay")).toBe(
@@ -235,7 +243,7 @@ describe("stack builder D1 compatibility", () => {
       api: "none",
       dbSetup: "none",
       auth: "better-auth",
-      payments: "abacatepay",
+      payments: ["abacatepay"],
     });
 
     expect(getDisabledReason(stack, "payments", "abacatepay")).toBe(
@@ -251,7 +259,7 @@ describe("stack builder D1 compatibility", () => {
       runtime: "bun",
       database: "sqlite",
       orm: "drizzle",
-      payments: "abacatepay",
+      payments: ["abacatepay"],
       observability: ["getmonitor"],
       webDeploy: "guaracloud",
       serverDeploy: "guaracloud",
@@ -278,7 +286,7 @@ describe("stack builder D1 compatibility", () => {
       runtime: "bun",
       database: "none",
       orm: "none",
-      payments: "stripe",
+      payments: ["stripe"],
     });
 
     expect(getDisabledReason(stack, "payments", "stripe")).toBeNull();
@@ -286,12 +294,12 @@ describe("stack builder D1 compatibility", () => {
   });
 
   test("blocks Stripe for Convex and native-only stacks", () => {
-    const convex = createStack({ webFrontend: ["next"], backend: "convex", payments: "stripe" });
+    const convex = createStack({ webFrontend: ["next"], backend: "convex", payments: ["stripe"] });
     const native = createStack({
       webFrontend: ["none"],
       nativeFrontend: ["native-bare"],
       backend: "hono",
-      payments: "stripe",
+      payments: ["stripe"],
     });
     expect(getDisabledReason(convex, "payments", "stripe")).toBe(
       "Stripe não é suportado com Convex",
@@ -301,10 +309,10 @@ describe("stack builder D1 compatibility", () => {
 
   test("clears incompatible payments when Convex is selected", () => {
     const result = analyzeStackCompatibility(
-      createStack({ webFrontend: ["next"], backend: "convex", payments: "stripe" }),
+      createStack({ webFrontend: ["next"], backend: "convex", payments: ["stripe"] }),
     );
 
-    expect(result.adjustedStack).toMatchObject({ backend: "convex", payments: "none" });
+    expect(result.adjustedStack).toMatchObject({ backend: "convex", payments: [] });
     expect(result.changes).toContainEqual(
       expect.objectContaining({
         category: "backend",
@@ -330,7 +338,7 @@ describe("stack builder D1 compatibility", () => {
       runtime: "none",
       api: "none",
       auth: "none",
-      payments: "none",
+      payments: [],
       observability: [],
       communication: "none",
       database: "none",

@@ -28,6 +28,7 @@ export function getIsSelected(stack: StackState, category: keyof StackState, tec
     category === "examples" ||
     category === "webFrontend" ||
     category === "nativeFrontend" ||
+    category === "payments" ||
     category === "observability"
   ) {
     return ((currentValue as string[]) || []).includes(techId);

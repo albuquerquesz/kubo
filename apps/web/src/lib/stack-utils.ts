@@ -187,7 +187,7 @@ export function generateStackCommand(stack: StackState) {
     `--runtime ${stack.runtime}`,
     `--api ${stack.api}`,
     `--auth ${stack.auth || "none"}`,
-    `--payments ${stack.payments || "none"}`,
+    `--payments ${stack.payments.join(" ") || "none"}`,
     // Always emit observability so Stack Builder → CLI carries the choice
     // (including explicit "none"); CLI processFlags must accept this flag.
     stack.observability.length > 0

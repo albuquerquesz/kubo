@@ -111,7 +111,11 @@ function stackStateToConfig(state: StackState): ProjectConfig {
     examples: (state.examples || []).filter((e) => e !== "none") as ProjectConfig["examples"],
     testing: (state.testing || []).filter((t) => t !== "none") as ProjectConfig["testing"],
     auth: (state.auth || "none") as ProjectConfig["auth"],
-    payments: (state.payments || "none") as ProjectConfig["payments"],
+    payments: Array.isArray(state.payments)
+      ? state.payments.filter((payment) => payment !== "none")
+      : state.payments && state.payments !== "none"
+        ? [state.payments]
+        : [],
     observability: state.observability as ProjectConfig["observability"],
     communication: (state.communication || "none") as ProjectConfig["communication"],
     git,

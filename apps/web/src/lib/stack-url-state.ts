@@ -42,9 +42,7 @@ const serverStackParsers = {
   auth: parseAsStringEnumServer<StackState["auth"]>(getValidIds("auth")).withDefault(
     DEFAULT_STACK.auth,
   ),
-  payments: parseAsStringEnumServer<StackState["payments"]>(getValidIds("payments")).withDefault(
-    DEFAULT_STACK.payments,
-  ),
+  payments: parseAsArrayOfServer(parseAsStringServer).withDefault(DEFAULT_STACK.payments),
   observability: parseAsArrayOfServer(parseAsStringServer).withDefault(DEFAULT_STACK.observability),
   communication: parseAsStringEnumServer<StackState["communication"]>(
     getValidIds("communication"),

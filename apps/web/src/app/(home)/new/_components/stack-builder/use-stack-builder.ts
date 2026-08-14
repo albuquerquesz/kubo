@@ -197,6 +197,7 @@ export function useStackBuilder() {
         catKey === "nativeFrontend" ||
         catKey === "addons" ||
         catKey === "examples" ||
+        catKey === "payments" ||
         catKey === "observability"
       ) {
         if (catKey === "webFrontend" || catKey === "nativeFrontend") {
@@ -211,8 +212,8 @@ export function useStackBuilder() {
           Math.random() * Math.min(options.length, catKey === "observability" ? 3 : 4),
         );
         if (numToPick === 0) {
-          randomStack[catKey as "addons" | "examples" | "observability"] =
-            catKey === "observability" ? [] : ["none"];
+          randomStack[catKey as "addons" | "examples" | "payments" | "observability"] =
+            catKey === "payments" || catKey === "observability" ? [] : ["none"];
           continue;
         }
 
@@ -221,9 +222,8 @@ export function useStackBuilder() {
           .sort(() => 0.5 - Math.random())
           .slice(0, numToPick);
 
-        randomStack[catKey as "addons" | "examples" | "observability"] = shuffledOptions.map(
-          (opt) => opt.id,
-        );
+        randomStack[catKey as "addons" | "examples" | "payments" | "observability"] =
+          shuffledOptions.map((opt) => opt.id);
         continue;
       }
 
@@ -263,6 +263,7 @@ export function useStackBuilder() {
           catKey === "nativeFrontend" ||
           catKey === "addons" ||
           catKey === "examples" ||
+          catKey === "payments" ||
           catKey === "observability"
         ) {
           const currentArray = Array.isArray(currentValue) ? [...currentValue] : [];
@@ -284,7 +285,7 @@ export function useStackBuilder() {
             } else {
               nextArray = [techId];
             }
-          } else if (catKey === "observability") {
+          } else if (catKey === "observability" || catKey === "payments") {
             nextArray = isSelected
               ? nextArray.filter((id) => id !== techId)
               : [...nextArray, techId];
@@ -307,7 +308,13 @@ export function useStackBuilder() {
               nextArray = nextArray.filter((id) => id !== "none");
             }
 
-            if (nextArray.length === 0 && catKey !== "addons" && catKey !== "examples") {
+            if (
+              nextArray.length === 0 &&
+              catKey !== "addons" &&
+              catKey !== "examples" &&
+              catKey !== "payments" &&
+              catKey !== "observability"
+            ) {
               nextArray = ["none"];
             }
           }

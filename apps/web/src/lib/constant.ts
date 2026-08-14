@@ -497,14 +497,6 @@ export const TECH_OPTIONS: Record<
   ],
   payments: [
     {
-      id: "none",
-      name: "Sem pagamentos",
-      description: "Pular integração de pagamentos",
-      icon: "",
-      color: "from-gray-400 to-gray-600",
-      default: true,
-    },
-    {
       id: "abacatepay",
       name: "AbacatePay",
       description: "Checkout hospedado + webhooks para pagamentos no Brasil",
@@ -819,7 +811,7 @@ export const PRESET_TEMPLATES = [
       orm: "mongoose",
       dbSetup: "mongodb-atlas",
       auth: "better-auth",
-      payments: "none",
+      payments: [],
       observability: ["getmonitor"],
       communication: "none",
       packageManager: "bun",
@@ -848,7 +840,7 @@ export const PRESET_TEMPLATES = [
       orm: "drizzle",
       dbSetup: "none",
       auth: "better-auth",
-      payments: "none",
+      payments: [],
       observability: ["getmonitor"],
       communication: "none",
       packageManager: "bun",
@@ -877,7 +869,7 @@ export const PRESET_TEMPLATES = [
       orm: "prisma",
       dbSetup: "none",
       auth: "better-auth",
-      payments: "none",
+      payments: [],
       observability: ["getmonitor"],
       communication: "none",
       packageManager: "bun",
@@ -906,7 +898,7 @@ export const PRESET_TEMPLATES = [
       orm: "none",
       dbSetup: "none",
       auth: "none",
-      payments: "none",
+      payments: [],
       observability: [],
       communication: "none",
       packageManager: "bun",
@@ -933,7 +925,7 @@ export type StackState = {
   orm: string;
   dbSetup: string;
   auth: string;
-  payments: string;
+  payments: string[];
   observability: string[];
   communication: string;
   packageManager: string;
@@ -958,7 +950,7 @@ export const DEFAULT_STACK: StackState = {
   orm: "drizzle",
   dbSetup: "none",
   auth: "better-auth",
-  payments: "none",
+  payments: [],
   observability: ["getmonitor"],
   communication: "none",
   packageManager: "bun",

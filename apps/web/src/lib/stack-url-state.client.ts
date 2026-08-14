@@ -29,9 +29,7 @@ export const stackParsers = {
     DEFAULT_STACK.dbSetup,
   ),
   auth: parseAsStringEnum<StackState["auth"]>(getValidIds("auth")).withDefault(DEFAULT_STACK.auth),
-  payments: parseAsStringEnum<StackState["payments"]>(getValidIds("payments")).withDefault(
-    DEFAULT_STACK.payments,
-  ),
+  payments: parseAsArrayOf(parseAsString).withDefault(DEFAULT_STACK.payments),
   observability: parseAsArrayOf(parseAsString).withDefault(DEFAULT_STACK.observability),
   communication: parseAsStringEnum<StackState["communication"]>(
     getValidIds("communication"),

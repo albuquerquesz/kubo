@@ -6,6 +6,7 @@ const validAddonIds = new Set(["none", ...TECH_OPTIONS.addons.map((option) => op
 const validTestingIds = new Set(["none", ...TECH_OPTIONS.testing.map((option) => option.id)]);
 const validExampleIds = new Set(["none", ...TECH_OPTIONS.examples.map((option) => option.id)]);
 const validObservabilityIds = new Set(TECH_OPTIONS.observability.map((option) => option.id));
+const validPaymentIds = new Set(TECH_OPTIONS.payments.map((option) => option.id));
 
 export const TASK_RUNNER_ADDONS = ["nx", "turborepo", "vite-plus"] as const;
 export const LINTER_ADDONS = ["biome", "oxlint", "ultracite"] as const;
@@ -91,6 +92,12 @@ export function sanitizeObservability(
   return [...new Set(normalized.filter((value) => validObservabilityIds.has(value)))];
 }
 
+export function sanitizePayments(values: readonly string[] | string | null | undefined): string[] {
+  if (values == null) return [...DEFAULT_STACK.payments];
+  const normalized = typeof values === "string" ? [values] : values;
+  return [...new Set(normalized.filter((value) => value !== "none" && validPaymentIds.has(value)))];
+}
+
 export function sanitizeWebFrontends(webFrontend: readonly string[] | null | undefined): string[] {
   return sanitizeSingleSelection(webFrontend, validWebFrontendIds, DEFAULT_STACK.webFrontend);
 }
@@ -113,6 +120,7 @@ export function sanitizeStackState(stack: StackState): StackState {
     addons: sanitizeAddons(stack.addons),
     testing: sanitizeTesting(stack.testing),
     examples: sanitizeExamples(stack.examples),
+    payments: sanitizePayments(stack.payments),
     observability: sanitizeObservability(stack.observability),
   };
 }

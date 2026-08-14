@@ -214,6 +214,10 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
   let changed = false;
   const notes: CompatibilityResult["notes"] = {};
   const changes: Array<{ category: string; message: string }> = [];
+  const valuesEqual = (left: unknown, right: unknown) =>
+    Array.isArray(left) && Array.isArray(right)
+      ? left.length === right.length && left.every((value, index) => value === right[index])
+      : left === right;
 
   for (const cat of CATEGORY_ORDER) {
     notes[cat] = { notes: [], hasIssue: false };
@@ -232,12 +236,12 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
       api: "none",
       dbSetup: "none",
       serverDeploy: "none",
-      payments: "none",
+      payments: [],
     };
 
     for (const [key, value] of Object.entries(convexOverrides)) {
       const catKey = key as keyof StackState;
-      if (nextStack[catKey] !== value) {
+      if (!valuesEqual(nextStack[catKey], value)) {
         nextStack[catKey] = value as never;
         changed = true;
         changes.push({
@@ -305,13 +309,13 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
       auth: "none",
       dbSetup: "none",
       serverDeploy: "none",
-      payments: "none",
+      payments: [],
       communication: "none",
     };
 
     for (const [key, value] of Object.entries(noneOverrides)) {
       const catKey = key as keyof StackState;
-      if (nextStack[catKey] !== value) {
+      if (!valuesEqual(nextStack[catKey], value)) {
         nextStack[catKey] = value as never;
         changed = true;
         changes.push({
@@ -666,6 +670,25 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
   // ============================================
   // PAYMENTS CONSTRAINTS
   // ============================================
+
+  const compatiblePayments = nextStack.payments.filter(
+    (provider) =>
+      getPaymentCompatibilityIssue({
+        provider,
+        backend: nextStack.backend,
+        frontends: [...nextStack.webFrontend, ...nextStack.nativeFrontend],
+        database: nextStack.database,
+        orm: nextStack.orm,
+      }) === null,
+  );
+  if (compatiblePayments.length !== nextStack.payments.length) {
+    nextStack.payments = compatiblePayments;
+    changed = true;
+    changes.push({
+      category: "payments",
+      message: "Providers de pagamento incompatíveis foram removidos",
+    });
+  }
 
   // ============================================
   // ADDONS CONSTRAINTS
