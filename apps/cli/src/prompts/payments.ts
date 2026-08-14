@@ -1,9 +1,9 @@
-import { getPaymentCompatibilityIssue } from "@kubojs/types";
+import { getPaymentCompatibilityIssue, type PaymentProvider } from "@kubojs/types";
 
 import { DEFAULT_CONFIG } from "../constants";
 import type { Auth, Backend, Frontend, Payments } from "../types";
 import { UserCancelledError } from "../utils/errors";
-import { isCancel, navigableSelect, preferValidInitial } from "./navigable";
+import { isCancel, navigableMultiselect } from "./navigable";
 
 export async function getPaymentsChoice(
   payments?: Payments,
@@ -15,28 +15,23 @@ export async function getPaymentsChoice(
   if (payments !== undefined) return payments;
 
   if (backend === "none") {
-    return "none" as Payments;
+    return [];
   }
 
   const options = [
     {
-      value: "none" as Payments,
-      label: "None",
-      hint: "No payments integration",
-    },
-    {
-      value: "abacatepay" as Payments,
+      value: "abacatepay" as PaymentProvider,
       label: "AbacatePay",
       hint: "Hosted checkout with webhook reconciliation",
     },
     {
-      value: "stripe" as Payments,
+      value: "stripe" as PaymentProvider,
       label: "Stripe",
       hint: "Embedded Checkout with a fulfillment webhook",
     },
   ];
 
-  const getDisabledReason = (provider: Payments) => {
+  const getDisabledReason = (provider: PaymentProvider) => {
     const issue = getPaymentCompatibilityIssue({ provider, backend, frontends });
     if (issue === "requires-web-frontend") return "Requires a web frontend";
     if (issue === "convex-unsupported") return "Not supported with Convex";
@@ -46,8 +41,6 @@ export async function getPaymentsChoice(
   };
 
   const selectableOptions = options.map((option) => {
-    if (option.value === "none") return option;
-
     const disabledReason = getDisabledReason(option.value);
     return {
       ...option,
@@ -56,10 +49,11 @@ export async function getPaymentsChoice(
     };
   });
 
-  const response = await navigableSelect<Payments>({
-    message: "Select payments provider",
+  const response = await navigableMultiselect<PaymentProvider>({
+    message: "Select payments providers",
     options: selectableOptions,
-    initialValue: preferValidInitial(selectableOptions, previousValue, DEFAULT_CONFIG.payments),
+    required: false,
+    initialValues: previousValue ?? DEFAULT_CONFIG.payments,
   });
 
   if (isCancel(response)) throw new UserCancelledError({ message: "Operation cancelled" });

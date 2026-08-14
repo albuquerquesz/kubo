@@ -13,6 +13,7 @@ import type {
   DatabaseSetupSchema,
   APISchema,
   AuthSchema,
+  PaymentProviderSchema,
   PaymentsSchema,
   ObservabilitySchema,
   CommunicationSchema,
@@ -44,6 +45,7 @@ export type PackageManager = z.infer<typeof PackageManagerSchema>;
 export type DatabaseSetup = z.infer<typeof DatabaseSetupSchema>;
 export type API = z.infer<typeof APISchema>;
 export type Auth = z.infer<typeof AuthSchema>;
+export type PaymentProvider = z.infer<typeof PaymentProviderSchema>;
 export type Payments = z.infer<typeof PaymentsSchema>;
 export type Observability = z.infer<typeof ObservabilitySchema>;
 export type Communication = z.infer<typeof CommunicationSchema>;

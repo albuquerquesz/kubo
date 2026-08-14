@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { desktopWebFrontends } from "@kubojs/types";
+import { desktopWebFrontends, type PaymentProvider } from "@kubojs/types";
 
 import { getUserPkgManager } from "./utils/get-package-manager";
 
@@ -19,7 +19,7 @@ export const DEFAULT_CONFIG_BASE = {
   database: "sqlite",
   orm: "drizzle",
   auth: "better-auth",
-  payments: "none",
+  payments: [],
   observability: ["getmonitor"],
   communication: "none",
   addons: ["turborepo"],
@@ -41,6 +41,8 @@ export function getDefaultConfig() {
     projectDir: path.resolve(process.cwd(), DEFAULT_CONFIG_BASE.projectName),
     packageManager: getUserPkgManager(),
     frontend: [...DEFAULT_CONFIG_BASE.frontend],
+    payments: [...(DEFAULT_CONFIG_BASE.payments as readonly PaymentProvider[])],
+    observability: [...DEFAULT_CONFIG_BASE.observability],
     addons: [...DEFAULT_CONFIG_BASE.addons],
     examples: [...DEFAULT_CONFIG_BASE.examples],
     testing: [...DEFAULT_CONFIG_BASE.testing],

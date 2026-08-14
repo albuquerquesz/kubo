@@ -27,7 +27,7 @@ export type ProjectHistoryEntry = {
     orm: string;
     runtime: string;
     auth: string;
-    payments: string;
+    payments: string[];
     observability: string[];
     communication: string;
     api: string;

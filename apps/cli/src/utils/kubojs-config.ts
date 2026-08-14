@@ -31,7 +31,10 @@ export async function readKubojsConfig(projectDir: string): Promise<KubojsConfig
 export async function updateKubojsConfig(
   projectDir: string,
   updates: Partial<
-    Pick<KubojsConfig, "addons" | "addonOptions" | "dbSetupOptions" | "webDeploy" | "serverDeploy">
+    Pick<
+      KubojsConfig,
+      "addons" | "addonOptions" | "dbSetupOptions" | "webDeploy" | "serverDeploy" | "testing"
+    >
   >,
 ): Promise<void> {
   try {

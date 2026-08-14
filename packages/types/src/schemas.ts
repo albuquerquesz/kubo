@@ -93,9 +93,26 @@ export const AuthSchema = z
   .enum(["better-auth", "clerk", "none"])
   .describe("Authentication provider");
 
+export const PaymentProviderSchema = z.enum(["abacatepay", "stripe"]);
+
 export const PaymentsSchema = z
-  .enum(["none", "abacatepay", "stripe"])
-  .describe("Payments provider");
+  .preprocess(
+    (value) => {
+      if (value === "none" || value === undefined) return [];
+      if (typeof value === "string") return [value];
+      if (Array.isArray(value)) return value.filter((item) => item !== "none");
+      return value;
+    },
+    z.array(PaymentProviderSchema).superRefine((providers, ctx) => {
+      if (new Set(providers).size !== providers.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Payment providers must be unique",
+        });
+      }
+    }),
+  )
+  .describe("Selected payment providers");
 
 export const ObservabilityProviderSchema = z.enum(["getmonitor", "himetrica"]);
 

@@ -346,7 +346,7 @@ export function validateBackendNoneConstraints(
     );
   }
 
-  if (has("payments") && config.payments !== "none") {
+  if (has("payments") && (config.payments?.length ?? 0) > 0) {
     return validationErr(
       "Backend 'none' requires '--payments none'. Please remove the --payments flag or set it to 'none'.",
     );

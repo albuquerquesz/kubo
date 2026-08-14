@@ -82,7 +82,7 @@ function createEmptyResult(
       examples: [],
       testing: [],
       auth: "none",
-      payments: "none",
+      payments: [],
       observability: [],
       communication: "none",
       git: false,

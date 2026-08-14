@@ -448,10 +448,14 @@ export function validateDockerWebDeployDesktopAddons(
 ): ValidationResult {
   if (webDeploy !== "docker" || !addons || !frontend) return Result.ok(undefined);
 
-  const desktopAddons = addons.filter((addon) => STATIC_DESKTOP_ADDONS.includes(addon));
+  const desktopAddons = addons.filter((addon) =>
+    (STATIC_DESKTOP_ADDONS as readonly string[]).includes(addon),
+  );
   if (desktopAddons.length === 0) return Result.ok(undefined);
 
-  const affected = frontend.find((f) => DOCKER_SERVER_OUTPUT_FRONTENDS.includes(f));
+  const affected = frontend.find((f) =>
+    (DOCKER_SERVER_OUTPUT_FRONTENDS as readonly string[]).includes(f),
+  );
   if (!affected) return Result.ok(undefined);
 
   // next + electrobun keeps standalone output when Convex Better Auth forces server bootstrap
@@ -482,7 +486,7 @@ export function validateAddonCompatibility(
   }
 
   if (
-    STATIC_DESKTOP_ADDONS.includes(addon) &&
+    (STATIC_DESKTOP_ADDONS as readonly string[]).includes(addon) &&
     auth === "clerk" &&
     frontend.includes("react-router")
   ) {
@@ -492,7 +496,7 @@ export function validateAddonCompatibility(
     };
   }
 
-  if (backend === "self" && STATIC_DESKTOP_ADDONS.includes(addon)) {
+  if (backend === "self" && (STATIC_DESKTOP_ADDONS as readonly string[]).includes(addon)) {
     return {
       isCompatible: false,
       reason: `${addon} addon requires a separate backend or no backend because backend 'self' emits server routes that cannot be bundled as static desktop assets.`,
@@ -503,7 +507,7 @@ export function validateAddonCompatibility(
     addon === "tauri" &&
     backend === "convex" &&
     auth === "better-auth" &&
-    frontend.some((f) => TAURI_STATIC_EXPORT_FRONTENDS.includes(f))
+    frontend.some((f) => (TAURI_STATIC_EXPORT_FRONTENDS as readonly string[]).includes(f))
   ) {
     return {
       isCompatible: false,
@@ -653,35 +657,38 @@ export function validatePaymentsCompatibility(
   orm?: ProjectConfig["orm"],
   database?: ProjectConfig["database"],
 ): ValidationResult {
-  if (!payments || payments === "none") return Result.ok(undefined);
+  if (!payments || payments.length === 0) return Result.ok(undefined);
 
-  const issue = getPaymentCompatibilityIssue({
-    provider: payments,
-    backend,
-    frontends,
-    database,
-    orm,
-  });
+  for (const provider of payments) {
+    const issue = getPaymentCompatibilityIssue({
+      provider,
+      backend,
+      frontends,
+      database,
+      orm,
+    });
+    const label = provider === "stripe" ? "Stripe" : "AbacatePay";
 
-  if (issue === "convex-unsupported") {
-    return validationErr(
-      `${payments === "stripe" ? "Stripe" : "AbacatePay"} payments is not compatible with '--backend convex'. Please use a server backend or backend 'self'.`,
-    );
-  }
-  if (issue === "requires-web-frontend") {
-    return validationErr(
-      `${payments === "stripe" ? "Stripe" : "AbacatePay"} payments requires a web frontend. Please choose next, tanstack-start, tanstack-router, react-router, nuxt, svelte, solid, or astro.`,
-    );
-  }
-  if (issue === "native-only-unsupported") {
-    return validationErr(
-      `${payments === "stripe" ? "Stripe" : "AbacatePay"} payments is not compatible with native-only frontends. Please add a supported web frontend or use '--payments none'.`,
-    );
-  }
-  if (issue === "sql-database-required") {
-    return validationErr(
-      "AbacatePay payments v1 requires a SQL database with Drizzle or Prisma. MongoDB and Mongoose are not supported.",
-    );
+    if (issue === "convex-unsupported") {
+      return validationErr(
+        `${label} payments is not compatible with '--backend convex'. Please use a server backend or backend 'self'.`,
+      );
+    }
+    if (issue === "requires-web-frontend") {
+      return validationErr(
+        `${label} payments requires a web frontend. Please choose next, tanstack-start, tanstack-router, react-router, nuxt, svelte, solid, or astro.`,
+      );
+    }
+    if (issue === "native-only-unsupported") {
+      return validationErr(
+        `${label} payments is not compatible with native-only frontends. Please add a supported web frontend or use '--payments none'.`,
+      );
+    }
+    if (issue === "sql-database-required") {
+      return validationErr(
+        "AbacatePay payments v1 requires a SQL database with Drizzle or Prisma. MongoDB and Mongoose are not supported.",
+      );
+    }
   }
 
   return Result.ok(undefined);

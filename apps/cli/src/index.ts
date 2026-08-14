@@ -415,7 +415,8 @@ import {
  * ```
  */
 export async function createVirtual(
-  options: Partial<Omit<ProjectConfig, "projectDir" | "relativePath">>,
+  options: Partial<Omit<ProjectConfig, "projectDir" | "relativePath">> &
+    Pick<CLIInput, "disableObservability">,
 ): Promise<Result<VirtualFileTree, GeneratorError>> {
   const config: ProjectConfig = {
     projectName: options.projectName || "my-project",
@@ -432,7 +433,7 @@ export async function createVirtual(
     examples: options.examples || [],
     testing: options.testing || [],
     auth: options.auth || "none",
-    payments: options.payments || "none",
+    payments: options.payments || [],
     observability: options.disableObservability ? [] : options.observability || [],
     communication: options.communication || "none",
     git: options.git ?? false,

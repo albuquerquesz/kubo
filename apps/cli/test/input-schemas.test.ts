@@ -24,6 +24,22 @@ describe("Input schemas", () => {
     );
   });
 
+  it("normalizes legacy and multiple payment inputs to a unique array", () => {
+    expect(CreateInputSchema.parse({ projectName: "app", payments: "stripe" }).payments).toEqual([
+      "stripe",
+    ]);
+    expect(
+      CreateInputSchema.safeParse({
+        projectName: "app",
+        payments: ["abacatepay", "stripe", "abacatepay"],
+      }).success,
+    ).toBe(false);
+    expect(
+      CreateInputSchema.parse({ projectName: "app", payments: ["abacatepay", "stripe"] }).payments,
+    ).toEqual(["abacatepay", "stripe"]);
+    expect(CreateInputSchema.parse({ projectName: "app", payments: "none" }).payments).toEqual([]);
+  });
+
   it("accepts Resend and Notifique as communication providers", () => {
     expect(CommunicationSchema.safeParse("resend").success).toBe(true);
     expect(CommunicationSchema.safeParse("notifique").success).toBe(true);

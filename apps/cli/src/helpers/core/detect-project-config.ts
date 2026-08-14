@@ -23,6 +23,7 @@ export async function detectProjectConfig(projectDir: string) {
           frontend: kubojsConfig.frontend,
           addons: kubojsConfig.addons,
           examples: kubojsConfig.examples,
+          testing: kubojsConfig.testing,
           auth: kubojsConfig.auth,
           payments: kubojsConfig.payments,
           observability: normalizeObservability(kubojsConfig.observability),

@@ -1,5 +1,5 @@
 import { isDesktopWebFrontend } from "./constants";
-import type { Payments } from "./types";
+import type { PaymentProvider } from "./types";
 
 export type PaymentCompatibilityIssue =
   | "convex-unsupported"
@@ -8,7 +8,7 @@ export type PaymentCompatibilityIssue =
   | "sql-database-required";
 
 export type PaymentCompatibilityInput = {
-  provider: Payments | string | undefined;
+  provider: PaymentProvider | string | undefined;
   backend?: string;
   frontends?: readonly string[];
   database?: string;

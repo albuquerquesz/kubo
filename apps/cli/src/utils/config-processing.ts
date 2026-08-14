@@ -69,7 +69,7 @@ export function processFlags(options: CLIInput, projectName?: string) {
   }
 
   if (options.payments !== undefined) {
-    config.payments = options.payments as Payments;
+    config.payments = normalizePayments(options.payments);
   }
 
   if (options.observability !== undefined)
@@ -140,6 +140,16 @@ export function normalizeObservability(value: unknown): Observability {
       values.filter(
         (item): item is Observability[number] => item === "getmonitor" || item === "himetrica",
       ),
+    ),
+  ];
+}
+
+export function normalizePayments(value: unknown): Payments {
+  if (value === "none" || value === undefined) return [];
+  const values = Array.isArray(value) ? value : [value];
+  return [
+    ...new Set(
+      values.filter((item): item is Payments[number] => item === "abacatepay" || item === "stripe"),
     ),
   ];
 }

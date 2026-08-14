@@ -50,7 +50,7 @@ const McpCreateProjectInputSchema = CreateInputSchema.safeExtend({
   orm: ORMSchema.describe("Explicit ORM choice"),
   api: APISchema.describe("Explicit API layer"),
   auth: AuthSchema.describe("Explicit authentication provider"),
-  payments: PaymentsSchema.describe("Explicit payments provider"),
+  payments: PaymentsSchema.describe("Explicit payment providers; use [] for none"),
   observability: ObservabilitySchema.describe("Explicit observability providers; use [] for none"),
   communication: CommunicationSchema.describe("Explicit communication provider"),
   addons: z.array(AddonsSchema).describe("Explicit addon list. Use [] when no addons are needed."),

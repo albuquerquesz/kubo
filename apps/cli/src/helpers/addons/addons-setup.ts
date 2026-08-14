@@ -51,7 +51,7 @@ async function runAddonStep(addon: string, step: () => Promise<void>): Promise<v
 }
 
 export async function setupAddons(config: ProjectConfig): Promise<void> {
-  const { addons, testing, frontend, projectDir } = config;
+  const { addons, frontend, projectDir } = config;
   const hasWebFrontend = frontend.some((value) =>
     (desktopWebFrontends as readonly string[]).includes(value),
   );
@@ -124,14 +124,6 @@ export async function setupAddons(config: ProjectConfig): Promise<void> {
 
   if (addons.includes("evlog")) {
     await runSetup(() => setupEvlog(config));
-  }
-
-  if (testing.includes("vitest")) {
-    await runAddonStep("vitest", () => setupVitest(projectDir));
-  }
-
-  if (testing.includes("playwright")) {
-    await runAddonStep("playwright", () => setupPlaywright(projectDir));
   }
 }
 
