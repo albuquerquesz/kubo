@@ -1,6 +1,9 @@
-<h3 align="center">
-  <div style="font-size: 2em; font-weight: 600; border: none;">Kubo</div>
-</h3>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="apps/web/public/assets/kubo-wordmark-dark.svg" />
+    <img alt="Kubo" src="apps/web/public/assets/kubo-wordmark-light.svg" height="48" />
+  </picture>
+</p>
 
 <p align="center">
   A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations.
@@ -9,6 +12,10 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/create-kubojs">
     <img alt="npm: create-kubojs" src="https://img.shields.io/npm/v/create-kubojs?style=flat-square&label=npm&color=CB3837" />
+  </a>
+  &nbsp;|&nbsp;
+  <a href="https://x.com/byalbuquerquesz">
+    <img alt="X: @byalbuquerquesz" src="https://img.shields.io/badge/X-@byalbuquerquesz-000000?style=flat-square&logo=x&logoColor=white" />
   </a>
 </p>
 
