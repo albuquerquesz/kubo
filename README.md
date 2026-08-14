@@ -1,4 +1,6 @@
-<h1 align="center">Kubo</h1>
+<h3 align="center">
+  <div style="font-size: 2em; font-weight: 600; border: none;">Kubo</div>
+</h3>
 
 <br />
 
