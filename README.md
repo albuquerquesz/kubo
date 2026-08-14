@@ -1,11 +1,13 @@
-# Kubo
-
-A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations.
+<h1 align="center">Kubo</h1>
 
 <br />
 
 <p align="center">
   <img alt="Kubo" src="apps/web/public/assets/kubo-bg.png" width="900" />
+</p>
+
+<p align="center">
+  A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations.
 </p>
 
 <br />
@@ -75,8 +77,6 @@ bun dev
 # Start CLI development
 bun cli
 
-# Remotion Studio (launch / brand videos)
-bun run dev:video
 ```
 
 ## Want to contribute?
