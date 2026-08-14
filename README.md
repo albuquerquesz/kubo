@@ -2,14 +2,20 @@
   <div style="font-size: 2em; font-weight: 600; border: none;">Kubo</div>
 </h3>
 
+<p align="center">
+  A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations.
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/create-kubojs">
+    <img alt="npm: create-kubojs" src="https://img.shields.io/npm/v/create-kubojs?style=flat-square&label=npm&color=CB3837" />
+  </a>
+</p>
+
 <br />
 
 <p align="center">
   <img alt="Kubo" src="apps/web/public/assets/kubo-bg.png" width="900" />
-</p>
-
-<p align="center">
-  A modern CLI tool for scaffolding end-to-end type-safe TypeScript projects with best practices and customizable configurations.
 </p>
 
 <br />
