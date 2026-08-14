@@ -40,6 +40,10 @@ npx create-kubojs@latest
 
 Type safety end-to-end, clean monorepo layout, and zero lock-in: you choose only what you need.
 
+## Credits
+
+Kubo began as a continuation of [Better T Stack](https://github.com/AmanVarshney01/create-better-t-stack). We thank its maintainers and contributors for the foundation that made this project possible.
+
 ## Repository Structure
 
 This repository is organized as a monorepo containing:
