@@ -11,6 +11,10 @@ export const desktopWebFrontends = [
   "astro",
 ] as const satisfies readonly DesktopWebFrontend[];
 
+export function isDesktopWebFrontend(frontend: string): frontend is DesktopWebFrontend {
+  return desktopWebFrontends.some((candidate) => candidate === frontend);
+}
+
 export function getWebPort(frontends: readonly string[] = []): string {
   if (frontends.includes("react-router") || frontends.includes("svelte")) return "5173";
   if (frontends.includes("astro")) return "4321";

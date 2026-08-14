@@ -1,4 +1,4 @@
-import { desktopWebFrontends, getPaymentCompatibilityIssue } from "@kubojs/types";
+import { getPaymentCompatibilityIssue, isDesktopWebFrontend } from "@kubojs/types";
 
 import { DEFAULT_STACK, type StackState, type TECH_OPTIONS } from "@/lib/constant";
 import { CATEGORY_ORDER } from "@/lib/stack-utils";
@@ -46,6 +46,56 @@ const selfHostedFullstackBackends = [
   "self-astro",
 ] as const;
 
+type SelfHostedFullstackBackend = (typeof selfHostedFullstackBackends)[number];
+
+const selfHostedCompatibilityRules: Record<
+  SelfHostedFullstackBackend,
+  {
+    frontend: string;
+    frontendLabel: string;
+    frontendMessage: string;
+    runtimeMessage: string;
+    apiMessage?: string;
+  }
+> = {
+  "self-next": {
+    frontend: "next",
+    frontendLabel: "Next.js",
+    frontendMessage: "Next.js fullstack exige frontend Next.js",
+    runtimeMessage: "Next.js fullstack usa rotas de API nativas",
+  },
+  "self-tanstack-start": {
+    frontend: "tanstack-start",
+    frontendLabel: "TanStack Start",
+    frontendMessage: "TanStack Start fullstack exige frontend TanStack Start",
+    runtimeMessage: "TanStack Start fullstack usa rotas de API nativas",
+  },
+  "self-nuxt": {
+    frontend: "nuxt",
+    frontendLabel: "Nuxt",
+    frontendMessage: "Nuxt fullstack exige frontend Nuxt",
+    runtimeMessage: "Nuxt fullstack usa rotas de servidor nativas",
+    apiMessage: "tRPC não é compatível com Nuxt (use oRPC)",
+  },
+  "self-svelte": {
+    frontend: "svelte",
+    frontendLabel: "SvelteKit",
+    frontendMessage: "SvelteKit fullstack exige frontend SvelteKit",
+    runtimeMessage: "SvelteKit fullstack usa rotas de servidor nativas",
+    apiMessage: "tRPC não é compatível com SvelteKit (use oRPC)",
+  },
+  "self-astro": {
+    frontend: "astro",
+    frontendLabel: "Astro",
+    frontendMessage: "Astro fullstack exige frontend Astro",
+    runtimeMessage: "Astro fullstack usa rotas de API nativas",
+    apiMessage: "tRPC não é compatível com Astro (use oRPC)",
+  },
+};
+
+const includesValue = <T extends string>(values: readonly T[], value: string): value is T =>
+  values.some((candidate) => candidate === value);
+
 const clerkBackendRequirementMessage =
   "Clerk exige backend Convex, Hono, Express, Fastify, Elysia ou Next.js/TanStack Start fullstack";
 const clerkFrontendRequirementMessage =
@@ -63,16 +113,8 @@ const convexBetterAuthSupportedNativeFrontends = [
 ] as const;
 
 const hasConvexBetterAuthCompatibleFrontend = (webFrontend: string[], nativeFrontend: string[]) =>
-  webFrontend.some((f) =>
-    convexBetterAuthSupportedWebFrontends.includes(
-      f as (typeof convexBetterAuthSupportedWebFrontends)[number],
-    ),
-  ) ||
-  nativeFrontend.some((f) =>
-    convexBetterAuthSupportedNativeFrontends.includes(
-      f as (typeof convexBetterAuthSupportedNativeFrontends)[number],
-    ),
-  );
+  webFrontend.some((f) => includesValue(convexBetterAuthSupportedWebFrontends, f)) ||
+  nativeFrontend.some((f) => includesValue(convexBetterAuthSupportedNativeFrontends, f));
 
 const convexBetterAuthFrontendRequirementMessage =
   "Better-Auth com Convex exige React Router, TanStack Router, TanStack Start, Next.js ou React Native";
@@ -84,27 +126,25 @@ export const hasClerkCompatibleFrontend = (webFrontend: string[], nativeFrontend
   nativeFrontend.some((f) => ["native-bare", "native-uniwind", "native-unistyles"].includes(f));
 
 export const hasClerkCompatibleBackend = (backend: string) =>
-  clerkSupportedBackends.includes(backend as (typeof clerkSupportedBackends)[number]);
+  includesValue(clerkSupportedBackends, backend);
 
-const isSelfHostedFullstackBackend = (backend: string) =>
-  selfHostedFullstackBackends.includes(backend as (typeof selfHostedFullstackBackends)[number]);
+const isSelfHostedFullstackBackend = (backend: string): backend is SelfHostedFullstackBackend =>
+  includesValue(selfHostedFullstackBackends, backend);
 
 const hasStaticDesktopCompatibleBackend = (backend: string) =>
   !isSelfHostedFullstackBackend(backend);
 
 export const hasTauriCompatibleFrontend = (webFrontend: string[], backend = "") =>
-  hasStaticDesktopCompatibleBackend(backend) &&
-  webFrontend.some((f) => (desktopWebFrontends as readonly string[]).includes(f));
+  hasStaticDesktopCompatibleBackend(backend) && webFrontend.some(isDesktopWebFrontend);
 
 export const hasElectrobunCompatibleFrontend = (webFrontend: string[], backend = "") =>
-  hasStaticDesktopCompatibleBackend(backend) &&
-  webFrontend.some((f) => (desktopWebFrontends as readonly string[]).includes(f));
+  hasStaticDesktopCompatibleBackend(backend) && webFrontend.some(isDesktopWebFrontend);
 
 export const hasEvlogCompatibleBackend = (backend: string) =>
   ["hono", "express", "fastify", "elysia", ...selfHostedFullstackBackends].includes(backend);
 
 export const hasPlaywrightCompatibleFrontend = (webFrontend: string[]) =>
-  webFrontend.some((f) => (desktopWebFrontends as readonly string[]).includes(f));
+  webFrontend.some(isDesktopWebFrontend);
 
 // Mirrors the CLI rule: Tauri static exports can't bundle Convex Better Auth on these frontends
 const tauriStaticExportFrontends = ["next", "tanstack-start"] as const;
@@ -312,49 +352,15 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
       });
     }
 
-    // Ensure correct frontend is selected
-    if (nextStack.backend === "self-next" && !nextStack.webFrontend.includes("next")) {
-      nextStack.webFrontend = ["next"];
+    // Ensure the frontend required by the selected fullstack backend is selected.
+    const fullstackRule = selfHostedCompatibilityRules[nextStack.backend];
+    const requiredFrontend = fullstackRule.frontend;
+    if (!nextStack.webFrontend.includes(requiredFrontend)) {
+      nextStack.webFrontend = [requiredFrontend];
       changed = true;
       changes.push({
         category: "backend",
-        message: "Frontend definido como 'Next.js' (necessário para Next.js fullstack)",
-      });
-    }
-    if (
-      nextStack.backend === "self-tanstack-start" &&
-      !nextStack.webFrontend.includes("tanstack-start")
-    ) {
-      nextStack.webFrontend = ["tanstack-start"];
-      changed = true;
-      changes.push({
-        category: "backend",
-        message:
-          "Frontend definido como 'TanStack Start' (necessário para TanStack Start fullstack)",
-      });
-    }
-    if (nextStack.backend === "self-nuxt" && !nextStack.webFrontend.includes("nuxt")) {
-      nextStack.webFrontend = ["nuxt"];
-      changed = true;
-      changes.push({
-        category: "backend",
-        message: "Frontend definido como 'Nuxt' (necessário para Nuxt fullstack)",
-      });
-    }
-    if (nextStack.backend === "self-svelte" && !nextStack.webFrontend.includes("svelte")) {
-      nextStack.webFrontend = ["svelte"];
-      changed = true;
-      changes.push({
-        category: "backend",
-        message: "Frontend definido como 'SvelteKit' (necessário para SvelteKit fullstack)",
-      });
-    }
-    if (nextStack.backend === "self-astro" && !nextStack.webFrontend.includes("astro")) {
-      nextStack.webFrontend = ["astro"];
-      changed = true;
-      changes.push({
-        category: "backend",
-        message: "Frontend definido como 'Astro' (necessário para Astro fullstack)",
+        message: `Frontend definido como '${fullstackRule.frontendLabel}' (necessário para ${fullstackRule.frontendLabel} fullstack)`,
       });
     }
   }
@@ -960,72 +966,19 @@ export const getDisabledReason = (
   // ============================================
   // FULLSTACK BACKEND CONSTRAINTS
   // ============================================
-  if (currentStack.backend === "self-next") {
+  if (isSelfHostedFullstackBackend(currentStack.backend)) {
+    const rule = selfHostedCompatibilityRules[currentStack.backend];
     if (category === "runtime" && optionId !== "none") {
-      return "Next.js fullstack usa rotas de API nativas";
+      return rule.runtimeMessage;
     }
-    if (category === "webFrontend" && optionId !== "next") {
-      return "Next.js fullstack exige frontend Next.js";
+    if (category === "webFrontend" && optionId !== rule.frontend) {
+      return rule.frontendMessage;
     }
     if (category === "serverDeploy" && optionId !== "none") {
       return "Fullstack usa o deploy do frontend";
     }
-  }
-
-  if (currentStack.backend === "self-nuxt") {
-    if (category === "runtime" && optionId !== "none") {
-      return "Nuxt fullstack usa rotas de servidor nativas";
-    }
-    if (category === "webFrontend" && optionId !== "nuxt") {
-      return "Nuxt fullstack exige frontend Nuxt";
-    }
-    if (category === "serverDeploy" && optionId !== "none") {
-      return "Fullstack usa o deploy do frontend";
-    }
-    if (category === "api" && optionId === "trpc") {
-      return "tRPC não é compatível com Nuxt (use oRPC)";
-    }
-  }
-
-  if (currentStack.backend === "self-svelte") {
-    if (category === "runtime" && optionId !== "none") {
-      return "SvelteKit fullstack usa rotas de servidor nativas";
-    }
-    if (category === "webFrontend" && optionId !== "svelte") {
-      return "SvelteKit fullstack exige frontend SvelteKit";
-    }
-    if (category === "serverDeploy" && optionId !== "none") {
-      return "Fullstack usa o deploy do frontend";
-    }
-    if (category === "api" && optionId === "trpc") {
-      return "tRPC não é compatível com SvelteKit (use oRPC)";
-    }
-  }
-
-  if (currentStack.backend === "self-tanstack-start") {
-    if (category === "runtime" && optionId !== "none") {
-      return "TanStack Start fullstack usa rotas de API nativas";
-    }
-    if (category === "webFrontend" && optionId !== "tanstack-start") {
-      return "TanStack Start fullstack exige frontend TanStack Start";
-    }
-    if (category === "serverDeploy" && optionId !== "none") {
-      return "Fullstack usa o deploy do frontend";
-    }
-  }
-
-  if (currentStack.backend === "self-astro") {
-    if (category === "runtime" && optionId !== "none") {
-      return "Astro fullstack usa rotas de API nativas";
-    }
-    if (category === "webFrontend" && optionId !== "astro") {
-      return "Astro fullstack exige frontend Astro";
-    }
-    if (category === "serverDeploy" && optionId !== "none") {
-      return "Fullstack usa o deploy do frontend";
-    }
-    if (category === "api" && optionId === "trpc") {
-      return "tRPC não é compatível com Astro (use oRPC)";
+    if (category === "api" && optionId === "trpc" && rule.apiMessage) {
+      return rule.apiMessage;
     }
   }
 

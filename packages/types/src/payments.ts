@@ -1,4 +1,4 @@
-import { desktopWebFrontends } from "./constants";
+import { isDesktopWebFrontend } from "./constants";
 import type { Payments } from "./types";
 
 export type PaymentCompatibilityIssue =
@@ -60,9 +60,7 @@ export function getPaymentCompatibilityIssue({
 
   if (backend === "convex" && !capabilities.supportsConvex) return "convex-unsupported";
 
-  const hasWebFrontend = frontends.some((frontend) =>
-    (desktopWebFrontends as readonly string[]).includes(frontend),
-  );
+  const hasWebFrontend = frontends.some((frontend) => isDesktopWebFrontend(frontend));
   const hasNativeFrontend = frontends.some((frontend) =>
     ["native-bare", "native-uniwind", "native-unistyles"].includes(frontend),
   );
