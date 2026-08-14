@@ -32,6 +32,23 @@ This repo is a Bun + Turborepo monorepo.
 - Symbols: `camelCase` for functions/variables, `PascalCase` for types/components.
 - Keep feature logic near domain folders (`helpers`, `utils`, `template-handlers`).
 
+## Maintainability Guardrails
+
+When touching an existing TypeScript file, actively remove small, high-confidence sources of
+branching and type noise encountered in the touched area:
+
+- Replace unnecessary or unsafe `as` assertions with typed boundaries, type guards, or shared
+  canonical helpers. Do not remove an assertion blindly when it documents a real external boundary.
+- Replace repeated `else`/`else if` chains and more than four sequential conditionals with a small
+  typed lookup, dispatcher, predicate, or focused helper when that preserves the behavior clearly.
+- Prefer small local refactors over broad rewrites: keep the public behavior and architecture
+  stable, avoid speculative abstractions, and do not refactor generated files or tests merely to
+  improve a metric.
+- Whenever one of these patterns is found in the file being changed, fix the highest-confidence
+  occurrence in the same change and add or run focused tests for the affected behavior.
+- Treat this as a maintainability rule, not a ban on `as` or `if`: a single clear guard or a
+  boundary assertion is preferable to a clever abstraction.
+
 ## Error Handling Conventions
 
 - In CLI code, prefer `better-result` over ad-hoc `try/catch` for recoverable flows.

@@ -45,3 +45,13 @@ Natural-language aliases for documentation (still load **document** only):
 - Follow Conventional Commits with a repository-appropriate scope (`cli`, `web`, `video`, package name).
 - Respect app boundaries in [`reference/monorepo-map.md`](reference/monorepo-map.md): Remotion lives in `apps/video` (`@kubojs/video`); do not nest video sources under `apps/web/public`.
 - Link to [`AGENTS.md`](../../../AGENTS.md) for full coding, template, and test conventions instead of copying them here.
+
+## Maintainability pass
+
+Whenever a change touches an existing TypeScript file, perform a small maintainability pass in the
+edited area. If you encounter an unnecessary or unsafe `as`, replace it with an explicit type
+boundary, type guard, or canonical helper. If you encounter repeated `else`/`else if` branches or
+more than four sequential conditionals, prefer a small typed lookup, dispatcher, predicate, or
+focused helper that preserves behavior. Fix only high-confidence occurrences in the touched area;
+do not turn this into a repository-wide rewrite, and do not remove assertions that represent real
+external boundaries. Run focused tests (and `bun run check` before committing) after the refactor.
