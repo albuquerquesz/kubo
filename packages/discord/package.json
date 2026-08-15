@@ -1,0 +1,17 @@
+{
+  "name": "@kubojs/discord",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Discord REST client for sending messages to a configured Kubo channel",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  }
+}
