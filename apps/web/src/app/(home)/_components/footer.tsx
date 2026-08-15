@@ -13,7 +13,10 @@ const footerGroups = [
   },
   {
     label: "Explorar",
-    links: [{ label: "Pacote NPM", href: "https://www.npmjs.com/package/create-kubojs" }],
+    links: [
+      { label: "Pacote NPM", href: "https://www.npmjs.com/package/create-kubojs" },
+      { label: "Newsletter", href: "/updates/newsletter" },
+    ],
   },
   {
     label: "Comunidade",
@@ -31,6 +34,55 @@ export default function Footer() {
   return (
     <footer>
       <FinalCtaDotMatrix />
+
+      <section
+        className="grid border-rule border-y lg:grid-cols-[1fr_1.4fr]"
+        aria-labelledby="newsletter-title"
+      >
+        <div className="border-rule p-6 lg:border-r lg:p-12">
+          <p className="ui-kicker text-primary">Sinal de lançamento</p>
+          <h2
+            id="newsletter-title"
+            className="mt-5 max-w-sm text-2xl font-semibold tracking-[-0.04em] sm:text-3xl"
+          >
+            Menos ruído. Mais Kubo.
+          </h2>
+        </div>
+        <div className="flex flex-col justify-between gap-8 bg-card p-6 sm:p-8 lg:p-12">
+          <p className="max-w-xl text-base leading-7 text-muted-foreground">
+            Receba lançamentos, decisões de produto e guias curtos para montar projetos TypeScript
+            com mais clareza.
+          </p>
+          <form
+            className="flex flex-col gap-3 sm:flex-row"
+            action="/updates/newsletter"
+            method="get"
+          >
+            <label className="sr-only" htmlFor="footer-newsletter-email">
+              Seu email
+            </label>
+            <input
+              id="footer-newsletter-email"
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
+              placeholder="voce@exemplo.com"
+              className="min-h-12 min-w-0 flex-1 border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40"
+            />
+            <button
+              type="submit"
+              className="inline-flex min-h-12 items-center justify-center gap-2 bg-primary px-5 font-semibold text-primary-foreground transition-colors duration-150 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              Entrar na lista
+              <ArrowUpRight className="size-4" />
+            </button>
+          </form>
+          <p className="text-xs text-muted-foreground">
+            Um email quando houver algo que valha seu tempo. Você pode sair quando quiser.
+          </p>
+        </div>
+      </section>
 
       <nav aria-label="Navegação do rodapé" className="grid border-rule sm:grid-cols-3">
         {footerGroups.map((group) => (
