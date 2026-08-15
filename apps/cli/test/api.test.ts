@@ -507,7 +507,7 @@ describe("API Configurations", () => {
 
       const files = collectFiles(result.value.root, result.value.root.path);
       const serverFile = files.get("apps/server/src/index.ts");
-      const contextFile = files.get("packages/api/src/context.ts");
+      const contextFile = files.get("apps/api/src/context.ts");
 
       expect(serverFile).toContain("context: await createContext(request.headers)");
       expect(contextFile).toContain('import type { IncomingHttpHeaders } from "node:http";');

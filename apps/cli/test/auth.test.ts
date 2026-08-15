@@ -73,7 +73,7 @@ describe("Authentication Configurations", () => {
       expect(todosRoute).toContain("const handleDeleteTodo = (id: TodoId");
 
       const todoRouter = await fs.readFile(
-        path.join(projectDir, "packages/api/src/routers/todo.ts"),
+        path.join(projectDir, "apps/api/src/modules/todo/index.ts"),
         "utf8",
       );
       expect(todoRouter).toContain('import "@better-auth-mongodb/db";');
@@ -328,7 +328,7 @@ describe("Authentication Configurations", () => {
         "utf8",
       );
       const apiContextFile = await fs.readFile(
-        path.join(result.projectDir, "packages/api/src/context.ts"),
+        path.join(result.projectDir, "apps/api/src/context.ts"),
         "utf8",
       );
       const serverEnvPackageFile = await fs.readFile(

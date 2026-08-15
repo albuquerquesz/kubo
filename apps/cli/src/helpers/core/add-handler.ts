@@ -55,7 +55,7 @@ const ADD_PACKAGE_JSON_PATHS = [
   "apps/desktop/package.json",
   "apps/fumadocs/package.json",
   "apps/docs/package.json",
-  "packages/api/package.json",
+  "apps/api/package.json",
   "packages/db/package.json",
   "packages/auth/package.json",
   "packages/backend/package.json",

@@ -154,24 +154,24 @@ describe("Clerk matrix", () => {
       }
 
       if (combo.backend !== "convex" && combo.api !== "none") {
-        const contextFile = files.get("packages/api/src/context.ts");
+        const contextFile = files.get("apps/api/src/context.ts");
         const expectedImport = expectedContextImport(combo.backend);
 
         if (!contextFile?.includes(expectedImport)) {
           failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing ${expectedImport} in packages/api/src/context.ts`,
+            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing ${expectedImport} in apps/api/src/context.ts`,
           );
         }
 
         if (!contextFile?.includes("type ClerkContextAuth")) {
           failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing ClerkContextAuth in packages/api/src/context.ts`,
+            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing ClerkContextAuth in apps/api/src/context.ts`,
           );
         }
 
         if (!contextFile?.includes("type ClerkRequestContext")) {
           failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing ClerkRequestContext in packages/api/src/context.ts`,
+            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing ClerkRequestContext in apps/api/src/context.ts`,
           );
         }
 
@@ -180,7 +180,7 @@ describe("Clerk matrix", () => {
           !contextFile?.includes("publishableKey: env.CLERK_PUBLISHABLE_KEY")
         ) {
           failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing publishableKey in packages/api/src/context.ts`,
+            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing publishableKey in apps/api/src/context.ts`,
           );
         }
 
@@ -189,7 +189,7 @@ describe("Clerk matrix", () => {
           !contextFile?.includes("authorizedParties: [env.CORS_ORIGIN]")
         ) {
           failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing authorizedParties in packages/api/src/context.ts`,
+            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing authorizedParties in apps/api/src/context.ts`,
           );
         }
       }

@@ -501,7 +501,7 @@ export default defineConfig({
 O kubojs sempre cria `packages/config`. Outros packages são adicionados conforme suas seleções:
 
 - `packages/env`: quando qualquer frontend é selecionado ou o backend não é `none`
-- `packages/api`: quando `--api` não é `none` (não-Convex)
+- `apps/api`: quando `--api` não é `none` (não-Convex); concentra a API gerada por domínio em `src/modules`
 - `packages/auth`: quando `--auth` não é `none` (não-Convex)
 - `packages/db`: quando `--database` e `--orm` são selecionados (não-Convex)
 - `packages/backend`: somente backend Convex

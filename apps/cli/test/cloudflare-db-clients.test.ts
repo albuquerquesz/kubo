@@ -38,8 +38,8 @@ describe("Cloudflare DB client generation", () => {
     const authFile = files.get("packages/auth/src/index.ts");
     const envFile = files.get("packages/env/src/server.ts");
     const serverFile = files.get("apps/server/src/index.ts");
-    const contextFile = files.get("packages/api/src/context.ts");
-    const todoRouterFile = files.get("packages/api/src/routers/todo.ts");
+    const contextFile = files.get("apps/api/src/context.ts");
+    const todoRouterFile = files.get("apps/api/src/modules/todo/index.ts");
 
     expect(dbFile).toContain("export function createDb()");
     expect(dbFile).not.toContain("export const db = createDb();");
@@ -77,7 +77,7 @@ describe("Cloudflare DB client generation", () => {
     const envPackageFile = files.get("packages/env/package.json");
     const routeFile = files.get("apps/web/src/app/api/auth/[...all]/route.ts");
     const dashboardFile = files.get("apps/web/src/app/dashboard/page.tsx");
-    const contextFile = files.get("packages/api/src/context.ts");
+    const contextFile = files.get("apps/api/src/context.ts");
 
     expect(dbFile).toContain("export function createPrismaClient()");
     expect(dbFile).not.toContain("export default prisma;");
@@ -166,8 +166,8 @@ describe("Cloudflare DB client generation", () => {
       const authFile = files.get("packages/auth/src/index.ts");
       const envFile = files.get("packages/env/src/server.ts");
       const routeFile = files.get(scenario.routePath);
-      const contextFile = files.get("packages/api/src/context.ts");
-      const todoRouterFile = files.get("packages/api/src/routers/todo.ts");
+      const contextFile = files.get("apps/api/src/context.ts");
+      const todoRouterFile = files.get("apps/api/src/modules/todo/index.ts");
 
       expect(dbFile).toContain('import { drizzle } from "drizzle-orm/d1";');
       expect(dbFile).toContain("drizzle(env.DB, { schema })");
@@ -212,7 +212,7 @@ describe("Cloudflare DB client generation", () => {
     const authFile = files.get("packages/auth/src/index.ts");
     const envFile = files.get("packages/env/src/server.ts");
     const routeFile = files.get("apps/web/src/app/api/auth/[...all]/route.ts");
-    const contextFile = files.get("packages/api/src/context.ts");
+    const contextFile = files.get("apps/api/src/context.ts");
 
     expect(dbFile).toContain('import { PrismaD1 } from "@prisma/adapter-d1";');
     expect(dbFile).toContain("const adapter = new PrismaD1(env.DB);");
