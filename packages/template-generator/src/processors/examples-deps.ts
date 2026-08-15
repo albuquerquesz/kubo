@@ -21,7 +21,7 @@ export function processExamplesDeps(vfs: VirtualFileSystem, config: ProjectConfi
 
 function setupTodoDependencies(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { orm, database, backend } = config;
-  const apiPkgPath = "packages/api/package.json";
+  const apiPkgPath = "apps/api/package.json";
   if (!vfs.exists(apiPkgPath) || backend === "none") return;
 
   if (orm === "drizzle") {

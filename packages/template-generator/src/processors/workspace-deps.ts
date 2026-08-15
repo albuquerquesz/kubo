@@ -27,7 +27,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     email: vfs.exists("packages/email/package.json"),
     notifique: vfs.exists("packages/notifique/package.json"),
     arara: vfs.exists("packages/arara/package.json"),
-    api: vfs.exists("packages/api/package.json"),
+    api: vfs.exists("apps/api/package.json"),
     ui: vfs.exists("packages/ui/package.json"),
     backend: vfs.exists("packages/backend/package.json"),
     server: vfs.exists("apps/server/package.json"),
@@ -163,7 +163,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     }
     addPackageDependency({
       vfs,
-      packagePath: "packages/api/package.json",
+      packagePath: "apps/api/package.json",
       dependencies: commonDeps,
       devDependencies: ["typescript"],
       customDependencies: apiPackageDeps,

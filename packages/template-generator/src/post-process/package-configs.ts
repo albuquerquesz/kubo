@@ -610,11 +610,11 @@ function updateAuthPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
 }
 
 function updateApiPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("packages/api/package.json");
+  const pkgJson = vfs.readJson<PackageJson>("apps/api/package.json");
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/api`;
-  vfs.writeJson("packages/api/package.json", pkgJson);
+  vfs.writeJson("apps/api/package.json", pkgJson);
 }
 
 function updateConfigPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {

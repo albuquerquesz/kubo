@@ -1,7 +1,7 @@
 {{#if (eq api "orpc")}}
 import z from "zod";
 import "@{{projectName}}/db";
-import { publicProcedure } from "../index";
+import { publicProcedure } from "../../index";
 import { Todo } from "@{{projectName}}/db/models/todo.model";
 
 export const todoRouter = {
@@ -38,7 +38,7 @@ export const todoRouter = {
 {{#if (eq api "trpc")}}
 import z from "zod";
 import "@{{projectName}}/db";
-import { router, publicProcedure } from "../index";
+import { router, publicProcedure } from "../../index";
 import { Todo } from "@{{projectName}}/db/models/todo.model";
 
 export const todoRouter = router({

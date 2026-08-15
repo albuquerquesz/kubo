@@ -1,21 +1,20 @@
 {{#if (eq api "orpc")}}
 import { {{#if (eq auth "better-auth")}}protectedProcedure, {{/if}}publicProcedure } from "../index";
 import type { RouterClient } from "@orpc/server";
+{{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+import { authModule } from "./modules/auth";
+{{/if}}
+import { healthModule } from "./modules/health";
 {{#if (includes examples "todo")}}
-import { todoRouter } from "./todo";
+import { todoRouter } from "./modules/todo";
 {{/if}}
 
 export const appRouter = {
-  healthCheck: publicProcedure.handler(() => {
-    return "OK";
-  }),
+  healthCheck: healthModule,
   {{#if (eq auth "better-auth")}}
-  privateData: protectedProcedure.handler(({ context }) => {
-    return {
-      message: "This is private",
-      user: context.session?.user,
-    };
-  }),
+  {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+  privateData: authModule,
+  {{/if}}
   {{/if}}
   {{#if (includes examples "todo")}}
   todo: todoRouter,
@@ -28,25 +27,20 @@ import {
   {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}protectedProcedure, {{/if}}publicProcedure,
   router,
 } from "../index";
+{{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+import { authModule } from "./modules/auth";
+{{/if}}
+import { healthModule } from "./modules/health";
 {{#if (includes examples "todo")}}
-import { todoRouter } from "./todo";
+import { todoRouter } from "./modules/todo";
 {{/if}}
 
 export const appRouter = router({
-  healthCheck: publicProcedure.query(() => {
-    return "OK";
-  }),
+  healthCheck: healthModule,
   {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
-  privateData: protectedProcedure.query(({ ctx }) => {
-    return {
-      message: "This is private",
-      {{#if (eq auth "better-auth")}}
-      user: ctx.session.user,
-      {{else}}
-      userId: ctx.auth.userId,
-      {{/if}}
-    };
-  }),
+  {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+  privateData: authModule,
+  {{/if}}
   {{/if}}
   {{#if (includes examples "todo")}}
   todo: todoRouter,

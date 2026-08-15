@@ -3,6 +3,13 @@ import type { ProjectConfig } from "@kubojs/types";
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix, processSingleTemplate } from "./utils";
 
+function moveGeneratedFile(vfs: VirtualFileSystem, from: string, to: string): void {
+  const content = vfs.readFile(from);
+  if (content === undefined) return;
+  vfs.writeFile(to, content);
+  vfs.deleteFile(from);
+}
+
 export async function processApiTemplates(
   vfs: VirtualFileSystem,
   templates: TemplateData,
@@ -11,7 +18,9 @@ export async function processApiTemplates(
   if (config.api === "none") return;
   if (config.backend === "convex") return;
 
-  processTemplatesFromPrefix(vfs, templates, `api/${config.api}/server`, "packages/api", config);
+  processTemplatesFromPrefix(vfs, templates, `api/${config.api}/server`, "apps/api", config);
+  moveGeneratedFile(vfs, "apps/api/src/routers/index.ts", "apps/api/src/router.ts");
+  vfs.writeFile("apps/api/src/routers/index.ts", 'export * from "../router";\n');
 
   const hasReactWeb = config.frontend.some((f) =>
     ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),

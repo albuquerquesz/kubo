@@ -1,7 +1,14 @@
 import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
-import { type TemplateData, processTemplatesFromPrefix } from "./utils";
+import { type TemplateData, processSingleTemplate, processTemplatesFromPrefix } from "./utils";
+
+function moveGeneratedFile(vfs: VirtualFileSystem, from: string, to: string): void {
+  const content = vfs.readFile(from);
+  if (content === undefined) return;
+  vfs.writeFile(to, content);
+  vfs.deleteFile(from);
+}
 
 export async function processExampleTemplates(
   vfs: VirtualFileSystem,
@@ -38,7 +45,7 @@ export async function processExampleTemplates(
         vfs,
         templates,
         `examples/${example}/server/${config.orm}/base`,
-        "packages/api",
+        "apps/api",
         config,
       );
 
@@ -48,6 +55,28 @@ export async function processExampleTemplates(
           templates,
           `examples/${example}/server/${config.orm}/${config.database}`,
           "packages/db",
+          config,
+        );
+      }
+
+      if (example === "todo") {
+        moveGeneratedFile(
+          vfs,
+          "apps/api/src/routers/todo.ts",
+          "apps/api/src/modules/todo/index.ts",
+        );
+        processSingleTemplate(
+          vfs,
+          templates,
+          `api/${config.api}/server/src/modules/todo/model.ts`,
+          "apps/api/src/modules/todo/model.ts",
+          config,
+        );
+        processSingleTemplate(
+          vfs,
+          templates,
+          `api/${config.api}/server/src/modules/todo/service.ts`,
+          "apps/api/src/modules/todo/service.ts",
           config,
         );
       }

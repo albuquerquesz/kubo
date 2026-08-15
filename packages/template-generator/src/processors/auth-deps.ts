@@ -127,7 +127,7 @@ function processConvexAuthDeps(vfs: VirtualFileSystem, config: ProjectConfig): v
 function processStandardAuthDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { auth, backend, frontend, orm } = config;
   const authPath = "packages/auth/package.json";
-  const apiPath = "packages/api/package.json";
+  const apiPath = "apps/api/package.json";
   const webPath = "apps/web/package.json";
   const nativePath = "apps/native/package.json";
   const serverPath = "apps/server/package.json";

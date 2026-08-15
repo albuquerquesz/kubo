@@ -1,0 +1,6 @@
+{{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+import { protectedProcedure } from "../../index";
+import { AuthService } from "./service";
+
+export const authModule = protectedProcedure.query(({ ctx }) => AuthService.privateData(ctx));
+{{/if}}

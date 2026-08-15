@@ -433,7 +433,12 @@ export async function createVirtual(
     examples: options.examples || [],
     testing: options.testing || [],
     auth: options.auth || "none",
-    payments: options.payments || [],
+    payments:
+      options.payments === "none"
+        ? []
+        : typeof options.payments === "string"
+          ? [options.payments]
+          : options.payments || [],
     observability: options.disableObservability ? [] : options.observability || [],
     communication: options.communication || "none",
     git: options.git ?? false,

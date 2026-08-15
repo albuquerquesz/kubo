@@ -1191,28 +1191,72 @@ const requireAuth = o.middleware(async ({ context, next }) => {
 export const protectedProcedure = publicProcedure.use(requireAuth);
 {{/if}}
 `],
+  ["api/orpc/server/src/modules/auth/index.ts.hbs", `{{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+import { protectedProcedure } from "../../index";
+import { AuthService } from "./service";
+
+export const authModule = protectedProcedure.handler(({ context }) => AuthService.privateData(context));
+{{/if}}
+`],
+  ["api/orpc/server/src/modules/auth/model.ts.hbs", `export namespace AuthModel {
+  export type PrivateData = {
+    message: string;
+    user: unknown;
+  };
+}
+`],
+  ["api/orpc/server/src/modules/auth/service.ts.hbs", `import type { Context } from "../../context";
+import type { AuthModel } from "./model";
+
+export abstract class AuthService {
+  static privateData(ctx: Context): AuthModel.PrivateData {
+    return {
+      message: "This is private",
+      user: ctx.session?.user,
+    };
+  }
+}
+`],
+  ["api/orpc/server/src/modules/health/index.ts.hbs", `import { publicProcedure } from "../../index";
+import { HealthService } from "./service";
+
+export const healthModule = publicProcedure.handler(() => HealthService.status());
+`],
+  ["api/orpc/server/src/modules/health/model.ts.hbs", `export namespace HealthModel {
+  export type Status = "OK";
+}
+`],
+  ["api/orpc/server/src/modules/health/service.ts.hbs", `import type { HealthModel } from "./model";
+
+export abstract class HealthService {
+  static status(): HealthModel.Status {
+    return "OK";
+  }
+}
+`],
+  ["api/orpc/server/src/modules/todo/model.ts.hbs", `export namespace TodoModel {
+  export type Id = number | string;
+}
+`],
+  ["api/orpc/server/src/modules/todo/service.ts.hbs", `export abstract class TodoService {}
+`],
   ["api/orpc/server/src/routers/index.ts.hbs", `{{#if (eq api "orpc")}}
 import { {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}protectedProcedure, {{/if}}publicProcedure } from "../index";
 import type { RouterClient } from "@orpc/server";
+{{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+import { authModule } from "./modules/auth";
+{{/if}}
+import { healthModule } from "./modules/health";
 {{#if (includes examples "todo")}}
-import { todoRouter } from "./todo";
+import { todoRouter } from "./modules/todo";
 {{/if}}
 
 export const appRouter = {
-  healthCheck: publicProcedure.handler(() => {
-    return "OK";
-  }),
+  healthCheck: healthModule,
   {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
-  privateData: protectedProcedure.handler(({ context }) => {
-    return {
-      message: "This is private",
-      {{#if (eq auth "better-auth")}}
-      user: context.session?.user,
-      {{else}}
-      userId: context.auth?.userId,
-      {{/if}}
-    };
-  }),
+  {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+  privateData: authModule,
+  {{/if}}
   {{/if}}
   {{#if (includes examples "todo")}}
   todo: todoRouter,
@@ -1225,21 +1269,20 @@ import {
   {{#if (eq auth "better-auth")}}protectedProcedure, {{/if}}publicProcedure,
   router,
 } from "../index";
+{{#if (eq auth "better-auth")}}
+import { authModule } from "./modules/auth";
+{{/if}}
+import { healthModule } from "./modules/health";
 {{#if (includes examples "todo")}}
-import { todoRouter } from "./todo";
+import { todoRouter } from "./modules/todo";
 {{/if}}
 
 export const appRouter = router({
-  healthCheck: publicProcedure.query(() => {
-    return "OK";
-  }),
+  healthCheck: healthModule,
   {{#if (eq auth "better-auth")}}
-  privateData: protectedProcedure.query(({ ctx }) => {
-    return {
-      message: "This is private",
-      user: ctx.session.user,
-    };
-  }),
+  {{#if (eq auth "better-auth")}}
+  privateData: authModule,
+  {{/if}}
   {{/if}}
   {{#if (includes examples "todo")}}
   todo: todoRouter,
@@ -2062,24 +2105,72 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 });
 {{/if}}
 `],
+  ["api/trpc/server/src/modules/auth/index.ts.hbs", `{{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+import { protectedProcedure } from "../../index";
+import { AuthService } from "./service";
+
+export const authModule = protectedProcedure.query(({ ctx }) => AuthService.privateData(ctx));
+{{/if}}
+`],
+  ["api/trpc/server/src/modules/auth/model.ts.hbs", `export namespace AuthModel {
+  export type PrivateData = {
+    message: string;
+    user: unknown;
+  };
+}
+`],
+  ["api/trpc/server/src/modules/auth/service.ts.hbs", `import type { Context } from "../../context";
+import type { AuthModel } from "./model";
+
+export abstract class AuthService {
+  static privateData(ctx: Context): AuthModel.PrivateData {
+    return {
+      message: "This is private",
+      user: ctx.session?.user,
+    };
+  }
+}
+`],
+  ["api/trpc/server/src/modules/health/index.ts.hbs", `import { publicProcedure } from "../../index";
+import { HealthService } from "./service";
+
+export const healthModule = publicProcedure.query(() => HealthService.status());
+`],
+  ["api/trpc/server/src/modules/health/model.ts.hbs", `export namespace HealthModel {
+  export type Status = "OK";
+}
+`],
+  ["api/trpc/server/src/modules/health/service.ts.hbs", `import type { HealthModel } from "./model";
+
+export abstract class HealthService {
+  static status(): HealthModel.Status {
+    return "OK";
+  }
+}
+`],
+  ["api/trpc/server/src/modules/todo/model.ts.hbs", `export namespace TodoModel {
+  export type Id = number | string;
+}
+`],
+  ["api/trpc/server/src/modules/todo/service.ts.hbs", `export abstract class TodoService {}
+`],
   ["api/trpc/server/src/routers/index.ts.hbs", `{{#if (eq api "orpc")}}
 import { {{#if (eq auth "better-auth")}}protectedProcedure, {{/if}}publicProcedure } from "../index";
 import type { RouterClient } from "@orpc/server";
+{{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+import { authModule } from "./modules/auth";
+{{/if}}
+import { healthModule } from "./modules/health";
 {{#if (includes examples "todo")}}
-import { todoRouter } from "./todo";
+import { todoRouter } from "./modules/todo";
 {{/if}}
 
 export const appRouter = {
-  healthCheck: publicProcedure.handler(() => {
-    return "OK";
-  }),
+  healthCheck: healthModule,
   {{#if (eq auth "better-auth")}}
-  privateData: protectedProcedure.handler(({ context }) => {
-    return {
-      message: "This is private",
-      user: context.session?.user,
-    };
-  }),
+  {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+  privateData: authModule,
+  {{/if}}
   {{/if}}
   {{#if (includes examples "todo")}}
   todo: todoRouter,
@@ -2092,25 +2183,20 @@ import {
   {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}protectedProcedure, {{/if}}publicProcedure,
   router,
 } from "../index";
+{{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+import { authModule } from "./modules/auth";
+{{/if}}
+import { healthModule } from "./modules/health";
 {{#if (includes examples "todo")}}
-import { todoRouter } from "./todo";
+import { todoRouter } from "./modules/todo";
 {{/if}}
 
 export const appRouter = router({
-  healthCheck: publicProcedure.query(() => {
-    return "OK";
-  }),
+  healthCheck: healthModule,
   {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
-  privateData: protectedProcedure.query(({ ctx }) => {
-    return {
-      message: "This is private",
-      {{#if (eq auth "better-auth")}}
-      user: ctx.session.user,
-      {{else}}
-      userId: ctx.auth.userId,
-      {{/if}}
-    };
-  }),
+  {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
+  privateData: authModule,
+  {{/if}}
   {{/if}}
   {{#if (includes examples "todo")}}
   todo: todoRouter,
@@ -22877,7 +22963,7 @@ import { createDb } from "@{{projectName}}/db";
 import { db } from "@{{projectName}}/db";
 {{/if}}
 import { todo } from "@{{projectName}}/db/schema/todo";
-import { publicProcedure } from "../index";
+import { publicProcedure } from "../../index";
 
 export const todoRouter = {
   getAll: publicProcedure.handler(async ({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}{ context }{{/if}}) => {
@@ -22925,7 +23011,7 @@ export const todoRouter = {
 
 {{#if (eq api "trpc")}}
 import z from "zod";
-import { router, publicProcedure } from "../index";
+import { router, publicProcedure } from "../../index";
 import { todo } from "@{{projectName}}/db/schema/todo";
 import { eq } from "drizzle-orm";
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
@@ -23003,7 +23089,7 @@ export const todo = sqliteTable("todo", {
   ["examples/todo/server/mongoose/base/src/routers/todo.ts.hbs", `{{#if (eq api "orpc")}}
 import z from "zod";
 import "@{{projectName}}/db";
-import { publicProcedure } from "../index";
+import { publicProcedure } from "../../index";
 import { Todo } from "@{{projectName}}/db/models/todo.model";
 
 export const todoRouter = {
@@ -23040,7 +23126,7 @@ export const todoRouter = {
 {{#if (eq api "trpc")}}
 import z from "zod";
 import "@{{projectName}}/db";
-import { router, publicProcedure } from "../index";
+import { router, publicProcedure } from "../../index";
 import { Todo } from "@{{projectName}}/db/models/todo.model";
 
 export const todoRouter = router({
@@ -23107,7 +23193,7 @@ import { createPrismaClient } from "@{{projectName}}/db";
 {{else}}
 import prisma from "@{{projectName}}/db";
 {{/if}}
-import { publicProcedure } from "../index";
+import { publicProcedure } from "../../index";
 
 export const todoRouter = {
   getAll: publicProcedure.handler(async ({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}{ context }{{/if}}) => {
@@ -23175,7 +23261,7 @@ import { createPrismaClient } from "@{{projectName}}/db";
 {{else}}
 import prisma from "@{{projectName}}/db";
 {{/if}}
-import { publicProcedure, router } from "../index";
+import { publicProcedure, router } from "../../index";
 
 export const todoRouter = router({
   getAll: publicProcedure.query(async () => {
@@ -37411,4 +37497,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 587;
+export const TEMPLATE_COUNT = 603;

@@ -53,7 +53,7 @@ function addApiPackageDeps(
   frontend: Frontend[],
   auth: ProjectConfig["auth"],
 ): void {
-  const pkgPath = "packages/api/package.json";
+  const pkgPath = "apps/api/package.json";
   if (!vfs.exists(pkgPath)) return;
 
   if (api === "trpc") {

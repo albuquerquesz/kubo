@@ -7,7 +7,7 @@ import { createDb } from "@{{projectName}}/db";
 import { db } from "@{{projectName}}/db";
 {{/if}}
 import { todo } from "@{{projectName}}/db/schema/todo";
-import { publicProcedure } from "../index";
+import { publicProcedure } from "../../index";
 
 export const todoRouter = {
   getAll: publicProcedure.handler(async ({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}{ context }{{/if}}) => {
@@ -55,7 +55,7 @@ export const todoRouter = {
 
 {{#if (eq api "trpc")}}
 import z from "zod";
-import { router, publicProcedure } from "../index";
+import { router, publicProcedure } from "../../index";
 import { todo } from "@{{projectName}}/db/schema/todo";
 import { eq } from "drizzle-orm";
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
