@@ -10,7 +10,7 @@ import {
   getDisabledReason,
 } from "../src/app/(home)/new/_components/utils";
 import { DEFAULT_STACK, type StackState } from "../src/lib/constant";
-import { sanitizeAddons } from "../src/lib/sanitize-stack-addons";
+import { sanitizeAddons, sanitizeTesting } from "../src/lib/sanitize-stack-addons";
 import { formatStackCommandForDisplay, generateStackCommand } from "../src/lib/stack-utils";
 
 function createStack(overrides: Partial<StackState> = {}): StackState {
@@ -31,6 +31,16 @@ describe("stack builder D1 compatibility", () => {
     expect(getIsSelected(stack, "payments", "abacatepay")).toBe(true);
     expect(getIsSelected(stack, "payments", "stripe")).toBe(true);
     expect(generateStackCommand(stack)).toContain("--payments abacatepay stripe");
+  });
+
+  test("supports selecting multiple testing tools and emits both CLI values", () => {
+    const testing = sanitizeTesting(["vitest", "playwright"]);
+    const stack = createStack({ testing });
+
+    expect(testing).toEqual(["vitest", "playwright"]);
+    expect(getIsSelected(stack, "testing", "vitest")).toBe(true);
+    expect(getIsSelected(stack, "testing", "playwright")).toBe(true);
+    expect(generateStackCommand(stack)).toContain("--testing vitest playwright");
   });
 
   test("renders observability providers as selected when present in the array", () => {

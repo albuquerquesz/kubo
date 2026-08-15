@@ -196,6 +196,7 @@ export function useStackBuilder() {
         catKey === "webFrontend" ||
         catKey === "nativeFrontend" ||
         catKey === "addons" ||
+        catKey === "testing" ||
         catKey === "examples" ||
         catKey === "payments" ||
         catKey === "observability"
@@ -208,11 +209,10 @@ export function useStackBuilder() {
           continue;
         }
 
-        const numToPick = Math.floor(
-          Math.random() * Math.min(options.length, catKey === "observability" ? 3 : 4),
-        );
+        const maxSelections = catKey === "observability" ? 3 : catKey === "testing" ? 2 : 4;
+        const numToPick = Math.floor(Math.random() * Math.min(options.length, maxSelections));
         if (numToPick === 0) {
-          randomStack[catKey as "addons" | "examples" | "payments" | "observability"] =
+          randomStack[catKey as "addons" | "testing" | "examples" | "payments" | "observability"] =
             catKey === "payments" || catKey === "observability" ? [] : ["none"];
           continue;
         }
@@ -222,7 +222,7 @@ export function useStackBuilder() {
           .sort(() => 0.5 - Math.random())
           .slice(0, numToPick);
 
-        randomStack[catKey as "addons" | "examples" | "payments" | "observability"] =
+        randomStack[catKey as "addons" | "testing" | "examples" | "payments" | "observability"] =
           shuffledOptions.map((opt) => opt.id);
         continue;
       }
@@ -262,6 +262,7 @@ export function useStackBuilder() {
           catKey === "webFrontend" ||
           catKey === "nativeFrontend" ||
           catKey === "addons" ||
+          catKey === "testing" ||
           catKey === "examples" ||
           catKey === "payments" ||
           catKey === "observability"

@@ -76,8 +76,9 @@ export function sanitizeAddons(addons: readonly string[] | null | undefined): st
   return resolveMonorepoAddonConflicts(sanitized);
 }
 
-export function sanitizeTesting(testing: readonly string[] | null | undefined): string[] {
-  return sanitizeMultiSelection(testing, validTestingIds, DEFAULT_STACK.testing);
+export function sanitizeTesting(testing: readonly string[] | string | null | undefined): string[] {
+  const normalized = typeof testing === "string" ? [testing] : testing;
+  return sanitizeMultiSelection(normalized, validTestingIds, DEFAULT_STACK.testing);
 }
 
 export function sanitizeExamples(examples: readonly string[] | null | undefined): string[] {
