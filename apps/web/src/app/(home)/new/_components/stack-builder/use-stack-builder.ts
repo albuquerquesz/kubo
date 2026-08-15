@@ -312,6 +312,7 @@ export function useStackBuilder() {
             if (
               nextArray.length === 0 &&
               catKey !== "addons" &&
+              catKey !== "testing" &&
               catKey !== "examples" &&
               catKey !== "payments" &&
               catKey !== "observability"
