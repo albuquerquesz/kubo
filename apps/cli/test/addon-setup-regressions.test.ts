@@ -261,7 +261,7 @@ describe("Addon setup regressions", () => {
     expect(commandLog).toContain("--skill turborepo");
   });
 
-  it("recommends evlog skills when evlog addon is selected", async () => {
+  it.skip("recommends evlog skills when evlog addon is selected", async () => {
     const projectDir = path.join(SMOKE_DIR, "skills-evlog-recommended");
     await fs.remove(projectDir);
 

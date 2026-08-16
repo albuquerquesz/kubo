@@ -62,7 +62,7 @@ describe("Database setup options", () => {
       auth: "better-auth",
       payments: "none",
       api: "trpc",
-      addons: ["nx"],
+      addons: ["turborepo"],
       examples: ["todo"],
       dbSetup: "neon",
       webDeploy: "none",

@@ -31,9 +31,8 @@ kubojs create-json --input '{
   "orm": "drizzle",
   "api": "trpc",
   "auth": "none",
-  "addons": ["wxt", "mcp"],
+  "addons": ["s3-storage", "mcp"],
   "addonOptions": {
-    "wxt": { "template": "react", "devPort": 5555 },
     "mcp": {
       "scope": "project",
       "servers": ["context7"],
@@ -57,7 +56,7 @@ Adiciona addons a um projeto existente com um único payload JSON.
 ```bash
 kubojs add-json --input '{
   "projectDir": "./my-app",
-  "addons": ["skills", "ultracite"],
+  "addons": ["skills", "s3-storage"],
   "addonOptions": {
     "skills": {
       "scope": "project",
@@ -67,16 +66,7 @@ kubojs add-json --input '{
           "source": "vercel-labs/agent-skills",
           "skills": ["web-design-guidelines"]
         },
-        {
-          "source": "https://www.evlog.dev",
-          "skills": ["review-logging-patterns", "analyze-logs"]
-        }
       ]
-    },
-    "ultracite": {
-      "linter": "biome",
-      "editors": ["vscode", "cursor"],
-      "agents": ["claude", "codex"]
     }
   },
   "dryRun": true
@@ -231,26 +221,17 @@ Addons orientados por prompts podem ser configurados de antemão via `addonOptio
 
 Superfícies estruturadas de addon suportadas incluem:
 
-- `wxt`
-- `fumadocs`
 - `opentui`
 - `mcp`
 - `skills`
-- `ultracite`
 
-Quando `skills` é usado com o addon `evlog`, o kubojs recomenda as agent skills do Evlog em `https://www.evlog.dev`: `review-logging-patterns` e `analyze-logs`.
+O addon `s3-storage` não possui opções interativas: ele gera diretamente o pacote compartilhado de bucket e as variáveis de ambiente S3-compatible.
 
 Exemplo:
 
 ```json
 {
-  "addons": ["wxt"],
-  "addonOptions": {
-    "wxt": {
-      "template": "react",
-      "devPort": 5555
-    }
-  }
+  "addons": ["s3-storage"]
 }
 ```
 

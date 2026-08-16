@@ -471,6 +471,7 @@ function buildServerVars(
   examples: ProjectConfig["examples"],
   observability: ProjectConfig["observability"],
   communication: ProjectConfig["communication"],
+  addons: ProjectConfig["addons"],
 ): EnvVariable[] {
   const hasReactRouter = frontend.includes("react-router");
   const hasSvelte = frontend.includes("svelte");
@@ -613,6 +614,36 @@ function buildServerVars(
       condition: database !== "none" && dbSetup === "none",
     },
     {
+      key: "S3_BUCKET",
+      value: "",
+      condition: addons.includes("s3-storage"),
+      comment: "S3-compatible bucket name",
+    },
+    {
+      key: "S3_REGION",
+      value: "auto",
+      condition: addons.includes("s3-storage"),
+      comment: "S3 region (use auto for Cloudflare R2)",
+    },
+    {
+      key: "S3_ENDPOINT",
+      value: "",
+      condition: addons.includes("s3-storage"),
+      comment: "Optional S3-compatible endpoint (for example Cloudflare R2 or MinIO)",
+    },
+    {
+      key: "S3_ACCESS_KEY_ID",
+      value: "",
+      condition: addons.includes("s3-storage"),
+      comment: "S3-compatible access key",
+    },
+    {
+      key: "S3_SECRET_ACCESS_KEY",
+      value: "",
+      condition: addons.includes("s3-storage"),
+      comment: "S3-compatible secret key",
+    },
+    {
       key: "ABACATEPAY_API_KEY",
       value: "",
       condition: payments.includes("abacatepay"),
@@ -674,6 +705,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     payments,
     observability,
     communication,
+    addons,
   } = config;
 
   const hasReactRouter = frontend.includes("react-router");
@@ -805,6 +837,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     examples,
     observability,
     communication,
+    addons,
   );
 
   if (backend === "self") {

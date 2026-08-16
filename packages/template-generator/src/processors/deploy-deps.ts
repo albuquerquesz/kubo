@@ -98,7 +98,7 @@ export function processDeployDeps(vfs: VirtualFileSystem, config: ProjectConfig)
           devDependencies: ["@sveltejs/adapter-node"],
         });
       } else if (frontend.includes("tanstack-start")) {
-        // Same section as the evlog addon so the two never duplicate nitro
+        // Keep the Nitro dependency in the web package for TanStack Start
         addPackageDependency({
           vfs,
           packagePath: webPkgPath,

@@ -58,14 +58,10 @@ const TECH_HREFS: Record<string, string> = {
   npm: "https://www.npmjs.com",
   pnpm: "https://pnpm.io",
   tauri: "https://tauri.app",
-  starlight: "https://starlight.astro.build",
-  fumadocs: "https://fumadocs.dev",
   biome: "https://biomejs.dev",
   oxlint: "https://oxc.rs",
   turborepo: "https://turbo.build",
-  nx: "https://nx.dev",
   "vite-plus": "https://viteplus.dev",
-  ultracite: "https://www.ultracite.ai",
 };
 
 const SHOW_CATEGORIES = [

@@ -1,8 +1,9 @@
 import type { ProjectConfig } from "@kubojs/types";
 
-function normalizeMultiValues(values: string[] | undefined): string[] {
-  if (!values || values.length === 0) return [];
-  const filtered = values.filter((value) => value !== "none");
+function normalizeMultiValues(values: string[] | string | undefined): string[] {
+  if (!values || (Array.isArray(values) && values.length === 0)) return [];
+  const normalized = Array.isArray(values) ? values : [values];
+  const filtered = normalized.filter((value) => value !== "none");
   return Array.from(new Set(filtered));
 }
 
@@ -42,12 +43,9 @@ export function generateReproducibleCommand(config: ProjectConfig): string {
   flags.push(`--orm ${config.orm}`);
   flags.push(`--api ${config.api}`);
   flags.push(`--auth ${config.auth}`);
-  flags.push(`--payments ${config.payments.join(" ") || "none"}`);
-  const observability = Array.isArray(config.observability)
-    ? config.observability
-    : config.observability === "none"
-      ? []
-      : [config.observability];
+  const payments = normalizeMultiValues(config.payments);
+  flags.push(`--payments ${payments.join(" ") || "none"}`);
+  const observability = normalizeMultiValues(config.observability);
   if (observability.length === 0) {
     flags.push("--disable-observability");
   } else {

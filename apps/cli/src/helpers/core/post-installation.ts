@@ -107,9 +107,6 @@ export async function displayPostInstallInstructions(
       : "";
   const pwaInstructions =
     addons?.includes("pwa") && frontend?.includes("react-router") ? getPwaInstructions() : "";
-  const starlightInstructions = addons?.includes("starlight")
-    ? getStarlightInstructions(runCmd)
-    : "";
   const playwrightInstructions = testing?.includes("playwright")
     ? getPlaywrightInstructions(runCmd)
     : "";
@@ -185,15 +182,14 @@ export async function displayPostInstallInstructions(
   }
 
   const hasStandaloneBackend = backend !== "none";
-  const hasAnyService =
-    hasWeb || hasStandaloneBackend || addons?.includes("starlight") || addons?.includes("fumadocs");
+  const hasAnyService = hasWeb || hasStandaloneBackend;
 
   if (hasAnyService) {
     output += `${pc.bold("Your project will be available at:")}\n`;
 
     if (hasWeb) {
       output += `${pc.cyan("•")} Frontend: http://localhost:${webPort}\n`;
-    } else if (!hasNative && !addons?.includes("starlight")) {
+    } else if (!hasNative) {
       output += `${pc.yellow(
         "NOTE:",
       )} You are creating a backend-only app\n   (no frontend selected)\n`;
@@ -216,14 +212,6 @@ export async function displayPostInstallInstructions(
         frontend?.includes("next") || frontend?.includes("tanstack-start") ? "/api/rpc" : "/rpc";
       output += `${pc.cyan("•")} OpenAPI (Scalar UI): http://localhost:${webPort}${rpcPath}/api-reference\n`;
     }
-
-    if (addons?.includes("starlight")) {
-      output += `${pc.cyan("•")} Docs: http://localhost:4321\n`;
-    }
-
-    if (addons?.includes("fumadocs")) {
-      output += `${pc.cyan("•")} Fumadocs: http://localhost:4000\n`;
-    }
   }
 
   if (nativeInstructions) output += `\n${nativeInstructions.trim()}\n`;
@@ -235,7 +223,6 @@ export async function displayPostInstallInstructions(
   if (vitePlusNativeHooksInstructions) output += `\n${vitePlusNativeHooksInstructions.trim()}\n`;
   if (lintingInstructions) output += `\n${lintingInstructions.trim()}\n`;
   if (pwaInstructions) output += `\n${pwaInstructions.trim()}\n`;
-  if (starlightInstructions) output += `\n${starlightInstructions.trim()}\n`;
   if (playwrightInstructions) output += `\n${playwrightInstructions.trim()}\n`;
   if (clerkInstructions) output += `\n${clerkInstructions.trim()}\n`;
   if (betterAuthConvexInstructions) output += `\n${betterAuthConvexInstructions.trim()}\n`;
@@ -458,14 +445,6 @@ function getPwaInstructions() {
   return `\n${pc.bold("PWA with React Router v7:")}\n${pc.yellow(
     "NOTE:",
   )} There is a known compatibility issue between VitePWA\n   and React Router v7. See:\n   https://github.com/vite-pwa/vite-plugin-pwa/issues/809`;
-}
-
-function getStarlightInstructions(runCmd: string) {
-  return `\n${pc.bold("Documentation with Starlight:")}\n${pc.cyan(
-    "•",
-  )} Start docs site: ${`cd apps/docs && ${runCmd} dev`}\n${pc.cyan(
-    "•",
-  )} Build docs site: ${`cd apps/docs && ${runCmd} build`}`;
 }
 
 function getNoOrmWarning() {

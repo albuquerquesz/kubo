@@ -320,6 +320,125 @@ export default defineConfig({
   images: ["public/logo.png"],
 });
 `],
+  ["addons/s3-storage/packages/storage/package.json.hbs", `{
+  "name": "@{{projectName}}/storage",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}
+`],
+  ["addons/s3-storage/packages/storage/src/bucket.ts.hbs", `export type BucketConfig = {
+  bucket: string;
+};
+
+export type BucketUploadInput = {
+  key: string;
+  body: string | Uint8Array | ArrayBuffer;
+  contentType?: string;
+  metadata?: Record<string, string>;
+};
+
+export abstract class Bucket<TObject = unknown> {
+  protected readonly bucket: string;
+
+  protected constructor(config: BucketConfig) {
+    this.bucket = config.bucket;
+  }
+
+  abstract upload(input: BucketUploadInput): Promise<void>;
+
+  abstract download(key: string): Promise<TObject>;
+
+  abstract exists(key: string): Promise<boolean>;
+
+  abstract delete(key: string): Promise<void>;
+
+  abstract getSignedUrl(key: string, expiresIn?: number): Promise<string>;
+}
+`],
+  ["addons/s3-storage/packages/storage/src/index.ts.hbs", `import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  HeadObjectCommand,
+  PutObjectCommand,
+  S3Client,
+  type GetObjectCommandOutput,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+import { Bucket, type BucketConfig, type BucketUploadInput } from "./bucket";
+
+export type S3BucketConfig = BucketConfig & {
+  region: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  endpoint?: string;
+  forcePathStyle?: boolean;
+};
+
+export class S3Bucket extends Bucket<GetObjectCommandOutput> {
+  private readonly client: S3Client;
+
+  constructor(config: S3BucketConfig) {
+    super(config);
+    this.client = new S3Client({
+      region: config.region,
+      endpoint: config.endpoint,
+      forcePathStyle: config.forcePathStyle ?? Boolean(config.endpoint),
+      credentials: {
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey,
+      },
+    });
+  }
+
+  async upload(input: BucketUploadInput): Promise<void> {
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: input.key,
+        Body: input.body,
+        ContentType: input.contentType,
+        Metadata: input.metadata,
+      }),
+    );
+  }
+
+  download(key: string): Promise<GetObjectCommandOutput> {
+    return this.client.send(new GetObjectCommand({ Bucket: this.bucket, Key: key }));
+  }
+
+  async exists(key: string): Promise<boolean> {
+    try {
+      await this.client.send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }));
+      return true;
+    } catch (error) {
+      if (error instanceof Error && error.name === "NotFound") return false;
+      throw error;
+    }
+  }
+
+  async delete(key: string): Promise<void> {
+    await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
+  }
+
+  getSignedUrl(key: string, expiresIn = 900): Promise<string> {
+    return getSignedUrl(this.client, new GetObjectCommand({ Bucket: this.bucket, Key: key }), {
+      expiresIn,
+    });
+  }
+}
+
+export { Bucket } from "./bucket";
+export type { BucketConfig, BucketUploadInput } from "./bucket";
+`],
+  ["addons/s3-storage/packages/storage/tsconfig.json.hbs", `{
+  "extends": "../config/tsconfig.base.json",
+  "include": ["src"]
+}
+`],
   ["api/orpc/fullstack/astro/src/pages/rpc/[...rest].ts.hbs", `import type { APIRoute } from "astro";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
@@ -25402,7 +25521,7 @@ declare module "cloudflare:workers" {
   ["extras/pnpm-workspace.yaml.hbs", `packages:
   - "apps/*"
   - "packages/*"
-{{#if (or (eq runtime "node") (eq webDeploy "cloudflare") (eq serverDeploy "cloudflare") (eq webDeploy "docker") (eq serverDeploy "docker") (eq webDeploy "vercel") (eq serverDeploy "vercel") (eq orm "prisma") (includes addons "lefthook") (includes addons "nx") (includes addons "pwa") (includes addons "turborepo") (includes addons "vite-plus") (includes frontend "react-router") (includes frontend "next") (includes frontend "nuxt"))}}
+{{#if (or (eq runtime "node") (eq webDeploy "cloudflare") (eq serverDeploy "cloudflare") (eq webDeploy "docker") (eq serverDeploy "docker") (eq webDeploy "vercel") (eq serverDeploy "vercel") (eq orm "prisma") (includes addons "lefthook") (includes addons "pwa") (includes addons "turborepo") (includes addons "vite-plus") (includes frontend "react-router") (includes frontend "next") (includes frontend "nuxt"))}}
 
 # pnpm 11 blocks dependency lifecycle scripts unless they are approved here.
 # Entries are scoped to packages this generated stack can pull in.
@@ -25426,9 +25545,6 @@ allowBuilds:
 {{/if}}
 {{#if (includes addons "lefthook")}}
   lefthook: true
-{{/if}}
-{{#if (includes addons "nx")}}
-  nx: true
 {{/if}}
 {{/if}}
 `],
@@ -37636,4 +37752,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 612;
+export const TEMPLATE_COUNT = 616;

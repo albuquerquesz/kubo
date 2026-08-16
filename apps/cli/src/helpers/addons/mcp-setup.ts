@@ -191,10 +191,6 @@ export function getRecommendedMcpServers(
   const serversByKey = new Map(getAllMcpServers(config).map((server) => [server.key, server]));
   const recommendedServerKeys: McpServerKey[] = ["kubojs", "context7"];
 
-  if (scope === "project" && config.addons.includes("nx")) {
-    recommendedServerKeys.push("nx");
-  }
-
   if (
     config.runtime === "workers" ||
     config.webDeploy === "cloudflare" ||

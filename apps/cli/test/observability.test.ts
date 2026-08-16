@@ -275,7 +275,7 @@ describe("observability CLI flag processing", () => {
       backend: "none",
     });
     expect(noneConfig.observability).toEqual([]);
-    expect(noneConfig.payments).toBe("none");
+    expect(noneConfig.payments).toEqual([]);
 
     const getMonitorConfig = processFlags({
       observability: "getmonitor",

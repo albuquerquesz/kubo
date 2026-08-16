@@ -392,32 +392,6 @@ Se uma API for selecionada, um utilitário de cliente é adicionado:
 - API=trpc: `utils/trpc.ts`
 - API=orpc: `utils/orpc.ts`
 
-## Estrutura da documentação
-
-### Starlight (apps/docs)
-
-<Files>
-  <Folder name="apps/docs" defaultOpen>
-    <Folder name="src" defaultOpen>
-      <Folder name="content">
-        <Folder name="docs">
-          <File name="..." />
-        </Folder>
-      </Folder>
-      <Folder name="pages">
-        <File name="..." />
-      </Folder>
-    </Folder>
-    <File name="astro.config.mjs" />
-    <File name="package.json" />
-    <File name="tsconfig.json" />
-  </Folder>
-</Files>
-
-### Fumadocs (apps/fumadocs)
-
-O Fumadocs é gerado por `create-fumadocs-app` dentro de `apps/fumadocs`. A estrutura exata depende do template escolhido (MDX vs static).
-
 ### Electrobun (apps/desktop)
 
 O Electrobun adiciona um workspace `apps/desktop` com seu próprio `package.json`, `electrobun.config.ts` e `src/bun/index.ts`. O shell desktop reutiliza `apps/web` no desenvolvimento e empacota a saída estática buildada para releases. Use um backend separado ou nenhum backend para apps desktop; `--backend self` emite rotas de server dentro de `apps/web` e não pode ser empacotado como assets estáticos de desktop.
@@ -436,7 +410,7 @@ O Electrobun adiciona um workspace `apps/desktop` com seu próprio `package.json
   "backend": "<none|hono|express|fastify|elysia|convex|self>",
   "runtime": "<bun|node|workers|none>",
   "frontend": ["<tanstack-router|react-router|tanstack-start|next|nuxt|svelte|solid|astro|native-bare|native-uniwind|native-unistyles|none>"] ,
-  "addons": ["<pwa|tauri|electrobun|starlight|fumadocs|biome|lefthook|husky|mcp|turborepo|nx|vite-plus|ultracite|oxlint|opentui|wxt|skills|evlog|none>"] ,
+  "addons": ["<pwa|tauri|electrobun|biome|lefthook|husky|mcp|turborepo|vite-plus|oxlint|opentui|skills|s3-storage|none>"] ,
   "examples": ["<ai|todo|none>"] ,
   "auth": <"better-auth"|"clerk"|"none">,
   "packageManager": "<bun|pnpm|npm>",
@@ -466,10 +440,6 @@ Gerado somente se você escolheu o addon Turborepo.
   }
 }
 ```
-
-### Config Nx (nx.json)
-
-Gerado somente se você escolheu o addon Nx.
 
 ### Config Vite+
 

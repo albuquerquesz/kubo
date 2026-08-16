@@ -140,9 +140,6 @@ export const hasTauriCompatibleFrontend = (webFrontend: string[], backend = "") 
 export const hasElectrobunCompatibleFrontend = (webFrontend: string[], backend = "") =>
   hasStaticDesktopCompatibleBackend(backend) && webFrontend.some(isDesktopWebFrontend);
 
-export const hasEvlogCompatibleBackend = (backend: string) =>
-  ["hono", "express", "fastify", "elysia", ...selfHostedFullstackBackends].includes(backend);
-
 export const hasPlaywrightCompatibleFrontend = (webFrontend: string[]) =>
   webFrontend.some(isDesktopWebFrontend);
 
@@ -700,7 +697,6 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
     nextStack.webFrontend,
     nextStack.backend,
   );
-  const evlogCompat = hasEvlogCompatibleBackend(nextStack.backend);
 
   if (!pwaCompat && nextStack.addons.includes("pwa")) {
     nextStack.addons = nextStack.addons.filter((a) => a !== "pwa");
@@ -740,15 +736,6 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
       message: isSelfHostedFullstackBackend(nextStack.backend)
         ? "Electrobun removido (exige um backend separado ou nenhum backend)"
         : "Electrobun removido (exige frontend compatível)",
-    });
-  }
-  if (!evlogCompat && nextStack.addons.includes("evlog")) {
-    nextStack.addons = nextStack.addons.filter((a) => a !== "evlog");
-    if (nextStack.addons.length === 0) nextStack.addons = ["none"];
-    changed = true;
-    changes.push({
-      category: "addons",
-      message: "evlog removido (exige um servidor ou backend fullstack)",
     });
   }
 
@@ -1240,9 +1227,6 @@ export const getDisabledReason = (
         return "Electrobun exige um backend separado ou nenhum backend";
       }
       return "Electrobun exige um frontend web";
-    }
-    if (optionId === "evlog" && !hasEvlogCompatibleBackend(currentStack.backend)) {
-      return "evlog exige Hono, Express, Fastify, Elysia ou um backend fullstack";
     }
     // Task runners are mutually exclusive in the CLI, but the builder lets users swap them.
     // URL/state sanitization keeps only the latest selected runner before generating commands.

@@ -22,9 +22,9 @@ import { ValidationError } from "./errors";
 
 type ValidationResult = Result<void, ValidationError>;
 type AddonCompatibilityConfig = Pick<ProjectConfig, "frontend" | "auth" | "backend" | "runtime">;
-const TASK_RUNNER_ADDONS: readonly Addons[] = ["turborepo", "nx", "vite-plus"];
+const TASK_RUNNER_ADDONS: readonly Addons[] = ["turborepo", "vite-plus"];
 /** Mutually exclusive code-quality linters (one slot). */
-export const LINTER_ADDONS: readonly Addons[] = ["biome", "oxlint", "ultracite"];
+export const LINTER_ADDONS: readonly Addons[] = ["biome", "oxlint"];
 const STATIC_DESKTOP_ADDONS: readonly Addons[] = ["tauri", "electrobun"];
 
 export function isLinterAddon(addon: string): boolean {
@@ -137,31 +137,6 @@ const FULLSTACK_FRONTENDS: readonly Frontend[] = [
   "svelte",
   "astro",
 ] as const;
-
-const EVLOG_SERVER_BACKENDS: readonly Backend[] = ["hono", "express", "fastify", "elysia"];
-const EVLOG_FULLSTACK_FRONTENDS: readonly Frontend[] = FULLSTACK_FRONTENDS;
-
-const evlogCompatibilityMessage =
-  "evlog addon supports Hono, Express, Fastify, Elysia, or backend self with Next.js, TanStack Start, Nuxt, SvelteKit, or Astro. Convex and backend none are not supported yet.";
-
-export function supportsEvlogAddon(
-  frontend: Frontend[] = [],
-  backend?: Backend,
-  _runtime?: Runtime,
-) {
-  if (!backend) return true;
-
-  if (EVLOG_SERVER_BACKENDS.includes(backend)) {
-    return true;
-  }
-
-  if (backend === "self") {
-    if (frontend.length === 0) return true;
-    return frontend.some((f) => EVLOG_FULLSTACK_FRONTENDS.includes(f));
-  }
-
-  return false;
-}
 
 export function validateSelfBackendCompatibility(
   providedFlags: Set<string>,
@@ -483,13 +458,6 @@ export function validateAddonCompatibility(
   backend?: Backend,
   runtime?: Runtime,
 ): { isCompatible: boolean; reason?: string } {
-  if (addon === "evlog" && !supportsEvlogAddon(frontend, backend, runtime)) {
-    return {
-      isCompatible: false,
-      reason: evlogCompatibilityMessage,
-    };
-  }
-
   if (
     STATIC_DESKTOP_ADDONS.includes(addon) &&
     auth === "clerk" &&
@@ -521,7 +489,14 @@ export function validateAddonCompatibility(
     };
   }
 
-  const compatibleFrontends = ADDON_COMPATIBILITY[addon];
+  if (!(addon in ADDON_COMPATIBILITY)) {
+    return {
+      isCompatible: false,
+      reason: `${addon} is not a supported addon`,
+    };
+  }
+
+  const compatibleFrontends = ADDON_COMPATIBILITY[addon as keyof typeof ADDON_COMPATIBILITY];
 
   if (compatibleFrontends.length > 0) {
     const hasCompatibleFrontend = frontend.some((f) =>
@@ -575,14 +550,14 @@ export function validateAddonsAgainstFrontends(
   const selectedTaskRunners = addons.filter((addon) => TASK_RUNNER_ADDONS.includes(addon));
   if (selectedTaskRunners.length > 1) {
     return validationErr(
-      "Cannot combine 'turborepo', 'nx', and 'vite-plus' addons. Choose one task runner.",
+      "Cannot combine 'turborepo' and 'vite-plus' addons. Choose one task runner.",
     );
   }
 
   const selectedLinters = [...new Set(addons.filter((addon) => LINTER_ADDONS.includes(addon)))];
   if (selectedLinters.length > 1) {
     return validationErr(
-      "Cannot combine 'biome', 'oxlint', and 'ultracite' addons. Choose one code-quality linter.",
+      "Cannot combine 'biome' and 'oxlint' addons. Choose one code-quality linter.",
     );
   }
 

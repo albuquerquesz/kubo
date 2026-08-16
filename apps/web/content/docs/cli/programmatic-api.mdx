@@ -212,9 +212,7 @@ const result = await create("my-app", {
   database: "postgres",
   orm: "drizzle",
   auth: "better-auth",
-  addonOptions: {
-    wxt: { template: "react" },
-  },
+  addons: ["s3-storage"],
   dbSetupOptions: {
     mode: "manual",
   },

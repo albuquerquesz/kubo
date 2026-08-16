@@ -1,7 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
-{{#if (or (eq runtime "node") (eq webDeploy "cloudflare") (eq serverDeploy "cloudflare") (eq webDeploy "docker") (eq serverDeploy "docker") (eq webDeploy "vercel") (eq serverDeploy "vercel") (eq orm "prisma") (includes addons "lefthook") (includes addons "nx") (includes addons "pwa") (includes addons "turborepo") (includes addons "vite-plus") (includes frontend "react-router") (includes frontend "next") (includes frontend "nuxt"))}}
+{{#if (or (eq runtime "node") (eq webDeploy "cloudflare") (eq serverDeploy "cloudflare") (eq webDeploy "docker") (eq serverDeploy "docker") (eq webDeploy "vercel") (eq serverDeploy "vercel") (eq orm "prisma") (includes addons "lefthook") (includes addons "pwa") (includes addons "turborepo") (includes addons "vite-plus") (includes frontend "react-router") (includes frontend "next") (includes frontend "nuxt"))}}
 
 # pnpm 11 blocks dependency lifecycle scripts unless they are approved here.
 # Entries are scoped to packages this generated stack can pull in.
@@ -25,8 +25,5 @@ allowBuilds:
 {{/if}}
 {{#if (includes addons "lefthook")}}
   lefthook: true
-{{/if}}
-{{#if (includes addons "nx")}}
-  nx: true
 {{/if}}
 {{/if}}
