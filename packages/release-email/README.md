@@ -34,4 +34,12 @@ await sendReleaseChangelogEmail({
 });
 ```
 
-O remetente precisa pertencer a um domínio verificado na Notifique. Configure `NOTIFIQUE_API_KEY`, `NOTIFIQUE_FROM_EMAIL` e, opcionalmente, `NOTIFIQUE_BASE_URL`. O envio usa `POST /v1/email/messages` e preserva HTML e texto simples.
+O remetente precisa pertencer a um domínio verificado na Notifique. Configure:
+
+```env
+NOTIFIQUE_API_KEY=
+NOTIFIQUE_FROM_EMAIL=
+NOTIFIQUE_BASE_URL=https://api.notifique.dev
+```
+
+O envio usa `POST /v1/email/messages` e preserva HTML e texto simples.
