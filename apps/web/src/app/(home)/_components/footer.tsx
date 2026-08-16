@@ -38,6 +38,34 @@ export default function Footer() {
         aria-label="Navegação do rodapé"
         className="grid border-rule sm:grid-cols-2 lg:grid-cols-4"
       >
+        <div className="border-rule p-6 sm:p-8 lg:px-4 lg:py-20">
+          <p id="newsletter-title" className="ui-kicker text-primary">
+            Newsletter
+          </p>
+          <form
+            className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center"
+            action="/updates/newsletter"
+            method="get"
+          >
+            <label className="sr-only" htmlFor="footer-newsletter-email">
+              Seu email
+            </label>
+            <input
+              id="footer-newsletter-email"
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
+              placeholder="voce@exemplo.com"
+              className="min-h-12 min-w-0 flex-1 rounded-2xl border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40"
+            />
+            <Button type="submit" variant="cta" size="lg" className="shrink-0">
+              Entrar
+              <ArrowUpRight className="size-4" />
+            </Button>
+          </form>
+        </div>
+
         {footerGroups.map((group) => (
           <div
             key={group.label}
@@ -65,29 +93,6 @@ export default function Footer() {
             </ul>
           </div>
         ))}
-        <div className="border-rule p-6 sm:p-8 lg:p-12 lg:py-20">
-          <p id="newsletter-title" className="ui-kicker text-primary">
-            Newsletter
-          </p>
-          <form className="mt-8 flex flex-col gap-3" action="/updates/newsletter" method="get">
-            <label className="sr-only" htmlFor="footer-newsletter-email">
-              Seu email
-            </label>
-            <input
-              id="footer-newsletter-email"
-              name="email"
-              type="email"
-              required
-              autoComplete="email"
-              placeholder="voce@exemplo.com"
-              className="min-h-12 min-w-0 border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40"
-            />
-            <Button type="submit" variant="default" size="lg" className="min-h-12 w-full">
-              Entrar na lista
-              <ArrowUpRight className="size-4" />
-            </Button>
-          </form>
-        </div>
       </nav>
 
       <div className="grid border-rule border-t sm:grid-cols-2">
