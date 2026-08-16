@@ -44,8 +44,8 @@ export default function Footer() {
           </p>
           <form
             className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center"
-            action="/updates/newsletter"
-            method="get"
+            action="/api/newsletter"
+            method="post"
           >
             <label className="sr-only" htmlFor="footer-newsletter-email">
               Seu email
