@@ -16,7 +16,7 @@ export async function getApiChoice(
     return "none";
   }
 
-  const allowed = allowedApisForFrontends(frontend ?? []);
+  const allowed = allowedApisForFrontends(frontend ?? [], backend);
 
   if (Api) {
     const compat = validateApiFrontendCompatibility(Api, frontend ?? []);
@@ -36,11 +36,17 @@ export async function getApiChoice(
             label: "oRPC",
             hint: "End-to-end type-safe APIs that adhere to OpenAPI standards",
           }
-        : {
-            value: "none" as const,
-            label: "None",
-            hint: "No API layer (e.g. for full-stack frameworks like Next.js with Route Handlers)",
-          },
+        : a === "orval"
+          ? {
+              value: "orval" as const,
+              label: "Orval",
+              hint: "OpenAPI REST APIs with generated Hono handlers and Fetch clients",
+            }
+          : {
+              value: "none" as const,
+              label: "None",
+              hint: "No API layer (e.g. for full-stack frameworks like Next.js with Route Handlers)",
+            },
   );
 
   const apiType = await navigableSelect<API>({

@@ -1677,6 +1677,138 @@ export const client: AppRouterClient = createORPCClient(link);
 
 export const orpc = createTanstackQueryUtils(client);
 `],
+  ["api/orval/server/_gitignore", `# dependencies (bun install)
+node_modules
+
+# generated build output
+dist
+out
+
+# local environment files
+.env
+.env.*
+`],
+  ["api/orval/server/openapi.yaml.hbs", `openapi: 3.0.3
+info:
+  title: {{projectName}} API
+  version: 1.0.0
+  description: REST API generated with Orval from this OpenAPI contract.
+servers:
+  - url: /api
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      tags:
+        - health
+      responses:
+        '200':
+          description: API health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+`],
+  ["api/orval/server/orval.config.ts.hbs", `import { defineConfig } from "orval";
+
+export default defineConfig({
+  server: {
+    input: { target: "./openapi.yaml" },
+    output: {
+      mode: "split",
+      client: "hono",
+      target: "../server/src/generated/routes.ts",
+      schemas: "../server/src/generated/schemas",
+      override: {
+        hono: {
+          handlers: "../server/src/generated/handlers",
+        },
+      },
+    },
+  },
+  client: {
+    input: { target: "./openapi.yaml" },
+    output: {
+      client: "fetch",
+      target: "./src/generated/client.ts",
+      schemas: "./src/generated/models",
+      baseUrl: "/api",
+    },
+  },
+});
+`],
+  ["api/orval/server/package.json.hbs", `{
+  "name": "@{{projectName}}/api",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "api:generate": "orval --config ./orval.config.ts"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
+`],
+  ["api/orval/server/src/generated/client.ts.hbs", `export type HealthResponse = {
+  status: "ok";
+};
+
+export async function getHealth(baseUrl = ""): Promise<HealthResponse> {
+  const response = await fetch(\`\${baseUrl}/api/health\`);
+  if (!response.ok) {
+    throw new Error(\`Health request failed with status \${response.status}\`);
+  }
+  return response.json() as Promise<HealthResponse>;
+}
+`],
+  ["api/orval/server/src/generated/handlers/health.ts.hbs", `import { createFactory } from "hono/factory";
+
+const factory = createFactory();
+
+export const getHealthHandlers = factory.createHandlers(async (c) => {
+  return c.json({ status: "ok" as const });
+});
+`],
+  ["api/orval/server/src/generated/routes.ts.hbs", `import { Hono } from "hono";
+
+import { getHealthHandlers } from "./handlers/health";
+
+const routes = new Hono();
+
+routes.get("/health", ...getHealthHandlers);
+
+export default routes;
+`],
+  ["api/orval/server/src/index.ts.hbs", `export * from "./generated/client";
+`],
+  ["api/orval/server/tsconfig.json.hbs", `{
+  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "composite": true
+  }
+}
+`],
   ["api/trpc/fullstack/next/src/app/api/trpc/[trpc]/route.ts.hbs", `import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "@{{projectName}}/api/routers/index";
 import { createContext } from "@{{projectName}}/api/context";
@@ -14562,6 +14694,9 @@ import { trpcServer } from "@hono/trpc-server";
 import { createContext } from "@{{projectName}}/api/context";
 import { appRouter } from "@{{projectName}}/api/routers/index";
 {{/if}}
+{{#if (eq api "orval")}}
+import orvalRoutes from "./generated/routes";
+{{/if}}
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
 import { createAuth } from "@{{projectName}}/auth";
@@ -14748,6 +14883,10 @@ app.use(
 		},
 	})
 );
+{{/if}}
+
+{{#if (eq api "orval")}}
+app.route("/api", orvalRoutes);
 {{/if}}
 
 {{#if (and (includes examples "ai") (or (eq runtime "bun") (eq runtime "node")))}}
@@ -37497,4 +37636,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 603;
+export const TEMPLATE_COUNT = 612;

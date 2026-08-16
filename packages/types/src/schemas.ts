@@ -87,7 +87,7 @@ export const DatabaseSetupSchema = z
   ])
   .describe("Database hosting setup");
 
-export const APISchema = z.enum(["trpc", "orpc", "none"]).describe("API type");
+export const APISchema = z.enum(["trpc", "orpc", "orval", "none"]).describe("API type");
 
 export const AuthSchema = z
   .enum(["better-auth", "clerk", "none"])

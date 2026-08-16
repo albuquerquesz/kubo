@@ -1,0 +1,7 @@
+import { createFactory } from "hono/factory";
+
+const factory = createFactory();
+
+export const getHealthHandlers = factory.createHandlers(async (c) => {
+  return c.json({ status: "ok" as const });
+});

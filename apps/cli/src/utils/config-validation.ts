@@ -9,6 +9,7 @@ import {
   supportsConvexBetterAuth,
   validateAddonsAgainstFrontends,
   validateApiFrontendCompatibility,
+  isApiCompatibleWithBackend,
   validateExamplesCompatibility,
   validatePaymentsCompatibility,
   validateTestingAgainstFrontends,
@@ -478,6 +479,18 @@ export function validateApiConstraints(
   config: Partial<ProjectConfig>,
   options: CLIInput,
 ): ValidationResult {
+  if (!isApiCompatibleWithBackend(config.api, config.backend)) {
+    return validationErr(
+      "Orval API requires the Hono backend in this version. Please use '--backend hono' or choose tRPC/oRPC.",
+    );
+  }
+
+  if (config.api === "orval" && options.examples?.includes("todo")) {
+    return validationErr(
+      "The Orval API layer does not support the generated todo example yet. Please remove 'todo' from --examples or choose tRPC/oRPC.",
+    );
+  }
+
   if (config.api === "none") {
     if (
       options.examples?.includes("todo") &&

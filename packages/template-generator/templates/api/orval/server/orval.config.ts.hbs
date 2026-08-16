@@ -1,0 +1,27 @@
+import { defineConfig } from "orval";
+
+export default defineConfig({
+  server: {
+    input: { target: "./openapi.yaml" },
+    output: {
+      mode: "split",
+      client: "hono",
+      target: "../server/src/generated/routes.ts",
+      schemas: "../server/src/generated/schemas",
+      override: {
+        hono: {
+          handlers: "../server/src/generated/handlers",
+        },
+      },
+    },
+  },
+  client: {
+    input: { target: "./openapi.yaml" },
+    output: {
+      client: "fetch",
+      target: "./src/generated/client.ts",
+      schemas: "./src/generated/models",
+      baseUrl: "/api",
+    },
+  },
+});

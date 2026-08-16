@@ -1,0 +1,10 @@
+# dependencies (bun install)
+node_modules
+
+# generated build output
+dist
+out
+
+# local environment files
+.env
+.env.*

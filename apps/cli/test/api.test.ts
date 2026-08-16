@@ -158,6 +158,99 @@ describe("API Configurations", () => {
     }
   });
 
+  describe("Orval API", () => {
+    it("should generate an OpenAPI contract and Hono REST route", async () => {
+      const result = await createVirtual({
+        projectName: "orval-hono",
+        api: "orval",
+        frontend: ["tanstack-router"],
+        backend: "hono",
+        runtime: "bun",
+        database: "sqlite",
+        orm: "drizzle",
+        auth: "none",
+        addons: ["none"],
+        examples: ["none"],
+        disableObservability: true,
+      });
+
+      if (result.isErr()) throw result.error;
+
+      const files = collectFiles(result.value.root, result.value.root.path);
+      expect(files.get("apps/api/openapi.yaml")).toContain("openapi: 3.0.3");
+      expect(files.get("apps/api/orval.config.ts")).toContain('client: "hono"');
+      expect(files.get("apps/api/package.json")).toContain('"api:generate"');
+      expect(files.get("apps/server/src/generated/routes.ts")).toContain('routes.get("/health"');
+      expect(files.get("apps/api/src/generated/client.ts")).toContain("getHealth");
+      expect(files.get("apps/server/src/index.ts")).toContain('app.route("/api", orvalRoutes)');
+    });
+
+    it("should work with non-React web frontends on Hono", async () => {
+      const result = await runTRPCTest({
+        projectName: "orval-nuxt",
+        api: "orval",
+        frontend: ["nuxt"],
+        backend: "hono",
+        runtime: "bun",
+        database: "none",
+        orm: "none",
+        auth: "none",
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+        install: false,
+      });
+
+      expectSuccess(result);
+    });
+
+    it("should reject Orval with a non-Hono backend", async () => {
+      const result = await runTRPCTest({
+        projectName: "orval-express-fail",
+        api: "orval",
+        frontend: ["tanstack-router"],
+        backend: "express",
+        runtime: "bun",
+        database: "none",
+        orm: "none",
+        auth: "none",
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+        install: false,
+        expectError: true,
+      });
+
+      expectError(result, "Orval API requires the Hono backend");
+    });
+
+    it("should reject the todo example until it has REST handlers", async () => {
+      const result = await runTRPCTest({
+        projectName: "orval-todo-fail",
+        api: "orval",
+        frontend: ["tanstack-router"],
+        backend: "hono",
+        runtime: "bun",
+        database: "sqlite",
+        orm: "drizzle",
+        auth: "none",
+        addons: ["none"],
+        examples: ["todo"],
+        dbSetup: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+        install: false,
+        expectError: true,
+      });
+
+      expectError(result, "Orval API layer does not support the generated todo example yet");
+    });
+  });
+
   describe("No API", () => {
     it("should work with API none + basic setup", async () => {
       const config = {

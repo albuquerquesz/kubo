@@ -298,16 +298,27 @@ export function supportsConvexBetterAuth(frontends: readonly Frontend[] = []) {
   );
 }
 
-export function allowedApisForFrontends(frontends: Frontend[] = []) {
+export function allowedApisForFrontends(
+  frontends: Frontend[] = [],
+  backend?: ProjectConfig["backend"],
+) {
   const includesNuxt = frontends.includes("nuxt");
   const includesSvelte = frontends.includes("svelte");
   const includesSolid = frontends.includes("solid");
   const includesAstro = frontends.includes("astro");
   const base: API[] = ["trpc", "orpc", "none"];
+  if (backend === "hono") base.splice(2, 0, "orval");
   if (includesNuxt || includesSvelte || includesSolid || includesAstro) {
-    return ["orpc", "none"];
+    return backend === "hono" ? ["orpc", "orval", "none"] : ["orpc", "none"];
   }
   return base;
+}
+
+export function isApiCompatibleWithBackend(
+  api: API | undefined,
+  backend?: ProjectConfig["backend"],
+): boolean {
+  return api !== "orval" || backend === "hono";
 }
 
 export function isExampleTodoAllowed(

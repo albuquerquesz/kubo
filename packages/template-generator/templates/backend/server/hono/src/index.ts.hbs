@@ -13,6 +13,9 @@ import { trpcServer } from "@hono/trpc-server";
 import { createContext } from "@{{projectName}}/api/context";
 import { appRouter } from "@{{projectName}}/api/routers/index";
 {{/if}}
+{{#if (eq api "orval")}}
+import orvalRoutes from "./generated/routes";
+{{/if}}
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
 import { createAuth } from "@{{projectName}}/auth";
@@ -199,6 +202,10 @@ app.use(
 		},
 	})
 );
+{{/if}}
+
+{{#if (eq api "orval")}}
+app.route("/api", orvalRoutes);
 {{/if}}
 
 {{#if (and (includes examples "ai") (or (eq runtime "bun") (eq runtime "node")))}}

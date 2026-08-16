@@ -1,0 +1,31 @@
+openapi: 3.0.3
+info:
+  title: {{projectName}} API
+  version: 1.0.0
+  description: REST API generated with Orval from this OpenAPI contract.
+servers:
+  - url: /api
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      tags:
+        - health
+      responses:
+        '200':
+          description: API health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - ok

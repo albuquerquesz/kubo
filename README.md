@@ -43,7 +43,7 @@ npx create-kubojs@latest
 
 - Frontend: React (TanStack Router, React Router, TanStack Start), Next.js, Nuxt, Svelte, Solid, Astro, React Native (Bare, NativeWind, Unistyles), or none
 - Backend: Hono, Express, Fastify, Elysia, Self (fullstack web app), Convex, or none
-- API: tRPC or oRPC (or none)
+- API: tRPC, oRPC, Orval, or none
 - Runtime: Bun, Node.js, or Cloudflare Workers
 - Databases: SQLite, PostgreSQL, MySQL, MongoDB (or none)
 - ORMs: Drizzle, Prisma, Mongoose (or none)

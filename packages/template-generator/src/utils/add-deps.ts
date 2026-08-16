@@ -117,6 +117,9 @@ export const dependencyVersionMap = {
   "@orpc/zod": "^1.14.6",
   "@orpc/tanstack-query": "^1.14.6",
 
+  orval: "^8.24.0",
+  "@hono/zod-validator": "^0.9.0",
+
   "@trpc/tanstack-react-query": "^11.18.0",
   "@trpc/server": "^11.18.0",
   "@trpc/client": "^11.18.0",

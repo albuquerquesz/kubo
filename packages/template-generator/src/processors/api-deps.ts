@@ -68,6 +68,13 @@ function addApiPackageDeps(
       packagePath: pkgPath,
       dependencies: ["@orpc/server", "@orpc/client", "@orpc/openapi", "@orpc/zod", "zod"],
     });
+  } else if (api === "orval") {
+    addPackageDependency({
+      vfs,
+      packagePath: pkgPath,
+      dependencies: ["zod"],
+      devDependencies: ["orval"],
+    });
   }
 
   // Add next dep for api package when backend is self and frontend includes next
@@ -113,6 +120,12 @@ function addServerDeps(vfs: VirtualFileSystem, api: API, backend: Backend): void
       vfs,
       packagePath: serverPath,
       dependencies: ["@orpc/server", "@orpc/openapi"],
+    });
+  } else if (api === "orval" && backend === "hono") {
+    addPackageDependency({
+      vfs,
+      packagePath: serverPath,
+      dependencies: ["@hono/zod-validator"],
     });
   }
 }

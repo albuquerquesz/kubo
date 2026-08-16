@@ -205,6 +205,10 @@ export async function displayPostInstallInstructions(
       if (api === "orpc") {
         output += `${pc.cyan("•")} OpenAPI (Scalar UI): http://localhost:3000/api-reference\n`;
       }
+      if (api === "orval") {
+        output += `${pc.cyan("•")} OpenAPI contract: apps/api/openapi.yaml\n`;
+        output += `${pc.cyan("•")} Regenerate API code: bun run api:generate\n`;
+      }
     }
 
     if (isBackendSelf && api === "orpc") {

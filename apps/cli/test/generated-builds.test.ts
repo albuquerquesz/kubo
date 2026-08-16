@@ -108,6 +108,22 @@ const buildSamples: BuildSample[] = [
     },
   },
   {
+    name: "hono-orval",
+    config: {
+      ...baseConfig,
+      frontend: ["tanstack-router"],
+      backend: "hono",
+      runtime: "bun",
+      database: "sqlite",
+      orm: "drizzle",
+      api: "orval",
+      auth: "none",
+      payments: "none",
+      addons: ["turborepo"],
+      examples: [],
+    },
+  },
+  {
     name: "convex-clerk-react",
     config: {
       ...baseConfig,

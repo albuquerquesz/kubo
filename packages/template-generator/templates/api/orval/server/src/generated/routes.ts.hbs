@@ -1,0 +1,9 @@
+import { Hono } from "hono";
+
+import { getHealthHandlers } from "./handlers/health";
+
+const routes = new Hono();
+
+routes.get("/health", ...getHealthHandlers);
+
+export default routes;

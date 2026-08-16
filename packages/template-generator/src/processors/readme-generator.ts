@@ -769,6 +769,8 @@ function generateFeaturesList(
     features.push("- **tRPC** - End-to-end type-safe APIs");
   } else if (!isConvex && api === "orpc") {
     features.push("- **oRPC** - End-to-end type-safe APIs with OpenAPI integration");
+  } else if (!isConvex && api === "orval") {
+    features.push("- **Orval** - OpenAPI REST handlers and generated Fetch clients");
   }
 
   if (!isConvex && backend !== "none" && runtime !== "none") {

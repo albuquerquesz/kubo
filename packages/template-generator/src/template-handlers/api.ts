@@ -19,6 +19,19 @@ export async function processApiTemplates(
   if (config.backend === "convex") return;
 
   processTemplatesFromPrefix(vfs, templates, `api/${config.api}/server`, "apps/api", config);
+  if (config.api === "orval") {
+    moveGeneratedFile(
+      vfs,
+      "apps/api/src/generated/routes.ts",
+      "apps/server/src/generated/routes.ts",
+    );
+    moveGeneratedFile(
+      vfs,
+      "apps/api/src/generated/handlers/health.ts",
+      "apps/server/src/generated/handlers/health.ts",
+    );
+    return;
+  }
   moveGeneratedFile(vfs, "apps/api/src/routers/index.ts", "apps/api/src/router.ts");
   vfs.writeFile("apps/api/src/routers/index.ts", 'export * from "../router";\n');
 
