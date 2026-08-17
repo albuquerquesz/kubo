@@ -124,7 +124,7 @@ export async function navigableSelect<T>(opts: NavigableSelectOptions<T>): Promi
       case "selected":
         return `${pc.dim(label)}`;
       case "active":
-        return `${pc.green(S_RADIO_ACTIVE)} ${label}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
+        return `${cliColors.bright(S_RADIO_ACTIVE)} ${label}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
       case "cancelled":
         return `${pc.strikethrough(pc.dim(label))}`;
       default:

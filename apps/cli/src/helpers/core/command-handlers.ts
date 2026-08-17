@@ -160,7 +160,7 @@ async function createProjectHandlerInternal(
     if (!isSilent() && input.renderTitle !== false) {
       renderTitle();
     }
-    if (!isSilent()) intro(cliColors.signal("Creating a new kubojs project"));
+    if (!isSilent()) intro(cliColors.bright("Creating a new kubojs project"));
 
     if (!isSilent() && input.yolo) {
       cliConsola.fatal("YOLO mode enabled - skipping checks. Things may break!");
