@@ -27,7 +27,7 @@ describe("CLI color palette", () => {
       "#E0B43E",
       "#E08A2E",
       "#E0B43E",
-      "#D97724",
+      "#E8A43A",
       "#E08A2E",
       "#E08A2E",
       "#C49314",
