@@ -40,6 +40,13 @@ describe("S3-compatible storage addon", () => {
     expect(bucket).toContain("abstract upload");
     expect(bucket).toContain("abstract getSignedUrl");
     expect(adapter).toContain("extends Bucket<GetObjectCommandOutput>");
+    expect(adapter).toContain("export type S3BucketEnv");
+    expect(adapter).toContain("export function createS3BucketFromEnv");
+    expect(adapter).toContain(
+      "S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY must be provided together",
+    );
+    expect(adapter).toContain('error.name === "NoSuchKey"');
+    expect(adapter).toContain("getS3ErrorStatusCode(error) === 404");
     expect(adapter).toContain("credentials?: {");
     expect(adapter).toContain("...(config.credentials ? { credentials: config.credentials } : {})");
     expect(JSON.parse(packageJson).dependencies["@aws-sdk/client-s3"]).toBeDefined();

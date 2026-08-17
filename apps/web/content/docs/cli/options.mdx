@@ -309,6 +309,22 @@ Recursos adicionais a incluir:
 - `skills`: Instala AI agent skills para assistentes de código (Cursor, Claude Code, GitHub Copilot etc.)
 - `s3-storage`: Pacote de bucket tipado compatível com AWS S3, Cloudflare R2, MinIO e Backblaze
 
+O addon `s3-storage` gera as variáveis `S3_*` e uma factory para criar o adapter no backend:
+
+```typescript
+import { createS3BucketFromEnv } from "@my-project/storage";
+
+const bucket = createS3BucketFromEnv({
+  S3_BUCKET: process.env.S3_BUCKET,
+  S3_REGION: process.env.S3_REGION,
+  S3_ENDPOINT: process.env.S3_ENDPOINT,
+  S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
+});
+```
+
+`S3_ACCESS_KEY_ID` e `S3_SECRET_ACCESS_KEY` devem ser informadas juntas. Sem elas, o SDK pode usar seu provider padrão de credenciais.
+
 ```bash
 kubojs --addons pwa biome husky
 ```

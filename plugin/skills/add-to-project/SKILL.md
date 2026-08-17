@@ -1,6 +1,6 @@
 ---
 name: add-to-project
-description: Add addons or features (PWA, Tauri, Starlight/Fumadocs docs, Biome/Oxlint, Husky/Lefthook, Turborepo/Nx, the MCP addon, etc.) to an existing kubojs project. Use when the user wants to extend, enhance, or add tooling to a project that was created with kubojs.
+description: Add addons or features (PWA, Tauri, Electrobun, Biome/Oxlint, Husky/Lefthook, Turborepo/Vite+, MCP, Skills, or S3-compatible Storage) to an existing kubojs project. Use when the user wants to extend, enhance, or add tooling to a project that was created with kubojs.
 metadata:
   priority: 7
   docs:
@@ -28,9 +28,9 @@ For brand-new projects, use the **scaffold-project** skill instead.
 
 ## Available addons
 
-`pwa`, `tauri`, `electrobun`, `starlight`, `biome`, `lefthook`, `husky`, `mcp`, `turborepo`, `nx`, `vite-plus`, `fumadocs`, `ultracite`, `oxlint`, `opentui`, `wxt`, `skills`, `evlog`.
+`pwa`, `tauri`, `electrobun`, `biome`, `lefthook`, `husky`, `mcp`, `turborepo`, `vite-plus`, `oxlint`, `opentui`, `skills`, `s3-storage`.
 
-Note: `nx`, `turborepo`, and `vite-plus` are mutually exclusive task runners. Use `bts_get_schema` for nested addon options (e.g. Fumadocs templates/search/AI chat, WXT templates, OpenTUI templates).
+Note: `turborepo` and `vite-plus` are mutually exclusive task runners. Use `bts_get_schema` for nested addon options such as OpenTUI templates.
 
 ## Rules
 

@@ -380,6 +380,31 @@ export type S3BucketConfig = BucketConfig & {
   forcePathStyle?: boolean;
 };
 
+export type S3BucketEnv = {
+  S3_BUCKET?: string;
+  S3_REGION?: string;
+  S3_ENDPOINT?: string;
+  S3_ACCESS_KEY_ID?: string;
+  S3_SECRET_ACCESS_KEY?: string;
+};
+
+function getS3ErrorStatusCode(error: Error): number | undefined {
+  const metadata = (error as Error & { $metadata?: unknown }).$metadata;
+  if (typeof metadata !== "object" || metadata === null) return undefined;
+
+  const statusCode = (metadata as { httpStatusCode?: unknown }).httpStatusCode;
+  return typeof statusCode === "number" ? statusCode : undefined;
+}
+
+function isNotFoundError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  return (
+    error.name === "NotFound" ||
+    error.name === "NoSuchKey" ||
+    getS3ErrorStatusCode(error) === 404
+  );
+}
+
 export class S3Bucket extends Bucket<GetObjectCommandOutput> {
   private readonly client: S3Client;
 
@@ -423,7 +448,7 @@ export class S3Bucket extends Bucket<GetObjectCommandOutput> {
       await this.client.send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }));
       return true;
     } catch (error) {
-      if (error instanceof Error && error.name === "NotFound") return false;
+      if (isNotFoundError(error)) return false;
       throw error;
     }
   }
@@ -437,6 +462,28 @@ export class S3Bucket extends Bucket<GetObjectCommandOutput> {
       expiresIn,
     });
   }
+}
+
+export function createS3BucketFromEnv(env: S3BucketEnv): S3Bucket {
+  const bucket = env.S3_BUCKET?.trim();
+  if (!bucket) {
+    throw new Error("S3_BUCKET is required to create an S3 bucket");
+  }
+
+  const accessKeyId = env.S3_ACCESS_KEY_ID?.trim();
+  const secretAccessKey = env.S3_SECRET_ACCESS_KEY?.trim();
+  if (Boolean(accessKeyId) !== Boolean(secretAccessKey)) {
+    throw new Error("S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY must be provided together");
+  }
+
+  return new S3Bucket({
+    bucket,
+    region: env.S3_REGION?.trim() || "auto",
+    endpoint: env.S3_ENDPOINT?.trim() || undefined,
+    ...(accessKeyId && secretAccessKey
+      ? { credentials: { accessKeyId, secretAccessKey } }
+      : {}),
+  });
 }
 
 export { Bucket } from "./bucket";

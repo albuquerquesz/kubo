@@ -22,7 +22,6 @@ Na raiz do repositório você verá:
     <File name="package.json" />
     <File name="kubojs.jsonrc" />
     <File name="turbo.json" />
-    <File name="nx.json" />
     <File name="pnpm-workspace.yaml" />
     <File name="bunfig.toml" />
     <File name=".npmrc" />
@@ -34,7 +33,6 @@ Observações:
 
 - `kubojs.jsonrc` permite que a CLI detecte e aprimore o projeto depois; mantenha-o se planejar usar `kubojs add`.
 - `turbo.json` existe apenas se você escolheu o addon Turborepo.
-- `nx.json` existe apenas se você escolheu o addon Nx.
 - `pnpm-workspace.yaml`, `bunfig.toml` e `.npmrc` são adicionados conforme o gerenciador de pacotes escolhido.
 - `packages/infra` é criado somente quando o deploy Cloudflare está habilitado.
 
@@ -57,9 +55,6 @@ Observações:
       <Folder name="native">
         <File name="..." />
       </Folder>
-      <Folder name="docs">
-        <File name="..." />
-      </Folder>
     </Folder>
     <Folder name="packages">
       <File name="..." />
@@ -70,8 +65,6 @@ Observações:
 Observações:
 
 - `apps/desktop` é criado apenas com o addon Electrobun.
-- `apps/docs` é criado apenas com o addon Starlight.
-- `apps/fumadocs` é criado apenas com o addon Fumadocs.
 
 ### Backend self (fullstack)
 
@@ -87,9 +80,6 @@ Quando `--backend self` é usado, as rotas de API ficam dentro de `apps/web` (se
         <File name="..." />
       </Folder>
       <Folder name="native">
-        <File name="..." />
-      </Folder>
-      <Folder name="docs">
         <File name="..." />
       </Folder>
     </Folder>
@@ -474,12 +464,13 @@ O kubojs sempre cria `packages/config`. Outros packages são adicionados conform
 - `apps/api`: quando `--api` não é `none` (não-Convex); concentra a API gerada por domínio em `src/modules`
 - `packages/auth`: quando `--auth` não é `none` (não-Convex)
 - `packages/db`: quando `--database` e `--orm` são selecionados (não-Convex)
+- `packages/storage`: quando o addon `s3-storage` é selecionado
 - `packages/backend`: somente backend Convex
 - `packages/infra`: somente deploy Cloudflare
 
 ## Scripts de desenvolvimento
 
-Os scripts são ajustados conforme o gerenciador de pacotes e se o addon Turborepo, Nx ou Vite+ está selecionado.
+Os scripts são ajustados conforme o gerenciador de pacotes e se o addon Turborepo ou Vite+ está selecionado.
 
 Com Turborepo:
 
@@ -493,20 +484,6 @@ Com Turborepo:
     "dev:server": "turbo run dev -F server",
     "db:push": "turbo run db:push -F server",
     "db:studio": "turbo run db:studio -F server"
-  }
-}
-```
-
-Com Nx:
-
-```json
-{
-  "scripts": {
-    "dev": "nx run-many -t dev",
-    "build": "nx run-many -t build",
-    "check-types": "nx run-many -t check-types",
-    "dev:web": "nx run-many -t dev --projects=web",
-    "dev:server": "nx run-many -t dev --projects=server"
   }
 }
 ```
@@ -529,7 +506,7 @@ Com Vite+:
 }
 ```
 
-Sem Turborepo, Nx ou Vite+ (exemplo para Bun):
+Sem Turborepo ou Vite+ (exemplo para Bun):
 
 ```json
 {

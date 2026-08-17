@@ -48,7 +48,7 @@ npx create-kubojs@latest
 - Databases: SQLite, PostgreSQL, MySQL, MongoDB (or none)
 - ORMs: Drizzle, Prisma, Mongoose (or none)
 - Auth: Better Auth or Clerk (optional)
-- Addons: Turborepo, Nx, PWA, Tauri, Electrobun, Biome, Lefthook, Husky, Starlight, Fumadocs, Ultracite, Oxlint, MCP, OpenTUI, WXT, Skills, Get Monitor, Guara Cloud, AbacatePay
+- Addons: Turborepo, Vite+, PWA, Tauri, Electrobun, Biome, Lefthook, Husky, Oxlint, MCP, OpenTUI, Skills, S3-compatible Storage
 - Testing: Vitest, Playwright
 - Examples: Todo, AI
 - DB Setup: Turso, Neon, Supabase, Prisma PostgreSQL, MongoDB Atlas, Cloudflare D1, Docker

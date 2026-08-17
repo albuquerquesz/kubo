@@ -117,11 +117,7 @@ const result = await createVirtual({
   backend: "hono",
   database: "sqlite",
   orm: "drizzle",
-  addonOptions: {
-    wxt: {
-      template: "react",
-    },
-  },
+  addons: ["s3-storage"],
 });
 ```
 
