@@ -193,13 +193,13 @@ export async function navigableMultiselect<T>(
       return `${cliColors.orange(S_CHECKBOX_ACTIVE)} ${label}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
     }
     if (state === "selected") {
-      return `${pc.green(S_CHECKBOX_SELECTED)} ${pc.dim(label)}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
+      return `${cliColors.bright(S_CHECKBOX_SELECTED)} ${pc.dim(label)}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
     }
     if (state === "cancelled") {
       return `${pc.strikethrough(pc.dim(label))}`;
     }
     if (state === "active-selected") {
-      return `${pc.green(S_CHECKBOX_SELECTED)} ${label}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
+      return `${cliColors.bright(S_CHECKBOX_SELECTED)} ${label}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
     }
     if (state === "submitted") {
       return `${pc.dim(label)}`;
@@ -364,17 +364,17 @@ export async function navigableGroupMultiselect<T>(
       return `${prefix}${cliColors.orange(S_CHECKBOX_ACTIVE)} ${pc.dim(label)}`;
     }
     if (state === "group-active-selected") {
-      return `${prefix}${pc.green(S_CHECKBOX_SELECTED)} ${pc.dim(label)}`;
+      return `${prefix}${cliColors.bright(S_CHECKBOX_SELECTED)} ${pc.dim(label)}`;
     }
     if (state === "selected") {
-      const selectedCheckbox = isItem ? pc.green(S_CHECKBOX_SELECTED) : "";
+      const selectedCheckbox = isItem ? cliColors.bright(S_CHECKBOX_SELECTED) : "";
       return `${pc.dim(prefix)}${selectedCheckbox} ${pc.dim(label)}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
     }
     if (state === "cancelled") {
       return `${pc.strikethrough(pc.dim(label))}`;
     }
     if (state === "active-selected") {
-      return `${pc.dim(prefix)}${pc.green(S_CHECKBOX_SELECTED)} ${label}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
+      return `${pc.dim(prefix)}${cliColors.bright(S_CHECKBOX_SELECTED)} ${label}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
     }
     if (state === "submitted") {
       return `${pc.dim(label)}`;
