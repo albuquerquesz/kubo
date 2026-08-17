@@ -11,6 +11,7 @@ import { gatherConfig } from "../../prompts/config-prompts";
 import { getProjectName } from "../../prompts/project-name";
 import type { CreateInput, DirectoryConflict, ProjectConfig } from "../../types";
 import { trackProjectCreation } from "../../utils/analytics";
+import { cliColors } from "../../utils/cli-colors";
 import {
   validateAddonsAgainstFrontends,
   validateTestingAgainstFrontends,
@@ -159,7 +160,7 @@ async function createProjectHandlerInternal(
     if (!isSilent() && input.renderTitle !== false) {
       renderTitle();
     }
-    if (!isSilent()) intro(pc.magenta("Creating a new kubojs project"));
+    if (!isSilent()) intro(cliColors.bright("Creating a new kubojs project"));
 
     if (!isSilent() && input.yolo) {
       cliConsola.fatal("YOLO mode enabled - skipping checks. Things may break!");
@@ -255,7 +256,7 @@ async function createProjectHandlerInternal(
         const templateName = input.template.toUpperCase();
         const templateDescription = getTemplateDescription(input.template);
         if (!isSilent()) {
-          log.message(pc.bold(pc.cyan(`Using template: ${pc.white(templateName)}`)));
+          log.message(pc.bold(cliColors.bright(`Using template: ${pc.white(templateName)}`)));
           log.message(pc.dim(`   ${templateDescription}`));
         }
         const userOverrides: Record<string, unknown> = {};
@@ -391,7 +392,7 @@ async function createProjectHandlerInternal(
         log.success(pc.green("Dry run validation passed. No files were written."));
         log.message(pc.dim(`Target directory: ${finalResolvedPath}`));
         log.message(pc.dim(`Run without --dry-run to create the project.`));
-        outro(pc.magenta("Dry run complete."));
+        outro(cliColors.signal("Dry run complete."));
       }
 
       return Result.ok({
@@ -415,7 +416,9 @@ async function createProjectHandlerInternal(
 
     if (!isSilent()) {
       log.success(
-        pc.blue(`You can reproduce this setup with the following command:\n${reproducibleCommand}`),
+        cliColors.bright(
+          `You can reproduce this setup with the following command:\n${reproducibleCommand}`,
+        ),
       );
     }
 
@@ -431,7 +434,9 @@ async function createProjectHandlerInternal(
     if (!isSilent()) {
       const elapsedTimeInSeconds = (elapsedTimeMs / 1000).toFixed(2);
       outro(
-        pc.magenta(`Project created successfully in ${pc.bold(elapsedTimeInSeconds)} seconds!`),
+        cliColors.signal(
+          `Project created successfully in ${pc.bold(elapsedTimeInSeconds)} seconds!`,
+        ),
       );
     }
 

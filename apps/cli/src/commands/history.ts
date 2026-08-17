@@ -1,6 +1,7 @@
 import { intro, log } from "@clack/prompts";
 import pc from "picocolors";
 
+import { cliColors } from "../utils/cli-colors";
 import { clearHistory, getHistory, type ProjectHistoryEntry } from "../utils/project-history";
 import { renderTitle } from "../utils/render-title";
 
@@ -73,11 +74,11 @@ export async function historyHandler(input: HistoryCommandInput): Promise<void> 
   }
 
   renderTitle();
-  intro(pc.magenta(`Project History (${entries.length} entries)`));
+  intro(cliColors.signal(`Project History (${entries.length} entries)`));
 
   for (const [index, entry] of entries.entries()) {
     const num = pc.dim(`${index + 1}.`);
-    const name = pc.cyan(pc.bold(entry.projectName));
+    const name = cliColors.bright(pc.bold(entry.projectName));
     const stack = pc.dim(formatStackSummary(entry));
 
     log.message(`${num} ${name}`);

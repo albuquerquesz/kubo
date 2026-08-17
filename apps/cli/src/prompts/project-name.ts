@@ -1,13 +1,54 @@
 import path from "node:path";
 
-import { isCancel, text } from "@clack/prompts";
+import { isCancel, TextPrompt } from "@clack/core";
 import fs from "fs-extra";
 import pc from "picocolors";
 
 import { DEFAULT_CONFIG } from "../constants";
 import { ProjectNameSchema } from "../types";
+import { cliColors } from "../utils/cli-colors";
 import { UserCancelledError } from "../utils/errors";
 import { cliConsola } from "../utils/terminal-output";
+
+const S_BAR = "│";
+const S_BAR_END = "└";
+const S_STEP_ACTIVE = "◆";
+
+function kuboText(options: {
+  message: string;
+  placeholder?: string;
+  defaultValue?: string;
+  initialValue?: string;
+  validate: (value: unknown) => string | undefined;
+}) {
+  return new TextPrompt({
+    validate: options.validate,
+    placeholder: options.placeholder,
+    defaultValue: options.defaultValue,
+    initialValue: options.initialValue,
+    render() {
+      const title = `${cliColors.signal(S_BAR)}\n${cliColors.bright(S_STEP_ACTIVE)}  ${options.message}\n`;
+      const placeholder = options.placeholder
+        ? pc.inverse(options.placeholder[0]) + pc.dim(options.placeholder.slice(1))
+        : pc.inverse(pc.hidden("_"));
+      const input = this.userInput ? this.userInputWithCursor : placeholder;
+      const value = this.value ?? "";
+
+      switch (this.state) {
+        case "error": {
+          const error = this.error ? `  ${pc.yellow(this.error)}` : "";
+          return `${title.trim()}\n${cliColors.signal(S_BAR)}  ${input}\n${pc.yellow(S_BAR_END)}${error}\n`;
+        }
+        case "submit":
+          return `${title}${pc.gray(S_BAR)}${value ? `  ${pc.dim(value)}` : ""}`;
+        case "cancel":
+          return `${title}${pc.gray(S_BAR)}${value ? `  ${pc.strikethrough(pc.dim(value))}` : ""}${value.trim() ? `\n${pc.gray(S_BAR)}` : ""}`;
+        default:
+          return `${title}${cliColors.signal(S_BAR)}  ${input}\n${cliColors.signal(S_BAR_END)}\n`;
+      }
+    },
+  }).prompt();
+}
 
 function isPathWithinCwd(targetPath: string) {
   const resolved = path.resolve(targetPath);
@@ -55,7 +96,7 @@ export async function getProjectName(initialName?: string): Promise<string> {
   }
 
   while (!isValid) {
-    const response = await text({
+    const response = await kuboText({
       message: "Enter your project name or path (relative to current directory)",
       placeholder: defaultName,
       initialValue: initialName,
