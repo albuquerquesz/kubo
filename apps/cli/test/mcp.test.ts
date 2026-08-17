@@ -39,7 +39,7 @@ function getExplicitCreateInput(projectPath: string) {
     api: "trpc" as const,
     auth: "better-auth" as const,
     payments: "none" as const,
-    observability: [] as const,
+    observability: ["getmonitor"] as const,
     communication: "none" as const,
     addons: ["turborepo"] as const,
     examples: [] as const,

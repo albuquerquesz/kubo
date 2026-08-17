@@ -1,4 +1,4 @@
-import pc from "picocolors";
+import basePc from "picocolors";
 
 import type {
   Backend,
@@ -12,8 +12,11 @@ import type {
   WebDeploy,
 } from "../../types";
 import { desktopWebFrontends, getWebPort } from "../../types";
+import { cliColors } from "../../utils/cli-colors";
 import { getDockerStatus } from "../../utils/docker-utils";
 import { cliConsola } from "../../utils/terminal-output";
+
+const pc = { ...basePc, cyan: cliColors.signal };
 
 function getDesktopStaticBuildNote(frontend: Frontend[]): string {
   const staticBuildFrontends = new Map<Frontend, string>([

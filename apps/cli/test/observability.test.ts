@@ -302,7 +302,7 @@ describe("observability CLI flag processing", () => {
       orm: "none",
       api: "none",
       auth: "none",
-      payments: "none",
+      payments: [],
       observability: "none",
       communication: "none",
       addons: ["biome"],
