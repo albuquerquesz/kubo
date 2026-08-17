@@ -45,7 +45,7 @@ function symbol(state: State) {
     case "error":
       return pc.yellow(S_STEP_ERROR);
     case "submit":
-      return pc.green(S_STEP_SUBMIT);
+      return cliColors.signal(S_STEP_SUBMIT);
   }
 }
 
