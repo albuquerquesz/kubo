@@ -1,7 +1,7 @@
 import { log } from "@clack/prompts";
 import { Result } from "better-result";
-import pc from "picocolors";
 
+import { cliColors } from "../utils/cli-colors";
 import { openUrl } from "../utils/open-url";
 
 const DOCS_URL = "https://kubojs.dev/docs";
@@ -14,7 +14,7 @@ async function openExternalUrl(url: string, successMessage: string) {
   });
 
   if (result.isOk()) {
-    log.success(pc.blue(successMessage));
+    log.success(cliColors.signal(successMessage));
   } else {
     log.message(`Please visit ${url}`);
   }

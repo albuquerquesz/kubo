@@ -19,6 +19,7 @@ import pc from "picocolors";
 
 import { getAddonsToAdd } from "../../prompts/addons";
 import type { AddInput, Addons, AddonOptions, ProjectConfig } from "../../types";
+import { cliColors } from "../../utils/cli-colors";
 import {
   isLinterAddon,
   mergeAddonsExclusive,
@@ -263,7 +264,7 @@ async function addHandlerInternal(
 
   if (!isSilent()) {
     renderTitle();
-    intro(pc.magenta("Add addons to your kubojs project"));
+    intro(cliColors.signal("Add addons to your kubojs project"));
   }
 
   // Detect existing project configuration
@@ -328,7 +329,7 @@ async function addHandlerInternal(
     if (selectedAddons.length === 0) {
       if (!isSilent()) {
         log.info(pc.dim("No addons selected."));
-        outro(pc.magenta("Nothing to add."));
+        outro(cliColors.signal("Nothing to add."));
       }
       return Result.ok({
         success: true,
@@ -349,7 +350,7 @@ async function addHandlerInternal(
   }
 
   if (!isSilent()) {
-    log.info(pc.cyan(`Adding addons: ${addonsToAdd.join(", ")}`));
+    log.info(cliColors.bright(`Adding addons: ${addonsToAdd.join(", ")}`));
     if (removedAddons.length > 0) {
       log.info(pc.dim(`Replacing exclusive addons: ${removedAddons.join(", ")}`));
     }
@@ -455,7 +456,7 @@ async function addHandlerInternal(
     if (!isSilent()) {
       log.success(pc.green("Dry run validation passed. No addon files were written."));
       log.info(pc.dim(`Planned addon files: ${vfs.getFileCount()}`));
-      outro(pc.magenta("Dry run complete."));
+      outro(cliColors.signal("Dry run complete."));
     }
 
     return Result.ok({
@@ -538,7 +539,7 @@ async function addHandlerInternal(
       );
     }
 
-    outro(pc.magenta("Addons added successfully!"));
+    outro(cliColors.signal("Addons added successfully!"));
   }
 
   return Result.ok({

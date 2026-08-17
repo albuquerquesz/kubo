@@ -13,6 +13,7 @@ import {
 } from "@clack/core";
 import pc from "picocolors";
 
+import { cliColors } from "../utils/cli-colors";
 import {
   didLastPromptShowUI as ctxDidLastPromptShowUI,
   isFirstPrompt as ctxIsFirstPrompt,
@@ -38,7 +39,7 @@ function symbol(state: State) {
   switch (state) {
     case "initial":
     case "active":
-      return pc.cyan(S_STEP_ACTIVE);
+      return cliColors.orange(S_STEP_ACTIVE);
     case "cancel":
       return pc.red(S_STEP_CANCEL);
     case "error":
@@ -149,9 +150,9 @@ export async function navigableSelect<T>(opts: NavigableSelectOptions<T>): Promi
             .map((option, i) =>
               opt(option, option.disabled ? "disabled" : i === this.cursor ? "active" : "inactive"),
             )
-            .join(`\n${pc.cyan(S_BAR)}  `);
+            .join(`\n${cliColors.signal(S_BAR)}  `);
           const hint = `\n${pc.gray(S_BAR)}  ${getHint()}`;
-          return `${title}${pc.cyan(S_BAR)}  ${optionsText}\n${pc.cyan(S_BAR_END)}${hint}\n`;
+          return `${title}${cliColors.signal(S_BAR)}  ${optionsText}\n${cliColors.signal(S_BAR_END)}${hint}\n`;
         }
       }
     },
@@ -189,7 +190,7 @@ export async function navigableMultiselect<T>(
       return `${pc.gray(S_CHECKBOX_INACTIVE)} ${pc.strikethrough(pc.gray(label))}${option.hint ? ` ${pc.dim(`(${option.hint ?? "disabled"})`)}` : ""}`;
     }
     if (state === "active") {
-      return `${pc.cyan(S_CHECKBOX_ACTIVE)} ${label}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
+      return `${cliColors.orange(S_CHECKBOX_ACTIVE)} ${label}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
     }
     if (state === "selected") {
       return `${pc.green(S_CHECKBOX_SELECTED)} ${pc.dim(label)}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
@@ -263,9 +264,9 @@ export async function navigableMultiselect<T>(
         default: {
           const optionsText = this.options
             .map((option, i) => styleOption(option, i === this.cursor))
-            .join(`\n${pc.cyan(S_BAR)}  `);
+            .join(`\n${cliColors.signal(S_BAR)}  `);
           const hint = `\n${pc.gray(S_BAR)}  ${getMultiHint()}`;
-          return `${title}${pc.cyan(S_BAR)}  ${optionsText}\n${pc.cyan(S_BAR_END)}${hint}\n`;
+          return `${title}${cliColors.signal(S_BAR)}  ${optionsText}\n${cliColors.signal(S_BAR_END)}${hint}\n`;
         }
       }
     },
@@ -300,7 +301,7 @@ export async function navigableConfirm(opts: NavigableConfirmOptions): Promise<b
           return `${title}${pc.gray(S_BAR)}  ${pc.strikethrough(pc.dim(value))}\n${pc.gray(S_BAR)}`;
         default: {
           const hint = `\n${pc.gray(S_BAR)}  ${getHint()}`;
-          return `${title}${pc.cyan(S_BAR)}  ${
+          return `${title}${cliColors.signal(S_BAR)}  ${
             this.value
               ? `${pc.green(S_RADIO_ACTIVE)} ${active}`
               : `${pc.dim(S_RADIO_INACTIVE)} ${pc.dim(active)}`
@@ -308,7 +309,7 @@ export async function navigableConfirm(opts: NavigableConfirmOptions): Promise<b
             !this.value
               ? `${pc.green(S_RADIO_ACTIVE)} ${inactive}`
               : `${pc.dim(S_RADIO_INACTIVE)} ${pc.dim(inactive)}`
-          }\n${pc.cyan(S_BAR_END)}${hint}\n`;
+          }\n${cliColors.signal(S_BAR_END)}${hint}\n`;
         }
       }
     },
@@ -357,10 +358,10 @@ export async function navigableGroupMultiselect<T>(
     const prefix = isItem ? `${isLast ? S_BAR_END : S_BAR} ` : "";
 
     if (state === "active") {
-      return `${pc.dim(prefix)}${pc.cyan(S_CHECKBOX_ACTIVE)} ${label}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
+      return `${pc.dim(prefix)}${cliColors.orange(S_CHECKBOX_ACTIVE)} ${label}${option.hint ? ` ${pc.dim(`(${option.hint})`)}` : ""}`;
     }
     if (state === "group-active") {
-      return `${prefix}${pc.cyan(S_CHECKBOX_ACTIVE)} ${pc.dim(label)}`;
+      return `${prefix}${cliColors.orange(S_CHECKBOX_ACTIVE)} ${pc.dim(label)}`;
     }
     if (state === "group-active-selected") {
       return `${prefix}${pc.green(S_CHECKBOX_SELECTED)} ${pc.dim(label)}`;
@@ -470,10 +471,10 @@ export async function navigableGroupMultiselect<T>(
               const optPrefix = i !== 0 && !optionText.startsWith("\n") ? "  " : "";
               return `${optPrefix}${optionText}`;
             })
-            .join(`\n${pc.cyan(S_BAR)}`);
+            .join(`\n${cliColors.signal(S_BAR)}`);
           const optionsPrefix = optionsText.startsWith("\n") ? "" : "  ";
           const hint = `\n${pc.gray(S_BAR)}  ${getMultiHint()}`;
-          return `${title}${pc.cyan(S_BAR)}${optionsPrefix}${optionsText}\n${pc.cyan(S_BAR_END)}${hint}\n`;
+          return `${title}${cliColors.signal(S_BAR)}${optionsPrefix}${optionsText}\n${cliColors.signal(S_BAR_END)}${hint}\n`;
         }
       }
     },
