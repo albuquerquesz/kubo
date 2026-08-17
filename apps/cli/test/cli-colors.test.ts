@@ -27,12 +27,12 @@ describe("CLI color palette", () => {
       "#E0B43E",
       "#E08A2E",
       "#E0B43E",
-      "#E86F5D",
-      "#F08A4B",
+      "#D97724",
+      "#E08A2E",
       "#E08A2E",
       "#C49314",
-      "#FFF7D6",
-      "#F2EDE0",
+      "#E8C978",
+      "#E5D3A5",
     ]);
   });
 });
