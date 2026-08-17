@@ -48,7 +48,7 @@ describe("scaffold quality fixes", () => {
 
     expect(result.isErr()).toBe(true);
     if (result.isOk()) return;
-    expect(result.error.message).toMatch(/biome|oxlint|ultracite|code-quality/i);
+    expect(result.error.message).toMatch(/biome|oxlint|code-quality/i);
   });
 
   it("scaffold: cookies, check-types, env path, sqlite scripts, biome indent", async () => {

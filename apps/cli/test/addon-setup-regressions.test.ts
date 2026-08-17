@@ -261,34 +261,6 @@ describe("Addon setup regressions", () => {
     expect(commandLog).toContain("--skill turborepo");
   });
 
-  it("recommends evlog skills when evlog addon is selected", async () => {
-    const projectDir = path.join(SMOKE_DIR, "skills-evlog-recommended");
-    await fs.remove(projectDir);
-
-    const config = createProjectConfig({
-      projectDir,
-      addons: ["skills", "evlog"],
-      addonOptions: {
-        skills: {
-          scope: "project",
-          agents: ["codex"],
-        },
-      },
-    });
-
-    const { markerFile, result } = await runWithFakeBunx(
-      projectDir,
-      () => runWithContextAsync({ silent: true }, () => setupSkills(config)),
-      0,
-    );
-
-    expect(result.isOk()).toBe(true);
-    const commandLog = await fs.readFile(markerFile, "utf8");
-    expect(commandLog).toContain("skills@latest add https://www.evlog.dev");
-    expect(commandLog).toContain("--skill review-logging-patterns analyze-logs");
-    expect(commandLog).toContain("--agent codex");
-  });
-
   it("does not install upgrade skills from the curated skills addon", async () => {
     const projectDir = path.join(SMOKE_DIR, "skills-no-upgrade-skills");
     await fs.remove(projectDir);

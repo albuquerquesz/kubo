@@ -53,7 +53,7 @@ const SKIP_EXTENSIONS = new Set([
 
 export type FormatProjectOptions = {
   /**
-   * Project addons. When `biome` or `ultracite` is present, post-format with
+   * Project addons. When `biome` is present, post-format with
    * Biome (`check --write`) so scaffold matches `biome check`.
    * Otherwise oxfmt is used (oxlint / no quality addon).
    */
@@ -68,7 +68,7 @@ function shouldSkipFile(fileName: string): boolean {
 
 function shouldUseBiomeFormatter(addons: readonly string[] | undefined): boolean {
   if (!addons) return false;
-  return addons.includes("biome") || addons.includes("ultracite");
+  return addons.includes("biome");
 }
 
 export async function formatCode(filePath: string, content: string): Promise<string | null> {
@@ -153,7 +153,7 @@ async function formatProjectWithBiome(projectDir: string): Promise<void> {
 
 /**
  * Post-scaffold format.
- * - biome / ultracite → Biome `check --write` (not oxfmt)
+ * - biome → Biome `check --write` (not oxfmt)
  * - oxlint / none → oxfmt
  * Always skips kubojs.jsonrc, lockfiles, and binary extensions (oxfmt path).
  */

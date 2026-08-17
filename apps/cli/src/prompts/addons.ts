@@ -32,10 +32,6 @@ function getAddonDisplay(addon: Addons): { label: string; hint: string } {
       label = "Turborepo";
       hint = "High-performance build system";
       break;
-    case "nx":
-      label = "Nx";
-      hint = "Smart monorepo orchestration and task graph";
-      break;
     case "vite-plus":
       label = "Vite+";
       hint = "Unified Vite toolchain and workspace task runner";
@@ -60,10 +56,6 @@ function getAddonDisplay(addon: Addons): { label: string; hint: string } {
       label = "Oxlint";
       hint = "Oxlint + Oxfmt (linting & formatting)";
       break;
-    case "ultracite":
-      label = "Ultracite";
-      hint = "Zero-config preset for Biome or Oxlint with AI integration";
-      break;
     case "lefthook":
       label = "Lefthook";
       hint = "Fast and powerful Git hooks manager";
@@ -72,21 +64,9 @@ function getAddonDisplay(addon: Addons): { label: string; hint: string } {
       label = "Husky";
       hint = "Modern native Git hooks made easy";
       break;
-    case "starlight":
-      label = "Starlight";
-      hint = "Build stellar docs with astro";
-      break;
-    case "fumadocs":
-      label = "Fumadocs";
-      hint = "Build excellent documentation site";
-      break;
     case "opentui":
       label = "OpenTUI";
       hint = "Build terminal user interfaces";
-      break;
-    case "wxt":
-      label = "WXT";
-      hint = "Build browser extensions";
       break;
     case "skills":
       label = "Skills";
@@ -96,9 +76,9 @@ function getAddonDisplay(addon: Addons): { label: string; hint: string } {
       label = "MCP";
       hint = "Install MCP servers, including kubojs, via add-mcp";
       break;
-    case "evlog":
-      label = "evlog";
-      hint = "Request logging with Better Auth context and AI SDK telemetry";
+    case "s3-storage":
+      label = "S3-compatible Storage";
+      hint = "Add object storage for AWS S3, Cloudflare R2, MinIO, or Backblaze";
       break;
     default:
       label = addon;
@@ -109,11 +89,9 @@ function getAddonDisplay(addon: Addons): { label: string; hint: string } {
 }
 
 const ADDON_GROUPS = {
-  "Monorepo & Tasks": ["turborepo", "nx", "vite-plus"],
-  "Code Quality": ["biome", "oxlint", "ultracite", "husky", "lefthook"],
-  Documentation: ["starlight", "fumadocs"],
-  "Platform Extensions": ["pwa", "tauri", "electrobun", "opentui", "wxt"],
-  Observability: ["evlog"],
+  "Monorepo & Tasks": ["turborepo", "vite-plus"],
+  "Code Quality": ["biome", "oxlint", "husky", "lefthook"],
+  "Platform Extensions": ["pwa", "tauri", "electrobun", "opentui", "s3-storage"],
   "AI & Agent Tools": ["skills", "mcp"],
 };
 
@@ -148,15 +126,14 @@ function sortAndPruneGroupedOptions(groupedOptions: Record<string, AddonOption[]
 
 function validateAddonSelection(selected: Addons[] | undefined) {
   const selectedTaskRunners =
-    selected?.filter((addon) => ["turborepo", "nx", "vite-plus"].includes(addon)) ?? [];
+    selected?.filter((addon) => ["turborepo", "vite-plus"].includes(addon)) ?? [];
   if (selectedTaskRunners.length > 1) {
-    return "Choose Turborepo, Nx, or Vite+ as your task runner, not more than one.";
+    return "Choose Turborepo or Vite+ as your task runner, not both.";
   }
 
-  const selectedLinters =
-    selected?.filter((addon) => ["biome", "oxlint", "ultracite"].includes(addon)) ?? [];
+  const selectedLinters = selected?.filter((addon) => ["biome", "oxlint"].includes(addon)) ?? [];
   if (selectedLinters.length > 1) {
-    return "Choose Biome, Oxlint, or Ultracite as your code-quality tool, not more than one.";
+    return "Choose Biome or Oxlint as your code-quality tool, not both.";
   }
 }
 

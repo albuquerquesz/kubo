@@ -59,6 +59,9 @@ export const dependencyVersionMap = {
 
   "@tauri-apps/cli": "^2.11.4",
 
+  "@aws-sdk/client-s3": "^3.879.0",
+  "@aws-sdk/s3-request-presigner": "^3.879.0",
+
   "@biomejs/biome": "^2.5.2",
 
   oxlint: "^1.72.0",
@@ -98,7 +101,6 @@ export const dependencyVersionMap = {
   "fastify-raw-body": "^5.0.0",
 
   turbo: "^2.10.2",
-  nx: "^23.0.1",
   "vite-plus": "0.2.2",
   rolldown: "1.1.4",
 
@@ -178,7 +180,6 @@ export const dependencyVersionMap = {
   "@t3-oss/env-nextjs": "^0.13.11",
   "@t3-oss/env-nuxt": "^0.13.11",
 
-  evlog: "^2.19.2",
   "@himetrica/tracker-js": "^0.1.36",
   "@getmonitor/browser": "^0.1.0",
   "@getmonitor/node": "^0.1.0",

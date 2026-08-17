@@ -418,6 +418,8 @@ export async function createVirtual(
   options: Partial<Omit<ProjectConfig, "projectDir" | "relativePath">> &
     Pick<CLIInput, "disableObservability">,
 ): Promise<Result<VirtualFileTree, GeneratorError>> {
+  const rawPayments: unknown = options.payments;
+  const rawObservability: unknown = options.observability;
   const config: ProjectConfig = {
     projectName: options.projectName || "my-project",
     projectDir: "/virtual",
@@ -434,12 +436,22 @@ export async function createVirtual(
     testing: options.testing || [],
     auth: options.auth || "none",
     payments:
-      options.payments === "none"
+      rawPayments === "none"
         ? []
-        : typeof options.payments === "string"
-          ? [options.payments]
-          : options.payments || [],
-    observability: options.disableObservability ? [] : options.observability || [],
+        : Array.isArray(rawPayments)
+          ? rawPayments
+          : rawPayments
+            ? [rawPayments]
+            : [],
+    observability: options.disableObservability
+      ? []
+      : rawObservability === "none"
+        ? []
+        : Array.isArray(rawObservability)
+          ? rawObservability
+          : rawObservability
+            ? [rawObservability]
+            : [],
     communication: options.communication || "none",
     git: options.git ?? false,
     packageManager: options.packageManager || "bun",

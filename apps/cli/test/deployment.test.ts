@@ -917,7 +917,7 @@ describe("Deployment Configurations", () => {
         webDeploy: "cloudflare",
         serverDeploy: "cloudflare",
         install: false,
-        addons: ["evlog", "lefthook", "turborepo", "ultracite"],
+        addons: ["lefthook", "turborepo", "oxlint"],
         examples: ["none"],
       });
 

@@ -60,7 +60,7 @@ describe("silent create output", () => {
         api: "none",
         auth: "none",
         payments: "none",
-        addons: ["nx", "oxlint"],
+        addons: ["turborepo", "oxlint"],
         examples: [],
         git: true,
         packageManager: "pnpm",

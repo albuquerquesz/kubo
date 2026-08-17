@@ -221,14 +221,6 @@ function getRecommendedSourceKeys(config: ProjectConfig): SourceKey[] {
     sources.push("msmps/opentui-skill");
   }
 
-  if (addons.includes("ultracite")) {
-    sources.push("haydenbleasel/ultracite");
-  }
-
-  if (addons.includes("evlog")) {
-    sources.push("https://www.evlog.dev");
-  }
-
   return sources;
 }
 

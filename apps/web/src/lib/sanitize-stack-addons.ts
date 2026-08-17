@@ -8,8 +8,8 @@ const validExampleIds = new Set(["none", ...TECH_OPTIONS.examples.map((option) =
 const validObservabilityIds = new Set(TECH_OPTIONS.observability.map((option) => option.id));
 const validPaymentIds = new Set(TECH_OPTIONS.payments.map((option) => option.id));
 
-export const TASK_RUNNER_ADDONS = ["nx", "turborepo", "vite-plus"] as const;
-export const LINTER_ADDONS = ["biome", "oxlint", "ultracite"] as const;
+export const TASK_RUNNER_ADDONS = ["turborepo", "vite-plus"] as const;
+export const LINTER_ADDONS = ["biome", "oxlint"] as const;
 
 function sanitizeSingleSelection(
   values: readonly string[] | null | undefined,

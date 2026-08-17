@@ -205,28 +205,7 @@ export function generateStackCommand(stack: StackState) {
     `--addons ${
       stack.addons.length > 0
         ? stack.addons
-            .filter((addon) =>
-              [
-                "pwa",
-                "tauri",
-                "electrobun",
-                "starlight",
-                "biome",
-                "lefthook",
-                "husky",
-                "turborepo",
-                "nx",
-                "vite-plus",
-                "ultracite",
-                "fumadocs",
-                "oxlint",
-                "opentui",
-                "wxt",
-                "skills",
-                "mcp",
-                "evlog",
-              ].includes(addon),
-            )
+            .filter((addon) => TECH_OPTIONS.addons.some((option) => option.id === addon))
             .join(" ") || "none"
         : "none"
     }`,

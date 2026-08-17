@@ -229,15 +229,6 @@ describe("Electrobun addon scaffolding", () => {
         expectedRootBuild: "turbo run build --filter='!desktop' && turbo run build -F desktop",
       },
       {
-        projectName: "electrobun-nx-runner-static-v2",
-        addons: ["nx", "electrobun"] as const,
-        expectedRunner: "nx run-many -t build --projects=web",
-        expectedHmr: "nx run-many -t dev --projects=web",
-        expectedRootDev: "nx run-many -t dev",
-        expectedRootBuild:
-          "nx run-many -t build --exclude=desktop && nx run-many -t build --projects=desktop",
-      },
-      {
         projectName: "electrobun-vite-plus-runner-static-v2",
         addons: ["vite-plus", "electrobun"] as const,
         expectedRunner: "vp run --filter web build",

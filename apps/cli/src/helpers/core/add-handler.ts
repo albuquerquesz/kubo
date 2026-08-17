@@ -5,8 +5,8 @@ import {
   EMBEDDED_TEMPLATES,
   processAddonTemplates,
   processAddonsDeps,
-  processNxConfig,
   processPackageConfigs,
+  processEnvVariables,
   processTurboConfig,
   processVitePlusConfig,
   processTemplateString,
@@ -54,7 +54,6 @@ const ADD_PACKAGE_JSON_PATHS = [
   "apps/web/package.json",
   "apps/native/package.json",
   "apps/desktop/package.json",
-  "apps/fumadocs/package.json",
   "apps/docs/package.json",
   "apps/api/package.json",
   "packages/db/package.json",
@@ -67,10 +66,18 @@ const ADD_PACKAGE_JSON_PATHS = [
 ];
 
 const ADD_TEXT_FILE_PATHS = ["apps/web/vite.config.ts", "lefthook.yml"];
+const ADD_ENV_FILE_PATHS = [
+  ".env",
+  "apps/web/.env",
+  "apps/server/.env",
+  "apps/native/.env",
+  "packages/backend/.env.local",
+  "packages/infra/.env",
+];
 
 const HOOK_ADDONS = ["husky", "lefthook"] as const satisfies readonly Addons[];
 const HOOK_LINTER_ADDONS = ["biome", "oxlint", "vite-plus"] as const satisfies readonly Addons[];
-const TASK_RUNNER_ADDONS = ["turborepo", "nx", "vite-plus"] as const satisfies readonly Addons[];
+const TASK_RUNNER_ADDONS = ["turborepo", "vite-plus"] as const satisfies readonly Addons[];
 
 function mergeAddonOptions(
   existingAddonOptions?: AddonOptions,
@@ -152,11 +159,10 @@ async function cleanupRemovedLinters(projectDir: string, removedAddons: Addons[]
     packageJson.devDependencies = packageJson.devDependencies ?? {};
 
     for (const removed of removedLinters) {
-      if (removed === "biome" || removed === "ultracite") {
+      if (removed === "biome") {
         delete packageJson.devDependencies["@biomejs/biome"];
-        delete packageJson.devDependencies.ultracite;
       }
-      if (removed === "oxlint" || removed === "ultracite") {
+      if (removed === "oxlint") {
         delete packageJson.devDependencies.oxlint;
         delete packageJson.devDependencies.oxfmt;
       }
@@ -168,7 +174,6 @@ async function cleanupRemovedLinters(projectDir: string, removedAddons: Addons[]
       removedLinters.some((linter) => {
         if (linter === "biome") return packageJson.scripts.check.includes("biome");
         if (linter === "oxlint") return packageJson.scripts.check.includes("oxlint");
-        if (linter === "ultracite") return packageJson.scripts.check.includes("ultracite");
         return false;
       })
     ) {
@@ -409,19 +414,23 @@ async function addHandlerInternal(
       vfs.writeFile(filePath, content);
     }
   }
+  for (const filePath of ADD_ENV_FILE_PATHS) {
+    const fullPath = path.join(projectDir, filePath);
+    if (await fs.pathExists(fullPath)) {
+      const content = await fs.readFile(fullPath, "utf-8");
+      vfs.writeFile(filePath, content);
+    }
+  }
 
   // Process addon templates
   await processAddonTemplates(vfs, EMBEDDED_TEMPLATES, config);
 
   // Process addon dependencies (adds deps to package.json files in VFS)
   processAddonsDeps(vfs, config);
+  processEnvVariables(vfs, updatedConfig);
 
   if (addonsToAdd.includes("turborepo")) {
     processTurboConfig(vfs, updatedConfig);
-  }
-
-  if (addonsToAdd.includes("nx")) {
-    processNxConfig(vfs, updatedConfig);
   }
 
   if (addonsToAdd.includes("vite-plus")) {

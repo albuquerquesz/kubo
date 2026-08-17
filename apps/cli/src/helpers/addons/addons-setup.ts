@@ -8,16 +8,11 @@ import { desktopWebFrontends, type ProjectConfig } from "../../types";
 import { addPackageDependency } from "../../utils/add-package-deps";
 import { AddonSetupError, UserCancelledError } from "../../utils/errors";
 import { cliConsola } from "../../utils/terminal-output";
-import { setupEvlog } from "./evlog-setup";
-import { setupFumadocs } from "./fumadocs-setup";
 import { setupMcp } from "./mcp-setup";
 import { setupOxlint } from "./oxlint-setup";
 import { setupSkills } from "./skills-setup";
-import { setupStarlight } from "./starlight-setup";
 import { setupTauri } from "./tauri-setup";
 import { setupTui } from "./tui-setup";
-import { setupUltracite } from "./ultracite-setup";
-import { setupWxt } from "./wxt-setup";
 
 // Helper to run setup and handle Result
 async function runSetup<T, E extends AddonSetupError | UserCancelledError>(
@@ -60,58 +55,37 @@ export async function setupAddons(config: ProjectConfig): Promise<void> {
     await runSetup(() => setupTauri(config));
   }
 
-  const hasUltracite = addons.includes("ultracite");
-  // Exclusive lint slot: ultracite > oxlint > biome (never install dual base linters)
-  const hasOxlint = !hasUltracite && addons.includes("oxlint");
-  const hasBiome = !hasUltracite && !hasOxlint && addons.includes("biome");
+  const hasOxlint = addons.includes("oxlint");
+  const hasBiome = !hasOxlint && addons.includes("biome");
   const hasHusky = addons.includes("husky");
   const hasLefthook = addons.includes("lefthook");
   const hasVitePlus = addons.includes("vite-plus");
 
-  if (hasUltracite) {
-    const gitHooks: string[] = [];
-    if (hasHusky) gitHooks.push("husky");
-    if (hasLefthook) gitHooks.push("lefthook");
-    await runSetup(() => setupUltracite(config, gitHooks));
-  } else {
-    if (hasBiome) {
-      await runAddonStep("biome", () => setupBiome(projectDir));
-    } else if (hasOxlint) {
-      await runSetup(() => setupOxlint(projectDir, config.packageManager));
-    }
-
-    if (hasHusky || hasLefthook) {
-      let linter: "biome" | "oxlint" | "vite-plus" | undefined;
-      if (hasOxlint) {
-        linter = "oxlint";
-      } else if (hasBiome) {
-        linter = "biome";
-      } else if (hasVitePlus) {
-        linter = "vite-plus";
-      }
-      if (hasHusky) {
-        await runAddonStep("husky", () => setupHusky(projectDir, linter));
-      }
-      if (hasLefthook) {
-        await runAddonStep("lefthook", () => setupLefthook(projectDir));
-      }
-    }
+  if (hasBiome) {
+    await runAddonStep("biome", () => setupBiome(projectDir));
+  } else if (hasOxlint) {
+    await runSetup(() => setupOxlint(projectDir, config.packageManager));
   }
 
-  if (addons.includes("starlight")) {
-    await runSetup(() => setupStarlight(config));
-  }
-
-  if (addons.includes("fumadocs")) {
-    await runSetup(() => setupFumadocs(config));
+  if (hasHusky || hasLefthook) {
+    let linter: "biome" | "oxlint" | "vite-plus" | undefined;
+    if (hasOxlint) {
+      linter = "oxlint";
+    } else if (hasBiome) {
+      linter = "biome";
+    } else if (hasVitePlus) {
+      linter = "vite-plus";
+    }
+    if (hasHusky) {
+      await runAddonStep("husky", () => setupHusky(projectDir, linter));
+    }
+    if (hasLefthook) {
+      await runAddonStep("lefthook", () => setupLefthook(projectDir));
+    }
   }
 
   if (addons.includes("opentui")) {
     await runSetup(() => setupTui(config));
-  }
-
-  if (addons.includes("wxt")) {
-    await runSetup(() => setupWxt(config));
   }
 
   if (addons.includes("skills")) {
@@ -120,10 +94,6 @@ export async function setupAddons(config: ProjectConfig): Promise<void> {
 
   if (addons.includes("mcp")) {
     await runSetup(() => setupMcp(config));
-  }
-
-  if (addons.includes("evlog")) {
-    await runSetup(() => setupEvlog(config));
   }
 }
 

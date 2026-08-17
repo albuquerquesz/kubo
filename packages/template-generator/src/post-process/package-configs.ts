@@ -80,7 +80,6 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
   const backendPackageName = backend === "convex" ? `@${projectName}/backend` : "server";
   const dbPackageName = `@${projectName}/db`;
   const hasTurborepo = addons.includes("turborepo");
-  const hasNx = addons.includes("nx");
   const hasVitePlus = addons.includes("vite-plus");
   const hasVitePlusNativeHooks =
     hasVitePlus && !addons.includes("husky") && !addons.includes("lefthook");
@@ -89,7 +88,7 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
   const needsDbScripts = dbSupport.hasDbScripts;
   const isD1Alchemy = dbSupport.isD1Alchemy;
 
-  const pmConfig = getPackageManagerConfig(packageManager, { hasTurborepo, hasNx, hasVitePlus });
+  const pmConfig = getPackageManagerConfig(packageManager, { hasTurborepo, hasVitePlus });
 
   scripts.dev = pmConfig.dev;
   scripts.build = pmConfig.build;
@@ -123,7 +122,6 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
     // serialized so PMs without topological ordering don't run two web builds at once.
     scripts.build = getElectrobunRootBuildCommand(vfs, packageManager, {
       hasTurborepo,
-      hasNx,
       hasVitePlus,
     });
     scripts["dev:desktop"] = pmConfig.filter("desktop", "dev:hmr");
@@ -296,7 +294,7 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
     if (!workspaces.includes("packages/*")) {
       workspaces.push("packages/*");
     }
-    const needsAppsDir = config.frontend.length > 0 || addons.includes("starlight");
+    const needsAppsDir = config.frontend.length > 0;
     if (needsAppsDir && !workspaces.includes("apps/*")) {
       workspaces.push("apps/*");
     }
@@ -354,7 +352,7 @@ function getUpdatedWorkspaces(
 
 function getPackageManagerConfig(
   packageManager: ProjectConfig["packageManager"],
-  options: { hasTurborepo: boolean; hasNx: boolean; hasVitePlus: boolean },
+  options: { hasTurborepo: boolean; hasVitePlus: boolean },
 ): PackageManagerConfig {
   if (options.hasTurborepo) {
     return {
@@ -362,15 +360,6 @@ function getPackageManagerConfig(
       build: "turbo run build",
       checkTypes: "turbo run check-types",
       filter: (workspace, script) => `turbo run ${script} -F ${workspace}`,
-    };
-  }
-
-  if (options.hasNx) {
-    return {
-      dev: "nx run-many -t dev",
-      build: "nx run-many -t build",
-      checkTypes: "nx run-many -t check-types",
-      filter: (workspace, script) => `nx run-many -t ${script} --projects=${workspace}`,
     };
   }
 
@@ -414,14 +403,10 @@ function getPackageManagerConfig(
 function getElectrobunRootBuildCommand(
   vfs: VirtualFileSystem,
   packageManager: ProjectConfig["packageManager"],
-  options: { hasTurborepo: boolean; hasNx: boolean; hasVitePlus: boolean },
+  options: { hasTurborepo: boolean; hasVitePlus: boolean },
 ): string {
   if (options.hasTurborepo) {
     return "turbo run build --filter='!desktop' && turbo run build -F desktop";
-  }
-
-  if (options.hasNx) {
-    return "nx run-many -t build --exclude=desktop && nx run-many -t build --projects=desktop";
   }
 
   if (options.hasVitePlus) {
@@ -476,20 +461,15 @@ function updateDesktopPackageJson(vfs: VirtualFileSystem, config: ProjectConfig)
 
   const { packageManager, addons, frontend } = config;
   const hasTurborepo = addons.includes("turborepo");
-  const hasNx = addons.includes("nx");
   const hasVitePlus = addons.includes("vite-plus");
   // Nuxt emits its static bundle via `generate`; every other frontend via `build`.
   const desktopBuildScript: DesktopWebScript = frontend.includes("nuxt") ? "generate" : "build";
   const webBuildCommand = getDesktopWebCommand(
     packageManager,
-    { hasTurborepo, hasNx, hasVitePlus },
+    { hasTurborepo, hasVitePlus },
     desktopBuildScript,
   );
-  const webDevCommand = getDesktopWebCommand(
-    packageManager,
-    { hasTurborepo, hasNx, hasVitePlus },
-    "dev",
-  );
+  const webDevCommand = getDesktopWebCommand(packageManager, { hasTurborepo, hasVitePlus }, "dev");
   const localRunCommand = getLocalRunCommand(packageManager);
 
   pkgJson.scripts = {
@@ -513,15 +493,11 @@ function updateDesktopPackageJson(vfs: VirtualFileSystem, config: ProjectConfig)
 
 function getDesktopWebCommand(
   packageManager: ProjectConfig["packageManager"],
-  options: { hasTurborepo: boolean; hasNx: boolean; hasVitePlus: boolean },
+  options: { hasTurborepo: boolean; hasVitePlus: boolean },
   script: DesktopWebScript,
 ): string {
   if (options.hasTurborepo) {
     return `turbo run ${script} -F web`;
-  }
-
-  if (options.hasNx) {
-    return `nx run-many -t ${script} --projects=web`;
   }
 
   if (options.hasVitePlus) {

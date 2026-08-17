@@ -82,7 +82,7 @@ describe("pnpm workspace", () => {
       orm: "none",
       auth: "none",
       payments: "none",
-      addons: ["nx", "lefthook"],
+      addons: ["lefthook"],
       examples: ["none"],
       dbSetup: "none",
       webDeploy: "none",
@@ -92,7 +92,6 @@ describe("pnpm workspace", () => {
     expect(workspace.allowBuilds).toMatchObject({
       esbuild: true,
       lefthook: true,
-      nx: true,
     });
   });
 
@@ -107,7 +106,7 @@ describe("pnpm workspace", () => {
       orm: "drizzle",
       auth: "better-auth",
       payments: "none",
-      addons: ["evlog", "husky", "oxlint", "vite-plus"],
+      addons: ["husky", "oxlint", "vite-plus"],
       examples: ["none"],
       dbSetup: "none",
       webDeploy: "none",

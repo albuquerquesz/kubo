@@ -182,11 +182,11 @@ kubojs --frontend next native-uniwind
 
 ### Task runners
 
-- `nx`, `turborepo` e `vite-plus` são mutuamente exclusivos — só um pode ser selecionado por projeto
+- `turborepo` e `vite-plus` são mutuamente exclusivos — só um pode ser selecionado por projeto
 
 ```bash
 # ❌ Invalid - two task runners
-kubojs --addons turborepo nx
+kubojs --addons turborepo vite-plus
 
 # ✅ Valid - a single task runner
 kubojs --addons turborepo

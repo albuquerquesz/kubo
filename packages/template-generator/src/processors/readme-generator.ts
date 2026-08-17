@@ -525,10 +525,6 @@ function generateProjectStructure(config: ProjectConfig): string {
     structure.push("│   ├── native/      # Mobile application (React Native, Expo)");
   }
 
-  if (addons.includes("starlight")) {
-    structure.push("│   ├── docs/        # Documentation site (Astro Starlight)");
-  }
-
   if (!isBackendSelf && backend !== "none" && !isConvex) {
     const backendName = (backend[0]?.toUpperCase() ?? "") + backend.slice(1);
     const apiName = api !== "none" ? api.toUpperCase() : "";
@@ -569,6 +565,9 @@ function generateProjectStructure(config: ProjectConfig): string {
       }
       if (payments.includes("abacatepay")) {
         structure.push("│   └── payments/    # AbacatePay runtime and webhook helpers");
+      }
+      if (addons.includes("s3-storage")) {
+        structure.push("│   └── storage/     # S3-compatible object storage adapter");
       }
     }
   }
@@ -816,11 +815,11 @@ function generateFeaturesList(
     biome: "- **Biome** - Linting and formatting",
     oxlint: "- **Oxlint** - Oxlint + Oxfmt (linting & formatting)",
     husky: "- **Husky** - Git hooks for code quality",
-    starlight: "- **Starlight** - Documentation site with Astro",
     turborepo: "- **Turborepo** - Optimized monorepo build system",
-    nx: "- **Nx** - Smart monorepo task orchestration and caching",
     "vite-plus":
       "- **Vite+** - Unified Vite toolchain, workspace task runner, linting, and formatting",
+    "s3-storage":
+      "- **S3-compatible Storage** - Typed bucket abstraction for AWS S3, Cloudflare R2, MinIO, and Backblaze",
   };
 
   for (const addon of addons) {
@@ -1030,11 +1029,6 @@ function generateScriptsList(
     if (staticBuildNote) {
       scripts += `\n- Note: ${staticBuildNote}`;
     }
-  }
-
-  if (addons.includes("starlight")) {
-    scripts += `\n- \`cd apps/docs && ${packageManagerRunCmd} dev\`: Start documentation site
-- \`cd apps/docs && ${packageManagerRunCmd} build\`: Build documentation site`;
   }
 
   if (webDeploy === "docker" || serverDeploy === "docker") {

@@ -63,11 +63,7 @@ describe("Input schemas", () => {
   });
 
   it("rejects conflicting task-runner addon combinations", () => {
-    const conflictingAddonPairs = [
-      ["nx", "vite-plus"],
-      ["turborepo", "vite-plus"],
-      ["nx", "turborepo"],
-    ];
+    const conflictingAddonPairs = [["turborepo", "vite-plus"]];
 
     for (const addons of conflictingAddonPairs) {
       const result = AddInputSchema.safeParse({ addons });

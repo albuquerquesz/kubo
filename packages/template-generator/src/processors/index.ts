@@ -14,7 +14,6 @@ import { processEnvVariables } from "./env-vars";
 import { processExamplesDeps } from "./examples-deps";
 import { processFrontendDeps } from "./frontend-deps";
 import { processInfraDeps } from "./infra-deps";
-import { processNxConfig } from "./nx-generator";
 import { processObservability } from "./observability";
 import { processPaymentsDeps } from "./payments-deps";
 import { processPwaPlugins } from "./pwa-plugins";
@@ -39,7 +38,6 @@ export function processDependencies(vfs: VirtualFileSystem, config: ProjectConfi
   processAddonsDeps(vfs, config);
   processExamplesDeps(vfs, config);
   processTurboConfig(vfs, config);
-  processNxConfig(vfs, config);
   processVitePlusConfig(vfs, config);
 }
 
@@ -55,7 +53,6 @@ export {
   processFrontendDeps,
   processInfraDeps,
   processPaymentsDeps,
-  processNxConfig,
   processReadme,
   processRuntimeDeps,
   processTurboConfig,

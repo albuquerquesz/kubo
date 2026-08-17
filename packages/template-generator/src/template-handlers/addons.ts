@@ -14,7 +14,7 @@ export async function processAddonTemplates(
     if (addon === "none") continue;
 
     // Task runners are handled programmatically by generators.
-    if (addon === "turborepo" || addon === "nx" || addon === "vite-plus") continue;
+    if (addon === "turborepo" || addon === "vite-plus") continue;
 
     if (addon === "pwa") {
       if (config.frontend.includes("next")) {

@@ -124,7 +124,7 @@ describe("stack builder D1 compatibility", () => {
 
   test("keeps only the latest selected task-runner addon", () => {
     expect(sanitizeAddons(["turborepo", "vite-plus"])).toEqual(["vite-plus"]);
-    expect(sanitizeAddons(["vite-plus", "nx"])).toEqual(["nx"]);
+    expect(sanitizeAddons(["vite-plus", "nx"])).toEqual(["vite-plus"]);
     expect(sanitizeAddons(["nx", "turborepo"])).toEqual(["turborepo"]);
 
     const sanitizedAddons = sanitizeAddons(["turborepo", "vite-plus"]);
@@ -136,7 +136,12 @@ describe("stack builder D1 compatibility", () => {
     expect(
       getDisabledReason(createStack({ addons: ["turborepo"] }), "addons", "vite-plus"),
     ).toBeNull();
-    expect(getDisabledReason(createStack({ addons: ["vite-plus"] }), "addons", "nx")).toBeNull();
+  });
+
+  test("emits supported storage addons in the CLI command", () => {
+    const command = generateStackCommand(createStack({ addons: ["s3-storage"] }));
+
+    expect(command).toContain("--addons s3-storage");
   });
 
   test("renders long CLI commands with visible flag separators", () => {
@@ -402,53 +407,6 @@ describe("stack builder D1 compatibility", () => {
     });
 
     expect(result.adjustedStack?.examples).toEqual(["none"]);
-  });
-
-  test("blocks Evlog for Convex stacks", () => {
-    const stack = createStack({
-      webFrontend: ["tanstack-start"],
-      nativeFrontend: ["native-uniwind"],
-      backend: "convex",
-      runtime: "none",
-      addons: ["turborepo"],
-    });
-
-    expect(getDisabledReason(stack, "addons", "evlog")).toBe(
-      "evlog exige Hono, Express, Fastify, Elysia ou um backend fullstack",
-    );
-  });
-
-  test("removes Evlog when a selected stack switches to Convex", () => {
-    const stack = createStack({
-      webFrontend: ["tanstack-start"],
-      nativeFrontend: ["native-uniwind"],
-      backend: "convex",
-      runtime: "none",
-      addons: ["turborepo", "evlog"],
-    });
-
-    const result = analyzeStackCompatibility(stack);
-
-    expect(result.adjustedStack?.addons).toEqual(["turborepo"]);
-    expect(result.changes).toContainEqual({
-      category: "addons",
-      message: "evlog removido (exige um servidor ou backend fullstack)",
-    });
-  });
-
-  test("allows Evlog for server and fullstack stacks", () => {
-    const serverStack = createStack({
-      backend: "hono",
-      runtime: "bun",
-    });
-    const fullstackStack = createStack({
-      webFrontend: ["tanstack-start"],
-      backend: "self-tanstack-start",
-      runtime: "none",
-    });
-
-    expect(getDisabledReason(serverStack, "addons", "evlog")).toBeNull();
-    expect(getDisabledReason(fullstackStack, "addons", "evlog")).toBeNull();
   });
 });
 

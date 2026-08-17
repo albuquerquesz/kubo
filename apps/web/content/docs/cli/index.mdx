@@ -109,7 +109,7 @@ Use quando quiser um único objeto de entrada legível por máquina em vez de mu
 Adiciona addons a partir de um payload JSON bruto.
 
 ```bash
-kubojs add-json --input '{"projectDir":"./my-app","addons":["wxt"],"addonOptions":{"wxt":{"template":"react"}}}'
+kubojs add-json --input '{"projectDir":"./my-app","addons":["s3-storage"]}'
 ```
 
 ## `schema`
@@ -221,7 +221,7 @@ kubojs api-server \
 
 ```bash
 cd my-existing-project
-kubojs add --addons tauri starlight --install
+kubojs add --addons tauri s3-storage --install
 ```
 
 ### Mostrar histórico local

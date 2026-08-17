@@ -36,31 +36,26 @@ export const AddonsSchema = z
     "pwa",
     "tauri",
     "electrobun",
-    "starlight",
     "biome",
     "lefthook",
     "husky",
     "mcp",
     "turborepo",
-    "nx",
     "vite-plus",
-    "fumadocs",
-    "ultracite",
     "oxlint",
     "opentui",
-    "wxt",
     "skills",
-    "evlog",
+    "s3-storage",
     "none",
   ])
   .describe("Additional addons");
 
 const AddonsListSchema = z.array(AddonsSchema).superRefine((addons, ctx) => {
-  const taskRunners = addons.filter((addon) => ["nx", "turborepo", "vite-plus"].includes(addon));
+  const taskRunners = addons.filter((addon) => ["turborepo", "vite-plus"].includes(addon));
   if (taskRunners.length > 1) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "`nx`, `turborepo`, and `vite-plus` cannot be used together",
+      message: "`turborepo` and `vite-plus` cannot be used together",
     });
   }
 });
@@ -155,35 +150,7 @@ export const TemplateSchema = z
   .enum(["mern", "pern", "t3", "uniwind", "none"])
   .describe("Predefined project template");
 
-export const WxtTemplateSchema = z
-  .enum(["vanilla", "vue", "react", "solid", "svelte"])
-  .describe("WXT template");
-
 export const TuiTemplateSchema = z.enum(["core", "react", "solid"]).describe("OpenTUI template");
-
-export const FumadocsTemplateSchema = z
-  .enum([
-    "next-mdx",
-    "next-mdx-static",
-    "waku",
-    "react-router",
-    "react-router-spa",
-    "tanstack-start",
-    "tanstack-start-spa",
-  ])
-  .describe("Fumadocs template");
-
-export const FumadocsSearchSchema = z
-  .enum(["orama", "orama-cloud"])
-  .describe("Fumadocs search solution");
-
-export const FumadocsOgImageSchema = z
-  .enum(["next-og", "takumi"])
-  .describe("Fumadocs OG image generator");
-
-export const FumadocsAiChatSchema = z
-  .enum(["openrouter", "llmgateway", "inkeep"])
-  .describe("Fumadocs AI chat provider");
 
 export const InstallScopeSchema = z.enum(["project", "global"]).describe("Installation scope");
 
@@ -289,74 +256,6 @@ export const SkillSelectionSchema = z.strictObject({
   skills: z.array(z.string()).describe("Curated skill names to install from this source"),
 });
 
-export const UltraciteLinterSchema = z.enum(["biome", "oxlint"]).describe("Ultracite linter");
-
-export const UltraciteEditorSchema = z
-  .enum([
-    "vscode",
-    "cursor",
-    "windsurf",
-    "codebuddy",
-    "antigravity",
-    "bob",
-    "kiro",
-    "trae",
-    "void",
-    "zed",
-  ])
-  .describe("Ultracite editor integration");
-
-export const UltraciteAgentSchema = z
-  .enum([
-    "universal",
-    "claude",
-    "codex",
-    "jules",
-    "replit",
-    "devin",
-    "lovable",
-    "zencoder",
-    "ona",
-    "openclaw",
-    "continue",
-    "snowflake-cortex",
-    "deepagents",
-    "qoder",
-    "kimi-cli",
-    "mcpjam",
-    "mux",
-    "pi",
-    "adal",
-    "copilot",
-    "cline",
-    "amp",
-    "aider",
-    "firebase-studio",
-    "open-hands",
-    "gemini",
-    "junie",
-    "augmentcode",
-    "bob",
-    "kilo-code",
-    "goose",
-    "roo-code",
-    "warp",
-    "droid",
-    "opencode",
-    "crush",
-    "qwen",
-    "amazon-q-cli",
-    "firebender",
-    "cursor-cli",
-    "mistral-vibe",
-    "vercel",
-  ])
-  .describe("Ultracite agent integration");
-
-export const UltraciteHookSchema = z
-  .enum(["cursor", "windsurf", "codebuddy", "claude", "copilot"])
-  .describe("Ultracite hook integration");
-
 export const DbSetupModeSchema = z.enum(["manual", "auto"]).describe("Database setup mode");
 
 export const NeonSetupMethodSchema = z
@@ -365,23 +264,6 @@ export const NeonSetupMethodSchema = z
 
 export const AddonOptionsSchema = z
   .strictObject({
-    wxt: z
-      .strictObject({
-        template: WxtTemplateSchema,
-        devPort: z.number().int().min(1).max(65535).optional().describe("WXT dev server port"),
-      })
-      .optional()
-      .describe("Options for the WXT addon"),
-    fumadocs: z
-      .strictObject({
-        template: FumadocsTemplateSchema,
-        devPort: z.number().int().min(1).max(65535).optional().describe("Fumadocs dev server port"),
-        search: FumadocsSearchSchema.optional().describe("Fumadocs search solution"),
-        ogImage: FumadocsOgImageSchema.optional().describe("Fumadocs OG image generator"),
-        aiChat: FumadocsAiChatSchema.optional().describe("Fumadocs AI chat provider"),
-      })
-      .optional()
-      .describe("Options for the Fumadocs addon"),
     opentui: z
       .strictObject({
         template: TuiTemplateSchema,
@@ -404,15 +286,6 @@ export const AddonOptionsSchema = z
       })
       .optional()
       .describe("Options for the Skills addon"),
-    ultracite: z
-      .strictObject({
-        linter: UltraciteLinterSchema.optional(),
-        editors: z.array(UltraciteEditorSchema).optional(),
-        agents: z.array(UltraciteAgentSchema).optional(),
-        hooks: z.array(UltraciteHookSchema).optional(),
-      })
-      .optional()
-      .describe("Options for the Ultracite addon"),
   })
   .describe("Addon-specific configuration");
 
