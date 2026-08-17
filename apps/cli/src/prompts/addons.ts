@@ -91,8 +91,7 @@ function getAddonDisplay(addon: Addons): { label: string; hint: string } {
 const ADDON_GROUPS = {
   "Monorepo & Tasks": ["turborepo", "vite-plus"],
   "Code Quality": ["biome", "oxlint", "husky", "lefthook"],
-  "Platform Extensions": ["pwa", "tauri", "electrobun", "opentui"],
-  Storage: ["s3-storage"],
+  "Platform Extensions": ["pwa", "tauri", "electrobun", "opentui", "s3-storage"],
   "AI & Agent Tools": ["skills", "mcp"],
 };
 

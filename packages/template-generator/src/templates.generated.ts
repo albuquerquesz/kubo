@@ -372,8 +372,10 @@ import { Bucket, type BucketConfig, type BucketUploadInput } from "./bucket";
 
 export type S3BucketConfig = BucketConfig & {
   region: string;
-  accessKeyId: string;
-  secretAccessKey: string;
+  credentials?: {
+    accessKeyId: string;
+    secretAccessKey: string;
+  };
   endpoint?: string;
   forcePathStyle?: boolean;
 };
@@ -383,14 +385,20 @@ export class S3Bucket extends Bucket<GetObjectCommandOutput> {
 
   constructor(config: S3BucketConfig) {
     super(config);
-    this.client = new S3Client({
+    if (
+      config.credentials &&
+      (!config.credentials.accessKeyId || !config.credentials.secretAccessKey)
+    ) {
+      throw new Error("S3 credentials must include both accessKeyId and secretAccessKey");
+    }
+    const clientConfig = {
       region: config.region,
       endpoint: config.endpoint,
       forcePathStyle: config.forcePathStyle ?? Boolean(config.endpoint),
-      credentials: {
-        accessKeyId: config.accessKeyId,
-        secretAccessKey: config.secretAccessKey,
-      },
+      ...(config.credentials ? { credentials: config.credentials } : {}),
+    };
+    this.client = new S3Client({
+      ...clientConfig,
     });
   }
 

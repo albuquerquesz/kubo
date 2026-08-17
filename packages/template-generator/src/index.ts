@@ -7,6 +7,7 @@ export { processTestingTemplates } from "./template-handlers/testing";
 export { processAddonsDeps } from "./processors/addons-deps";
 export { processTurboConfig } from "./processors/turbo-generator";
 export { processVitePlusConfig } from "./processors/vite-plus-generator";
+export { processEnvVariables } from "./processors/env-vars";
 export { processPackageConfigs, processVercelConfig } from "./post-process";
 export { writeKubojsConfigToVfs } from "./kubojs-config";
 

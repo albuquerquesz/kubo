@@ -16,6 +16,43 @@ type AddEnvVariablesOptions = {
 const CONVEX_URL_PLACEHOLDER = "https://example.convex.cloud";
 const CONVEX_SITE_URL_PLACEHOLDER = "https://example.convex.site";
 
+function buildS3StorageVars(addons: ProjectConfig["addons"]): EnvVariable[] {
+  if (!addons.includes("s3-storage")) return [];
+
+  return [
+    {
+      key: "S3_BUCKET",
+      value: "",
+      condition: true,
+      comment: "S3-compatible bucket name",
+    },
+    {
+      key: "S3_REGION",
+      value: "auto",
+      condition: true,
+      comment: "S3 region (use auto for Cloudflare R2)",
+    },
+    {
+      key: "S3_ENDPOINT",
+      value: "",
+      condition: true,
+      comment: "Optional S3-compatible endpoint (for example Cloudflare R2 or MinIO)",
+    },
+    {
+      key: "S3_ACCESS_KEY_ID",
+      value: "",
+      condition: true,
+      comment: "Optional S3-compatible access key",
+    },
+    {
+      key: "S3_SECRET_ACCESS_KEY",
+      value: "",
+      condition: true,
+      comment: "Optional S3-compatible secret key",
+    },
+  ];
+}
+
 function generateRandomString(length: number, charset: string) {
   let result = "";
   if (
@@ -98,7 +135,8 @@ function addEnvVariablesToContent(
 
       if (lineRegex.test(envContent)) {
         const existingMatch = envContent.match(lineRegex);
-        if (existingMatch && existingMatch[0] !== lineToWrite) {
+        const existingLine = existingMatch?.[0].trim();
+        if (existingLine?.startsWith("#")) {
           envContent = envContent.replace(lineRegex, lineToWrite);
         }
       } else {
@@ -315,6 +353,7 @@ function buildConvexBackendVars(
   _payments: ProjectConfig["payments"],
   examples: ProjectConfig["examples"],
   communication: ProjectConfig["communication"],
+  addons: ProjectConfig["addons"],
 ): EnvVariable[] {
   const hasReactRouter = frontend.includes("react-router");
   const hasTanStackRouter = frontend.includes("tanstack-router");
@@ -360,6 +399,8 @@ function buildConvexBackendVars(
       comment: "Google AI API key for AI agent",
     });
   }
+
+  vars.push(...buildS3StorageVars(addons));
 
   if (auth === "better-auth") {
     if (hasReactRouter || hasTanStackRouter) {
@@ -613,36 +654,7 @@ function buildServerVars(
       value: databaseUrl,
       condition: database !== "none" && dbSetup === "none",
     },
-    {
-      key: "S3_BUCKET",
-      value: "",
-      condition: addons.includes("s3-storage"),
-      comment: "S3-compatible bucket name",
-    },
-    {
-      key: "S3_REGION",
-      value: "auto",
-      condition: addons.includes("s3-storage"),
-      comment: "S3 region (use auto for Cloudflare R2)",
-    },
-    {
-      key: "S3_ENDPOINT",
-      value: "",
-      condition: addons.includes("s3-storage"),
-      comment: "Optional S3-compatible endpoint (for example Cloudflare R2 or MinIO)",
-    },
-    {
-      key: "S3_ACCESS_KEY_ID",
-      value: "",
-      condition: addons.includes("s3-storage"),
-      comment: "S3-compatible access key",
-    },
-    {
-      key: "S3_SECRET_ACCESS_KEY",
-      value: "",
-      condition: addons.includes("s3-storage"),
-      comment: "S3-compatible secret key",
-    },
+    ...buildS3StorageVars(addons),
     {
       key: "ABACATEPAY_API_KEY",
       value: "",
@@ -806,6 +818,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
         payments,
         examples,
         communication,
+        addons,
       );
       if (convexBackendVars.length > 0) {
         let existingContent = "";

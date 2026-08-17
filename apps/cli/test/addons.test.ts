@@ -664,50 +664,6 @@ describe("Addon Configurations", () => {
       expect(rootViteConfig).toContain('import { defineConfig } from "vite-plus";');
     });
 
-    it.skip("should wire Nx addon when added later", async () => {
-      const created = await runTRPCTest({
-        projectName: "nx-add-later",
-        addons: ["none"],
-        frontend: ["tanstack-router"],
-        backend: "hono",
-        runtime: "bun",
-        database: "sqlite",
-        orm: "drizzle",
-        auth: "none",
-        api: "trpc",
-        examples: ["none"],
-        dbSetup: "none",
-        webDeploy: "none",
-        serverDeploy: "none",
-        install: false,
-      });
-
-      expectSuccess(created);
-      const projectDir = created.result?.projectDirectory;
-      if (!projectDir) throw new Error("Expected generated project directory");
-
-      const addResult = await add({
-        projectDir,
-        addons: ["nx"],
-        install: false,
-      });
-
-      expect(addResult?.success).toBe(true);
-
-      const rootPackageJson = JSON.parse(await readFile(join(projectDir, "package.json"), "utf8"));
-      const nxConfig = JSON.parse(await readFile(join(projectDir, "nx.json"), "utf8"));
-
-      expect(rootPackageJson.devDependencies.nx).toBeDefined();
-      expect(rootPackageJson.scripts.dev).toBe("nx run-many -t dev");
-      expect(rootPackageJson.scripts.build).toBe("nx run-many -t build");
-      expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/apps/web/dist/**");
-      expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/apps/server/dist/**");
-      expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/packages/db/dist/**");
-      expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/local.db");
-      expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/local.db-*");
-      expect(nxConfig.namedInputs.production).toContain("!{workspaceRoot}/packages/db/local.db*");
-    });
-
     it("should wire Turborepo addon when added later", async () => {
       const created = await runTRPCTest({
         projectName: "turborepo-add-later",
