@@ -15,6 +15,9 @@
 #   vars.VERCEL_ORG_ID            — team_… (from `vercel link` / project.json)
 #   vars.VERCEL_PROJECT_ID        — prj_… (from `vercel link` / project.json)
 #   vars.VERCEL_PRODUCTION_URL    — optional smoke URL (default https://kubo-gamma.vercel.app)
+#   secrets.DISCORD_BOT_TOKEN     — Discord bot token
+#   vars.DISCORD_GUILD_ID         — Discord server ID
+#   vars.DISCORD_CHANNEL_ID       — release notification channel ID
 name: Release
 
 on:
@@ -483,6 +486,45 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Web" >> $GITHUB_STEP_SUMMARY
           echo "Production site deploy runs in the **Deploy web to Vercel** job (same workflow)." >> $GITHUB_STEP_SUMMARY
+
+      - name: Read release notes
+        if: steps.check-version.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: gh release view "v$RELEASE_VERSION" --json body --jq .body > /tmp/kubo-release-notes.md
+
+      - name: Release Summary
+        if: steps.check-version.outputs.exists == 'false'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          echo "## Release v$VERSION Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Auth" >> $GITHUB_STEP_SUMMARY
+          echo "OIDC Trusted Publishing (no write token on publish steps)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Published Packages" >> $GITHUB_STEP_SUMMARY
+          echo "- [create-kubojs@$VERSION](https://www.npmjs.com/package/create-kubojs/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "- [@kubojs/cli@$VERSION](https://www.npmjs.com/package/@kubojs/cli/v/$VERSION) (compat alias)" >> $GITHUB_STEP_SUMMARY
+          echo "- [@kubojs/types@$VERSION](https://www.npmjs.com/package/@kubojs/types/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "- [@kubojs/template-generator@$VERSION](https://www.npmjs.com/package/@kubojs/template-generator/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### GitHub Release" >> $GITHUB_STEP_SUMMARY
+          echo "[v$VERSION](https://github.com/${{ github.repository }}/releases/tag/v$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Web" >> $GITHUB_STEP_SUMMARY
+          echo "Production site deploy runs in the **Deploy web to Vercel** job (same workflow)." >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify Discord
+        if: steps.check-version.outputs.exists == 'false'
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_GUILD_ID: ${{ vars.DISCORD_GUILD_ID }}
+          DISCORD_CHANNEL_ID: ${{ vars.DISCORD_CHANNEL_ID }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.version }}
+          RELEASE_NOTES_FILE: /tmp/kubo-release-notes.md
+        run: bun run notify:release
 
   # ---------------------------------------------------------------------------
   # Production web deploy (Vercel) — same chore(release): gate as npm

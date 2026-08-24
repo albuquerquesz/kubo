@@ -41,6 +41,7 @@
     "check": "oxfmt . && oxlint .",
     "prepare": "lefthook install",
     "release": "bun run scripts/release.ts",
+    "notify:release": "bun run scripts/notify-release.ts",
     "downloads": "bun run scripts/npm-downloads.ts",
     "bump": "bun run scripts/bump-version.ts",
     "canary": "bun run scripts/canary-release.ts",
