@@ -623,7 +623,7 @@ function buildServerVars(
       key: "NOTIFIQUE_API_KEY",
       value: "",
       condition: communication === "notifique",
-      comment: "Notifique API key (sk_live_… or sk_test_…) — optional until you send",
+      comment: "Notifique API key (sk_live_… or sk_test_…) — required by packages/env schema",
     },
     {
       key: "NOTIFIQUE_BASE_URL",
@@ -635,13 +635,13 @@ function buildServerVars(
       key: "NOTIFIQUE_WHATSAPP_INSTANCE_ID",
       value: "",
       condition: communication === "notifique",
-      comment: "Optional default WhatsApp instance id for sendWhatsAppText",
+      comment: "Optional WhatsApp instance id — pass to sendWhatsAppText({ instanceId })",
     },
     {
       key: "NOTIFIQUE_FROM_EMAIL",
-      value: "",
+      value: "Acme <noreply@example.com>",
       condition: communication === "notifique",
-      comment: "Optional default From (must use a VERIFIED domain)",
+      comment: "Default From (replace with a VERIFIED domain sender)",
     },
     {
       key: "ARARA_API_KEY",

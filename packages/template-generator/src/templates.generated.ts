@@ -33174,10 +33174,10 @@ export const env = createEnv({
 		RESEND_FROM_EMAIL: z.string().min(1).default("Acme <onboarding@resend.dev>"),
 	{{/if}}
 	{{#if (eq communication "notifique")}}
-		NOTIFIQUE_API_KEY: z.string().min(1).optional(),
+		NOTIFIQUE_API_KEY: z.string().min(1),
 		NOTIFIQUE_BASE_URL: z.url().default("https://api.notifique.dev"),
 		NOTIFIQUE_WHATSAPP_INSTANCE_ID: z.string().min(1).optional(),
-		NOTIFIQUE_FROM_EMAIL: z.string().min(1).optional(),
+		NOTIFIQUE_FROM_EMAIL: z.string().min(1).default("Acme <noreply@example.com>"),
 	{{/if}}
 	},
 	runtimeEnv: {{#if (or (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}runtimeEnv{{else}}process.env{{/if}},
@@ -33927,23 +33927,19 @@ await app.finalize();
     }
   },
   "scripts": {},
+  "dependencies": {
+    "@notifique/sdk-node": "0.2.1"
+  },
   "devDependencies": {}
 }
 `],
-  ["packages/notifique/src/index.ts.hbs", `export { NotifiqueError, notifiqueRequest } from "./lib/client";
+  ["packages/notifique/src/index.ts.hbs", `export { getNotifiqueClient } from "./lib/client";
 export { sendSms } from "./lib/sms";
 export { sendWhatsAppText } from "./lib/whatsapp";
 export { sendEmail } from "./lib/email";
 `],
-  ["packages/notifique/src/lib/client.ts.hbs", `import { env } from "@{{projectName}}/env/server";
-
-export type NotifiqueEnvelope<T> = {
-	success?: boolean;
-	data?: T;
-	error?: string;
-	message?: string;
-	code?: string;
-};
+  ["packages/notifique/src/lib/client.ts.hbs", `import { Notifique, NotifiqueApiError } from "@notifique/sdk-node";
+import { env } from "@{{projectName}}/env/server";
 
 export class NotifiqueError extends Error {
 	readonly status: number;
@@ -33957,98 +33953,67 @@ export class NotifiqueError extends Error {
 	}
 }
 
-function getApiKey(): string {
-	const apiKey = env.NOTIFIQUE_API_KEY?.trim();
-	if (!apiKey) {
-		throw new NotifiqueError(
-			401,
-			"NOTIFIQUE_API_KEY is not set. Add it to your server .env (sk_live_… or sk_test_…).",
-		);
+export type NotifiqueClient = Notifique;
+
+let singleton: Notifique | undefined;
+let singletonKey = "";
+
+export function getNotifiqueClient(): Notifique {
+	const apiKey = env.NOTIFIQUE_API_KEY;
+	const baseUrl = env.NOTIFIQUE_BASE_URL.replace(/\\/$/, "");
+	const cacheKey = \`\${apiKey}|\${baseUrl}\`;
+	if (!singleton || singletonKey !== cacheKey) {
+		singleton = new Notifique({ apiKey, baseUrl });
+		singletonKey = cacheKey;
 	}
-	return apiKey;
+	return singleton;
 }
 
-function getBaseUrl(): string {
-	const base = (env.NOTIFIQUE_BASE_URL ?? "https://api.notifique.dev").replace(/\\/$/, "");
-	return base.endsWith("/v1") ? base : \`\${base}/v1\`;
+export function resetNotifiqueClient(): void {
+	singleton = undefined;
+	singletonKey = "";
 }
 
-export type NotifiqueRequestOptions = {
-	method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-	body?: unknown;
-	/** Header Idempotency-Key — retries within 24h do not create duplicate sends. */
-	idempotencyKey?: string;
-};
-
-/**
- * Low-level Notifique REST helper.
- * Auth: Authorization Bearer only. Do not send x-workspace-id (key scopes the workspace).
- * Docs: https://docs.notifique.dev/skill.md · https://docs.notifique.dev/llms.txt
- */
-export async function notifiqueRequest<T>(
-	path: string,
-	options: NotifiqueRequestOptions = {},
-): Promise<T> {
-	const apiKey = getApiKey();
-	const url = \`\${getBaseUrl()}\${path.startsWith("/") ? path : \`/\${path}\`}\`;
-
-	const headers: Record<string, string> = {
-		"Content-Type": "application/json",
-		Authorization: \`Bearer \${apiKey}\`,
-	};
-	if (options.idempotencyKey) {
-		headers["Idempotency-Key"] = options.idempotencyKey;
-	}
-
-	const response = await fetch(url, {
-		method: options.method ?? (options.body !== undefined ? "POST" : "GET"),
-		headers,
-		body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
-	});
-
-	const payload = (await response.json().catch(() => ({}))) as NotifiqueEnvelope<T>;
-
-	// 202 Accepted is the normal success for send endpoints.
-	if (!response.ok) {
+export function mapNotifiqueError(error: unknown): never {
+	if (error instanceof NotifiqueError) throw error;
+	if (error instanceof NotifiqueApiError) {
+		const responseData = error.responseData as
+			| { message?: string; error?: string; code?: string }
+			| undefined;
 		throw new NotifiqueError(
-			response.status,
-			payload.message ?? payload.error ?? \`Notifique request failed (\${response.status})\`,
-			payload.code,
+			error.statusCode,
+			responseData?.message ?? responseData?.error ?? error.message,
+			responseData?.code ?? error.code,
 		);
 	}
-
-	if (payload.data !== undefined) {
-		return payload.data;
-	}
-
-	return payload as unknown as T;
+	throw error;
 }
 `],
   ["packages/notifique/src/lib/email.ts.hbs", `import { env } from "@{{projectName}}/env/server";
-import { notifiqueRequest } from "./client";
+import { getNotifiqueClient, mapNotifiqueError } from "./client";
+
+export type NotifiqueEmailPriority = "high" | "normal" | "low";
 
 export type SendNotifiqueEmailInput = {
-	/** Verified domain sender, e.g. "Acme <noreply@example.com>". Defaults to NOTIFIQUE_FROM_EMAIL. */
+	/** Verified domain sender. Defaults to NOTIFIQUE_FROM_EMAIL. */
 	from?: string;
+	fromName?: string;
 	to: string | string[];
 	subject: string;
 	html?: string;
 	text?: string;
-	cc?: string | string[];
-	bcc?: string | string[];
-	replyTo?: string | string[];
+	priority?: NotifiqueEmailPriority;
 	idempotencyKey?: string;
 };
 
 export type SendNotifiqueEmailResult = {
-	status: "QUEUED" | "SCHEDULED" | string;
-	count?: number;
+	status: "QUEUED" | "SCHEDULED";
+	count: number;
 	messageIds: string[];
-	emailIds?: string[];
+	scheduledAt?: string;
 };
 
-function asArray(value: string | string[] | undefined): string[] | undefined {
-	if (value === undefined) return undefined;
+function asArray(value: string | string[]): string[] {
 	return Array.isArray(value) ? value : [value];
 }
 
@@ -34059,37 +34024,34 @@ function asArray(value: string | string[] | undefined): string[] | undefined {
 export async function sendEmail(
 	input: SendNotifiqueEmailInput,
 ): Promise<SendNotifiqueEmailResult> {
-	const from = input.from ?? env.NOTIFIQUE_FROM_EMAIL;
-	if (!from) {
-		throw new Error(
-			"Email from is required. Pass from or set NOTIFIQUE_FROM_EMAIL (verified domain).",
-		);
-	}
 	if (!input.html && !input.text) {
-		throw new Error("Email requires payload.html and/or payload.text.");
+		throw new Error("Email requires html and/or text.");
 	}
 
-	return notifiqueRequest<SendNotifiqueEmailResult>("/email/messages", {
-		body: {
-			from,
-			to: asArray(input.to),
-			cc: asArray(input.cc),
-			bcc: asArray(input.bcc),
-			replyTo: asArray(input.replyTo),
-			type: "email",
-			payload: {
+	const notifique = getNotifiqueClient();
+
+	try {
+		const response = await notifique.email.send(
+			{
+				from: input.from ?? env.NOTIFIQUE_FROM_EMAIL,
+				...(input.fromName ? { fromName: input.fromName } : {}),
+				to: asArray(input.to),
 				subject: input.subject,
 				html: input.html,
 				text: input.text,
+				...(input.priority ? { options: { priority: input.priority } } : {}),
 			},
-		},
-		idempotencyKey: input.idempotencyKey,
-	});
+			{ idempotencyKey: input.idempotencyKey },
+		);
+		return response.data;
+	} catch (error) {
+		mapNotifiqueError(error);
+	}
 }
 `],
-  ["packages/notifique/src/lib/sms.ts.hbs", `import { notifiqueRequest } from "./client";
+  ["packages/notifique/src/lib/sms.ts.hbs", `import { getNotifiqueClient, mapNotifiqueError } from "./client";
 
-export type NotifiqueSmsSpeed = "full" | "standard" | "slow";
+export type NotifiqueSmsPriority = "high" | "normal" | "low";
 
 export type SendSmsInput = {
 	/** Digits only, international (no +), e.g. 5511999999999 — or array of numbers */
@@ -34097,16 +34059,15 @@ export type SendSmsInput = {
 	/** Plain text; API requires at least 9 characters */
 	message: string;
 	idempotencyKey?: string;
-	/** Operator route / pricing: full | standard | slow */
-	speed?: NotifiqueSmsSpeed;
+	/** Delivery priority: high | normal | low */
+	priority?: NotifiqueSmsPriority;
 };
 
 export type SendSmsResult = {
-	status: "QUEUED" | "SCHEDULED" | string;
-	count?: number;
-	messageIds: string[];
-	smsIds?: string[];
-	scheduledAt?: string | null;
+	status: "QUEUED" | "SCHEDULED";
+	count: number;
+	smsIds: string[];
+	scheduledAt?: string;
 };
 
 /**
@@ -34119,23 +34080,28 @@ export async function sendSms(input: SendSmsInput): Promise<SendSmsResult> {
 		throw new Error("SMS message must be at least 9 characters (Notifique API rule).");
 	}
 
-	return notifiqueRequest<SendSmsResult>("/sms/messages", {
-		body: {
-			to,
-			type: "text",
-			payload: { message: input.message },
-			...(input.speed ? { options: { speed: input.speed } } : {}),
-		},
-		idempotencyKey: input.idempotencyKey,
-	});
+	const notifique = getNotifiqueClient();
+
+	try {
+		const response = await notifique.sms.send(
+			{
+				to,
+				message: input.message,
+				...(input.priority ? { options: { priority: input.priority } } : {}),
+			},
+			{ idempotencyKey: input.idempotencyKey },
+		);
+		return response.data;
+	} catch (error) {
+		mapNotifiqueError(error);
+	}
 }
 `],
-  ["packages/notifique/src/lib/whatsapp.ts.hbs", `import { env } from "@{{projectName}}/env/server";
-import { notifiqueRequest } from "./client";
+  ["packages/notifique/src/lib/whatsapp.ts.hbs", `import { getNotifiqueClient, mapNotifiqueError } from "./client";
 
 export type SendWhatsAppTextInput = {
-	/** WhatsApp instance id (ACTIVE). Defaults to NOTIFIQUE_WHATSAPP_INSTANCE_ID when set. */
-	instanceId?: string;
+	/** WhatsApp instance id (ACTIVE). Prefer env.NOTIFIQUE_WHATSAPP_INSTANCE_ID at the call site. */
+	instanceId: string;
 	/** Digits only, international (no +), e.g. 5511999999999 */
 	to: string | string[];
 	message: string;
@@ -34156,25 +34122,19 @@ export type SendWhatsAppResult = {
 export async function sendWhatsAppText(
 	input: SendWhatsAppTextInput,
 ): Promise<SendWhatsAppResult> {
-	const instanceId =
-		input.instanceId?.trim() || env.NOTIFIQUE_WHATSAPP_INSTANCE_ID?.trim();
-	if (!instanceId) {
-		throw new Error(
-			"WhatsApp instanceId is required. Pass instanceId or set NOTIFIQUE_WHATSAPP_INSTANCE_ID.",
-		);
-	}
-
 	const to = Array.isArray(input.to) ? input.to : [input.to];
+	const notifique = getNotifiqueClient();
 
-	return notifiqueRequest<SendWhatsAppResult>("/whatsapp/messages", {
-		body: {
-			instanceId,
-			to,
-			type: "text",
-			payload: { message: input.message },
-		},
-		idempotencyKey: input.idempotencyKey,
-	});
+	try {
+		const response = await notifique.whatsapp.send(
+			input.instanceId,
+			{ to, type: "text", payload: { message: input.message } },
+			{ idempotencyKey: input.idempotencyKey },
+		);
+		return response.data;
+	} catch (error) {
+		mapNotifiqueError(error);
+	}
 }
 `],
   ["packages/notifique/tsconfig.json.hbs", `{

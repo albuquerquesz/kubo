@@ -1,9 +1,8 @@
-import { env } from "@{{projectName}}/env/server";
-import { notifiqueRequest } from "./client";
+import { getNotifiqueClient, mapNotifiqueError } from "./client";
 
 export type SendWhatsAppTextInput = {
-	/** WhatsApp instance id (ACTIVE). Defaults to NOTIFIQUE_WHATSAPP_INSTANCE_ID when set. */
-	instanceId?: string;
+	/** WhatsApp instance id (ACTIVE). Prefer env.NOTIFIQUE_WHATSAPP_INSTANCE_ID at the call site. */
+	instanceId: string;
 	/** Digits only, international (no +), e.g. 5511999999999 */
 	to: string | string[];
 	message: string;
@@ -24,23 +23,17 @@ export type SendWhatsAppResult = {
 export async function sendWhatsAppText(
 	input: SendWhatsAppTextInput,
 ): Promise<SendWhatsAppResult> {
-	const instanceId =
-		input.instanceId?.trim() || env.NOTIFIQUE_WHATSAPP_INSTANCE_ID?.trim();
-	if (!instanceId) {
-		throw new Error(
-			"WhatsApp instanceId is required. Pass instanceId or set NOTIFIQUE_WHATSAPP_INSTANCE_ID.",
-		);
-	}
-
 	const to = Array.isArray(input.to) ? input.to : [input.to];
+	const notifique = getNotifiqueClient();
 
-	return notifiqueRequest<SendWhatsAppResult>("/whatsapp/messages", {
-		body: {
-			instanceId,
-			to,
-			type: "text",
-			payload: { message: input.message },
-		},
-		idempotencyKey: input.idempotencyKey,
-	});
+	try {
+		const response = await notifique.whatsapp.send(
+			input.instanceId,
+			{ to, type: "text", payload: { message: input.message } },
+			{ idempotencyKey: input.idempotencyKey },
+		);
+		return response.data;
+	} catch (error) {
+		mapNotifiqueError(error);
+	}
 }

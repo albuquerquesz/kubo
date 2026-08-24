@@ -212,20 +212,22 @@ describe("Resend communication", () => {
     const readme = files.get("README.md") ?? "";
 
     expect(files.has("packages/email/package.json")).toBe(false);
+    expect(index).toContain("export { getNotifiqueClient }");
     expect(index).toContain("sendSms");
-    expect(client).toContain("Authorization");
-    expect(client).toContain("Bearer");
-    expect(client).toContain("api.notifique.dev");
-    // Skill rule: never send x-workspace-id as a request header (comment may mention it).
-    expect(client).not.toMatch(/["']x-workspace-id["']\s*:/);
-    expect(client).toContain("Idempotency-Key");
-    expect(sms).toContain("/sms/messages");
-    expect(sms).toContain('type: "text"');
-    expect(sms).toContain("payload");
-    expect(whatsapp).toContain("/whatsapp/messages");
+    expect(index).not.toMatch(/^\*/m);
+    expect(client).toContain("@notifique/sdk-node");
+    expect(client).toContain("new Notifique");
+    expect(client).toContain("env.NOTIFIQUE_API_KEY");
+    expect(client).not.toContain("fetch(");
+    expect(sms).toContain(".sms.send");
+    expect(sms).toContain("idempotencyKey");
+    expect(sms).toContain("options: { priority:");
+    expect(sms).not.toContain("options: { speed:");
+    expect(whatsapp).toContain(".whatsapp.send");
     expect(whatsapp).toContain("instanceId");
-    expect(email).toContain("/email/messages");
-    expect(email).toContain('type: "email"');
+    expect(email).toContain(".email.send");
+    expect(email).toContain("env.NOTIFIQUE_FROM_EMAIL");
+    expect(email).not.toContain("cc:");
     expect(serverEnv).toContain("NOTIFIQUE_API_KEY=");
     expect(serverPackage.dependencies?.["@notifique-app/notifique"]).toBeTruthy();
     expect(readme).toContain("Notifique");
