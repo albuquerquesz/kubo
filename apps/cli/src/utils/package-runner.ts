@@ -48,6 +48,8 @@ function splitCommandArgs(commandWithArgs: string): string[] {
   return args;
 }
 
+export type PackageCommand = string | readonly string[];
+
 /**
  * Returns the appropriate command for running a package without installing it globally,
  * based on the selected package manager.
@@ -80,9 +82,11 @@ export function getPackageExecutionCommand(
  */
 export function getPackageExecutionArgs(
   packageManager: PackageManager | null | undefined,
-  commandWithArgs: string,
+  commandWithArgs: PackageCommand,
 ): string[] {
-  const args = splitCommandArgs(commandWithArgs);
+  const args = Array.isArray(commandWithArgs)
+    ? [...commandWithArgs]
+    : splitCommandArgs(commandWithArgs);
   switch (packageManager) {
     case "pnpm":
       return ["pnpm", "dlx", ...args];

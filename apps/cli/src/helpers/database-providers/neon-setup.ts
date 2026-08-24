@@ -24,6 +24,8 @@ import {
   resolveDbSetupMode,
 } from "../core/db-setup-options";
 
+const NEON_REFERRAL = "sbA3tIe";
+
 type NeonConfig = {
   connectionString: string;
   projectId: string;
@@ -51,11 +53,11 @@ const NEON_REGIONS: NeonRegion[] = [
 
 async function executeNeonCommand(
   packageManager: PackageManager,
-  commandArgsString: string,
+  commandArgs: readonly string[],
   spinnerText?: string,
 ): Promise<Result<{ stdout: string; stderr: string }, DatabaseSetupError>> {
   const s = createSpinner();
-  const args = getPackageExecutionArgs(packageManager, commandArgsString);
+  const args = getPackageExecutionArgs(packageManager, commandArgs);
 
   if (spinnerText) s.start(spinnerText);
 
@@ -82,10 +84,19 @@ async function createNeonProject(
   regionId: string,
   packageManager: PackageManager,
 ): Promise<Result<NeonConfig, DatabaseSetupError>> {
-  const commandArgsString = `neonctl@latest projects create --name ${projectName} --region-id ${regionId} --output json`;
   const execResult = await executeNeonCommand(
     packageManager,
-    commandArgsString,
+    [
+      "neonctl@latest",
+      "projects",
+      "create",
+      "--name",
+      projectName,
+      "--region-id",
+      regionId,
+      "--output",
+      "json",
+    ],
     `Creating Neon project "${projectName}"...`,
   );
 
@@ -180,10 +191,12 @@ async function setupWithNeonDb(
     return ensureDirResult;
   }
 
-  const packageArgs = getPackageExecutionArgs(
-    packageManager,
-    `neon-new@latest --yes --ref "sbA3tIe"`,
-  );
+  const packageArgs = getPackageExecutionArgs(packageManager, [
+    "neon-new@latest",
+    "--yes",
+    "--ref",
+    NEON_REFERRAL,
+  ]);
 
   return Result.tryPromise({
     try: async () => {
@@ -194,11 +207,29 @@ async function setupWithNeonDb(
       s.stop(pc.red("Failed to create database with neon-new"));
       return new DatabaseSetupError({
         provider: "neon",
-        message: `Failed to create database with neon-new: ${e instanceof Error ? e.message : String(e)}`,
+        message: formatNeonCommandError(e),
         cause: e,
       });
     },
   });
+}
+
+function formatNeonCommandError(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+
+  if (
+    process.platform === "win32" &&
+    message.includes("ERR_UNSUPPORTED_ESM_URL_SCHEME") &&
+    message.includes("protocol 'c:'")
+  ) {
+    return [
+      "Failed to create database with neon-new: the Neon CLI returned an invalid Windows file URL.",
+      "Use the Manual Neon setup for now, or update neon-new if a newer release is available.",
+      `Original error: ${message}`,
+    ].join(" ");
+  }
+
+  return `Failed to create database with neon-new: ${message}`;
 }
 
 function displayManualSetupInstructions(target: "apps/web" | "apps/server") {
