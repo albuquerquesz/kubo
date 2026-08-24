@@ -29,6 +29,63 @@ test("surfaces a friendly validation error for invalid addons", async () => {
   expect(output).not.toContain("Input validation failed");
 });
 
+test("accepts the documented s3-storage addon in the CLI", async () => {
+  const logs: string[] = [];
+
+  const result = await createBtsCli()
+    .run({
+      argv: [
+        "create",
+        "s3-app",
+        "--dry-run",
+        "--frontend",
+        "tanstack-router",
+        "--backend",
+        "hono",
+        "--runtime",
+        "bun",
+        "--database",
+        "sqlite",
+        "--orm",
+        "drizzle",
+        "--auth",
+        "none",
+        "--payments",
+        "none",
+        "--disable-observability",
+        "--communication",
+        "none",
+        "--addons",
+        "s3-storage",
+        "--examples",
+        "none",
+        "--testing",
+        "none",
+        "--api",
+        "trpc",
+        "--db-setup",
+        "none",
+        "--web-deploy",
+        "none",
+        "--server-deploy",
+        "none",
+        "--package-manager",
+        "bun",
+        "--no-git",
+        "--no-install",
+      ],
+      logger: {
+        error: (...args) => logs.push(args.map(String).join(" ")),
+      },
+      process: { exit: () => 0 as never },
+    })
+    .catch((error) => error);
+
+  expect(result).toBeInstanceOf(FailedToExitError);
+  expect(result.exitCode).toBe(0);
+  expect(logs.join("\n")).not.toContain("Invalid option");
+});
+
 test("allows self + D1 flags before web deploy is resolved by prompts", () => {
   const options = {
     backend: "self",
