@@ -12,12 +12,12 @@ describe("External Command Guards", () => {
   it("should split quoted args correctly", () => {
     const args = getPackageExecutionArgs(
       "bun",
-      `get-db@latest --yes --ref "sbA3tIe" --name test-db`,
+      `neon-new@latest --yes --ref "sbA3tIe" --name test-db`,
     );
 
     expect(args).toEqual([
       "bunx",
-      "get-db@latest",
+      "neon-new@latest",
       "--yes",
       "--ref",
       "sbA3tIe",
