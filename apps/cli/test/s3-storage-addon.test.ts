@@ -49,6 +49,8 @@ describe("S3-compatible storage addon", () => {
     expect(adapter).toContain("getS3ErrorStatusCode(error) === 404");
     expect(adapter).toContain("credentials?: {");
     expect(adapter).toContain("...(config.credentials ? { credentials: config.credentials } : {})");
+    expect(adapter).toContain('requestChecksumCalculation: "WHEN_REQUIRED"');
+    expect(adapter).toContain('responseChecksumValidation: "WHEN_REQUIRED"');
     expect(JSON.parse(packageJson).dependencies["@aws-sdk/client-s3"]).toBeDefined();
     expect(JSON.parse(packageJson).dependencies["@aws-sdk/s3-request-presigner"]).toBeDefined();
     expect(serverEnv).toContain("S3_BUCKET=");

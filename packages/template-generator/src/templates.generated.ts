@@ -420,6 +420,13 @@ export class S3Bucket extends Bucket<GetObjectCommandOutput> {
       region: config.region,
       endpoint: config.endpoint,
       forcePathStyle: config.forcePathStyle ?? Boolean(config.endpoint),
+      // Custom endpoints (R2/MinIO/Backblaze) reject AWS SDK default CRC32 checksums.
+      ...(config.endpoint
+        ? {
+            requestChecksumCalculation: "WHEN_REQUIRED" as const,
+            responseChecksumValidation: "WHEN_REQUIRED" as const,
+          }
+        : {}),
       ...(config.credentials ? { credentials: config.credentials } : {}),
     };
     this.client = new S3Client({
@@ -37790,10 +37797,21 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
+{{#if (or (includes addons "turborepo") (includes addons "nx") (includes addons "vite-plus"))}}
+    // Prefer the web-only workspace script when a monorepo task runner is present.
+    command: "{{packageManager}} run dev:web",
+{{else}}
     command: "{{packageManager}} run dev",
+{{/if}}
     url: baseURL,
     reuseExistingServer: !process.env.CI,
   },
+});
+`],
+  ["testing/vitest/smoke.test.ts.hbs", `import { expect, test } from "vitest";
+
+test("smoke: vitest is wired", () => {
+  expect(1 + 1).toBe(2);
 });
 `],
   ["testing/vitest/vitest.config.ts.hbs", `import { defineConfig } from "vitest/config";
@@ -37801,10 +37819,15 @@ export default defineConfig({
 export default defineConfig({
   test: {
     passWithNoTests: true,
-    include: ["apps/*/src/**/*.{test,spec}.ts", "packages/*/src/**/*.{test,spec}.ts"],
+    include: [
+      "smoke.test.ts",
+      "apps/*/src/**/*.{test,spec}.ts",
+      "packages/*/src/**/*.{test,spec}.ts",
+    ],
+    exclude: ["**/node_modules/**", "**/e2e/**", "**/.git/**"],
   },
 });
 `]
 ]);
 
-export const TEMPLATE_COUNT = 616;
+export const TEMPLATE_COUNT = 617;

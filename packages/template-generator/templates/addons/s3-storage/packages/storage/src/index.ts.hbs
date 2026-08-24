@@ -60,6 +60,13 @@ export class S3Bucket extends Bucket<GetObjectCommandOutput> {
       region: config.region,
       endpoint: config.endpoint,
       forcePathStyle: config.forcePathStyle ?? Boolean(config.endpoint),
+      // Custom endpoints (R2/MinIO/Backblaze) reject AWS SDK default CRC32 checksums.
+      ...(config.endpoint
+        ? {
+            requestChecksumCalculation: "WHEN_REQUIRED" as const,
+            responseChecksumValidation: "WHEN_REQUIRED" as const,
+          }
+        : {}),
       ...(config.credentials ? { credentials: config.credentials } : {}),
     };
     this.client = new S3Client({
