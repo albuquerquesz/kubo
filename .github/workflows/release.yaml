@@ -171,19 +171,44 @@ jobs:
       - name: Post-publish npm view verify
         run: |
           VERSION="${{ steps.version.outputs.version }}"
+          # npm registry can 404 briefly after publish; retry with backoff.
+          wait_for_npm_version() {
+            local pkg="$1"
+            local version="$2"
+            local attempts=12
+            local delay=5
+            local i got
+            for i in $(seq 1 "$attempts"); do
+              got=$(npm view "$pkg@$version" version 2>/dev/null || true)
+              if [ "$got" = "$version" ]; then
+                echo "OK $pkg@$got (attempt $i)"
+                return 0
+              fi
+              echo "Waiting for $pkg@$version (attempt $i/$attempts, got='${got:-missing}')..."
+              sleep "$delay"
+            done
+            echo "Error: expected $pkg@$version after $attempts attempts"
+            return 1
+          }
+
           for pkg in create-kubojs @kubojs/cli @kubojs/types @kubojs/template-generator; do
-            got=$(npm view "$pkg@$VERSION" version)
-            if [ "$got" != "$VERSION" ]; then
-              echo "Error: expected $pkg@$VERSION, got $got"
-              exit 1
-            fi
-            echo "OK $pkg@$got"
+            wait_for_npm_version "$pkg" "$VERSION"
           done
-          TAG=$(npm view create-kubojs dist-tags.oidc-canary)
+
+          TAG=""
+          for i in $(seq 1 12); do
+            TAG=$(npm view create-kubojs dist-tags.oidc-canary 2>/dev/null || true)
+            if [ "$TAG" = "$VERSION" ]; then
+              break
+            fi
+            echo "Waiting for oidc-canary=$VERSION (attempt $i/12, got='${TAG:-missing}')..."
+            sleep 5
+          done
           if [ "$TAG" != "$VERSION" ]; then
             echo "Error: oidc-canary tag is '$TAG', expected $VERSION"
             exit 1
           fi
+
           LATEST_NOW=$(npm view create-kubojs dist-tags.latest)
           if [ "$LATEST_NOW" != "${{ steps.pre-latest.outputs.latest }}" ]; then
             echo "Error: latest dist-tag changed from ${{ steps.pre-latest.outputs.latest }} to $LATEST_NOW"
@@ -389,13 +414,28 @@ jobs:
         if: steps.check-version.outputs.exists == 'false'
         run: |
           VERSION="${{ steps.version.outputs.version }}"
+          # npm registry can 404 briefly after publish; retry with backoff.
+          wait_for_npm_version() {
+            local pkg="$1"
+            local version="$2"
+            local attempts=12
+            local delay=5
+            local i got
+            for i in $(seq 1 "$attempts"); do
+              got=$(npm view "$pkg@$version" version 2>/dev/null || true)
+              if [ "$got" = "$version" ]; then
+                echo "OK $pkg@$got (attempt $i)"
+                return 0
+              fi
+              echo "Waiting for $pkg@$version (attempt $i/$attempts, got='${got:-missing}')..."
+              sleep "$delay"
+            done
+            echo "Error: expected $pkg@$version after $attempts attempts"
+            return 1
+          }
+
           for pkg in create-kubojs @kubojs/cli @kubojs/types @kubojs/template-generator; do
-            got=$(npm view "$pkg@$VERSION" version)
-            if [ "$got" != "$VERSION" ]; then
-              echo "Error: expected $pkg@$VERSION, got $got"
-              exit 1
-            fi
-            echo "OK $pkg@$got"
+            wait_for_npm_version "$pkg" "$VERSION"
           done
 
       - name: Create and push tag
