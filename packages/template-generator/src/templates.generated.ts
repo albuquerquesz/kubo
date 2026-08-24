@@ -320,6 +320,187 @@ export default defineConfig({
   images: ["public/logo.png"],
 });
 `],
+  ["addons/s3-storage/packages/storage/package.json.hbs", `{
+  "name": "@{{projectName}}/storage",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}
+`],
+  ["addons/s3-storage/packages/storage/src/bucket.ts.hbs", `export type BucketConfig = {
+  bucket: string;
+};
+
+export type BucketUploadInput = {
+  key: string;
+  body: string | Uint8Array | ArrayBuffer;
+  contentType?: string;
+  metadata?: Record<string, string>;
+};
+
+export abstract class Bucket<TObject = unknown> {
+  protected readonly bucket: string;
+
+  protected constructor(config: BucketConfig) {
+    this.bucket = config.bucket;
+  }
+
+  abstract upload(input: BucketUploadInput): Promise<void>;
+
+  abstract download(key: string): Promise<TObject>;
+
+  abstract exists(key: string): Promise<boolean>;
+
+  abstract delete(key: string): Promise<void>;
+
+  abstract getSignedUrl(key: string, expiresIn?: number): Promise<string>;
+}
+`],
+  ["addons/s3-storage/packages/storage/src/index.ts.hbs", `import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  HeadObjectCommand,
+  PutObjectCommand,
+  S3Client,
+  type GetObjectCommandOutput,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+import { Bucket, type BucketConfig, type BucketUploadInput } from "./bucket";
+
+export type S3BucketConfig = BucketConfig & {
+  region: string;
+  credentials?: {
+    accessKeyId: string;
+    secretAccessKey: string;
+  };
+  endpoint?: string;
+  forcePathStyle?: boolean;
+};
+
+export type S3BucketEnv = {
+  S3_BUCKET?: string;
+  S3_REGION?: string;
+  S3_ENDPOINT?: string;
+  S3_ACCESS_KEY_ID?: string;
+  S3_SECRET_ACCESS_KEY?: string;
+};
+
+function getS3ErrorStatusCode(error: Error): number | undefined {
+  const metadata = (error as Error & { $metadata?: unknown }).$metadata;
+  if (typeof metadata !== "object" || metadata === null) return undefined;
+
+  const statusCode = (metadata as { httpStatusCode?: unknown }).httpStatusCode;
+  return typeof statusCode === "number" ? statusCode : undefined;
+}
+
+function isNotFoundError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  return (
+    error.name === "NotFound" ||
+    error.name === "NoSuchKey" ||
+    getS3ErrorStatusCode(error) === 404
+  );
+}
+
+export class S3Bucket extends Bucket<GetObjectCommandOutput> {
+  private readonly client: S3Client;
+
+  constructor(config: S3BucketConfig) {
+    super(config);
+    if (
+      config.credentials &&
+      (!config.credentials.accessKeyId || !config.credentials.secretAccessKey)
+    ) {
+      throw new Error("S3 credentials must include both accessKeyId and secretAccessKey");
+    }
+    const clientConfig = {
+      region: config.region,
+      endpoint: config.endpoint,
+      forcePathStyle: config.forcePathStyle ?? Boolean(config.endpoint),
+      // Custom endpoints (R2/MinIO/Backblaze) reject AWS SDK default CRC32 checksums.
+      ...(config.endpoint
+        ? {
+            requestChecksumCalculation: "WHEN_REQUIRED" as const,
+            responseChecksumValidation: "WHEN_REQUIRED" as const,
+          }
+        : {}),
+      ...(config.credentials ? { credentials: config.credentials } : {}),
+    };
+    this.client = new S3Client({
+      ...clientConfig,
+    });
+  }
+
+  async upload(input: BucketUploadInput): Promise<void> {
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: input.key,
+        Body: input.body,
+        ContentType: input.contentType,
+        Metadata: input.metadata,
+      }),
+    );
+  }
+
+  download(key: string): Promise<GetObjectCommandOutput> {
+    return this.client.send(new GetObjectCommand({ Bucket: this.bucket, Key: key }));
+  }
+
+  async exists(key: string): Promise<boolean> {
+    try {
+      await this.client.send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }));
+      return true;
+    } catch (error) {
+      if (isNotFoundError(error)) return false;
+      throw error;
+    }
+  }
+
+  async delete(key: string): Promise<void> {
+    await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
+  }
+
+  getSignedUrl(key: string, expiresIn = 900): Promise<string> {
+    return getSignedUrl(this.client, new GetObjectCommand({ Bucket: this.bucket, Key: key }), {
+      expiresIn,
+    });
+  }
+}
+
+export function createS3BucketFromEnv(env: S3BucketEnv): S3Bucket {
+  const bucket = env.S3_BUCKET?.trim();
+  if (!bucket) {
+    throw new Error("S3_BUCKET is required to create an S3 bucket");
+  }
+
+  const accessKeyId = env.S3_ACCESS_KEY_ID?.trim();
+  const secretAccessKey = env.S3_SECRET_ACCESS_KEY?.trim();
+  if (Boolean(accessKeyId) !== Boolean(secretAccessKey)) {
+    throw new Error("S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY must be provided together");
+  }
+
+  return new S3Bucket({
+    bucket,
+    region: env.S3_REGION?.trim() || "auto",
+    endpoint: env.S3_ENDPOINT?.trim() || undefined,
+    ...(accessKeyId && secretAccessKey
+      ? { credentials: { accessKeyId, secretAccessKey } }
+      : {}),
+  });
+}
+
+export { Bucket } from "./bucket";
+export type { BucketConfig, BucketUploadInput } from "./bucket";
+`],
+  ["addons/s3-storage/packages/storage/tsconfig.json.hbs", `{
+  "extends": "../config/tsconfig.base.json",
+  "include": ["src"]
+}
+`],
   ["api/orpc/fullstack/astro/src/pages/rpc/[...rest].ts.hbs", `import type { APIRoute } from "astro";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
@@ -38046,10 +38227,21 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
+{{#if (or (includes addons "turborepo") (includes addons "nx") (includes addons "vite-plus"))}}
+    // Prefer the web-only workspace script when a monorepo task runner is present.
+    command: "{{packageManager}} run dev:web",
+{{else}}
     command: "{{packageManager}} run dev",
+{{/if}}
     url: baseURL,
     reuseExistingServer: !process.env.CI,
   },
+});
+`],
+  ["testing/vitest/smoke.test.ts.hbs", `import { expect, test } from "vitest";
+
+test("smoke: vitest is wired", () => {
+  expect(1 + 1).toBe(2);
 });
 `],
   ["testing/vitest/vitest.config.ts.hbs", `import { defineConfig } from "vitest/config";
@@ -38057,10 +38249,15 @@ export default defineConfig({
 export default defineConfig({
   test: {
     passWithNoTests: true,
-    include: ["apps/*/src/**/*.{test,spec}.ts", "packages/*/src/**/*.{test,spec}.ts"],
+    include: [
+      "smoke.test.ts",
+      "apps/*/src/**/*.{test,spec}.ts",
+      "packages/*/src/**/*.{test,spec}.ts",
+    ],
+    exclude: ["**/node_modules/**", "**/e2e/**", "**/.git/**"],
   },
 });
 `]
 ]);
 
-export const TEMPLATE_COUNT = 559;
+export const TEMPLATE_COUNT = 564;

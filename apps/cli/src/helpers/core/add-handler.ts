@@ -5,6 +5,7 @@ import {
   EMBEDDED_TEMPLATES,
   processAddonTemplates,
   processAddonsDeps,
+  processEnvVariables,
   processNxConfig,
   processPackageConfigs,
   processTurboConfig,
@@ -62,10 +63,20 @@ const ADD_PACKAGE_JSON_PATHS = [
   "packages/config/package.json",
   "packages/env/package.json",
   "packages/infra/package.json",
+  "packages/storage/package.json",
   "packages/ui/package.json",
 ];
 
 const ADD_TEXT_FILE_PATHS = ["apps/web/vite.config.ts", "lefthook.yml"];
+
+const ADD_ENV_FILE_PATHS = [
+  ".env",
+  "apps/web/.env",
+  "apps/server/.env",
+  "apps/native/.env",
+  "packages/backend/.env.local",
+  "packages/infra/.env",
+];
 
 const HOOK_ADDONS = ["husky", "lefthook"] as const satisfies readonly Addons[];
 const HOOK_LINTER_ADDONS = ["biome", "oxlint", "vite-plus"] as const satisfies readonly Addons[];
@@ -355,6 +366,7 @@ async function addHandlerInternal(
   }
 
   const mergedAddonOptions = mergeAddonOptions(existingConfig.addonOptions, input.addonOptions);
+  const updatedTesting = existingConfig.testing ?? [];
   const config: ProjectConfig = {
     projectName: existingConfig.projectName,
     projectDir,
@@ -371,6 +383,7 @@ async function addHandlerInternal(
     payments: existingConfig.payments,
     observability: existingConfig.observability,
     communication: existingConfig.communication ?? "none",
+    testing: updatedTesting,
     git: false,
     packageManager: input.packageManager || existingConfig.packageManager,
     install: input.install ?? false,
@@ -406,12 +419,20 @@ async function addHandlerInternal(
       vfs.writeFile(filePath, content);
     }
   }
+  for (const filePath of ADD_ENV_FILE_PATHS) {
+    const fullPath = path.join(projectDir, filePath);
+    if (await fs.pathExists(fullPath)) {
+      const content = await fs.readFile(fullPath, "utf-8");
+      vfs.writeFile(filePath, content);
+    }
+  }
 
   // Process addon templates
   await processAddonTemplates(vfs, EMBEDDED_TEMPLATES, config);
 
   // Process addon dependencies (adds deps to package.json files in VFS)
   processAddonsDeps(vfs, config);
+  processEnvVariables(vfs, updatedConfig);
 
   if (addonsToAdd.includes("turborepo")) {
     processTurboConfig(vfs, updatedConfig);

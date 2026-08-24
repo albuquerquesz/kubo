@@ -100,6 +100,10 @@ function getAddonDisplay(addon: Addons): { label: string; hint: string } {
       label = "evlog";
       hint = "Request logging with Better Auth context and AI SDK telemetry";
       break;
+    case "s3-storage":
+      label = "S3-compatible Storage";
+      hint = "Add object storage for AWS S3, Cloudflare R2, MinIO, or Backblaze";
+      break;
     default:
       label = addon;
       hint = `Add ${addon}`;
@@ -112,7 +116,7 @@ const ADDON_GROUPS = {
   "Monorepo & Tasks": ["turborepo", "nx", "vite-plus"],
   "Code Quality": ["biome", "oxlint", "ultracite", "husky", "lefthook"],
   Documentation: ["starlight", "fumadocs"],
-  "Platform Extensions": ["pwa", "tauri", "electrobun", "opentui", "wxt"],
+  "Platform Extensions": ["pwa", "tauri", "electrobun", "opentui", "wxt", "s3-storage"],
   Observability: ["evlog"],
   "AI & Agent Tools": ["skills", "mcp"],
 };

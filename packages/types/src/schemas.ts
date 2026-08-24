@@ -51,6 +51,7 @@ export const AddonsSchema = z
     "wxt",
     "skills",
     "evlog",
+    "s3-storage",
     "none",
   ])
   .describe("Additional addons");

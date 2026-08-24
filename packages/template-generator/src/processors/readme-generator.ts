@@ -524,13 +524,20 @@ function generateProjectStructure(config: ProjectConfig): string {
       }
       if (hasDbPackage) {
         structure.push(
-          payments === "abacatepay"
+          payments === "abacatepay" || addons.includes("s3-storage")
             ? "│   ├── db/          # Database schema & queries"
             : "│   └── db/          # Database schema & queries",
         );
       }
       if (payments === "abacatepay") {
-        structure.push("│   └── payments/    # AbacatePay runtime and webhook helpers");
+        structure.push(
+          addons.includes("s3-storage")
+            ? "│   ├── payments/    # AbacatePay runtime and webhook helpers"
+            : "│   └── payments/    # AbacatePay runtime and webhook helpers",
+        );
+      }
+      if (addons.includes("s3-storage")) {
+        structure.push("│   └── storage/     # S3-compatible object storage adapter");
       }
     }
   }
@@ -744,6 +751,8 @@ function generateFeaturesList(
     nx: "- **Nx** - Smart monorepo task orchestration and caching",
     "vite-plus":
       "- **Vite+** - Unified Vite toolchain, workspace task runner, linting, and formatting",
+    "s3-storage":
+      "- **S3-compatible Storage** - Typed bucket abstraction for AWS S3, Cloudflare R2, MinIO, and Backblaze",
   };
 
   for (const addon of addons) {

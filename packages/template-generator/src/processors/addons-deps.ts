@@ -23,6 +23,14 @@ export function processAddonsDeps(vfs: VirtualFileSystem, config: ProjectConfig)
     ["next", "nuxt", "svelte", "tanstack-start", "astro"].includes(frontend),
   );
 
+  if (config.addons.includes("s3-storage")) {
+    addPackageDependency({
+      vfs,
+      packagePath: "packages/storage/package.json",
+      dependencies: ["@aws-sdk/client-s3", "@aws-sdk/s3-request-presigner"],
+    });
+  }
+
   if (config.addons.includes("turborepo")) {
     addPackageDependency({ vfs, packagePath: "package.json", devDependencies: ["turbo"] });
   }

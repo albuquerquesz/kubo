@@ -53,7 +53,7 @@ Options:
   --auth <provider>               Authentication (better-auth, clerk, none)
   --payments <provider>           Payments provider (none)
   --frontend <types...>           Frontend types (tanstack-router, react-router, tanstack-start, next, nuxt, svelte, solid, astro, native-bare, native-uniwind, native-unistyles, none)
-  --addons <types...>             Additional addons (pwa, tauri, electrobun, starlight, biome, lefthook, husky, mcp, turborepo, nx, vite-plus, fumadocs, ultracite, oxlint, opentui, wxt, skills, evlog, none)
+  --addons <types...>             Additional addons (pwa, tauri, electrobun, starlight, biome, lefthook, husky, mcp, turborepo, nx, vite-plus, fumadocs, ultracite, oxlint, opentui, wxt, skills, evlog, s3-storage, none)
   --examples <types...>           Examples to include (todo, ai, none)
   --testing <types...>            Testing tools (vitest, playwright, none)
   --git                           Initialize git repository

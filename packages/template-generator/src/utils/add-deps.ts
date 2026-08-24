@@ -71,6 +71,9 @@ export const dependencyVersionMap = {
   vitest: "^4.1.10",
   "@playwright/test": "^1.62.1",
 
+  "@aws-sdk/client-s3": "^3.879.0",
+  "@aws-sdk/s3-request-presigner": "^3.879.0",
+
   tsx: "^4.22.5",
   "@types/node": "^22.13.14",
 
