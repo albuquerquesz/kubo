@@ -1,114 +1,36 @@
-import { afterEach, describe, expect, mock, test } from "bun:test";
-
-import {
-  createNotifiqueClient,
-  NotifiqueConfigurationError,
-  NotifiqueError,
-} from "../src/lib/notifique/client";
-
-const originalFetch = globalThis.fetch;
-
-function mockResponse(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 
 describe("Notifique client", () => {
-  afterEach(() => {
-    globalThis.fetch = originalFetch;
+  const originalApiKey = process.env.NOTIFIQUE_API_KEY;
+  const originalBaseUrl = process.env.NOTIFIQUE_BASE_URL;
+  const originalListId = process.env.NOTIFIQUE_NEWSLETTER_LIST_ID;
+  const originalSkip = process.env.SKIP_ENV_VALIDATION;
+
+  beforeEach(() => {
+    delete process.env.SKIP_ENV_VALIDATION;
+    process.env.NOTIFIQUE_API_KEY = "sk_test_123";
+    process.env.NOTIFIQUE_NEWSLETTER_LIST_ID = "list_test";
+    process.env.NOTIFIQUE_BASE_URL = "https://api.notifique.dev";
   });
 
-  test("subscribes an email using the documented forms payload", async () => {
-    const fetchMock = mock(() =>
-      Promise.resolve(
-        mockResponse({
-          success: true,
-          data: { status: "PENDING_CONFIRMATION", subscriptionId: "sub_123" },
-        }),
-      ),
-    );
-    globalThis.fetch = fetchMock as typeof fetch;
-
-    const client = createNotifiqueClient({
-      apiKey: "sk_test_123",
-      baseUrl: "https://api.notifique.dev",
-    });
-    const result = await client.forms.subscribe({
-      email: "person@example.com",
-      listId: "newsletterform1234567890",
-    });
-
-    expect(result.status).toBe("PENDING_CONFIRMATION");
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.notifique.dev/v1/forms/subscriptions",
-      expect.objectContaining({
-        headers: {
-          Authorization: "Bearer sk_test_123",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          listId: "newsletterform1234567890",
-          email: "person@example.com",
-        }),
-      }),
-    );
+  afterEach(async () => {
+    process.env.NOTIFIQUE_API_KEY = originalApiKey;
+    process.env.NOTIFIQUE_BASE_URL = originalBaseUrl;
+    process.env.NOTIFIQUE_NEWSLETTER_LIST_ID = originalListId;
+    process.env.SKIP_ENV_VALIDATION = originalSkip;
+    const { resetNotifiqueClient } = await import("../src/lib/notifique/client");
+    resetNotifiqueClient();
   });
 
-  test("accepts a skipped duplicate subscription", async () => {
-    globalThis.fetch = mock(() =>
-      Promise.resolve(mockResponse({ success: true, data: { status: "SKIPPED" } })),
-    ) as typeof fetch;
+  test("returns a cached SDK instance", async () => {
+    const { getNotifiqueClient, resetNotifiqueClient, Notifique } =
+      await import("../src/lib/notifique/client");
+    resetNotifiqueClient();
 
-    const client = createNotifiqueClient({ apiKey: "sk_test_123" });
-    const result = await client.forms.subscribe({
-      email: "person@example.com",
-      listId: "newsletterform1234567890",
-    });
+    const first = getNotifiqueClient();
+    const second = getNotifiqueClient();
 
-    expect(result.status).toBe("SKIPPED");
-  });
-
-  test("exposes documented API errors", async () => {
-    globalThis.fetch = mock(() =>
-      Promise.resolve(
-        mockResponse(
-          {
-            success: false,
-            error: "Forbidden",
-            message: "Missing forms:submit scope",
-            code: "FORBIDDEN",
-          },
-          403,
-        ),
-      ),
-    ) as typeof fetch;
-
-    const client = createNotifiqueClient({ apiKey: "sk_test_123" });
-
-    await expect(
-      client.forms.subscribe({
-        email: "person@example.com",
-        listId: "newsletterform1234567890",
-      }),
-    ).rejects.toEqual(
-      expect.objectContaining<Partial<NotifiqueError>>({
-        status: 403,
-        code: "FORBIDDEN",
-        message: "Missing forms:submit scope",
-      }),
-    );
-  });
-
-  test("rejects invalid form IDs before making a request", async () => {
-    const fetchMock = mock(() => Promise.resolve(mockResponse({})));
-    globalThis.fetch = fetchMock as typeof fetch;
-    const client = createNotifiqueClient({ apiKey: "sk_test_123" });
-
-    await expect(
-      client.forms.subscribe({ email: "person@example.com", listId: "newsletter" }),
-    ).rejects.toBeInstanceOf(NotifiqueConfigurationError);
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(first).toBeInstanceOf(Notifique);
+    expect(second).toBe(first);
   });
 });

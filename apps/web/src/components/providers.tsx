@@ -6,8 +6,9 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { RemoteDevSync } from "@/components/dev/remote-dev-sync";
 import { KuboHimetricaProvider } from "@/components/himetrica-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { env } from "@/env/client";
 
-const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL || "");
+const convex = new ConvexReactClient(env.NEXT_PUBLIC_CONVEX_URL ?? "");
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (

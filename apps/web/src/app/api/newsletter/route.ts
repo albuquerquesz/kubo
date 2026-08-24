@@ -1,25 +1,13 @@
+import { NotifiqueApiError } from "@notifique/sdk-node";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import {
-  createNotifiqueClient,
-  NotifiqueConfigurationError,
-  NotifiqueError,
-} from "@/lib/notifique/client";
+import { env } from "@/env/server";
+import { getNotifiqueClient } from "@/lib/notifique/client";
 
 const subscriptionSchema = z.object({
   email: z.email(),
 });
-
-function getRequiredEnv(name: "NOTIFIQUE_API_KEY" | "NOTIFIQUE_NEWSLETTER_LIST_ID") {
-  const value = process.env[name]?.trim();
-
-  if (!value) {
-    throw new Error(`${name} is not configured`);
-  }
-
-  return value;
-}
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -35,13 +23,13 @@ export async function POST(request: Request) {
   }
 
   try {
-    const client = createNotifiqueClient({
-      apiKey: getRequiredEnv("NOTIFIQUE_API_KEY"),
-      baseUrl: process.env.NOTIFIQUE_BASE_URL,
-    });
-    await client.forms.subscribe({
-      email: result.data.email,
-      listId: getRequiredEnv("NOTIFIQUE_NEWSLETTER_LIST_ID"),
+    const notifique = getNotifiqueClient();
+
+    await notifique.api.forms.postV1FormsSubscriptions({
+      body: {
+        email: result.data.email,
+        listId: env.NOTIFIQUE_NEWSLETTER_LIST_ID,
+      },
     });
 
     return NextResponse.redirect(
@@ -49,11 +37,12 @@ export async function POST(request: Request) {
       303,
     );
   } catch (error) {
-    if (error instanceof NotifiqueError || error instanceof NotifiqueConfigurationError) {
+    if (error instanceof NotifiqueApiError) {
+      const responseData = error.responseData as { code?: string } | undefined;
       console.error("Newsletter subscription failed", {
-        code: error instanceof NotifiqueError ? error.code : undefined,
+        code: responseData?.code ?? error.code,
         message: error.message,
-        status: error instanceof NotifiqueError ? error.status : undefined,
+        status: error.statusCode,
       });
     } else {
       console.error("Newsletter subscription failed", error);
