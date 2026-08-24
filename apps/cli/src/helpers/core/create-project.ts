@@ -16,7 +16,7 @@ import { generateRouteTreeIfNeeded } from "../../utils/generate-route-tree";
 import { getLatestCLIVersion } from "../../utils/get-latest-cli-version";
 import { setupAddons } from "../addons/addons-setup";
 import { setupDatabase } from "../core/db-setup";
-import { setupTesting } from "../testing/testing-setup";
+import { installPlaywrightBrowsers, setupTesting } from "../testing/testing-setup";
 import { initializeGit } from "./git";
 import { installDependencies } from "./install-dependencies";
 import { displayPostInstallInstructions } from "./post-installation";
@@ -143,6 +143,10 @@ export async function createProject(
           packageManager: options.packageManager,
         }),
       );
+
+      if (options.testing.includes("playwright")) {
+        await installPlaywrightBrowsers(projectDir, options.packageManager);
+      }
     }
 
     // Initialize git if requested

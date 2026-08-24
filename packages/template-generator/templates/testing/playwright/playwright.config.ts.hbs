@@ -11,7 +11,12 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
+{{#if (or (includes addons "turborepo") (includes addons "nx") (includes addons "vite-plus"))}}
+    // Prefer the web-only workspace script when a monorepo task runner is present.
+    command: "{{packageManager}} run dev:web",
+{{else}}
     command: "{{packageManager}} run dev",
+{{/if}}
     url: baseURL,
     reuseExistingServer: !process.env.CI,
   },

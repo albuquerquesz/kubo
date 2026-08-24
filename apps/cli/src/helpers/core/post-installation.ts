@@ -111,7 +111,7 @@ export async function displayPostInstallInstructions(
     ? getStarlightInstructions(runCmd)
     : "";
   const playwrightInstructions = testing?.includes("playwright")
-    ? getPlaywrightInstructions(runCmd)
+    ? getPlaywrightInstructions(runCmd, packageManager)
     : "";
   const clerkInstructions =
     config.auth === "clerk" ? getClerkInstructions(frontend || [], backend, api) : "";
@@ -296,10 +296,16 @@ function getHuskyInstructions(runCmd: string) {
   )} Initialize hooks: ${`${runCmd} prepare`}\n`;
 }
 
-function getPlaywrightInstructions(runCmd: string) {
+function getPlaywrightInstructions(runCmd: string, packageManager: string) {
+  const browserInstall =
+    packageManager === "bun"
+      ? "bunx playwright install"
+      : packageManager === "pnpm"
+        ? "pnpm exec playwright install"
+        : "npx playwright install";
   return `${pc.bold("End-to-end tests with Playwright:")}\n${pc.cyan(
     "•",
-  )} Install browsers: ${"npx playwright install"}\n${pc.cyan(
+  )} Install browsers (if needed): ${browserInstall}\n${pc.cyan(
     "•",
   )} Run e2e tests: ${`${runCmd} test:e2e`}\n`;
 }
