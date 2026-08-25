@@ -83,6 +83,14 @@ function normalizeValidationMessage(
   return validationMessage instanceof Error ? validationMessage.message : validationMessage;
 }
 
+function formatKeycap(key: string): string {
+  return pc.bold(`<${key}>`);
+}
+
+function getRequiredMultiselectMessage(): string {
+  return `Please select at least one option.\n${pc.dim(`Press ${formatKeycap("space")} to select, ${formatKeycap("enter")} to submit`)}`;
+}
+
 async function runWithNavigation<T>(prompt: any): Promise<T | symbol> {
   let goBack = false;
 
@@ -213,7 +221,7 @@ export async function navigableMultiselect<T>(
     required,
     validate(selected: T[] | undefined) {
       if (required && (selected === undefined || selected.length === 0)) {
-        return `Please select at least one option.\n${pc.reset(pc.dim(`Press ${pc.gray(pc.bgWhite(pc.inverse(" space ")))} to select, ${pc.gray(pc.bgWhite(pc.inverse(" enter ")))} to submit`))}`;
+        return getRequiredMultiselectMessage();
       }
       return normalizeValidationMessage(opts.validate?.(selected));
     },
@@ -390,7 +398,7 @@ export async function navigableGroupMultiselect<T>(
     selectableGroups: true,
     validate(selected: T[] | undefined) {
       if (required && (selected === undefined || selected.length === 0)) {
-        return `Please select at least one option.\n${pc.reset(pc.dim(`Press ${pc.gray(pc.bgWhite(pc.inverse(" space ")))} to select, ${pc.gray(pc.bgWhite(pc.inverse(" enter ")))} to submit`))}`;
+        return getRequiredMultiselectMessage();
       }
       return normalizeValidationMessage(opts.validate?.(selected));
     },

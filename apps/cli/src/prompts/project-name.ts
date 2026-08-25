@@ -28,9 +28,7 @@ function kuboText(options: {
     initialValue: options.initialValue,
     render() {
       const title = `${cliColors.signal(S_BAR)}\n${cliColors.bright(S_STEP_ACTIVE)}  ${options.message}\n`;
-      const placeholder = options.placeholder
-        ? pc.inverse(options.placeholder[0]) + pc.dim(options.placeholder.slice(1))
-        : pc.inverse(pc.hidden("_"));
+      const placeholder = options.placeholder ? pc.dim(options.placeholder) : pc.dim("_");
       const input = this.userInput ? this.userInputWithCursor : placeholder;
       const value = this.value ?? "";
 
