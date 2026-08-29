@@ -4,8 +4,6 @@ import { env } from "@/env/server";
 
 export { Notifique, NotifiqueApiError } from "@notifique/sdk-node";
 
-export type NotifiqueClient = Notifique;
-
 let singleton: Notifique | undefined;
 let singletonKey = "";
 

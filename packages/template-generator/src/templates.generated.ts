@@ -33938,22 +33938,8 @@ export { sendSms } from "./lib/sms";
 export { sendWhatsAppText } from "./lib/whatsapp";
 export { sendEmail } from "./lib/email";
 `],
-  ["packages/notifique/src/lib/client.ts.hbs", `import { Notifique, NotifiqueApiError } from "@notifique/sdk-node";
+  ["packages/notifique/src/lib/client.ts.hbs", `import { Notifique } from "@notifique/sdk-node";
 import { env } from "@{{projectName}}/env/server";
-
-export class NotifiqueError extends Error {
-	readonly status: number;
-	readonly code?: string;
-
-	constructor(status: number, message: string, code?: string) {
-		super(message);
-		this.name = "NotifiqueError";
-		this.status = status;
-		this.code = code;
-	}
-}
-
-export type NotifiqueClient = Notifique;
 
 let singleton: Notifique | undefined;
 let singletonKey = "";
@@ -33973,24 +33959,9 @@ export function resetNotifiqueClient(): void {
 	singleton = undefined;
 	singletonKey = "";
 }
-
-export function mapNotifiqueError(error: unknown): never {
-	if (error instanceof NotifiqueError) throw error;
-	if (error instanceof NotifiqueApiError) {
-		const responseData = error.responseData as
-			| { message?: string; error?: string; code?: string }
-			| undefined;
-		throw new NotifiqueError(
-			error.statusCode,
-			responseData?.message ?? responseData?.error ?? error.message,
-			responseData?.code ?? error.code,
-		);
-	}
-	throw error;
-}
 `],
   ["packages/notifique/src/lib/email.ts.hbs", `import { env } from "@{{projectName}}/env/server";
-import { getNotifiqueClient, mapNotifiqueError } from "./client";
+import { getNotifiqueClient } from "./client";
 
 export type NotifiqueEmailPriority = "high" | "normal" | "low";
 
@@ -34006,32 +33977,20 @@ export type SendNotifiqueEmailInput = {
 	idempotencyKey?: string;
 };
 
-export type SendNotifiqueEmailResult = {
-	status: "QUEUED" | "SCHEDULED";
-	count: number;
-	messageIds: string[];
-	scheduledAt?: string;
-};
-
 function asArray(value: string | string[]): string[] {
 	return Array.isArray(value) ? value : [value];
 }
 
-/**
- * POST /v1/email/messages — transactional email (202 Accepted).
- * Requires a VERIFIED domain on \`from\`. Docs: https://docs.notifique.dev/emails-api/como-funciona/quick-start
- */
 export async function sendEmail(
 	input: SendNotifiqueEmailInput,
-): Promise<SendNotifiqueEmailResult> {
+) {
 	if (!input.html && !input.text) {
 		throw new Error("Email requires html and/or text.");
 	}
 
 	const notifique = getNotifiqueClient();
 
-	try {
-		const response = await notifique.email.send(
+	const response = await notifique.email.send(
 			{
 				from: input.from ?? env.NOTIFIQUE_FROM_EMAIL,
 				...(input.fromName ? { fromName: input.fromName } : {}),
@@ -34043,13 +34002,10 @@ export async function sendEmail(
 			},
 			{ idempotencyKey: input.idempotencyKey },
 		);
-		return response.data;
-	} catch (error) {
-		mapNotifiqueError(error);
-	}
+	return response.data;
 }
 `],
-  ["packages/notifique/src/lib/sms.ts.hbs", `import { getNotifiqueClient, mapNotifiqueError } from "./client";
+  ["packages/notifique/src/lib/sms.ts.hbs", `import { getNotifiqueClient } from "./client";
 
 export type NotifiqueSmsPriority = "high" | "normal" | "low";
 
@@ -34063,18 +34019,7 @@ export type SendSmsInput = {
 	priority?: NotifiqueSmsPriority;
 };
 
-export type SendSmsResult = {
-	status: "QUEUED" | "SCHEDULED";
-	count: number;
-	smsIds: string[];
-	scheduledAt?: string;
-};
-
-/**
- * POST /v1/sms/messages — text SMS (202 Accepted).
- * Skill: https://docs.notifique.dev/skill.md · Quick start: https://docs.notifique.dev/sms-api/como-funciona/quick-start
- */
-export async function sendSms(input: SendSmsInput): Promise<SendSmsResult> {
+export async function sendSms(input: SendSmsInput) {
 	const to = Array.isArray(input.to) ? input.to : [input.to];
 	if (input.message.trim().length < 9) {
 		throw new Error("SMS message must be at least 9 characters (Notifique API rule).");
@@ -34082,8 +34027,7 @@ export async function sendSms(input: SendSmsInput): Promise<SendSmsResult> {
 
 	const notifique = getNotifiqueClient();
 
-	try {
-		const response = await notifique.sms.send(
+	const response = await notifique.sms.send(
 			{
 				to,
 				message: input.message,
@@ -34091,13 +34035,10 @@ export async function sendSms(input: SendSmsInput): Promise<SendSmsResult> {
 			},
 			{ idempotencyKey: input.idempotencyKey },
 		);
-		return response.data;
-	} catch (error) {
-		mapNotifiqueError(error);
-	}
+	return response.data;
 }
 `],
-  ["packages/notifique/src/lib/whatsapp.ts.hbs", `import { getNotifiqueClient, mapNotifiqueError } from "./client";
+  ["packages/notifique/src/lib/whatsapp.ts.hbs", `import { getNotifiqueClient } from "./client";
 
 export type SendWhatsAppTextInput = {
 	/** WhatsApp instance id (ACTIVE). Prefer env.NOTIFIQUE_WHATSAPP_INSTANCE_ID at the call site. */
@@ -34108,33 +34049,18 @@ export type SendWhatsAppTextInput = {
 	idempotencyKey?: string;
 };
 
-export type SendWhatsAppResult = {
-	status: "QUEUED" | "SCHEDULED" | string;
-	messageIds: string[];
-	scheduledAt?: string | null;
-};
-
-/**
- * POST /v1/whatsapp/messages — free-form text (unofficial / open 24h window on official).
- * Official first contact outside 24h needs type: "template" (not covered here).
- * Docs: https://docs.notifique.dev/whatsapp-api/como-funciona/quick-start
- */
 export async function sendWhatsAppText(
 	input: SendWhatsAppTextInput,
-): Promise<SendWhatsAppResult> {
+) {
 	const to = Array.isArray(input.to) ? input.to : [input.to];
 	const notifique = getNotifiqueClient();
 
-	try {
-		const response = await notifique.whatsapp.send(
+	const response = await notifique.whatsapp.send(
 			input.instanceId,
 			{ to, type: "text", payload: { message: input.message } },
 			{ idempotencyKey: input.idempotencyKey },
 		);
-		return response.data;
-	} catch (error) {
-		mapNotifiqueError(error);
-	}
+	return response.data;
 }
 `],
   ["packages/notifique/tsconfig.json.hbs", `{

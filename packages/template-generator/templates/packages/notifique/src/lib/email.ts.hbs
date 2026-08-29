@@ -1,5 +1,5 @@
 import { env } from "@{{projectName}}/env/server";
-import { getNotifiqueClient, mapNotifiqueError } from "./client";
+import { getNotifiqueClient } from "./client";
 
 export type NotifiqueEmailPriority = "high" | "normal" | "low";
 
@@ -15,32 +15,20 @@ export type SendNotifiqueEmailInput = {
 	idempotencyKey?: string;
 };
 
-export type SendNotifiqueEmailResult = {
-	status: "QUEUED" | "SCHEDULED";
-	count: number;
-	messageIds: string[];
-	scheduledAt?: string;
-};
-
 function asArray(value: string | string[]): string[] {
 	return Array.isArray(value) ? value : [value];
 }
 
-/**
- * POST /v1/email/messages — transactional email (202 Accepted).
- * Requires a VERIFIED domain on `from`. Docs: https://docs.notifique.dev/emails-api/como-funciona/quick-start
- */
 export async function sendEmail(
 	input: SendNotifiqueEmailInput,
-): Promise<SendNotifiqueEmailResult> {
+) {
 	if (!input.html && !input.text) {
 		throw new Error("Email requires html and/or text.");
 	}
 
 	const notifique = getNotifiqueClient();
 
-	try {
-		const response = await notifique.email.send(
+	const response = await notifique.email.send(
 			{
 				from: input.from ?? env.NOTIFIQUE_FROM_EMAIL,
 				...(input.fromName ? { fromName: input.fromName } : {}),
@@ -52,8 +40,5 @@ export async function sendEmail(
 			},
 			{ idempotencyKey: input.idempotencyKey },
 		);
-		return response.data;
-	} catch (error) {
-		mapNotifiqueError(error);
-	}
+	return response.data;
 }

@@ -1,4 +1,4 @@
-import { getNotifiqueClient, mapNotifiqueError } from "./client";
+import { getNotifiqueClient } from "./client";
 
 export type NotifiqueSmsPriority = "high" | "normal" | "low";
 
@@ -12,18 +12,7 @@ export type SendSmsInput = {
 	priority?: NotifiqueSmsPriority;
 };
 
-export type SendSmsResult = {
-	status: "QUEUED" | "SCHEDULED";
-	count: number;
-	smsIds: string[];
-	scheduledAt?: string;
-};
-
-/**
- * POST /v1/sms/messages — text SMS (202 Accepted).
- * Skill: https://docs.notifique.dev/skill.md · Quick start: https://docs.notifique.dev/sms-api/como-funciona/quick-start
- */
-export async function sendSms(input: SendSmsInput): Promise<SendSmsResult> {
+export async function sendSms(input: SendSmsInput) {
 	const to = Array.isArray(input.to) ? input.to : [input.to];
 	if (input.message.trim().length < 9) {
 		throw new Error("SMS message must be at least 9 characters (Notifique API rule).");
@@ -31,8 +20,7 @@ export async function sendSms(input: SendSmsInput): Promise<SendSmsResult> {
 
 	const notifique = getNotifiqueClient();
 
-	try {
-		const response = await notifique.sms.send(
+	const response = await notifique.sms.send(
 			{
 				to,
 				message: input.message,
@@ -40,8 +28,5 @@ export async function sendSms(input: SendSmsInput): Promise<SendSmsResult> {
 			},
 			{ idempotencyKey: input.idempotencyKey },
 		);
-		return response.data;
-	} catch (error) {
-		mapNotifiqueError(error);
-	}
+	return response.data;
 }

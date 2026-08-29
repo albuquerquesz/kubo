@@ -1,4 +1,4 @@
-import { getNotifiqueClient, mapNotifiqueError } from "./client";
+import { getNotifiqueClient } from "./client";
 
 export type SendWhatsAppTextInput = {
 	/** WhatsApp instance id (ACTIVE). Prefer env.NOTIFIQUE_WHATSAPP_INSTANCE_ID at the call site. */
@@ -9,31 +9,16 @@ export type SendWhatsAppTextInput = {
 	idempotencyKey?: string;
 };
 
-export type SendWhatsAppResult = {
-	status: "QUEUED" | "SCHEDULED" | string;
-	messageIds: string[];
-	scheduledAt?: string | null;
-};
-
-/**
- * POST /v1/whatsapp/messages — free-form text (unofficial / open 24h window on official).
- * Official first contact outside 24h needs type: "template" (not covered here).
- * Docs: https://docs.notifique.dev/whatsapp-api/como-funciona/quick-start
- */
 export async function sendWhatsAppText(
 	input: SendWhatsAppTextInput,
-): Promise<SendWhatsAppResult> {
+) {
 	const to = Array.isArray(input.to) ? input.to : [input.to];
 	const notifique = getNotifiqueClient();
 
-	try {
-		const response = await notifique.whatsapp.send(
+	const response = await notifique.whatsapp.send(
 			input.instanceId,
 			{ to, type: "text", payload: { message: input.message } },
 			{ idempotencyKey: input.idempotencyKey },
 		);
-		return response.data;
-	} catch (error) {
-		mapNotifiqueError(error);
-	}
+	return response.data;
 }

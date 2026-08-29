@@ -1,19 +1,5 @@
-import { Notifique, NotifiqueApiError } from "@notifique/sdk-node";
+import { Notifique } from "@notifique/sdk-node";
 import { env } from "@{{projectName}}/env/server";
-
-export class NotifiqueError extends Error {
-	readonly status: number;
-	readonly code?: string;
-
-	constructor(status: number, message: string, code?: string) {
-		super(message);
-		this.name = "NotifiqueError";
-		this.status = status;
-		this.code = code;
-	}
-}
-
-export type NotifiqueClient = Notifique;
 
 let singleton: Notifique | undefined;
 let singletonKey = "";
@@ -32,19 +18,4 @@ export function getNotifiqueClient(): Notifique {
 export function resetNotifiqueClient(): void {
 	singleton = undefined;
 	singletonKey = "";
-}
-
-export function mapNotifiqueError(error: unknown): never {
-	if (error instanceof NotifiqueError) throw error;
-	if (error instanceof NotifiqueApiError) {
-		const responseData = error.responseData as
-			| { message?: string; error?: string; code?: string }
-			| undefined;
-		throw new NotifiqueError(
-			error.statusCode,
-			responseData?.message ?? responseData?.error ?? error.message,
-			responseData?.code ?? error.code,
-		);
-	}
-	throw error;
 }
