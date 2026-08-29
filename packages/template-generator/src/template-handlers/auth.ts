@@ -1,4 +1,11 @@
-import type { ProjectConfig } from "@kubojs/types";
+import {
+  findFrontend,
+  hasAnyFrontend,
+  hasNativeFrontend,
+  hasReactFrontend,
+  reactWebFrontends,
+  type ProjectConfig,
+} from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix } from "./utils";
@@ -10,9 +17,7 @@ export async function processAuthTemplates(
 ): Promise<void> {
   if (!config.auth || config.auth === "none") return;
 
-  const hasReactWeb = config.frontend.some((f) =>
-    ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-  );
+  const hasReactWeb = hasReactFrontend(config.frontend);
   const hasNuxtWeb = config.frontend.includes("nuxt");
   const hasSvelteWeb = config.frontend.includes("svelte");
   const hasSolidWeb = config.frontend.includes("solid");
@@ -20,7 +25,7 @@ export async function processAuthTemplates(
   const hasNativeBare = config.frontend.includes("native-bare");
   const hasUniwind = config.frontend.includes("native-uniwind");
   const hasUnistyles = config.frontend.includes("native-unistyles");
-  const hasNative = hasNativeBare || hasUniwind || hasUnistyles;
+  const hasNative = hasNativeFrontend(config.frontend);
 
   const authProvider = config.auth;
 
@@ -34,9 +39,7 @@ export async function processAuthTemplates(
     );
 
     if (hasReactWeb) {
-      const reactFramework = config.frontend.find((f) =>
-        ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-      );
+      const reactFramework = findFrontend(config.frontend, reactWebFrontends);
       if (reactFramework) {
         processTemplatesFromPrefix(
           vfs,
@@ -93,9 +96,7 @@ export async function processAuthTemplates(
         config,
       );
 
-      const reactFramework = config.frontend.find((f) =>
-        ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-      );
+      const reactFramework = findFrontend(config.frontend, reactWebFrontends);
       if (reactFramework) {
         processTemplatesFromPrefix(
           vfs,
@@ -163,9 +164,7 @@ export async function processAuthTemplates(
       config,
     );
 
-    const reactFramework = config.frontend.find((f) =>
-      ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-    );
+    const reactFramework = findFrontend(config.frontend, reactWebFrontends);
     if (reactFramework) {
       processTemplatesFromPrefix(
         vfs,

@@ -1,4 +1,9 @@
-import type { ProjectConfig } from "@kubojs/types";
+import {
+  hasNativeFrontend,
+  hasWebFrontend,
+  hasReactFrontend,
+  type ProjectConfig,
+} from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix, processSingleTemplate } from "./utils";
@@ -16,23 +21,10 @@ export async function processEnvPackage(
   templates: TemplateData,
   config: ProjectConfig,
 ): Promise<void> {
-  const hasWebFrontend = config.frontend.some((f) =>
-    [
-      "tanstack-router",
-      "react-router",
-      "tanstack-start",
-      "next",
-      "nuxt",
-      "svelte",
-      "solid",
-      "astro",
-    ].includes(f),
-  );
-  const hasNative = config.frontend.some((f) =>
-    ["native-bare", "native-uniwind", "native-unistyles"].includes(f),
-  );
+  const hasWeb = hasWebFrontend(config.frontend);
+  const hasNative = hasNativeFrontend(config.frontend);
 
-  if (!hasWebFrontend && !hasNative && config.backend === "none") return;
+  if (!hasWeb && !hasNative && config.backend === "none") return;
 
   // Process base env package files (package.json, tsconfig.json)
   processSingleTemplate(
@@ -51,7 +43,7 @@ export async function processEnvPackage(
   );
 
   // Conditionally include web.ts
-  if (hasWebFrontend) {
+  if (hasWeb) {
     processSingleTemplate(
       vfs,
       templates,
@@ -102,9 +94,7 @@ export async function processUiPackage(
   templates: TemplateData,
   config: ProjectConfig,
 ): Promise<void> {
-  const hasReactWeb = config.frontend.some((f) =>
-    ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-  );
+  const hasReactWeb = hasReactFrontend(config.frontend);
 
   if (!hasReactWeb) return;
 

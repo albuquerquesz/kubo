@@ -3,7 +3,7 @@
  * Updates package names, scripts, and workspaces after template generation
  */
 
-import { desktopWebFrontends, type ProjectConfig } from "@kubojs/types";
+import { hasNativeFrontend, hasWebFrontend, type ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { dependencyVersionMap } from "../utils/add-deps";
@@ -608,12 +608,8 @@ function updateEnvPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): vo
   pkgJson.name = `@${config.projectName}/env`;
 
   // Set exports based on which env files exist
-  const hasWebFrontend = config.frontend.some((f: string) =>
-    (desktopWebFrontends as readonly string[]).includes(f),
-  );
-  const hasNative = config.frontend.some((f: string) =>
-    ["native-bare", "native-uniwind", "native-unistyles"].includes(f),
-  );
+  const hasWeb = hasWebFrontend(config.frontend);
+  const hasNative = hasNativeFrontend(config.frontend);
   const needsServerEnv = config.backend !== "none" && config.backend !== "convex";
 
   const exports: Record<string, string> = {};
@@ -621,7 +617,7 @@ function updateEnvPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): vo
   if (needsServerEnv) {
     exports["./server"] = "./src/server.ts";
   }
-  if (hasWebFrontend) {
+  if (hasWeb) {
     exports["./web"] = "./src/web.ts";
   }
   if (hasNative) {

@@ -1,4 +1,9 @@
-import type { ProjectConfig } from "@kubojs/types";
+import {
+  findFrontend,
+  hasReactFrontend,
+  reactWebFrontends,
+  type ProjectConfig,
+} from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix, processSingleTemplate } from "./utils";
@@ -35,9 +40,7 @@ export async function processApiTemplates(
   moveGeneratedFile(vfs, "apps/api/src/routers/index.ts", "apps/api/src/router.ts");
   vfs.writeFile("apps/api/src/routers/index.ts", 'export * from "../router";\n');
 
-  const hasReactWeb = config.frontend.some((f) =>
-    ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-  );
+  const hasReactWeb = hasReactFrontend(config.frontend);
   const hasNuxtWeb = config.frontend.includes("nuxt");
   const hasSvelteWeb = config.frontend.includes("svelte");
   const hasSolidWeb = config.frontend.includes("solid");
@@ -52,9 +55,7 @@ export async function processApiTemplates(
       config,
     );
 
-    const reactFramework = config.frontend.find((f) =>
-      ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-    );
+    const reactFramework = findFrontend(config.frontend, reactWebFrontends);
     if (
       config.backend === "self" &&
       (reactFramework === "next" || reactFramework === "tanstack-start")
