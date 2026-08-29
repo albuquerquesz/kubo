@@ -1,8 +1,8 @@
 {
-  "name": "@kubojs/release-email",
+  "name": "@kubojs/email",
   "version": "0.0.0",
   "private": true,
-  "description": "React Email template for KuboJS release announcements",
+  "description": "Email templates and delivery helpers for KuboJS",
   "type": "module",
   "scripts": {
     "preview": "email dev --dir emails --port 3001",
@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@kubojs/env": "workspace:*",
+    "@notifique/sdk-node": "0.2.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-email": "^6.9.2"
