@@ -1,9 +1,8 @@
-import { NotifiqueApiError } from "@notifique/sdk-node";
+import { Notifique, NotifiqueApiError } from "@notifique/sdk-node";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { env } from "@/env/server";
-import { getNotifiqueClient } from "@/lib/notifique/client";
 
 const subscriptionSchema = z.object({
   email: z.email(),
@@ -23,7 +22,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    const notifique = getNotifiqueClient();
+    const notifique = new Notifique({
+      apiKey: env.NOTIFIQUE_API_KEY,
+    });
 
     await notifique.api.forms.postV1FormsSubscriptions({
       body: {
