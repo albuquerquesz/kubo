@@ -107,6 +107,7 @@
         "@gsap/react": "^2.1.2",
         "@himetrica/tracker-js": "0.1.36",
         "@kubojs/backend": "workspace:*",
+        "@kubojs/email": "workspace:*",
         "@kubojs/env": "workspace:*",
         "@kubojs/template-generator": "workspace:*",
         "@kubojs/types": "workspace:*",

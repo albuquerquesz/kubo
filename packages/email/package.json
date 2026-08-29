@@ -4,6 +4,12 @@
   "private": true,
   "description": "Email templates and delivery helpers for KuboJS",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
   "scripts": {
     "preview": "email dev --dir emails --port 3001",
     "render:example": "bun run src/render-example.tsx",

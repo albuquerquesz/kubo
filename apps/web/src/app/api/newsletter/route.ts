@@ -1,4 +1,5 @@
-import { Notifique, NotifiqueApiError } from "@notifique/sdk-node";
+import { subscribeToNewsletter } from "@kubojs/email";
+import { NotifiqueApiError } from "@notifique/sdk-node";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -22,15 +23,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    const notifique = new Notifique({
-      apiKey: env.NOTIFIQUE_API_KEY,
-    });
-
-    await notifique.api.forms.postV1FormsSubscriptions({
-      body: {
-        email: result.data.email,
-        listId: env.NOTIFIQUE_NEWSLETTER_LIST_ID,
-      },
+    await subscribeToNewsletter({
+      email: result.data.email,
+      listId: env.NOTIFIQUE_NEWSLETTER_LIST_ID,
     });
 
     return NextResponse.redirect(

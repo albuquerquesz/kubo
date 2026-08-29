@@ -17,6 +17,17 @@ const notifique = new Notifique({
   apiKey: env.NOTIFIQUE_API_KEY,
 });
 
+export type SubscribeToNewsletterInput = {
+  email: string;
+  listId: string;
+};
+
+export async function subscribeToNewsletter(input: SubscribeToNewsletterInput) {
+  return notifique.api.forms.postV1FormsSubscriptions({
+    body: input,
+  });
+}
+
 export async function mail(input: SendReleaseChangelogEmail) {
   const html = await render(createElement(ReleaseChangelogEmail, input.release));
   const text = toPlainText(html);
