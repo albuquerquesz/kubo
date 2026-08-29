@@ -8,6 +8,8 @@ import {
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency } from "../utils/add-deps";
 
+const unsupportedNodeBackends: readonly ProjectConfig["backend"][] = ["none", "self", "convex"];
+
 const ERROR_BOUNDARY_FALLBACK = `fallback={(error, reset) => (
         <div>
           <p>Something went wrong.</p>
@@ -77,6 +79,7 @@ export function GetMonitorBoundary({ children }: { children: React.ReactNode }) 
   );
 
   const layoutPath = "apps/web/src/app/layout.tsx";
+
   if (vfs.exists(layoutPath)) {
     let layout = vfs.readFile(layoutPath) ?? "";
     const importLine =
@@ -416,13 +419,11 @@ function processHimetricaIntegration(vfs: VirtualFileSystem, config: ProjectConf
 }
 
 function processNodeIntegration(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const supported =
-    config.backend !== "none" &&
-    config.backend !== "self" &&
-    config.backend !== "convex" &&
-    config.serverDeploy !== "cloudflare" &&
-    config.runtime !== "workers";
-  if (!supported || !vfs.exists("apps/server/package.json")) return;
+  const unsupported =
+    unsupportedNodeBackends.includes(config.backend) ||
+    config.serverDeploy === "cloudflare" ||
+    config.runtime === "workers";
+  if (unsupported || !vfs.exists("apps/server/package.json")) return;
 
   addPackageDependency({
     vfs,

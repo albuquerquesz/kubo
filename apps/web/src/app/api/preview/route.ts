@@ -9,7 +9,6 @@ import { sanitizeStackState } from "@/lib/sanitize-stack-addons";
 export async function POST(request: Request) {
   try {
     const body = sanitizeStackState((await request.json()) as StackState);
-
     const config = stackStateToConfig(body);
 
     const result = await generate({
@@ -22,7 +21,6 @@ export async function POST(request: Request) {
     }
 
     const tree = result.value;
-
     const transformedRoot = transformTree(tree.root);
 
     return NextResponse.json({
