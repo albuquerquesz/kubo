@@ -48,18 +48,18 @@ function logNewsletterSubscriptionError(error: unknown): void {
     return;
   }
 
-  const responseData = error.responseData;
-  const responseCode =
-    responseData &&
-    typeof responseData === "object" &&
-    "code" in responseData &&
-    typeof responseData.code === "string"
-      ? responseData.code
-      : undefined;
-
   console.error("Newsletter subscription failed", {
-    code: responseCode ?? error.code,
+    code: getNotifiqueErrorCode(error.responseData) ?? error.code,
     message: error.message,
     status: error.statusCode,
   });
+}
+
+function getNotifiqueErrorCode(responseData: unknown): string | undefined {
+  if (!responseData || typeof responseData !== "object" || !("code" in responseData)) {
+    return undefined;
+  }
+
+  const code = responseData.code;
+  return typeof code === "string" ? code : undefined;
 }
