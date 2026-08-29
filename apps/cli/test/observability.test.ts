@@ -186,6 +186,42 @@ describe("GetMonitor observability", () => {
     expect(webEnv).toContain("NUXT_PUBLIC_GETMONITOR_API_KEY=");
     expect(webEnv).toContain("GETMONITOR_AUTH_TOKEN=");
   });
+
+  it("wires browser observability for Svelte and Astro", async () => {
+    for (const frontend of ["svelte", "astro"] as const) {
+      const result = await createVirtual({
+        projectName: `${frontend}-getmonitor-app`,
+        frontend: [frontend],
+        backend: "hono",
+        runtime: "bun",
+        database: "none",
+        orm: "none",
+        auth: "none",
+        payments: "none",
+        observability: "getmonitor",
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        api: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+      });
+
+      expect(result.isOk()).toBe(true);
+      if (result.isErr()) continue;
+
+      const files = collectFiles(result.value.root, "/virtual");
+      const client = files.get("apps/web/src/lib/getmonitor.ts") ?? "";
+      const entry =
+        frontend === "svelte"
+          ? files.get("apps/web/src/routes/+layout.svelte")
+          : files.get("apps/web/src/layouts/Layout.astro");
+
+      expect(client).toContain("GetMonitor.init");
+      expect(client).toContain("PUBLIC_GETMONITOR_API_KEY");
+      expect(entry).toContain(frontend === "svelte" ? "$lib/getmonitor" : "../lib/getmonitor");
+    }
+  });
 });
 
 describe("Himetrica observability", () => {

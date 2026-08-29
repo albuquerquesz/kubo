@@ -1,4 +1,4 @@
-import { getStripePublicEnvKey, type ProjectConfig } from "@kubojs/types";
+import { getPublicEnvKey, type ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 
@@ -197,7 +197,7 @@ function buildClientVars(
   ];
 
   if (payments.includes("stripe")) {
-    const stripeKey = getStripePublicEnvKey(frontend);
+    const stripeKey = getPublicEnvKey(frontend, "STRIPE_PUBLISHABLE_KEY");
     vars.push({
       key: stripeKey,
       value: "",
@@ -253,13 +253,7 @@ function buildClientVars(
   }
 
   if (observability.includes("getmonitor")) {
-    const getMonitorKey = hasNextJs
-      ? "NEXT_PUBLIC_GETMONITOR_API_KEY"
-      : frontend.includes("nuxt")
-        ? "NUXT_PUBLIC_GETMONITOR_API_KEY"
-        : frontend.includes("svelte") || frontend.includes("astro")
-          ? "PUBLIC_GETMONITOR_API_KEY"
-          : "VITE_GETMONITOR_API_KEY";
+    const getMonitorKey = getPublicEnvKey(frontend, "GETMONITOR_API_KEY");
     vars.push({
       key: getMonitorKey,
       value: "",
@@ -277,13 +271,7 @@ function buildClientVars(
   }
 
   if (observability.includes("himetrica")) {
-    const himetricaKey = hasNextJs
-      ? "NEXT_PUBLIC_HIMETRICA_API_KEY"
-      : frontend.includes("nuxt")
-        ? "NUXT_PUBLIC_HIMETRICA_API_KEY"
-        : frontend.includes("svelte") || frontend.includes("astro")
-          ? "PUBLIC_HIMETRICA_API_KEY"
-          : "VITE_HIMETRICA_API_KEY";
+    const himetricaKey = getPublicEnvKey(frontend, "HIMETRICA_API_KEY");
     vars.push({
       key: himetricaKey,
       value: "",

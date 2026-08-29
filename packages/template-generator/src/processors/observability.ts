@@ -1,46 +1,12 @@
-import type { ProjectConfig } from "@kubojs/types";
+import {
+  getPublicEnvKey,
+  hasReactFrontend,
+  hasWebFrontend,
+  type ProjectConfig,
+} from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency } from "../utils/add-deps";
-
-const webFrontends = [
-  "tanstack-router",
-  "react-router",
-  "tanstack-start",
-  "next",
-  "solid",
-  "nuxt",
-] as const;
-
-const reactFrontends = ["next", "tanstack-router", "react-router", "tanstack-start"] as const;
-
-function hasWebFrontend(frontend: ProjectConfig["frontend"]): boolean {
-  return frontend.some((value) => webFrontends.includes(value as (typeof webFrontends)[number]));
-}
-
-function hasReactFrontend(frontend: ProjectConfig["frontend"]): boolean {
-  return frontend.some((value) =>
-    reactFrontends.includes(value as (typeof reactFrontends)[number]),
-  );
-}
-
-function getWebEnvKey(frontend: ProjectConfig["frontend"]): string {
-  if (frontend.includes("next")) return "NEXT_PUBLIC_GETMONITOR_API_KEY";
-  if (frontend.includes("nuxt")) return "NUXT_PUBLIC_GETMONITOR_API_KEY";
-  if (frontend.includes("svelte") || frontend.includes("astro")) {
-    return "PUBLIC_GETMONITOR_API_KEY";
-  }
-  return "VITE_GETMONITOR_API_KEY";
-}
-
-function getHimetricaWebEnvKey(frontend: ProjectConfig["frontend"]): string {
-  if (frontend.includes("next")) return "NEXT_PUBLIC_HIMETRICA_API_KEY";
-  if (frontend.includes("nuxt")) return "NUXT_PUBLIC_HIMETRICA_API_KEY";
-  if (frontend.includes("svelte") || frontend.includes("astro")) {
-    return "PUBLIC_HIMETRICA_API_KEY";
-  }
-  return "VITE_HIMETRICA_API_KEY";
-}
 
 const ERROR_BOUNDARY_FALLBACK = `fallback={(error, reset) => (
         <div>
@@ -254,18 +220,27 @@ if (typeof window !== "undefined" && env.${key}) {
 `,
   );
 
-  const entryByFrontend: Record<string, string> = {
-    "tanstack-router": "apps/web/src/main.tsx",
-    "react-router": "apps/web/src/root.tsx",
-    "tanstack-start": "apps/web/src/router.tsx",
-    solid: "apps/web/src/main.tsx",
+  const entryByFrontend: Record<string, { path: string; importPath: string }> = {
+    "tanstack-router": { path: "apps/web/src/main.tsx", importPath: "./lib/getmonitor" },
+    "react-router": { path: "apps/web/src/root.tsx", importPath: "./lib/getmonitor" },
+    "tanstack-start": { path: "apps/web/src/router.tsx", importPath: "./lib/getmonitor" },
+    solid: { path: "apps/web/src/main.tsx", importPath: "./lib/getmonitor" },
+    svelte: { path: "apps/web/src/routes/+layout.svelte", importPath: "$lib/getmonitor" },
+    astro: { path: "apps/web/src/layouts/Layout.astro", importPath: "../lib/getmonitor" },
   };
   const frontend = config.frontend.find((value) => entryByFrontend[value]);
-  const entryPath = frontend ? entryByFrontend[frontend] : undefined;
-  if (entryPath && vfs.exists(entryPath)) {
-    const content = vfs.readFile(entryPath) ?? "";
-    if (!content.includes('"./lib/getmonitor"') && !content.includes("'./lib/getmonitor'")) {
-      vfs.writeFile(entryPath, `import "./lib/getmonitor";\n${content}`);
+  const entry = frontend ? entryByFrontend[frontend] : undefined;
+  if (entry && vfs.exists(entry.path)) {
+    let content = vfs.readFile(entry.path) ?? "";
+    if (!content.includes(entry.importPath)) {
+      content =
+        frontend === "svelte"
+          ? content.replace(
+              '<script lang="ts">',
+              `<script lang="ts">\n\timport "${entry.importPath}";`,
+            )
+          : `import "${entry.importPath}";\n${content}`;
+      vfs.writeFile(entry.path, content);
     }
   }
 
@@ -292,7 +267,7 @@ if (typeof window !== "undefined" && env.${key}) {
 function processBrowserIntegration(vfs: VirtualFileSystem, config: ProjectConfig): void {
   if (!hasWebFrontend(config.frontend) || !vfs.exists("apps/web/package.json")) return;
 
-  const key = getWebEnvKey(config.frontend);
+  const key = getPublicEnvKey(config.frontend, "GETMONITOR_API_KEY");
 
   if (config.frontend.includes("next")) {
     processNextIntegration(vfs, config, key);
@@ -432,7 +407,7 @@ export const himetrica =
 
 function processHimetricaIntegration(vfs: VirtualFileSystem, config: ProjectConfig): void {
   if (!hasWebFrontend(config.frontend) || !vfs.exists("apps/web/package.json")) return;
-  const key = getHimetricaWebEnvKey(config.frontend);
+  const key = getPublicEnvKey(config.frontend, "HIMETRICA_API_KEY");
   if (config.frontend.includes("next")) {
     processHimetricaNextIntegration(vfs, config, key);
     return;
