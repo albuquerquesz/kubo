@@ -1,4 +1,5 @@
 import { isDesktopWebFrontend } from "./constants";
+import { getPublicEnvKey } from "./frontend";
 import type { PaymentProvider, Payments } from "./types";
 
 export type PaymentCompatibilityIssue =
@@ -14,13 +15,6 @@ export type PaymentCompatibilityInput = {
   database?: string;
   orm?: string;
 };
-
-const stripePublicEnvKeys = {
-  next: "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
-  nuxt: "NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
-  browser: "VITE_STRIPE_PUBLISHABLE_KEY",
-  public: "PUBLIC_STRIPE_PUBLISHABLE_KEY",
-} as const;
 
 export const PAYMENT_PROVIDER_CAPABILITIES = {
   abacatepay: {
@@ -58,12 +52,7 @@ export function normalizePayments(value: unknown): Payments {
 }
 
 export function getStripePublicEnvKey(frontends: readonly string[] = []): string {
-  if (frontends.includes("next")) return stripePublicEnvKeys.next;
-  if (frontends.includes("nuxt")) return stripePublicEnvKeys.nuxt;
-  if (frontends.includes("svelte") || frontends.includes("astro")) {
-    return stripePublicEnvKeys.public;
-  }
-  return stripePublicEnvKeys.browser;
+  return getPublicEnvKey(frontends, "STRIPE_PUBLISHABLE_KEY");
 }
 
 export function getPaymentCompatibilityIssue({
