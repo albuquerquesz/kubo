@@ -1,4 +1,11 @@
-import type { ProjectConfig, Frontend, API, Backend } from "@kubojs/types";
+import {
+  hasNativeFrontend,
+  hasReactFrontend,
+  type API,
+  type Backend,
+  type Frontend,
+  type ProjectConfig,
+} from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
@@ -14,16 +21,12 @@ type FrontendType = {
 
 function getFrontendType(frontend: Frontend[]): FrontendType {
   return {
-    hasReactWeb: frontend.some((f) =>
-      ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-    ),
+    hasReactWeb: hasReactFrontend(frontend),
     hasNuxtWeb: frontend.includes("nuxt"),
     hasSvelteWeb: frontend.includes("svelte"),
     hasSolidWeb: frontend.includes("solid"),
     hasAstroWeb: frontend.includes("astro"),
-    hasNative: frontend.some((f) =>
-      ["native-bare", "native-uniwind", "native-unistyles"].includes(f),
-    ),
+    hasNative: hasNativeFrontend(frontend),
   };
 }
 

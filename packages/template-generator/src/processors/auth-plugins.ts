@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubojs/types";
+import { hasNativeFrontend, type ProjectConfig } from "@kubojs/types";
 import { Node, Project, SyntaxKind } from "ts-morph";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
@@ -36,9 +36,7 @@ export function processAuthPlugins(vfs: VirtualFileSystem, config: ProjectConfig
   }
 
   // Expo Plugin
-  const hasNative = config.frontend.some((f) =>
-    ["native-bare", "native-uniwind", "native-unistyles"].includes(f),
-  );
+  const hasNative = hasNativeFrontend(config.frontend);
   if (hasNative) {
     pluginsToAdd.push("expo()");
     importsToAdd.push({

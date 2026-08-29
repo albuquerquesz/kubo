@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubojs/types";
+import { hasAnyFrontend, type ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency } from "../utils/add-deps";
@@ -15,8 +15,7 @@ type PackageJson = {
 export function processAddonsDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
   if (!config.addons || config.addons.length === 0) return;
 
-  const hasViteReactFrontend =
-    config.frontend.includes("react-router") || config.frontend.includes("tanstack-router");
+  const hasViteReactFrontend = hasAnyFrontend(config.frontend, ["react-router", "tanstack-router"]);
   const hasSolidFrontend = config.frontend.includes("solid");
   const hasPwaCompatibleFrontend = hasViteReactFrontend || hasSolidFrontend;
   if (config.addons.includes("turborepo")) {

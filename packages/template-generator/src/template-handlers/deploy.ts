@@ -3,6 +3,12 @@ import type { ProjectConfig } from "@kubojs/types";
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix } from "./utils";
 
+const webTemplateDeployments: readonly ProjectConfig["webDeploy"][] = ["docker", "guaracloud"];
+const serverTemplateDeployments: readonly ProjectConfig["serverDeploy"][] = [
+  "docker",
+  "guaracloud",
+];
+
 export async function processDeployTemplates(
   vfs: VirtualFileSystem,
   templates: TemplateData,
@@ -22,11 +28,7 @@ export async function processDeployTemplates(
     processTemplatesFromPrefix(vfs, templates, "deploy/vercel", "", config);
   }
 
-  if (
-    config.webDeploy !== "none" &&
-    config.webDeploy !== "cloudflare" &&
-    config.webDeploy !== "vercel"
-  ) {
+  if (webTemplateDeployments.includes(config.webDeploy)) {
     const templateMap: Record<string, string> = {
       "tanstack-router": "react/tanstack-router",
       "tanstack-start": "react/tanstack-start",
@@ -55,12 +57,7 @@ export async function processDeployTemplates(
     }
   }
 
-  if (
-    config.serverDeploy !== "none" &&
-    config.serverDeploy !== "cloudflare" &&
-    config.serverDeploy !== "vercel" &&
-    !isBackendSelf
-  ) {
+  if (serverTemplateDeployments.includes(config.serverDeploy) && !isBackendSelf) {
     const serverTemplateRoot =
       config.serverDeploy === "guaracloud"
         ? "deploy/docker/server"

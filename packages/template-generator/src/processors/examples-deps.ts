@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubojs/types";
+import { hasNativeFrontend, hasReactFrontend, type ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
@@ -48,14 +48,10 @@ function setupAIDependencies(vfs: VirtualFileSystem, config: ProjectConfig): voi
   const serverExists = vfs.exists(serverPkgPath);
   const convexBackendExists = vfs.exists(convexBackendPkgPath);
 
-  const hasReactWeb = frontend.some((f) =>
-    ["react-router", "tanstack-router", "next", "tanstack-start"].includes(f),
-  );
+  const hasReactWeb = hasReactFrontend(frontend);
   const hasNuxt = frontend.includes("nuxt");
   const hasSvelte = frontend.includes("svelte");
-  const hasReactNative = frontend.some((f) =>
-    ["native-bare", "native-uniwind", "native-unistyles"].includes(f),
-  );
+  const hasReactNative = hasNativeFrontend(frontend);
 
   if (backend === "convex" && convexBackendExists) {
     addPackageDependency({

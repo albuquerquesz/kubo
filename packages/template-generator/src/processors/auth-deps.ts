@@ -1,4 +1,9 @@
-import type { ProjectConfig } from "@kubojs/types";
+import {
+  hasNativeFrontend,
+  hasReactFrontend,
+  hasWebFrontend,
+  type ProjectConfig,
+} from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
@@ -27,9 +32,7 @@ function processConvexAuthDeps(vfs: VirtualFileSystem, config: ProjectConfig): v
   const nativeExists = vfs.exists(nativePath);
   const backendExists = vfs.exists(backendPath);
 
-  const hasNative = frontend.some((f) =>
-    ["native-bare", "native-uniwind", "native-unistyles"].includes(f),
-  );
+  const hasNative = hasNativeFrontend(frontend);
   const hasNextJs = frontend.includes("next");
   const hasReactRouter = frontend.includes("react-router");
   const hasTanStackRouter = frontend.includes("tanstack-router");
@@ -138,24 +141,9 @@ function processStandardAuthDeps(vfs: VirtualFileSystem, config: ProjectConfig):
   const nativeExists = vfs.exists(nativePath);
   const serverExists = vfs.exists(serverPath);
 
-  const hasNative = frontend.some((f) =>
-    ["native-bare", "native-uniwind", "native-unistyles"].includes(f),
-  );
-  const hasWebFrontend = frontend.some((f) =>
-    [
-      "react-router",
-      "tanstack-router",
-      "tanstack-start",
-      "next",
-      "nuxt",
-      "svelte",
-      "solid",
-      "astro",
-    ].includes(f),
-  );
-  const hasReactWebAuthForms = frontend.some((f) =>
-    ["react-router", "tanstack-router", "tanstack-start", "next"].includes(f),
-  );
+  const hasNative = hasNativeFrontend(frontend);
+  const hasWeb = hasWebFrontend(frontend);
+  const hasReactWebAuthForms = hasReactFrontend(frontend);
   const hasSolid = frontend.includes("solid");
   const hasSvelte = frontend.includes("svelte");
   const hasNextJs = frontend.includes("next");
@@ -213,7 +201,7 @@ function processStandardAuthDeps(vfs: VirtualFileSystem, config: ProjectConfig):
       }
     }
 
-    if (hasWebFrontend && webExists) {
+    if (hasWeb && webExists) {
       addPackageDependency({ vfs, packagePath: webPath, dependencies: ["better-auth"] });
 
       if (hasReactWebAuthForms) {

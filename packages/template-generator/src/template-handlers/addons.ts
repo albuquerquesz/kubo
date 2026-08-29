@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubojs/types";
+import { hasAnyFrontend, type ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix } from "./utils";
@@ -19,9 +19,7 @@ export async function processAddonTemplates(
     if (addon === "pwa") {
       if (config.frontend.includes("next")) {
         processTemplatesFromPrefix(vfs, templates, "addons/pwa/apps/web/next", "apps/web", config);
-      } else if (
-        config.frontend.some((f) => ["tanstack-router", "react-router", "solid"].includes(f))
-      ) {
+      } else if (hasAnyFrontend(config.frontend, ["tanstack-router", "react-router", "solid"])) {
         processTemplatesFromPrefix(vfs, templates, "addons/pwa/apps/web/vite", "apps/web", config);
       }
       continue;

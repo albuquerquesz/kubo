@@ -22,7 +22,12 @@ const FRONTEND_GENERATED_PATTERNS = {
   none: [],
 } as const satisfies Partial<Record<ProjectConfig["frontend"][number], readonly string[]>>;
 
-const SERVER_BUILD_BACKENDS = ["hono", "express", "fastify", "elysia"] as const;
+const SERVER_BUILD_BACKENDS: readonly ProjectConfig["backend"][] = [
+  "hono",
+  "express",
+  "fastify",
+  "elysia",
+];
 
 export function getStackGeneratedIgnorePatterns(config: ProjectConfig): string[] {
   const patterns = new Set<string>();
@@ -35,7 +40,7 @@ export function getStackGeneratedIgnorePatterns(config: ProjectConfig): string[]
     }
   }
 
-  if ((SERVER_BUILD_BACKENDS as readonly string[]).includes(config.backend)) {
+  if (SERVER_BUILD_BACKENDS.includes(config.backend)) {
     patterns.add("apps/server/dist/**");
   }
 

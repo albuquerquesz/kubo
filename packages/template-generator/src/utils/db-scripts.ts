@@ -9,17 +9,18 @@ export type DbScriptSupport = {
   isD1Alchemy: boolean;
 };
 
+const unsupportedBackends: readonly ProjectConfig["backend"][] = ["convex", "none"];
+const unsupportedOrms: readonly ProjectConfig["orm"][] = ["none", "mongoose"];
+
 export function getDbScriptSupport(config: ProjectConfig): DbScriptSupport {
   const isD1Alchemy =
     config.dbSetup === "d1" &&
     (config.serverDeploy === "cloudflare" ||
       (config.backend === "self" && config.webDeploy === "cloudflare"));
   const hasDbScripts =
-    config.backend !== "convex" &&
-    config.backend !== "none" &&
+    !unsupportedBackends.includes(config.backend) &&
     config.database !== "none" &&
-    config.orm !== "none" &&
-    config.orm !== "mongoose";
+    !unsupportedOrms.includes(config.orm);
 
   if (!hasDbScripts) {
     return {

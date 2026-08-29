@@ -1,4 +1,10 @@
-import type { ProjectConfig } from "@kubojs/types";
+import {
+  findFrontend,
+  hasNativeFrontend,
+  hasReactFrontend,
+  reactWebFrontends,
+  type ProjectConfig,
+} from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processSingleTemplate, processTemplatesFromPrefix } from "./utils";
@@ -17,9 +23,7 @@ export async function processExampleTemplates(
 ): Promise<void> {
   if (!config.examples || config.examples.length === 0 || config.examples[0] === "none") return;
 
-  const hasReactWeb = config.frontend.some((f) =>
-    ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-  );
+  const hasReactWeb = hasReactFrontend(config.frontend);
   const hasNuxtWeb = config.frontend.includes("nuxt");
   const hasSvelteWeb = config.frontend.includes("svelte");
   const hasSolidWeb = config.frontend.includes("solid");
@@ -27,7 +31,7 @@ export async function processExampleTemplates(
   const hasNativeBare = config.frontend.includes("native-bare");
   const hasUniwind = config.frontend.includes("native-uniwind");
   const hasUnistyles = config.frontend.includes("native-unistyles");
-  const hasNative = hasNativeBare || hasUniwind || hasUnistyles;
+  const hasNative = hasNativeFrontend(config.frontend);
 
   for (const example of config.examples) {
     if (example === "none") continue;
@@ -83,9 +87,7 @@ export async function processExampleTemplates(
     }
 
     if (hasReactWeb) {
-      const reactFramework = config.frontend.find((f) =>
-        ["next", "react-router", "tanstack-router", "tanstack-start"].includes(f),
-      );
+      const reactFramework = findFrontend(config.frontend, reactWebFrontends);
       if (reactFramework) {
         processTemplatesFromPrefix(
           vfs,
