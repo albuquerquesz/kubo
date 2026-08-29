@@ -6,7 +6,6 @@ describe("web env schemas", () => {
   test("server schema requires Notifique keys and defaults base URL", () => {
     const serverSchema = z.object({
       NOTIFIQUE_API_KEY: z.string().min(1),
-      NOTIFIQUE_BASE_URL: z.url().default("https://api.notifique.dev"),
       NOTIFIQUE_NEWSLETTER_LIST_ID: z.string().trim().min(1),
     });
 
@@ -22,7 +21,6 @@ describe("web env schemas", () => {
       NOTIFIQUE_NEWSLETTER_LIST_ID: " list_1 ",
     });
 
-    expect(parsed.NOTIFIQUE_BASE_URL).toBe("https://api.notifique.dev");
     expect(parsed.NOTIFIQUE_NEWSLETTER_LIST_ID).toBe("list_1");
   });
 

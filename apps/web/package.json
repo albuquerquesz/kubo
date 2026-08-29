@@ -24,6 +24,7 @@
     "@gsap/react": "^2.1.2",
     "@himetrica/tracker-js": "0.1.36",
     "@kubojs/backend": "workspace:*",
+    "@kubojs/env": "workspace:*",
     "@kubojs/template-generator": "workspace:*",
     "@kubojs/types": "workspace:*",
     "@notifique/sdk-node": "0.2.1",
