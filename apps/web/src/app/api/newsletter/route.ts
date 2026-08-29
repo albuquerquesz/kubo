@@ -22,28 +22,44 @@ export async function POST(request: Request) {
     );
   }
 
-  try {
-    await subscribeToNewsletter({
-      email: result.data.email,
-      listId: env.NOTIFIQUE_NEWSLETTER_LIST_ID,
+  const subscriptionFailed = await subscribeToNewsletter({
+    email: result.data.email,
+    listId: env.NOTIFIQUE_NEWSLETTER_LIST_ID,
+  })
+    .then(() => false)
+    .catch((error: unknown) => {
+      logNewsletterSubscriptionError(error);
+      return true;
     });
 
-    return NextResponse.redirect(
-      new URL("/?newsletter=subscribed#newsletter-title", request.url),
-      303,
-    );
-  } catch (error) {
-    if (error instanceof NotifiqueApiError) {
-      const responseData = error.responseData as { code?: string } | undefined;
-      console.error("Newsletter subscription failed", {
-        code: responseData?.code ?? error.code,
-        message: error.message,
-        status: error.statusCode,
-      });
-    } else {
-      console.error("Newsletter subscription failed", error);
-    }
-
+  if (subscriptionFailed) {
     return NextResponse.redirect(new URL("/?newsletter=error#newsletter-title", request.url), 303);
   }
+
+  return NextResponse.redirect(
+    new URL("/?newsletter=subscribed#newsletter-title", request.url),
+    303,
+  );
+}
+
+function logNewsletterSubscriptionError(error: unknown): void {
+  if (!(error instanceof NotifiqueApiError)) {
+    console.error("Newsletter subscription failed", error);
+    return;
+  }
+
+  const responseData = error.responseData;
+  const responseCode =
+    responseData &&
+    typeof responseData === "object" &&
+    "code" in responseData &&
+    typeof responseData.code === "string"
+      ? responseData.code
+      : undefined;
+
+  console.error("Newsletter subscription failed", {
+    code: responseCode ?? error.code,
+    message: error.message,
+    status: error.statusCode,
+  });
 }
