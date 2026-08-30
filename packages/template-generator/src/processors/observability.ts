@@ -449,18 +449,22 @@ export const getMonitor = env.GETMONITOR_API_KEY
   if (!content.includes('from "./getmonitor"')) {
     content = `import { getMonitor } from "./getmonitor";\n${content}`;
   }
-  if (config.backend === "express" && !content.includes("setupExpressErrorHandler")) {
-    content = content.replace(
-      'import express from "express";',
-      'import express from "express";\nimport { setupExpressErrorHandler } from "@getmonitor/node";',
-    );
-    content = content.replace(
-      "app.listen(3000,",
-      "if (getMonitor) setupExpressErrorHandler(getMonitor, app);\n\napp.listen(3000,",
-    );
-  } else if (!content.includes("void getMonitor;")) {
-    content += "\nvoid getMonitor;\n";
+  if (config.backend !== "express" || content.includes("setupExpressErrorHandler")) {
+    if (!content.includes("void getMonitor;")) {
+      content += "\nvoid getMonitor;\n";
+    }
+    vfs.writeFile(entryPath, content);
+    return;
   }
+
+  content = content.replace(
+    'import express from "express";',
+    'import express from "express";\nimport { setupExpressErrorHandler } from "@getmonitor/node";',
+  );
+  content = content.replace(
+    "app.listen(3000,",
+    "if (getMonitor) setupExpressErrorHandler(getMonitor, app);\n\napp.listen(3000,",
+  );
   vfs.writeFile(entryPath, content);
 }
 
