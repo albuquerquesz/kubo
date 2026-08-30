@@ -202,7 +202,7 @@ describe("Resend communication", () => {
     if (result.isErr()) return;
 
     const files = collectFiles(result.value.root, "/virtual");
-    const client = files.get("packages/notifique/src/lib/client.ts") ?? "";
+    const notifique = files.get("packages/notifique/src/notifique.ts") ?? "";
     const sms = files.get("packages/notifique/src/lib/sms.ts") ?? "";
     const whatsapp = files.get("packages/notifique/src/lib/whatsapp.ts") ?? "";
     const email = files.get("packages/notifique/src/lib/email.ts") ?? "";
@@ -212,13 +212,16 @@ describe("Resend communication", () => {
     const readme = files.get("README.md") ?? "";
 
     expect(files.has("packages/email/package.json")).toBe(false);
-    expect(index).toContain("export { getNotifiqueClient }");
+    expect(index).toContain('export { notifique } from "./notifique"');
     expect(index).toContain("sendSms");
     expect(index).not.toMatch(/^\*/m);
-    expect(client).toContain("@notifique/sdk-node");
-    expect(client).toContain("new Notifique");
-    expect(client).toContain("env.NOTIFIQUE_API_KEY");
-    expect(client).not.toContain("fetch(");
+    expect(notifique).toContain("@notifique/sdk-node");
+    expect(notifique).toContain("new Notifique");
+    expect(notifique).toContain("env.NOTIFIQUE_API_KEY");
+    expect(notifique).not.toContain("fetch(");
+    expect(sms).toContain('from "../notifique"');
+    expect(whatsapp).toContain('from "../notifique"');
+    expect(email).toContain('from "../notifique"');
     expect(sms).toContain(".sms.send");
     expect(sms).toContain("idempotencyKey");
     expect(sms).toContain("options: { priority:");
