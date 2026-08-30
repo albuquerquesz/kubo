@@ -33175,7 +33175,6 @@ export const env = createEnv({
 	{{/if}}
 	{{#if (eq communication "notifique")}}
 		NOTIFIQUE_API_KEY: z.string().min(1),
-		NOTIFIQUE_BASE_URL: z.url().default("https://api.notifique.dev"),
 		NOTIFIQUE_WHATSAPP_INSTANCE_ID: z.string().min(1).optional(),
 		NOTIFIQUE_FROM_EMAIL: z.string().min(1).default("Acme <noreply@example.com>"),
 	{{/if}}
@@ -33942,22 +33941,10 @@ export { sendEmail } from "./lib/email";
 import { env } from "@{{projectName}}/env/server";
 
 let singleton: Notifique | undefined;
-let singletonKey = "";
 
 export function getNotifiqueClient(): Notifique {
-	const apiKey = env.NOTIFIQUE_API_KEY;
-	const baseUrl = env.NOTIFIQUE_BASE_URL.replace(/\\/$/, "");
-	const cacheKey = \`\${apiKey}|\${baseUrl}\`;
-	if (!singleton || singletonKey !== cacheKey) {
-		singleton = new Notifique({ apiKey, baseUrl });
-		singletonKey = cacheKey;
-	}
+	if (!singleton) singleton = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
 	return singleton;
-}
-
-export function resetNotifiqueClient(): void {
-	singleton = undefined;
-	singletonKey = "";
 }
 `],
   ["packages/notifique/src/lib/email.ts.hbs", `import { env } from "@{{projectName}}/env/server";

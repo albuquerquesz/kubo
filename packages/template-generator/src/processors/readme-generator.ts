@@ -583,7 +583,7 @@ function generateNotifiqueSetup(): string {
 
 This project includes a \`packages/notifique\` REST client for [Notifique](https://notifique.dev) (WhatsApp, SMS, email, and more).
 
-\`NOTIFIQUE_API_KEY\` is **required** by the Zod schema in \`packages/env\` (typed \`env.NOTIFIQUE_*\`). \`NOTIFIQUE_BASE_URL\` and \`NOTIFIQUE_FROM_EMAIL\` have defaults. Set \`SKIP_ENV_VALIDATION=1\` only if you need to boot before filling secrets.
+\`NOTIFIQUE_API_KEY\` is **required** by the Zod schema in \`packages/env\` (typed \`env.NOTIFIQUE_*\`). \`NOTIFIQUE_FROM_EMAIL\` has a default. Set \`SKIP_ENV_VALIDATION=1\` only if you need to boot before filling secrets.
 
 1. Create an API key in the [Developer panel](https://docs.notifique.dev/guides/api-key/index) (\`sk_live_…\` or sandbox \`sk_test_…\`).
 2. Grant the scopes you need (e.g. \`sms:send\`, \`whatsapp:send\`, \`email:send\`).

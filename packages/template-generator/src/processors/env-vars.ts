@@ -569,12 +569,6 @@ function buildServerVars(
       comment: "Notifique API key (sk_live_… or sk_test_…) — required by packages/env schema",
     },
     {
-      key: "NOTIFIQUE_BASE_URL",
-      value: "https://api.notifique.dev",
-      condition: communication === "notifique",
-      comment: "Notifique API host (paths use /v1 automatically)",
-    },
-    {
       key: "NOTIFIQUE_WHATSAPP_INSTANCE_ID",
       value: "",
       condition: communication === "notifique",

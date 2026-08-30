@@ -186,7 +186,6 @@ export const env = createEnv({
 	{{/if}}
 	{{#if (eq communication "notifique")}}
 		NOTIFIQUE_API_KEY: z.string().min(1),
-		NOTIFIQUE_BASE_URL: z.url().default("https://api.notifique.dev"),
 		NOTIFIQUE_WHATSAPP_INSTANCE_ID: z.string().min(1).optional(),
 		NOTIFIQUE_FROM_EMAIL: z.string().min(1).default("Acme <noreply@example.com>"),
 	{{/if}}
