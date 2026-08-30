@@ -2,7 +2,7 @@
 
 import { v } from "convex/values";
 import { action } from "./_generated/server";
-import { createAraraClient } from "@{{projectName}}/arara";
+import { arara } from "@{{projectName}}/arara";
 
 const messageInput = v.object({
   receiver: v.string(),
@@ -27,23 +27,21 @@ export const execute = action({
   },
   handler: async (ctx, args) => {
     void ctx;
-    const client = createAraraClient(process.env.ARARA_API_KEY);
-
     switch (args.operation) {
       case "send":
         if (!args.message) throw new Error("message is required for send");
-        return client.messages.send(args.message);
+        return arara.messages.send(args.message);
       case "status":
         if (!args.messageId) throw new Error("messageId is required for status");
-        return client.messages.get(args.messageId);
+        return arara.messages.get(args.messageId);
       case "listTemplates":
-        return client.templates.list();
+        return arara.templates.list();
       case "createTemplate":
         if (!args.template) throw new Error("template is required for createTemplate");
-        return client.templates.create(args.template);
+        return arara.templates.create(args.template);
       case "templateStatus":
         if (!args.templateName) throw new Error("templateName is required for templateStatus");
-        return client.templates.getStatus(args.templateName);
+        return arara.templates.getStatus(args.templateName);
     }
   },
 });

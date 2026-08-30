@@ -13827,7 +13827,7 @@ export const httpAction = httpActionGeneric;
 
 import { v } from "convex/values";
 import { action } from "./_generated/server";
-import { createAraraClient } from "@{{projectName}}/arara";
+import { arara } from "@{{projectName}}/arara";
 
 const messageInput = v.object({
   receiver: v.string(),
@@ -13852,23 +13852,21 @@ export const execute = action({
   },
   handler: async (ctx, args) => {
     void ctx;
-    const client = createAraraClient(process.env.ARARA_API_KEY);
-
     switch (args.operation) {
       case "send":
         if (!args.message) throw new Error("message is required for send");
-        return client.messages.send(args.message);
+        return arara.messages.send(args.message);
       case "status":
         if (!args.messageId) throw new Error("messageId is required for status");
-        return client.messages.get(args.messageId);
+        return arara.messages.get(args.messageId);
       case "listTemplates":
-        return client.templates.list();
+        return arara.templates.list();
       case "createTemplate":
         if (!args.template) throw new Error("template is required for createTemplate");
-        return client.templates.create(args.template);
+        return arara.templates.create(args.template);
       case "templateStatus":
         if (!args.templateName) throw new Error("templateName is required for templateStatus");
-        return client.templates.getStatus(args.templateName);
+        return arara.templates.getStatus(args.templateName);
     }
   },
 });
@@ -32780,28 +32778,7 @@ export default defineConfig({
 
 export type AraraClient = NodeSDK;
 
-export function createAraraClient(apiKey = process.env.ARARA_API_KEY): AraraClient {
-  if (!apiKey) {
-    throw new Error("ARARA_API_KEY is not set. Add it to your server environment before using AraraHQ.");
-  }
-
-  return new NodeSDK({ apiKey });
-}
-
-export function getAraraClient(): AraraClient {
-  return createAraraClient();
-}
-
-export const arara = {
-  client: getAraraClient,
-  sendMessage: (input: Parameters<AraraClient["messages"]["send"]>[0]) =>
-    getAraraClient().messages.send(input),
-  getMessage: (messageId: string) => getAraraClient().messages.get(messageId),
-  listTemplates: () => getAraraClient().templates.list(),
-  createTemplate: (input: Parameters<AraraClient["templates"]["create"]>[0]) =>
-    getAraraClient().templates.create(input),
-  getTemplateStatus: (name: string) => getAraraClient().templates.getStatus(name),
-};
+export const arara = new NodeSDK({ apiKey: process.env.ARARA_API_KEY });
 `],
   ["packages/arara/tsconfig.json.hbs", `{
   "extends": "@{{projectName}}/config/tsconfig.base.json",

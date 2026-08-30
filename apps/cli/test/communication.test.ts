@@ -136,8 +136,10 @@ describe("Resend communication", () => {
 
     expect(araraPackage.dependencies?.["@ararahq/sdk"]).toBe("^1.8.1");
     expect(client).toContain("NodeSDK");
-    expect(client).toContain("messages.send");
-    expect(client).toContain("templates.list");
+    expect(client).toContain("export const arara");
+    expect(client).not.toContain("getAraraClient");
+    expect(client).not.toContain("createAraraClient");
+    expect(client).toContain("new NodeSDK");
     expect(serverEnv).toContain("ARARA_API_KEY=");
     expect(serverPackage.dependencies?.["@arara-app/arara"]).toBeTruthy();
     expect(readme).toContain("docs.ararahq.com/sdks/node");
@@ -172,8 +174,10 @@ describe("Resend communication", () => {
     const backendPackage = JSON.parse(files.get("packages/backend/package.json") ?? "{}");
 
     expect(action).toContain('"use node"');
-    expect(action).toContain("client.messages.send");
-    expect(action).toContain("client.templates.create");
+    expect(action).toContain("import { arara }");
+    expect(action).not.toContain("createAraraClient");
+    expect(action).toContain("arara.messages.send");
+    expect(action).toContain("arara.templates.create");
     expect(env).toContain("ARARA_API_KEY=");
     expect(backendPackage.dependencies?.["@arara-convex-app/arara"]).toBe("workspace:*");
   });
