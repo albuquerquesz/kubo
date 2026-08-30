@@ -1,7 +1,4 @@
-import { Notifique } from "@notifique/sdk-node";
-import { env } from "@{{projectName}}/env/server";
-
-const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
+import { notifique } from "../notifique";
 
 export type NotifiqueSmsPriority = "high" | "normal" | "low";
 

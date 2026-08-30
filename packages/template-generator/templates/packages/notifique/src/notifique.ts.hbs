@@ -1,0 +1,4 @@
+import { Notifique } from "@notifique/sdk-node";
+import { env } from "@{{projectName}}/env/server";
+
+export const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });

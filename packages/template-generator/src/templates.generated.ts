@@ -33932,14 +33932,13 @@ await app.finalize();
   "devDependencies": {}
 }
 `],
-  ["packages/notifique/src/index.ts.hbs", `export { sendSms } from "./lib/sms";
+  ["packages/notifique/src/index.ts.hbs", `export { notifique } from "./notifique";
+export { sendSms } from "./lib/sms";
 export { sendWhatsAppText } from "./lib/whatsapp";
 export { sendEmail } from "./lib/email";
 `],
   ["packages/notifique/src/lib/email.ts.hbs", `import { env } from "@{{projectName}}/env/server";
-import { Notifique } from "@notifique/sdk-node";
-
-const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
+import { notifique } from "../notifique";
 
 export type NotifiqueEmailPriority = "high" | "normal" | "low";
 
@@ -33981,10 +33980,7 @@ export async function sendEmail(
 	return response.data;
 }
 `],
-  ["packages/notifique/src/lib/sms.ts.hbs", `import { Notifique } from "@notifique/sdk-node";
-import { env } from "@{{projectName}}/env/server";
-
-const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
+  ["packages/notifique/src/lib/sms.ts.hbs", `import { notifique } from "../notifique";
 
 export type NotifiqueSmsPriority = "high" | "normal" | "low";
 
@@ -34015,10 +34011,7 @@ export async function sendSms(input: SendSmsInput) {
 	return response.data;
 }
 `],
-  ["packages/notifique/src/lib/whatsapp.ts.hbs", `import { Notifique } from "@notifique/sdk-node";
-import { env } from "@{{projectName}}/env/server";
-
-const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
+  ["packages/notifique/src/lib/whatsapp.ts.hbs", `import { notifique } from "../notifique";
 
 export type SendWhatsAppTextInput = {
 	/** WhatsApp instance id (ACTIVE). Prefer env.NOTIFIQUE_WHATSAPP_INSTANCE_ID at the call site. */
@@ -34040,6 +34033,11 @@ export async function sendWhatsAppText(
 		);
 	return response.data;
 }
+`],
+  ["packages/notifique/src/notifique.ts.hbs", `import { Notifique } from "@notifique/sdk-node";
+import { env } from "@{{projectName}}/env/server";
+
+export const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
 `],
   ["packages/notifique/tsconfig.json.hbs", `{
   "extends": "@{{projectName}}/config/tsconfig.base.json",
@@ -37694,4 +37692,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 616;
+export const TEMPLATE_COUNT = 617;
