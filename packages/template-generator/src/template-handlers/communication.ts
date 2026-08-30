@@ -67,13 +67,6 @@ export async function processCommunicationTemplates(
     processSingleTemplate(
       vfs,
       templates,
-      "packages/notifique/src/lib/client.ts",
-      "packages/notifique/src/lib/client.ts",
-      config,
-    );
-    processSingleTemplate(
-      vfs,
-      templates,
       "packages/notifique/src/lib/sms.ts",
       "packages/notifique/src/lib/sms.ts",
       config,

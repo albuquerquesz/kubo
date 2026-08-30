@@ -1,4 +1,7 @@
-import { getNotifiqueClient } from "./client";
+import { Notifique } from "@notifique/sdk-node";
+import { env } from "@{{projectName}}/env/server";
+
+const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
 
 export type NotifiqueSmsPriority = "high" | "normal" | "low";
 
@@ -17,8 +20,6 @@ export async function sendSms(input: SendSmsInput) {
 	if (input.message.trim().length < 9) {
 		throw new Error("SMS message must be at least 9 characters (Notifique API rule).");
 	}
-
-	const notifique = getNotifiqueClient();
 
 	const response = await notifique.sms.send(
 			{

@@ -1,9 +1,0 @@
-import { Notifique } from "@notifique/sdk-node";
-import { env } from "@{{projectName}}/env/server";
-
-let singleton: Notifique | undefined;
-
-export function getNotifiqueClient(): Notifique {
-	if (!singleton) singleton = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
-	return singleton;
-}

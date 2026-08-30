@@ -33932,23 +33932,14 @@ await app.finalize();
   "devDependencies": {}
 }
 `],
-  ["packages/notifique/src/index.ts.hbs", `export { getNotifiqueClient } from "./lib/client";
-export { sendSms } from "./lib/sms";
+  ["packages/notifique/src/index.ts.hbs", `export { sendSms } from "./lib/sms";
 export { sendWhatsAppText } from "./lib/whatsapp";
 export { sendEmail } from "./lib/email";
 `],
-  ["packages/notifique/src/lib/client.ts.hbs", `import { Notifique } from "@notifique/sdk-node";
-import { env } from "@{{projectName}}/env/server";
-
-let singleton: Notifique | undefined;
-
-export function getNotifiqueClient(): Notifique {
-	if (!singleton) singleton = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
-	return singleton;
-}
-`],
   ["packages/notifique/src/lib/email.ts.hbs", `import { env } from "@{{projectName}}/env/server";
-import { getNotifiqueClient } from "./client";
+import { Notifique } from "@notifique/sdk-node";
+
+const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
 
 export type NotifiqueEmailPriority = "high" | "normal" | "low";
 
@@ -33975,8 +33966,6 @@ export async function sendEmail(
 		throw new Error("Email requires html and/or text.");
 	}
 
-	const notifique = getNotifiqueClient();
-
 	const response = await notifique.email.send(
 			{
 				from: input.from ?? env.NOTIFIQUE_FROM_EMAIL,
@@ -33992,7 +33981,10 @@ export async function sendEmail(
 	return response.data;
 }
 `],
-  ["packages/notifique/src/lib/sms.ts.hbs", `import { getNotifiqueClient } from "./client";
+  ["packages/notifique/src/lib/sms.ts.hbs", `import { Notifique } from "@notifique/sdk-node";
+import { env } from "@{{projectName}}/env/server";
+
+const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
 
 export type NotifiqueSmsPriority = "high" | "normal" | "low";
 
@@ -34012,8 +34004,6 @@ export async function sendSms(input: SendSmsInput) {
 		throw new Error("SMS message must be at least 9 characters (Notifique API rule).");
 	}
 
-	const notifique = getNotifiqueClient();
-
 	const response = await notifique.sms.send(
 			{
 				to,
@@ -34025,7 +34015,10 @@ export async function sendSms(input: SendSmsInput) {
 	return response.data;
 }
 `],
-  ["packages/notifique/src/lib/whatsapp.ts.hbs", `import { getNotifiqueClient } from "./client";
+  ["packages/notifique/src/lib/whatsapp.ts.hbs", `import { Notifique } from "@notifique/sdk-node";
+import { env } from "@{{projectName}}/env/server";
+
+const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
 
 export type SendWhatsAppTextInput = {
 	/** WhatsApp instance id (ACTIVE). Prefer env.NOTIFIQUE_WHATSAPP_INSTANCE_ID at the call site. */
@@ -34040,8 +34033,6 @@ export async function sendWhatsAppText(
 	input: SendWhatsAppTextInput,
 ) {
 	const to = Array.isArray(input.to) ? input.to : [input.to];
-	const notifique = getNotifiqueClient();
-
 	const response = await notifique.whatsapp.send(
 			input.instanceId,
 			{ to, type: "text", payload: { message: input.message } },
@@ -37703,4 +37694,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 617;
+export const TEMPLATE_COUNT = 616;
