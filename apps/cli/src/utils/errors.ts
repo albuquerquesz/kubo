@@ -4,10 +4,6 @@ import pc from "picocolors";
 
 import { cliConsola } from "./terminal-output";
 
-// ============================================================================
-// Tagged Error Classes
-// ============================================================================
-
 /**
  * User cancelled the operation (e.g., Ctrl+C in prompts)
  */
@@ -106,10 +102,6 @@ export class AddonSetupError extends TaggedError("AddonSetupError")<{
   }
 }
 
-// ============================================================================
-// Error Type Unions
-// ============================================================================
-
 /**
  * All possible CLI errors
  */
@@ -122,10 +114,6 @@ export type AppError =
   | ProjectCreationError
   | DatabaseSetupError
   | AddonSetupError;
-
-// ============================================================================
-// Result Helper Functions
-// ============================================================================
 
 /**
  * Create an error Result from a message string
@@ -201,10 +189,6 @@ export function addonSetupError(
 ): Result<never, AddonSetupError> {
   return Result.err(new AddonSetupError({ addon, message, cause }));
 }
-
-// ============================================================================
-// Error Display Utilities
-// ============================================================================
 
 /**
  * Display an error to the user (for CLI mode)

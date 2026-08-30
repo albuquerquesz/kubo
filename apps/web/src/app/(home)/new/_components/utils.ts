@@ -220,10 +220,6 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
     notes[cat] = { notes: [], hasIssue: false };
   }
 
-  // ============================================
-  // BACKEND CONSTRAINTS
-  // ============================================
-
   if (nextStack.backend === "convex") {
     // Convex handles its own runtime, database, orm, api, dbSetup
     const convexOverrides: Partial<StackState> = {
@@ -366,10 +362,6 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
     }
   }
 
-  // ============================================
-  // RUNTIME CONSTRAINTS
-  // ============================================
-
   // Workers runtime requires Hono backend
   if (nextStack.runtime === "workers" && nextStack.backend !== "hono") {
     nextStack.backend = "hono";
@@ -416,10 +408,6 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
       message: `Runtime definido como '${DEFAULT_STACK.runtime}' (necessário para este backend)`,
     });
   }
-
-  // ============================================
-  // DATABASE & ORM CONSTRAINTS (CLI-like flow)
-  // ============================================
 
   // Skip if backend doesn't use database
   if (nextStack.backend !== "convex" && nextStack.backend !== "none") {
@@ -623,10 +611,6 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
     }
   }
 
-  // ============================================
-  // API CONSTRAINTS
-  // ============================================
-
   if (nextStack.backend !== "convex" && nextStack.backend !== "none") {
     // Nuxt, Svelte, Solid, Astro require oRPC (not tRPC)
     const needsOrpc = nextStack.webFrontend.some((f) =>
@@ -641,10 +625,6 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
       });
     }
   }
-
-  // ============================================
-  // AUTH CONSTRAINTS
-  // ============================================
 
   if (nextStack.auth === "clerk") {
     if (!hasClerkCompatibleBackend(nextStack.backend)) {
@@ -664,10 +644,6 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
     }
   }
 
-  // ============================================
-  // PAYMENTS CONSTRAINTS
-  // ============================================
-
   const compatiblePayments = nextStack.payments.filter(
     (provider) =>
       getPaymentCompatibilityIssue({
@@ -686,10 +662,6 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
       message: "Providers de pagamento incompatíveis foram removidos",
     });
   }
-
-  // ============================================
-  // ADDONS CONSTRAINTS
-  // ============================================
 
   const pwaCompat = hasPWACompatibleFrontend(nextStack.webFrontend);
   const tauriCompat = hasTauriCompatibleFrontend(nextStack.webFrontend, nextStack.backend);
@@ -739,10 +711,6 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
     });
   }
 
-  // ============================================
-  // TESTING CONSTRAINTS
-  // ============================================
-
   const playwrightCompat = hasPlaywrightCompatibleFrontend(nextStack.webFrontend);
 
   if (!playwrightCompat && nextStack.testing.includes("playwright")) {
@@ -754,10 +722,6 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
       message: "Playwright removido (exige frontend compatível)",
     });
   }
-
-  // ============================================
-  // EXAMPLES CONSTRAINTS
-  // ============================================
 
   // Todo example requires database AND API (unless Convex)
   if (nextStack.examples.includes("todo") && nextStack.backend !== "convex") {
@@ -799,10 +763,6 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
       }
     }
   }
-
-  // ============================================
-  // DEPLOYMENT CONSTRAINTS
-  // ============================================
 
   // Web deploy requires web frontend
   if (nextStack.webDeploy !== "none" && !nextStack.webFrontend.some((f) => f !== "none")) {
@@ -889,9 +849,6 @@ export const getDisabledReason = (
   category: keyof typeof TECH_OPTIONS,
   optionId: string,
 ): string | null => {
-  // ============================================
-  // CONVEX BACKEND - locks down many options
-  // ============================================
   if (currentStack.backend === "convex") {
     if (category === "runtime" && optionId !== "none") {
       return "O Convex fornece o próprio runtime";
@@ -937,9 +894,6 @@ export const getDisabledReason = (
     }
   }
 
-  // ============================================
-  // NO BACKEND - locks down backend-dependent options
-  // ============================================
   if (currentStack.backend === "none") {
     if (category === "runtime" && optionId !== "none") {
       return "Nenhum backend selecionado";
@@ -973,9 +927,6 @@ export const getDisabledReason = (
     }
   }
 
-  // ============================================
-  // FULLSTACK BACKEND CONSTRAINTS
-  // ============================================
   if (isSelfHostedFullstackBackend(currentStack.backend)) {
     const rule = selfHostedCompatibilityRules[currentStack.backend];
     if (category === "runtime" && optionId !== "none") {
@@ -992,9 +943,6 @@ export const getDisabledReason = (
     }
   }
 
-  // ============================================
-  // BACKEND SELECTION CONSTRAINTS
-  // ============================================
   if (category === "backend") {
     if (optionId === "self-next" && !currentStack.webFrontend.includes("next")) {
       return "Exige frontend Next.js";
@@ -1027,9 +975,6 @@ export const getDisabledReason = (
     }
   }
 
-  // ============================================
-  // RUNTIME CONSTRAINTS
-  // ============================================
   if (category === "runtime") {
     if (optionId === "workers" && currentStack.backend !== "hono") {
       return "Workers exige backend Hono";
@@ -1045,9 +990,6 @@ export const getDisabledReason = (
     }
   }
 
-  // ============================================
-  // DATABASE CONSTRAINTS
-  // ============================================
   if (category === "database") {
     if (optionId === "mongodb" && currentStack.runtime === "workers") {
       return "MongoDB não é compatível com o runtime Workers";
@@ -1055,9 +997,6 @@ export const getDisabledReason = (
     // Allow all databases when ORM is none - system will auto-select ORM
   }
 
-  // ============================================
-  // ORM CONSTRAINTS
-  // ============================================
   if (category === "orm") {
     if (optionId === "mongoose") {
       if (currentStack.runtime === "workers") {
@@ -1077,9 +1016,6 @@ export const getDisabledReason = (
     }
   }
 
-  // ============================================
-  // DB SETUP CONSTRAINTS
-  // ============================================
   if (category === "dbSetup" && optionId !== "none") {
     if (currentStack.database === "none") {
       return "Selecione um banco de dados primeiro";
@@ -1123,9 +1059,6 @@ export const getDisabledReason = (
     }
   }
 
-  // ============================================
-  // API CONSTRAINTS
-  // ============================================
   if (category === "api" && optionId === "trpc") {
     const needsOrpc = currentStack.webFrontend.some((f) =>
       ["nuxt", "svelte", "solid", "astro"].includes(f),
@@ -1138,9 +1071,6 @@ export const getDisabledReason = (
     }
   }
 
-  // ============================================
-  // AUTH CONSTRAINTS
-  // ============================================
   if (category === "auth") {
     if (optionId === "clerk") {
       if (!hasClerkCompatibleBackend(currentStack.backend)) {
@@ -1152,9 +1082,6 @@ export const getDisabledReason = (
     }
   }
 
-  // ============================================
-  // PAYMENTS CONSTRAINTS
-  // ============================================
   if (category === "payments") {
     const issue = getPaymentCompatibilityIssue({
       provider: optionId,
@@ -1182,9 +1109,6 @@ export const getDisabledReason = (
       return "AbacatePay v1 exige um banco SQL com Prisma ou Drizzle";
   }
 
-  // ============================================
-  // COMMUNICATION CONSTRAINTS
-  // ============================================
   if (category === "communication") {
     if ((optionId === "resend" || optionId === "notifique") && currentStack.backend === "none") {
       return optionId === "notifique"
@@ -1193,9 +1117,6 @@ export const getDisabledReason = (
     }
   }
 
-  // ============================================
-  // ADDONS CONSTRAINTS
-  // ============================================
   if (category === "addons") {
     if (optionId === "pwa" && !hasPWACompatibleFrontend(currentStack.webFrontend)) {
       return "PWA exige TanStack Router, React Router, Solid ou Next.js";
@@ -1238,9 +1159,6 @@ export const getDisabledReason = (
     }
   }
 
-  // ============================================
-  // EXAMPLES CONSTRAINTS
-  // ============================================
   if (category === "examples") {
     if (optionId === "todo" && currentStack.backend !== "convex") {
       if (currentStack.database === "none") {
@@ -1269,9 +1187,6 @@ export const getDisabledReason = (
     }
   }
 
-  // ============================================
-  // DEPLOYMENT CONSTRAINTS
-  // ============================================
   if (category === "webDeploy" && optionId !== "none") {
     if (!currentStack.webFrontend.some((f) => f !== "none")) {
       return "Deploy web exige um frontend web";
