@@ -30,7 +30,6 @@ import {
   InitResultSchema,
 } from "./schemas";
 
-// Generate JSON schemas for each type
 export function getDatabaseJsonSchema() {
   return z.toJSONSchema(DatabaseSchema);
 }
@@ -139,7 +138,6 @@ export function getInitResultJsonSchema() {
   return z.toJSONSchema(InitResultSchema);
 }
 
-// Get all JSON schemas as a single object
 export function getAllJsonSchemas() {
   return {
     database: getDatabaseJsonSchema(),

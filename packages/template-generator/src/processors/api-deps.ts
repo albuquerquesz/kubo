@@ -80,27 +80,22 @@ function addApiPackageDeps(
     });
   }
 
-  // Add next dep for api package when backend is self and frontend includes next
   if (backend === "self" && frontend.includes("next")) {
     addPackageDependency({ vfs, packagePath: pkgPath, dependencies: ["next"] });
   }
 
-  // Add better-auth for express/fastify backends
   if (auth === "better-auth" && (backend === "express" || backend === "fastify")) {
     addPackageDependency({ vfs, packagePath: pkgPath, dependencies: ["better-auth"] });
   }
 
-  // Add @types/express for express backend
   if (backend === "express") {
     addPackageDependency({ vfs, packagePath: pkgPath, devDependencies: ["@types/express"] });
   }
 
-  // Add hono types for hono backend
   if (backend === "hono") {
     addPackageDependency({ vfs, packagePath: pkgPath, devDependencies: ["hono"] });
   }
 
-  // Add elysia types for elysia backend
   if (backend === "elysia") {
     addPackageDependency({ vfs, packagePath: pkgPath, devDependencies: ["elysia"] });
   }
@@ -144,7 +139,6 @@ function addSelfBackendWebDeps(
   const webPath = "apps/web/package.json";
   if (!vfs.exists(webPath)) return;
 
-  // When backend is "self", add server deps to web too
   if (api === "trpc") {
     addPackageDependency({
       vfs,

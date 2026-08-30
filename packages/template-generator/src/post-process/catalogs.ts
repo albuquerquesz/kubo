@@ -149,7 +149,6 @@ function setupBunCatalogs(vfs: VirtualFileSystem, catalog: Record<string, string
 function setupPnpmCatalogs(vfs: VirtualFileSystem, catalog: Record<string, string>): void {
   let content = vfs.readFile("pnpm-workspace.yaml");
 
-  // Create pnpm-workspace.yaml if it doesn't exist
   if (!content) {
     content = `packages:
   - "apps/*"

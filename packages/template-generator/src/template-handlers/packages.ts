@@ -26,7 +26,6 @@ export async function processEnvPackage(
 
   if (!hasWeb && !hasNative && config.backend === "none") return;
 
-  // Process base env package files (package.json, tsconfig.json)
   processSingleTemplate(
     vfs,
     templates,
@@ -42,7 +41,6 @@ export async function processEnvPackage(
     config,
   );
 
-  // Conditionally include web.ts
   if (hasWeb) {
     processSingleTemplate(
       vfs,
@@ -53,7 +51,6 @@ export async function processEnvPackage(
     );
   }
 
-  // Conditionally include native.ts only when native frontend is selected
   if (hasNative) {
     processSingleTemplate(
       vfs,
@@ -64,7 +61,6 @@ export async function processEnvPackage(
     );
   }
 
-  // Conditionally include server.ts when backend is NOT none and NOT convex
   if (config.backend !== "none" && config.backend !== "convex") {
     processSingleTemplate(
       vfs,

@@ -673,7 +673,6 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
   const hasAstro = frontend.includes("astro");
   const hasWebApp = hasWebFrontend(frontend);
 
-  // --- Client App .env ---
   if (hasWebApp) {
     const clientDir = "apps/web";
     if (vfs.directoryExists(clientDir)) {
@@ -683,9 +682,6 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     }
   }
 
-  // --- Root .env for docker compose build args ---
-  // compose ${VAR} interpolation only reads the root .env, not the per-app env_file,
-  // so mirror the same variable names users fill in apps/web/.env
   if (webDeploy === "docker" && hasWebApp) {
     const hasClerkBuildArgFrontend =
       hasNextJs || hasReactRouter || hasTanStackRouter || hasTanStackStart;
@@ -716,7 +712,6 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     }
   }
 
-  // --- Native App .env ---
   if (hasNativeFrontend(frontend)) {
     const nativeDir = "apps/native";
     if (vfs.directoryExists(nativeDir)) {
@@ -726,13 +721,11 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     }
   }
 
-  // --- Convex Backend .env.local ---
   if (backend === "convex") {
     const convexBackendDir = "packages/backend";
     if (vfs.directoryExists(convexBackendDir)) {
       const envLocalPath = `${convexBackendDir}/.env.local`;
 
-      // Write comment blocks first
       const commentBlocks = buildConvexCommentBlocks(frontend, auth, payments, examples);
       if (commentBlocks) {
         let currentContent = "";
@@ -742,7 +735,6 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
         vfs.writeFile(envLocalPath, commentBlocks + currentContent);
       }
 
-      // Then add variables
       const convexBackendVars = buildConvexBackendVars(
         frontend,
         auth,
@@ -765,7 +757,6 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     return;
   }
 
-  // --- Server App .env ---
   const serverVars = buildServerVars(
     backend,
     frontend,
@@ -795,7 +786,6 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     writeEnvFile(vfs, envPath, serverVars);
   }
 
-  // --- Alchemy Infra .env ---
   const isUnifiedAlchemy = webDeploy === "cloudflare" && serverDeploy === "cloudflare";
   const isIndividualAlchemy = webDeploy === "cloudflare" || serverDeploy === "cloudflare";
 

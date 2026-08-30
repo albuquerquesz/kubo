@@ -179,7 +179,6 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
     }
   }
 
-  // Add deploy/destroy scripts when using alchemy (cloudflare deployment)
   const infraPackageName = `@${projectName}/infra`;
   const hasCloudflareDeploy =
     config.webDeploy === "cloudflare" || config.serverDeploy === "cloudflare";
@@ -253,7 +252,6 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
     }
   }
 
-  // Add compose scripts when deploying web/server as Docker containers
   if (config.webDeploy === "docker" || config.serverDeploy === "docker") {
     scripts["docker:build"] = "docker compose build";
     scripts["docker:up"] = "docker compose up -d --build";
@@ -603,7 +601,6 @@ function updateEnvPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): vo
 
   pkgJson.name = `@${config.projectName}/env`;
 
-  // Set exports based on which env files exist
   const hasWeb = hasWebFrontend(config.frontend);
   const hasNative = hasNativeFrontend(config.frontend);
   const needsServerEnv = config.backend !== "none" && config.backend !== "convex";
@@ -685,7 +682,6 @@ function updateConvexPackageJson(vfs: VirtualFileSystem, config: ProjectConfig):
 function renameDevScriptsForAlchemy(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { serverDeploy, webDeploy, backend } = config;
 
-  // Rename server dev script to dev:bare when serverDeploy is cloudflare
   if (serverDeploy === "cloudflare" && backend !== "self") {
     const serverPkgPath = "apps/server/package.json";
     const serverPkg = vfs.readJson<PackageJson>(serverPkgPath);
@@ -696,7 +692,6 @@ function renameDevScriptsForAlchemy(vfs: VirtualFileSystem, config: ProjectConfi
     }
   }
 
-  // Rename web dev script to dev:bare when webDeploy is cloudflare
   if (webDeploy === "cloudflare") {
     const webPkgPath = "apps/web/package.json";
     const webPkg = vfs.readJson<PackageJson>(webPkgPath);
