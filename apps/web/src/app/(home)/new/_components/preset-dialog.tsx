@@ -25,13 +25,10 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
     <Dialog>
       <DialogTrigger
         render={
-          <button
-            type="button"
-            className="builder-focus-ring inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-md bg-muted/20 px-3 font-mono font-medium text-muted-foreground text-xs transition-colors hover:bg-muted/35 hover:text-foreground"
-          />
+          <Button type="button" variant="ghost" size="default" className="w-full font-mono" />
         }
       >
-        <Zap className="h-3 w-3" />
+        <Zap data-icon="inline-start" className="h-3 w-3" />
         Modelos
       </DialogTrigger>
       <DialogContent

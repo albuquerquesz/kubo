@@ -2,6 +2,7 @@
 
 import { Share2 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { ShareDialog } from "@/components/ui/share-dialog";
 import type { StackState } from "@/lib/constant";
 
@@ -20,14 +21,16 @@ export function ShareButton({ stackUrl, stackState, open, onOpenChange }: ShareB
       open={open}
       onOpenChange={onOpenChange}
     >
-      <button
+      <Button
         type="button"
-        className="builder-focus-ring inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-md bg-primary/15 px-3 font-mono font-medium text-primary text-xs transition-colors hover:bg-primary/22"
+        variant="ghost"
+        size="default"
+        className="w-full font-mono text-primary hover:bg-primary/15 hover:text-primary"
         title="Compartilhar sua stack"
       >
-        <Share2 className="h-3 w-3" />
+        <Share2 data-icon="inline-start" className="h-3 w-3" />
         Compartilhar
-      </button>
+      </Button>
     </ShareDialog>
   );
 }

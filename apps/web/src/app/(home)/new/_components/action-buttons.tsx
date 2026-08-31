@@ -2,6 +2,7 @@
 
 import { AlertTriangle, RefreshCw, Settings, Star } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { StackState } from "@/lib/constant";
 import { cn } from "@/lib/utils";
@@ -21,9 +22,6 @@ type ActionButtonsProps = {
   onYoloToggle: (yolo: string) => void;
 };
 
-const mutedActionClasses =
-  "builder-focus-ring inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-muted/20 px-3 font-mono font-medium text-muted-foreground text-xs transition-colors hover:bg-muted/35 hover:text-foreground";
-
 export function ActionButtons({
   onReset,
   onSave,
@@ -39,34 +37,40 @@ export function ActionButtons({
     <div className="space-y-1.5">
       <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">Ações</p>
       <div className="grid grid-cols-2 gap-1.5">
-        <button
+        <Button
           type="button"
           onClick={onSave}
-          className={mutedActionClasses}
+          variant="ghost"
+          size="default"
+          className="w-full font-mono"
           title="Salvar preferências atuais"
         >
           <Star className="h-3 w-3" />
           Salvar
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={onReset}
-          className={mutedActionClasses}
+          variant="ghost"
+          size="default"
+          className="w-full font-mono"
           title="Restaurar padrões"
         >
           <RefreshCw className="h-3 w-3" />
           Redefinir
-        </button>
+        </Button>
         {hasSavedStack && (
-          <button
+          <Button
             type="button"
             onClick={onLoad}
-            className={mutedActionClasses}
+            variant="ghost"
+            size="default"
+            className="w-full font-mono"
             title="Carregar preferências salvas"
           >
             <Settings className="h-3 w-3" />
             Carregar
-          </button>
+          </Button>
         )}
       </div>
       <div className="grid grid-cols-3 gap-1.5">
@@ -75,20 +79,21 @@ export function ActionButtons({
         <Tooltip delay={100}>
           <TooltipTrigger
             render={
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="default"
                 onClick={() => onYoloToggle(yolo ? "false" : "true")}
                 aria-pressed={yolo}
                 className={cn(
-                  "builder-focus-ring inline-flex h-8 items-center justify-center gap-1.5 rounded-md px-3 font-mono font-medium text-xs transition-colors",
-                  yolo
-                    ? "bg-destructive/15 text-destructive hover:bg-destructive/25"
-                    : "bg-muted/20 text-muted-foreground hover:bg-muted/35 hover:text-foreground",
+                  "w-full font-mono",
+                  yolo &&
+                    "bg-destructive/15 text-destructive hover:bg-destructive/25 hover:text-destructive",
                 )}
               />
             }
           >
-            <AlertTriangle className="h-3 w-3" />
+            <AlertTriangle data-icon="inline-start" className="h-3 w-3" />
             YOLO
           </TooltipTrigger>
           <TooltipContent side="top" align="end" className="max-w-xs">
