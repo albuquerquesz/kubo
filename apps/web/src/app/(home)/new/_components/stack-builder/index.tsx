@@ -1,19 +1,12 @@
 "use client";
 
-import {
-  AlertTriangle,
-  Check,
-  ChevronDown,
-  ClipboardCopy,
-  FolderTree,
-  Terminal,
-} from "lucide-react";
-import { startTransition, useState } from "react";
+import { AlertTriangle, Check, ClipboardCopy, FolderTree, Terminal } from "lucide-react";
+import { startTransition } from "react";
 
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { formatStackCommandForDisplay, getDesktopBuildNote } from "@/lib/stack-utils";
+import { getDesktopBuildNote } from "@/lib/stack-utils";
 import type { Sponsor } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -58,9 +51,6 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
   } = useStackBuilder();
   const effectiveStack = compatibilityAnalysis.adjustedStack || stack;
   const desktopBuildNote = getDesktopBuildNote(effectiveStack);
-  const displayCommand = formatStackCommandForDisplay(command);
-  const [commandExpanded, setCommandExpanded] = useState(false);
-  const isCommandMultiline = displayCommand !== command;
 
   const actionButtons = (
     <ActionButtons
@@ -150,48 +140,10 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   </section>
 
                   <section className="space-y-2 border-border/20 border-b px-3 py-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center">
                       <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
                         Comando CLI
                       </p>
-                      <div className="flex items-center gap-1">
-                        {isCommandMultiline && (
-                          <button
-                            type="button"
-                            onClick={() => setCommandExpanded((prev) => !prev)}
-                            className="builder-focus-ring flex items-center gap-1 rounded-md bg-muted/20 px-2 py-1 font-mono text-[11px] text-muted-foreground uppercase transition-colors hover:bg-muted/35 hover:text-foreground"
-                            title={
-                              commandExpanded ? "Recolher comando" : "Mostrar comando completo"
-                            }
-                          >
-                            <ChevronDown
-                              className={cn(
-                                "h-3 w-3 shrink-0 transition-transform",
-                                commandExpanded && "rotate-180",
-                              )}
-                            />
-                            {commandExpanded ? "Menos" : "Flags"}
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          onClick={copyToClipboard}
-                          className={cn(
-                            "builder-focus-ring flex items-center gap-1 rounded-md px-2 py-1 font-mono text-[11px] uppercase transition-colors",
-                            copied
-                              ? "bg-primary/14 text-primary"
-                              : "bg-muted/20 text-muted-foreground hover:bg-muted/35 hover:text-foreground",
-                          )}
-                          title={copied ? "Copiado!" : "Copiar comando"}
-                        >
-                          {copied ? (
-                            <Check className="h-3 w-3 shrink-0" />
-                          ) : (
-                            <ClipboardCopy className="h-3 w-3 shrink-0" />
-                          )}
-                          {copied ? "Copiado" : "Copiar"}
-                        </button>
-                      </div>
                     </div>
                     <div
                       role="button"
@@ -207,13 +159,8 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                       title="Clique para copiar o comando"
                       className="builder-focus-ring cursor-pointer rounded-lg bg-muted/20 px-2.5 py-2"
                     >
-                      <code
-                        className={cn(
-                          "block font-mono text-muted-foreground text-xs",
-                          commandExpanded ? "whitespace-pre-wrap break-words" : "truncate",
-                        )}
-                      >
-                        {commandExpanded ? displayCommand : command}
+                      <code className="block truncate font-mono text-muted-foreground text-xs">
+                        {command}
                       </code>
                     </div>
                   </section>
@@ -408,41 +355,21 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                         <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wide">
                           Comando CLI
                         </span>
-                        <div className="flex items-center gap-1">
-                          {isCommandMultiline && (
-                            <button
-                              type="button"
-                              onClick={() => setCommandExpanded((prev) => !prev)}
-                              className="builder-focus-ring flex items-center gap-1 rounded-md bg-muted/20 px-2 py-1 font-mono text-[11px] text-muted-foreground uppercase"
-                              title={
-                                commandExpanded ? "Recolher comando" : "Mostrar comando completo"
-                              }
-                            >
-                              <ChevronDown
-                                className={cn(
-                                  "h-3 w-3 shrink-0 transition-transform",
-                                  commandExpanded && "rotate-180",
-                                )}
-                              />
-                              {commandExpanded ? "Menos" : "Flags"}
-                            </button>
+                        <span
+                          className={cn(
+                            "flex items-center gap-1 rounded-md px-2 py-1 font-mono text-[11px] uppercase",
+                            copied
+                              ? "bg-primary/14 text-primary"
+                              : "bg-muted/20 text-muted-foreground",
                           )}
-                          <span
-                            className={cn(
-                              "flex items-center gap-1 rounded-md px-2 py-1 font-mono text-[11px] uppercase",
-                              copied
-                                ? "bg-primary/14 text-primary"
-                                : "bg-muted/20 text-muted-foreground",
-                            )}
-                          >
-                            {copied ? (
-                              <Check className="h-3 w-3 shrink-0" />
-                            ) : (
-                              <ClipboardCopy className="h-3 w-3 shrink-0" />
-                            )}
-                            {copied ? "Copiado" : "Toque para copiar"}
-                          </span>
-                        </div>
+                        >
+                          {copied ? (
+                            <Check className="h-3 w-3 shrink-0" />
+                          ) : (
+                            <ClipboardCopy className="h-3 w-3 shrink-0" />
+                          )}
+                          {copied ? "Copiado" : "Toque para copiar"}
+                        </span>
                       </div>
                       <div
                         role="button"
@@ -463,14 +390,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                       >
                         <div className="flex min-w-0 items-start gap-1.5">
                           <span className="mt-0.5 text-chart-4">$</span>
-                          <code
-                            className={cn(
-                              "min-w-0 flex-1",
-                              commandExpanded ? "whitespace-pre-wrap break-words" : "truncate",
-                            )}
-                          >
-                            {commandExpanded ? displayCommand : command}
-                          </code>
+                          <code className="min-w-0 flex-1 truncate">{command}</code>
                         </div>
                       </div>
                     </div>

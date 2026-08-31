@@ -2,6 +2,7 @@
 
 import { ArrowUpRight, ChevronDown, Zap } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -64,14 +65,11 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
                     <DialogClose
                       onClick={() => onApplyPreset(preset.id)}
                       render={
-                        <button
-                          type="button"
-                          className="builder-focus-ring inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-md border border-primary/40 bg-primary/10 px-3 font-mono font-medium text-primary text-xs transition-colors hover:border-primary/60 hover:bg-primary/18"
-                        />
+                        <Button type="button" variant="cta" size="default" className="shrink-0" />
                       }
                     >
                       Usar este modelo
-                      <ArrowUpRight className="h-3 w-3" />
+                      <ArrowUpRight data-icon="inline-end" />
                     </DialogClose>
                   </div>
 
