@@ -135,6 +135,7 @@ export async function GET(req: NextRequest) {
             flexDirection: "column",
             gap: "22px",
             maxWidth: "980px",
+            transform: "translateY(40px)",
           }}
         >
           <div
