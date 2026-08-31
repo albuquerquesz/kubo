@@ -58,14 +58,14 @@ function CopyRow({
       </span>
       <span
         className={cn(
-          "flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 font-mono text-[10px] uppercase transition-colors",
+          "shrink-0 transition-colors",
           copied
-            ? "border-green-500/20 bg-green-500/10 text-green-600 dark:text-green-400"
-            : "border-border text-muted-foreground group-hover:text-foreground",
+            ? "text-green-600 dark:text-green-400"
+            : "text-muted-foreground group-hover:text-foreground",
         )}
+        aria-hidden
       >
-        {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-        {copied ? "copiado" : "copiar"}
+        {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
       </span>
     </button>
   );
