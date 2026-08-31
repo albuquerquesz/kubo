@@ -5,11 +5,10 @@ import { ArrowUpRight, ChevronDown, Zap } from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
+  DialogClose,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { PRESET_TEMPLATES } from "@/lib/constant";
 import { getSelectedTechs } from "@/lib/stack-utils";
@@ -35,17 +34,17 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
         Modelos
         <ChevronDown className="ml-auto h-3 w-3" />
       </DialogTrigger>
-      <DialogContent className="flex max-h-[85vh] flex-col gap-0 overflow-hidden bg-background p-0 sm:max-w-3xl">
-        <DialogHeader className="border-border border-b px-5 py-4 sm:px-6 sm:py-5">
+      <DialogContent
+        showCloseButton={false}
+        className="flex max-h-[85vh] flex-col gap-0 overflow-hidden bg-background p-0 sm:max-w-3xl"
+      >
+        <DialogHeader className="px-5 py-4 sm:px-6 sm:py-5">
           <div className="flex items-center gap-2">
             <Zap className="h-4 w-4 text-primary" />
             <DialogTitle className="font-mono font-semibold text-foreground text-sm">
               Modelos de stack
             </DialogTitle>
           </div>
-          <DialogDescription className="font-mono text-muted-foreground text-xs">
-            Comece com uma combinação pronta e ajuste qualquer escolha depois.
-          </DialogDescription>
         </DialogHeader>
 
         <div className="min-h-0 overflow-y-auto">

@@ -49,7 +49,8 @@ function CopyRow({
     <button
       type="button"
       onClick={onCopy}
-      title={`Copiar ${label.toLowerCase()}`}
+      aria-label={copied ? `${label} copiado` : `Copiar ${label.toLowerCase()}`}
+      title={copied ? `${label} copiado` : `Copiar ${label.toLowerCase()}`}
       className="builder-focus-ring group flex h-10 w-full min-w-0 items-center gap-2 rounded-md border border-border bg-muted/10 px-3 text-left transition-colors hover:border-muted-foreground/30 hover:bg-muted/25"
     >
       <span className="shrink-0 text-primary">{icon}</span>
