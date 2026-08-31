@@ -80,7 +80,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
 
   return (
     <TooltipProvider>
-      <div className="flex h-full w-full flex-col overflow-hidden bg-fd-background text-foreground">
+      <div className="flex h-full w-full flex-col overflow-hidden bg-background text-foreground">
         <div className="sticky top-0 z-20 border-border border-b bg-fd-background/95 px-3 py-2 backdrop-blur-sm sm:hidden">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 rounded-md bg-muted/20 p-1">
