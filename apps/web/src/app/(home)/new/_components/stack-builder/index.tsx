@@ -117,7 +117,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
           )}
         </div>
 
-        <div className="hidden h-full flex-1 grid-cols-[19rem_minmax(0,1fr)] overflow-hidden border-border sm:grid lg:grid-cols-[24rem_minmax(0,1fr)]">
+        <div className="hidden h-full flex-1 grid-cols-[19rem_minmax(0,1fr)] overflow-hidden border-border sm:grid lg:grid-cols-[24rem_minmax(0,1fr)_15rem]">
           <aside className="flex min-h-0 flex-col overflow-hidden border-rule border-r bg-fd-background">
             <ScrollArea className="min-h-0 flex-1">
               <div className="p-2">
@@ -324,7 +324,9 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                 </button>
               </div>
               {viewMode === "command" && (
-                <CategoryNav progress={categoryProgress} idPrefix="section" />
+                <div className="lg:hidden">
+                  <CategoryNav progress={categoryProgress} idPrefix="section" />
+                </div>
               )}
             </div>
 
@@ -350,6 +352,16 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
               />
             )}
           </section>
+
+          <aside className="hidden min-h-0 flex-col overflow-hidden border-rule border-l bg-background lg:flex">
+            {viewMode === "command" ? (
+              <CategoryNav progress={categoryProgress} idPrefix="section" orientation="vertical" />
+            ) : (
+              <p className="px-4 py-4 font-mono text-[11px] text-muted-foreground leading-relaxed">
+                Volte para Configurar para navegar pelas categorias.
+              </p>
+            )}
+          </aside>
         </div>
 
         <div className="flex flex-1 flex-col overflow-hidden sm:hidden">
