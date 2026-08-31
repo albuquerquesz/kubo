@@ -220,11 +220,9 @@ export function addPackageDependency(options: AddDepsOptions): void {
   const pkgJson = vfs.readJson<PackageJson>(packagePath);
   if (!pkgJson) return;
 
-  // Initialize if not present
   pkgJson.dependencies = pkgJson.dependencies || {};
   pkgJson.devDependencies = pkgJson.devDependencies || {};
 
-  // Add regular dependencies
   for (const dep of dependencies) {
     if (!pkgJson.dependencies[dep]) {
       const version = dependencyVersionMap[dep as AvailableDependencies];
@@ -239,7 +237,6 @@ export function addPackageDependency(options: AddDepsOptions): void {
     }
   }
 
-  // Add dev dependencies
   for (const dep of devDependencies) {
     if (!pkgJson.devDependencies[dep] && !pkgJson.dependencies[dep]) {
       const version = dependencyVersionMap[dep as AvailableDependencies];
@@ -252,12 +249,10 @@ export function addPackageDependency(options: AddDepsOptions): void {
     }
   }
 
-  // Add custom dependencies (with specific versions)
   for (const [dep, version] of Object.entries(customDependencies)) {
     pkgJson.dependencies[dep] = version;
   }
 
-  // Add custom dev dependencies (with specific versions)
   for (const [dep, version] of Object.entries(customDevDependencies)) {
     pkgJson.devDependencies[dep] = version;
   }

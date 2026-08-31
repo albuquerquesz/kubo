@@ -9,24 +9,18 @@ import { sanitizeStackState } from "@/lib/sanitize-stack-addons";
 export async function POST(request: Request) {
   try {
     const body = sanitizeStackState((await request.json()) as StackState);
-
-    // Convert StackState from web to CLI options format
     const config = stackStateToConfig(body);
 
-    // Generate project to virtual filesystem using Result-based API
     const result = await generate({
       config,
       templates: EMBEDDED_TEMPLATES,
     });
 
-    // Handle Result type
     if (result.isErr()) {
       throw new Error(result.error.message);
     }
 
     const tree = result.value;
-
-    // Transform VirtualFileTree to web's expected format
     const transformedRoot = transformTree(tree.root);
 
     return NextResponse.json({
@@ -49,9 +43,6 @@ export async function POST(request: Request) {
   }
 }
 
-/**
- * Transform VirtualFileTree format to web's expected tree format
- */
 function transformTree(node: VirtualNode): Record<string, unknown> {
   if (node.type === "file") {
     return {
@@ -84,11 +75,9 @@ function normalizeBackend(value?: string): ProjectConfig["backend"] {
 }
 
 function stackStateToConfig(state: StackState): ProjectConfig {
-  // Convert web StackState format to ProjectConfig format
   const webFrontend = state.webFrontend || [];
   const nativeFrontend = state.nativeFrontend || [];
 
-  // Combine frontends, filtering out "none"
   const frontend = [
     ...webFrontend.filter((f) => f !== "none"),
     ...nativeFrontend.filter((f) => f !== "none"),

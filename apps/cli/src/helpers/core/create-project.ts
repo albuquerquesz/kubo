@@ -86,10 +86,8 @@ export async function createProject(
     // Generate TanStack routeTree.gen.ts so typecheck works without a prior vite build
     yield* Result.await(generateRouteTreeIfNeeded(projectDir, options));
 
-    // Set package manager version
     yield* Result.await(setPackageManagerVersion(projectDir, options.packageManager));
 
-    // Setup database if needed
     if (!isConvex && options.database !== "none") {
       yield* Result.await(
         Result.tryPromise({
@@ -104,7 +102,6 @@ export async function createProject(
       );
     }
 
-    // Setup addons if any
     const hasAddons = options.addons.some((addon) => addon !== "none");
     const hasTesting = options.testing.some((tool) => tool !== "none");
     if (hasAddons) {

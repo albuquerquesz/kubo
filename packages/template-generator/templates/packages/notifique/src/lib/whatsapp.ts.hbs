@@ -1,4 +1,4 @@
-import { getNotifiqueClient } from "./client";
+import { notifique } from "../notifique";
 
 export type SendWhatsAppTextInput = {
 	/** WhatsApp instance id (ACTIVE). Prefer env.NOTIFIQUE_WHATSAPP_INSTANCE_ID at the call site. */
@@ -13,8 +13,6 @@ export async function sendWhatsAppText(
 	input: SendWhatsAppTextInput,
 ) {
 	const to = Array.isArray(input.to) ? input.to : [input.to];
-	const notifique = getNotifiqueClient();
-
 	const response = await notifique.whatsapp.send(
 			input.instanceId,
 			{ to, type: "text", payload: { message: input.message } },

@@ -32,7 +32,6 @@ import type {
   InitResultSchema,
 } from "./schemas";
 
-// Inferred types from Zod schemas
 export type Database = z.infer<typeof DatabaseSchema>;
 export type ORM = z.infer<typeof ORMSchema>;
 export type Backend = z.infer<typeof BackendSchema>;

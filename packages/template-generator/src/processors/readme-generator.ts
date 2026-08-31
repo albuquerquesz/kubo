@@ -1,4 +1,11 @@
-import { getWebPort, type ProjectConfig } from "@kubojs/types";
+import {
+  getWebPort,
+  hasAnyFrontend,
+  hasNativeFrontend,
+  hasReactFrontend,
+  hasWebFrontend,
+  type ProjectConfig,
+} from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { getDbScriptSupport } from "../utils/db-scripts";
@@ -33,11 +40,7 @@ function getClerkQuickstartUrl(frontend: ProjectConfig["frontend"]): string {
   if (frontend.includes("tanstack-router")) {
     return "https://clerk.com/docs/react/getting-started/quickstart";
   }
-  if (
-    frontend.includes("native-bare") ||
-    frontend.includes("native-uniwind") ||
-    frontend.includes("native-unistyles")
-  ) {
+  if (hasNativeFrontend(frontend)) {
     return "https://clerk.com/docs/expo/getting-started/quickstart";
   }
 
@@ -51,15 +54,11 @@ function getClerkFrontendEnvLines(frontend: ProjectConfig["frontend"]): string[]
     lines.push("- Set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` in `apps/web/.env`");
   }
 
-  if (
-    frontend.some((value) => ["react-router", "tanstack-router", "tanstack-start"].includes(value))
-  ) {
+  if (hasAnyFrontend(frontend, ["react-router", "tanstack-router", "tanstack-start"])) {
     lines.push("- Set `VITE_CLERK_PUBLISHABLE_KEY` in `apps/web/.env`");
   }
 
-  if (
-    frontend.some((value) => ["native-bare", "native-uniwind", "native-unistyles"].includes(value))
-  ) {
+  if (hasNativeFrontend(frontend)) {
     lines.push("- Set `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` in `apps/native/.env`");
   }
 
@@ -73,9 +72,11 @@ function getClerkSetupLines(
   isConvex: boolean,
 ): string[] {
   const lines = getClerkFrontendEnvLines(frontend);
-  const hasClerkServerFrontend = frontend.some((value) =>
-    ["next", "react-router", "tanstack-start"].includes(value),
-  );
+  const hasClerkServerFrontend = hasAnyFrontend(frontend, [
+    "next",
+    "react-router",
+    "tanstack-start",
+  ]);
 
   if (isConvex) {
     return [
@@ -122,27 +123,6 @@ function getClerkSetupLines(
   return lines;
 }
 
-function hasNativeFrontend(frontend: ProjectConfig["frontend"]): boolean {
-  return frontend.some((value) =>
-    ["native-bare", "native-uniwind", "native-unistyles"].includes(value),
-  );
-}
-
-function hasWebFrontend(frontend: ProjectConfig["frontend"]): boolean {
-  return frontend.some((value) =>
-    [
-      "tanstack-router",
-      "react-router",
-      "tanstack-start",
-      "next",
-      "svelte",
-      "nuxt",
-      "solid",
-      "astro",
-    ].includes(value),
-  );
-}
-
 export function processReadme(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const content = generateReadmeContent(config);
   vfs.writeFile("README.md", content);
@@ -170,9 +150,7 @@ function generateReadmeContent(options: ProjectConfig): string {
 
   const isConvex = backend === "convex";
   const hasNative = hasNativeFrontend(frontend);
-  const hasReactWeb = frontend.some((f) =>
-    ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-  );
+  const hasReactWeb = hasReactFrontend(frontend);
   const hasReactRouter = frontend.includes("react-router");
   const packageManagerRunCmd = `${packageManager} run`;
   // TanStack Router/Start, Next, Nuxt and Solid all dev on 3001; only React Router and SvelteKit use Vite's default 5173.
@@ -495,9 +473,7 @@ function generateProjectStructure(config: ProjectConfig): string {
   const structure: string[] = [`${projectName}/`, "├── apps/"];
   const hasAppWebFrontend = hasWebFrontend(frontend);
   const isBackendSelf = backend === "self";
-  const hasReactWeb = frontend.some((f) =>
-    ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-  );
+  const hasReactWeb = hasReactFrontend(frontend);
   const hasNative = hasNativeFrontend(frontend);
   const hasDbPackage = !isConvex && database !== "none" && orm !== "none";
 
@@ -607,7 +583,7 @@ function generateNotifiqueSetup(): string {
 
 This project includes a \`packages/notifique\` REST client for [Notifique](https://notifique.dev) (WhatsApp, SMS, email, and more).
 
-\`NOTIFIQUE_API_KEY\` is **required** by the Zod schema in \`packages/env\` (typed \`env.NOTIFIQUE_*\`). \`NOTIFIQUE_BASE_URL\` and \`NOTIFIQUE_FROM_EMAIL\` have defaults. Set \`SKIP_ENV_VALIDATION=1\` only if you need to boot before filling secrets.
+\`NOTIFIQUE_API_KEY\` is **required** by the Zod schema in \`packages/env\` (typed \`env.NOTIFIQUE_*\`). \`NOTIFIQUE_FROM_EMAIL\` has a default. Set \`SKIP_ENV_VALIDATION=1\` only if you need to boot before filling secrets.
 
 1. Create an API key in the [Developer panel](https://docs.notifique.dev/guides/api-key/index) (\`sk_live_…\` or sandbox \`sk_test_…\`).
 2. Grant the scopes you need (e.g. \`sms:send\`, \`whatsapp:send\`, \`email:send\`).
@@ -689,9 +665,7 @@ function generateFeaturesList(
   const isConvex = backend === "convex";
   const hasNative = hasNativeFrontend(frontend);
   const hasAppWebFrontend = hasWebFrontend(frontend);
-  const hasReactWeb = frontend.some((f) =>
-    ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-  );
+  const hasReactWeb = hasReactFrontend(frontend);
   const usesTailwind = hasAppWebFrontend || frontend.includes("native-uniwind");
 
   const features = ["- **TypeScript** - For type safety and improved developer experience"];

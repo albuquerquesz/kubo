@@ -1,5 +1,5 @@
 import { env } from "@{{projectName}}/env/server";
-import { getNotifiqueClient } from "./client";
+import { notifique } from "../notifique";
 
 export type NotifiqueEmailPriority = "high" | "normal" | "low";
 
@@ -25,8 +25,6 @@ export async function sendEmail(
 	if (!input.html && !input.text) {
 		throw new Error("Email requires html and/or text.");
 	}
-
-	const notifique = getNotifiqueClient();
 
 	const response = await notifique.email.send(
 			{

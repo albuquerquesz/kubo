@@ -13827,7 +13827,7 @@ export const httpAction = httpActionGeneric;
 
 import { v } from "convex/values";
 import { action } from "./_generated/server";
-import { createAraraClient } from "@{{projectName}}/arara";
+import { arara } from "@{{projectName}}/arara";
 
 const messageInput = v.object({
   receiver: v.string(),
@@ -13852,23 +13852,21 @@ export const execute = action({
   },
   handler: async (ctx, args) => {
     void ctx;
-    const client = createAraraClient(process.env.ARARA_API_KEY);
-
     switch (args.operation) {
       case "send":
         if (!args.message) throw new Error("message is required for send");
-        return client.messages.send(args.message);
+        return arara.messages.send(args.message);
       case "status":
         if (!args.messageId) throw new Error("messageId is required for status");
-        return client.messages.get(args.messageId);
+        return arara.messages.get(args.messageId);
       case "listTemplates":
-        return client.templates.list();
+        return arara.templates.list();
       case "createTemplate":
         if (!args.template) throw new Error("template is required for createTemplate");
-        return client.templates.create(args.template);
+        return arara.templates.create(args.template);
       case "templateStatus":
         if (!args.templateName) throw new Error("templateName is required for templateStatus");
-        return client.templates.getStatus(args.templateName);
+        return arara.templates.getStatus(args.templateName);
     }
   },
 });
@@ -32780,28 +32778,7 @@ export default defineConfig({
 
 export type AraraClient = NodeSDK;
 
-export function createAraraClient(apiKey = process.env.ARARA_API_KEY): AraraClient {
-  if (!apiKey) {
-    throw new Error("ARARA_API_KEY is not set. Add it to your server environment before using AraraHQ.");
-  }
-
-  return new NodeSDK({ apiKey });
-}
-
-export function getAraraClient(): AraraClient {
-  return createAraraClient();
-}
-
-export const arara = {
-  client: getAraraClient,
-  sendMessage: (input: Parameters<AraraClient["messages"]["send"]>[0]) =>
-    getAraraClient().messages.send(input),
-  getMessage: (messageId: string) => getAraraClient().messages.get(messageId),
-  listTemplates: () => getAraraClient().templates.list(),
-  createTemplate: (input: Parameters<AraraClient["templates"]["create"]>[0]) =>
-    getAraraClient().templates.create(input),
-  getTemplateStatus: (name: string) => getAraraClient().templates.getStatus(name),
-};
+export const arara = new NodeSDK({ apiKey: process.env.ARARA_API_KEY });
 `],
   ["packages/arara/tsconfig.json.hbs", `{
   "extends": "@{{projectName}}/config/tsconfig.base.json",
@@ -33175,7 +33152,6 @@ export const env = createEnv({
 	{{/if}}
 	{{#if (eq communication "notifique")}}
 		NOTIFIQUE_API_KEY: z.string().min(1),
-		NOTIFIQUE_BASE_URL: z.url().default("https://api.notifique.dev"),
 		NOTIFIQUE_WHATSAPP_INSTANCE_ID: z.string().min(1).optional(),
 		NOTIFIQUE_FROM_EMAIL: z.string().min(1).default("Acme <noreply@example.com>"),
 	{{/if}}
@@ -33933,35 +33909,13 @@ await app.finalize();
   "devDependencies": {}
 }
 `],
-  ["packages/notifique/src/index.ts.hbs", `export { getNotifiqueClient } from "./lib/client";
+  ["packages/notifique/src/index.ts.hbs", `export { notifique } from "./notifique";
 export { sendSms } from "./lib/sms";
 export { sendWhatsAppText } from "./lib/whatsapp";
 export { sendEmail } from "./lib/email";
 `],
-  ["packages/notifique/src/lib/client.ts.hbs", `import { Notifique } from "@notifique/sdk-node";
-import { env } from "@{{projectName}}/env/server";
-
-let singleton: Notifique | undefined;
-let singletonKey = "";
-
-export function getNotifiqueClient(): Notifique {
-	const apiKey = env.NOTIFIQUE_API_KEY;
-	const baseUrl = env.NOTIFIQUE_BASE_URL.replace(/\\/$/, "");
-	const cacheKey = \`\${apiKey}|\${baseUrl}\`;
-	if (!singleton || singletonKey !== cacheKey) {
-		singleton = new Notifique({ apiKey, baseUrl });
-		singletonKey = cacheKey;
-	}
-	return singleton;
-}
-
-export function resetNotifiqueClient(): void {
-	singleton = undefined;
-	singletonKey = "";
-}
-`],
   ["packages/notifique/src/lib/email.ts.hbs", `import { env } from "@{{projectName}}/env/server";
-import { getNotifiqueClient } from "./client";
+import { notifique } from "../notifique";
 
 export type NotifiqueEmailPriority = "high" | "normal" | "low";
 
@@ -33988,8 +33942,6 @@ export async function sendEmail(
 		throw new Error("Email requires html and/or text.");
 	}
 
-	const notifique = getNotifiqueClient();
-
 	const response = await notifique.email.send(
 			{
 				from: input.from ?? env.NOTIFIQUE_FROM_EMAIL,
@@ -34005,7 +33957,7 @@ export async function sendEmail(
 	return response.data;
 }
 `],
-  ["packages/notifique/src/lib/sms.ts.hbs", `import { getNotifiqueClient } from "./client";
+  ["packages/notifique/src/lib/sms.ts.hbs", `import { notifique } from "../notifique";
 
 export type NotifiqueSmsPriority = "high" | "normal" | "low";
 
@@ -34025,8 +33977,6 @@ export async function sendSms(input: SendSmsInput) {
 		throw new Error("SMS message must be at least 9 characters (Notifique API rule).");
 	}
 
-	const notifique = getNotifiqueClient();
-
 	const response = await notifique.sms.send(
 			{
 				to,
@@ -34038,7 +33988,7 @@ export async function sendSms(input: SendSmsInput) {
 	return response.data;
 }
 `],
-  ["packages/notifique/src/lib/whatsapp.ts.hbs", `import { getNotifiqueClient } from "./client";
+  ["packages/notifique/src/lib/whatsapp.ts.hbs", `import { notifique } from "../notifique";
 
 export type SendWhatsAppTextInput = {
 	/** WhatsApp instance id (ACTIVE). Prefer env.NOTIFIQUE_WHATSAPP_INSTANCE_ID at the call site. */
@@ -34053,8 +34003,6 @@ export async function sendWhatsAppText(
 	input: SendWhatsAppTextInput,
 ) {
 	const to = Array.isArray(input.to) ? input.to : [input.to];
-	const notifique = getNotifiqueClient();
-
 	const response = await notifique.whatsapp.send(
 			input.instanceId,
 			{ to, type: "text", payload: { message: input.message } },
@@ -34062,6 +34010,11 @@ export async function sendWhatsAppText(
 		);
 	return response.data;
 }
+`],
+  ["packages/notifique/src/notifique.ts.hbs", `import { Notifique } from "@notifique/sdk-node";
+import { env } from "@{{projectName}}/env/server";
+
+export const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
 `],
   ["packages/notifique/tsconfig.json.hbs", `{
   "extends": "@{{projectName}}/config/tsconfig.base.json",

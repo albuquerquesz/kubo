@@ -8,6 +8,8 @@ import {
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency } from "../utils/add-deps";
 
+const unsupportedNodeBackends: readonly ProjectConfig["backend"][] = ["none", "self", "convex"];
+
 const ERROR_BOUNDARY_FALLBACK = `fallback={(error, reset) => (
         <div>
           <p>Something went wrong.</p>
@@ -77,6 +79,7 @@ export function GetMonitorBoundary({ children }: { children: React.ReactNode }) 
   );
 
   const layoutPath = "apps/web/src/app/layout.tsx";
+
   if (vfs.exists(layoutPath)) {
     let layout = vfs.readFile(layoutPath) ?? "";
     const importLine =
@@ -416,13 +419,11 @@ function processHimetricaIntegration(vfs: VirtualFileSystem, config: ProjectConf
 }
 
 function processNodeIntegration(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const supported =
-    config.backend !== "none" &&
-    config.backend !== "self" &&
-    config.backend !== "convex" &&
-    config.serverDeploy !== "cloudflare" &&
-    config.runtime !== "workers";
-  if (!supported || !vfs.exists("apps/server/package.json")) return;
+  const unsupported =
+    unsupportedNodeBackends.includes(config.backend) ||
+    config.serverDeploy === "cloudflare" ||
+    config.runtime === "workers";
+  if (unsupported || !vfs.exists("apps/server/package.json")) return;
 
   addPackageDependency({
     vfs,
@@ -448,18 +449,22 @@ export const getMonitor = env.GETMONITOR_API_KEY
   if (!content.includes('from "./getmonitor"')) {
     content = `import { getMonitor } from "./getmonitor";\n${content}`;
   }
-  if (config.backend === "express" && !content.includes("setupExpressErrorHandler")) {
-    content = content.replace(
-      'import express from "express";',
-      'import express from "express";\nimport { setupExpressErrorHandler } from "@getmonitor/node";',
-    );
-    content = content.replace(
-      "app.listen(3000,",
-      "if (getMonitor) setupExpressErrorHandler(getMonitor, app);\n\napp.listen(3000,",
-    );
-  } else if (!content.includes("void getMonitor;")) {
-    content += "\nvoid getMonitor;\n";
+  if (config.backend !== "express" || content.includes("setupExpressErrorHandler")) {
+    if (!content.includes("void getMonitor;")) {
+      content += "\nvoid getMonitor;\n";
+    }
+    vfs.writeFile(entryPath, content);
+    return;
   }
+
+  content = content.replace(
+    'import express from "express";',
+    'import express from "express";\nimport { setupExpressErrorHandler } from "@getmonitor/node";',
+  );
+  content = content.replace(
+    "app.listen(3000,",
+    "if (getMonitor) setupExpressErrorHandler(getMonitor, app);\n\napp.listen(3000,",
+  );
   vfs.writeFile(entryPath, content);
 }
 

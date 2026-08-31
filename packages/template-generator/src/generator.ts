@@ -100,7 +100,6 @@ export async function generate(
       processVercelConfig(vfs, config);
       processReadme(vfs, config);
 
-      // Write kubojs.jsonrc config file
       if (options.version) {
         const reproducibleCommand = generateReproducibleCommand(config);
         writeKubojsConfigToVfs(vfs, config, options.version, reproducibleCommand);

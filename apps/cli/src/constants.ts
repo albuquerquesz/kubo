@@ -5,7 +5,6 @@ import { desktopWebFrontends, type PaymentProvider } from "@kubojs/types";
 
 import { getUserPkgManager } from "./utils/get-package-manager";
 
-// Re-export from template-generator (single source of truth)
 export { dependencyVersionMap, type AvailableDependencies } from "@kubojs/template-generator";
 
 const __filename = fileURLToPath(import.meta.url);

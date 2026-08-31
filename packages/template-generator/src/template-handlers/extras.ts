@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubojs/types";
+import { hasNativeFrontend, type ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processSingleTemplate } from "./utils";
@@ -8,9 +8,7 @@ export async function processExtrasTemplates(
   templates: TemplateData,
   config: ProjectConfig,
 ): Promise<void> {
-  const hasNative = config.frontend.some((f) =>
-    ["native-bare", "native-uniwind", "native-unistyles"].includes(f),
-  );
+  const hasNative = hasNativeFrontend(config.frontend);
   const hasNuxt = config.frontend.includes("nuxt");
 
   if (config.packageManager === "pnpm") {

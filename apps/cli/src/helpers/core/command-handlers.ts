@@ -122,16 +122,13 @@ export async function createProjectHandler(
 
     const result = await createProjectHandlerInternal(input, startTime, timeScaffolded);
 
-    // Handle success case
     if (result.isOk()) {
       return result.value;
     }
 
-    // Handle error cases
     const error = result.error;
     const elapsedTimeMs = Date.now() - startTime;
 
-    // Handle user cancellation specially
     if (UserCancelledError.is(error)) {
       if (isSilent()) {
         return createEmptyResult(timeScaffolded, elapsedTimeMs, error.message);
@@ -166,7 +163,6 @@ async function createProjectHandlerInternal(
       cliConsola.fatal("YOLO mode enabled - skipping checks. Things may break!");
     }
 
-    // Get project name
     let currentPathInput: string;
     if (isSilent()) {
       const silentProjectName = yield* Result.await(resolveProjectNameForSilent(input));

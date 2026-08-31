@@ -1,4 +1,11 @@
-import type { ProjectConfig, Frontend, API, Backend } from "@kubojs/types";
+import {
+  hasNativeFrontend,
+  hasReactFrontend,
+  type API,
+  type Backend,
+  type Frontend,
+  type ProjectConfig,
+} from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
@@ -14,16 +21,12 @@ type FrontendType = {
 
 function getFrontendType(frontend: Frontend[]): FrontendType {
   return {
-    hasReactWeb: frontend.some((f) =>
-      ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-    ),
+    hasReactWeb: hasReactFrontend(frontend),
     hasNuxtWeb: frontend.includes("nuxt"),
     hasSvelteWeb: frontend.includes("svelte"),
     hasSolidWeb: frontend.includes("solid"),
     hasAstroWeb: frontend.includes("astro"),
-    hasNative: frontend.some((f) =>
-      ["native-bare", "native-uniwind", "native-unistyles"].includes(f),
-    ),
+    hasNative: hasNativeFrontend(frontend),
   };
 }
 
@@ -77,27 +80,22 @@ function addApiPackageDeps(
     });
   }
 
-  // Add next dep for api package when backend is self and frontend includes next
   if (backend === "self" && frontend.includes("next")) {
     addPackageDependency({ vfs, packagePath: pkgPath, dependencies: ["next"] });
   }
 
-  // Add better-auth for express/fastify backends
   if (auth === "better-auth" && (backend === "express" || backend === "fastify")) {
     addPackageDependency({ vfs, packagePath: pkgPath, dependencies: ["better-auth"] });
   }
 
-  // Add @types/express for express backend
   if (backend === "express") {
     addPackageDependency({ vfs, packagePath: pkgPath, devDependencies: ["@types/express"] });
   }
 
-  // Add hono types for hono backend
   if (backend === "hono") {
     addPackageDependency({ vfs, packagePath: pkgPath, devDependencies: ["hono"] });
   }
 
-  // Add elysia types for elysia backend
   if (backend === "elysia") {
     addPackageDependency({ vfs, packagePath: pkgPath, devDependencies: ["elysia"] });
   }
@@ -141,7 +139,6 @@ function addSelfBackendWebDeps(
   const webPath = "apps/web/package.json";
   if (!vfs.exists(webPath)) return;
 
-  // When backend is "self", add server deps to web too
   if (api === "trpc") {
     addPackageDependency({
       vfs,

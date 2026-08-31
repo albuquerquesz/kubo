@@ -15,7 +15,6 @@ export async function addEnvVariablesToFile(
   if (fs.existsSync(envPath)) {
     content = await fs.readFile(envPath, "utf-8");
   } else {
-    // If file doesn't exist, create it
     await fs.ensureFile(envPath);
   }
 
@@ -56,7 +55,6 @@ export async function addEnvVariablesToFile(
     }
   }
 
-  // Remove empty line at the end if it exists
   if (newLines.length > 0 && newLines[newLines.length - 1] === "") {
     newLines.pop();
   }

@@ -3,7 +3,7 @@
  * Updates package names, scripts, and workspaces after template generation
  */
 
-import { desktopWebFrontends, type ProjectConfig } from "@kubojs/types";
+import { hasNativeFrontend, hasWebFrontend, type ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { dependencyVersionMap } from "../utils/add-deps";
@@ -70,12 +70,8 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
 
   const scripts = pkgJson.scripts;
   const { projectName, packageManager, backend, database, orm, dbSetup, addons, frontend } = config;
-  const hasWebApp = frontend.some((item) =>
-    (desktopWebFrontends as readonly string[]).includes(item),
-  );
-  const hasNativeApp = frontend.some((item) =>
-    ["native-bare", "native-uniwind", "native-unistyles"].includes(item),
-  );
+  const hasWebApp = hasWebFrontend(frontend);
+  const hasNativeApp = hasNativeFrontend(frontend);
 
   const backendPackageName = backend === "convex" ? `@${projectName}/backend` : "server";
   const dbPackageName = `@${projectName}/db`;
@@ -183,7 +179,6 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
     }
   }
 
-  // Add deploy/destroy scripts when using alchemy (cloudflare deployment)
   const infraPackageName = `@${projectName}/infra`;
   const hasCloudflareDeploy =
     config.webDeploy === "cloudflare" || config.serverDeploy === "cloudflare";
@@ -257,7 +252,6 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
     }
   }
 
-  // Add compose scripts when deploying web/server as Docker containers
   if (config.webDeploy === "docker" || config.serverDeploy === "docker") {
     scripts["docker:build"] = "docker compose build";
     scripts["docker:up"] = "docker compose up -d --build";
@@ -607,13 +601,8 @@ function updateEnvPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): vo
 
   pkgJson.name = `@${config.projectName}/env`;
 
-  // Set exports based on which env files exist
-  const hasWebFrontend = config.frontend.some((f: string) =>
-    (desktopWebFrontends as readonly string[]).includes(f),
-  );
-  const hasNative = config.frontend.some((f: string) =>
-    ["native-bare", "native-uniwind", "native-unistyles"].includes(f),
-  );
+  const hasWeb = hasWebFrontend(config.frontend);
+  const hasNative = hasNativeFrontend(config.frontend);
   const needsServerEnv = config.backend !== "none" && config.backend !== "convex";
 
   const exports: Record<string, string> = {};
@@ -621,7 +610,7 @@ function updateEnvPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): vo
   if (needsServerEnv) {
     exports["./server"] = "./src/server.ts";
   }
-  if (hasWebFrontend) {
+  if (hasWeb) {
     exports["./web"] = "./src/web.ts";
   }
   if (hasNative) {
@@ -693,7 +682,6 @@ function updateConvexPackageJson(vfs: VirtualFileSystem, config: ProjectConfig):
 function renameDevScriptsForAlchemy(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { serverDeploy, webDeploy, backend } = config;
 
-  // Rename server dev script to dev:bare when serverDeploy is cloudflare
   if (serverDeploy === "cloudflare" && backend !== "self") {
     const serverPkgPath = "apps/server/package.json";
     const serverPkg = vfs.readJson<PackageJson>(serverPkgPath);
@@ -704,7 +692,6 @@ function renameDevScriptsForAlchemy(vfs: VirtualFileSystem, config: ProjectConfi
     }
   }
 
-  // Rename web dev script to dev:bare when webDeploy is cloudflare
   if (webDeploy === "cloudflare") {
     const webPkgPath = "apps/web/package.json";
     const webPkg = vfs.readJson<PackageJson>(webPkgPath);

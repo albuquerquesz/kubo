@@ -1,5 +1,4 @@
 import { subscribeToNewsletter } from "@kubojs/email";
-import { NotifiqueApiError } from "@notifique/sdk-node";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -28,7 +27,7 @@ export async function POST(request: Request) {
   })
     .then(() => false)
     .catch((error: unknown) => {
-      logNewsletterSubscriptionError(error);
+      console.error("Newsletter subscription failed", error);
       return true;
     });
 
@@ -40,26 +39,4 @@ export async function POST(request: Request) {
     new URL("/?newsletter=subscribed#newsletter-title", request.url),
     303,
   );
-}
-
-function logNewsletterSubscriptionError(error: unknown): void {
-  if (!(error instanceof NotifiqueApiError)) {
-    console.error("Newsletter subscription failed", error);
-    return;
-  }
-
-  console.error("Newsletter subscription failed", {
-    code: getNotifiqueErrorCode(error.responseData) ?? error.code,
-    message: error.message,
-    status: error.statusCode,
-  });
-}
-
-function getNotifiqueErrorCode(responseData: unknown): string | undefined {
-  if (!responseData || typeof responseData !== "object" || !("code" in responseData)) {
-    return undefined;
-  }
-
-  const code = responseData.code;
-  return typeof code === "string" ? code : undefined;
 }

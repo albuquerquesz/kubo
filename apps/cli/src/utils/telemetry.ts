@@ -14,6 +14,5 @@ export function isTelemetryEnabled() {
   if (BTS_TELEMETRY !== undefined) {
     return BTS_TELEMETRY === "1";
   }
-  // Default: enabled
   return true;
 }

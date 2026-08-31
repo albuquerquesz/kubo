@@ -1,4 +1,9 @@
-import type { ProjectConfig } from "@kubojs/types";
+import {
+  findFrontend,
+  hasReactFrontend,
+  reactWebFrontends,
+  type ProjectConfig,
+} from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix, processSingleTemplate } from "./utils";
@@ -35,9 +40,7 @@ export async function processApiTemplates(
   moveGeneratedFile(vfs, "apps/api/src/routers/index.ts", "apps/api/src/router.ts");
   vfs.writeFile("apps/api/src/routers/index.ts", 'export * from "../router";\n');
 
-  const hasReactWeb = config.frontend.some((f) =>
-    ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-  );
+  const hasReactWeb = hasReactFrontend(config.frontend);
   const hasNuxtWeb = config.frontend.includes("nuxt");
   const hasSvelteWeb = config.frontend.includes("svelte");
   const hasSolidWeb = config.frontend.includes("solid");
@@ -52,9 +55,7 @@ export async function processApiTemplates(
       config,
     );
 
-    const reactFramework = config.frontend.find((f) =>
-      ["tanstack-router", "react-router", "tanstack-start", "next"].includes(f),
-    );
+    const reactFramework = findFrontend(config.frontend, reactWebFrontends);
     if (
       config.backend === "self" &&
       (reactFramework === "next" || reactFramework === "tanstack-start")
@@ -76,7 +77,6 @@ export async function processApiTemplates(
         "apps/web",
         config,
       );
-      // Only include vue-query from web templates, skip generic orpc.ts
       processSingleTemplate(
         vfs,
         templates,
@@ -104,9 +104,7 @@ export async function processApiTemplates(
   } else if (hasSolidWeb && config.api === "orpc") {
     processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/solid`, "apps/web", config);
   } else if (hasAstroWeb && config.api === "orpc") {
-    // Always include the orpc client (handles both self and external backend)
     processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/astro`, "apps/web", config);
-    // Add fullstack API routes when backend=self
     if (config.backend === "self") {
       processTemplatesFromPrefix(
         vfs,

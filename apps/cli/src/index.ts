@@ -289,7 +289,6 @@ export function createBtsCli(): ReturnType<typeof createCli> {
   });
 }
 
-// Re-export Result type from better-result for programmatic API consumers
 export { Result } from "better-result";
 
 /**
@@ -369,7 +368,6 @@ export async function builder() {
   return openBuilderCommand();
 }
 
-// Re-export virtual filesystem types for programmatic usage
 export {
   VirtualFileSystem,
   type VirtualFileTree,
@@ -383,7 +381,6 @@ export {
   TEMPLATE_COUNT,
 } from "@kubojs/template-generator";
 
-// Import for createVirtual
 import {
   generate,
   GeneratorError,
@@ -560,7 +557,6 @@ export async function add(
   return addHandler(options, { silent: true });
 }
 
-// Re-export error types for consumers
 export {
   UserCancelledError,
   CLIError,

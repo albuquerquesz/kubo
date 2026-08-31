@@ -1,4 +1,10 @@
-import { getPublicEnvKey, type ProjectConfig } from "@kubojs/types";
+import {
+  getPublicEnvKey,
+  getWebPort,
+  hasNativeFrontend,
+  hasWebFrontend,
+  type ProjectConfig,
+} from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 
@@ -82,36 +88,19 @@ function generateAuthSecret() {
 }
 
 function getClientServerVar(frontend: string[], backend: ProjectConfig["backend"]) {
-  const hasNextJs = frontend.includes("next");
-  const hasNuxt = frontend.includes("nuxt");
-  const hasSvelte = frontend.includes("svelte");
-  const hasAstro = frontend.includes("astro");
-  const hasTanstackStart = frontend.includes("tanstack-start");
-
-  // For fullstack self, no base URL is needed (same-origin)
   if (backend === "self") {
     return { key: "", value: "", write: false } as const;
   }
 
-  let key = "VITE_SERVER_URL";
-  if (hasNextJs) key = "NEXT_PUBLIC_SERVER_URL";
-  else if (hasNuxt) key = "NUXT_PUBLIC_SERVER_URL";
-  else if (hasSvelte || hasAstro) key = "PUBLIC_SERVER_URL";
-  else if (hasTanstackStart) key = "VITE_SERVER_URL";
-
-  return { key, value: "http://localhost:3000", write: true } as const;
+  return {
+    key: getPublicEnvKey(frontend, "SERVER_URL"),
+    value: "http://localhost:3000",
+    write: true,
+  } as const;
 }
 
 function getConvexVar(frontend: string[]) {
-  const hasNextJs = frontend.includes("next");
-  const hasNuxt = frontend.includes("nuxt");
-  const hasSvelte = frontend.includes("svelte");
-  const hasTanstackStart = frontend.includes("tanstack-start");
-  if (hasNextJs) return "NEXT_PUBLIC_CONVEX_URL";
-  if (hasNuxt) return "NUXT_PUBLIC_CONVEX_URL";
-  if (hasSvelte) return "PUBLIC_CONVEX_URL";
-  if (hasTanstackStart) return "VITE_CONVEX_URL";
-  return "VITE_CONVEX_URL";
+  return getPublicEnvKey(frontend, "CONVEX_URL");
 }
 
 function escapeRegExp(value: string): string {
@@ -346,27 +335,10 @@ function buildConvexBackendVars(
   const hasReactRouter = frontend.includes("react-router");
   const hasTanStackRouter = frontend.includes("tanstack-router");
   const hasNextJs = frontend.includes("next");
-  const hasNative =
-    frontend.includes("native-bare") ||
-    frontend.includes("native-uniwind") ||
-    frontend.includes("native-unistyles");
-  const hasWeb =
-    frontend.includes("react-router") ||
-    frontend.includes("tanstack-router") ||
-    frontend.includes("tanstack-start") ||
-    hasNextJs ||
-    frontend.includes("nuxt") ||
-    frontend.includes("solid") ||
-    frontend.includes("svelte") ||
-    frontend.includes("astro");
+  const hasNative = hasNativeFrontend(frontend);
+  const hasWeb = hasWebFrontend(frontend);
   const defaultSiteUrl =
-    hasNative && !hasWeb
-      ? "http://localhost:8081"
-      : frontend.includes("react-router") || frontend.includes("svelte")
-        ? "http://localhost:5173"
-        : frontend.includes("astro")
-          ? "http://localhost:4321"
-          : "http://localhost:3001";
+    hasNative && !hasWeb ? "http://localhost:8081" : `http://localhost:${getWebPort(frontend)}`;
 
   const vars: EnvVariable[] = [];
 
@@ -412,7 +384,7 @@ function buildConvexBackendVars(
     if (hasWeb) {
       vars.push(
         {
-          key: hasNextJs ? "NEXT_PUBLIC_CONVEX_SITE_URL" : "VITE_CONVEX_SITE_URL",
+          key: getPublicEnvKey(frontend, "CONVEX_SITE_URL"),
           value: "",
           condition: true,
           comment: "Same as CONVEX_URL but ends in .site",
@@ -445,27 +417,10 @@ function buildConvexCommentBlocks(
 ): string {
   const needsConvexSiteUrl =
     frontend.includes("react-router") || frontend.includes("tanstack-router");
-  const hasNative =
-    frontend.includes("native-bare") ||
-    frontend.includes("native-uniwind") ||
-    frontend.includes("native-unistyles");
-  const hasWeb =
-    frontend.includes("react-router") ||
-    frontend.includes("tanstack-router") ||
-    frontend.includes("tanstack-start") ||
-    frontend.includes("next") ||
-    frontend.includes("nuxt") ||
-    frontend.includes("solid") ||
-    frontend.includes("svelte") ||
-    frontend.includes("astro");
+  const hasNative = hasNativeFrontend(frontend);
+  const hasWeb = hasWebFrontend(frontend);
   const defaultSiteUrl =
-    hasNative && !hasWeb
-      ? "http://localhost:8081"
-      : frontend.includes("react-router") || frontend.includes("svelte")
-        ? "http://localhost:5173"
-        : frontend.includes("astro")
-          ? "http://localhost:4321"
-          : "http://localhost:3001";
+    hasNative && !hasWeb ? "http://localhost:8081" : `http://localhost:${getWebPort(frontend)}`;
 
   let commentBlocks = "";
 
@@ -614,12 +569,6 @@ function buildServerVars(
       comment: "Notifique API key (sk_live_… or sk_test_…) — required by packages/env schema",
     },
     {
-      key: "NOTIFIQUE_BASE_URL",
-      value: "https://api.notifique.dev",
-      condition: communication === "notifique",
-      comment: "Notifique API host (paths use /v1 automatically)",
-    },
-    {
       key: "NOTIFIQUE_WHATSAPP_INSTANCE_ID",
       value: "",
       condition: communication === "notifique",
@@ -716,18 +665,9 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
   const hasSvelte = frontend.includes("svelte");
   const hasSolid = frontend.includes("solid");
   const hasAstro = frontend.includes("astro");
-  const hasWebFrontend =
-    hasReactRouter ||
-    hasTanStackRouter ||
-    hasTanStackStart ||
-    hasNextJs ||
-    hasNuxt ||
-    hasSolid ||
-    hasSvelte ||
-    hasAstro;
+  const hasWebApp = hasWebFrontend(frontend);
 
-  // --- Client App .env ---
-  if (hasWebFrontend) {
+  if (hasWebApp) {
     const clientDir = "apps/web";
     if (vfs.directoryExists(clientDir)) {
       const envPath = `${clientDir}/.env`;
@@ -736,10 +676,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     }
   }
 
-  // --- Root .env for docker compose build args ---
-  // compose ${VAR} interpolation only reads the root .env, not the per-app env_file,
-  // so mirror the same variable names users fill in apps/web/.env
-  if (webDeploy === "docker" && hasWebFrontend) {
+  if (webDeploy === "docker" && hasWebApp) {
     const hasClerkBuildArgFrontend =
       hasNextJs || hasReactRouter || hasTanStackRouter || hasTanStackStart;
     const convexBuildArg = hasNextJs
@@ -769,12 +706,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     }
   }
 
-  // --- Native App .env ---
-  if (
-    frontend.includes("native-bare") ||
-    frontend.includes("native-uniwind") ||
-    frontend.includes("native-unistyles")
-  ) {
+  if (hasNativeFrontend(frontend)) {
     const nativeDir = "apps/native";
     if (vfs.directoryExists(nativeDir)) {
       const envPath = `${nativeDir}/.env`;
@@ -783,13 +715,11 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     }
   }
 
-  // --- Convex Backend .env.local ---
   if (backend === "convex") {
     const convexBackendDir = "packages/backend";
     if (vfs.directoryExists(convexBackendDir)) {
       const envLocalPath = `${convexBackendDir}/.env.local`;
 
-      // Write comment blocks first
       const commentBlocks = buildConvexCommentBlocks(frontend, auth, payments, examples);
       if (commentBlocks) {
         let currentContent = "";
@@ -799,7 +729,6 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
         vfs.writeFile(envLocalPath, commentBlocks + currentContent);
       }
 
-      // Then add variables
       const convexBackendVars = buildConvexBackendVars(
         frontend,
         auth,
@@ -822,7 +751,6 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     return;
   }
 
-  // --- Server App .env ---
   const serverVars = buildServerVars(
     backend,
     frontend,
@@ -852,7 +780,6 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     writeEnvFile(vfs, envPath, serverVars);
   }
 
-  // --- Alchemy Infra .env ---
   const isUnifiedAlchemy = webDeploy === "cloudflare" && serverDeploy === "cloudflare";
   const isIndividualAlchemy = webDeploy === "cloudflare" || serverDeploy === "cloudflare";
 

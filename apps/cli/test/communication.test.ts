@@ -136,8 +136,10 @@ describe("Resend communication", () => {
 
     expect(araraPackage.dependencies?.["@ararahq/sdk"]).toBe("^1.8.1");
     expect(client).toContain("NodeSDK");
-    expect(client).toContain("messages.send");
-    expect(client).toContain("templates.list");
+    expect(client).toContain("export const arara");
+    expect(client).not.toContain("getAraraClient");
+    expect(client).not.toContain("createAraraClient");
+    expect(client).toContain("new NodeSDK");
     expect(serverEnv).toContain("ARARA_API_KEY=");
     expect(serverPackage.dependencies?.["@arara-app/arara"]).toBeTruthy();
     expect(readme).toContain("docs.ararahq.com/sdks/node");
@@ -172,8 +174,10 @@ describe("Resend communication", () => {
     const backendPackage = JSON.parse(files.get("packages/backend/package.json") ?? "{}");
 
     expect(action).toContain('"use node"');
-    expect(action).toContain("client.messages.send");
-    expect(action).toContain("client.templates.create");
+    expect(action).toContain("import { arara }");
+    expect(action).not.toContain("createAraraClient");
+    expect(action).toContain("arara.messages.send");
+    expect(action).toContain("arara.templates.create");
     expect(env).toContain("ARARA_API_KEY=");
     expect(backendPackage.dependencies?.["@arara-convex-app/arara"]).toBe("workspace:*");
   });
@@ -202,7 +206,7 @@ describe("Resend communication", () => {
     if (result.isErr()) return;
 
     const files = collectFiles(result.value.root, "/virtual");
-    const client = files.get("packages/notifique/src/lib/client.ts") ?? "";
+    const notifique = files.get("packages/notifique/src/notifique.ts") ?? "";
     const sms = files.get("packages/notifique/src/lib/sms.ts") ?? "";
     const whatsapp = files.get("packages/notifique/src/lib/whatsapp.ts") ?? "";
     const email = files.get("packages/notifique/src/lib/email.ts") ?? "";
@@ -212,13 +216,16 @@ describe("Resend communication", () => {
     const readme = files.get("README.md") ?? "";
 
     expect(files.has("packages/email/package.json")).toBe(false);
-    expect(index).toContain("export { getNotifiqueClient }");
+    expect(index).toContain('export { notifique } from "./notifique"');
     expect(index).toContain("sendSms");
     expect(index).not.toMatch(/^\*/m);
-    expect(client).toContain("@notifique/sdk-node");
-    expect(client).toContain("new Notifique");
-    expect(client).toContain("env.NOTIFIQUE_API_KEY");
-    expect(client).not.toContain("fetch(");
+    expect(notifique).toContain("@notifique/sdk-node");
+    expect(notifique).toContain("new Notifique");
+    expect(notifique).toContain("env.NOTIFIQUE_API_KEY");
+    expect(notifique).not.toContain("fetch(");
+    expect(sms).toContain('from "../notifique"');
+    expect(whatsapp).toContain('from "../notifique"');
+    expect(email).toContain('from "../notifique"');
     expect(sms).toContain(".sms.send");
     expect(sms).toContain("idempotencyKey");
     expect(sms).toContain("options: { priority:");

@@ -392,7 +392,6 @@ async function addHandlerInternal(
     addons: updatedAddons,
   };
 
-  // Create VFS and process addon templates using template-generator's logic
   if (!isSilent()) {
     log.info(pc.dim("Installing addon files..."));
   }
@@ -422,10 +421,8 @@ async function addHandlerInternal(
     }
   }
 
-  // Process addon templates
   await processAddonTemplates(vfs, EMBEDDED_TEMPLATES, config);
 
-  // Process addon dependencies (adds deps to package.json files in VFS)
   processAddonsDeps(vfs, config);
   processEnvVariables(vfs, updatedConfig);
 

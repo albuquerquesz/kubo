@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubojs/types";
+import { hasNativeFrontend, type ProjectConfig } from "@kubojs/types";
 import { Node, Project, SyntaxKind } from "ts-morph";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
@@ -17,7 +17,6 @@ export function processAuthPlugins(vfs: VirtualFileSystem, config: ProjectConfig
   const pluginsToAdd: string[] = [];
   const importsToAdd: { named: string; module: string }[] = [];
 
-  // TanStack Start Cookies
   if (config.backend === "self" && config.frontend.includes("tanstack-start")) {
     pluginsToAdd.push("tanstackStartCookies()");
     importsToAdd.push({
@@ -26,7 +25,6 @@ export function processAuthPlugins(vfs: VirtualFileSystem, config: ProjectConfig
     });
   }
 
-  // Next.js Cookies
   if (config.backend === "self" && config.frontend.includes("next")) {
     pluginsToAdd.push("nextCookies()");
     importsToAdd.push({
@@ -35,10 +33,7 @@ export function processAuthPlugins(vfs: VirtualFileSystem, config: ProjectConfig
     });
   }
 
-  // Expo Plugin
-  const hasNative = config.frontend.some((f) =>
-    ["native-bare", "native-uniwind", "native-unistyles"].includes(f),
-  );
+  const hasNative = hasNativeFrontend(config.frontend);
   if (hasNative) {
     pluginsToAdd.push("expo()");
     importsToAdd.push({
@@ -49,7 +44,6 @@ export function processAuthPlugins(vfs: VirtualFileSystem, config: ProjectConfig
 
   if (pluginsToAdd.length === 0) return;
 
-  // Add imports
   importsToAdd.forEach(({ named, module }) => {
     const existingImport = sourceFile.getImportDeclaration((decl) =>
       decl.getModuleSpecifierValue().includes(module),
@@ -100,7 +94,6 @@ export function processAuthPlugins(vfs: VirtualFileSystem, config: ProjectConfig
           });
         }
       } else {
-        // Create plugins array if it doesn't exist
         configObject.addPropertyAssignment({
           name: "plugins",
           initializer: `[${pluginsToAdd.join(", ")}]`,
