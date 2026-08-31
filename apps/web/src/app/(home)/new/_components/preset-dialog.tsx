@@ -64,12 +64,14 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
                     </div>
                     <DialogClose
                       onClick={() => onApplyPreset(preset.id)}
-                      render={
-                        <Button type="button" variant="cta" size="default" className="shrink-0" />
-                      }
+                      render={<Button type="button" variant="cta" size="lg" className="shrink-0" />}
                     >
-                      Usar este modelo
-                      <ArrowUpRight data-icon="inline-end" />
+                      Usar modelo
+                      <ArrowUpRight
+                        aria-hidden
+                        data-icon="inline-end"
+                        className="size-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
+                      />
                     </DialogClose>
                   </div>
 
@@ -80,7 +82,7 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
                     {selectedTechs.map((tech) => (
                       <li
                         key={`${preset.id}-${tech.category}-${tech.id}`}
-                        className="inline-flex items-center gap-1.5 border border-border bg-muted/10 px-2 py-1 font-mono text-[10px] text-muted-foreground"
+                        className="inline-flex items-center gap-1.5 bg-muted/10 px-2 py-1 font-mono text-[10px] text-muted-foreground"
                       >
                         {tech.icon && (
                           <TechIcon icon={tech.icon} name={tech.name} className="h-3 w-3" />
