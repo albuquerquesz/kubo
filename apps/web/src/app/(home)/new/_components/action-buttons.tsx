@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, RefreshCw, Settings, Shuffle, Star } from "lucide-react";
+import { AlertTriangle, RefreshCw, Settings, Star } from "lucide-react";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { StackState } from "@/lib/constant";
@@ -11,7 +11,6 @@ import { ShareButton } from "./share-button";
 
 type ActionButtonsProps = {
   onReset: () => void;
-  onRandom: () => void;
   onSave: () => void;
   onLoad: () => void;
   hasSavedStack: boolean;
@@ -27,7 +26,6 @@ const mutedActionClasses =
 
 export function ActionButtons({
   onReset,
-  onRandom,
   onSave,
   onLoad,
   hasSavedStack,
@@ -43,15 +41,6 @@ export function ActionButtons({
       <div className="grid grid-cols-2 gap-1.5">
         <button
           type="button"
-          onClick={onRandom}
-          className="builder-focus-ring inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-primary/15 px-3 font-mono font-medium text-primary text-xs transition-colors hover:bg-primary/22"
-          title="Gerar uma stack aleatória"
-        >
-          <Shuffle className="h-3 w-3" />
-          Aleatorizar
-        </button>
-        <button
-          type="button"
           onClick={onSave}
           className={mutedActionClasses}
           title="Salvar preferências atuais"
@@ -62,7 +51,7 @@ export function ActionButtons({
         <button
           type="button"
           onClick={onReset}
-          className={cn(mutedActionClasses, !hasSavedStack && "col-span-2")}
+          className={mutedActionClasses}
           title="Restaurar padrões"
         >
           <RefreshCw className="h-3 w-3" />

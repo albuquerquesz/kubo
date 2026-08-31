@@ -182,69 +182,6 @@ export function useStackBuilder() {
     return generateStackSharingUrl(withFormattedProjectName(stackToUse));
   }
 
-  function getRandomStack() {
-    const randomStack: Partial<StackState> = {};
-
-    for (const category of CATEGORY_LIST) {
-      const options = TECH_OPTIONS[category as keyof typeof TECH_OPTIONS] || [];
-      if (options.length === 0) {
-        continue;
-      }
-
-      const catKey = category as keyof StackState;
-      if (
-        catKey === "webFrontend" ||
-        catKey === "nativeFrontend" ||
-        catKey === "addons" ||
-        catKey === "testing" ||
-        catKey === "examples" ||
-        catKey === "payments" ||
-        catKey === "observability"
-      ) {
-        if (catKey === "webFrontend" || catKey === "nativeFrontend") {
-          const selectedOption = options[Math.floor(Math.random() * options.length)]?.id;
-          if (selectedOption) {
-            randomStack[catKey as "webFrontend" | "nativeFrontend"] = [selectedOption];
-          }
-          continue;
-        }
-
-        const maxSelections = catKey === "observability" ? 3 : catKey === "testing" ? 2 : 4;
-        const numToPick = Math.floor(Math.random() * Math.min(options.length, maxSelections));
-        if (numToPick === 0) {
-          randomStack[catKey as "addons" | "testing" | "examples" | "payments" | "observability"] =
-            catKey === "payments" || catKey === "observability" ? [] : ["none"];
-          continue;
-        }
-
-        const shuffledOptions = [...options]
-          .filter((opt) => opt.id !== "none")
-          .sort(() => 0.5 - Math.random())
-          .slice(0, numToPick);
-
-        randomStack[catKey as "addons" | "testing" | "examples" | "payments" | "observability"] =
-          shuffledOptions.map((opt) => opt.id);
-        continue;
-      }
-
-      const selectedOption = options[Math.floor(Math.random() * options.length)]?.id;
-      if (selectedOption) {
-        randomStack[catKey] = selectedOption as never;
-      }
-    }
-
-    startTransition(() => {
-      setStack({
-        ...(randomStack as StackState),
-        projectName: stack.projectName || "my-kubo-app",
-      });
-    });
-
-    analytics.track("stack_randomized", {});
-
-    contentRef.current?.scrollTo(0, 0);
-  }
-
   function handleTechSelect(category: keyof typeof TECH_OPTIONS, techId: string) {
     if (!isOptionCompatible(stack, category, techId)) {
       return;
@@ -426,7 +363,6 @@ export function useStackBuilder() {
     compatibilityAnalysis,
     copied,
     copyToClipboard,
-    getRandomStack,
     getStackUrl,
     handleTechSelect,
     lastSavedStack,

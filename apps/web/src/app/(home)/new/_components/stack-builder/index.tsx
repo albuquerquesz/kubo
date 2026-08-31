@@ -37,7 +37,6 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
     compatibilityAnalysis,
     copied,
     copyToClipboard,
-    getRandomStack,
     getStackUrl,
     handleTechSelect,
     lastSavedStack,
@@ -66,7 +65,6 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
   const actionButtons = (
     <ActionButtons
       onReset={resetStack}
-      onRandom={getRandomStack}
       onSave={saveCurrentStack}
       onLoad={loadSavedStack}
       hasSavedStack={!!lastSavedStack}
