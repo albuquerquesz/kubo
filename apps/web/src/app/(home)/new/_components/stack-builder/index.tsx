@@ -117,7 +117,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
           )}
         </div>
 
-        <div className="hidden h-full flex-1 grid-cols-[19rem_minmax(0,1fr)] overflow-hidden border-border sm:grid lg:grid-cols-[24rem_minmax(0,1fr)_15rem]">
+        <div className="hidden h-full flex-1 grid-cols-[19rem_minmax(0,1fr)] overflow-hidden border-border sm:grid lg:grid-cols-[24rem_minmax(0,1fr)]">
           <aside className="flex min-h-0 flex-col overflow-hidden border-rule border-r bg-fd-background">
             <ScrollArea className="min-h-0 flex-1">
               <div className="p-2">
@@ -285,8 +285,8 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
             </div>
           </aside>
 
-          <section className="flex min-h-0 flex-col overflow-hidden">
-            <div className="sticky top-0 z-10 flex flex-col gap-2 border-border border-b bg-fd-background px-3 py-2">
+          <div className="grid min-h-0 min-w-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden lg:grid-cols-[minmax(0,1fr)_15rem]">
+            <div className="sticky top-0 z-10 flex flex-col gap-2 border-border border-b bg-fd-background px-3 py-2 lg:col-span-2">
               <div className="flex w-fit items-center gap-1 rounded-md bg-muted/20 p-1">
                 <button
                   type="button"
@@ -330,38 +330,44 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
               )}
             </div>
 
-            {viewMode === "command" ? (
-              <div ref={scrollAreaRef} className="min-h-0 flex-1">
-                <ScrollArea className="h-full overflow-hidden scroll-smooth">
-                  <main className="p-2 sm:p-4">
-                    <TechCategories
-                      mode="desktop"
-                      stack={stack}
-                      compatibilityNotes={compatibilityAnalysis.notes}
-                      onSelect={handleTechSelect}
-                      showAllCategories
-                    />
-                  </main>
-                </ScrollArea>
-              </div>
-            ) : (
-              <PreviewPanel
-                stack={effectiveStack}
-                selectedFilePath={selectedFile}
-                onSelectFile={setSelectedFile}
-              />
-            )}
-          </section>
+            <section className="flex min-h-0 flex-col overflow-hidden">
+              {viewMode === "command" ? (
+                <div ref={scrollAreaRef} className="min-h-0 flex-1">
+                  <ScrollArea className="h-full overflow-hidden scroll-smooth">
+                    <main className="p-2 sm:p-4">
+                      <TechCategories
+                        mode="desktop"
+                        stack={stack}
+                        compatibilityNotes={compatibilityAnalysis.notes}
+                        onSelect={handleTechSelect}
+                        showAllCategories
+                      />
+                    </main>
+                  </ScrollArea>
+                </div>
+              ) : (
+                <PreviewPanel
+                  stack={effectiveStack}
+                  selectedFilePath={selectedFile}
+                  onSelectFile={setSelectedFile}
+                />
+              )}
+            </section>
 
-          <aside className="hidden min-h-0 flex-col overflow-hidden border-rule border-l bg-background lg:flex">
-            {viewMode === "command" ? (
-              <CategoryNav progress={categoryProgress} idPrefix="section" orientation="vertical" />
-            ) : (
-              <p className="px-4 py-4 font-mono text-[11px] text-muted-foreground leading-relaxed">
-                Volte para Configurar para navegar pelas categorias.
-              </p>
-            )}
-          </aside>
+            <aside className="hidden min-h-0 flex-col overflow-hidden border-rule border-l bg-background lg:flex">
+              {viewMode === "command" ? (
+                <CategoryNav
+                  progress={categoryProgress}
+                  idPrefix="section"
+                  orientation="vertical"
+                />
+              ) : (
+                <p className="px-4 py-4 font-mono text-[11px] text-muted-foreground leading-relaxed">
+                  Volte para Configurar para navegar pelas categorias.
+                </p>
+              )}
+            </aside>
+          </div>
         </div>
 
         <div className="flex flex-1 flex-col overflow-hidden sm:hidden">
