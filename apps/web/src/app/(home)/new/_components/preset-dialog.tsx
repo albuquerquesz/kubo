@@ -58,9 +58,6 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <h3 className="font-medium text-foreground text-sm">{preset.name}</h3>
-                      <p className="mt-1 max-w-2xl text-muted-foreground text-xs leading-5">
-                        {preset.description}
-                      </p>
                     </div>
                     <DialogClose
                       onClick={() => onApplyPreset(preset.id)}
