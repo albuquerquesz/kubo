@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import type { StackState } from "@/lib/constant";
 import { cn } from "@/lib/utils";
 
-import { PresetDropdown } from "./preset-dropdown";
+import { PresetDialog } from "./preset-dialog";
 import { ShareButton } from "./share-button";
 
 type ActionButtonsProps = {
@@ -71,7 +71,7 @@ export function ActionButtons({
       </div>
       <div className="grid grid-cols-3 gap-1.5">
         <ShareButton stackUrl={stackUrl} stackState={stackState} />
-        <PresetDropdown onApplyPreset={onApplyPreset} />
+        <PresetDialog onApplyPreset={onApplyPreset} />
         <Tooltip delay={100}>
           <TooltipTrigger
             render={

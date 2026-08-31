@@ -2,28 +2,15 @@ import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 
 import type { StackState } from "@/lib/constant";
-import { OG_SIZE, OgShell, ogColors } from "@/lib/og";
+import { OG_SIZE } from "@/lib/og";
 import { loadStackParams } from "@/lib/stack-url-state";
 import { getSelectedTechs } from "@/lib/stack-utils";
 
-const MAX_CHIPS = 15;
+import { ogEditorial } from "./_lib/colors";
+import { loadKuboMarkDataUrl, loadStackOgFonts } from "./_lib/fonts";
+import { OgMosaicField } from "./_lib/mosaic";
 
-const categoryChipColors: Partial<Record<string, string>> = {
-  webFrontend: "#89b4fa",
-  nativeFrontend: "#89b4fa",
-  runtime: "#fab387",
-  backend: "#74c7ec",
-  api: "#b4befe",
-  database: "#a6e3a1",
-  orm: "#94e2d5",
-  dbSetup: "#f5c2e7",
-  auth: "#a6e3a1",
-  payments: "#eba0ac",
-  packageManager: "#f9e2af",
-  addons: "#cba6f7",
-  testing: "#a6e3a1",
-  examples: "#94e2d5",
-};
+const MAX_CHIPS = 12;
 
 function commandBase(packageManager: StackState["packageManager"]) {
   if (packageManager === "npm") return "npx create-kubojs@latest";
@@ -39,91 +26,212 @@ export async function GET(req: NextRequest) {
   const techs = getSelectedTechs(stack);
   const visible = techs.slice(0, MAX_CHIPS);
   const overflow = techs.length - visible.length;
+  const command = `${commandBase(stack.packageManager)} ${projectName}`;
+
+  const [fonts, markSrc] = await Promise.all([loadStackOgFonts(), loadKuboMarkDataUrl()]);
 
   return new ImageResponse(
-    <OgShell
-      path={`~/stack/${projectName}`}
-      section="stack"
-      footerRight={`${techs.length} techs · kubojs.dev`}
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        position: "relative",
+        background: ogEditorial.background,
+        color: ogEditorial.foreground,
+        fontFamily: '"Space Grotesk"',
+      }}
     >
+      <OgMosaicField width={OG_SIZE.width} height={OG_SIZE.height} />
+
+      {/* Copy-safe veil — denser on the left where type sits */}
       <div
         style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          backgroundImage:
+            "linear-gradient(90deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.55) 42%, rgba(0,0,0,0.22) 72%, rgba(0,0,0,0.45) 100%)",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          backgroundImage:
+            "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.08) 28%, rgba(0,0,0,0.12) 72%, rgba(0,0,0,0.55) 100%)",
+        }}
+      />
+
+      <div
+        style={{
+          position: "relative",
           display: "flex",
           flexDirection: "column",
-          padding: "44px 56px",
-          flex: 1,
-          justifyContent: "center",
-          gap: "24px",
+          width: "100%",
+          height: "100%",
+          padding: "48px 56px 40px",
+          justifyContent: "space-between",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            fontFamily: "monospace",
-            fontSize: "20px",
-          }}
-        >
-          <span style={{ color: ogColors.green, display: "flex" }}>$</span>
-          <span style={{ color: ogColors.subtext, display: "flex" }}>
-            {commandBase(stack.packageManager)} {projectName}
-          </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+          <img
+            src={markSrc}
+            width={52}
+            height={52}
+            alt=""
+            style={{ display: "flex", objectFit: "contain" }}
+          />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "2px",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: '"IBM Plex Mono"',
+                fontSize: "14px",
+                fontWeight: 500,
+                letterSpacing: "0.08em",
+                color: ogEditorial.primary,
+                display: "flex",
+              }}
+            >
+              STACK
+            </span>
+            <span
+              style={{
+                fontFamily: '"IBM Plex Mono"',
+                fontSize: "14px",
+                color: ogEditorial.mutedForeground,
+                display: "flex",
+              }}
+            >
+              kubojs.dev/new
+            </span>
+          </div>
         </div>
 
         <div
           style={{
-            fontSize: "54px",
-            fontWeight: 700,
-            color: ogColors.text,
-            lineHeight: 1.1,
-            letterSpacing: "-0.025em",
             display: "flex",
+            flexDirection: "column",
+            gap: "22px",
+            maxWidth: "980px",
           }}
         >
-          {projectName}
-        </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              fontFamily: '"IBM Plex Mono"',
+              fontSize: "20px",
+              fontWeight: 400,
+            }}
+          >
+            <span style={{ color: ogEditorial.primary, display: "flex" }}>$</span>
+            <span style={{ color: ogEditorial.mutedForeground, display: "flex" }}>{command}</span>
+          </div>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", maxWidth: "1020px" }}>
-          {visible.map((tech) => {
-            const color = categoryChipColors[tech.category] ?? "#a6adc8";
-            return (
+          <div
+            style={{
+              fontSize: "64px",
+              fontWeight: 700,
+              lineHeight: 1.05,
+              letterSpacing: "-0.03em",
+              color: ogEditorial.foreground,
+              display: "flex",
+            }}
+          >
+            {projectName}
+          </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", maxWidth: "1020px" }}>
+            {visible.map((tech, index) => {
+              const emphasize = index === 0;
+              return (
+                <div
+                  key={`${tech.category}-${tech.id}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "7px 16px",
+                    borderRadius: "9999px",
+                    border: `1px solid ${emphasize ? ogEditorial.primary : ogEditorial.ruleStrong}`,
+                    background: emphasize ? "rgba(196,147,20,0.14)" : "rgba(255,255,255,0.04)",
+                    color: emphasize ? ogEditorial.accent : ogEditorial.foreground,
+                    fontSize: "18px",
+                    fontWeight: 500,
+                  }}
+                >
+                  {tech.name}
+                </div>
+              );
+            })}
+            {overflow > 0 && (
               <div
-                key={`${tech.category}-${tech.id}`}
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  padding: "6px 16px",
+                  padding: "7px 16px",
                   borderRadius: "9999px",
-                  border: `1px solid ${color}4d`,
-                  background: `${color}1a`,
-                  color,
-                  fontSize: "20px",
-                  fontWeight: 500,
+                  border: `1px solid ${ogEditorial.rule}`,
+                  color: ogEditorial.mutedForeground,
+                  fontSize: "18px",
+                  fontFamily: '"IBM Plex Mono"',
                 }}
               >
-                {tech.name}
+                +{overflow} mais
               </div>
-            );
-          })}
-          {overflow > 0 && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "6px 16px",
-                borderRadius: "9999px",
-                border: `1px solid ${ogColors.border}`,
-                color: ogColors.overlay,
-                fontSize: "20px",
-              }}
-            >
-              +{overflow} more
-            </div>
-          )}
+            )}
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderTop: `1px solid ${ogEditorial.rule}`,
+            paddingTop: "18px",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: '"IBM Plex Mono"',
+              fontSize: "16px",
+              color: ogEditorial.mutedForeground,
+              display: "flex",
+            }}
+          >
+            {techs.length} tecnologias
+          </span>
+          <span
+            style={{
+              fontFamily: '"IBM Plex Mono"',
+              fontSize: "16px",
+              color: ogEditorial.primary,
+              display: "flex",
+            }}
+          >
+            kubojs.dev
+          </span>
         </div>
       </div>
-    </OgShell>,
-    OG_SIZE,
+    </div>,
+    {
+      ...OG_SIZE,
+      fonts,
+    },
   );
 }
