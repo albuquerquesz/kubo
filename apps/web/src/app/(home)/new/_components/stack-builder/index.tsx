@@ -1,8 +1,9 @@
 "use client";
 
-import { AlertTriangle, Check, ClipboardCopy, FolderTree, Terminal } from "lucide-react";
+import { AlertTriangle, FolderTree, Terminal } from "lucide-react";
 import { startTransition } from "react";
 
+import CopyInstallCommandButton from "@/app/(home)/_components/copy-install-command-button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,8 +29,6 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
     categoryProgress,
     command,
     compatibilityAnalysis,
-    copied,
-    copyToClipboard,
     getStackUrl,
     handleTechSelect,
     lastSavedStack,
@@ -140,29 +139,14 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   </section>
 
                   <section className="space-y-2 border-border/20 border-b px-3 py-3">
-                    <div className="flex items-center">
-                      <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-                        Comando CLI
-                      </p>
-                    </div>
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      onClick={copyToClipboard}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                          event.preventDefault();
-                          copyToClipboard();
-                        }
-                      }}
-                      aria-label="Copiar comando CLI"
-                      title="Clique para copiar o comando"
-                      className="builder-focus-ring cursor-pointer rounded-lg bg-muted/20 px-2.5 py-2"
-                    >
-                      <code className="block truncate font-mono text-muted-foreground text-xs">
-                        {command}
-                      </code>
-                    </div>
+                    <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
+                      Comando CLI
+                    </p>
+                    <CopyInstallCommandButton
+                      command={command}
+                      compact
+                      className="w-full max-w-full px-4"
+                    />
                   </section>
 
                   <section className="space-y-2 px-3 py-3">
@@ -351,48 +335,14 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     </label>
 
                     <div className="space-y-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wide">
-                          Comando CLI
-                        </span>
-                        <span
-                          className={cn(
-                            "flex items-center gap-1 rounded-md px-2 py-1 font-mono text-[11px] uppercase",
-                            copied
-                              ? "bg-primary/14 text-primary"
-                              : "bg-muted/20 text-muted-foreground",
-                          )}
-                        >
-                          {copied ? (
-                            <Check className="h-3 w-3 shrink-0" />
-                          ) : (
-                            <ClipboardCopy className="h-3 w-3 shrink-0" />
-                          )}
-                          {copied ? "Copiado" : "Toque para copiar"}
-                        </span>
-                      </div>
-                      <div
-                        role="button"
-                        tabIndex={0}
-                        onClick={copyToClipboard}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
-                            copyToClipboard();
-                          }
-                        }}
-                        className={cn(
-                          "builder-focus-ring rounded-lg bg-background/75 px-2.5 py-2 font-mono text-xs text-muted-foreground ring-1",
-                          copied ? "ring-primary/40" : "ring-border/45",
-                        )}
-                        aria-label="Copiar comando"
-                        title="Clique para copiar o comando"
-                      >
-                        <div className="flex min-w-0 items-start gap-1.5">
-                          <span className="mt-0.5 text-chart-4">$</span>
-                          <code className="min-w-0 flex-1 truncate">{command}</code>
-                        </div>
-                      </div>
+                      <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wide">
+                        Comando CLI
+                      </span>
+                      <CopyInstallCommandButton
+                        command={command}
+                        compact
+                        className="w-full max-w-full px-4"
+                      />
                     </div>
 
                     {desktopBuildNote && (

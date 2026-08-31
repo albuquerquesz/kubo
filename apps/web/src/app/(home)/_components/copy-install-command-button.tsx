@@ -11,6 +11,7 @@ const DEFAULT_COMMAND = "bun create kubojs@latest";
 type CopyInstallCommandButtonProps = {
   command?: string;
   className?: string;
+  compact?: boolean;
   /**
    * Fire the shared CTA confetti burst after a successful copy.
    * Default false so secondary / quiet placements stay calm.
@@ -21,6 +22,7 @@ type CopyInstallCommandButtonProps = {
 export default function CopyInstallCommandButton({
   command = DEFAULT_COMMAND,
   className,
+  compact = false,
   confetti = false,
 }: CopyInstallCommandButtonProps) {
   const [copied, setCopied] = useState(false);
@@ -69,6 +71,7 @@ export default function CopyInstallCommandButton({
       onClick={copyCommand}
       className={cn(
         buttonVariants({ variant: "cta", size: "xl" }),
+        compact && "h-12 gap-2 px-4 text-sm sm:px-4",
         "relative no-underline",
         className,
       )}
@@ -78,7 +81,12 @@ export default function CopyInstallCommandButton({
       <span className="sr-only" aria-live="polite">
         {copied ? "Comando copiado" : "Copiar comando"}
       </span>
-      <code className="max-w-[min(100%,28rem)] break-all font-mono text-sm tracking-[0.04em] sm:text-base">
+      <code
+        className={cn(
+          "max-w-[min(100%,28rem)] truncate font-mono text-sm tracking-[0.04em]",
+          !compact && "sm:text-base",
+        )}
+      >
         {command}
       </code>
     </button>
