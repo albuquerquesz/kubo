@@ -37,11 +37,8 @@ export function PresetDropdown({ onApplyPreset }: PresetDropdownProps) {
             onClick={() => onApplyPreset(preset.id)}
             className="flex flex-col items-start gap-1 p-3"
           >
-            <div className="flex w-full items-center justify-between gap-2">
+            <div className="flex w-full items-center gap-2">
               <div className="font-medium text-sm">{preset.name}</div>
-              <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground uppercase">
-                Modelo
-              </span>
             </div>
             <div className="line-clamp-2 text-xs text-muted-foreground">{preset.description}</div>
             <div className="line-clamp-1 w-full font-mono text-[10px] text-primary uppercase tracking-wide">
