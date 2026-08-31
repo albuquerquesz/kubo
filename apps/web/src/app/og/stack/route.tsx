@@ -8,9 +8,13 @@ import { getSelectedTechs } from "@/lib/stack-utils";
 
 import { ogEditorial } from "./_lib/colors";
 import { loadKuboMarkDataUrl, loadStackOgFonts } from "./_lib/fonts";
+import { loadTechIconDataUrls } from "./_lib/icons";
 import { OgMosaicField } from "./_lib/mosaic";
 
+export const runtime = "nodejs";
+
 const MAX_CHIPS = 12;
+const CHIP_ICON_SIZE = 22;
 
 function commandBase(packageManager: StackState["packageManager"]) {
   if (packageManager === "npm") return "npx create-kubojs@latest";
@@ -28,7 +32,11 @@ export async function GET(req: NextRequest) {
   const overflow = techs.length - visible.length;
   const command = `${commandBase(stack.packageManager)} ${projectName}`;
 
-  const [fonts, markSrc] = await Promise.all([loadStackOgFonts(), loadKuboMarkDataUrl()]);
+  const [fonts, markSrc, iconSrcByPath] = await Promise.all([
+    loadStackOgFonts(),
+    loadKuboMarkDataUrl(),
+    loadTechIconDataUrls(visible.map((tech) => tech.icon)),
+  ]);
 
   return new ImageResponse(
     <div
@@ -159,13 +167,15 @@ export async function GET(req: NextRequest) {
           <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", maxWidth: "1020px" }}>
             {visible.map((tech, index) => {
               const emphasize = index === 0;
+              const iconSrc = iconSrcByPath.get(tech.icon);
               return (
                 <div
                   key={`${tech.category}-${tech.id}`}
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    padding: "7px 16px",
+                    gap: "8px",
+                    padding: iconSrc ? "7px 14px 7px 10px" : "7px 16px",
                     borderRadius: "9999px",
                     border: `1px solid ${emphasize ? ogEditorial.primary : ogEditorial.ruleStrong}`,
                     background: emphasize ? "rgba(196,147,20,0.14)" : "rgba(255,255,255,0.04)",
@@ -174,7 +184,16 @@ export async function GET(req: NextRequest) {
                     fontWeight: 500,
                   }}
                 >
-                  {tech.name}
+                  {iconSrc ? (
+                    <img
+                      src={iconSrc}
+                      width={CHIP_ICON_SIZE}
+                      height={CHIP_ICON_SIZE}
+                      alt=""
+                      style={{ display: "flex", objectFit: "contain" }}
+                    />
+                  ) : null}
+                  <span style={{ display: "flex" }}>{tech.name}</span>
                 </div>
               );
             })}

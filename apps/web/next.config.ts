@@ -62,6 +62,7 @@ const config: NextConfig = {
     "handlebars",
     "ts-morph",
     "memfs",
+    "@resvg/resvg-js",
   ],
 };
 

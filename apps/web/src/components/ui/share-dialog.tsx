@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaXTwitter } from "react-icons/fa6";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -171,15 +172,6 @@ export function ShareDialog({
         </DialogHeader>
 
         <div className="rounded border border-border">
-          <div className="flex items-center gap-2 border-border border-b px-3 py-2">
-            <span className="text-primary text-xs">▶</span>
-            <span className="font-mono font-semibold text-foreground text-xs">
-              SOCIAL_PREVIEW.PNG
-            </span>
-            <span className="ml-auto font-mono text-[10px] text-muted-foreground uppercase">
-              {selectedTechs.length} tecnologias
-            </span>
-          </div>
           <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted/10">
             {!previewLoaded && (
               <div className="absolute inset-0 flex items-center justify-center gap-2 font-mono text-muted-foreground text-xs">
@@ -213,37 +205,27 @@ export function ShareDialog({
         </div>
 
         <div className={cn("grid gap-2", canNativeShare ? "grid-cols-3" : "grid-cols-2")}>
-          <button
-            type="button"
-            onClick={shareToTwitter}
-            className="builder-focus-ring inline-flex h-10 items-center justify-center gap-1.5 rounded-md border border-border bg-muted/10 px-3 font-mono text-muted-foreground text-xs transition-colors hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground"
-          >
+          <Button type="button" onClick={shareToTwitter} className="w-full font-mono">
             <FaXTwitter className="h-3 w-3" />
             Postar
-          </button>
+          </Button>
           {canNativeShare && (
-            <button
-              type="button"
-              onClick={nativeShare}
-              className="builder-focus-ring inline-flex h-10 items-center justify-center gap-1.5 rounded-md border border-border bg-muted/10 px-3 font-mono text-muted-foreground text-xs transition-colors hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground"
-            >
+            <Button type="button" onClick={nativeShare} className="w-full font-mono">
               <Share2 className="h-3 w-3" />
               Compartilhar
-            </button>
+            </Button>
           )}
-          <button
+          <Button
             type="button"
             onClick={() => setShowQr((prev) => !prev)}
             className={cn(
-              "builder-focus-ring inline-flex h-10 items-center justify-center gap-1.5 rounded-md border px-3 font-mono text-xs transition-colors",
-              showQr
-                ? "border-primary/30 bg-primary/10 text-primary"
-                : "border-border bg-muted/10 text-muted-foreground hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground",
+              "w-full font-mono",
+              showQr && "border-primary/30 bg-primary/10 text-primary hover:bg-primary/15",
             )}
           >
             <QrCode className="h-3 w-3" />
             QR
-          </button>
+          </Button>
         </div>
 
         {showQr && (
