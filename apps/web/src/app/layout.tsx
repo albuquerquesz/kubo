@@ -114,7 +114,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
-    apple: [{ url: "/mascots/kubo-candidates/c2.png", type: "image/png" }],
+    apple: [{ url: "/mascots/kubo-candidates/favicon.png", type: "image/png" }],
   },
 };
 
