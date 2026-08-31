@@ -164,7 +164,7 @@ export async function GET(req: NextRequest) {
             {projectName}
           </div>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", maxWidth: "1020px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", maxWidth: "760px" }}>
             {visible.map((tech, index) => {
               const emphasize = index === 0;
               const iconSrc = iconSrcByPath.get(tech.icon);
