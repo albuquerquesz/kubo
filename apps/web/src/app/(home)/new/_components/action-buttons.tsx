@@ -19,8 +19,6 @@ type ActionButtonsProps = {
   stackState: StackState;
   yolo: boolean;
   onYoloToggle: (yolo: string) => void;
-  shareOpen?: boolean;
-  onShareOpenChange?: (open: boolean) => void;
 };
 
 const mutedActionClasses =
@@ -36,8 +34,6 @@ export function ActionButtons({
   stackState,
   yolo,
   onYoloToggle,
-  shareOpen,
-  onShareOpenChange,
 }: ActionButtonsProps) {
   return (
     <div className="space-y-1.5">
@@ -74,12 +70,7 @@ export function ActionButtons({
         )}
       </div>
       <div className="grid grid-cols-3 gap-1.5">
-        <ShareButton
-          stackUrl={stackUrl}
-          stackState={stackState}
-          open={shareOpen}
-          onOpenChange={onShareOpenChange}
-        />
+        <ShareButton stackUrl={stackUrl} stackState={stackState} />
         <PresetDialog onApplyPreset={onApplyPreset} />
         <Tooltip delay={100}>
           <TooltipTrigger

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, ChevronDown, Zap } from "lucide-react";
+import { ArrowUpRight, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -33,7 +33,6 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
       >
         <Zap className="h-3 w-3" />
         Modelos
-        <ChevronDown className="ml-auto h-3 w-3" />
       </DialogTrigger>
       <DialogContent
         showCloseButton={false}

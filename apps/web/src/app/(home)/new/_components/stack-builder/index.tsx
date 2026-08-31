@@ -6,6 +6,7 @@ import { startTransition, useCallback, useRef, useState } from "react";
 import CopyInstallCommandButton from "@/app/(home)/_components/copy-install-command-button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ShareDialog } from "@/components/ui/share-dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getDesktopBuildNote } from "@/lib/stack-utils";
 import type { Sponsor } from "@/lib/types";
@@ -59,6 +60,8 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
     setShareOpen(true);
   }, []);
 
+  const stackUrl = getStackUrl();
+
   const actionButtons = (
     <ActionButtons
       onReset={resetStack}
@@ -66,18 +69,27 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
       onLoad={loadSavedStack}
       hasSavedStack={!!lastSavedStack}
       onApplyPreset={applyPreset}
-      stackUrl={getStackUrl()}
+      stackUrl={stackUrl}
       stackState={effectiveStack}
       yolo={stack.yolo === "true"}
       onYoloToggle={(yolo) => setStack({ yolo })}
-      shareOpen={shareOpen}
-      onShareOpenChange={setShareOpen}
     />
   );
 
   return (
     <TooltipProvider>
       <div className="flex h-full w-full flex-col overflow-hidden bg-background text-foreground">
+        {/* Single controlled share dialog for first-copy prompt (desktop+mobile ActionButtons stay uncontrolled). */}
+        <ShareDialog
+          stackUrl={stackUrl}
+          stackState={effectiveStack}
+          open={shareOpen}
+          onOpenChange={setShareOpen}
+        >
+          <button type="button" tabIndex={-1} className="sr-only" aria-hidden>
+            Compartilhar stack
+          </button>
+        </ShareDialog>
         <div className="sticky top-0 z-20 border-border border-b bg-fd-background/95 px-3 py-2 backdrop-blur-sm sm:hidden">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 rounded-md bg-muted/20 p-1">
@@ -133,10 +145,10 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                         aria-invalid={!!projectNameError}
                         aria-describedby={projectNameError ? "project-name-error" : undefined}
                         className={cn(
-                          "builder-focus-ring w-full rounded-lg px-2.5 py-1.5 font-mono text-sm focus:outline-none",
+                          "builder-focus-ring min-h-12 min-w-0 w-full rounded-full border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 dark:bg-background md:text-sm",
                           projectNameError
-                            ? "border-destructive bg-destructive/10 text-destructive-foreground"
-                            : "border-border/60 focus:border-primary",
+                            ? "border-destructive bg-destructive/10 text-destructive-foreground dark:bg-destructive/10"
+                            : undefined,
                         )}
                         placeholder="my-kubo-app"
                       />
@@ -328,10 +340,10 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                           projectNameError ? "project-name-error-mobile" : undefined
                         }
                         className={cn(
-                          "builder-focus-ring w-full rounded-lg border bg-background/75 px-2.5 py-1.5 font-mono text-sm focus:outline-none",
+                          "builder-focus-ring min-h-12 min-w-0 w-full rounded-full border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 dark:bg-background md:text-sm",
                           projectNameError
-                            ? "border-destructive bg-destructive/10 text-destructive-foreground"
-                            : "border-border/60 focus:border-primary",
+                            ? "border-destructive bg-destructive/10 text-destructive-foreground dark:bg-destructive/10"
+                            : undefined,
                         )}
                         placeholder="my-kubo-app"
                       />
