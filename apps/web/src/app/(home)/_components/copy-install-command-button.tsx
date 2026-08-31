@@ -17,6 +17,8 @@ type CopyInstallCommandButtonProps = {
    * Default false so secondary / quiet placements stay calm.
    */
   confetti?: boolean;
+  /** Called only after a successful clipboard write. */
+  onCopied?: () => void;
 };
 
 export default function CopyInstallCommandButton({
@@ -24,6 +26,7 @@ export default function CopyInstallCommandButton({
   className,
   compact = false,
   confetti = false,
+  onCopied,
 }: CopyInstallCommandButtonProps) {
   const [copied, setCopied] = useState(false);
   const resetTimerRef = useRef<number | null>(null);
@@ -45,6 +48,7 @@ export default function CopyInstallCommandButton({
     try {
       await navigator.clipboard.writeText(command);
       setCopied(true);
+      onCopied?.();
 
       if (confetti) {
         const anchor = buttonRef.current;

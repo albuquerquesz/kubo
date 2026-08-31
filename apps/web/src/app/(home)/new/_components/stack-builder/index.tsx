@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertTriangle, FolderTree, Terminal } from "lucide-react";
-import { startTransition } from "react";
+import { startTransition, useCallback, useRef, useState } from "react";
 
 import CopyInstallCommandButton from "@/app/(home)/_components/copy-install-command-button";
 import { Input } from "@/components/ui/input";
@@ -50,6 +50,14 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
   } = useStackBuilder();
   const effectiveStack = compatibilityAnalysis.adjustedStack || stack;
   const desktopBuildNote = getDesktopBuildNote(effectiveStack);
+  const [shareOpen, setShareOpen] = useState(false);
+  const hasPromptedShareAfterCopyRef = useRef(false);
+
+  const handleCommandCopied = useCallback(() => {
+    if (hasPromptedShareAfterCopyRef.current) return;
+    hasPromptedShareAfterCopyRef.current = true;
+    setShareOpen(true);
+  }, []);
 
   const actionButtons = (
     <ActionButtons
@@ -62,6 +70,8 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
       stackState={effectiveStack}
       yolo={stack.yolo === "true"}
       onYoloToggle={(yolo) => setStack({ yolo })}
+      shareOpen={shareOpen}
+      onShareOpenChange={setShareOpen}
     />
   );
 
@@ -138,14 +148,12 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     </label>
                   </section>
 
-                  <section className="space-y-2 border-border/20 border-b px-3 py-3">
-                    <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-                      Comando CLI
-                    </p>
+                  <section className="border-border/20 border-b px-3 py-3">
                     <CopyInstallCommandButton
                       command={command}
                       compact
                       className="w-full max-w-full px-4"
+                      onCopied={handleCommandCopied}
                     />
                   </section>
 
@@ -335,13 +343,11 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     </label>
 
                     <div className="space-y-1">
-                      <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wide">
-                        Comando CLI
-                      </span>
                       <CopyInstallCommandButton
                         command={command}
                         compact
                         className="w-full max-w-full px-4"
+                        onCopied={handleCommandCopied}
                       />
                     </div>
 

@@ -28,6 +28,8 @@ interface ShareDialogProps {
   children: React.ReactNode;
   stackUrl: string;
   stackState: StackState;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 type CopyTarget = "url" | "command";
@@ -72,7 +74,13 @@ function CopyRow({
   );
 }
 
-export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps) {
+export function ShareDialog({
+  children,
+  stackUrl,
+  stackState,
+  open,
+  onOpenChange,
+}: ShareDialogProps) {
   const [copiedTarget, setCopiedTarget] = useState<CopyTarget | null>(null);
   const [showQr, setShowQr] = useState(false);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
@@ -151,7 +159,7 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
   }, [showQr, stackUrl]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger
         render={
           React.isValidElement(children) ? children : <button type="button">{children}</button>
