@@ -120,7 +120,7 @@ export function CategoryNav({ progress, idPrefix, orientation = "horizontal" }: 
             onClick={() => scrollToCategorySection(idPrefix, category)}
             title={`Ir para ${getCategoryDisplayName(category)}`}
             className={cn(
-              "builder-focus-ring flex shrink-0 items-center gap-1.5 font-mono text-[10px] uppercase tracking-wide transition-colors",
+              "builder-focus-ring flex shrink-0 items-center gap-1.5 font-mono text-[10px] tracking-wide transition-colors",
               isVertical
                 ? "w-full justify-between rounded-md px-3 py-2 text-left"
                 : "whitespace-nowrap rounded-full px-2 py-0.5",

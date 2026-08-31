@@ -5,8 +5,8 @@ import { ArrowUpRight, ChevronDown, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogContent,
   DialogClose,
+  DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -37,12 +37,11 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
       </DialogTrigger>
       <DialogContent
         showCloseButton={false}
-        className="flex max-h-[85vh] flex-col gap-0 overflow-hidden bg-background p-0 sm:max-w-3xl"
+        className="flex max-h-[85vh] flex-col gap-0 overflow-hidden rounded-2xl bg-background p-0 sm:max-w-3xl"
       >
         <DialogHeader className="px-5 py-4 sm:px-6 sm:py-5">
           <div className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-primary" />
-            <DialogTitle className="font-mono font-semibold text-foreground text-sm">
+            <DialogTitle className="font-mono font-semibold text-foreground text-base">
               Modelos de stack
             </DialogTitle>
           </div>
@@ -55,9 +54,9 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
 
               return (
                 <div key={preset.id} className="flex flex-col gap-4 px-5 py-5 sm:px-6">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0">
-                      <h3 className="font-medium text-foreground text-sm">{preset.name}</h3>
+                      <h3 className="font-medium text-foreground text-base">{preset.name}</h3>
                     </div>
                     <DialogClose
                       onClick={() => onApplyPreset(preset.id)}
