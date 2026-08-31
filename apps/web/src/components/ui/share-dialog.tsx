@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy, Link2, QrCode, Share2, SquareTerminal, Terminal } from "lucide-react";
+import { Check, Copy, QrCode, Share2, SquareTerminal, Terminal } from "lucide-react";
 import Image from "next/image";
 import QRCode from "qrcode";
 import React, { useEffect, useRef, useState } from "react";
@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -32,7 +31,7 @@ interface ShareDialogProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-type CopyTarget = "url" | "command";
+type CopyTarget = "command";
 
 function CopyRow({
   icon,
@@ -105,11 +104,7 @@ export function ShareDialog({
     try {
       await navigator.clipboard.writeText(value);
       setCopiedTarget(target);
-      toast.success(
-        target === "url"
-          ? "Link copiado para a área de transferência!"
-          : "Comando copiado para a área de transferência!",
-      );
+      toast.success("Comando copiado para a área de transferência!");
       if (copyResetTimer.current) clearTimeout(copyResetTimer.current);
       copyResetTimer.current = setTimeout(() => setCopiedTarget(null), 2000);
     } catch {
@@ -173,9 +168,6 @@ export function ShareDialog({
               SHARE_STACK.SH
             </DialogTitle>
           </div>
-          <DialogDescription className="font-mono text-muted-foreground text-xs">
-            $ ./share --stack {projectName}
-          </DialogDescription>
         </DialogHeader>
 
         <div className="rounded border border-border">
@@ -211,13 +203,6 @@ export function ShareDialog({
         </div>
 
         <div className="grid min-w-0 grid-cols-1 gap-2">
-          <CopyRow
-            icon={<Link2 className="h-3.5 w-3.5" />}
-            label="Link"
-            value={stackUrl}
-            copied={copiedTarget === "url"}
-            onCopy={() => copyValue("url", stackUrl)}
-          />
           <CopyRow
             icon={<SquareTerminal className="h-3.5 w-3.5" />}
             label="Comando"
