@@ -20,17 +20,18 @@ export function ShareButton({ stackUrl, stackState, open, onOpenChange }: ShareB
       stackState={stackState}
       open={open}
       onOpenChange={onOpenChange}
+      trigger={
+        <Button
+          type="button"
+          variant="ghost"
+          size="default"
+          className="w-full font-mono text-primary hover:bg-primary/15 hover:text-primary"
+          title="Compartilhar sua stack"
+        />
+      }
     >
-      <Button
-        type="button"
-        variant="ghost"
-        size="default"
-        className="w-full font-mono text-primary hover:bg-primary/15 hover:text-primary"
-        title="Compartilhar sua stack"
-      >
-        <Share2 data-icon="inline-start" className="h-3 w-3" />
-        Compartilhar
-      </Button>
+      <Share2 data-icon="inline-start" className="h-3 w-3" />
+      Compartilhar
     </ShareDialog>
   );
 }

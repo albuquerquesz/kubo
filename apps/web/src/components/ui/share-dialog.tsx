@@ -24,7 +24,10 @@ import {
 import { cn } from "@/lib/utils";
 
 interface ShareDialogProps {
+  /** Visible trigger content (icon + label). */
   children: React.ReactNode;
+  /** Element merged by DialogTrigger (prefer shared `Button`). */
+  trigger: React.ReactElement;
   stackUrl: string;
   stackState: StackState;
   open?: boolean;
@@ -75,6 +78,7 @@ function CopyRow({
 
 export function ShareDialog({
   children,
+  trigger,
   stackUrl,
   stackState,
   open,
@@ -155,11 +159,7 @@ export function ShareDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger
-        render={
-          React.isValidElement(children) ? children : <button type="button">{children}</button>
-        }
-      />
+      <DialogTrigger render={trigger}>{children}</DialogTrigger>
       <DialogContent className="grid max-h-[85vh] grid-cols-1 gap-3 overflow-y-auto bg-fd-background sm:max-w-lg">
         <DialogHeader className="border-border border-b pb-3">
           <div className="flex items-center gap-2">

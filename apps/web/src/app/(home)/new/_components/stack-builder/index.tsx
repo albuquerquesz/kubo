@@ -85,10 +85,9 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
           stackState={effectiveStack}
           open={shareOpen}
           onOpenChange={setShareOpen}
+          trigger={<button type="button" tabIndex={-1} className="sr-only" aria-hidden />}
         >
-          <button type="button" tabIndex={-1} className="sr-only" aria-hidden>
-            Compartilhar stack
-          </button>
+          Compartilhar stack
         </ShareDialog>
         <div className="sticky top-0 z-20 border-border border-b bg-fd-background/95 px-3 py-2 backdrop-blur-sm sm:hidden">
           <div className="flex items-center gap-2">
