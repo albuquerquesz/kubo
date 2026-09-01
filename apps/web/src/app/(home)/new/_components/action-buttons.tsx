@@ -31,9 +31,8 @@ export function ActionButtons({
   onYoloToggle,
 }: ActionButtonsProps) {
   return (
-    <div className="space-y-1.5">
-      <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">Ações</p>
-      <div className="grid grid-cols-2 gap-1.5">
+    <div className="space-y-2.5">
+      <div className="grid grid-cols-2 gap-2.5">
         <Button
           type="button"
           onClick={onSave}
@@ -70,7 +69,7 @@ export function ActionButtons({
           </Button>
         )}
       </div>
-      <div className="grid grid-cols-2 gap-1.5">
+      <div className="grid grid-cols-2 gap-2.5">
         <ShareButton stackUrl={stackUrl} stackState={stackState} />
         <Tooltip delay={100}>
           <TooltipTrigger

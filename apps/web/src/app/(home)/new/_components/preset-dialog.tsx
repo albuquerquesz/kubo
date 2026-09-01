@@ -25,7 +25,7 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
     <Dialog>
       <DialogTrigger
         render={
-          <Button type="button" variant="ghost" size="default" className="w-full font-mono" />
+          <Button type="button" variant="secondary" size="default" className="w-full font-mono" />
         }
       >
         <Zap data-icon="inline-start" className="h-3 w-3" />

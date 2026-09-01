@@ -218,7 +218,7 @@ export function ShareDialog({
           <Button
             type="button"
             onClick={() => setShowQr((prev) => !prev)}
-            variant="cta"
+            variant="secondary"
             size="lg"
             className={cn(
               "w-full",
