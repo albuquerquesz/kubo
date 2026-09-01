@@ -70,7 +70,7 @@ export function ShareDialog({
     setQrCodeDataUrl("");
     setQrFailed(false);
     QRCode.toDataURL(stackUrl, {
-      width: 320,
+      width: 448,
       margin: 2,
       color: {
         dark: "#cdd6f4",
@@ -163,17 +163,17 @@ export function ShareDialog({
             {qrCodeDataUrl ? (
               <Image
                 src={qrCodeDataUrl}
-                width={160}
-                height={160}
+                width={224}
+                height={224}
                 alt="QR code com link para esta stack"
-                className="h-40 w-40 rounded"
+                className="h-56 w-56 rounded"
               />
             ) : qrFailed ? (
-              <div className="flex h-40 w-40 items-center justify-center font-mono text-destructive text-xs">
+              <div className="flex h-56 w-56 items-center justify-center font-mono text-destructive text-xs">
                 falha ao gerar qr
               </div>
             ) : (
-              <div className="flex h-40 w-40 items-center justify-center font-mono text-muted-foreground text-xs">
+              <div className="flex h-56 w-56 items-center justify-center font-mono text-muted-foreground text-xs">
                 <span className="animate-pulse">gerando...</span>
               </div>
             )}
