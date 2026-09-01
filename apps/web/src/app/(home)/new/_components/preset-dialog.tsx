@@ -51,7 +51,7 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
       </DialogTrigger>
       <DialogContent
         showCloseButton={false}
-        className="flex max-h-[85vh] flex-col gap-0 overflow-hidden rounded-2xl bg-background p-0 sm:max-w-3xl"
+        className="flex max-h-[85vh] flex-col gap-0 overflow-hidden rounded-2xl bg-background p-0 sm:max-w-2xl"
       >
         <DialogHeader className="px-5 py-4 sm:px-6 sm:py-5">
           <div className="flex items-center justify-between gap-3">
