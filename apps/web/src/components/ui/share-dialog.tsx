@@ -74,7 +74,7 @@ export function ShareDialog({
       margin: 2,
       color: {
         dark: "#cdd6f4",
-        light: "#11111b",
+        light: "#00000000",
       },
     })
       .then(setQrCodeDataUrl)
