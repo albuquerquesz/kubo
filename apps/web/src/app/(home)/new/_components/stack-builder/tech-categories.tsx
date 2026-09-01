@@ -61,7 +61,7 @@ export function TechCategories({
             id={isDesktop ? `section-${categoryKey}` : `section-mobile-${categoryKey}`}
             className={cn("mb-6 scroll-mt-4", isDesktop && "sm:mb-8")}
           >
-            <div className="mb-3 flex items-center border-border border-b pb-2 text-muted-foreground">
+            <div className="mb-3 flex items-center pb-2 text-muted-foreground">
               <h2
                 className={cn(
                   "font-semibold font-mono text-foreground text-sm",
@@ -113,13 +113,13 @@ export function TechCategories({
                     aria-pressed={isSelected}
                     aria-label={`${tech.name}${isDisabled && disabledReason ? `. ${disabledReason}` : ""}`}
                     className={cn(
-                      "builder-focus-ring relative h-full w-full text-left rounded-lg p-3 transition-colors",
+                      "builder-focus-ring relative h-full w-full rounded-[0.5rem] border border-border p-3 text-left transition-colors",
                       isDesktop && "p-2 sm:p-3",
                       isSelected
                         ? "bg-primary/12 ring-1 ring-primary"
                         : isDisabled
                           ? "cursor-not-allowed bg-destructive/6 ring-1 ring-destructive/25 opacity-80"
-                          : "bg-muted/15 hover:bg-muted/25",
+                          : "hover:border-primary/60",
                     )}
                     whileHover={isDesktop && !isDisabled ? { scale: 1.01 } : undefined}
                     whileTap={!isDisabled ? { scale: 0.98 } : undefined}

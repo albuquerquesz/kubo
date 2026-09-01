@@ -1,16 +1,18 @@
 "use client";
 
-import { Check, Copy, Link2, QrCode, Share2, SquareTerminal, Terminal } from "lucide-react";
+import { Link2, Share2, Terminal, XIcon } from "lucide-react";
 import Image from "next/image";
 import QRCode from "qrcode";
 import React, { useEffect, useRef, useState } from "react";
-import { FaXTwitter } from "react-icons/fa6";
+import { FaLinkedin, FaXTwitter } from "react-icons/fa6";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
+import { CopyCommandButton } from "@/components/ui/copy-command-button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -25,56 +27,28 @@ import {
 import { cn } from "@/lib/utils";
 
 interface ShareDialogProps {
+  /** Visible trigger content (icon + label). */
   children: React.ReactNode;
+  /** Element merged by DialogTrigger (prefer shared `Button`). */
+  trigger: React.ReactElement;
   stackUrl: string;
   stackState: StackState;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-type CopyTarget = "url" | "command";
+type CopyTarget = "command" | "url";
 
-function CopyRow({
-  icon,
-  label,
-  value,
-  copied,
-  onCopy,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  copied: boolean;
-  onCopy: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onCopy}
-      title={`Copiar ${label.toLowerCase()}`}
-      className="builder-focus-ring group flex h-10 w-full min-w-0 items-center gap-2 rounded-md border border-border bg-muted/10 px-3 text-left transition-colors hover:border-muted-foreground/30 hover:bg-muted/25"
-    >
-      <span className="shrink-0 text-primary">{icon}</span>
-      <span className="min-w-0 flex-1 truncate font-mono text-muted-foreground text-xs group-hover:text-foreground">
-        {value}
-      </span>
-      <span
-        className={cn(
-          "flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 font-mono text-[10px] uppercase transition-colors",
-          copied
-            ? "border-green-500/20 bg-green-500/10 text-green-600 dark:text-green-400"
-            : "border-border text-muted-foreground group-hover:text-foreground",
-        )}
-      >
-        {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-        {copied ? "copiado" : "copiar"}
-      </span>
-    </button>
-  );
-}
-
-export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps) {
+export function ShareDialog({
+  children,
+  trigger,
+  stackUrl,
+  stackState,
+  open,
+  onOpenChange,
+}: ShareDialogProps) {
   const [copiedTarget, setCopiedTarget] = useState<CopyTarget | null>(null);
-  const [showQr, setShowQr] = useState(false);
-  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const [qrFailed, setQrFailed] = useState(false);
   const [previewLoaded, setPreviewLoaded] = useState(false);
   const [canNativeShare, setCanNativeShare] = useState(false);
@@ -92,13 +66,32 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
     };
   }, []);
 
+  useEffect(() => {
+    if (!stackUrl) return;
+    setQrCodeDataUrl("");
+    setQrFailed(false);
+    QRCode.toDataURL(stackUrl, {
+      width: 448,
+      margin: 2,
+      color: {
+        dark: "#cdd6f4",
+        light: "#00000000",
+      },
+    })
+      .then(setQrCodeDataUrl)
+      .catch(() => {
+        setQrCodeDataUrl("");
+        setQrFailed(true);
+      });
+  }, [stackUrl]);
+
   const copyValue = async (target: CopyTarget, value: string) => {
     try {
       await navigator.clipboard.writeText(value);
       setCopiedTarget(target);
       toast.success(
         target === "url"
-          ? "Link copiado para a área de transferência!"
+          ? "URL copiada para a área de transferência!"
           : "Comando copiado para a área de transferência!",
       );
       if (copyResetTimer.current) clearTimeout(copyResetTimer.current);
@@ -121,6 +114,11 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
   };
 
+  const shareToLinkedIn = () => {
+    const url = encodeURIComponent(stackUrl);
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, "_blank");
+  };
+
   const nativeShare = async () => {
     try {
       await navigator.share({ title: projectName, text: shareText(), url: stackUrl });
@@ -130,150 +128,135 @@ export function ShareDialog({ children, stackUrl, stackState }: ShareDialogProps
     }
   };
 
-  useEffect(() => {
-    if (!showQr || !stackUrl) return;
-    setQrFailed(false);
-    // Site is dark-only; match QR contrast to the forced dark UI.
-    QRCode.toDataURL(stackUrl, {
-      width: 320,
-      margin: 2,
-      color: {
-        dark: "#cdd6f4",
-        light: "#11111b",
-      },
-    })
-      .then(setQrCodeDataUrl)
-      .catch(() => {
-        setQrCodeDataUrl("");
-        setQrFailed(true);
-      });
-  }, [showQr, stackUrl]);
-
   return (
-    <Dialog>
-      <DialogTrigger
-        render={
-          React.isValidElement(children) ? children : <button type="button">{children}</button>
-        }
-      />
-      <DialogContent className="grid max-h-[85vh] grid-cols-1 gap-3 overflow-y-auto bg-fd-background sm:max-w-lg">
-        <DialogHeader className="border-border border-b pb-3">
-          <div className="flex items-center gap-2">
-            <Terminal className="h-4 w-4 text-primary" />
-            <DialogTitle className="font-mono font-semibold text-foreground text-sm">
-              SHARE_STACK.SH
-            </DialogTitle>
-          </div>
-          <DialogDescription className="font-mono text-muted-foreground text-xs">
-            $ ./share --stack {projectName}
-          </DialogDescription>
-        </DialogHeader>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTrigger render={trigger}>{children}</DialogTrigger>
+      <DialogContent
+        showCloseButton={false}
+        className="grid max-h-[85vh] min-h-0 grid-cols-1 gap-0 overflow-hidden rounded-2xl bg-fd-background p-0 md:min-h-[30rem] md:max-w-5xl md:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]"
+      >
+        <div className="flex min-h-0 min-w-0 flex-col overflow-y-auto p-4 sm:p-6">
+          <DialogHeader className="pb-4 pr-8">
+            <div className="flex items-center gap-2">
+              <Terminal className="h-4 w-4 text-primary" />
+              <DialogTitle className="font-mono font-semibold text-foreground text-sm">
+                Compartilhar Stack
+              </DialogTitle>
+            </div>
+          </DialogHeader>
 
-        <div className="rounded border border-border">
-          <div className="flex items-center gap-2 border-border border-b px-3 py-2">
-            <span className="text-primary text-xs">▶</span>
-            <span className="font-mono font-semibold text-foreground text-xs">
-              SOCIAL_PREVIEW.PNG
-            </span>
-            <span className="ml-auto font-mono text-[10px] text-muted-foreground uppercase">
-              {selectedTechs.length} tecnologias
-            </span>
-          </div>
-          <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted/10">
-            {!previewLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center gap-2 font-mono text-muted-foreground text-xs">
-                <span className="text-primary">$</span>
-                <span className="animate-pulse">renderizando prévia...</span>
-              </div>
-            )}
-            <Image
-              src={ogImageUrl}
-              alt={`Cartão de prévia social de ${projectName}`}
-              width={1200}
-              height={630}
-              unoptimized
-              onLoad={() => setPreviewLoaded(true)}
-              className={cn(
-                "h-full w-full object-cover transition-opacity duration-300",
-                previewLoaded ? "opacity-100" : "opacity-0",
-              )}
+          <div className="grid gap-3">
+            <CopyCommandButton
+              value={command}
+              copied={copiedTarget === "command"}
+              onCopy={() => copyValue("command", command)}
+            />
+            <CopyCommandButton
+              value={stackUrl}
+              label="URL"
+              icon={<Link2 className="h-3.5 w-3.5" />}
+              copied={copiedTarget === "url"}
+              onCopy={() => copyValue("url", stackUrl)}
             />
           </div>
-        </div>
 
-        <div className="grid min-w-0 grid-cols-1 gap-2">
-          <CopyRow
-            icon={<Link2 className="h-3.5 w-3.5" />}
-            label="Link"
-            value={stackUrl}
-            copied={copiedTarget === "url"}
-            onCopy={() => copyValue("url", stackUrl)}
-          />
-          <CopyRow
-            icon={<SquareTerminal className="h-3.5 w-3.5" />}
-            label="Comando"
-            value={command}
-            copied={copiedTarget === "command"}
-            onCopy={() => copyValue("command", command)}
-          />
-        </div>
-
-        <div className={cn("grid gap-2", canNativeShare ? "grid-cols-3" : "grid-cols-2")}>
-          <button
-            type="button"
-            onClick={shareToTwitter}
-            className="builder-focus-ring inline-flex h-10 items-center justify-center gap-1.5 rounded-md border border-border bg-muted/10 px-3 font-mono text-muted-foreground text-xs transition-colors hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground"
-          >
-            <FaXTwitter className="h-3 w-3" />
-            Postar
-          </button>
-          {canNativeShare && (
-            <button
-              type="button"
-              onClick={nativeShare}
-              className="builder-focus-ring inline-flex h-10 items-center justify-center gap-1.5 rounded-md border border-border bg-muted/10 px-3 font-mono text-muted-foreground text-xs transition-colors hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground"
-            >
-              <Share2 className="h-3 w-3" />
-              Compartilhar
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={() => setShowQr((prev) => !prev)}
-            className={cn(
-              "builder-focus-ring inline-flex h-10 items-center justify-center gap-1.5 rounded-md border px-3 font-mono text-xs transition-colors",
-              showQr
-                ? "border-primary/30 bg-primary/10 text-primary"
-                : "border-border bg-muted/10 text-muted-foreground hover:border-muted-foreground/30 hover:bg-muted/25 hover:text-foreground",
-            )}
-          >
-            <QrCode className="h-3 w-3" />
-            QR
-          </button>
-        </div>
-
-        {showQr && (
-          <div className="flex flex-col items-center gap-2 rounded border border-border bg-muted/10 p-4">
+          <div className="flex min-h-0 flex-1 items-center justify-center py-4">
             {qrCodeDataUrl ? (
               <Image
                 src={qrCodeDataUrl}
-                width={160}
-                height={160}
+                width={224}
+                height={224}
                 alt="QR code com link para esta stack"
-                className="h-40 w-40 rounded"
+                className="h-56 w-56 rounded"
               />
             ) : qrFailed ? (
-              <div className="flex h-40 w-40 items-center justify-center font-mono text-destructive text-xs">
+              <div className="flex h-56 w-56 items-center justify-center font-mono text-destructive text-xs">
                 falha ao gerar qr
               </div>
             ) : (
-              <div className="flex h-40 w-40 items-center justify-center font-mono text-muted-foreground text-xs">
+              <div className="flex h-56 w-56 items-center justify-center font-mono text-muted-foreground text-xs">
                 <span className="animate-pulse">gerando...</span>
               </div>
             )}
-            <span className="font-mono text-[10px] text-muted-foreground">$ scan --open stack</span>
           </div>
-        )}
+
+          <div className="mt-auto grid gap-2 pt-6">
+            <div className={cn("grid gap-2", canNativeShare ? "grid-cols-3" : "grid-cols-2")}>
+              <Button
+                type="button"
+                onClick={shareToTwitter}
+                variant="secondary"
+                size="lg"
+                className="w-full"
+              >
+                <FaXTwitter className="h-4 w-4" />
+                Postar
+              </Button>
+              {canNativeShare && (
+                <Button
+                  type="button"
+                  onClick={nativeShare}
+                  variant="cta"
+                  size="lg"
+                  className="w-full"
+                >
+                  <Share2 className="h-4 w-4" />
+                  Compartilhar
+                </Button>
+              )}
+              <Button
+                type="button"
+                onClick={shareToLinkedIn}
+                variant="secondary"
+                size="lg"
+                className="w-full"
+              >
+                <FaLinkedin className="h-4 w-4" />
+                Postar
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative flex min-w-0 items-center overflow-y-auto border-border border-t bg-muted/5 p-3 sm:p-4 md:border-t-0 md:border-l">
+          <DialogClose
+            render={
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                className="absolute top-2 right-2 z-10 text-muted-foreground hover:text-foreground"
+              />
+            }
+          >
+            <XIcon className="size-4" />
+            <span className="sr-only">Fechar</span>
+          </DialogClose>
+          <div className="w-full min-w-0">
+            <div className="rounded border border-border">
+              <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted/10">
+                {!previewLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center gap-2 font-mono text-muted-foreground text-xs">
+                    <span className="text-primary">$</span>
+                    <span className="animate-pulse">renderizando prévia...</span>
+                  </div>
+                )}
+                <Image
+                  src={ogImageUrl}
+                  alt={`Cartão de prévia social de ${projectName}`}
+                  width={1200}
+                  height={630}
+                  unoptimized
+                  onLoad={() => setPreviewLoaded(true)}
+                  className={cn(
+                    "h-full w-full object-cover transition-opacity duration-300",
+                    previewLoaded ? "opacity-100" : "opacity-0",
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -7,7 +7,7 @@ import { FaGithub, FaXTwitter } from "react-icons/fa6";
 import { KuboMark } from "@/components/brand/kubo-mark";
 import { cn } from "@/lib/utils";
 
-const primaryLinks = [{ href: "/#documentation", label: "Docs" }] as const;
+const primaryLinks = [{ href: "/docs", label: "Docs" }] as const;
 
 const socialLinks = [
   {

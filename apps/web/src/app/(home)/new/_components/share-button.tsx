@@ -2,25 +2,36 @@
 
 import { Share2 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { ShareDialog } from "@/components/ui/share-dialog";
 import type { StackState } from "@/lib/constant";
 
 interface ShareButtonProps {
   stackUrl: string;
   stackState: StackState;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function ShareButton({ stackUrl, stackState }: ShareButtonProps) {
+export function ShareButton({ stackUrl, stackState, open, onOpenChange }: ShareButtonProps) {
   return (
-    <ShareDialog stackUrl={stackUrl} stackState={stackState}>
-      <button
-        type="button"
-        className="builder-focus-ring inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-md bg-primary/15 px-3 font-mono font-medium text-primary text-xs transition-colors hover:bg-primary/22"
-        title="Compartilhar sua stack"
-      >
-        <Share2 className="h-3 w-3" />
-        Compartilhar
-      </button>
+    <ShareDialog
+      stackUrl={stackUrl}
+      stackState={stackState}
+      open={open}
+      onOpenChange={onOpenChange}
+      trigger={
+        <Button
+          type="button"
+          variant="secondary"
+          size="default"
+          className="w-full font-mono"
+          title="Compartilhar sua stack"
+        />
+      }
+    >
+      <Share2 data-icon="inline-start" className="h-3 w-3" />
+      Compartilhar
     </ShareDialog>
   );
 }

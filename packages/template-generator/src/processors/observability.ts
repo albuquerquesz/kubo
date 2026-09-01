@@ -431,7 +431,7 @@ function processNodeIntegration(vfs: VirtualFileSystem, config: ProjectConfig): 
     dependencies: ["@getmonitor/node"],
   });
   vfs.writeFile(
-    "apps/server/src/getmonitor.ts",
+    "apps/server/src/shared/getmonitor.ts",
     `import { GetMonitor } from "@getmonitor/node";
 import { env } from "@${config.projectName}/env/server";
 
@@ -446,8 +446,8 @@ export const getMonitor = env.GETMONITOR_API_KEY
   const entryPath = "apps/server/src/index.ts";
   if (!vfs.exists(entryPath)) return;
   let content = vfs.readFile(entryPath) ?? "";
-  if (!content.includes('from "./getmonitor"')) {
-    content = `import { getMonitor } from "./getmonitor";\n${content}`;
+  if (!content.includes('from "./shared/getmonitor"')) {
+    content = `import { getMonitor } from "./shared/getmonitor";\n${content}`;
   }
   if (config.backend !== "express" || content.includes("setupExpressErrorHandler")) {
     if (!content.includes("void getMonitor;")) {

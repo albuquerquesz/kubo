@@ -10,6 +10,7 @@ import type { CategoryProgressItem } from "./use-stack-builder";
 type CategoryNavProps = {
   progress: CategoryProgressItem[];
   idPrefix: string;
+  orientation?: "horizontal" | "vertical";
 };
 
 function getScrollViewport(el: HTMLElement) {
@@ -38,9 +39,10 @@ export function scrollToCategorySection(idPrefix: string, category: string, retr
   viewport.scrollTo({ top, behavior: "smooth" });
 }
 
-export function CategoryNav({ progress, idPrefix }: CategoryNavProps) {
+export function CategoryNav({ progress, idPrefix, orientation = "horizontal" }: CategoryNavProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const railRef = useRef<HTMLDivElement | null>(null);
+  const isVertical = orientation === "vertical";
 
   useEffect(() => {
     const sections = progress
@@ -79,17 +81,34 @@ export function CategoryNav({ progress, idPrefix }: CategoryNavProps) {
     if (!chip) return;
     const railRect = rail.getBoundingClientRect();
     const chipRect = chip.getBoundingClientRect();
+    if (isVertical) {
+      if (chipRect.top < railRect.top) {
+        rail.scrollBy({ top: chipRect.top - railRect.top - 24, behavior: "smooth" });
+        return;
+      }
+      if (chipRect.bottom > railRect.bottom) {
+        rail.scrollBy({ top: chipRect.bottom - railRect.bottom + 24, behavior: "smooth" });
+        return;
+      }
+      return;
+    }
+
     if (chipRect.left < railRect.left) {
       rail.scrollBy({ left: chipRect.left - railRect.left - 24, behavior: "smooth" });
     } else if (chipRect.right > railRect.right) {
       rail.scrollBy({ left: chipRect.right - railRect.right + 24, behavior: "smooth" });
     }
-  }, [activeCategory]);
+  }, [activeCategory, isVertical]);
 
   return (
     <div
       ref={railRef}
-      className="-my-1 flex items-center gap-1 overflow-x-auto px-0.5 py-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className={cn(
+        "flex gap-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        isVertical
+          ? "min-h-0 flex-1 flex-col items-stretch overflow-y-auto px-3 py-3"
+          : "-my-1 items-center overflow-x-auto px-0.5 py-1",
+      )}
     >
       {progress.map(({ category, done, selected }) => {
         const isActive = category === activeCategory;
@@ -101,9 +120,12 @@ export function CategoryNav({ progress, idPrefix }: CategoryNavProps) {
             onClick={() => scrollToCategorySection(idPrefix, category)}
             title={`Ir para ${getCategoryDisplayName(category)}`}
             className={cn(
-              "builder-focus-ring flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide transition-colors",
+              "builder-focus-ring flex shrink-0 items-center gap-1.5 font-mono tracking-wide transition-colors",
+              isVertical
+                ? "w-full justify-between rounded-[0.5rem] px-3 py-2 text-left text-xs"
+                : "whitespace-nowrap rounded-full px-2 py-0.5 text-[10px]",
               done
-                ? "bg-primary/10 text-primary hover:bg-primary/18"
+                ? "bg-primary/8 text-primary hover:bg-primary/12"
                 : "bg-muted/15 text-muted-foreground hover:bg-muted/30 hover:text-foreground",
               isActive && "ring-1 ring-primary/60",
             )}
@@ -114,7 +136,9 @@ export function CategoryNav({ progress, idPrefix }: CategoryNavProps) {
                 done ? "bg-primary" : "bg-muted-foreground/40",
               )}
             />
-            {getCategoryDisplayName(category)}
+            <span className="min-w-0 flex-1 text-left uppercase">
+              {getCategoryDisplayName(category)}
+            </span>
             {selected > 1 && <span>({selected})</span>}
           </button>
         );

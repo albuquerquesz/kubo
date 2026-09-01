@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
 import { ShareDialog } from "@/components/ui/share-dialog";
 import { TechBadge } from "@/components/ui/tech-badge";
 import type { LoadedStackState } from "@/lib/stack-url-state";
@@ -101,14 +102,20 @@ export function StackDisplay({ stackState }: StackDisplayProps) {
             </button>
           </Link>
 
-          <ShareDialog stackUrl={stackUrl} stackState={stackState}>
-            <button
-              type="button"
-              className="inline-flex h-8 items-center gap-2 rounded-md border border-border bg-fd-background px-3 font-mono text-muted-foreground text-xs transition-all hover:border-muted-foreground/30 hover:bg-muted hover:text-foreground"
-            >
-              <Share2 className="h-3 w-3" />
-              <span>./share --config</span>
-            </button>
+          <ShareDialog
+            stackUrl={stackUrl}
+            stackState={stackState}
+            trigger={
+              <Button
+                type="button"
+                variant="outline"
+                size="default"
+                className="font-mono text-muted-foreground"
+              />
+            }
+          >
+            <Share2 data-icon="inline-start" className="h-3 w-3" />
+            <span>./share --config</span>
           </ShareDialog>
         </div>
 

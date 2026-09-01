@@ -2,6 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 import FinalCtaDotMatrix from "./final-cta-dot-matrix";
 
@@ -57,7 +58,7 @@ export default function Footer() {
               required
               autoComplete="email"
               placeholder="voce@exemplo.com"
-              className="min-h-12 min-w-0 flex-1 rounded-2xl border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40"
+              className="min-h-12 min-w-0 flex-1 rounded-full border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 sm:max-w-[280px]"
             />
             <Button type="submit" variant="cta" size="lg" className="shrink-0">
               Entrar
@@ -66,10 +67,13 @@ export default function Footer() {
           </form>
         </div>
 
-        {footerGroups.map((group) => (
+        {footerGroups.map((group, index) => (
           <div
             key={group.label}
-            className="border-rule p-6 not-last:border-b sm:p-8 sm:not-last:border-r sm:not-last:border-b-0 lg:p-12 lg:py-20"
+            className={cn(
+              "border-rule p-6 not-last:border-b sm:p-8 sm:not-last:border-r sm:not-last:border-b-0 lg:p-12 lg:py-20",
+              index === 0 && "sm:border-l",
+            )}
           >
             <p className="ui-kicker text-primary">{group.label}</p>
             <ul className="mt-8 space-y-4">

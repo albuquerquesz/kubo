@@ -1,23 +1,19 @@
 "use client";
 
-import {
-  AlertTriangle,
-  Check,
-  ChevronDown,
-  ClipboardCopy,
-  FolderTree,
-  Terminal,
-} from "lucide-react";
-import { startTransition, useState } from "react";
+import { AlertTriangle, FolderTree, Terminal } from "lucide-react";
+import { startTransition, useCallback, useRef, useState } from "react";
 
+import CopyInstallCommandButton from "@/app/(home)/_components/copy-install-command-button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ShareDialog } from "@/components/ui/share-dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { formatStackCommandForDisplay, getDesktopBuildNote } from "@/lib/stack-utils";
+import { getDesktopBuildNote } from "@/lib/stack-utils";
 import type { Sponsor } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 import { ActionButtons } from "../action-buttons";
+import { PresetDialog } from "../preset-dialog";
 import { PreviewPanel } from "../preview-panel";
 import { SpecialSponsorsPanel } from "../special-sponsors-panel";
 import { CategoryNav, scrollToCategorySection } from "./category-nav";
@@ -35,9 +31,6 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
     categoryProgress,
     command,
     compatibilityAnalysis,
-    copied,
-    copyToClipboard,
-    getRandomStack,
     getStackUrl,
     handleTechSelect,
     lastSavedStack,
@@ -59,19 +52,24 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
   } = useStackBuilder();
   const effectiveStack = compatibilityAnalysis.adjustedStack || stack;
   const desktopBuildNote = getDesktopBuildNote(effectiveStack);
-  const displayCommand = formatStackCommandForDisplay(command);
-  const [commandExpanded, setCommandExpanded] = useState(false);
-  const isCommandMultiline = displayCommand !== command;
+  const [shareOpen, setShareOpen] = useState(false);
+  const hasPromptedShareAfterCopyRef = useRef(false);
+
+  const handleCommandCopied = useCallback(() => {
+    if (hasPromptedShareAfterCopyRef.current) return;
+    hasPromptedShareAfterCopyRef.current = true;
+    setShareOpen(true);
+  }, []);
+
+  const stackUrl = getStackUrl();
 
   const actionButtons = (
     <ActionButtons
       onReset={resetStack}
-      onRandom={getRandomStack}
       onSave={saveCurrentStack}
       onLoad={loadSavedStack}
       hasSavedStack={!!lastSavedStack}
-      onApplyPreset={applyPreset}
-      stackUrl={getStackUrl()}
+      stackUrl={stackUrl}
       stackState={effectiveStack}
       yolo={stack.yolo === "true"}
       onYoloToggle={(yolo) => setStack({ yolo })}
@@ -80,7 +78,17 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
 
   return (
     <TooltipProvider>
-      <div className="flex h-full w-full flex-col overflow-hidden bg-fd-background text-foreground">
+      <div className="flex h-full w-full flex-col overflow-hidden bg-background text-foreground">
+        {/* Single controlled share dialog for first-copy prompt (desktop+mobile ActionButtons stay uncontrolled). */}
+        <ShareDialog
+          stackUrl={stackUrl}
+          stackState={effectiveStack}
+          open={shareOpen}
+          onOpenChange={setShareOpen}
+          trigger={<button type="button" tabIndex={-1} className="sr-only" aria-hidden />}
+        >
+          Compartilhar stack
+        </ShareDialog>
         <div className="sticky top-0 z-20 border-border border-b bg-fd-background/95 px-3 py-2 backdrop-blur-sm sm:hidden">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 rounded-md bg-muted/20 p-1">
@@ -136,10 +144,10 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                         aria-invalid={!!projectNameError}
                         aria-describedby={projectNameError ? "project-name-error" : undefined}
                         className={cn(
-                          "builder-focus-ring w-full rounded-lg px-2.5 py-1.5 font-mono text-sm focus:outline-none",
+                          "builder-focus-ring min-h-12 min-w-0 w-full rounded-full border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 dark:bg-background md:text-sm",
                           projectNameError
-                            ? "border-destructive bg-destructive/10 text-destructive-foreground"
-                            : "border-border/60 focus:border-primary",
+                            ? "border-destructive bg-destructive/10 text-destructive-foreground dark:bg-destructive/10"
+                            : undefined,
                         )}
                         placeholder="my-kubo-app"
                       />
@@ -151,74 +159,21 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     </label>
                   </section>
 
-                  <section className="space-y-2 border-border/20 border-b px-3 py-3">
-                    <div className="flex items-center justify-between">
-                      <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-                        Comando CLI
-                      </p>
-                      <div className="flex items-center gap-1">
-                        {isCommandMultiline && (
-                          <button
-                            type="button"
-                            onClick={() => setCommandExpanded((prev) => !prev)}
-                            className="builder-focus-ring flex items-center gap-1 rounded-md bg-muted/20 px-2 py-1 font-mono text-[11px] text-muted-foreground uppercase transition-colors hover:bg-muted/35 hover:text-foreground"
-                            title={
-                              commandExpanded ? "Recolher comando" : "Mostrar comando completo"
-                            }
-                          >
-                            <ChevronDown
-                              className={cn(
-                                "h-3 w-3 shrink-0 transition-transform",
-                                commandExpanded && "rotate-180",
-                              )}
-                            />
-                            {commandExpanded ? "Menos" : "Flags"}
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          onClick={copyToClipboard}
-                          className={cn(
-                            "builder-focus-ring flex items-center gap-1 rounded-md px-2 py-1 font-mono text-[11px] uppercase transition-colors",
-                            copied
-                              ? "bg-primary/14 text-primary"
-                              : "bg-muted/20 text-muted-foreground hover:bg-muted/35 hover:text-foreground",
-                          )}
-                          title={copied ? "Copiado!" : "Copiar comando"}
-                        >
-                          {copied ? (
-                            <Check className="h-3 w-3 shrink-0" />
-                          ) : (
-                            <ClipboardCopy className="h-3 w-3 shrink-0" />
-                          )}
-                          {copied ? "Copiado" : "Copiar"}
-                        </button>
-                      </div>
-                    </div>
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      onClick={copyToClipboard}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                          event.preventDefault();
-                          copyToClipboard();
-                        }
-                      }}
-                      aria-label="Copiar comando CLI"
-                      title="Clique para copiar o comando"
-                      className="builder-focus-ring cursor-pointer rounded-lg bg-muted/20 px-2.5 py-2"
-                    >
-                      <code
-                        className={cn(
-                          "block font-mono text-muted-foreground text-xs",
-                          commandExpanded ? "whitespace-pre-wrap break-words" : "truncate",
-                        )}
-                      >
-                        {commandExpanded ? displayCommand : command}
-                      </code>
-                    </div>
+                  <section className="border-border/20 border-b px-3 py-3">
+                    <CopyInstallCommandButton
+                      command={command}
+                      compact
+                      confetti
+                      className="w-full max-w-full px-4"
+                      onCopied={handleCommandCopied}
+                    />
                   </section>
+
+                  <section className="border-border/20 border-b px-3 py-3">
+                    <PresetDialog onApplyPreset={applyPreset} />
+                  </section>
+
+                  <section className="border-border/20 border-b px-3 py-3">{actionButtons}</section>
 
                   <section className="space-y-2 px-3 py-3">
                     <div className="flex items-center justify-between">
@@ -276,17 +231,17 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
               </div>
             </ScrollArea>
 
-            <div className="border-border/35 border-t bg-fd-background/95 p-2">
-              <div className="rounded-2xl bg-fd-background/80 p-2">
-                <SpecialSponsorsPanel sponsors={specialSponsors} />
-                {specialSponsors.length > 0 ? <div className="my-2 h-px bg-border/25" /> : null}
-                {actionButtons}
+            {specialSponsors.length > 0 ? (
+              <div className="border-border/35 border-t bg-fd-background/95 p-2">
+                <div className="rounded-2xl bg-fd-background/80 p-2">
+                  <SpecialSponsorsPanel sponsors={specialSponsors} />
+                </div>
               </div>
-            </div>
+            ) : null}
           </aside>
 
-          <section className="flex min-h-0 flex-col overflow-hidden">
-            <div className="sticky top-0 z-10 flex flex-col gap-2 border-border border-b bg-fd-background px-3 py-2">
+          <div className="grid min-h-0 min-w-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden lg:grid-cols-[minmax(0,1fr)_15rem]">
+            <div className="sticky top-0 z-10 flex flex-col gap-2 border-border border-b bg-fd-background px-3 py-2 lg:col-span-2">
               <div className="flex w-fit items-center gap-1 rounded-md bg-muted/20 p-1">
                 <button
                   type="button"
@@ -324,32 +279,46 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                 </button>
               </div>
               {viewMode === "command" && (
-                <CategoryNav progress={categoryProgress} idPrefix="section" />
+                <div className="lg:hidden">
+                  <CategoryNav progress={categoryProgress} idPrefix="section" />
+                </div>
               )}
             </div>
 
-            {viewMode === "command" ? (
-              <div ref={scrollAreaRef} className="min-h-0 flex-1">
-                <ScrollArea className="h-full overflow-hidden scroll-smooth">
-                  <main className="p-2 sm:p-4">
-                    <TechCategories
-                      mode="desktop"
-                      stack={stack}
-                      compatibilityNotes={compatibilityAnalysis.notes}
-                      onSelect={handleTechSelect}
-                      showAllCategories
-                    />
-                  </main>
-                </ScrollArea>
-              </div>
-            ) : (
-              <PreviewPanel
-                stack={effectiveStack}
-                selectedFilePath={selectedFile}
-                onSelectFile={setSelectedFile}
-              />
-            )}
-          </section>
+            <section className="flex min-h-0 flex-col overflow-hidden">
+              {viewMode === "command" ? (
+                <div ref={scrollAreaRef} className="min-h-0 flex-1">
+                  <ScrollArea className="h-full overflow-hidden scroll-smooth">
+                    <main className="p-2 sm:p-4">
+                      <TechCategories
+                        mode="desktop"
+                        stack={stack}
+                        compatibilityNotes={compatibilityAnalysis.notes}
+                        onSelect={handleTechSelect}
+                        showAllCategories
+                      />
+                    </main>
+                  </ScrollArea>
+                </div>
+              ) : (
+                <PreviewPanel
+                  stack={effectiveStack}
+                  selectedFilePath={selectedFile}
+                  onSelectFile={setSelectedFile}
+                />
+              )}
+            </section>
+
+            <aside className="hidden min-h-0 flex-col overflow-hidden border-rule border-l bg-background lg:flex">
+              {viewMode === "command" && (
+                <CategoryNav
+                  progress={categoryProgress}
+                  idPrefix="section"
+                  orientation="vertical"
+                />
+              )}
+            </aside>
+          </div>
         </div>
 
         <div className="flex flex-1 flex-col overflow-hidden sm:hidden">
@@ -373,10 +342,10 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                           projectNameError ? "project-name-error-mobile" : undefined
                         }
                         className={cn(
-                          "builder-focus-ring w-full rounded-lg border bg-background/75 px-2.5 py-1.5 font-mono text-sm focus:outline-none",
+                          "builder-focus-ring min-h-12 min-w-0 w-full rounded-full border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 dark:bg-background md:text-sm",
                           projectNameError
-                            ? "border-destructive bg-destructive/10 text-destructive-foreground"
-                            : "border-border/60 focus:border-primary",
+                            ? "border-destructive bg-destructive/10 text-destructive-foreground dark:bg-destructive/10"
+                            : undefined,
                         )}
                         placeholder="my-kubo-app"
                       />
@@ -388,76 +357,18 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     </label>
 
                     <div className="space-y-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wide">
-                          Comando CLI
-                        </span>
-                        <div className="flex items-center gap-1">
-                          {isCommandMultiline && (
-                            <button
-                              type="button"
-                              onClick={() => setCommandExpanded((prev) => !prev)}
-                              className="builder-focus-ring flex items-center gap-1 rounded-md bg-muted/20 px-2 py-1 font-mono text-[11px] text-muted-foreground uppercase"
-                              title={
-                                commandExpanded ? "Recolher comando" : "Mostrar comando completo"
-                              }
-                            >
-                              <ChevronDown
-                                className={cn(
-                                  "h-3 w-3 shrink-0 transition-transform",
-                                  commandExpanded && "rotate-180",
-                                )}
-                              />
-                              {commandExpanded ? "Menos" : "Flags"}
-                            </button>
-                          )}
-                          <span
-                            className={cn(
-                              "flex items-center gap-1 rounded-md px-2 py-1 font-mono text-[11px] uppercase",
-                              copied
-                                ? "bg-primary/14 text-primary"
-                                : "bg-muted/20 text-muted-foreground",
-                            )}
-                          >
-                            {copied ? (
-                              <Check className="h-3 w-3 shrink-0" />
-                            ) : (
-                              <ClipboardCopy className="h-3 w-3 shrink-0" />
-                            )}
-                            {copied ? "Copiado" : "Toque para copiar"}
-                          </span>
-                        </div>
-                      </div>
-                      <div
-                        role="button"
-                        tabIndex={0}
-                        onClick={copyToClipboard}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
-                            copyToClipboard();
-                          }
-                        }}
-                        className={cn(
-                          "builder-focus-ring rounded-lg bg-background/75 px-2.5 py-2 font-mono text-xs text-muted-foreground ring-1",
-                          copied ? "ring-primary/40" : "ring-border/45",
-                        )}
-                        aria-label="Copiar comando"
-                        title="Clique para copiar o comando"
-                      >
-                        <div className="flex min-w-0 items-start gap-1.5">
-                          <span className="mt-0.5 text-chart-4">$</span>
-                          <code
-                            className={cn(
-                              "min-w-0 flex-1",
-                              commandExpanded ? "whitespace-pre-wrap break-words" : "truncate",
-                            )}
-                          >
-                            {commandExpanded ? displayCommand : command}
-                          </code>
-                        </div>
-                      </div>
+                      <CopyInstallCommandButton
+                        command={command}
+                        compact
+                        confetti
+                        className="w-full max-w-full px-4"
+                        onCopied={handleCommandCopied}
+                      />
                     </div>
+
+                    <PresetDialog onApplyPreset={applyPreset} />
+
+                    {actionButtons}
 
                     {desktopBuildNote && (
                       <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-2">
@@ -480,13 +391,13 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                 </main>
               </ScrollArea>
 
-              <div className="border-border/35 border-t bg-fd-background/95 p-2 backdrop-blur-sm">
-                <div className="rounded-xl bg-fd-background/80 p-2">
-                  <SpecialSponsorsPanel sponsors={specialSponsors} compact />
-                  {specialSponsors.length > 0 ? <div className="my-2 h-px bg-border/25" /> : null}
-                  {actionButtons}
+              {specialSponsors.length > 0 ? (
+                <div className="border-border/35 border-t bg-fd-background/95 p-2 backdrop-blur-sm">
+                  <div className="rounded-xl bg-fd-background/80 p-2">
+                    <SpecialSponsorsPanel sponsors={specialSponsors} compact />
+                  </div>
                 </div>
-              </div>
+              ) : null}
             </div>
           )}
 

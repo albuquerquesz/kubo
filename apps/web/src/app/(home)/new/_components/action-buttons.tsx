@@ -1,105 +1,94 @@
 "use client";
 
-import { AlertTriangle, RefreshCw, Settings, Shuffle, Star } from "lucide-react";
+import { AlertTriangle, RefreshCw, Settings, Star } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { StackState } from "@/lib/constant";
 import { cn } from "@/lib/utils";
 
-import { PresetDropdown } from "./preset-dropdown";
 import { ShareButton } from "./share-button";
+
+/** Temporarily hidden from the stack builder actions row. */
+const SHOW_YOLO_BUTTON = false;
 
 type ActionButtonsProps = {
   onReset: () => void;
-  onRandom: () => void;
   onSave: () => void;
   onLoad: () => void;
   hasSavedStack: boolean;
-  onApplyPreset: (presetId: string) => void;
   stackUrl: string;
   stackState: StackState;
   yolo: boolean;
   onYoloToggle: (yolo: string) => void;
 };
 
-const mutedActionClasses =
-  "builder-focus-ring inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-muted/20 px-3 font-mono font-medium text-muted-foreground text-xs transition-colors hover:bg-muted/35 hover:text-foreground";
-
 export function ActionButtons({
   onReset,
-  onRandom,
   onSave,
   onLoad,
   hasSavedStack,
-  onApplyPreset,
   stackUrl,
   stackState,
   yolo,
   onYoloToggle,
 }: ActionButtonsProps) {
   return (
-    <div className="space-y-1.5">
-      <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">Ações</p>
-      <div className="grid grid-cols-2 gap-1.5">
-        <button
-          type="button"
-          onClick={onRandom}
-          className="builder-focus-ring inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-primary/15 px-3 font-mono font-medium text-primary text-xs transition-colors hover:bg-primary/22"
-          title="Gerar uma stack aleatória"
-        >
-          <Shuffle className="h-3 w-3" />
-          Aleatorizar
-        </button>
-        <button
-          type="button"
-          onClick={onSave}
-          className={mutedActionClasses}
-          title="Salvar preferências atuais"
-        >
-          <Star className="h-3 w-3" />
-          Salvar
-        </button>
-        <button
-          type="button"
-          onClick={onReset}
-          className={cn(mutedActionClasses, !hasSavedStack && "col-span-2")}
-          title="Restaurar padrões"
-        >
-          <RefreshCw className="h-3 w-3" />
-          Redefinir
-        </button>
-        {hasSavedStack && (
-          <button
-            type="button"
-            onClick={onLoad}
-            className={mutedActionClasses}
-            title="Carregar preferências salvas"
-          >
-            <Settings className="h-3 w-3" />
-            Carregar
-          </button>
-        )}
-      </div>
-      <div className="grid grid-cols-3 gap-1.5">
-        <ShareButton stackUrl={stackUrl} stackState={stackState} />
-        <PresetDropdown onApplyPreset={onApplyPreset} />
+    <div className="grid grid-cols-2 gap-2.5">
+      <Button
+        type="button"
+        onClick={onSave}
+        variant="secondary"
+        size="default"
+        className="w-full font-mono"
+        title="Salvar preferências atuais"
+      >
+        <Star className="h-3 w-3" />
+        Salvar
+      </Button>
+      <Button
+        type="button"
+        onClick={onReset}
+        variant="secondary"
+        size="default"
+        className="w-full font-mono"
+        title="Restaurar padrões"
+      >
+        <RefreshCw className="h-3 w-3" />
+        Redefinir
+      </Button>
+      <Button
+        type="button"
+        onClick={onLoad}
+        variant="secondary"
+        size="default"
+        className="w-full font-mono"
+        title="Carregar preferências salvas"
+        disabled={!hasSavedStack}
+      >
+        <Settings className="h-3 w-3" />
+        Carregar
+      </Button>
+      <ShareButton stackUrl={stackUrl} stackState={stackState} />
+      {SHOW_YOLO_BUTTON ? (
         <Tooltip delay={100}>
           <TooltipTrigger
             render={
-              <button
+              <Button
                 type="button"
+                variant="secondary"
+                size="default"
                 onClick={() => onYoloToggle(yolo ? "false" : "true")}
                 aria-pressed={yolo}
                 className={cn(
-                  "builder-focus-ring inline-flex h-8 items-center justify-center gap-1.5 rounded-md px-3 font-mono font-medium text-xs transition-colors",
-                  yolo
-                    ? "bg-destructive/15 text-destructive hover:bg-destructive/25"
-                    : "bg-muted/20 text-muted-foreground hover:bg-muted/35 hover:text-foreground",
+                  "w-full font-mono",
+                  yolo &&
+                    "bg-destructive/15 text-destructive hover:bg-destructive/25 hover:text-destructive",
                 )}
               />
             }
           >
-            <AlertTriangle className="h-3 w-3" />
+            <AlertTriangle data-icon="inline-start" className="h-3 w-3" />
             YOLO
           </TooltipTrigger>
           <TooltipContent side="top" align="end" className="max-w-xs">
@@ -109,7 +98,7 @@ export function ActionButtons({
             </p>
           </TooltipContent>
         </Tooltip>
-      </div>
+      ) : null}
     </div>
   );
 }
