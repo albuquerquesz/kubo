@@ -139,7 +139,7 @@ export async function GET(req: NextRequest) {
             {projectName}
           </div>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", maxWidth: "760px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", maxWidth: "980px" }}>
             {visible.map((tech) => {
               const iconSrc = iconSrcByPath.get(tech.icon);
               return (
