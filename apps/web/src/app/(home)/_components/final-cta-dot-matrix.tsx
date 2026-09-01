@@ -27,7 +27,7 @@ export default function FinalCtaDotMatrix() {
     >
       <DotMatrixBackdrop />
 
-      <div className="relative z-10 mx-auto flex min-h-[20.375rem] w-full max-w-[1200px] flex-col justify-center gap-6 px-6 py-20 md:px-8">
+      <div className="relative z-10 mx-auto flex min-h-[20.375rem] w-full max-w-[1200px] flex-col justify-center gap-6 py-20">
         <h2
           id="final-cta-title"
           className="ui-display max-w-[47.5rem] text-balance text-[clamp(2rem,3vw,3.5rem)] leading-[0.93] text-white"
