@@ -37,7 +37,8 @@ describe("GetMonitor observability", () => {
     const serverPackage = JSON.parse(files.get("apps/server/package.json") ?? "{}");
     const getmonitorClient = files.get("apps/web/src/lib/getmonitor.ts") ?? "";
     const rootRoute = files.get("apps/web/src/routes/__root.tsx") ?? "";
-    const serverGm = files.get("apps/server/src/getmonitor.ts") ?? "";
+    const serverGm = files.get("apps/server/src/shared/getmonitor.ts") ?? "";
+    const serverIndex = files.get("apps/server/src/index.ts") ?? "";
     const webEnv = files.get("apps/web/.env") ?? "";
     const serverEnv = files.get("apps/server/.env") ?? "";
     const webEnvSchema = files.get("packages/env/src/web.ts") ?? "";
@@ -60,6 +61,8 @@ describe("GetMonitor observability", () => {
     expect(rootRoute).toContain("GetMonitorErrorBoundary");
     expect(serverGm).toContain("new GetMonitor");
     expect(serverGm).not.toContain("apiHost");
+    expect(serverIndex).toContain('from "./shared/getmonitor"');
+    expect(files.has("apps/server/src/getmonitor.ts")).toBe(false);
 
     expect(webEnv).toContain("VITE_GETMONITOR_API_KEY=");
     expect(webEnv).not.toContain("GETMONITOR_API_HOST");
@@ -99,6 +102,8 @@ describe("GetMonitor observability", () => {
     const server = files.get("apps/server/src/index.ts") ?? "";
     expect(server).toContain("setupExpressErrorHandler(getMonitor, app)");
     expect(server).toContain('from "@getmonitor/node"');
+    expect(server).toContain('from "./shared/getmonitor"');
+    expect(files.has("apps/server/src/shared/getmonitor.ts")).toBe(true);
   });
 
   it("wires Next.js ErrorBoundary and conditional source-map upload", async () => {
