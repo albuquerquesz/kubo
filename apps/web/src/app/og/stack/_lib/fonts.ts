@@ -18,7 +18,8 @@ async function loadAsset(relativeFromLib: string): Promise<Buffer> {
 
 async function loadTtf(relativeFromLib: string): Promise<ArrayBuffer> {
   const buffer = await loadAsset(relativeFromLib);
-  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+  // Copy into a fresh ArrayBuffer — Buffer#buffer can be SharedArrayBuffer.
+  return Uint8Array.from(buffer).buffer;
 }
 
 export function loadStackOgFonts(): Promise<OgFont[]> {
