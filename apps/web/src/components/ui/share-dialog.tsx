@@ -136,37 +136,35 @@ export function ShareDialog({
             </div>
           </DialogHeader>
 
-          <div className="grid min-w-0 grid-cols-1 gap-3">
-            <CopyCommandButton
-              value={command}
-              copied={copiedTarget === "command"}
-              onCopy={() => copyValue("command", command)}
-            />
+          <CopyCommandButton
+            value={command}
+            copied={copiedTarget === "command"}
+            onCopy={() => copyValue("command", command)}
+          />
 
-            {showQr && (
-              <div className="flex justify-center">
-                {qrCodeDataUrl ? (
-                  <Image
-                    src={qrCodeDataUrl}
-                    width={160}
-                    height={160}
-                    alt="QR code com link para esta stack"
-                    className="h-40 w-40 rounded"
-                  />
-                ) : qrFailed ? (
-                  <div className="flex h-40 w-40 items-center justify-center font-mono text-destructive text-xs">
-                    falha ao gerar qr
-                  </div>
-                ) : (
-                  <div className="flex h-40 w-40 items-center justify-center font-mono text-muted-foreground text-xs">
-                    <span className="animate-pulse">gerando...</span>
-                  </div>
-                )}
-              </div>
-            )}
+          <div className="flex min-h-0 flex-1 items-center justify-center py-4">
+            {showQr ? (
+              qrCodeDataUrl ? (
+                <Image
+                  src={qrCodeDataUrl}
+                  width={160}
+                  height={160}
+                  alt="QR code com link para esta stack"
+                  className="h-40 w-40 rounded"
+                />
+              ) : qrFailed ? (
+                <div className="flex h-40 w-40 items-center justify-center font-mono text-destructive text-xs">
+                  falha ao gerar qr
+                </div>
+              ) : (
+                <div className="flex h-40 w-40 items-center justify-center font-mono text-muted-foreground text-xs">
+                  <span className="animate-pulse">gerando...</span>
+                </div>
+              )
+            ) : null}
           </div>
 
-          <div className="mt-auto grid gap-2 pt-6">
+          <div className="grid gap-2 pt-2">
             <div className={cn("grid gap-2", canNativeShare ? "grid-cols-3" : "grid-cols-2")}>
               <Button
                 type="button"
