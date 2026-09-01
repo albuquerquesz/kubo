@@ -37,7 +37,7 @@ export function ActionButtons({
         <Button
           type="button"
           onClick={onSave}
-          variant="ghost"
+          variant="secondary"
           size="default"
           className="w-full font-mono"
           title="Salvar preferências atuais"
@@ -48,7 +48,7 @@ export function ActionButtons({
         <Button
           type="button"
           onClick={onReset}
-          variant="ghost"
+          variant="secondary"
           size="default"
           className="w-full font-mono"
           title="Restaurar padrões"
@@ -60,7 +60,7 @@ export function ActionButtons({
           <Button
             type="button"
             onClick={onLoad}
-            variant="ghost"
+            variant="secondary"
             size="default"
             className="w-full font-mono"
             title="Carregar preferências salvas"
@@ -77,7 +77,7 @@ export function ActionButtons({
             render={
               <Button
                 type="button"
-                variant="ghost"
+                variant="secondary"
                 size="default"
                 onClick={() => onYoloToggle(yolo ? "false" : "true")}
                 aria-pressed={yolo}

@@ -205,25 +205,27 @@ export function ShareDialog({
         </div>
 
         <div className={cn("grid gap-2", canNativeShare ? "grid-cols-3" : "grid-cols-2")}>
-          <Button type="button" onClick={shareToTwitter} className="w-full font-mono">
-            <FaXTwitter className="h-3 w-3" />
+          <Button type="button" onClick={shareToTwitter} variant="cta" size="lg" className="w-full">
+            <FaXTwitter className="h-4 w-4" />
             Postar
           </Button>
           {canNativeShare && (
-            <Button type="button" onClick={nativeShare} className="w-full font-mono">
-              <Share2 className="h-3 w-3" />
+            <Button type="button" onClick={nativeShare} variant="cta" size="lg" className="w-full">
+              <Share2 className="h-4 w-4" />
               Compartilhar
             </Button>
           )}
           <Button
             type="button"
             onClick={() => setShowQr((prev) => !prev)}
+            variant="cta"
+            size="lg"
             className={cn(
-              "w-full font-mono",
-              showQr && "border-primary/30 bg-primary/10 text-primary hover:bg-primary/15",
+              "w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:ring-secondary/20",
+              showQr && "border border-primary/30 bg-primary/10 text-primary hover:bg-primary/15",
             )}
           >
-            <QrCode className="h-3 w-3" />
+            <QrCode className="h-4 w-4" />
             QR
           </Button>
         </div>

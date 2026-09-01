@@ -23,7 +23,7 @@ export function ShareButton({ stackUrl, stackState, open, onOpenChange }: ShareB
       trigger={
         <Button
           type="button"
-          variant="ghost"
+          variant="secondary"
           size="default"
           className="w-full font-mono text-primary hover:bg-primary/15 hover:text-primary"
           title="Compartilhar sua stack"
