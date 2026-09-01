@@ -5,6 +5,13 @@ import { cn } from "@/lib/utils";
 
 /** Tailwind medium radius (0.375rem). Fixed value so buttons stay soft when page --radius is 0. */
 const BUTTON_RADIUS = "rounded-[0.375rem]";
+const CTA_BUTTON_BASE = [
+  "rounded-full border-0 font-medium",
+  "transition-all duration-300",
+  "hover:scale-105 hover:ring-4",
+  "active:scale-95",
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:ring-0",
+].join(" ");
 
 const buttonVariants = cva(
   "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 border border-transparent bg-clip-padding text-xs font-medium focus-visible:ring-1 aria-invalid:ring-1 [&_svg:not([class*='size-'])]:size-4 inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0 outline-none group/button select-none",
@@ -13,18 +20,12 @@ const buttonVariants = cva(
       variant: {
         default: `${BUTTON_RADIUS} bg-primary text-primary-foreground [a]:hover:bg-primary/80`,
         /**
-         * Marketing conversion pill — matches the home hero install/CTA motion.
+         * Primary marketing action — shared geometry and interaction with secondary.
          * Do not use in the site header (header freezes its own chrome styles).
          */
-        cta: [
-          "rounded-full border-0 bg-primary font-medium text-primary-foreground",
-          "transition-all duration-300",
-          "hover:scale-105 hover:bg-primary/90 hover:ring-4 hover:ring-primary/20",
-          "active:scale-95",
-          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring focus-visible:ring-0",
-        ].join(" "),
+        cta: `${CTA_BUTTON_BASE} bg-primary text-primary-foreground hover:bg-primary/90 hover:ring-primary/20`,
         outline: `${BUTTON_RADIUS} border-border bg-background hover:bg-muted hover:text-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 aria-expanded:bg-muted aria-expanded:text-foreground`,
-        secondary: `${BUTTON_RADIUS} bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground`,
+        secondary: `${CTA_BUTTON_BASE} bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:ring-secondary/20`,
         ghost: `${BUTTON_RADIUS} hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 aria-expanded:bg-muted aria-expanded:text-foreground`,
         destructive: `${BUTTON_RADIUS} bg-destructive/10 hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/20 text-destructive focus-visible:border-destructive/40 dark:hover:bg-destructive/30`,
         link: "text-primary underline-offset-4 hover:underline",

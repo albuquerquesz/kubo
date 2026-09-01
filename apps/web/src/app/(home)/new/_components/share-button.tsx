@@ -25,7 +25,7 @@ export function ShareButton({ stackUrl, stackState, open, onOpenChange }: ShareB
           type="button"
           variant="secondary"
           size="default"
-          className="w-full font-mono text-primary hover:bg-primary/15 hover:text-primary"
+          className="w-full font-mono"
           title="Compartilhar sua stack"
         />
       }

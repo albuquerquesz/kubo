@@ -221,8 +221,9 @@ export function ShareDialog({
             variant="cta"
             size="lg"
             className={cn(
-              "w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:ring-secondary/20",
-              showQr && "border border-primary/30 bg-primary/10 text-primary hover:bg-primary/15",
+              "w-full",
+              showQr &&
+                "border border-primary/30 bg-primary/10 text-primary hover:bg-primary/15 hover:ring-primary/20",
             )}
           >
             <QrCode className="h-4 w-4" />
