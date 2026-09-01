@@ -2,6 +2,7 @@
 
 import { Link2, Share2, Terminal } from "lucide-react";
 import Image from "next/image";
+import QRCode from "qrcode";
 import React, { useEffect, useRef, useState } from "react";
 import { FaLinkedin, FaXTwitter } from "react-icons/fa6";
 import { toast } from "sonner";
@@ -46,6 +47,8 @@ export function ShareDialog({
   onOpenChange,
 }: ShareDialogProps) {
   const [copiedTarget, setCopiedTarget] = useState<CopyTarget | null>(null);
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
+  const [qrFailed, setQrFailed] = useState(false);
   const [previewLoaded, setPreviewLoaded] = useState(false);
   const [canNativeShare, setCanNativeShare] = useState(false);
   const copyResetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -61,6 +64,25 @@ export function ShareDialog({
       if (copyResetTimer.current) clearTimeout(copyResetTimer.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (!stackUrl) return;
+    setQrCodeDataUrl("");
+    setQrFailed(false);
+    QRCode.toDataURL(stackUrl, {
+      width: 320,
+      margin: 2,
+      color: {
+        dark: "#cdd6f4",
+        light: "#11111b",
+      },
+    })
+      .then(setQrCodeDataUrl)
+      .catch(() => {
+        setQrCodeDataUrl("");
+        setQrFailed(true);
+      });
+  }, [stackUrl]);
 
   const copyValue = async (target: CopyTarget, value: string) => {
     try {
@@ -135,6 +157,26 @@ export function ShareDialog({
               copied={copiedTarget === "url"}
               onCopy={() => copyValue("url", stackUrl)}
             />
+          </div>
+
+          <div className="flex min-h-0 flex-1 items-center justify-center py-4">
+            {qrCodeDataUrl ? (
+              <Image
+                src={qrCodeDataUrl}
+                width={160}
+                height={160}
+                alt="QR code com link para esta stack"
+                className="h-40 w-40 rounded"
+              />
+            ) : qrFailed ? (
+              <div className="flex h-40 w-40 items-center justify-center font-mono text-destructive text-xs">
+                falha ao gerar qr
+              </div>
+            ) : (
+              <div className="flex h-40 w-40 items-center justify-center font-mono text-muted-foreground text-xs">
+                <span className="animate-pulse">gerando...</span>
+              </div>
+            )}
           </div>
 
           <div className="mt-auto grid gap-2 pt-6">
