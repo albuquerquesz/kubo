@@ -112,9 +112,12 @@ export const metadata: Metadata = {
   },
   category: "Tecnologia",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
     shortcut: "/favicon.ico",
-    apple: [{ url: "/mascots/kubo-candidates/favicon.png", type: "image/png" }],
+    apple: [{ url: "/favicon/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
 };
 
