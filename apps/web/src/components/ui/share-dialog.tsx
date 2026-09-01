@@ -144,7 +144,7 @@ export function ShareDialog({
             />
 
             {showQr && (
-              <div className="flex flex-col items-center gap-2 rounded border border-border bg-muted/10 p-4">
+              <div className="flex justify-center">
                 {qrCodeDataUrl ? (
                   <Image
                     src={qrCodeDataUrl}
@@ -162,9 +162,6 @@ export function ShareDialog({
                     <span className="animate-pulse">gerando...</span>
                   </div>
                 )}
-                <span className="font-mono text-[10px] text-muted-foreground">
-                  $ scan --open stack
-                </span>
               </div>
             )}
           </div>
