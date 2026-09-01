@@ -1,10 +1,9 @@
 "use client";
 
-import { QrCode, Share2, Terminal } from "lucide-react";
+import { Link2, Share2, Terminal } from "lucide-react";
 import Image from "next/image";
-import QRCode from "qrcode";
 import React, { useEffect, useRef, useState } from "react";
-import { FaXTwitter } from "react-icons/fa6";
+import { FaLinkedin, FaXTwitter } from "react-icons/fa6";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -36,7 +35,7 @@ interface ShareDialogProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-type CopyTarget = "command";
+type CopyTarget = "command" | "url";
 
 export function ShareDialog({
   children,
@@ -47,9 +46,6 @@ export function ShareDialog({
   onOpenChange,
 }: ShareDialogProps) {
   const [copiedTarget, setCopiedTarget] = useState<CopyTarget | null>(null);
-  const [showQr, setShowQr] = useState(false);
-  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
-  const [qrFailed, setQrFailed] = useState(false);
   const [previewLoaded, setPreviewLoaded] = useState(false);
   const [canNativeShare, setCanNativeShare] = useState(false);
   const copyResetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -70,7 +66,11 @@ export function ShareDialog({
     try {
       await navigator.clipboard.writeText(value);
       setCopiedTarget(target);
-      toast.success("Comando copiado para a área de transferência!");
+      toast.success(
+        target === "url"
+          ? "URL copiada para a área de transferência!"
+          : "Comando copiado para a área de transferência!",
+      );
       if (copyResetTimer.current) clearTimeout(copyResetTimer.current);
       copyResetTimer.current = setTimeout(() => setCopiedTarget(null), 2000);
     } catch {
@@ -91,6 +91,11 @@ export function ShareDialog({
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
   };
 
+  const shareToLinkedIn = () => {
+    const url = encodeURIComponent(stackUrl);
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, "_blank");
+  };
+
   const nativeShare = async () => {
     try {
       await navigator.share({ title: projectName, text: shareText(), url: stackUrl });
@@ -100,33 +105,14 @@ export function ShareDialog({
     }
   };
 
-  useEffect(() => {
-    if (!showQr || !stackUrl) return;
-    setQrFailed(false);
-    // Site is dark-only; match QR contrast to the forced dark UI.
-    QRCode.toDataURL(stackUrl, {
-      width: 320,
-      margin: 2,
-      color: {
-        dark: "#cdd6f4",
-        light: "#11111b",
-      },
-    })
-      .then(setQrCodeDataUrl)
-      .catch(() => {
-        setQrCodeDataUrl("");
-        setQrFailed(true);
-      });
-  }, [showQr, stackUrl]);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger render={trigger}>{children}</DialogTrigger>
       <DialogContent
         showCloseButton={false}
-        className="grid max-h-[85vh] min-h-0 grid-cols-1 gap-0 overflow-hidden bg-fd-background p-0 md:min-h-[28rem] md:max-w-4xl md:grid-cols-2"
+        className="grid max-h-[85vh] min-h-0 grid-cols-1 gap-0 overflow-hidden bg-fd-background p-0 md:min-h-[30rem] md:max-w-5xl md:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]"
       >
-        <div className="flex min-w-0 min-h-0 flex-col overflow-y-auto p-4 sm:p-6">
+        <div className="flex min-h-0 min-w-0 flex-col overflow-y-auto p-4 sm:p-6">
           <DialogHeader className="pb-4 pr-8">
             <div className="flex items-center gap-2">
               <Terminal className="h-4 w-4 text-primary" />
@@ -136,35 +122,22 @@ export function ShareDialog({
             </div>
           </DialogHeader>
 
-          <CopyCommandButton
-            value={command}
-            copied={copiedTarget === "command"}
-            onCopy={() => copyValue("command", command)}
-          />
-
-          <div className="flex min-h-0 flex-1 items-center justify-center py-4">
-            {showQr ? (
-              qrCodeDataUrl ? (
-                <Image
-                  src={qrCodeDataUrl}
-                  width={160}
-                  height={160}
-                  alt="QR code com link para esta stack"
-                  className="h-40 w-40 rounded"
-                />
-              ) : qrFailed ? (
-                <div className="flex h-40 w-40 items-center justify-center font-mono text-destructive text-xs">
-                  falha ao gerar qr
-                </div>
-              ) : (
-                <div className="flex h-40 w-40 items-center justify-center font-mono text-muted-foreground text-xs">
-                  <span className="animate-pulse">gerando...</span>
-                </div>
-              )
-            ) : null}
+          <div className="grid gap-3">
+            <CopyCommandButton
+              value={command}
+              copied={copiedTarget === "command"}
+              onCopy={() => copyValue("command", command)}
+            />
+            <CopyCommandButton
+              value={stackUrl}
+              label="URL"
+              icon={<Link2 className="h-3.5 w-3.5" />}
+              copied={copiedTarget === "url"}
+              onCopy={() => copyValue("url", stackUrl)}
+            />
           </div>
 
-          <div className="grid gap-2 pt-2">
+          <div className="mt-auto grid gap-2 pt-6">
             <div className={cn("grid gap-2", canNativeShare ? "grid-cols-3" : "grid-cols-2")}>
               <Button
                 type="button"
@@ -190,24 +163,20 @@ export function ShareDialog({
               )}
               <Button
                 type="button"
-                onClick={() => setShowQr((prev) => !prev)}
+                onClick={shareToLinkedIn}
                 variant="secondary"
                 size="lg"
-                className={cn(
-                  "w-full",
-                  showQr &&
-                    "border border-primary/30 bg-primary/10 text-primary hover:bg-primary/15 hover:ring-primary/20",
-                )}
+                className="w-full"
               >
-                <QrCode className="h-4 w-4" />
-                QR
+                <FaLinkedin className="h-4 w-4" />
+                Postar
               </Button>
             </div>
           </div>
         </div>
 
-        <div className="min-w-0 overflow-y-auto border-border border-t bg-muted/5 p-4 sm:p-6 md:border-t-0 md:border-l">
-          <div className="flex h-full min-h-0 flex-col justify-center gap-3">
+        <div className="flex min-w-0 items-center overflow-y-auto border-border border-t bg-muted/5 p-3 sm:p-4 md:border-t-0 md:border-l">
+          <div className="w-full min-w-0">
             <div className="rounded border border-border">
               <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted/10">
                 {!previewLoaded && (
