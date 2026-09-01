@@ -1,6 +1,6 @@
 "use client";
 
-import { Link2, Share2, Terminal } from "lucide-react";
+import { Link2, Share2, Terminal, XIcon } from "lucide-react";
 import Image from "next/image";
 import QRCode from "qrcode";
 import React, { useEffect, useRef, useState } from "react";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { CopyCommandButton } from "@/components/ui/copy-command-button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -217,7 +218,20 @@ export function ShareDialog({
           </div>
         </div>
 
-        <div className="flex min-w-0 items-center overflow-y-auto border-border border-t bg-muted/5 p-3 sm:p-4 md:border-t-0 md:border-l">
+        <div className="relative flex min-w-0 items-center overflow-y-auto border-border border-t bg-muted/5 p-3 sm:p-4 md:border-t-0 md:border-l">
+          <DialogClose
+            render={
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                className="absolute top-2 right-2 z-10 text-muted-foreground hover:text-foreground"
+              />
+            }
+          >
+            <XIcon className="size-4" />
+            <span className="sr-only">Fechar</span>
+          </DialogClose>
           <div className="w-full min-w-0">
             <div className="rounded border border-border">
               <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted/10">
