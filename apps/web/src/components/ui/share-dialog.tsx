@@ -161,98 +161,125 @@ export function ShareDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger render={trigger}>{children}</DialogTrigger>
-      <DialogContent className="grid max-h-[85vh] grid-cols-1 gap-3 overflow-y-auto bg-fd-background sm:max-w-lg">
-        <DialogHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Terminal className="h-4 w-4 text-primary" />
-            <DialogTitle className="font-mono font-semibold text-foreground text-sm">
-              Compartilhar Stack
-            </DialogTitle>
-          </div>
-        </DialogHeader>
+      <DialogContent className="grid max-h-[85vh] grid-cols-1 gap-0 overflow-hidden bg-fd-background p-0 md:max-w-5xl md:grid-cols-2">
+        <div className="min-w-0 overflow-y-auto p-4 sm:p-6">
+          <DialogHeader className="pb-4 pr-8">
+            <div className="flex items-center gap-2">
+              <Terminal className="h-4 w-4 text-primary" />
+              <DialogTitle className="font-mono font-semibold text-foreground text-sm">
+                Compartilhar Stack
+              </DialogTitle>
+            </div>
+          </DialogHeader>
 
-        <div className="rounded border border-border">
-          <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted/10">
-            {!previewLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center gap-2 font-mono text-muted-foreground text-xs">
-                <span className="text-primary">$</span>
-                <span className="animate-pulse">renderizando prévia...</span>
-              </div>
-            )}
-            <Image
-              src={ogImageUrl}
-              alt={`Cartão de prévia social de ${projectName}`}
-              width={1200}
-              height={630}
-              unoptimized
-              onLoad={() => setPreviewLoaded(true)}
-              className={cn(
-                "h-full w-full object-cover transition-opacity duration-300",
-                previewLoaded ? "opacity-100" : "opacity-0",
-              )}
+          <div className="grid min-w-0 grid-cols-1 gap-3">
+            <CopyRow
+              icon={<SquareTerminal className="h-3.5 w-3.5" />}
+              label="Comando"
+              value={command}
+              copied={copiedTarget === "command"}
+              onCopy={() => copyValue("command", command)}
             />
+
+            <div className={cn("grid gap-2", canNativeShare ? "grid-cols-3" : "grid-cols-2")}>
+              <Button
+                type="button"
+                onClick={shareToTwitter}
+                variant="cta"
+                size="lg"
+                className="w-full"
+              >
+                <FaXTwitter className="h-4 w-4" />
+                Postar
+              </Button>
+              {canNativeShare && (
+                <Button
+                  type="button"
+                  onClick={nativeShare}
+                  variant="cta"
+                  size="lg"
+                  className="w-full"
+                >
+                  <Share2 className="h-4 w-4" />
+                  Compartilhar
+                </Button>
+              )}
+              <Button
+                type="button"
+                onClick={() => setShowQr((prev) => !prev)}
+                variant="secondary"
+                size="lg"
+                className={cn(
+                  "w-full",
+                  showQr &&
+                    "border border-primary/30 bg-primary/10 text-primary hover:bg-primary/15 hover:ring-primary/20",
+                )}
+              >
+                <QrCode className="h-4 w-4" />
+                QR
+              </Button>
+            </div>
+
+            {showQr && (
+              <div className="flex flex-col items-center gap-2 rounded border border-border bg-muted/10 p-4">
+                {qrCodeDataUrl ? (
+                  <Image
+                    src={qrCodeDataUrl}
+                    width={160}
+                    height={160}
+                    alt="QR code com link para esta stack"
+                    className="h-40 w-40 rounded"
+                  />
+                ) : qrFailed ? (
+                  <div className="flex h-40 w-40 items-center justify-center font-mono text-destructive text-xs">
+                    falha ao gerar qr
+                  </div>
+                ) : (
+                  <div className="flex h-40 w-40 items-center justify-center font-mono text-muted-foreground text-xs">
+                    <span className="animate-pulse">gerando...</span>
+                  </div>
+                )}
+                <span className="font-mono text-[10px] text-muted-foreground">
+                  $ scan --open stack
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="grid min-w-0 grid-cols-1 gap-2">
-          <CopyRow
-            icon={<SquareTerminal className="h-3.5 w-3.5" />}
-            label="Comando"
-            value={command}
-            copied={copiedTarget === "command"}
-            onCopy={() => copyValue("command", command)}
-          />
-        </div>
+        <div className="min-w-0 overflow-y-auto border-border border-t bg-muted/5 p-4 sm:p-6 md:border-t-0 md:border-l">
+          <div className="flex h-full min-h-0 flex-col justify-center gap-3">
+            <div className="flex items-center justify-between gap-3 pr-8">
+              <span className="font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                Prévia social
+              </span>
+              <span className="font-mono text-[10px] text-muted-foreground">1200 × 630</span>
+            </div>
 
-        <div className={cn("grid gap-2", canNativeShare ? "grid-cols-3" : "grid-cols-2")}>
-          <Button type="button" onClick={shareToTwitter} variant="cta" size="lg" className="w-full">
-            <FaXTwitter className="h-4 w-4" />
-            Postar
-          </Button>
-          {canNativeShare && (
-            <Button type="button" onClick={nativeShare} variant="cta" size="lg" className="w-full">
-              <Share2 className="h-4 w-4" />
-              Compartilhar
-            </Button>
-          )}
-          <Button
-            type="button"
-            onClick={() => setShowQr((prev) => !prev)}
-            variant="secondary"
-            size="lg"
-            className={cn(
-              "w-full",
-              showQr &&
-                "border border-primary/30 bg-primary/10 text-primary hover:bg-primary/15 hover:ring-primary/20",
-            )}
-          >
-            <QrCode className="h-4 w-4" />
-            QR
-          </Button>
-        </div>
-
-        {showQr && (
-          <div className="flex flex-col items-center gap-2 rounded border border-border bg-muted/10 p-4">
-            {qrCodeDataUrl ? (
-              <Image
-                src={qrCodeDataUrl}
-                width={160}
-                height={160}
-                alt="QR code com link para esta stack"
-                className="h-40 w-40 rounded"
-              />
-            ) : qrFailed ? (
-              <div className="flex h-40 w-40 items-center justify-center font-mono text-destructive text-xs">
-                falha ao gerar qr
+            <div className="rounded border border-border">
+              <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted/10">
+                {!previewLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center gap-2 font-mono text-muted-foreground text-xs">
+                    <span className="text-primary">$</span>
+                    <span className="animate-pulse">renderizando prévia...</span>
+                  </div>
+                )}
+                <Image
+                  src={ogImageUrl}
+                  alt={`Cartão de prévia social de ${projectName}`}
+                  width={1200}
+                  height={630}
+                  unoptimized
+                  onLoad={() => setPreviewLoaded(true)}
+                  className={cn(
+                    "h-full w-full object-cover transition-opacity duration-300",
+                    previewLoaded ? "opacity-100" : "opacity-0",
+                  )}
+                />
               </div>
-            ) : (
-              <div className="flex h-40 w-40 items-center justify-center font-mono text-muted-foreground text-xs">
-                <span className="animate-pulse">gerando...</span>
-              </div>
-            )}
-            <span className="font-mono text-[10px] text-muted-foreground">$ scan --open stack</span>
+            </div>
           </div>
-        )}
+        </div>
       </DialogContent>
     </Dialog>
   );
