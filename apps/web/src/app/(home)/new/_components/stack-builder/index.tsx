@@ -163,6 +163,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     <CopyInstallCommandButton
                       command={command}
                       compact
+                      confetti
                       className="w-full max-w-full px-4"
                       onCopied={handleCommandCopied}
                     />
@@ -171,6 +172,8 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   <section className="border-border/20 border-b px-3 py-3">
                     <PresetDialog onApplyPreset={applyPreset} />
                   </section>
+
+                  <section className="border-border/20 border-b px-3 py-3">{actionButtons}</section>
 
                   <section className="space-y-2 px-3 py-3">
                     <div className="flex items-center justify-between">
@@ -228,13 +231,13 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
               </div>
             </ScrollArea>
 
-            <div className="border-border/35 border-t bg-fd-background/95 p-2">
-              <div className="rounded-2xl bg-fd-background/80 p-2">
-                <SpecialSponsorsPanel sponsors={specialSponsors} />
-                {specialSponsors.length > 0 ? <div className="my-2 h-px bg-border/25" /> : null}
-                {actionButtons}
+            {specialSponsors.length > 0 ? (
+              <div className="border-border/35 border-t bg-fd-background/95 p-2">
+                <div className="rounded-2xl bg-fd-background/80 p-2">
+                  <SpecialSponsorsPanel sponsors={specialSponsors} />
+                </div>
               </div>
-            </div>
+            ) : null}
           </aside>
 
           <div className="grid min-h-0 min-w-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden lg:grid-cols-[minmax(0,1fr)_15rem]">
@@ -357,12 +360,15 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                       <CopyInstallCommandButton
                         command={command}
                         compact
+                        confetti
                         className="w-full max-w-full px-4"
                         onCopied={handleCommandCopied}
                       />
                     </div>
 
                     <PresetDialog onApplyPreset={applyPreset} />
+
+                    {actionButtons}
 
                     {desktopBuildNote && (
                       <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-2">
@@ -385,13 +391,13 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                 </main>
               </ScrollArea>
 
-              <div className="border-border/35 border-t bg-fd-background/95 p-2 backdrop-blur-sm">
-                <div className="rounded-xl bg-fd-background/80 p-2">
-                  <SpecialSponsorsPanel sponsors={specialSponsors} compact />
-                  {specialSponsors.length > 0 ? <div className="my-2 h-px bg-border/25" /> : null}
-                  {actionButtons}
+              {specialSponsors.length > 0 ? (
+                <div className="border-border/35 border-t bg-fd-background/95 p-2 backdrop-blur-sm">
+                  <div className="rounded-xl bg-fd-background/80 p-2">
+                    <SpecialSponsorsPanel sponsors={specialSponsors} compact />
+                  </div>
                 </div>
-              </div>
+              ) : null}
             </div>
           )}
 

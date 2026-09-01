@@ -162,7 +162,7 @@ export function ShareDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger render={trigger}>{children}</DialogTrigger>
       <DialogContent className="grid max-h-[85vh] grid-cols-1 gap-3 overflow-y-auto bg-fd-background sm:max-w-lg">
-        <DialogHeader className="border-border border-b pb-3">
+        <DialogHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Terminal className="h-4 w-4 text-primary" />
             <DialogTitle className="font-mono font-semibold text-foreground text-sm">

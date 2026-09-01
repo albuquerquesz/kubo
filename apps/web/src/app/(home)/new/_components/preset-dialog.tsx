@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, Zap } from "lucide-react";
+import { ArrowUpRight, XIcon, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -36,10 +36,19 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
         className="flex max-h-[85vh] flex-col gap-0 overflow-hidden rounded-2xl bg-background p-0 sm:max-w-3xl"
       >
         <DialogHeader className="px-5 py-4 sm:px-6 sm:py-5">
-          <div className="flex items-center gap-2">
-            <DialogTitle className="font-mono font-semibold text-foreground text-base">
-              Modelos de stack
-            </DialogTitle>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-2">
+              <Zap className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+              <DialogTitle className="font-mono font-semibold text-foreground text-base">
+                Modelos de stack
+              </DialogTitle>
+            </div>
+            <DialogClose
+              render={<Button type="button" variant="ghost" size="icon-sm" className="shrink-0" />}
+            >
+              <XIcon className="size-4" />
+              <span className="sr-only">Fechar</span>
+            </DialogClose>
           </div>
         </DialogHeader>
 
