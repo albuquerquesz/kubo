@@ -161,8 +161,11 @@ export function ShareDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger render={trigger}>{children}</DialogTrigger>
-      <DialogContent className="grid max-h-[85vh] grid-cols-1 gap-0 overflow-hidden bg-fd-background p-0 md:max-w-5xl md:grid-cols-2">
-        <div className="min-w-0 overflow-y-auto p-4 sm:p-6">
+      <DialogContent
+        showCloseButton={false}
+        className="grid max-h-[85vh] grid-cols-1 gap-0 overflow-hidden bg-fd-background p-0 md:max-w-5xl md:grid-cols-2"
+      >
+        <div className="flex min-w-0 min-h-0 flex-col overflow-y-auto p-4 sm:p-6">
           <DialogHeader className="pb-4 pr-8">
             <div className="flex items-center gap-2">
               <Terminal className="h-4 w-4 text-primary" />
@@ -181,6 +184,33 @@ export function ShareDialog({
               onCopy={() => copyValue("command", command)}
             />
 
+            {showQr && (
+              <div className="flex flex-col items-center gap-2 rounded border border-border bg-muted/10 p-4">
+                {qrCodeDataUrl ? (
+                  <Image
+                    src={qrCodeDataUrl}
+                    width={160}
+                    height={160}
+                    alt="QR code com link para esta stack"
+                    className="h-40 w-40 rounded"
+                  />
+                ) : qrFailed ? (
+                  <div className="flex h-40 w-40 items-center justify-center font-mono text-destructive text-xs">
+                    falha ao gerar qr
+                  </div>
+                ) : (
+                  <div className="flex h-40 w-40 items-center justify-center font-mono text-muted-foreground text-xs">
+                    <span className="animate-pulse">gerando...</span>
+                  </div>
+                )}
+                <span className="font-mono text-[10px] text-muted-foreground">
+                  $ scan --open stack
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-auto grid gap-2 pt-6">
             <div className={cn("grid gap-2", canNativeShare ? "grid-cols-3" : "grid-cols-2")}>
               <Button
                 type="button"
@@ -219,43 +249,11 @@ export function ShareDialog({
                 QR
               </Button>
             </div>
-
-            {showQr && (
-              <div className="flex flex-col items-center gap-2 rounded border border-border bg-muted/10 p-4">
-                {qrCodeDataUrl ? (
-                  <Image
-                    src={qrCodeDataUrl}
-                    width={160}
-                    height={160}
-                    alt="QR code com link para esta stack"
-                    className="h-40 w-40 rounded"
-                  />
-                ) : qrFailed ? (
-                  <div className="flex h-40 w-40 items-center justify-center font-mono text-destructive text-xs">
-                    falha ao gerar qr
-                  </div>
-                ) : (
-                  <div className="flex h-40 w-40 items-center justify-center font-mono text-muted-foreground text-xs">
-                    <span className="animate-pulse">gerando...</span>
-                  </div>
-                )}
-                <span className="font-mono text-[10px] text-muted-foreground">
-                  $ scan --open stack
-                </span>
-              </div>
-            )}
           </div>
         </div>
 
         <div className="min-w-0 overflow-y-auto border-border border-t bg-muted/5 p-4 sm:p-6 md:border-t-0 md:border-l">
           <div className="flex h-full min-h-0 flex-col justify-center gap-3">
-            <div className="flex items-center justify-between gap-3 pr-8">
-              <span className="font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                Prévia social
-              </span>
-              <span className="font-mono text-[10px] text-muted-foreground">1200 × 630</span>
-            </div>
-
             <div className="rounded border border-border">
               <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted/10">
                 {!previewLoaded && (
