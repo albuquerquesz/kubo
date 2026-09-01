@@ -136,7 +136,9 @@ export function CategoryNav({ progress, idPrefix, orientation = "horizontal" }: 
                 done ? "bg-primary" : "bg-muted-foreground/40",
               )}
             />
-            <span className="min-w-0 flex-1 text-left">{getCategoryDisplayName(category)}</span>
+            <span className="min-w-0 flex-1 text-left uppercase">
+              {getCategoryDisplayName(category)}
+            </span>
             {selected > 1 && <span>({selected})</span>}
           </button>
         );
