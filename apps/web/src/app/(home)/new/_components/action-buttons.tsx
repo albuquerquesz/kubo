@@ -57,19 +57,18 @@ export function ActionButtons({
         <RefreshCw className="h-3 w-3" />
         Redefinir
       </Button>
-      {hasSavedStack && (
-        <Button
-          type="button"
-          onClick={onLoad}
-          variant="secondary"
-          size="default"
-          className="w-full font-mono"
-          title="Carregar preferências salvas"
-        >
-          <Settings className="h-3 w-3" />
-          Carregar
-        </Button>
-      )}
+      <Button
+        type="button"
+        onClick={onLoad}
+        variant="secondary"
+        size="default"
+        className="w-full font-mono"
+        title="Carregar preferências salvas"
+        disabled={!hasSavedStack}
+      >
+        <Settings className="h-3 w-3" />
+        Carregar
+      </Button>
       <ShareButton stackUrl={stackUrl} stackState={stackState} />
       {SHOW_YOLO_BUTTON ? (
         <Tooltip delay={100}>
