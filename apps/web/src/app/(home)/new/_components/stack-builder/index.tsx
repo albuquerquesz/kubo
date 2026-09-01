@@ -13,6 +13,7 @@ import type { Sponsor } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 import { ActionButtons } from "../action-buttons";
+import { PresetDialog } from "../preset-dialog";
 import { PreviewPanel } from "../preview-panel";
 import { SpecialSponsorsPanel } from "../special-sponsors-panel";
 import { CategoryNav, scrollToCategorySection } from "./category-nav";
@@ -68,7 +69,6 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
       onSave={saveCurrentStack}
       onLoad={loadSavedStack}
       hasSavedStack={!!lastSavedStack}
-      onApplyPreset={applyPreset}
       stackUrl={stackUrl}
       stackState={effectiveStack}
       yolo={stack.yolo === "true"}
@@ -166,6 +166,10 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                       className="w-full max-w-full px-4"
                       onCopied={handleCommandCopied}
                     />
+                  </section>
+
+                  <section className="border-border/20 border-b px-3 py-3">
+                    <PresetDialog onApplyPreset={applyPreset} />
                   </section>
 
                   <section className="space-y-2 px-3 py-3">
@@ -303,16 +307,12 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
             </section>
 
             <aside className="hidden min-h-0 flex-col overflow-hidden border-rule border-l bg-background lg:flex">
-              {viewMode === "command" ? (
+              {viewMode === "command" && (
                 <CategoryNav
                   progress={categoryProgress}
                   idPrefix="section"
                   orientation="vertical"
                 />
-              ) : (
-                <p className="px-4 py-4 font-mono text-[11px] text-muted-foreground leading-relaxed">
-                  Volte para Configurar para navegar pelas categorias.
-                </p>
               )}
             </aside>
           </div>
@@ -361,6 +361,8 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                         onCopied={handleCommandCopied}
                       />
                     </div>
+
+                    <PresetDialog onApplyPreset={applyPreset} />
 
                     {desktopBuildNote && (
                       <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-2">

@@ -7,7 +7,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import type { StackState } from "@/lib/constant";
 import { cn } from "@/lib/utils";
 
-import { PresetDialog } from "./preset-dialog";
 import { ShareButton } from "./share-button";
 
 type ActionButtonsProps = {
@@ -15,7 +14,6 @@ type ActionButtonsProps = {
   onSave: () => void;
   onLoad: () => void;
   hasSavedStack: boolean;
-  onApplyPreset: (presetId: string) => void;
   stackUrl: string;
   stackState: StackState;
   yolo: boolean;
@@ -27,7 +25,6 @@ export function ActionButtons({
   onSave,
   onLoad,
   hasSavedStack,
-  onApplyPreset,
   stackUrl,
   stackState,
   yolo,
@@ -73,9 +70,8 @@ export function ActionButtons({
           </Button>
         )}
       </div>
-      <div className="grid grid-cols-3 gap-1.5">
+      <div className="grid grid-cols-2 gap-1.5">
         <ShareButton stackUrl={stackUrl} stackState={stackState} />
-        <PresetDialog onApplyPreset={onApplyPreset} />
         <Tooltip delay={100}>
           <TooltipTrigger
             render={
