@@ -166,7 +166,7 @@ export function ShareDialog({
           <div className="flex items-center gap-2">
             <Terminal className="h-4 w-4 text-primary" />
             <DialogTitle className="font-mono font-semibold text-foreground text-sm">
-              SHARE_STACK.SH
+              Compartilhar Stack
             </DialogTitle>
           </div>
         </DialogHeader>
