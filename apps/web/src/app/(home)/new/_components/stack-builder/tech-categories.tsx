@@ -113,7 +113,7 @@ export function TechCategories({
                     aria-pressed={isSelected}
                     aria-label={`${tech.name}${isDisabled && disabledReason ? `. ${disabledReason}` : ""}`}
                     className={cn(
-                      "builder-focus-ring relative h-full w-full rounded-lg border border-border p-3 text-left transition-colors",
+                      "builder-focus-ring relative h-full w-full rounded-[0.5rem] border border-border p-3 text-left transition-colors",
                       isDesktop && "p-2 sm:p-3",
                       isSelected
                         ? "bg-primary/12 ring-1 ring-primary"
