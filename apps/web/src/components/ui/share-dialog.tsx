@@ -132,7 +132,7 @@ export function ShareDialog({
       <DialogTrigger render={trigger}>{children}</DialogTrigger>
       <DialogContent
         showCloseButton={false}
-        className="grid max-h-[85vh] min-h-0 grid-cols-1 gap-0 overflow-hidden bg-fd-background p-0 md:min-h-[30rem] md:max-w-5xl md:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]"
+        className="grid max-h-[85vh] min-h-0 grid-cols-1 gap-0 overflow-hidden rounded-2xl bg-fd-background p-0 md:min-h-[30rem] md:max-w-5xl md:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]"
       >
         <div className="flex min-h-0 min-w-0 flex-col overflow-y-auto p-4 sm:p-6">
           <DialogHeader className="pb-4 pr-8">
