@@ -1,6 +1,15 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "stream",
+  "globalPassThroughEnv": [
+    "NOTIFIQUE_API_KEY",
+    "NOTIFIQUE_FROM_EMAIL",
+    "NOTIFIQUE_NEWSLETTER_LIST_ID",
+    "NOTIFIQUE_BASE_URL",
+    "NEXT_PUBLIC_CONVEX_URL",
+    "NEXT_PUBLIC_HIMETRICA_API_KEY",
+    "SKIP_ENV_VALIDATION"
+  ],
   "tasks": {
     "transit": {
       "dependsOn": ["^transit"]
@@ -9,7 +18,15 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "templates-binary/**"],
-      "env": ["NOTIFIQUE_API_KEY", "NOTIFIQUE_FROM_EMAIL", "NOTIFIQUE_NEWSLETTER_LIST_ID"]
+      "env": [
+        "NOTIFIQUE_API_KEY",
+        "NOTIFIQUE_FROM_EMAIL",
+        "NOTIFIQUE_NEWSLETTER_LIST_ID",
+        "NOTIFIQUE_BASE_URL",
+        "NEXT_PUBLIC_CONVEX_URL",
+        "NEXT_PUBLIC_HIMETRICA_API_KEY",
+        "SKIP_ENV_VALIDATION"
+      ]
     },
     "bundle": {
       "dependsOn": ["^build"],
