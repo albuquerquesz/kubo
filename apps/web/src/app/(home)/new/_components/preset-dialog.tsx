@@ -29,7 +29,7 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
         }
       >
         <Zap data-icon="inline-start" className="h-3 w-3" />
-        Modelos
+        Templates
       </DialogTrigger>
       <DialogContent
         showCloseButton={false}
@@ -39,8 +39,8 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2">
               <Zap className="h-4 w-4 shrink-0 text-primary" aria-hidden />
-              <DialogTitle className="font-mono font-semibold text-foreground text-base">
-                Modelos de stack
+              <DialogTitle className="font-mono font-semibold text-foreground text-sm">
+                Templates de stack
               </DialogTitle>
             </div>
             <DialogClose
@@ -67,7 +67,7 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
                       onClick={() => onApplyPreset(preset.id)}
                       render={<Button type="button" variant="cta" size="lg" className="shrink-0" />}
                     >
-                      Usar modelo
+                      Usar template
                       <ArrowUpRight
                         aria-hidden
                         data-icon="inline-end"
