@@ -166,8 +166,7 @@ export async function GET(req: NextRequest) {
           </div>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", maxWidth: "760px" }}>
-            {visible.map((tech, index) => {
-              const emphasize = index === 0;
+            {visible.map((tech) => {
               const iconSrc = iconSrcByPath.get(tech.icon);
               return (
                 <div
@@ -178,9 +177,9 @@ export async function GET(req: NextRequest) {
                     gap: "8px",
                     padding: iconSrc ? "7px 14px 7px 10px" : "7px 16px",
                     borderRadius: "9999px",
-                    border: `1px solid ${emphasize ? ogEditorial.primary : ogEditorial.ruleStrong}`,
-                    background: emphasize ? "rgba(196,147,20,0.14)" : "rgba(255,255,255,0.04)",
-                    color: emphasize ? ogEditorial.accent : ogEditorial.foreground,
+                    border: `1px solid ${ogEditorial.ruleStrong}`,
+                    background: "rgba(255,255,255,0.04)",
+                    color: ogEditorial.foreground,
                     fontSize: "18px",
                     fontWeight: 500,
                   }}
@@ -222,7 +221,6 @@ export async function GET(req: NextRequest) {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            borderTop: `1px solid ${ogEditorial.rule}`,
             paddingTop: "18px",
           }}
         >

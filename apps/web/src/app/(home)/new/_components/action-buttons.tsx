@@ -9,6 +9,9 @@ import { cn } from "@/lib/utils";
 
 import { ShareButton } from "./share-button";
 
+/** Temporarily hidden from the stack builder actions row. */
+const SHOW_YOLO_BUTTON = false;
+
 type ActionButtonsProps = {
   onReset: () => void;
   onSave: () => void;
@@ -31,46 +34,44 @@ export function ActionButtons({
   onYoloToggle,
 }: ActionButtonsProps) {
   return (
-    <div className="space-y-2.5">
-      <div className="grid grid-cols-2 gap-2.5">
+    <div className="grid grid-cols-2 gap-2.5">
+      <Button
+        type="button"
+        onClick={onSave}
+        variant="secondary"
+        size="default"
+        className="w-full font-mono"
+        title="Salvar preferências atuais"
+      >
+        <Star className="h-3 w-3" />
+        Salvar
+      </Button>
+      <Button
+        type="button"
+        onClick={onReset}
+        variant="secondary"
+        size="default"
+        className="w-full font-mono"
+        title="Restaurar padrões"
+      >
+        <RefreshCw className="h-3 w-3" />
+        Redefinir
+      </Button>
+      {hasSavedStack && (
         <Button
           type="button"
-          onClick={onSave}
+          onClick={onLoad}
           variant="secondary"
           size="default"
           className="w-full font-mono"
-          title="Salvar preferências atuais"
+          title="Carregar preferências salvas"
         >
-          <Star className="h-3 w-3" />
-          Salvar
+          <Settings className="h-3 w-3" />
+          Carregar
         </Button>
-        <Button
-          type="button"
-          onClick={onReset}
-          variant="secondary"
-          size="default"
-          className="w-full font-mono"
-          title="Restaurar padrões"
-        >
-          <RefreshCw className="h-3 w-3" />
-          Redefinir
-        </Button>
-        {hasSavedStack && (
-          <Button
-            type="button"
-            onClick={onLoad}
-            variant="secondary"
-            size="default"
-            className="w-full font-mono"
-            title="Carregar preferências salvas"
-          >
-            <Settings className="h-3 w-3" />
-            Carregar
-          </Button>
-        )}
-      </div>
-      <div className="grid grid-cols-2 gap-2.5">
-        <ShareButton stackUrl={stackUrl} stackState={stackState} />
+      )}
+      <ShareButton stackUrl={stackUrl} stackState={stackState} />
+      {SHOW_YOLO_BUTTON ? (
         <Tooltip delay={100}>
           <TooltipTrigger
             render={
@@ -98,7 +99,7 @@ export function ActionButtons({
             </p>
           </TooltipContent>
         </Tooltip>
-      </div>
+      ) : null}
     </div>
   );
 }
