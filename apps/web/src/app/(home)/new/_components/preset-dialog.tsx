@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpRight, XIcon, Zap } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { PRESET_TEMPLATES } from "@/lib/constant";
 import { getSelectedTechs } from "@/lib/stack-utils";
+import { cn } from "@/lib/utils";
 
 import { TechIcon } from "./tech-icon";
 
@@ -21,8 +23,24 @@ type PresetDialogProps = {
 };
 
 export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
+  const [open, setOpen] = useState(false);
+  const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null);
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (!nextOpen) {
+      setSelectedPresetId(null);
+    }
+  };
+
+  const handleApply = () => {
+    if (!selectedPresetId) return;
+    onApplyPreset(selectedPresetId);
+    handleOpenChange(false);
+  };
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
         render={
           <Button type="button" variant="secondary" size="default" className="w-full font-mono" />
@@ -52,30 +70,37 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
           </div>
         </DialogHeader>
 
-        <div className="min-h-0 overflow-y-auto">
+        <div
+          role="radiogroup"
+          aria-label="Templates de stack"
+          className="min-h-0 flex-1 overflow-y-auto"
+        >
           <div className="divide-y divide-border">
             {PRESET_TEMPLATES.map((preset) => {
               const selectedTechs = getSelectedTechs(preset.stack);
+              const isSelected = selectedPresetId === preset.id;
 
               return (
-                <div key={preset.id} className="flex flex-col gap-4 px-5 py-5 sm:px-6">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="min-w-0">
-                      <h3 className="font-medium text-foreground text-base">{preset.name}</h3>
-                    </div>
-                    <DialogClose
-                      onClick={() => onApplyPreset(preset.id)}
-                      render={<Button type="button" variant="cta" size="lg" className="shrink-0" />}
-                    >
-                      Usar template
-                      <ArrowUpRight
-                        aria-hidden
-                        data-icon="inline-end"
-                        className="size-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
-                      />
-                    </DialogClose>
-                  </div>
-
+                <div
+                  key={preset.id}
+                  role="radio"
+                  tabIndex={0}
+                  aria-checked={isSelected}
+                  aria-label={preset.name}
+                  onClick={() => setSelectedPresetId(preset.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      setSelectedPresetId(preset.id);
+                    }
+                  }}
+                  className={cn(
+                    "flex w-full cursor-pointer flex-col gap-4 px-5 py-5 text-left transition-colors sm:px-6",
+                    "hover:bg-muted/20 focus-visible:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-inset",
+                    isSelected && "bg-primary/10 ring-1 ring-primary/30 ring-inset",
+                  )}
+                >
+                  <h3 className="font-medium text-foreground text-base">{preset.name}</h3>
                   <ul
                     className="flex flex-wrap gap-1.5"
                     aria-label={`Tecnologias de ${preset.name}`}
@@ -96,6 +121,36 @@ export function PresetDialog({ onApplyPreset }: PresetDialogProps) {
               );
             })}
           </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-4 border-border border-t px-5 py-4 sm:px-6">
+          <DialogClose
+            render={
+              <Button
+                type="button"
+                variant="secondary"
+                size="lg"
+                className="px-6 font-mono has-data-[icon=inline-end]:px-6 has-data-[icon=inline-start]:px-6"
+              />
+            }
+          >
+            Voltar
+          </DialogClose>
+          <Button
+            type="button"
+            variant="cta"
+            size="lg"
+            className="shrink-0 px-6 font-mono has-data-[icon=inline-end]:px-6 has-data-[icon=inline-start]:px-6"
+            disabled={!selectedPresetId}
+            onClick={handleApply}
+          >
+            Usar template
+            <ArrowUpRight
+              aria-hidden
+              data-icon="inline-end"
+              className="size-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
+            />
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

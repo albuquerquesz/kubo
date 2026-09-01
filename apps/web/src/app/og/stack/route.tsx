@@ -9,7 +9,7 @@ import { getSelectedTechs } from "@/lib/stack-utils";
 import { ogEditorial } from "./_lib/colors";
 import { loadKuboMarkDataUrl, loadStackOgFonts } from "./_lib/fonts";
 import { loadTechIconDataUrls } from "./_lib/icons";
-import { OgMosaicField } from "./_lib/mosaic";
+import { OgPixelField } from "./_lib/mosaic";
 
 export const runtime = "nodejs";
 
@@ -50,33 +50,7 @@ export async function GET(req: NextRequest) {
         fontFamily: '"Space Grotesk"',
       }}
     >
-      <OgMosaicField width={OG_SIZE.width} height={OG_SIZE.height} />
-
-      {/* Copy-safe veil — denser on the left where type sits */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          display: "flex",
-          backgroundImage:
-            "linear-gradient(90deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.55) 42%, rgba(0,0,0,0.22) 72%, rgba(0,0,0,0.45) 100%)",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          display: "flex",
-          backgroundImage:
-            "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.08) 28%, rgba(0,0,0,0.12) 72%, rgba(0,0,0,0.55) 100%)",
-        }}
-      />
+      <OgPixelField width={OG_SIZE.width} height={OG_SIZE.height} />
 
       <div
         style={{
@@ -110,7 +84,7 @@ export async function GET(req: NextRequest) {
                 fontSize: "14px",
                 fontWeight: 500,
                 letterSpacing: "0.08em",
-                color: ogEditorial.primary,
+                color: ogEditorial.mutedForeground,
                 display: "flex",
               }}
             >
@@ -148,7 +122,7 @@ export async function GET(req: NextRequest) {
               fontWeight: 400,
             }}
           >
-            <span style={{ color: ogEditorial.primary, display: "flex" }}>$</span>
+            <span style={{ color: ogEditorial.mutedForeground, display: "flex" }}>$</span>
             <span style={{ color: ogEditorial.mutedForeground, display: "flex" }}>{command}</span>
           </div>
 
@@ -238,7 +212,7 @@ export async function GET(req: NextRequest) {
             style={{
               fontFamily: '"IBM Plex Mono"',
               fontSize: "16px",
-              color: ogEditorial.primary,
+              color: ogEditorial.brand,
               display: "flex",
             }}
           >

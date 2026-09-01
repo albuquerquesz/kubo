@@ -1,12 +1,12 @@
-/** Editorial dark/gold tokens mirrored from `global.css` (`:root, .dark`). */
+/** Editorial dark tokens for stack OG cards. */
 export const ogEditorial = {
   background: "#000000",
   card: "#0c0c0c",
   muted: "#161616",
   foreground: "#f1f1f1",
   mutedForeground: "#a0a0a0",
-  primary: "#c49314",
-  accent: "#d6a72b",
+  /** Brand yellow — mark + footer link. */
+  brand: "#FBC80D",
   /** Soft structural rule ≈ white 10% on black (Satori has no color-mix). */
   rule: "rgba(255,255,255,0.10)",
   ruleStrong: "rgba(255,255,255,0.18)",
