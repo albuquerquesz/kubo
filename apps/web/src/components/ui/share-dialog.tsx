@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy, QrCode, Share2, SquareTerminal, Terminal } from "lucide-react";
+import { QrCode, Share2, Terminal } from "lucide-react";
 import Image from "next/image";
 import QRCode from "qrcode";
 import React, { useEffect, useRef, useState } from "react";
@@ -8,6 +8,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { CopyCommandButton } from "@/components/ui/copy-command-button";
 import {
   Dialog,
   DialogContent,
@@ -36,46 +37,6 @@ interface ShareDialogProps {
 }
 
 type CopyTarget = "command";
-
-function CopyRow({
-  icon,
-  label,
-  value,
-  copied,
-  onCopy,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  copied: boolean;
-  onCopy: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onCopy}
-      aria-label={copied ? `${label} copiado` : `Copiar ${label.toLowerCase()}`}
-      title={copied ? `${label} copiado` : `Copiar ${label.toLowerCase()}`}
-      className="builder-focus-ring group flex h-10 w-full min-w-0 items-center gap-2 rounded-md border border-border bg-muted/10 px-3 text-left transition-colors hover:border-muted-foreground/30 hover:bg-muted/25"
-    >
-      <span className="shrink-0 text-primary">{icon}</span>
-      <span className="min-w-0 flex-1 truncate font-mono text-muted-foreground text-xs group-hover:text-foreground">
-        {value}
-      </span>
-      <span
-        className={cn(
-          "shrink-0 transition-colors",
-          copied
-            ? "text-green-600 dark:text-green-400"
-            : "text-muted-foreground group-hover:text-foreground",
-        )}
-        aria-hidden
-      >
-        {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-      </span>
-    </button>
-  );
-}
 
 export function ShareDialog({
   children,
@@ -176,9 +137,7 @@ export function ShareDialog({
           </DialogHeader>
 
           <div className="grid min-w-0 grid-cols-1 gap-3">
-            <CopyRow
-              icon={<SquareTerminal className="h-3.5 w-3.5" />}
-              label="Comando"
+            <CopyCommandButton
               value={command}
               copied={copiedTarget === "command"}
               onCopy={() => copyValue("command", command)}
@@ -215,7 +174,7 @@ export function ShareDialog({
               <Button
                 type="button"
                 onClick={shareToTwitter}
-                variant="cta"
+                variant="secondary"
                 size="lg"
                 className="w-full"
               >
