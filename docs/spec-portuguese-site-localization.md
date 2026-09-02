@@ -2,11 +2,11 @@
 
 ## Status
 
-Pronta para implementação
+Supersedida parcialmente (ago/2026): a marketing/home passou a bilingue (`pt-BR` / `en-US`) via Accept-Language + cookie `kubo-locale`. Ver `apps/web/src/i18n/`. Docs MDX e analytics permanecem PT nesta fase.
 
 ## Data
 
-23 de julho de 2026
+23 de julho de 2026 (atualização i18n home: set/2026)
 
 ## Objetivo
 

@@ -1,5 +1,4 @@
 import { readFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
 
 export type OgFont = {
   name: string;
@@ -11,38 +10,33 @@ export type OgFont = {
 let cachedFonts: Promise<OgFont[]> | null = null;
 let cachedMark: Promise<string> | null = null;
 
-async function loadAsset(relativeFromLib: string): Promise<Buffer> {
-  const path = fileURLToPath(new URL(relativeFromLib, import.meta.url));
-  return readFile(path);
-}
-
-async function loadTtf(relativeFromLib: string): Promise<ArrayBuffer> {
-  const buffer = await loadAsset(relativeFromLib);
+async function loadTtf(assetUrl: URL): Promise<ArrayBuffer> {
+  const buffer = await readFile(assetUrl);
   // Copy into a fresh ArrayBuffer — Buffer#buffer can be SharedArrayBuffer.
   return Uint8Array.from(buffer).buffer;
 }
 
 export function loadStackOgFonts(): Promise<OgFont[]> {
   cachedFonts ??= Promise.all([
-    loadTtf("../_assets/SpaceGrotesk-Medium.ttf").then((data) => ({
+    loadTtf(new URL("../_assets/SpaceGrotesk-Medium.ttf", import.meta.url)).then((data) => ({
       name: "Space Grotesk",
       data,
       weight: 500 as const,
       style: "normal" as const,
     })),
-    loadTtf("../_assets/SpaceGrotesk-Bold.ttf").then((data) => ({
+    loadTtf(new URL("../_assets/SpaceGrotesk-Bold.ttf", import.meta.url)).then((data) => ({
       name: "Space Grotesk",
       data,
       weight: 700 as const,
       style: "normal" as const,
     })),
-    loadTtf("../_assets/IBMPlexMono-Regular.ttf").then((data) => ({
+    loadTtf(new URL("../_assets/IBMPlexMono-Regular.ttf", import.meta.url)).then((data) => ({
       name: "IBM Plex Mono",
       data,
       weight: 400 as const,
       style: "normal" as const,
     })),
-    loadTtf("../_assets/IBMPlexMono-Medium.ttf").then((data) => ({
+    loadTtf(new URL("../_assets/IBMPlexMono-Medium.ttf", import.meta.url)).then((data) => ({
       name: "IBM Plex Mono",
       data,
       weight: 500 as const,

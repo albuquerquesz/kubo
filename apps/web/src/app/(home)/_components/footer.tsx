@@ -2,46 +2,46 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { getDictionary, getLocale } from "@/i18n/server";
 import { cn } from "@/lib/utils";
 
 import FinalCtaDotMatrix from "./final-cta-dot-matrix";
 
-const footerGroups = [
-  {
-    label: "Criar",
-    links: [
-      { label: "Builder", href: "/new" },
-      { label: "Docs", href: "/docs" },
-    ],
-  },
-  {
-    label: "Explorar",
-    links: [{ label: "Pacote NPM", href: "https://www.npmjs.com/package/create-kubojs" }],
-  },
-  {
-    label: "Comunidade",
-    links: [
-      { label: "Discord", href: "https://discord.gg/ZYsbjpDaM5" },
-      {
-        label: "GitHub",
-        href: "https://github.com/albuquerquesz/kubo",
-      },
-    ],
-  },
-] as const;
+export default async function Footer() {
+  const t = getDictionary(await getLocale());
 
-export default function Footer() {
+  const footerGroups = [
+    {
+      label: t.footer.groups.create,
+      links: [
+        { label: t.footer.links.builder, href: "/new" },
+        { label: t.footer.links.docs, href: "/docs" },
+      ],
+    },
+    {
+      label: t.footer.groups.explore,
+      links: [{ label: t.footer.links.npm, href: "https://www.npmjs.com/package/create-kubojs" }],
+    },
+    {
+      label: t.footer.groups.community,
+      links: [
+        { label: t.footer.links.discord, href: "https://discord.gg/ZYsbjpDaM5" },
+        {
+          label: t.footer.links.github,
+          href: "https://github.com/albuquerquesz/kubo",
+        },
+      ],
+    },
+  ] as const;
+
   return (
     <footer>
       <FinalCtaDotMatrix />
 
-      <nav
-        aria-label="Navegação do rodapé"
-        className="grid border-rule sm:grid-cols-2 lg:grid-cols-4"
-      >
+      <nav aria-label={t.footer.navAria} className="grid border-rule sm:grid-cols-2 lg:grid-cols-4">
         <div className="border-rule p-6 sm:p-8 lg:px-4 lg:py-20">
           <p id="newsletter-title" className="ui-kicker text-primary">
-            Newsletter
+            {t.footer.newsletter}
           </p>
           <form
             className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center"
@@ -49,7 +49,7 @@ export default function Footer() {
             method="post"
           >
             <label className="sr-only" htmlFor="footer-newsletter-email">
-              Seu email
+              {t.footer.emailLabel}
             </label>
             <input
               id="footer-newsletter-email"
@@ -57,11 +57,11 @@ export default function Footer() {
               type="email"
               required
               autoComplete="email"
-              placeholder="voce@exemplo.com"
+              placeholder={t.footer.emailPlaceholder}
               className="min-h-12 min-w-0 flex-1 rounded-full border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 sm:max-w-[280px]"
             />
             <Button type="submit" variant="cta" size="lg" className="shrink-0">
-              Entrar
+              {t.footer.subscribe}
               <ArrowUpRight className="size-4" />
             </Button>
           </form>

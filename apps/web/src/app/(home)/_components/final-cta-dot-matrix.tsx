@@ -2,6 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
+import { getDictionary, getLocale } from "@/i18n/server";
 import { cn } from "@/lib/utils";
 
 import CopyInstallCommandButton from "./copy-install-command-button";
@@ -18,7 +19,9 @@ const finalCtaSecondaryClassName = cn(
 );
 
 /** Final conversion CTA; yellow field, black dots, white copy. */
-export default function FinalCtaDotMatrix() {
+export default async function FinalCtaDotMatrix() {
+  const t = getDictionary(await getLocale());
+
   return (
     <section
       id="cta"
@@ -32,15 +35,15 @@ export default function FinalCtaDotMatrix() {
           id="final-cta-title"
           className="ui-display max-w-[47.5rem] text-balance text-[clamp(2rem,3vw,3.5rem)] leading-[0.93] text-white"
         >
-          Pare de montar.
+          {t.finalCta.titleLine1}
           <br />
-          Comece a publicar.
+          {t.finalCta.titleLine2}
         </h2>
 
         <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
           <CopyInstallCommandButton confetti className={finalCtaPrimaryClassName} />
           <Link href="/new" className={finalCtaSecondaryClassName}>
-            Monte sua stack
+            {t.finalCta.buildStack}
             <ArrowUpRight
               aria-hidden
               data-icon="inline-end"

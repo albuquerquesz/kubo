@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { KuboMarkMotion, type KuboMarkMotionHandle } from "@/components/brand/kubo-mark-motion";
 import { buttonVariants } from "@/components/ui/button";
+import { formatMessage, useDictionary } from "@/i18n";
 import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "@/lib/create-commands";
 import { fireCtaConfetti } from "@/lib/motion/cta-confetti";
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
@@ -19,7 +20,6 @@ import { cn } from "@/lib/utils";
 import "./hero-dithering-card.css";
 
 const PRIMARY_FALLBACK = "#c49314";
-const HERO_TITLE = "Construa sem começar do zero.";
 const GITHUB_REPOSITORY_URL = "https://github.com/albuquerquesz/kubo";
 
 void import("@paper-design/shaders-react");
@@ -126,6 +126,8 @@ export type CTASectionProps = {
 };
 
 export function CTASection({ className }: CTASectionProps) {
+  const t = useDictionary();
+  const heroTitle = t.hero.titleFull;
   const [isHovered, setIsHovered] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shaderReady, setShaderReady] = useState(false);
@@ -179,7 +181,7 @@ export function CTASection({ className }: CTASectionProps) {
         killIntro?.();
       };
     },
-    { scope: contentRef, dependencies: [HERO_TITLE] },
+    { scope: contentRef, dependencies: [heroTitle] },
   );
 
   useEffect(() => {
@@ -225,7 +227,7 @@ export function CTASection({ className }: CTASectionProps) {
   return (
     <section
       id="top"
-      aria-label="Seção principal"
+      aria-label={t.hero.sectionAria}
       className={cn(
         "relative -mt-[var(--site-header-height)] flex h-svh min-h-svh w-full flex-col items-center justify-center overflow-hidden bg-background",
         className,
@@ -265,17 +267,16 @@ export function CTASection({ className }: CTASectionProps) {
             "md:text-7xl lg:text-8xl",
           )}
         >
-          Construa sem
+          {t.hero.titleLine1}
           <br />
-          <span className="text-foreground/80">começar do zero.</span>
+          <span className="text-foreground/80">{t.hero.titleLine2}</span>
         </h1>
 
         <p
           ref={bodyRef}
           className="mb-12 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl"
         >
-          Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.
-          Limpo, preciso e do seu jeito.
+          {t.hero.body}
         </p>
 
         <div ref={ctaRef} className="flex max-w-full flex-wrap items-center justify-center gap-3">
@@ -284,11 +285,11 @@ export function CTASection({ className }: CTASectionProps) {
             type="button"
             onClick={copyCommand}
             className={cn(buttonVariants({ variant: "cta", size: "xl" }), "relative")}
-            aria-label={copied ? "Comando copiado" : `Copiar comando: ${command}`}
-            title={copied ? "Copiado" : "Clique para copiar"}
+            aria-label={copied ? t.hero.copiedAria : formatMessage(t.hero.copyAria, { command })}
+            title={copied ? t.hero.copiedTitle : t.hero.copyTitle}
           >
             <span className="sr-only" aria-live="polite">
-              {copied ? "Comando copiado" : "Copiar comando"}
+              {copied ? t.hero.copiedSr : t.hero.copySr}
             </span>
             <code className="max-w-[min(100%,28rem)] truncate font-mono text-sm tracking-[0.04em] sm:text-base">
               {command}
@@ -304,8 +305,8 @@ export function CTASection({ className }: CTASectionProps) {
               "hover:scale-105 hover:bg-background/70 hover:ring-4 hover:ring-foreground/10 active:scale-95",
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
             )}
-            aria-label="Abrir o repositório Kubo no GitHub para dar uma estrela"
-            title="Dar uma estrela no GitHub"
+            aria-label={t.hero.starAria}
+            title={t.hero.starTitle}
           >
             <Star aria-hidden className="size-6" strokeWidth={1.8} />
           </a>

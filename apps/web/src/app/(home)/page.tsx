@@ -1,5 +1,3 @@
-export const dynamic = "force-static";
-
 import { api } from "@kubojs/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 
