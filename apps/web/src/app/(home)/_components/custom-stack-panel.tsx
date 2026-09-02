@@ -3,14 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
+import { getDictionary, getLocale } from "@/i18n/server";
 import { cn } from "@/lib/utils";
-
-const stackFeatures = [
-  "FRONTEND + BACKEND",
-  "CONFIGURAÇÃO DE DATABASE",
-  "AUTH E PAGAMENTOS",
-  "PRODUCTION-READY",
-] as const;
 
 type CustomStackPanelProps = {
   variant?: "stack-builder" | "documentation" | "integrations";
@@ -22,7 +16,7 @@ type CustomStackPanelProps = {
   showViewportBottomRule?: boolean;
 };
 
-export default function CustomStackPanel({
+export default async function CustomStackPanel({
   variant = "stack-builder",
   sectionId = "builder",
   titleId = "custom-stack-title",
@@ -31,42 +25,41 @@ export default function CustomStackPanel({
   showViewportTopRule = true,
   showViewportBottomRule = true,
 }: CustomStackPanelProps) {
+  const t = getDictionary(await getLocale());
+  const { panels } = t;
+
   const content =
     variant === "documentation"
       ? {
-          title: "Construa com o Kubo.",
-          description:
-            "Consulte guias práticos para entender cada camada, configurar seu projeto e colocá-lo em produção.",
-          cta: "Ler documentação",
+          title: panels.documentation.title,
+          description: panels.documentation.description,
+          cta: panels.documentation.cta,
           href: "/docs",
           imageSrc: "/assets/kubo-bg-3.png",
-          imageAlt: "Exemplo de código gerado pelo Kubo",
+          imageAlt: panels.documentation.imageAlt,
         }
       : variant === "integrations"
         ? {
-            title: "Monte sua stack",
+            title: panels.integrations.title,
             imageSrc: "/assets/kubo-bg.png",
-            description: (
-              <>
-                Escolha cada camada e gere uma base TypeScript pronta para evoluir com seu projeto.
-              </>
-            ),
-            cta: "Monte sua stack",
+            description: panels.integrations.description,
+            cta: panels.integrations.cta,
             href: "/new",
-            imageAlt: "Integrações brasileiras disponíveis no Stack Builder do Kubo",
+            imageAlt: panels.integrations.imageAlt,
           }
         : {
-            title: "Explorar Integrações",
+            title: panels.stackBuilder.title,
             imageSrc: "/assets/kubo-bg-4.png",
             description: (
               <>
-                Construa com as melhores ferramentas e descubra o diferencial das{" "}
-                <span className="text-foreground">integrações brasileiras</span>.
+                {panels.stackBuilder.descriptionBefore}
+                <span className="text-foreground">{panels.stackBuilder.descriptionHighlight}</span>
+                {panels.stackBuilder.descriptionAfter}
               </>
             ),
-            cta: "Explorar Integrações",
+            cta: panels.stackBuilder.cta,
             href: "/new",
-            imageAlt: "Interface do Stack Builder do Kubo",
+            imageAlt: panels.stackBuilder.imageAlt,
           };
 
   return (
@@ -120,7 +113,7 @@ export default function CustomStackPanel({
       </div>
 
       <div className="flex flex-wrap gap-2 px-4 py-4 sm:px-6 lg:px-6">
-        {stackFeatures.map((feature) => (
+        {panels.features.map((feature) => (
           <span
             key={feature}
             className="bg-muted px-2 py-1 font-mono text-[0.625rem] text-muted-foreground uppercase tracking-[0.04em]"

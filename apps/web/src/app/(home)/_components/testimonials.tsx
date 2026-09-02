@@ -4,6 +4,8 @@ import { type LucideIcon, Play, Quote } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { formatMessage, useDictionary } from "@/i18n";
+
 type CommunityEntry = {
   title: string;
   description: string;
@@ -58,17 +60,21 @@ export default function Testimonials({
   videos: Array<{ embedId: string; title: string }>;
   tweets: Array<{ tweetId: string }>;
 }) {
+  const t = useDictionary();
+
   const liveEntries: CommunityEntry[] = [
     ...videos.map((video) => ({
       title: video.title,
-      description: "Assista um membro da comunidade publicar uma stack TypeScript.",
+      description: t.community.videoDescription,
       href: `https://www.youtube.com/watch?v=${video.embedId}`,
       kind: "video" as const,
       icon: Play,
     })),
     ...tweets.map((tweet, index) => ({
-      title: `Despacho ${String(index + 1).padStart(2, "0")} da comunidade.`,
-      description: "Veja a stack, o contexto e as notas de implementação.",
+      title: formatMessage(t.community.noteTitle, {
+        n: String(index + 1).padStart(2, "0"),
+      }),
+      description: t.community.noteDescription,
       href: `https://x.com/i/status/${tweet.tweetId}`,
       kind: "note" as const,
       icon: Quote,
@@ -82,14 +88,14 @@ export default function Testimonials({
   return (
     <section
       id="community"
-      aria-label="Comunidade"
+      aria-label={t.community.sectionAria}
       className="ui-scroll-target border-rule border-b"
     >
       <div className="p-5 sm:p-8 lg:p-10">
         <div
           className="no-scrollbar flex snap-x snap-mandatory gap-px overflow-x-auto border border-rule bg-rule"
           tabIndex={0}
-          aria-label="Histórias da comunidade"
+          aria-label={t.community.storiesAria}
         >
           {liveEntries.map((entry, index) => (
             <CommunityCard key={`${entry.href}-${index}`} entry={entry} />

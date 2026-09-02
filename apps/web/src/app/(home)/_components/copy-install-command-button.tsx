@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
+import { formatMessage, useDictionary } from "@/i18n";
 import { fireCtaConfetti } from "@/lib/motion/cta-confetti";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +29,7 @@ export default function CopyInstallCommandButton({
   confetti = false,
   onCopied,
 }: CopyInstallCommandButtonProps) {
+  const t = useDictionary();
   const [copied, setCopied] = useState(false);
   const resetTimerRef = useRef<number | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -79,11 +81,11 @@ export default function CopyInstallCommandButton({
         "relative no-underline",
         className,
       )}
-      aria-label={copied ? "Comando copiado" : `Copiar comando: ${command}`}
-      title={copied ? "Copiado" : "Clique para copiar"}
+      aria-label={copied ? t.hero.copiedAria : formatMessage(t.hero.copyAria, { command })}
+      title={copied ? t.hero.copiedTitle : t.hero.copyTitle}
     >
       <span className="sr-only" aria-live="polite">
-        {copied ? "Comando copiado" : "Copiar comando"}
+        {copied ? t.hero.copiedSr : t.hero.copySr}
       </span>
       <code
         className={cn(
