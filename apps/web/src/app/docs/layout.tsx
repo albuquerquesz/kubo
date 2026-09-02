@@ -1,21 +1,22 @@
-import { DocsLayout, type DocsLayoutProps } from "fumadocs-ui/layouts/notebook";
+import { DocsLayout } from "fumadocs-ui/layouts/notebook";
 import type { ReactNode } from "react";
 
-import { baseOptions } from "@/app/layout.config";
+import { getBaseOptions } from "@/app/layout.config";
 import { SiteHeader } from "@/components/site/site-header";
 import { SpecialSponsorBanner } from "@/components/special-sponsor-banner";
+import { getDictionary, getLocale } from "@/i18n/server";
 import { source } from "@/lib/source";
 
-const docsOptions: DocsLayoutProps = {
-  ...baseOptions,
-  tree: source.pageTree,
-  // links: [],
-  sidebar: {
-    banner: <SpecialSponsorBanner />,
-  },
-};
+export default async function Layout({ children }: { children: ReactNode }) {
+  const dictionary = getDictionary(await getLocale());
+  const docsOptions = {
+    ...getBaseOptions(dictionary),
+    tree: source.pageTree,
+    sidebar: {
+      banner: <SpecialSponsorBanner />,
+    },
+  };
 
-export default function Layout({ children }: { children: ReactNode }) {
   return (
     <>
       <SiteHeader />

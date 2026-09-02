@@ -5,9 +5,11 @@ import type { ReactNode } from "react";
 
 import Providers from "@/components/providers";
 import UmamiScript from "@/components/umami-script";
+import { LocaleProvider } from "@/i18n";
+import { getDictionary, getLocale } from "@/i18n/server";
+import { cn } from "@/lib/utils";
 
 import "./global.css";
-import { cn } from "@/lib/utils";
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -38,98 +40,83 @@ const spaceGrotesk = Space_Grotesk({
 
 const ogImage = "https://kubojs.dev/assets/kubo-social.jpg";
 
-export const metadata: Metadata = {
-  title: "kubojs — crie projetos TypeScript type-safe",
-  description:
-    "CLI moderna para criar projetos TypeScript end-to-end com type safety, boas práticas e configurações personalizáveis",
-  keywords: [
-    "TypeScript",
-    "scaffolding de projetos",
-    "boilerplate",
-    "type safety",
-    "criar projetos",
-    "Drizzle",
-    "Prisma",
-    "hono",
-    "elysia",
-    "turborepo",
-    "trpc",
-    "orpc",
-    "turso",
-    "neon",
-    "Better-Auth",
-    "convex",
-    "monorepo",
-    "CLI",
-    "kubojs",
-  ],
-  authors: [{ name: "Equipe kubojs" }],
-  creator: "kubojs",
-  publisher: "kubojs",
-  formatDetection: {
-    email: false,
-    telephone: false,
-  },
-  metadataBase: new URL("https://kubojs.dev"),
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: "kubojs — crie projetos TypeScript type-safe",
-    description:
-      "CLI moderna para criar projetos TypeScript end-to-end com type safety, boas práticas e configurações personalizáveis",
-    url: "https://kubojs.dev",
-    siteName: "kubojs",
-    images: [
-      {
-        url: ogImage,
-        width: 1670,
-        height: 942,
-        type: "image/jpeg",
-        alt: "kubojs — CLI para projetos TypeScript type-safe",
-      },
-    ],
-    locale: "pt_BR",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "kubojs — crie projetos TypeScript type-safe",
-    description:
-      "CLI moderna para criar projetos TypeScript end-to-end com type safety, boas práticas e configurações personalizáveis",
-    images: [ogImage],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const { meta } = getDictionary(locale);
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    keywords: [...meta.keywords],
+    authors: [{ name: meta.authors }],
+    creator: "kubojs",
+    publisher: "kubojs",
+    formatDetection: {
+      email: false,
+      telephone: false,
+    },
+    metadataBase: new URL("https://kubojs.dev"),
+    alternates: {
+      canonical: "/",
+    },
+    openGraph: {
+      title: meta.title,
+      description: meta.description,
+      url: "https://kubojs.dev",
+      siteName: "kubojs",
+      images: [
+        {
+          url: ogImage,
+          width: 1670,
+          height: 942,
+          type: "image/jpeg",
+          alt: meta.ogAlt,
+        },
+      ],
+      locale: meta.openGraphLocale,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: meta.title,
+      description: meta.description,
+      images: [ogImage],
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-image-preview": "large",
-      "max-video-preview": -1,
-      "max-snippet": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-video-preview": -1,
+        "max-snippet": -1,
+      },
     },
-  },
-  category: "Tecnologia",
-  icons: {
-    icon: [
-      { url: "/favicon/favicon-96x96.png", sizes: "96x96", type: "image/png" },
-      { url: "/favicon.ico", sizes: "any" },
-    ],
-    shortcut: "/favicon.ico",
-    apple: [{ url: "/favicon/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
-  },
-};
+    category: meta.category,
+    icons: {
+      icon: [
+        { url: "/favicon/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+        { url: "/favicon.ico", sizes: "any" },
+      ],
+      shortcut: "/favicon.ico",
+      apple: [{ url: "/favicon/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    },
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1.0,
 };
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default async function Layout({ children }: { children: ReactNode }) {
+  const locale = await getLocale();
+  const dictionary = getDictionary(locale);
+
   return (
     <html
-      lang="pt-BR"
+      lang={locale}
       className={cn(
         archivo.variable,
         ibmPlexMono.variable,
@@ -150,18 +137,8 @@ export default function Layout({ children }: { children: ReactNode }) {
             },
           }}
           i18n={{
-            locale: "pt-BR",
-            translations: {
-              search: "Buscar",
-              searchNoResult: "Nenhum resultado encontrado",
-              toc: "Nesta página",
-              tocNoHeadings: "Sem cabeçalhos",
-              lastUpdate: "Última atualização em",
-              chooseLanguage: "Escolher idioma",
-              nextPage: "Próxima página",
-              previousPage: "Página anterior",
-              editOnGithub: "Editar no GitHub",
-            },
+            locale,
+            translations: { ...dictionary.fumadocs },
           }}
           // Site is forced dark via <html className="dark">. Disabling next-themes
           // avoids its client-side <script> injection, which React 19 warns about
@@ -170,7 +147,9 @@ export default function Layout({ children }: { children: ReactNode }) {
             enabled: false,
           }}
         >
-          <Providers>{children}</Providers>
+          <LocaleProvider locale={locale} dictionary={dictionary}>
+            <Providers>{children}</Providers>
+          </LocaleProvider>
         </RootProvider>
       </body>
     </html>
