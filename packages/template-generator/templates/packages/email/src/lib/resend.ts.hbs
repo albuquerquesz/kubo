@@ -17,15 +17,12 @@ export type SendEmailInput = {
  * Send a transactional email via Resend.
  */
 export async function sendEmail(input: SendEmailInput) {
-	const from = input.from ?? env.RESEND_FROM_EMAIL ?? "Acme <onboarding@resend.dev>";
+	const from = input.from ?? env.RESEND_FROM_EMAIL;
 
 	const { data, error } = await resend.emails.send(
 		{
 			from,
-			to: input.to,
-			subject: input.subject,
-			html: input.html,
-			replyTo: input.replyTo,
+			...input
 		},
 		input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : undefined,
 	);
