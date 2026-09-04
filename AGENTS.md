@@ -10,7 +10,6 @@ This repo is a Bun + Turborepo monorepo.
 - `packages/template-generator`: template generation engine used by the CLI.
 - `packages/types`: shared schemas/types.
 - `packages/backend`: Convex backend used by web features.
-- `plugin/`: installable agent plugin (Claude Code + Codex) — skills, commands, and MCP wiring; published via the root marketplaces (`.claude-plugin/`, `.agents/plugins/`).
 
 ## Build, Test, and Development Commands
 
@@ -88,12 +87,7 @@ branching and type noise encountered in the touched area:
 
 ### Start here
 
-For repository-scoped documentation and review workflows, use the [kubojs router](.agents/skills/kubojs/SKILL.md):
-
-- [`/kubojs document`](.agents/skills/kubojs/workflows/document/SKILL.md)
-- [`/kubojs review`](.agents/skills/kubojs/workflows/review/SKILL.md)
-- [Monorepo map](.agents/skills/kubojs/reference/monorepo-map.md) (app/package boundaries)
-- [Agent role runbook](docs/runbooks/agent-role-system.md)
+For practical KuboJS usage in a generated project, use the [KuboJS guide](.agents/skills/kubojs/SKILL.md).
 
 ### Issue tracker
 

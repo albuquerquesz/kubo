@@ -3,7 +3,7 @@
 **Date:** 2026-08-04  
 **Scope:** `HEAD~3..HEAD` only (exclusive of older history).  
 **Method:** static + diff analysis of semantic deltas; pure rename/skill/media trees summarized, not re-audited line-by-line.  
-**Rules referenced:** `AGENTS.md`, monorepo map (`.agents/skills/kubojs/reference/monorepo-map.md`), evidence-only findings.
+**Rules referenced:** `AGENTS.md` and evidence-only findings.
 
 ## Executive summary
 
@@ -27,14 +27,14 @@ Commit order is newest → oldest (`git log -3`).
 
 ### Semantic / non-rename surfaces (inspected)
 
-| Area          | Paths                                                                                                    | Role in range                                                        |
-| ------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| CI            | `.github/workflows/release.yaml`                                                                         | New `deploy-web` job; release summary web blurb                      |
-| Publish docs  | `docs/spec-npm-publish-secrets-and-oss.md`                                                               | Vercel credential table                                              |
-| Monorepo root | `package.json`, `turbo.json`, `bun.lock`                                                                 | `dev:video` / `build:video`, Turbo `bundle` task, hoisted video deps |
-| Video package | `apps/video/package.json`, `apps/video/.gitignore`                                                       | rename `@kubojs/video`, `build`→`bundle`, `render` script            |
-| Web           | `apps/web/tsconfig.json`                                                                                 | drop `public/video` exclude after move                               |
-| Agent docs    | `AGENTS.md`, `README.md`, `CONTEXT.md`, `.agents/skills/kubojs/**`, `docs/runbooks/agent-role-system.md` | monorepo map / blueprint (context only)                              |
+| Area          | Paths                                                                    | Role in range                                                        |
+| ------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| CI            | `.github/workflows/release.yaml`                                         | New `deploy-web` job; release summary web blurb                      |
+| Publish docs  | `docs/spec-npm-publish-secrets-and-oss.md`                               | Vercel credential table                                              |
+| Monorepo root | `package.json`, `turbo.json`, `bun.lock`                                 | `dev:video` / `build:video`, Turbo `bundle` task, hoisted video deps |
+| Video package | `apps/video/package.json`, `apps/video/.gitignore`                       | rename `@kubojs/video`, `build`→`bundle`, `render` script            |
+| Web           | `apps/web/tsconfig.json`                                                 | drop `public/video` exclude after move                               |
+| Agent docs    | `AGENTS.md`, `README.md`, `CONTEXT.md`, `.agents/skills/kubojs/SKILL.md` | agent guidance (context only)                                        |
 
 ### Rename / asset noise (summarized, not line-audited)
 
@@ -221,4 +221,4 @@ Automated regression guard added: `apps/cli/test/monorepo-video-workspace.test.t
 | ------------- | ------------------------------------------------- |
 | Author role   | Thermo-nuclear static code-quality review (agent) |
 | Fixes applied | None (report-only per scope)                      |
-| Related map   | `.agents/skills/kubojs/reference/monorepo-map.md` |
+| Related guide | `.agents/skills/kubojs/SKILL.md`                  |

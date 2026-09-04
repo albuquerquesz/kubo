@@ -69,7 +69,7 @@ This repository is organized as a monorepo containing:
 - **Video**: [`apps/video`](apps/video) — Remotion app (`@kubojs/video`) for brand/launch videos; Studio + render only (not nested under the web site)
 - **Packages**: [`packages/types`](packages/types), [`packages/template-generator`](packages/template-generator), [`packages/backend`](packages/backend)
 
-Agent-oriented layout notes: [`.agents/skills/kubojs/reference/monorepo-map.md`](.agents/skills/kubojs/reference/monorepo-map.md).
+Agent usage guide: [`.agents/skills/kubojs/SKILL.md`](.agents/skills/kubojs/SKILL.md).
 
 ## Documentation
 
