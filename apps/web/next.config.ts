@@ -39,6 +39,9 @@ const config: NextConfig = {
   outputFileTracingExcludes: {
     "*": ["./**/*.js.map", "./**/*.mjs.map", "./**/*.cjs.map"],
   },
+  outputFileTracingIncludes: {
+    "/og/stack": ["./src/app/og/stack/_assets/**/*"],
+  },
   async rewrites() {
     return [
       {

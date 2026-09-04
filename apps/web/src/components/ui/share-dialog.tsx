@@ -38,6 +38,7 @@ interface ShareDialogProps {
 }
 
 type CopyTarget = "command" | "url";
+type PreviewStatus = "loading" | "loaded" | "error";
 
 export function ShareDialog({
   children,
@@ -50,7 +51,7 @@ export function ShareDialog({
   const [copiedTarget, setCopiedTarget] = useState<CopyTarget | null>(null);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const [qrFailed, setQrFailed] = useState(false);
-  const [previewLoaded, setPreviewLoaded] = useState(false);
+  const [previewStatus, setPreviewStatus] = useState<PreviewStatus>("loading");
   const [canNativeShare, setCanNativeShare] = useState(false);
   const copyResetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const normalizedStack = { ...stackState, projectName: formatProjectName(stackState.projectName) };
@@ -58,6 +59,10 @@ export function ShareDialog({
   const command = generateStackCommand(normalizedStack);
   const ogImageUrl = generateStackOgImageUrl(normalizedStack);
   const selectedTechs = getSelectedTechs(stackState);
+
+  useEffect(() => {
+    setPreviewStatus("loading");
+  }, [ogImageUrl]);
 
   useEffect(() => {
     setCanNativeShare(typeof navigator !== "undefined" && !!navigator.share);
@@ -235,10 +240,16 @@ export function ShareDialog({
           <div className="w-full min-w-0">
             <div className="rounded border border-border">
               <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted/10">
-                {!previewLoaded && (
+                {previewStatus === "loading" && (
                   <div className="absolute inset-0 flex items-center justify-center gap-2 font-mono text-muted-foreground text-xs">
                     <span className="text-primary">$</span>
                     <span className="animate-pulse">renderizando prévia...</span>
+                  </div>
+                )}
+                {previewStatus === "error" && (
+                  <div className="absolute inset-0 flex items-center justify-center gap-2 font-mono text-muted-foreground text-xs">
+                    <span className="text-destructive">!</span>
+                    <span>falha ao renderizar prévia</span>
                   </div>
                 )}
                 <Image
@@ -247,10 +258,11 @@ export function ShareDialog({
                   width={1200}
                   height={630}
                   unoptimized
-                  onLoad={() => setPreviewLoaded(true)}
+                  onLoad={() => setPreviewStatus("loaded")}
+                  onError={() => setPreviewStatus("error")}
                   className={cn(
                     "h-full w-full object-cover transition-opacity duration-300",
-                    previewLoaded ? "opacity-100" : "opacity-0",
+                    previewStatus === "loaded" ? "opacity-100" : "opacity-0",
                   )}
                 />
               </div>
