@@ -166,30 +166,10 @@ Em projetos Bun, a config gerada usa o comando de servidor equivalente `bunx kub
 
 ## Usar dentro do seu agente de IA
 
-Instale o plugin kubojs e seu assistente gera scaffold e estende projetos por você — basta pedir em linguagem natural, como _"create a fullstack app with Next, Hono, Postgres and Better Auth"_, e ele monta uma stack válida em vez de escrever boilerplate na mão.
-
-### Claude Code
-
-Adicione o marketplace e instale o plugin:
+Conecte o servidor MCP do kubojs ao seu agente:
 
 ```bash
-/plugin marketplace add albuquerquesz/kubo
-/plugin install kubojs@kubojs
-```
-
-Depois peça um projeto no chat, ou use os atalhos:
-
-- `/kubojs:new <description>` — scaffold de um novo projeto
-- `/kubojs:add <addons>` — adiciona addons a um existente
-
-### Codex
-
-Adicione o mesmo marketplace na tela de plugins do Codex e instale **kubojs**, depois peça um projeto no chat.
-
-Prefere só as tools sem o plugin? Conecte o servidor MCP no Codex com `add-mcp`:
-
-```bash
-npx -y add-mcp@latest "npx -y kubojs@latest mcp"   # choose "codex"
+npx -y add-mcp@latest "npx -y kubojs@latest mcp"
 ```
 
 Ou adicione em `~/.codex/config.toml` diretamente:
@@ -198,14 +178,6 @@ Ou adicione em `~/.codex/config.toml` diretamente:
 [mcp_servers.kubojs]
 command = "npx"
 args = ["-y", "kubojs@latest", "mcp"]
-```
-
-### opencode
-
-Adicione o servidor MCP e peça um projeto no chat:
-
-```bash
-npx -y add-mcp@latest "npx -y kubojs@latest mcp"   # choose "opencode"
 ```
 
 ### Outros agentes

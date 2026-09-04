@@ -41,17 +41,15 @@ npm create kubojs@latest --yes
 npm create kubojs@latest builder
 ```
 
-### Agente de IA (plugin)
+### Agente de IA (MCP)
 
-Deixe seu assistente de IA montar a stack por você. Instale o plugin kubojs e descreva o que quer em português (ou inglês) — ele planeja uma stack válida e gera o scaffold.
+Deixe seu assistente de IA montar a stack por você. Conecte o servidor MCP do kubojs e descreva o que quer em português (ou inglês) — ele planeja uma stack válida e gera o scaffold.
 
 ```bash
-# Claude Code
-/plugin marketplace add albuquerquesz/kubo
-/plugin install kubojs@kubojs
+npx -y add-mcp@latest "npx -y kubojs@latest mcp"
 ```
 
-Depois peça: _"create a fullstack app with Next, Hono, Postgres and Better Auth"_. Também funciona no Codex, opencode e em qualquer agente com MCP — veja [Usar dentro do seu agente de IA](/docs/cli/agent-workflows#use-it-inside-your-ai-agent).
+Depois peça: _"create a fullstack app with Next, Hono, Postgres and Better Auth"_. Veja [Usar dentro do seu agente de IA](/docs/cli/agent-workflows#usar-dentro-do-seu-agente-de-ia).
 
 ## Configurações comuns
 
