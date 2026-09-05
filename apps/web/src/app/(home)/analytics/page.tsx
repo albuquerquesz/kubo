@@ -2,6 +2,7 @@ import { api } from "@kubojs/backend/convex/_generated/api";
 import { preloadQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 
+import Footer from "../_components/footer";
 import { AnalyticsClient } from "./analytics-client";
 
 export const metadata: Metadata = {
@@ -36,10 +37,13 @@ export default async function Analytics() {
   ]);
 
   return (
-    <AnalyticsClient
-      preloadedStats={preloadedStats}
-      preloadedDailyStats={preloadedDailyStats}
-      preloadedMonthlyStats={preloadedMonthlyStats}
-    />
+    <>
+      <AnalyticsClient
+        preloadedStats={preloadedStats}
+        preloadedDailyStats={preloadedDailyStats}
+        preloadedMonthlyStats={preloadedMonthlyStats}
+      />
+      <Footer />
+    </>
   );
 }

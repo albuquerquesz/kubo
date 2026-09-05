@@ -1,6 +1,5 @@
 "use client";
 
-import Footer from "../../_components/footer";
 import { AnalyticsHeader } from "./analytics-header";
 import { AnalyticsSources } from "./analytics-sources";
 import { DevToolsSection } from "./dev-environment-charts";
@@ -41,7 +40,6 @@ export default function AnalyticsPage({
           <AnalyticsSources />
         </div>
       </div>
-      <Footer />
     </main>
   );
 }
