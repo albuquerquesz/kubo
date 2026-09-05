@@ -1,4 +1,3 @@
-import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono, Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import type { ReactNode } from "react";
@@ -130,27 +129,9 @@ export default async function Layout({ children }: { children: ReactNode }) {
     >
       <body>
         <UmamiScript />
-        <RootProvider
-          search={{
-            options: {
-              type: "static",
-            },
-          }}
-          i18n={{
-            locale,
-            translations: { ...dictionary.fumadocs },
-          }}
-          // Site is forced dark via <html className="dark">. Disabling next-themes
-          // avoids its client-side <script> injection, which React 19 warns about
-          // ("Encountered a script tag while rendering React component").
-          theme={{
-            enabled: false,
-          }}
-        >
-          <LocaleProvider locale={locale} dictionary={dictionary}>
-            <Providers>{children}</Providers>
-          </LocaleProvider>
-        </RootProvider>
+        <LocaleProvider locale={locale} dictionary={dictionary}>
+          <Providers>{children}</Providers>
+        </LocaleProvider>
       </body>
     </html>
   );

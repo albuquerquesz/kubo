@@ -1,21 +1,31 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { isLocale, localeCookieMaxAge, localeCookieName } from "@/i18n/config";
-import { localeFromAcceptLanguage } from "@/i18n/resolve-locale";
+import {
+  localeCookieMaxAge,
+  localeCookieName,
+  localeRequestHeaderName,
+  usesBrowserLocale,
+} from "@/i18n/config";
+import { localeForPathname } from "@/i18n/resolve-locale";
 
 export function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const locale = localeForPathname(pathname, request.headers.get("accept-language"));
   const existing = request.cookies.get(localeCookieName)?.value;
-  if (isLocale(existing)) {
-    return NextResponse.next();
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(localeRequestHeaderName, locale);
+
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+
+  if (usesBrowserLocale(pathname) && existing !== locale) {
+    response.cookies.set(localeCookieName, locale, {
+      path: "/",
+      maxAge: localeCookieMaxAge,
+      sameSite: "lax",
+    });
   }
 
-  const locale = localeFromAcceptLanguage(request.headers.get("accept-language"));
-  const response = NextResponse.next();
-  response.cookies.set(localeCookieName, locale, {
-    path: "/",
-    maxAge: localeCookieMaxAge,
-    sameSite: "lax",
-  });
   return response;
 }
 

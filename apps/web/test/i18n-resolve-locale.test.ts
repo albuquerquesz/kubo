@@ -1,8 +1,13 @@
 import { describe, expect, test } from "bun:test";
 
+import { localeCookieMaxAge } from "../src/i18n/config";
 import { formatMessage } from "../src/i18n/format-message";
 import { getDictionary } from "../src/i18n/get-dictionary";
-import { localeFromAcceptLanguage, resolveLocale } from "../src/i18n/resolve-locale";
+import {
+  localeForPathname,
+  localeFromAcceptLanguage,
+  resolveLocale,
+} from "../src/i18n/resolve-locale";
 
 describe("localeFromAcceptLanguage", () => {
   test("maps Portuguese primary tags to pt-BR", () => {
@@ -24,6 +29,16 @@ describe("localeFromAcceptLanguage", () => {
 });
 
 describe("resolveLocale", () => {
+  test("trusted request locale wins over cookie and Accept-Language", () => {
+    expect(
+      resolveLocale({
+        requestLocale: "en-US",
+        cookie: "pt-BR",
+        acceptLanguage: "pt-BR,pt;q=0.9",
+      }),
+    ).toBe("en-US");
+  });
+
   test("valid cookie wins over Accept-Language", () => {
     expect(
       resolveLocale({
@@ -47,6 +62,24 @@ describe("resolveLocale", () => {
         acceptLanguage: "pt",
       }),
     ).toBe("pt-BR");
+  });
+});
+
+describe("localeForPathname", () => {
+  test("uses the current browser language on the localized homepage", () => {
+    expect(localeForPathname("/", "pt-BR,pt;q=0.9")).toBe("pt-BR");
+    expect(localeForPathname("/", "en-US,en;q=0.9")).toBe("en-US");
+  });
+
+  test("keeps untranslated routes in Portuguese", () => {
+    expect(localeForPathname("/new", "en-US,en;q=0.9")).toBe("pt-BR");
+    expect(localeForPathname("/stack", "en-US,en;q=0.9")).toBe("pt-BR");
+    expect(localeForPathname("/analytics", "en-US,en;q=0.9")).toBe("pt-BR");
+    expect(localeForPathname("/docs", "en-US,en;q=0.9")).toBe("pt-BR");
+  });
+
+  test("stores the detected homepage locale for 24 hours", () => {
+    expect(localeCookieMaxAge).toBe(60 * 60 * 24);
   });
 });
 

@@ -1,13 +1,25 @@
-import { defaultLocale, isLocale, type Locale } from "./config";
+import {
+  defaultLocale,
+  isLocale,
+  type Locale,
+  untranslatedContentLocale,
+  usesBrowserLocale,
+} from "./config";
 
 /**
- * Prefer an explicit cookie. Otherwise map Accept-Language:
+ * Prefer the locale resolved by the request proxy, then an explicit cookie.
+ * Otherwise map Accept-Language:
  * any tag whose primary subtag is `pt` → pt-BR; everything else → en-US.
  */
 export function resolveLocale(options: {
+  requestLocale?: string | null;
   cookie?: string | null;
   acceptLanguage?: string | null;
 }): Locale {
+  if (isLocale(options.requestLocale)) {
+    return options.requestLocale;
+  }
+
   if (isLocale(options.cookie)) {
     return options.cookie;
   }
@@ -27,4 +39,13 @@ export function localeFromAcceptLanguage(header: string | null | undefined): Loc
   }
 
   return defaultLocale;
+}
+
+export function localeForPathname(
+  pathname: string,
+  acceptLanguage: string | null | undefined,
+): Locale {
+  return usesBrowserLocale(pathname)
+    ? localeFromAcceptLanguage(acceptLanguage)
+    : untranslatedContentLocale;
 }
