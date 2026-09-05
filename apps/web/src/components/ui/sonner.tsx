@@ -9,10 +9,15 @@ import {
 } from "lucide-react";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
+import { useDictionary } from "@/i18n";
+
 const Toaster = ({ ...props }: ToasterProps) => {
+  const t = useDictionary();
+
   return (
     <Sonner
       theme="dark"
+      containerAriaLabel={t.notifications.containerAriaLabel}
       className="toaster group"
       icons={{
         success: <CircleCheckIcon className="size-4" />,

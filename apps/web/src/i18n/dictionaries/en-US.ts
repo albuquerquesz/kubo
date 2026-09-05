@@ -84,6 +84,7 @@ export const enUS = {
         "Choose every layer and generate a TypeScript base ready to grow with your project.",
       cta: "Build your stack",
       imageAlt: "Brazilian integrations available in the Kubo Stack Builder",
+      sectionAria: "Brazilian integrations",
     },
     stackBuilder: {
       title: "Explore integrations",
@@ -124,6 +125,9 @@ export const enUS = {
     videoDescription: "Watch a community member ship a TypeScript stack.",
     noteTitle: "Community dispatch {n}.",
     noteDescription: "See the stack, context, and implementation notes.",
+  },
+  notifications: {
+    containerAriaLabel: "Notifications",
   },
 } as const;
 

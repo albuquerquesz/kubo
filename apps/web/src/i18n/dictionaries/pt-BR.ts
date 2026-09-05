@@ -91,6 +91,7 @@ export const ptBR = {
         "Escolha cada camada e gere uma base TypeScript pronta para evoluir com seu projeto.",
       cta: "Monte sua stack",
       imageAlt: "Integrações brasileiras disponíveis no Stack Builder do Kubo",
+      sectionAria: "Integrações brasileiras",
     },
     stackBuilder: {
       title: "Explorar Integrações",
@@ -131,5 +132,8 @@ export const ptBR = {
     videoDescription: "Assista um membro da comunidade publicar uma stack TypeScript.",
     noteTitle: "Despacho {n} da comunidade.",
     noteDescription: "Veja a stack, o contexto e as notas de implementação.",
+  },
+  notifications: {
+    containerAriaLabel: "Notificações",
   },
 } as const satisfies Dictionary;

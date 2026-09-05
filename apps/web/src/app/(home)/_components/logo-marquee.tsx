@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 
+import { useDictionary } from "@/i18n";
 import {
   LOGO_MARQUEE_AUTOPLAY_PX_PER_SEC,
   LOGO_MARQUEE_CELL_COUNT,
@@ -122,6 +123,7 @@ function Track({
  * Geometry: docs/spec-mistral-home-logo-marquee.md (cell/step/hover/drag).
  */
 export default function LogoMarquee() {
+  const t = useDictionary();
   const viewportRef = useRef<HTMLDivElement>(null);
   const offsetRef = useRef(0);
   const sequenceWidthRef = useRef(logoMarqueeMetrics(1024).sequenceWidth);
@@ -304,7 +306,7 @@ export default function LogoMarquee() {
     <section
       id="integrations"
       className="logo-marquee ui-scroll-target"
-      aria-label="Integrações brasileiras"
+      aria-label={t.panels.integrations.sectionAria}
       data-logo-marquee
     >
       <div
