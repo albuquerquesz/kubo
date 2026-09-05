@@ -127,4 +127,12 @@ export const enUS = {
   },
 } as const;
 
-export type Dictionary = typeof enUS;
+type LocalizedDictionary<T> = T extends string
+  ? string
+  : T extends readonly unknown[]
+    ? { readonly [Key in keyof T]: LocalizedDictionary<T[Key]> }
+    : T extends object
+      ? { readonly [Key in keyof T]: LocalizedDictionary<T[Key]> }
+      : T;
+
+export type Dictionary = LocalizedDictionary<typeof enUS>;
