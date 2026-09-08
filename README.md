@@ -39,23 +39,6 @@ pnpm create kubojs@latest
 npx create-kubojs@latest
 ```
 
-## Features
-
-- Frontend: React (TanStack Router, React Router, TanStack Start), Next.js, Nuxt, Svelte, Solid, Astro, React Native (Bare, NativeWind, Unistyles), or none
-- Backend: Hono, Express, Fastify, Elysia, Self (fullstack web app), Convex, or none
-- API: tRPC, oRPC, Orval, or none
-- Runtime: Bun, Node.js, or Cloudflare Workers
-- Databases: SQLite, PostgreSQL, MySQL, MongoDB (or none)
-- ORMs: Drizzle, Prisma, Mongoose (or none)
-- Auth: Better Auth or Clerk (optional)
-- Addons: Turborepo, Vite+, PWA, Tauri, Electrobun, Biome, Lefthook, Husky, Oxlint, MCP, OpenTUI, Skills, S3-compatible Storage
-- Testing: Vitest, Playwright
-- Examples: Todo, AI
-- DB Setup: Turso, Neon, Supabase, Prisma PostgreSQL, MongoDB Atlas, Cloudflare D1, Docker
-- Web Deploy: Cloudflare Workers
-
-Type safety end-to-end, clean monorepo layout, and zero lock-in: you choose only what you need.
-
 ## Agent Skill
 
 Kubo includes a [`kubojs` agent skill](.agents/skills/kubojs/SKILL.md) that helps AI coding agents
@@ -73,9 +56,18 @@ Or install it globally for your agent:
 npx skills add albuquerquesz/kubo --skill kubojs --global
 ```
 
-## Credits
+## What Kubo Makes Easier
 
-Kubo began as a continuation of [Better T Stack](https://github.com/AmanVarshney01/create-better-t-stack). We thank its maintainers and contributors for the foundation that made this project possible.
+- `kubojs create` — scaffold a new project interactively or with explicit CLI options.
+- `kubojs create-json` — generate projects from JSON payloads for scripts and AI agents.
+- `kubojs add` — add addons and testing tools to an existing KuboJS project.
+- `kubojs add-json` — apply the same changes from a structured JSON payload.
+- `kubojs schema` — inspect current CLI schemas, valid stack options, and input shapes.
+- `kubojs history` — review project creation history or export it as JSON.
+- `kubojs docs` and `kubojs builder` — open the documentation and visual Stack Builder.
+- `kubojs mcp` — connect KuboJS to AI agents through a local stdio MCP server.
+
+From the first scaffold to ongoing project changes, Kubo keeps setup explicit, repeatable, and easy to automate.
 
 ## Repository Structure
 
@@ -109,6 +101,10 @@ bun dev
 bun cli
 
 ```
+
+## Credits
+
+Kubo began as a continuation of [Better T Stack](https://github.com/AmanVarshney01/create-better-t-stack). We thank its maintainers and contributors for the foundation that made this project possible.
 
 ## Want to contribute?
 
