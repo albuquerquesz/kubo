@@ -796,17 +796,10 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
     });
   }
 
-  if (nextStack.serverDeploy === "vercel" && nextStack.runtime === "workers") {
-    nextStack.serverDeploy = "cloudflare";
-    changed = true;
-    changes.push({
-      category: "serverDeploy",
-      message:
-        "Deploy do servidor definido como 'Cloudflare' (runtime Workers faz deploy via Cloudflare)",
-    });
-  }
-
-  if (nextStack.serverDeploy === "guaracloud" && nextStack.runtime === "workers") {
+  if (
+    ["vercel", "railway", "guaracloud"].includes(nextStack.serverDeploy) &&
+    nextStack.runtime === "workers"
+  ) {
     nextStack.serverDeploy = "cloudflare";
     changed = true;
     changes.push({
@@ -1210,11 +1203,15 @@ export const getDisabledReason = (
     if (optionId === "docker" && currentStack.runtime === "workers") {
       return "Deploy de servidor com Docker exige runtime Bun ou Node";
     }
-    if (optionId === "vercel" && currentStack.runtime === "workers") {
-      return "Deploy de servidor na Vercel exige runtime Bun ou Node";
-    }
-    if (optionId === "guaracloud" && currentStack.runtime === "workers") {
-      return "Deploy de servidor na Guara Cloud exige runtime Bun ou Node";
+    const serverDeployRuntimeLabels: Record<string, string> = {
+      docker: "com Docker",
+      vercel: "na Vercel",
+      railway: "na Railway",
+      guaracloud: "na Guara Cloud",
+    };
+    const deploymentLabel = serverDeployRuntimeLabels[optionId];
+    if (deploymentLabel && currentStack.runtime === "workers") {
+      return `Deploy de servidor ${deploymentLabel} exige runtime Bun ou Node`;
     }
     if (optionId !== "none") {
       if (

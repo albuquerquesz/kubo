@@ -418,6 +418,13 @@ export const TECH_OPTIONS: Record<
       color: "from-gray-700 to-black",
     },
     {
+      id: "railway",
+      name: "Railway",
+      description: "Deploy na Railway com Railpack",
+      icon: "https://railway.com/favicon.ico",
+      color: "from-violet-600 to-purple-800",
+    },
+    {
       id: "guaracloud",
       name: "Guara Cloud",
       description: "Deploy de containers na Guara Cloud com serviços por app",
@@ -454,6 +461,13 @@ export const TECH_OPTIONS: Record<
       description: "Deploy na Vercel com Services",
       icon: `${ICON_BASE_URL}/vercel.svg`,
       color: "from-gray-700 to-black",
+    },
+    {
+      id: "railway",
+      name: "Railway",
+      description: "Deploy na Railway com Railpack",
+      icon: "https://railway.com/favicon.ico",
+      color: "from-violet-600 to-purple-800",
     },
     {
       id: "guaracloud",
