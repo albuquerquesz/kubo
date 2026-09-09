@@ -11,7 +11,7 @@ export {
 import { runDownloadsCommand } from "../apps/cli/src/commands/downloads";
 
 async function main(): Promise<void> {
-  await runDownloadsCommand(process.argv.slice(2));
+  await runDownloadsCommand(process.argv.slice(2), undefined, "bun run downloads [--json]");
 }
 
 if (import.meta.main) {

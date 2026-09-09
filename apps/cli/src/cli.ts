@@ -1,4 +1,4 @@
-import { runDownloadsCommand } from "./commands/downloads";
+import { runStatsCommand } from "./commands/stats";
 import { createBtsCli } from "./index";
 import { startBtsMcpServer } from "./mcp";
 
@@ -16,9 +16,9 @@ This command is intended to be launched by an MCP client, for example:
   }
 
   await startBtsMcpServer();
-} else if (command === "downloads") {
+} else if (command === "stats") {
   try {
-    await runDownloadsCommand(args);
+    await runStatsCommand(args);
   } catch (error: unknown) {
     console.error(error instanceof Error ? error.message : error);
     process.exitCode = 1;

@@ -205,10 +205,11 @@ export function formatHelp(usage = "bun run downloads [--json]"): string {
 export async function runDownloadsCommand(
   arguments_: string[],
   options?: DownloadQueryOptions,
+  usage = "kubojs stats downloads [--json]",
 ): Promise<void> {
   const parsedArguments = parseArguments(arguments_);
   if (parsedArguments.help) {
-    console.log(formatHelp("kubojs downloads [--json]"));
+    console.log(formatHelp(usage));
     return;
   }
 
