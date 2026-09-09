@@ -246,9 +246,7 @@ function serializeStackToSearchString(stack: StackState) {
 }
 
 export function generateStackSharingUrl(stack: StackState, baseUrl?: string) {
-  const origin = baseUrl || "https://kubojs.dev";
-  const searchString = serializeStackToSearchString(stack);
-  return `${origin}/stack${searchString ? `?${searchString}` : ""}`;
+  return generateStackUrlFromState(stack, baseUrl);
 }
 
 export function generateStackOgImageUrl(stack: StackState, baseUrl = "") {
