@@ -15,17 +15,17 @@ function jsonResponse(body: unknown): Response {
 
 describe("downloads command", () => {
   it("is available through the CLI entrypoint with private help", async () => {
-    const result = await execa("bun", [CLI_ENTRYPOINT, "downloads", "--help"], {
+    const result = await execa("bun", [CLI_ENTRYPOINT, "stats", "downloads", "--help"], {
       reject: false,
     });
 
     expect(result.exitCode).toBe(0);
-    expect(result.stdout).toContain("Usage: kubojs downloads [--json]");
+    expect(result.stdout).toContain("Usage: kubojs stats downloads [--json]");
     expect(result.stderr).toBe("");
   });
 
   it("returns a failure for unsupported private-command arguments", async () => {
-    const result = await execa("bun", [CLI_ENTRYPOINT, "downloads", "--from=2026-01-01"], {
+    const result = await execa("bun", [CLI_ENTRYPOINT, "stats", "downloads", "--from=2026-01-01"], {
       reject: false,
     });
 
