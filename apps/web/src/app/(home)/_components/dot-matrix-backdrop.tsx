@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
+import { useWebGLTelemetry } from "@/components/webgl-telemetry";
+
 import DotMatrixCanvas from "./dot-matrix-canvas";
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
@@ -47,6 +49,7 @@ function getCoarsePointerServerSnapshot() {
  */
 export default function DotMatrixBackdrop() {
   const rootRef = useRef<HTMLDivElement>(null);
+  useWebGLTelemetry("cta_dot_matrix", rootRef);
   const [isInView, setIsInView] = useState(false);
   const [canvasReady, setCanvasReady] = useState(false);
 
@@ -86,6 +89,7 @@ export default function DotMatrixBackdrop() {
     <div
       ref={rootRef}
       aria-hidden="true"
+      data-webgl-surface="cta_dot_matrix"
       data-dot-matrix-in-view={isInView ? "true" : "false"}
       data-dot-matrix-reduced={reducedMotion ? "true" : "false"}
       data-dot-matrix-ready={canvasReady ? "true" : "false"}

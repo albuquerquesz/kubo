@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { KuboMarkMotion, type KuboMarkMotionHandle } from "@/components/brand/kubo-mark-motion";
 import { buttonVariants } from "@/components/ui/button";
+import { useWebGLTelemetry } from "@/components/webgl-telemetry";
 import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "@/lib/create-commands";
 import { fireCtaConfetti } from "@/lib/motion/cta-confetti";
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
@@ -73,6 +74,7 @@ function HeroDitherShader({
   onReady: () => void;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
+  useWebGLTelemetry("hero_dithering", hostRef, true);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -107,7 +109,7 @@ function HeroDitherShader({
   }, [onReady]);
 
   return (
-    <div ref={hostRef} className="hero-dither-shader size-full">
+    <div ref={hostRef} className="hero-dither-shader size-full" data-webgl-surface="hero_dithering">
       <Dithering
         colorBack="#00000000"
         colorFront={primary}

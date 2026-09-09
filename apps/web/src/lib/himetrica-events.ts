@@ -11,7 +11,18 @@ type HimetricaEventProperties = {
   stack_saved: Record<string, never>;
   stack_reset: Record<string, never>;
   preset_applied: { preset: string };
+  webgl_context_lost: { surface: WebGLSurface; route: string; status_message: string };
+  webgl_context_restored: { surface: WebGLSurface; route: string };
+  webgl_context_creation_error: { surface: WebGLSurface; route: string; status_message: string };
+  webgl_shader_error: {
+    surface: WebGLSurface;
+    route: string;
+    message: string;
+    source: "window_error";
+  };
 };
+
+export type WebGLSurface = "hero_dithering" | "cta_dot_matrix";
 
 export type KuboHimetricaEvent = keyof HimetricaEventProperties;
 
