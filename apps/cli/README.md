@@ -233,6 +233,7 @@ npx kubojs --frontend none --backend hono --api trpc --database none --addons no
 
 - **Convex backend**: Requires `database`, `orm`, `api`, `runtime`, and `server-deploy` to be `none`; auth can be `better-auth`, `clerk`, or `none` depending frontend compatibility
 - **Backend 'none'**: If selected, this option will force related options like API, ORM, database, authentication, and runtime to 'none'. Examples will also be disabled (set to none/empty).
+- **NestJS backend**: The initial KuboJS templates support PostgreSQL + Prisma, Better Auth or no authentication, and Orval or no API layer. These are current template capabilities, not limitations of NestJS itself; additional database, ORM, API, and example integrations can be added independently.
 - **Frontend 'none'**: Creates a backend-only project. When selected, PWA, Tauri, Electrobun, and certain examples may be disabled.
 - **API 'none'**: Disables tRPC/oRPC/Orval setup. Can be used with backend frameworks for REST APIs or custom API implementations.
 - **API 'orval'**: Generates a local OpenAPI contract and typed Fetch client. With Hono it also generates REST handlers; with NestJS, the server adapter owns the REST controllers. Orval requires `--backend hono` or `--backend nestjs`; run `bun run api:generate` after changing `apps/api/openapi.yaml`.
