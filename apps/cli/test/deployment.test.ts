@@ -219,17 +219,17 @@ describe("Deployment Configurations", () => {
     });
 
     it("should work with server deploy + all compatible backends", async () => {
-      const backends = ["hono", "express", "fastify", "elysia"] as const;
+      const backends = ["hono", "express", "fastify", "elysia", "nestjs"] as const;
 
       for (const backend of backends) {
         const config: TestConfig = {
           projectName: `server-deploy-${backend}`,
           webDeploy: "none",
           backend,
-          database: "sqlite",
-          orm: "drizzle",
+          database: backend === "nestjs" ? "postgres" : "sqlite",
+          orm: backend === "nestjs" ? "prisma" : "drizzle",
           auth: "none",
-          api: "trpc",
+          api: backend === "nestjs" ? "orval" : "trpc",
           frontend: ["tanstack-router"],
           addons: ["none"],
           examples: ["none"],
@@ -242,6 +242,9 @@ describe("Deployment Configurations", () => {
         if (backend === "hono") {
           config.runtime = "workers";
           config.serverDeploy = "cloudflare";
+        } else if (backend === "nestjs") {
+          config.runtime = "bun";
+          config.serverDeploy = "docker";
         } else {
           config.runtime = "bun";
           config.serverDeploy = "none";

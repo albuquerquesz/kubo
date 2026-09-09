@@ -1,0 +1,135 @@
+openapi: 3.0.3
+info:
+  title: {{projectName}} API
+  version: 1.0.0
+  description: REST API generated with Orval from this OpenAPI contract.
+servers:
+  - url: /api
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      tags:
+        - health
+      responses:
+        '200':
+          description: API health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+{{#if (includes examples "todo")}}
+  /todos:
+    get:
+      operationId: getTodos
+      tags:
+        - todos
+      responses:
+        '200':
+          description: Todo list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Todo'
+    post:
+      operationId: createTodo
+      tags:
+        - todos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTodoInput'
+      responses:
+        '201':
+          description: Created todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+  /todos/{id}:
+    patch:
+      operationId: toggleTodo
+      tags:
+        - todos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToggleTodoInput'
+      responses:
+        '200':
+          description: Updated todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+    delete:
+      operationId: deleteTodo
+      tags:
+        - todos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deleted todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+{{/if}}
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+{{#if (includes examples "todo")}}
+    Todo:
+      type: object
+      required:
+        - id
+        - text
+        - completed
+      properties:
+        id:
+          type: integer
+        text:
+          type: string
+        completed:
+          type: boolean
+    CreateTodoInput:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          minLength: 1
+    ToggleTodoInput:
+      type: object
+      required:
+        - completed
+      properties:
+        completed:
+          type: boolean
+{{/if}}

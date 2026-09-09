@@ -19,6 +19,9 @@ describe("Backend and Runtime Combinations", () => {
 
       { backend: "elysia" as const, runtime: "bun" as const },
 
+      { backend: "nestjs" as const, runtime: "bun" as const },
+      { backend: "nestjs" as const, runtime: "node" as const },
+
       // Special cases
       { backend: "convex" as const, runtime: "none" as const },
       { backend: "none" as const, runtime: "none" as const },
@@ -51,6 +54,11 @@ describe("Backend and Runtime Combinations", () => {
           config.orm = "none";
           config.auth = "none";
           config.api = "none";
+        } else if (backend === "nestjs") {
+          config.database = "postgres";
+          config.orm = "prisma";
+          config.auth = "none";
+          config.api = "orval";
         } else if (backend === "self") {
           config.frontend = ["next"];
           config.database = "sqlite";

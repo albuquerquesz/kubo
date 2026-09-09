@@ -1,0 +1,78 @@
+export type HealthResponse = {
+  status: "ok";
+};
+
+{{#if (includes examples "todo")}}
+export type Todo = {
+  id: number;
+  text: string;
+  completed: boolean;
+};
+{{/if}}
+
+type RequestOptions = {
+  baseUrl?: string;
+  init?: RequestInit;
+};
+
+type ApiResponse<T> = {
+  data: T;
+  status: number;
+  headers: Headers;
+};
+
+async function request<T>(path: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
+  const response = await fetch((options.baseUrl ?? "") + "/api" + path, {
+    ...options.init,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.init?.headers,
+    },
+  });
+  if (!response.ok) {
+    throw new Error("API request failed with status " + response.status);
+  }
+  return {
+    data: (await response.json()) as T,
+    status: response.status,
+    headers: response.headers,
+  };
+}
+
+export function getHealth(options?: RequestOptions): Promise<ApiResponse<HealthResponse>> {
+  return request<HealthResponse>("/health", options);
+}
+
+{{#if (includes examples "todo")}}
+export function getTodos(options?: RequestOptions): Promise<ApiResponse<Todo[]>> {
+  return request<Todo[]>("/todos", options);
+}
+
+export function createTodo(
+  input: { text: string },
+  options?: RequestOptions,
+): Promise<ApiResponse<Todo>> {
+  return request<Todo>("/todos", {
+    ...options,
+    init: { ...options?.init, method: "POST", body: JSON.stringify(input) },
+  });
+}
+
+export function toggleTodo(
+  id: number,
+  input: { completed: boolean },
+  options?: RequestOptions,
+): Promise<ApiResponse<Todo>> {
+  return request<Todo>("/todos/" + id, {
+    ...options,
+    init: { ...options?.init, method: "PATCH", body: JSON.stringify(input) },
+  });
+}
+
+export function deleteTodo(id: number, options?: RequestOptions): Promise<ApiResponse<Todo>> {
+  return request<Todo>("/todos/" + id, {
+    ...options,
+    init: { ...options?.init, method: "DELETE" },
+  });
+}
+{{/if}}

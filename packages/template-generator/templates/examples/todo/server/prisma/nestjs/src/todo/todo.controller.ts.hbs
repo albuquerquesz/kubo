@@ -1,0 +1,33 @@
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
+import type { Todo } from "@{{projectName}}/db";
+import { CreateTodoDto } from "./dto/create-todo.dto";
+import { ToggleTodoDto } from "./dto/toggle-todo.dto";
+import { TodoService } from "./todo.service";
+
+@Controller("api/todos")
+export class TodoController {
+  constructor(private readonly service: TodoService) {}
+
+  @Get()
+  findAll(): Promise<Todo[]> {
+    return this.service.findAll();
+  }
+
+  @Post()
+  create(@Body() input: CreateTodoDto): Promise<Todo> {
+    return this.service.create(input);
+  }
+
+  @Patch(":id")
+  toggle(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() input: ToggleTodoDto,
+  ): Promise<Todo> {
+    return this.service.toggle(id, input);
+  }
+
+  @Delete(":id")
+  remove(@Param("id", ParseIntPipe) id: number): Promise<Todo> {
+    return this.service.remove(id);
+  }
+}

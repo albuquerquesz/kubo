@@ -164,7 +164,19 @@ function addWebClientDeps(
   const webPath = "apps/web/package.json";
   if (!vfs.exists(webPath) || backend === "convex") return;
 
-  if (api === "trpc" && frontendType.hasReactWeb) {
+  if (api === "orval" && frontendType.hasNuxtWeb) {
+    addPackageDependency({
+      vfs,
+      packagePath: webPath,
+      dependencies: ["@tanstack/vue-query"],
+    });
+  } else if (api === "orval" && frontendType.hasSvelteWeb) {
+    addPackageDependency({
+      vfs,
+      packagePath: webPath,
+      dependencies: ["@tanstack/svelte-query"],
+    });
+  } else if (api === "trpc" && frontendType.hasReactWeb) {
     const deps: AvailableDependencies[] = [
       "@trpc/tanstack-react-query",
       "@trpc/client",

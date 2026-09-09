@@ -1,0 +1,34 @@
+import { Injectable, NotFoundException } from "@nestjs/common";
+import type { Todo } from "@{{projectName}}/db";
+import { TodoRepository } from "./todo.repository";
+import type { CreateTodoDto } from "./dto/create-todo.dto";
+import type { ToggleTodoDto } from "./dto/toggle-todo.dto";
+
+@Injectable()
+export class TodoService {
+  constructor(private readonly repository: TodoRepository) {}
+
+  findAll(): Promise<Todo[]> {
+    return this.repository.findAll();
+  }
+
+  create(input: CreateTodoDto): Promise<Todo> {
+    return this.repository.create(input.text);
+  }
+
+  async toggle(id: number, input: ToggleTodoDto): Promise<Todo> {
+    await this.ensureExists(id);
+    return this.repository.update(id, input.completed);
+  }
+
+  async remove(id: number): Promise<Todo> {
+    await this.ensureExists(id);
+    return this.repository.remove(id);
+  }
+
+  private async ensureExists(id: number): Promise<void> {
+    if (!(await this.repository.findById(id))) {
+      throw new NotFoundException("Todo not found");
+    }
+  }
+}

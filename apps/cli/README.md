@@ -25,8 +25,8 @@ Follow the prompts to configure your project or use the `--yes` flag for default
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **TypeScript**           | End-to-end type safety across all parts of your application                                                                                                                                                                                                                                                                                                          |
 | **Frontend**             | • React with TanStack Router<br>• React with React Router<br>• React with TanStack Start (SSR)<br>• Next.js<br>• SvelteKit<br>• Nuxt (Vue)<br>• SolidJS<br>• Astro<br>• React Native bare Expo<br>• React Native with NativeWind (via Expo)<br>• React Native with Unistyles (via Expo)<br>• None                                                                    |
-| **Backend**              | • Hono<br>• Express<br>• Elysia<br>• Fastify<br>• Self (fullstack inside the web app)<br>• Convex<br>• None                                                                                                                                                                                                                                                          |
-| **API Layer**            | • tRPC (type-safe APIs)<br>• oRPC (OpenAPI-compatible type-safe APIs)<br>• Orval (OpenAPI REST APIs with generated Hono handlers)<br>• None                                                                                                                                                                                                                          |
+| **Backend**              | • Hono<br>• Express<br>• Elysia<br>• Fastify<br>• NestJS<br>• Self (fullstack inside the web app)<br>• Convex<br>• None                                                                                                                                                                                                                                              |
+| **API Layer**            | • tRPC (type-safe APIs)<br>• oRPC (OpenAPI-compatible type-safe APIs)<br>• Orval (OpenAPI REST APIs with generated handlers or Fetch clients)<br>• None                                                                                                                                                                                                              |
 | **Runtime**              | • Bun<br>• Node.js<br>• Cloudflare Workers<br>• None                                                                                                                                                                                                                                                                                                                 |
 | **Database**             | • SQLite<br>• PostgreSQL<br>• MySQL<br>• MongoDB<br>• None                                                                                                                                                                                                                                                                                                           |
 | **ORM**                  | • Drizzle (TypeScript-first)<br>• Prisma (feature-rich)<br>• Mongoose (for MongoDB)<br>• None                                                                                                                                                                                                                                                                        |
@@ -64,7 +64,7 @@ Options:
   --db-setup <setup>              Database setup (turso, d1, neon, supabase, prisma-postgres, planetscale, mongodb-atlas, docker, none)
   --web-deploy <setup>            Web deployment (cloudflare, docker, vercel, none)
   --server-deploy <setup>         Server deployment (cloudflare, docker, vercel, none)
-  --backend <framework>           Backend framework (hono, express, fastify, elysia, convex, self, none)
+  --backend <framework>           Backend framework (hono, express, fastify, elysia, nestjs, convex, self, none)
   --runtime <runtime>             Runtime (bun, node, workers, none)
   --api <type>                    API type (trpc, orpc, orval, none)
   --directory-conflict <strategy> Directory strategy (merge, overwrite, increment, error)
@@ -235,8 +235,7 @@ npx kubojs --frontend none --backend hono --api trpc --database none --addons no
 - **Backend 'none'**: If selected, this option will force related options like API, ORM, database, authentication, and runtime to 'none'. Examples will also be disabled (set to none/empty).
 - **Frontend 'none'**: Creates a backend-only project. When selected, PWA, Tauri, Electrobun, and certain examples may be disabled.
 - **API 'none'**: Disables tRPC/oRPC/Orval setup. Can be used with backend frameworks for REST APIs or custom API implementations.
-- **API 'orval'**: Generates a local OpenAPI contract, Hono REST handlers, and a Fetch client. Orval currently requires `--backend hono`; run `bun run api:generate` after changing `apps/api/openapi.yaml`.
-  The generated `todo` example is not supported by Orval yet.
+- **API 'orval'**: Generates a local OpenAPI contract and typed Fetch client. With Hono it also generates REST handlers; with NestJS, the server adapter owns the REST controllers. Orval requires `--backend hono` or `--backend nestjs`; run `bun run api:generate` after changing `apps/api/openapi.yaml`.
 - **Database 'none'**: Disables database setup and requires ORM to be `none`.
 - **ORM 'none'**: Can be used when you want to handle database operations manually or use a different ORM.
 - **Runtime 'none'**: Only available with Convex backend, backend `none`, or backend `self`.
@@ -245,7 +244,7 @@ npx kubojs --frontend none --backend hono --api trpc --database none --addons no
 - **Addons 'none'**: Skips all addons.
 - **Testing 'none'**: Skips all testing tools. Playwright requires a web frontend.
 - **Examples 'none'**: Skips all example implementations (todo, AI chat).
-- **Nuxt, Svelte, SolidJS, and Astro** frontends are not compatible with tRPC; use oRPC, Orval with Hono, or no API layer.
+- **Nuxt, Svelte, SolidJS, and Astro** frontends are not compatible with tRPC; use oRPC, Orval, or no API layer. NestJS + Orval supports web frontends only.
 - **PWA support** requires TanStack Router, React Router, Next.js, or SolidJS
 - **Tauri desktop app** requires TanStack Router, React Router, TanStack Start, Next.js, Nuxt, SvelteKit, SolidJS, or Astro
 - **Electrobun desktop app** requires TanStack Router, React Router, TanStack Start, Next.js, Nuxt, SvelteKit, SolidJS, or Astro. Desktop packaging uses static web assets, so SSR-first frontends need a static/export build before desktop builds will work.

@@ -90,3 +90,6 @@ const prisma = createPrismaClient();
 export default prisma;
 {{/if}}
 {{/if}}
+{{#if (includes examples "todo")}}
+export type { Todo } from "../prisma/generated/client";
+{{/if}}

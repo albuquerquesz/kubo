@@ -31,6 +31,17 @@ export function processBackendDeps(vfs: VirtualFileSystem, config: ProjectConfig
     devDeps.push("@types/express", "@types/cors");
   } else if (backend === "fastify") {
     deps.push("fastify", "@fastify/cors");
+  } else if (backend === "nestjs") {
+    deps.push(
+      "@nestjs/common",
+      "@nestjs/core",
+      "@nestjs/platform-express",
+      "class-transformer",
+      "class-validator",
+      "reflect-metadata",
+      "rxjs",
+    );
+    devDeps.push("@types/express");
   }
 
   if (api === "trpc") {
@@ -39,7 +50,7 @@ export function processBackendDeps(vfs: VirtualFileSystem, config: ProjectConfig
     else if (backend === "elysia") deps.push("@elysiajs/trpc");
   } else if (api === "orpc") {
     deps.push("@orpc/server", "@orpc/openapi", "@orpc/zod");
-  } else if (api === "orval") {
+  } else if (api === "orval" && backend === "hono") {
     deps.push("@hono/zod-validator");
   }
 

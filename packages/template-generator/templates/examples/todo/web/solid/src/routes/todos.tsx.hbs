@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/solid-router";
 import { Loader2, Trash2 } from "lucide-solid";
 import { createSignal, For, Show } from "solid-js";
+{{#if (eq api "orval")}}
+import { createTodo, deleteTodo, getTodos, toggleTodo } from "@{{projectName}}/api";
+{{else}}
 import { orpc } from "@/utils/orpc";
+{{/if}}
 import { useQuery, useMutation } from "@tanstack/solid-query";
 
 export const Route = createFileRoute("/todos")({
@@ -11,8 +15,26 @@ export const Route = createFileRoute("/todos")({
 function TodosRoute() {
   const [newTodoText, setNewTodoText] = createSignal("");
 
+  {{#if (eq api "orval")}}
+  const todos = useQuery(() => ({ queryKey: ["todos"], queryFn: () => getTodos().then(({ data }) => data) }));
+  {{else}}
   const todos = useQuery(() => orpc.todo.getAll.queryOptions());
+  {{/if}}
 
+  {{#if (eq api "orval")}}
+  const createMutation = useMutation(() => ({
+    mutationFn: (input: { text: string }) => createTodo(input).then(({ data }) => data),
+    onSuccess: () => { todos.refetch(); setNewTodoText(""); },
+  }));
+  const toggleMutation = useMutation(() => ({
+    mutationFn: (input: { id: number; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }).then(({ data }) => data),
+    onSuccess: () => { todos.refetch(); },
+  }));
+  const deleteMutation = useMutation(() => ({
+    mutationFn: (input: { id: number }) => deleteTodo(input.id).then(({ data }) => data),
+    onSuccess: () => { todos.refetch(); },
+  }));
+  {{else}}
   const createMutation = useMutation(() =>
     orpc.todo.create.mutationOptions({
       onSuccess: () => {
@@ -33,6 +55,7 @@ function TodosRoute() {
       onSuccess: () => { todos.refetch() },
     }),
   );
+  {{/if}}
 
   const handleAddTodo = (e: Event) => {
     e.preventDefault();

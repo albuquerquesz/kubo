@@ -161,6 +161,9 @@
 </div>
 {{else}}
 <script lang="ts">
+	{{#if (eq api "orval")}}
+	import { createTodo, deleteTodo, getTodos, toggleTodo } from '@{{projectName}}/api';
+	{{/if}}
 	{{#if (eq api "orpc")}}
 	import { orpc } from '$lib/orpc';
 	{{/if}}
@@ -168,6 +171,9 @@
 
 	let newTodoText = $state('');
 
+	{{#if (eq api "orval")}}
+	const todosQuery = createQuery(() => ({ queryKey: ['todos'], queryFn: () => getTodos().then(({ data }) => data) }));
+	{{/if}}
 	{{#if (eq api "orpc")}}
 	const todosQuery = createQuery(() => orpc.todo.getAll.queryOptions());
 
@@ -204,6 +210,23 @@
 			},
 		})
 	);
+	{{/if}}
+	{{#if (eq api "orval")}}
+	const addMutation = createMutation(() => ({
+		mutationFn: (input: { text: string }) => createTodo(input).then(({ data }) => data),
+		onSuccess: () => {
+			todosQuery.refetch();
+			newTodoText = '';
+		},
+	}));
+	const toggleMutation = createMutation(() => ({
+		mutationFn: (input: { id: number; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }).then(({ data }) => data),
+		onSuccess: () => todosQuery.refetch(),
+	}));
+	const deleteMutation = createMutation(() => ({
+		mutationFn: (input: { id: number }) => deleteTodo(input.id).then(({ data }) => data),
+		onSuccess: () => todosQuery.refetch(),
+	}));
 	{{/if}}
 
 	function handleAddTodo(event: SubmitEvent) {

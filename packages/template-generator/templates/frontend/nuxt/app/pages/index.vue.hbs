@@ -2,7 +2,7 @@
 {{#if (eq backend "convex")}}
 import { api } from "@{{ projectName }}/backend/convex/_generated/api";
 import { useConvexQuery } from "convex-vue";
-{{else}}
+{{else if (eq api "orpc")}}
   {{#unless (eq api "none")}}
 const { $orpc } = useNuxtApp()
 import { useQuery } from '@tanstack/vue-query'
@@ -30,7 +30,7 @@ const TITLE_TEXT = `
 
 {{#if (eq backend "convex")}}
 const healthCheck = useConvexQuery(api.healthCheck.get, {});
-{{else}}
+{{else if (eq api "orpc")}}
   {{#unless (eq api "none")}}
 const healthCheck = useQuery($orpc.healthCheck.queryOptions())
 
@@ -88,7 +88,7 @@ async function openCheckout() {
             }}
           </span>
         </div>
-        {{else}}
+        {{else if (eq api "orpc")}}
         {{#unless (eq api "none")}}
         <div class="flex items-center gap-2">
           <UIcon

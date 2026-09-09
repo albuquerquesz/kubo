@@ -1858,6 +1858,268 @@ export const client: AppRouterClient = createORPCClient(link);
 
 export const orpc = createTanstackQueryUtils(client);
 `],
+  ["api/orval/nest/_gitignore", `src/generated/
+`],
+  ["api/orval/nest/openapi.yaml.hbs", `openapi: 3.0.3
+info:
+  title: {{projectName}} API
+  version: 1.0.0
+  description: REST API generated with Orval from this OpenAPI contract.
+servers:
+  - url: /api
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      tags:
+        - health
+      responses:
+        '200':
+          description: API health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+{{#if (includes examples "todo")}}
+  /todos:
+    get:
+      operationId: getTodos
+      tags:
+        - todos
+      responses:
+        '200':
+          description: Todo list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Todo'
+    post:
+      operationId: createTodo
+      tags:
+        - todos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTodoInput'
+      responses:
+        '201':
+          description: Created todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+  /todos/{id}:
+    patch:
+      operationId: toggleTodo
+      tags:
+        - todos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToggleTodoInput'
+      responses:
+        '200':
+          description: Updated todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+    delete:
+      operationId: deleteTodo
+      tags:
+        - todos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deleted todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+{{/if}}
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+{{#if (includes examples "todo")}}
+    Todo:
+      type: object
+      required:
+        - id
+        - text
+        - completed
+      properties:
+        id:
+          type: integer
+        text:
+          type: string
+        completed:
+          type: boolean
+    CreateTodoInput:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          minLength: 1
+    ToggleTodoInput:
+      type: object
+      required:
+        - completed
+      properties:
+        completed:
+          type: boolean
+{{/if}}
+`],
+  ["api/orval/nest/orval.config.ts.hbs", `import { defineConfig } from "orval";
+
+export default defineConfig({
+  client: {
+    input: { target: "./openapi.yaml" },
+    output: {
+      client: "fetch",
+      target: "./src/generated/client.ts",
+      schemas: "./src/generated/models",
+      baseUrl: "/api",
+    },
+  },
+});
+`],
+  ["api/orval/nest/package.json.hbs", `{
+  "name": "@{{projectName}}/api",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "api:generate": "orval --config ./orval.config.ts"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
+`],
+  ["api/orval/nest/src/generated/client.ts.hbs", `export type HealthResponse = {
+  status: "ok";
+};
+
+{{#if (includes examples "todo")}}
+export type Todo = {
+  id: number;
+  text: string;
+  completed: boolean;
+};
+{{/if}}
+
+type RequestOptions = {
+  baseUrl?: string;
+  init?: RequestInit;
+};
+
+type ApiResponse<T> = {
+  data: T;
+  status: number;
+  headers: Headers;
+};
+
+async function request<T>(path: string, options: RequestOptions = {}): Promise<ApiResponse<T>> {
+  const response = await fetch((options.baseUrl ?? "") + "/api" + path, {
+    ...options.init,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.init?.headers,
+    },
+  });
+  if (!response.ok) {
+    throw new Error("API request failed with status " + response.status);
+  }
+  return {
+    data: (await response.json()) as T,
+    status: response.status,
+    headers: response.headers,
+  };
+}
+
+export function getHealth(options?: RequestOptions): Promise<ApiResponse<HealthResponse>> {
+  return request<HealthResponse>("/health", options);
+}
+
+{{#if (includes examples "todo")}}
+export function getTodos(options?: RequestOptions): Promise<ApiResponse<Todo[]>> {
+  return request<Todo[]>("/todos", options);
+}
+
+export function createTodo(
+  input: { text: string },
+  options?: RequestOptions,
+): Promise<ApiResponse<Todo>> {
+  return request<Todo>("/todos", {
+    ...options,
+    init: { ...options?.init, method: "POST", body: JSON.stringify(input) },
+  });
+}
+
+export function toggleTodo(
+  id: number,
+  input: { completed: boolean },
+  options?: RequestOptions,
+): Promise<ApiResponse<Todo>> {
+  return request<Todo>("/todos/" + id, {
+    ...options,
+    init: { ...options?.init, method: "PATCH", body: JSON.stringify(input) },
+  });
+}
+
+export function deleteTodo(id: number, options?: RequestOptions): Promise<ApiResponse<Todo>> {
+  return request<Todo>("/todos/" + id, {
+    ...options,
+    init: { ...options?.init, method: "DELETE" },
+  });
+}
+{{/if}}
+`],
+  ["api/orval/nest/src/index.ts.hbs", `export * from "./generated/client";
+`],
+  ["api/orval/nest/tsconfig.json.hbs", `{
+  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "composite": true
+  }
+}
+`],
   ["api/orval/server/_gitignore", `# dependencies (bun install)
 node_modules
 
@@ -14126,7 +14388,10 @@ next-env.d.ts
       "@/*": ["./src/*"]
     },
     "jsx": "react-jsx"{{#if (eq backend "hono")}},
-    "jsxImportSource": "hono/jsx"{{/if}}
+    "jsxImportSource": "hono/jsx"{{/if}}{{#if (eq backend "nestjs")}},
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false{{/if}}
   }
 }
 `],
@@ -15142,6 +15407,94 @@ export default app;
 {{/if}}
 {{/if}}
 `],
+  ["backend/server/nestjs/src/app.module.ts.hbs", `import { Module } from "@nestjs/common";
+import { HealthModule } from "./health/health.module";
+{{#if (and (eq api "orval") (includes examples "todo"))}}
+import { TodoModule } from "./todo/todo.module";
+{{/if}}
+{{#if (eq auth "better-auth")}}
+import { AuthModule } from "./auth/auth.module";
+{{/if}}
+
+@Module({
+  imports: [
+    HealthModule,
+{{#if (and (eq api "orval") (includes examples "todo"))}}
+    TodoModule,
+{{/if}}
+{{#if (eq auth "better-auth")}}
+    AuthModule,
+{{/if}}
+  ],
+})
+export class AppModule {}
+`],
+  ["backend/server/nestjs/src/auth/auth.controller.ts.hbs", `import { Controller, All, Req, Res } from "@nestjs/common";
+import type { Request, Response } from "express";
+import { auth } from "@{{projectName}}/auth";
+import { toNodeHandler } from "better-auth/node";
+
+@Controller("api/auth")
+export class AuthController {
+  @All("*path")
+  handleAuth(@Req() request: Request, @Res() response: Response): void {
+    void toNodeHandler(auth)(request, response);
+  }
+}
+`],
+  ["backend/server/nestjs/src/auth/auth.module.ts.hbs", `import { Module } from "@nestjs/common";
+import { AuthController } from "./auth.controller";
+
+@Module({
+  controllers: [AuthController],
+})
+export class AuthModule {}
+`],
+  ["backend/server/nestjs/src/health/health.controller.ts", `import { Controller, Get } from "@nestjs/common";
+
+@Controller("api")
+export class HealthController {
+  @Get("health")
+  getHealth(): { status: "ok" } {
+    return { status: "ok" };
+  }
+}
+`],
+  ["backend/server/nestjs/src/health/health.module.ts", `import { Module } from "@nestjs/common";
+
+import { HealthController } from "./health.controller";
+
+@Module({
+  controllers: [HealthController],
+})
+export class HealthModule {}
+`],
+  ["backend/server/nestjs/src/index.ts.hbs", `import "reflect-metadata";
+import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { env } from "@{{projectName}}/env/server";
+import { AppModule } from "./app.module";
+
+async function bootstrap(): Promise<void> {
+  const app = await NestFactory.create(AppModule);
+
+  app.enableCors({
+    origin: env.CORS_ORIGIN,
+    credentials: {{#if (eq auth "better-auth")}}true{{else}}false{{/if}},
+  });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
+
+  await app.listen(Number(process.env.PORT ?? 3000));
+}
+
+void bootstrap();
+`],
   ["base/_gitignore", `# Dependencies
 node_modules
 .pnp
@@ -15923,6 +16276,9 @@ export function createPrismaClient({{#if (and (eq backend "self") (eq webDeploy 
 const prisma = createPrismaClient();
 export default prisma;
 {{/if}}
+{{/if}}
+{{#if (includes examples "todo")}}
+export type { Todo } from "../prisma/generated/client";
 {{/if}}
 `],
   ["db/prisma/sqlite/prisma.config.ts.hbs", `import path from "node:path";
@@ -23669,6 +24025,164 @@ export const todoRouter = router({
   @@map("todo")
 }
 `],
+  ["examples/todo/server/prisma/nestjs/src/database/prisma.module.ts", `import { Global, Module } from "@nestjs/common";
+
+import { PrismaService } from "./prisma.service";
+
+@Global()
+@Module({
+  providers: [PrismaService],
+  exports: [PrismaService],
+})
+export class PrismaModule {}
+`],
+  ["examples/todo/server/prisma/nestjs/src/database/prisma.service.ts.hbs", `import { Injectable } from "@nestjs/common";
+import type { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import { createPrismaClient } from "@{{projectName}}/db";
+
+@Injectable()
+export class PrismaService implements OnModuleInit, OnModuleDestroy {
+  readonly client: ReturnType<typeof createPrismaClient> = createPrismaClient();
+
+  async onModuleInit(): Promise<void> {
+    await this.client.$connect();
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.client.$disconnect();
+  }
+}
+`],
+  ["examples/todo/server/prisma/nestjs/src/todo/dto/create-todo.dto.ts", `import { IsNotEmpty, IsString } from "class-validator";
+
+export class CreateTodoDto {
+  @IsString()
+  @IsNotEmpty()
+  text!: string;
+}
+`],
+  ["examples/todo/server/prisma/nestjs/src/todo/dto/toggle-todo.dto.ts", `import { IsBoolean } from "class-validator";
+
+export class ToggleTodoDto {
+  @IsBoolean()
+  completed!: boolean;
+}
+`],
+  ["examples/todo/server/prisma/nestjs/src/todo/todo.controller.ts.hbs", `import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
+import type { Todo } from "@{{projectName}}/db";
+import { CreateTodoDto } from "./dto/create-todo.dto";
+import { ToggleTodoDto } from "./dto/toggle-todo.dto";
+import { TodoService } from "./todo.service";
+
+@Controller("api/todos")
+export class TodoController {
+  constructor(private readonly service: TodoService) {}
+
+  @Get()
+  findAll(): Promise<Todo[]> {
+    return this.service.findAll();
+  }
+
+  @Post()
+  create(@Body() input: CreateTodoDto): Promise<Todo> {
+    return this.service.create(input);
+  }
+
+  @Patch(":id")
+  toggle(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() input: ToggleTodoDto,
+  ): Promise<Todo> {
+    return this.service.toggle(id, input);
+  }
+
+  @Delete(":id")
+  remove(@Param("id", ParseIntPipe) id: number): Promise<Todo> {
+    return this.service.remove(id);
+  }
+}
+`],
+  ["examples/todo/server/prisma/nestjs/src/todo/todo.module.ts", `import { Module } from "@nestjs/common";
+
+import { PrismaModule } from "../database/prisma.module";
+import { TodoController } from "./todo.controller";
+import { TodoRepository } from "./todo.repository";
+import { TodoService } from "./todo.service";
+
+@Module({
+  imports: [PrismaModule],
+  controllers: [TodoController],
+  providers: [TodoRepository, TodoService],
+})
+export class TodoModule {}
+`],
+  ["examples/todo/server/prisma/nestjs/src/todo/todo.repository.ts.hbs", `import { Injectable } from "@nestjs/common";
+import type { Todo } from "@{{projectName}}/db";
+import { PrismaService } from "../database/prisma.service";
+
+@Injectable()
+export class TodoRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
+  findAll(): Promise<Todo[]> {
+    return this.prisma.client.todo.findMany({ orderBy: { id: "asc" } });
+  }
+
+  create(text: string): Promise<Todo> {
+    return this.prisma.client.todo.create({ data: { text } });
+  }
+
+  findById(id: number): Promise<Todo | null> {
+    return this.prisma.client.todo.findUnique({ where: { id } });
+  }
+
+  update(id: number, completed: boolean): Promise<Todo> {
+    return this.prisma.client.todo.update({
+      where: { id },
+      data: { completed },
+    });
+  }
+
+  remove(id: number): Promise<Todo> {
+    return this.prisma.client.todo.delete({ where: { id } });
+  }
+}
+`],
+  ["examples/todo/server/prisma/nestjs/src/todo/todo.service.ts.hbs", `import { Injectable, NotFoundException } from "@nestjs/common";
+import type { Todo } from "@{{projectName}}/db";
+import { TodoRepository } from "./todo.repository";
+import type { CreateTodoDto } from "./dto/create-todo.dto";
+import type { ToggleTodoDto } from "./dto/toggle-todo.dto";
+
+@Injectable()
+export class TodoService {
+  constructor(private readonly repository: TodoRepository) {}
+
+  findAll(): Promise<Todo[]> {
+    return this.repository.findAll();
+  }
+
+  create(input: CreateTodoDto): Promise<Todo> {
+    return this.repository.create(input.text);
+  }
+
+  async toggle(id: number, input: ToggleTodoDto): Promise<Todo> {
+    await this.ensureExists(id);
+    return this.repository.update(id, input.completed);
+  }
+
+  async remove(id: number): Promise<Todo> {
+    await this.ensureExists(id);
+    return this.repository.remove(id);
+  }
+
+  private async ensureExists(id: number): Promise<void> {
+    if (!(await this.repository.findById(id))) {
+      throw new NotFoundException("Todo not found");
+    }
+  }
+}
+`],
   ["examples/todo/server/prisma/postgres/prisma/schema/todo.prisma.hbs", `model Todo {
   id        Int     @id @default(autoincrement())
   text      String
@@ -23717,7 +24231,18 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <script>
+  {{#if (eq api "orval")}}
+  import { createTodo, deleteTodo, getTodos, toggleTodo } from "@{{projectName}}/api";
+  const todoApi = {
+    getAll: async () => (await getTodos()).data,
+    create: (input: { text: string }) => createTodo(input),
+    toggle: (input: { id: number; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }),
+    delete: (input: { id: number }) => deleteTodo(input.id),
+  };
+  {{else}}
   import { orpc } from "../lib/orpc";
+  const todoApi = orpc.todo;
+  {{/if}}
 
   interface Todo {
     id: number;
@@ -23797,7 +24322,7 @@ import Layout from "../layouts/Layout.astro";
 
   async function loadTodos() {
     try {
-      todos = await orpc.todo.getAll();
+      todos = await todoApi.getAll();
       renderTodos();
     } catch (e) {
       loadingEl.classList.add("hidden");
@@ -23809,7 +24334,7 @@ import Layout from "../layouts/Layout.astro";
     addBtn.disabled = true;
     addBtn.textContent = "Adding...";
     try {
-      await orpc.todo.create({ text });
+      await todoApi.create({ text });
       newTodoInput.value = "";
       await loadTodos();
     } catch (e) {
@@ -23822,7 +24347,7 @@ import Layout from "../layouts/Layout.astro";
 
   async function toggleTodo(id: number, completed: boolean) {
     try {
-      await orpc.todo.toggle({ id, completed: !completed });
+      await todoApi.toggle({ id, completed: !completed });
       await loadTodos();
     } catch (e) {
       showError("Failed to update todo");
@@ -23831,7 +24356,7 @@ import Layout from "../layouts/Layout.astro";
 
   async function deleteTodo(id: number) {
     try {
-      await orpc.todo.delete({ id });
+      await todoApi.delete({ id });
       await loadTodos();
     } catch (e) {
       showError("Failed to delete todo");
@@ -23884,6 +24409,31 @@ function handleDeleteTodo(id: Id<"todos">) {
 {{else}}
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 
+{{#if (eq api "orval")}}
+import { createTodo, deleteTodo, getTodos, toggleTodo } from '@{{projectName}}/api'
+
+const todos = useQuery({ queryKey: ['todos'], queryFn: () => getTodos().then(({ data }) => data) })
+const newTodoText = ref('')
+const queryClient = useQueryClient()
+
+const createMutation = useMutation({
+  mutationFn: (input: { text: string }) => createTodo(input).then(({ data }) => data),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['todos'] })
+    newTodoText.value = ''
+  }
+})
+
+const toggleMutation = useMutation({
+  mutationFn: (input: { id: number; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }).then(({ data }) => data),
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] })
+})
+
+const deleteMutation = useMutation({
+  mutationFn: (input: { id: number }) => deleteTodo(input.id).then(({ data }) => data),
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] })
+})
+{{else}}
 const { $orpc } = useNuxtApp()
 
 const newTodoText = ref('')
@@ -23925,6 +24475,7 @@ function handleToggleTodo(id: number, completed: boolean) {
 function handleDeleteTodo(id: number) {
   deleteMutation.mutate({ id })
 }
+{{/if}}
 {{/if}}
 </script>
 
@@ -24097,6 +24648,9 @@ import { api } from "@{{projectName}}/backend/convex/_generated/api";
 import type { Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
 {{else}}
 import { useMutation, useQuery } from "@tanstack/react-query";
+  {{#if (eq api "orval")}}
+import { createTodo, deleteTodo, getTodos, toggleTodo } from "@{{projectName}}/api";
+  {{/if}}
   {{#if (eq api "orpc")}}
 import { orpc } from "@/utils/orpc";
   {{/if}}
@@ -24134,6 +24688,21 @@ export default function TodosPage() {
     deleteTodoMutation({ id });
   };
   {{else}}
+    {{#if (eq api "orval")}}
+    const todos = useQuery({ queryKey: ["todos"], queryFn: () => getTodos().then(({ data }) => data) });
+    const createMutation = useMutation({
+      mutationFn: (input: { text: string }) => createTodo(input).then(({ data }) => data),
+      onSuccess: () => { todos.refetch(); setNewTodoText(""); },
+    });
+    const toggleMutation = useMutation({
+      mutationFn: (input: { id: TodoId; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }).then(({ data }) => data),
+      onSuccess: () => { todos.refetch(); },
+    });
+    const deleteMutation = useMutation({
+      mutationFn: (input: { id: TodoId }) => deleteTodo(input.id).then(({ data }) => data),
+      onSuccess: () => { todos.refetch(); },
+    });
+    {{/if}}
     {{#if (eq api "orpc")}}
     const todos = useQuery(orpc.todo.getAll.queryOptions());
     const createMutation = useMutation(
@@ -24343,6 +24912,9 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@{{projectName}}/backend/convex/_generated/api";
 import type { Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
 {{else}}
+  {{#if (eq api "orval")}}
+  import { createTodo, deleteTodo, getTodos, toggleTodo } from "@{{projectName}}/api";
+  {{/if}}
   {{#if (eq api "orpc")}}
   import { orpc } from "@/utils/orpc";
   {{/if}}
@@ -24381,6 +24953,21 @@ export default function Todos() {
     deleteTodo({ id });
   };
   {{else}}
+    {{#if (eq api "orval")}}
+    const todos = useQuery({ queryKey: ["todos"], queryFn: () => getTodos().then(({ data }) => data) });
+    const createMutation = useMutation({
+      mutationFn: (input: { text: string }) => createTodo(input).then(({ data }) => data),
+      onSuccess: () => { todos.refetch(); setNewTodoText(""); },
+    });
+    const toggleMutation = useMutation({
+      mutationFn: (input: { id: TodoId; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }).then(({ data }) => data),
+      onSuccess: () => { todos.refetch(); },
+    });
+    const deleteMutation = useMutation({
+      mutationFn: (input: { id: TodoId }) => deleteTodo(input.id).then(({ data }) => data),
+      onSuccess: () => { todos.refetch(); },
+    });
+    {{/if}}
     {{#if (eq api "orpc")}}
     const todos = useQuery(orpc.todo.getAll.queryOptions());
     const createMutation = useMutation(
@@ -24591,6 +25178,9 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@{{projectName}}/backend/convex/_generated/api";
 import type { Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
 {{else}}
+  {{#if (eq api "orval")}}
+  import { createTodo, deleteTodo, getTodos, toggleTodo } from "@{{projectName}}/api";
+  {{/if}}
   {{#if (eq api "orpc")}}
   import { orpc } from "@/utils/orpc";
   {{/if}}
@@ -24633,6 +25223,21 @@ function TodosRoute() {
     deleteTodo({ id });
   };
   {{else}}
+    {{#if (eq api "orval")}}
+    const todos = useQuery({ queryKey: ["todos"], queryFn: () => getTodos().then(({ data }) => data) });
+    const createMutation = useMutation({
+      mutationFn: (input: { text: string }) => createTodo(input).then(({ data }) => data),
+      onSuccess: () => { todos.refetch(); setNewTodoText(""); },
+    });
+    const toggleMutation = useMutation({
+      mutationFn: (input: { id: TodoId; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }).then(({ data }) => data),
+      onSuccess: () => { todos.refetch(); },
+    });
+    const deleteMutation = useMutation({
+      mutationFn: (input: { id: TodoId }) => deleteTodo(input.id).then(({ data }) => data),
+      onSuccess: () => { todos.refetch(); },
+    });
+    {{/if}}
     {{#if (eq api "orpc")}}
     const todos = useQuery(orpc.todo.getAll.queryOptions());
     const createMutation = useMutation(
@@ -24849,6 +25454,9 @@ import { useMutation } from "convex/react";
 import { api } from "@{{projectName}}/backend/convex/_generated/api";
 import type { Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
 {{else}}
+{{#if (eq api "orval")}}
+import { createTodo, deleteTodo, getTodos, toggleTodo } from "@{{projectName}}/api";
+{{/if}}
 {{#if (eq api "trpc")}}
 import { useTRPC } from "@/utils/trpc";
 {{/if}}
@@ -24907,6 +25515,21 @@ function TodosRoute() {
     }
   };
   {{else}}
+    {{#if (eq api "orval")}}
+  const todos = useQuery({ queryKey: ["todos"], queryFn: () => getTodos().then(({ data }) => data) });
+  const createMutation = useMutation({
+    mutationFn: (input: { text: string }) => createTodo(input).then(({ data }) => data),
+    onSuccess: () => { todos.refetch(); setNewTodoText(""); },
+  });
+  const toggleMutation = useMutation({
+    mutationFn: (input: { id: TodoId; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }).then(({ data }) => data),
+    onSuccess: () => { todos.refetch(); },
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (input: { id: TodoId }) => deleteTodo(input.id).then(({ data }) => data),
+    onSuccess: () => { todos.refetch(); },
+  });
+    {{/if}}
     {{#if (eq api "trpc")}}
   const trpc = useTRPC();
     {{/if}}
@@ -25104,7 +25727,11 @@ function TodosRoute() {
   ["examples/todo/web/solid/src/routes/todos.tsx.hbs", `import { createFileRoute } from "@tanstack/solid-router";
 import { Loader2, Trash2 } from "lucide-solid";
 import { createSignal, For, Show } from "solid-js";
+{{#if (eq api "orval")}}
+import { createTodo, deleteTodo, getTodos, toggleTodo } from "@{{projectName}}/api";
+{{else}}
 import { orpc } from "@/utils/orpc";
+{{/if}}
 import { useQuery, useMutation } from "@tanstack/solid-query";
 
 export const Route = createFileRoute("/todos")({
@@ -25114,8 +25741,26 @@ export const Route = createFileRoute("/todos")({
 function TodosRoute() {
   const [newTodoText, setNewTodoText] = createSignal("");
 
+  {{#if (eq api "orval")}}
+  const todos = useQuery(() => ({ queryKey: ["todos"], queryFn: () => getTodos().then(({ data }) => data) }));
+  {{else}}
   const todos = useQuery(() => orpc.todo.getAll.queryOptions());
+  {{/if}}
 
+  {{#if (eq api "orval")}}
+  const createMutation = useMutation(() => ({
+    mutationFn: (input: { text: string }) => createTodo(input).then(({ data }) => data),
+    onSuccess: () => { todos.refetch(); setNewTodoText(""); },
+  }));
+  const toggleMutation = useMutation(() => ({
+    mutationFn: (input: { id: number; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }).then(({ data }) => data),
+    onSuccess: () => { todos.refetch(); },
+  }));
+  const deleteMutation = useMutation(() => ({
+    mutationFn: (input: { id: number }) => deleteTodo(input.id).then(({ data }) => data),
+    onSuccess: () => { todos.refetch(); },
+  }));
+  {{else}}
   const createMutation = useMutation(() =>
     orpc.todo.create.mutationOptions({
       onSuccess: () => {
@@ -25136,6 +25781,7 @@ function TodosRoute() {
       onSuccess: () => { todos.refetch() },
     }),
   );
+  {{/if}}
 
   const handleAddTodo = (e: Event) => {
     e.preventDefault();
@@ -25397,6 +26043,9 @@ function TodosRoute() {
 </div>
 {{else}}
 <script lang="ts">
+	{{#if (eq api "orval")}}
+	import { createTodo, deleteTodo, getTodos, toggleTodo } from '@{{projectName}}/api';
+	{{/if}}
 	{{#if (eq api "orpc")}}
 	import { orpc } from '$lib/orpc';
 	{{/if}}
@@ -25404,6 +26053,9 @@ function TodosRoute() {
 
 	let newTodoText = $state('');
 
+	{{#if (eq api "orval")}}
+	const todosQuery = createQuery(() => ({ queryKey: ['todos'], queryFn: () => getTodos().then(({ data }) => data) }));
+	{{/if}}
 	{{#if (eq api "orpc")}}
 	const todosQuery = createQuery(() => orpc.todo.getAll.queryOptions());
 
@@ -25440,6 +26092,23 @@ function TodosRoute() {
 			},
 		})
 	);
+	{{/if}}
+	{{#if (eq api "orval")}}
+	const addMutation = createMutation(() => ({
+		mutationFn: (input: { text: string }) => createTodo(input).then(({ data }) => data),
+		onSuccess: () => {
+			todosQuery.refetch();
+			newTodoText = '';
+		},
+	}));
+	const toggleMutation = createMutation(() => ({
+		mutationFn: (input: { id: number; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }).then(({ data }) => data),
+		onSuccess: () => todosQuery.refetch(),
+	}));
+	const deleteMutation = createMutation(() => ({
+		mutationFn: (input: { id: number }) => deleteTodo(input.id).then(({ data }) => data),
+		onSuccess: () => todosQuery.refetch(),
+	}));
 	{{/if}}
 
 	function handleAddTodo(event: SubmitEvent) {
@@ -29476,7 +30145,7 @@ const items = computed<NavigationMenuItem[]>(() => [
 {{#if (eq backend "convex")}}
 import { api } from "@{{ projectName }}/backend/convex/_generated/api";
 import { useConvexQuery } from "convex-vue";
-{{else}}
+{{else if (eq api "orpc")}}
   {{#unless (eq api "none")}}
 const { $orpc } = useNuxtApp()
 import { useQuery } from '@tanstack/vue-query'
@@ -29504,7 +30173,7 @@ const TITLE_TEXT = \`
 
 {{#if (eq backend "convex")}}
 const healthCheck = useConvexQuery(api.healthCheck.get, {});
-{{else}}
+{{else if (eq api "orpc")}}
   {{#unless (eq api "none")}}
 const healthCheck = useQuery($orpc.healthCheck.queryOptions())
 
@@ -29562,7 +30231,7 @@ async function openCheckout() {
             }}
           </span>
         </div>
-        {{else}}
+        {{else if (eq api "orpc")}}
         {{#unless (eq api "none")}}
         <div class="flex items-center gap-2">
           <UIcon
@@ -29899,6 +30568,7 @@ export default function Home() {
     <div className="container mx-auto max-w-3xl px-4 py-2">
       <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
       <div className="grid gap-6">
+        {{#if (or (eq backend "convex") (eq api "trpc") (eq api "orpc"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">API Status</h2>
           {{#if (eq backend "convex")}}
@@ -29931,6 +30601,7 @@ export default function Home() {
             {{/unless}}
           {{/if}}
         </section>
+        {{/if}}
         {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Hosted Checkout</h2>
@@ -30010,13 +30681,16 @@ import { env } from "@{{projectName}}/env/web";
 {{/if}}
 {{else}}
 {{#unless (eq api "none")}}
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 {{#if (eq api "orpc")}}
 import { queryClient } from "@/utils/orpc";
 {{/if}}
 {{#if (eq api "trpc")}}
 import { queryClient } from "@/utils/trpc";
+{{/if}}
+{{#if (eq api "orval")}}
+const queryClient = new QueryClient();
 {{/if}}
 {{/unless}}
 {{/if}}
@@ -30291,6 +30965,10 @@ import { queryClient } from "./utils/orpc";
     {{#if (eq api "trpc")}}
 import { queryClient } from "./utils/trpc";
     {{/if}}
+    {{#if (eq api "orval")}}
+import { QueryClient } from "@tanstack/react-query";
+const queryClient = new QueryClient();
+    {{/if}}
   {{/unless}}
 {{/if}}
 
@@ -30415,7 +31093,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
       {{#unless (eq api "none")}}
       <ClerkApiAuthBridge />
       {{/unless}}
-      {{#if (eq api "orpc")}}
+      {{#if (or (eq api "orpc") (eq api "orval"))}}
       <QueryClientProvider client={queryClient}>
         <ThemeProvider
           attribute="class"
@@ -30464,7 +31142,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
     </ClerkProvider>
   );
 }
-{{else if (eq api "orpc")}}
+{{else if (or (eq api "orpc") (eq api "orval"))}}
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -30618,6 +31296,7 @@ export default function Home() {
     <div className="container mx-auto max-w-3xl px-4 py-2">
       <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
       <div className="grid gap-6">
+        {{#if (or (eq backend "convex") (eq api "trpc") (eq api "orpc"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">API Status</h2>
           {{#if (eq backend "convex")}}
@@ -30652,6 +31331,7 @@ export default function Home() {
             {{/unless}}
           {{/if}}
         </section>
+        {{/if}}
         {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Hosted Checkout</h2>
@@ -30824,6 +31504,10 @@ import { routeTree } from "./routeTree.gen";
   import { QueryClientProvider } from "@tanstack/react-query";
   import { queryClient, trpc } from "./utils/trpc";
 {{/if}}
+{{#if (eq api "orval")}}
+  import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+  const queryClient = new QueryClient();
+{{/if}}
 {{#if (or (eq backend "convex") (eq auth "clerk"))}}
   import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -30899,6 +31583,11 @@ const router = createRouter({
       </QueryClientProvider>
       {{/if}}
     );
+  },
+  {{else if (eq api "orval")}}
+  context: {},
+  Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
   },
   {{else if (eq backend "convex")}}
   context: {},
@@ -31115,6 +31804,7 @@ function HomeComponent() {
     <div className="container mx-auto max-w-3xl px-4 py-2">
       <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
       <div className="grid gap-6">
+        {{#if (or (eq backend "convex") (eq api "trpc") (eq api "orpc"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">API Status</h2>
           {{#if (eq backend "convex")}}
@@ -31147,6 +31837,7 @@ function HomeComponent() {
             {{/unless}}
           {{/if}}
         </section>
+        {{/if}}
         {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Hosted Checkout</h2>
@@ -31271,6 +31962,8 @@ import { getClerkAuthToken } from "@/utils/clerk-auth";
 {{else if (eq api "orpc")}}
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import { createQueryClient, orpc } from "./utils/orpc";
+{{else if (eq api "orval")}}
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 {{/if}}
 {{/if}}
 
@@ -31365,6 +32058,8 @@ export const getRouter = () => {
 	});
 {{else if (eq api "orpc")}}
 	const queryClient = createQueryClient();
+{{else if (eq api "orval")}}
+	const queryClient = new QueryClient();
 {{/if}}
 
 	const router = createTanStackRouter({
@@ -31394,6 +32089,11 @@ export const getRouter = () => {
 		router,
 		queryClient,
 	});
+{{/if}}
+{{#if (eq api "orval")}}
+		Wrap: ({ children }) => (
+			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+		),
 {{/if}}
 
 	return router;
@@ -31727,6 +32427,7 @@ function HomeComponent() {
     <div className="container mx-auto max-w-3xl px-4 py-2">
       <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
       <div className="grid gap-6">
+        {{#if (or (eq backend "convex") (eq api "trpc") (eq api "orpc"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">API Status</h2>
           {{#if (eq backend "convex")}}
@@ -31759,6 +32460,7 @@ function HomeComponent() {
             {{/unless}}
           {{/if}}
         </section>
+        {{/if}}
         {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Hosted Checkout</h2>
@@ -37656,4 +38358,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 617;
+export const TEMPLATE_COUNT = 638;

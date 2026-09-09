@@ -731,6 +731,7 @@ function generateFeaturesList(
     express: "- **Express** - Fast, unopinionated web framework",
     fastify: "- **Fastify** - Fast, low-overhead web framework",
     elysia: "- **Elysia** - Type-safe, high-performance framework",
+    nestjs: "- **NestJS** - Opinionated, modular TypeScript server framework",
   };
 
   if (backendFeatures[backend]) {
@@ -742,7 +743,11 @@ function generateFeaturesList(
   } else if (!isConvex && api === "orpc") {
     features.push("- **oRPC** - End-to-end type-safe APIs with OpenAPI integration");
   } else if (!isConvex && api === "orval") {
-    features.push("- **Orval** - OpenAPI REST handlers and generated Fetch clients");
+    features.push(
+      backend === "nestjs"
+        ? "- **Orval** - OpenAPI contract and generated Fetch client for NestJS controllers"
+        : "- **Orval** - OpenAPI REST handlers and generated Fetch clients",
+    );
   }
 
   if (!isConvex && backend !== "none" && runtime !== "none") {

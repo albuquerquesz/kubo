@@ -33,6 +33,31 @@ function handleDeleteTodo(id: Id<"todos">) {
 {{else}}
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 
+{{#if (eq api "orval")}}
+import { createTodo, deleteTodo, getTodos, toggleTodo } from '@{{projectName}}/api'
+
+const todos = useQuery({ queryKey: ['todos'], queryFn: () => getTodos().then(({ data }) => data) })
+const newTodoText = ref('')
+const queryClient = useQueryClient()
+
+const createMutation = useMutation({
+  mutationFn: (input: { text: string }) => createTodo(input).then(({ data }) => data),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['todos'] })
+    newTodoText.value = ''
+  }
+})
+
+const toggleMutation = useMutation({
+  mutationFn: (input: { id: number; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }).then(({ data }) => data),
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] })
+})
+
+const deleteMutation = useMutation({
+  mutationFn: (input: { id: number }) => deleteTodo(input.id).then(({ data }) => data),
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] })
+})
+{{else}}
 const { $orpc } = useNuxtApp()
 
 const newTodoText = ref('')
@@ -74,6 +99,7 @@ function handleToggleTodo(id: number, completed: boolean) {
 function handleDeleteTodo(id: number) {
   deleteMutation.mutate({ id })
 }
+{{/if}}
 {{/if}}
 </script>
 

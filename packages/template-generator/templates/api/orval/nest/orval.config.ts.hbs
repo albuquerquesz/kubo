@@ -1,0 +1,13 @@
+import { defineConfig } from "orval";
+
+export default defineConfig({
+  client: {
+    input: { target: "./openapi.yaml" },
+    output: {
+      client: "fetch",
+      target: "./src/generated/client.ts",
+      schemas: "./src/generated/models",
+      baseUrl: "/api",
+    },
+  },
+});

@@ -27,6 +27,8 @@ import { getClerkAuthToken } from "@/utils/clerk-auth";
 {{else if (eq api "orpc")}}
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import { createQueryClient, orpc } from "./utils/orpc";
+{{else if (eq api "orval")}}
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 {{/if}}
 {{/if}}
 
@@ -121,6 +123,8 @@ export const getRouter = () => {
 	});
 {{else if (eq api "orpc")}}
 	const queryClient = createQueryClient();
+{{else if (eq api "orval")}}
+	const queryClient = new QueryClient();
 {{/if}}
 
 	const router = createTanStackRouter({
@@ -150,6 +154,11 @@ export const getRouter = () => {
 		router,
 		queryClient,
 	});
+{{/if}}
+{{#if (eq api "orval")}}
+		Wrap: ({ children }) => (
+			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+		),
 {{/if}}
 
 	return router;

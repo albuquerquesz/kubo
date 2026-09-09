@@ -206,7 +206,37 @@ describe("API Configurations", () => {
       expectSuccess(result);
     });
 
-    it("should reject Orval with a non-Hono backend", async () => {
+    it("should generate a NestJS REST server and typed Fetch client", async () => {
+      const result = await createVirtual({
+        projectName: "orval-nestjs",
+        api: "orval",
+        frontend: ["tanstack-router"],
+        backend: "nestjs",
+        runtime: "bun",
+        database: "postgres",
+        orm: "prisma",
+        dbSetup: "prisma-postgres",
+        auth: "better-auth",
+        examples: ["todo"],
+        addons: ["none"],
+        payments: "none",
+        disableObservability: true,
+      });
+
+      if (result.isErr()) throw result.error;
+
+      const files = collectFiles(result.value.root, result.value.root.path);
+      expect(files.get("apps/server/src/index.ts")).toContain("NestFactory.create");
+      expect(files.get("apps/server/src/todo/todo.controller.ts")).toContain(
+        '@Controller("api/todos")',
+      );
+      expect(files.get("apps/server/src/todo/todo.repository.ts")).toContain("PrismaService");
+      expect(files.get("apps/api/openapi.yaml")).toContain("operationId: getTodos");
+      expect(files.get("apps/api/src/generated/client.ts")).toContain("getTodos");
+      expect(files.get("apps/api/orval.config.ts")).not.toContain('client: "hono"');
+    });
+
+    it("should reject Orval with an unsupported backend", async () => {
       const result = await runTRPCTest({
         projectName: "orval-express-fail",
         api: "orval",
@@ -225,7 +255,7 @@ describe("API Configurations", () => {
         expectError: true,
       });
 
-      expectError(result, "Orval API requires the Hono backend");
+      expectError(result, "Orval API requires the Hono or NestJS backend");
     });
 
     it("should reject the todo example until it has REST handlers", async () => {

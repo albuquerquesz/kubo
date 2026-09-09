@@ -23,8 +23,13 @@ export async function processApiTemplates(
   if (config.api === "none") return;
   if (config.backend === "convex") return;
 
-  processTemplatesFromPrefix(vfs, templates, `api/${config.api}/server`, "apps/api", config);
+  const serverTemplate =
+    config.api === "orval" && config.backend === "nestjs"
+      ? "api/orval/nest"
+      : `api/${config.api}/server`;
+  processTemplatesFromPrefix(vfs, templates, serverTemplate, "apps/api", config);
   if (config.api === "orval") {
+    if (config.backend === "nestjs") return;
     moveGeneratedFile(
       vfs,
       "apps/api/src/generated/routes.ts",

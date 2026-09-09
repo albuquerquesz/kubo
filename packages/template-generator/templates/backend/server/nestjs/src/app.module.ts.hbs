@@ -1,0 +1,21 @@
+import { Module } from "@nestjs/common";
+import { HealthModule } from "./health/health.module";
+{{#if (and (eq api "orval") (includes examples "todo"))}}
+import { TodoModule } from "./todo/todo.module";
+{{/if}}
+{{#if (eq auth "better-auth")}}
+import { AuthModule } from "./auth/auth.module";
+{{/if}}
+
+@Module({
+  imports: [
+    HealthModule,
+{{#if (and (eq api "orval") (includes examples "todo"))}}
+    TodoModule,
+{{/if}}
+{{#if (eq auth "better-auth")}}
+    AuthModule,
+{{/if}}
+  ],
+})
+export class AppModule {}

@@ -100,6 +100,14 @@ export const dependencyVersionMap = {
   "@fastify/cors": "^11.2.0",
   "fastify-raw-body": "^5.0.0",
 
+  "@nestjs/common": "^11.1.6",
+  "@nestjs/core": "^11.1.6",
+  "@nestjs/platform-express": "^11.1.6",
+  "class-transformer": "^0.5.1",
+  "class-validator": "^0.14.2",
+  "reflect-metadata": "^0.2.2",
+  rxjs: "^7.8.2",
+
   turbo: "^2.10.2",
   "vite-plus": "0.2.2",
   rolldown: "1.1.4",

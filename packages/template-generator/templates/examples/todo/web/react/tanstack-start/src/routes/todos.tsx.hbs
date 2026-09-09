@@ -23,6 +23,9 @@ import { useMutation } from "convex/react";
 import { api } from "@{{projectName}}/backend/convex/_generated/api";
 import type { Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
 {{else}}
+{{#if (eq api "orval")}}
+import { createTodo, deleteTodo, getTodos, toggleTodo } from "@{{projectName}}/api";
+{{/if}}
 {{#if (eq api "trpc")}}
 import { useTRPC } from "@/utils/trpc";
 {{/if}}
@@ -81,6 +84,21 @@ function TodosRoute() {
     }
   };
   {{else}}
+    {{#if (eq api "orval")}}
+  const todos = useQuery({ queryKey: ["todos"], queryFn: () => getTodos().then(({ data }) => data) });
+  const createMutation = useMutation({
+    mutationFn: (input: { text: string }) => createTodo(input).then(({ data }) => data),
+    onSuccess: () => { todos.refetch(); setNewTodoText(""); },
+  });
+  const toggleMutation = useMutation({
+    mutationFn: (input: { id: TodoId; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }).then(({ data }) => data),
+    onSuccess: () => { todos.refetch(); },
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (input: { id: TodoId }) => deleteTodo(input.id).then(({ data }) => data),
+    onSuccess: () => { todos.refetch(); },
+  });
+    {{/if}}
     {{#if (eq api "trpc")}}
   const trpc = useTRPC();
     {{/if}}

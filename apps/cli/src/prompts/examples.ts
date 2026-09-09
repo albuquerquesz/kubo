@@ -1,6 +1,10 @@
 import { DEFAULT_CONFIG } from "../constants";
 import type { API, Backend, Database, Examples, Frontend } from "../types";
-import { isExampleAIAllowed, isExampleTodoAllowed } from "../utils/compatibility-rules";
+import {
+  isExampleAIAllowed,
+  isExampleAIAllowedForBackend,
+  isExampleTodoAllowed,
+} from "../utils/compatibility-rules";
 import { UserCancelledError } from "../utils/errors";
 import { isCancel, navigableMultiselect } from "./navigable";
 
@@ -29,7 +33,7 @@ export async function getExamplesChoice(
     });
   }
 
-  if (isExampleAIAllowed(backend, frontends ?? [])) {
+  if (isExampleAIAllowed(backend, frontends ?? []) && isExampleAIAllowedForBackend(backend, "ai")) {
     options.push({
       value: "ai" as const,
       label: "AI Chat",
