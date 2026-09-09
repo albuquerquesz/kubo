@@ -43,18 +43,20 @@ describe("downloads command", () => {
       return jsonResponse({ downloads: [{ day: "2026-01-01", downloads: 7 }] });
     };
 
+    let output = "";
     try {
       await runDownloadsCommand(["--json"], {
         fetchImpl,
         sleep: async () => {},
         today: "2026-01-01",
       });
+      expect(logSpy).toHaveBeenCalledTimes(1);
+      output = String(logSpy.mock.calls[0]?.[0]);
     } finally {
       logSpy.mockRestore();
     }
 
-    expect(logSpy).toHaveBeenCalledTimes(1);
-    expect(JSON.parse(String(logSpy.mock.calls[0]?.[0]))).toMatchObject({
+    expect(JSON.parse(output)).toMatchObject({
       packageName: "create-kubojs",
       totalDownloads: 7,
     });
