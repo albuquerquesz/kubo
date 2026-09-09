@@ -8695,6 +8695,28 @@ model Verification {
   @@map("verification")
 }
 `],
+  ["auth/better-auth/server/nestjs/src/auth.controller.ts.hbs", `import { Controller, All, Req, Res } from "@nestjs/common";
+import type { Request, Response } from "express";
+import { auth } from "@{{projectName}}/auth";
+import { toNodeHandler } from "better-auth/node";
+
+@Controller("api/auth")
+export class AuthController {
+  @All("*path")
+  handleAuth(@Req() request: Request, @Res() response: Response): void {
+    void toNodeHandler(auth)(request, response);
+  }
+}
+`],
+  ["auth/better-auth/server/nestjs/src/auth.module.ts", `import { Module } from "@nestjs/common";
+
+import { AuthController } from "./auth.controller";
+
+@Module({
+  controllers: [AuthController],
+})
+export class AuthModule {}
+`],
   ["auth/better-auth/web/astro/src/components/SignInForm.astro.hbs", `---
 import { authClient } from "../lib/auth-client";
 ---
@@ -15167,27 +15189,6 @@ import { AuthModule } from "./auth/auth.module";
 })
 export class AppModule {}
 `],
-  ["backend/server/nestjs/src/auth/auth.controller.ts.hbs", `import { Controller, All, Req, Res } from "@nestjs/common";
-import type { Request, Response } from "express";
-import { auth } from "@{{projectName}}/auth";
-import { toNodeHandler } from "better-auth/node";
-
-@Controller("api/auth")
-export class AuthController {
-  @All("*path")
-  handleAuth(@Req() request: Request, @Res() response: Response): void {
-    void toNodeHandler(auth)(request, response);
-  }
-}
-`],
-  ["backend/server/nestjs/src/auth/auth.module.ts.hbs", `import { Module } from "@nestjs/common";
-import { AuthController } from "./auth.controller";
-
-@Module({
-  controllers: [AuthController],
-})
-export class AuthModule {}
-`],
   ["backend/server/nestjs/src/health/health.controller.ts", `import { Controller, Get } from "@nestjs/common";
 
 @Controller("api")
@@ -15215,6 +15216,7 @@ import { AppModule } from "./app.module";
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
 
   app.enableCors({
     origin: env.CORS_ORIGIN,

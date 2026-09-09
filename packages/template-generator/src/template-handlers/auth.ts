@@ -139,7 +139,9 @@ export async function processAuthTemplates(
     processTemplatesFromPrefix(
       vfs,
       templates,
-      `auth/${authProvider}/server/base`,
+      config.backend === "nestjs"
+        ? "auth/better-auth/server/nestjs"
+        : `auth/${authProvider}/server/base`,
       "packages/auth",
       config,
     );
