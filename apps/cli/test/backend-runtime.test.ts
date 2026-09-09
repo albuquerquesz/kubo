@@ -1,9 +1,41 @@
-import { describe, it } from "bun:test";
+import { describe, expect, it } from "bun:test";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 
 import type { Backend, Frontend, Runtime } from "../src/types";
 import { expectError, expectSuccess, runTRPCTest, type TestConfig } from "./test-utils";
 
 describe("Backend and Runtime Combinations", () => {
+  describe("NestJS server packaging", () => {
+    it("should externalize optional NestJS peers when compiling the server", async () => {
+      const result = await runTRPCTest({
+        projectName: "nestjs-compile-script",
+        frontend: ["none"],
+        backend: "nestjs",
+        runtime: "bun",
+        api: "none",
+        database: "none",
+        orm: "none",
+        auth: "none",
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+        install: false,
+      });
+
+      expectSuccess(result);
+
+      const serverPackage = JSON.parse(
+        await readFile(path.join(result.projectDir!, "apps/server/package.json"), "utf8"),
+      ) as { scripts?: { compile?: string } };
+
+      expect(serverPackage.scripts?.compile).toContain("--external @nestjs/microservices");
+      expect(serverPackage.scripts?.compile).toContain("--external @nestjs/websockets");
+    });
+  });
+
   describe("Valid Backend-Runtime Combinations", () => {
     const validCombinations = [
       // Standard backend-runtime combinations

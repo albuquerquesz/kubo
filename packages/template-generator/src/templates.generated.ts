@@ -14128,7 +14128,7 @@ next-env.d.ts
 	"scripts": {
 		"build": "tsdown",
 		"check-types": "tsc -b",
-		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server"
+		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server{{#if (eq backend 'nestjs')}} --external @nestjs/microservices --external @nestjs/websockets{{/if}}"
 	},
 	"dependencies": {},
 	{{#if (eq dbSetup 'supabase')}}
