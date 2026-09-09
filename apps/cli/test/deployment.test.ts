@@ -1549,4 +1549,74 @@ describe("Deployment Configurations", () => {
       );
     });
   });
+
+  describe("Railway Deploy", () => {
+    it("generates a Railway config for each selected service", async () => {
+      const result = await createVirtual({
+        projectName: "railway-split-deploy",
+        webDeploy: "railway",
+        serverDeploy: "railway",
+        backend: "hono",
+        runtime: "bun",
+        database: "postgres",
+        orm: "drizzle",
+        auth: "none",
+        payments: "none",
+        api: "trpc",
+        frontend: ["tanstack-router"],
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        install: false,
+        git: false,
+        packageManager: "bun",
+      });
+
+      if (result.isErr()) {
+        throw result.error;
+      }
+
+      const files = collectFiles(result.value.root, result.value.root.path);
+      const rootPkg = JSON.parse(files.get("package.json") ?? "{}");
+      const webRailwayConfig = JSON.parse(files.get("apps/web/railway.json") ?? "{}");
+      const serverRailwayConfig = JSON.parse(files.get("apps/server/railway.json") ?? "{}");
+      const readme = files.get("README.md") ?? "";
+
+      expect(webRailwayConfig).toEqual({
+        $schema: "https://railway.com/railway.schema.json",
+        build: { builder: "RAILPACK" },
+        deploy: { restartPolicyType: "ON_FAILURE", restartPolicyMaxRetries: 10 },
+      });
+      expect(serverRailwayConfig).toEqual(webRailwayConfig);
+      expect(rootPkg.scripts).toMatchObject({
+        "railway:login": "railway login",
+        "deploy:web": "cd apps/web && railway up",
+        "deploy:server": "cd apps/server && railway up",
+      });
+      expect(readme).toContain("### Railway");
+      expect(readme).toContain("`apps/web/railway.json`");
+      expect(readme).toContain("`apps/server/railway.json`");
+    });
+
+    it("rejects Railway server deploys with the Workers runtime", async () => {
+      const result = await runTRPCTest({
+        projectName: "railway-workers-fail",
+        webDeploy: "none",
+        serverDeploy: "railway",
+        backend: "hono",
+        runtime: "workers",
+        database: "sqlite",
+        orm: "drizzle",
+        auth: "none",
+        api: "trpc",
+        frontend: ["tanstack-router"],
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        expectError: true,
+      });
+
+      expectError(result, "'--server-deploy railway' is not compatible with '--runtime workers'");
+    });
+  });
 });

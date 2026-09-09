@@ -393,6 +393,28 @@ export function validateVercelServerDeploy(
   return Result.ok(undefined);
 }
 
+export function validateRailwayServerDeploy(
+  serverDeploy: ServerDeploy | undefined,
+  backend: Backend | undefined,
+  runtime: Runtime | undefined,
+): ValidationResult {
+  if (serverDeploy !== "railway") return Result.ok(undefined);
+
+  if (backend === "convex" || backend === "self") {
+    return validationErr(
+      "'--server-deploy railway' requires a separate server backend (hono, express, fastify, elysia). For a fullstack 'self' backend, use '--web-deploy railway' instead.",
+    );
+  }
+
+  if (runtime === "workers") {
+    return validationErr(
+      "'--server-deploy railway' is not compatible with '--runtime workers'. Use '--runtime bun' or '--runtime node', or choose '--server-deploy cloudflare'.",
+    );
+  }
+
+  return Result.ok(undefined);
+}
+
 export function validateGuaraCloudServerDeploy(
   serverDeploy: ServerDeploy | undefined,
   backend: Backend | undefined,
@@ -456,7 +478,7 @@ export function validateAddonCompatibility(
   frontend: Frontend[],
   auth?: Auth,
   backend?: Backend,
-  runtime?: Runtime,
+  _runtime?: Runtime,
 ): { isCompatible: boolean; reason?: string } {
   if (
     STATIC_DESKTOP_ADDONS.includes(addon) &&

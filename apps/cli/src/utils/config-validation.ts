@@ -19,6 +19,7 @@ import {
   validateDockerServerDeploy,
   validateDockerWebDeployDesktopAddons,
   validateGuaraCloudServerDeploy,
+  validateRailwayServerDeploy,
   validateServerDeployRequiresBackend,
   validateVercelServerDeploy,
   validateWebDeployRequiresWebFrontend,
@@ -528,6 +529,7 @@ export function validateFullConfig(
     yield* validateServerDeployRequiresBackend(config.serverDeploy, config.backend);
     yield* validateDockerServerDeploy(config.serverDeploy, config.backend, config.runtime);
     yield* validateVercelServerDeploy(config.serverDeploy, config.backend, config.runtime);
+    yield* validateRailwayServerDeploy(config.serverDeploy, config.backend, config.runtime);
     yield* validateGuaraCloudServerDeploy(config.serverDeploy, config.backend, config.runtime);
     yield* validateDockerWebDeployDesktopAddons(
       config.webDeploy,

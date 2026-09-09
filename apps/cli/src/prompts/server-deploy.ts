@@ -11,38 +11,27 @@ type DeploymentOption = {
   hint: string;
 };
 
+const DEPLOYMENT_DISPLAYS: Partial<Record<ServerDeploy, Omit<DeploymentOption, "value">>> = {
+  cloudflare: { label: "Cloudflare", hint: "Deploy to Cloudflare Workers using Alchemy" },
+  docker: { label: "Docker", hint: "Self-host with a Dockerfile and docker-compose.yml" },
+  vercel: { label: "Vercel", hint: "Deploy to Vercel with Services" },
+  railway: { label: "Railway", hint: "Deploy with Railpack and railway.json" },
+  guaracloud: {
+    label: "Guara Cloud",
+    hint: "Deploy containers on Guara Cloud via GitHub or Docker image",
+  },
+};
+
 function getDeploymentDisplay(deployment: ServerDeploy): {
   label: string;
   hint: string;
 } {
-  if (deployment === "cloudflare") {
-    return {
-      label: "Cloudflare",
-      hint: "Deploy to Cloudflare Workers using Alchemy",
-    };
-  }
-  if (deployment === "docker") {
-    return {
-      label: "Docker",
-      hint: "Self-host with a Dockerfile and docker-compose.yml",
-    };
-  }
-  if (deployment === "vercel") {
-    return {
-      label: "Vercel",
-      hint: "Deploy to Vercel with Services",
-    };
-  }
-  if (deployment === "guaracloud") {
-    return {
-      label: "Guara Cloud",
-      hint: "Deploy containers on Guara Cloud via GitHub or Docker image",
-    };
-  }
-  return {
-    label: deployment,
-    hint: `Add ${deployment} deployment`,
-  };
+  return (
+    DEPLOYMENT_DISPLAYS[deployment] ?? {
+      label: deployment,
+      hint: `Add ${deployment} deployment`,
+    }
+  );
 }
 
 export async function getServerDeploymentChoice(
@@ -67,7 +56,9 @@ export async function getServerDeploymentChoice(
     return "none";
   }
 
-  const options: DeploymentOption[] = (["docker", "vercel", "none"] as const).map((deploy) => {
+  const options: DeploymentOption[] = (
+    ["docker", "vercel", "railway", "guaracloud", "none"] as const
+  ).map((deploy) => {
     const { label, hint } =
       deploy === "none"
         ? { label: "None", hint: "Skip deployment setup" }
@@ -112,7 +103,7 @@ export async function getServerDeploymentToAdd(
   }
 
   if (runtime === "bun" || runtime === "node") {
-    for (const deploy of ["docker", "vercel", "guaracloud"] as const) {
+    for (const deploy of ["docker", "vercel", "railway", "guaracloud"] as const) {
       const { label, hint } = getDeploymentDisplay(deploy);
       options.push({
         value: deploy,

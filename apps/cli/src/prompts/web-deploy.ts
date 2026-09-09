@@ -14,38 +14,27 @@ type DeploymentOption = {
   hint: string;
 };
 
+const DEPLOYMENT_DISPLAYS: Partial<Record<WebDeploy, Omit<DeploymentOption, "value">>> = {
+  cloudflare: { label: "Cloudflare", hint: "Deploy to Cloudflare Workers using Alchemy" },
+  docker: { label: "Docker", hint: "Self-host with a Dockerfile and docker-compose.yml" },
+  vercel: { label: "Vercel", hint: "Deploy to Vercel with Services" },
+  railway: { label: "Railway", hint: "Deploy with Railpack and railway.json" },
+  guaracloud: {
+    label: "Guara Cloud",
+    hint: "Deploy containers on Guara Cloud via GitHub or Docker image",
+  },
+};
+
 function getDeploymentDisplay(deployment: WebDeploy): {
   label: string;
   hint: string;
 } {
-  if (deployment === "cloudflare") {
-    return {
-      label: "Cloudflare",
-      hint: "Deploy to Cloudflare Workers using Alchemy",
-    };
-  }
-  if (deployment === "docker") {
-    return {
-      label: "Docker",
-      hint: "Self-host with a Dockerfile and docker-compose.yml",
-    };
-  }
-  if (deployment === "vercel") {
-    return {
-      label: "Vercel",
-      hint: "Deploy to Vercel with Services",
-    };
-  }
-  if (deployment === "guaracloud") {
-    return {
-      label: "Guara Cloud",
-      hint: "Deploy containers on Guara Cloud via GitHub or Docker image",
-    };
-  }
-  return {
-    label: deployment,
-    hint: `Add ${deployment} deployment`,
-  };
+  return (
+    DEPLOYMENT_DISPLAYS[deployment] ?? {
+      label: deployment,
+      hint: `Add ${deployment} deployment`,
+    }
+  );
 }
 
 export async function getDeploymentChoice(
@@ -65,12 +54,19 @@ export async function getDeploymentChoice(
     return "cloudflare";
   }
 
-  const availableDeployments = ["cloudflare", "docker", "vercel", "guaracloud", "none"];
+  const availableDeployments = [
+    "cloudflare",
+    "docker",
+    "vercel",
+    "railway",
+    "guaracloud",
+    "none",
+  ] as const satisfies readonly WebDeploy[];
 
   const options: DeploymentOption[] = availableDeployments.map((deploy) => {
-    const { label, hint } = getDeploymentDisplay(deploy as WebDeploy);
+    const { label, hint } = getDeploymentDisplay(deploy);
     return {
-      value: deploy as WebDeploy,
+      value: deploy,
       label,
       hint,
     };
@@ -98,7 +94,7 @@ export async function getDeploymentToAdd(frontend: Frontend[], existingDeploymen
   }
 
   const options: DeploymentOption[] = (
-    ["cloudflare", "docker", "vercel", "guaracloud"] as const
+    ["cloudflare", "docker", "vercel", "railway", "guaracloud"] as const
   ).map((deploy) => {
     const { label, hint } = getDeploymentDisplay(deploy);
     return { value: deploy, label, hint };
