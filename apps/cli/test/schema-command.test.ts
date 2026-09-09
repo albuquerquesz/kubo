@@ -33,5 +33,6 @@ describe("Schema command", () => {
     expect(commandNames).toContain("create-json");
     expect(commandNames).toContain("add-json");
     expect(commandNames).toContain("schema");
+    expect(commandNames).not.toContain("downloads");
   });
 });
