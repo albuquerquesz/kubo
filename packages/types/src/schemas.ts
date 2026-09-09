@@ -135,11 +135,11 @@ export const CommunicationSchema = z
   .describe("Communication provider (email / messaging)");
 
 export const WebDeploySchema = z
-  .enum(["cloudflare", "docker", "vercel", "guaracloud", "none"])
+  .enum(["cloudflare", "docker", "vercel", "railway", "guaracloud", "none"])
   .describe("Web deployment");
 
 export const ServerDeploySchema = z
-  .enum(["cloudflare", "docker", "vercel", "guaracloud", "none"])
+  .enum(["cloudflare", "docker", "vercel", "railway", "guaracloud", "none"])
   .describe("Server deployment");
 
 export const DirectoryConflictSchema = z
