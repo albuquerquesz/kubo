@@ -1022,6 +1022,22 @@ function generateScriptsList(
 - \`${packageManagerRunCmd} ${v.deployCheck}\`: Dry-run a deploy to preview framework detection and included files without uploading`;
   }
 
+  if (webDeploy === "railway" || serverDeploy === "railway") {
+    const usesTargetScopedRailwayScripts =
+      (webDeploy !== "none" && serverDeploy !== "none" && webDeploy !== serverDeploy) ||
+      (webDeploy === "railway" && serverDeploy === "railway");
+    const deployScript = usesTargetScopedRailwayScripts
+      ? webDeploy === "railway"
+        ? "deploy:web"
+        : "deploy:server"
+      : "deploy";
+    scripts += `\n- \`${packageManagerRunCmd} railway:login\`: Authenticate the Railway CLI
+- \`${packageManagerRunCmd} ${deployScript}\`: Deploy the ${webDeploy === "railway" ? "web" : "server"} service to Railway`;
+    if (webDeploy === "railway" && serverDeploy === "railway") {
+      scripts += `\n- \`${packageManagerRunCmd} deploy:server\`: Deploy the server service to Railway`;
+    }
+  }
+
   if (webDeploy === "guaracloud" || serverDeploy === "guaracloud") {
     const scriptSets = getGuaraCloudScriptSets(webDeploy, serverDeploy);
     scripts += `\n- \`${packageManagerRunCmd} deploy:login\`: Authenticate the Guara Cloud CLI`;
@@ -1047,9 +1063,10 @@ function generateDeploymentCommands(
   const hasCloudflare = webDeploy === "cloudflare" || serverDeploy === "cloudflare";
   const hasDocker = webDeploy === "docker" || serverDeploy === "docker";
   const hasVercel = webDeploy === "vercel" || serverDeploy === "vercel";
+  const hasRailway = webDeploy === "railway" || serverDeploy === "railway";
   const hasGuaraCloud = webDeploy === "guaracloud" || serverDeploy === "guaracloud";
 
-  if (!hasCloudflare && !hasDocker && !hasVercel && !hasGuaraCloud) {
+  if (!hasCloudflare && !hasDocker && !hasVercel && !hasRailway && !hasGuaraCloud) {
     return "";
   }
 
@@ -1142,6 +1159,43 @@ function generateDeploymentCommands(
       "",
       "For more details, see the guide on [Deploying to Vercel](https://www.kubojs.dev/docs/guides/vercel).",
     );
+  }
+
+  if (hasRailway) {
+    const targetLabel =
+      webDeploy === "railway" && (serverDeploy === "railway" || backend === "self")
+        ? "web + server"
+        : webDeploy === "railway"
+          ? "web"
+          : "server";
+    const usesTargetScopedRailwayScripts =
+      (webDeploy !== "none" && serverDeploy !== "none" && webDeploy !== serverDeploy) ||
+      (webDeploy === "railway" && serverDeploy === "railway");
+    const deployScript = usesTargetScopedRailwayScripts
+      ? webDeploy === "railway"
+        ? "deploy:web"
+        : "deploy:server"
+      : "deploy";
+    const configPaths = [
+      ...(webDeploy === "railway" ? ["`apps/web/railway.json`"] : []),
+      ...(serverDeploy === "railway" ? ["`apps/server/railway.json`"] : []),
+    ];
+
+    lines.push(
+      "",
+      "### Railway",
+      "",
+      `- Target: ${targetLabel}`,
+      `- Config: ${configPaths.join(" and ")}`,
+      "- Each app is a separate Railway service; import the monorepo, then select the matching app directory as its config path.",
+      `- Login: ${packageManagerRunCmd} railway:login`,
+      `- Deploy: ${packageManagerRunCmd} ${deployScript}`,
+      "- Set the generated app's environment variables in Railway before the first deploy.",
+    );
+
+    if (webDeploy === "railway" && serverDeploy === "railway") {
+      lines.push(`- Server deploy: ${packageManagerRunCmd} deploy:server`);
+    }
   }
 
   if (hasGuaraCloud) {

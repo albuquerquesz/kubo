@@ -89,5 +89,11 @@ export function getStackGeneratedIgnorePatterns(config: ProjectConfig): string[]
     patterns.add(".vercel/**");
   }
 
+  if (config.webDeploy === "railway" || config.serverDeploy === "railway") {
+    patterns.add(".railway/**");
+    patterns.add("apps/web/.railway/**");
+    patterns.add("apps/server/.railway/**");
+  }
+
   return [...patterns];
 }

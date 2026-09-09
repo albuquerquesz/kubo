@@ -3,7 +3,12 @@ import { Result } from "better-result";
 
 import { VirtualFileSystem } from "./core/virtual-fs";
 import { writeKubojsConfigToVfs } from "./kubojs-config";
-import { processCatalogs, processPackageConfigs, processVercelConfig } from "./post-process";
+import {
+  processCatalogs,
+  processPackageConfigs,
+  processRailwayConfig,
+  processVercelConfig,
+} from "./post-process";
 import {
   processDependencies,
   processReadme,
@@ -97,6 +102,7 @@ export async function generate(
       processAlchemyPlugins(vfs, config);
       processPwaPlugins(vfs, config);
       processCatalogs(vfs, config);
+      processRailwayConfig(vfs, config);
       processVercelConfig(vfs, config);
       processReadme(vfs, config);
 

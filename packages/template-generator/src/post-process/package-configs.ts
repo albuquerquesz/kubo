@@ -183,6 +183,7 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
   const hasCloudflareDeploy =
     config.webDeploy === "cloudflare" || config.serverDeploy === "cloudflare";
   const hasVercelDeploy = config.webDeploy === "vercel" || config.serverDeploy === "vercel";
+  const hasRailwayDeploy = config.webDeploy === "railway" || config.serverDeploy === "railway";
   const hasGuaraCloudDeploy =
     config.webDeploy === "guaracloud" || config.serverDeploy === "guaracloud";
   // When web and server deploy to different targets, deploy scripts are named
@@ -211,6 +212,23 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
     scripts[vercelDeploy] = "vercel deploy";
     scripts[`${vercelDeploy}:prod`] = "vercel deploy --prod";
     scripts["deploy:check"] = "vercel deploy --dry";
+  }
+
+  if (hasRailwayDeploy) {
+    scripts["railway:login"] = "railway login";
+    const usesTargetScopedRailwayScripts =
+      hasSplitDeployTargets ||
+      (config.webDeploy === "railway" && config.serverDeploy === "railway");
+
+    if (config.webDeploy === "railway") {
+      const deployScript = usesTargetScopedRailwayScripts ? "deploy:web" : "deploy";
+      scripts[deployScript] = "cd apps/web && railway up";
+    }
+
+    if (config.serverDeploy === "railway") {
+      const deployScript = usesTargetScopedRailwayScripts ? "deploy:server" : "deploy";
+      scripts[deployScript] = "cd apps/server && railway up";
+    }
   }
 
   if (hasGuaraCloudDeploy) {
