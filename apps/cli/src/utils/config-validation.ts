@@ -404,10 +404,8 @@ export function validateBackendConstraints(
   const { backend } = config;
 
   if (backend === "nestjs") {
-    if (config.api !== "orval" && config.api !== "none") {
-      return validationErr(
-        "NestJS currently supports the Orval REST API or no API layer. Please use '--api orval' or '--api none'.",
-      );
+    if (config.api !== "none") {
+      return validationErr("NestJS currently supports no API layer yet. Please use '--api none'.");
     }
 
     if (config.auth === "clerk") {
@@ -425,15 +423,6 @@ export function validateBackendConstraints(
     if (config.orm && config.orm !== "none" && config.orm !== "prisma") {
       return validationErr(
         "NestJS backend currently supports Prisma as its ORM. Please use '--orm prisma'.",
-      );
-    }
-
-    if (
-      config.api === "orval" &&
-      (config.frontend ?? []).some((frontend) => frontend.startsWith("native-"))
-    ) {
-      return validationErr(
-        "NestJS + Orval currently supports web frontends only. Please remove the native frontend or choose API none.",
       );
     }
 
@@ -529,11 +518,11 @@ export function validateApiConstraints(
 ): ValidationResult {
   if (!isApiCompatibleWithBackend(config.api, config.backend)) {
     return validationErr(
-      "Orval API requires the Hono or NestJS backend. Please use '--backend hono', '--backend nestjs', or choose tRPC/oRPC.",
+      "Orval API requires the Hono backend. Please use '--backend hono' or choose tRPC/oRPC.",
     );
   }
 
-  if (config.api === "orval" && config.backend !== "nestjs" && options.examples?.includes("todo")) {
+  if (config.api === "orval" && options.examples?.includes("todo")) {
     return validationErr(
       "The Orval API layer does not support the generated todo example yet. Please remove 'todo' from --examples or choose tRPC/oRPC.",
     );

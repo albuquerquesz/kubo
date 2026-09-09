@@ -55,10 +55,10 @@ describe("Backend and Runtime Combinations", () => {
           config.auth = "none";
           config.api = "none";
         } else if (backend === "nestjs") {
-          config.database = "postgres";
-          config.orm = "prisma";
+          config.database = "none";
+          config.orm = "none";
           config.auth = "none";
-          config.api = "orval";
+          config.api = "none";
         } else if (backend === "self") {
           config.frontend = ["next"];
           config.database = "sqlite";

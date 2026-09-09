@@ -124,24 +124,6 @@ const buildSamples: BuildSample[] = [
     },
   },
   {
-    name: "nestjs-orval-prisma-todo",
-    packageManagers: ["bun"],
-    config: {
-      ...baseConfig,
-      frontend: ["tanstack-router"],
-      backend: "nestjs",
-      runtime: "bun",
-      database: "postgres",
-      orm: "prisma",
-      dbSetup: "prisma-postgres",
-      api: "orval",
-      auth: "better-auth",
-      payments: "none",
-      addons: ["turborepo"],
-      examples: ["todo"],
-    },
-  },
-  {
     name: "convex-clerk-react",
     config: {
       ...baseConfig,

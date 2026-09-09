@@ -30,18 +30,7 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <script>
-  {{#if (eq api "orval")}}
-  import { createTodo, deleteTodo, getTodos, toggleTodo } from "@{{projectName}}/api";
-  const todoApi = {
-    getAll: async () => (await getTodos()).data,
-    create: (input: { text: string }) => createTodo(input),
-    toggle: (input: { id: number; completed: boolean }) => toggleTodo(input.id, { completed: input.completed }),
-    delete: (input: { id: number }) => deleteTodo(input.id),
-  };
-  {{else}}
   import { orpc } from "../lib/orpc";
-  const todoApi = orpc.todo;
-  {{/if}}
 
   interface Todo {
     id: number;
@@ -121,7 +110,7 @@ import Layout from "../layouts/Layout.astro";
 
   async function loadTodos() {
     try {
-      todos = await todoApi.getAll();
+      todos = await orpc.todo.getAll();
       renderTodos();
     } catch (e) {
       loadingEl.classList.add("hidden");
@@ -133,7 +122,7 @@ import Layout from "../layouts/Layout.astro";
     addBtn.disabled = true;
     addBtn.textContent = "Adding...";
     try {
-      await todoApi.create({ text });
+      await orpc.todo.create({ text });
       newTodoInput.value = "";
       await loadTodos();
     } catch (e) {
@@ -146,7 +135,7 @@ import Layout from "../layouts/Layout.astro";
 
   async function toggleTodo(id: number, completed: boolean) {
     try {
-      await todoApi.toggle({ id, completed: !completed });
+      await orpc.todo.toggle({ id, completed: !completed });
       await loadTodos();
     } catch (e) {
       showError("Failed to update todo");
@@ -155,7 +144,7 @@ import Layout from "../layouts/Layout.astro";
 
   async function deleteTodo(id: number) {
     try {
-      await todoApi.delete({ id });
+      await orpc.todo.delete({ id });
       await loadTodos();
     } catch (e) {
       showError("Failed to delete todo");

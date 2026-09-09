@@ -44,24 +44,6 @@ export async function processExampleTemplates(
         "packages/backend",
         config,
       );
-    } else if (config.backend === "nestjs" && config.api === "orval" && example === "todo") {
-      processTemplatesFromPrefix(
-        vfs,
-        templates,
-        `examples/${example}/server/${config.orm}/nestjs`,
-        "apps/server",
-        config,
-      );
-
-      if (config.orm !== "none" && config.database !== "none") {
-        processTemplatesFromPrefix(
-          vfs,
-          templates,
-          `examples/${example}/server/${config.orm}/${config.database}`,
-          "packages/db",
-          config,
-        );
-      }
     } else if (config.backend !== "none" && config.api !== "none") {
       processTemplatesFromPrefix(
         vfs,

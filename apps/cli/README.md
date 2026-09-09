@@ -233,10 +233,10 @@ npx kubojs --frontend none --backend hono --api trpc --database none --addons no
 
 - **Convex backend**: Requires `database`, `orm`, `api`, `runtime`, and `server-deploy` to be `none`; auth can be `better-auth`, `clerk`, or `none` depending frontend compatibility
 - **Backend 'none'**: If selected, this option will force related options like API, ORM, database, authentication, and runtime to 'none'. Examples will also be disabled (set to none/empty).
-- **NestJS backend**: The initial KuboJS templates support PostgreSQL + Prisma, Better Auth or no authentication, and Orval or no API layer. These are current template capabilities, not limitations of NestJS itself; additional database, ORM, API, and example integrations can be added independently.
+- **NestJS backend**: The initial KuboJS templates support PostgreSQL + Prisma, Better Auth or no authentication, and no API layer. These are current template capabilities, not limitations of NestJS itself; additional database, ORM, API, and example integrations can be added independently.
 - **Frontend 'none'**: Creates a backend-only project. When selected, PWA, Tauri, Electrobun, and certain examples may be disabled.
 - **API 'none'**: Disables tRPC/oRPC/Orval setup. Can be used with backend frameworks for REST APIs or custom API implementations.
-- **API 'orval'**: Generates a local OpenAPI contract and typed Fetch client. With Hono it also generates REST handlers; with NestJS, the server adapter owns the REST controllers. Orval requires `--backend hono` or `--backend nestjs`; run `bun run api:generate` after changing `apps/api/openapi.yaml`.
+- **API 'orval'**: Generates a local OpenAPI contract, REST handlers, and typed Fetch client for Hono. Orval requires `--backend hono`; run `bun run api:generate` after changing `apps/api/openapi.yaml`.
 - **Database 'none'**: Disables database setup and requires ORM to be `none`.
 - **ORM 'none'**: Can be used when you want to handle database operations manually or use a different ORM.
 - **Runtime 'none'**: Only available with Convex backend, backend `none`, or backend `self`.
@@ -245,7 +245,7 @@ npx kubojs --frontend none --backend hono --api trpc --database none --addons no
 - **Addons 'none'**: Skips all addons.
 - **Testing 'none'**: Skips all testing tools. Playwright requires a web frontend.
 - **Examples 'none'**: Skips all example implementations (todo, AI chat).
-- **Nuxt, Svelte, SolidJS, and Astro** frontends are not compatible with tRPC; use oRPC, Orval, or no API layer. NestJS + Orval supports web frontends only.
+- **Nuxt, Svelte, SolidJS, and Astro** frontends are not compatible with tRPC; use oRPC, Orval, or no API layer.
 - **PWA support** requires TanStack Router, React Router, Next.js, or SolidJS
 - **Tauri desktop app** requires TanStack Router, React Router, TanStack Start, Next.js, Nuxt, SvelteKit, SolidJS, or Astro
 - **Electrobun desktop app** requires TanStack Router, React Router, TanStack Start, Next.js, Nuxt, SvelteKit, SolidJS, or Astro. Desktop packaging uses static web assets, so SSR-first frontends need a static/export build before desktop builds will work.

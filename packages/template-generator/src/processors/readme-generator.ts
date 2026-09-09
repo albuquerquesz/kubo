@@ -743,11 +743,7 @@ function generateFeaturesList(
   } else if (!isConvex && api === "orpc") {
     features.push("- **oRPC** - End-to-end type-safe APIs with OpenAPI integration");
   } else if (!isConvex && api === "orval") {
-    features.push(
-      backend === "nestjs"
-        ? "- **Orval** - OpenAPI contract and generated Fetch client for NestJS controllers"
-        : "- **Orval** - OpenAPI REST handlers and generated Fetch clients",
-    );
+    features.push("- **Orval** - OpenAPI REST handlers and generated Fetch clients");
   }
 
   if (!isConvex && backend !== "none" && runtime !== "none") {

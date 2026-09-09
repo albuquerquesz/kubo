@@ -40,7 +40,7 @@ export async function getApiChoice(
           ? {
               value: "orval" as const,
               label: "Orval",
-              hint: "OpenAPI REST APIs with generated handlers or Fetch clients",
+              hint: "OpenAPI REST APIs with generated Hono handlers and Fetch clients",
             }
           : {
               value: "none" as const,
