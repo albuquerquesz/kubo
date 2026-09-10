@@ -53,12 +53,12 @@ const LOGOS: LogoItem[] = [
   {
     name: "Resend",
     href: "https://resend.com",
-    src: "https://resend.com/favicon.ico",
+    src: "https://resend.com/static/logo-black-square.png",
   },
   {
     name: "AraraHQ",
     href: "https://ararahq.com",
-    src: "https://ararahq.com/favicon.ico",
+    src: "https://ararahq.com/favicon.svg",
   },
 ];
 
