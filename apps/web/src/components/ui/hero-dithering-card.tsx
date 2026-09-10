@@ -274,7 +274,7 @@ export function CTASection({ className }: CTASectionProps) {
 
         <p
           ref={bodyRef}
-          className="mb-12 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl"
+          className="mb-12 max-w-2xl text-lg leading-relaxed text-foreground/80 md:text-xl"
         >
           Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.
           Limpo, preciso e do seu jeito.
