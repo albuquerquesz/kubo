@@ -34,6 +34,46 @@ describe("Backend and Runtime Combinations", () => {
       expect(serverPackage.scripts?.compile).toContain("--external @nestjs/microservices");
       expect(serverPackage.scripts?.compile).toContain("--external @nestjs/websockets");
     });
+
+    it("keeps Better Auth core and NestJS adapter in their own packages", async () => {
+      const result = await runTRPCTest({
+        projectName: "nestjs-better-auth",
+        frontend: ["none"],
+        backend: "nestjs",
+        runtime: "bun",
+        api: "none",
+        database: "postgres",
+        orm: "prisma",
+        auth: "better-auth",
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+        install: false,
+      });
+
+      expectSuccess(result);
+      const projectDir = result.projectDir!;
+      const appModule = await readFile(
+        path.join(projectDir, "apps/server/src/app.module.ts"),
+        "utf8",
+      );
+      const authController = await readFile(
+        path.join(projectDir, "apps/server/src/auth/auth.controller.ts"),
+        "utf8",
+      );
+      const authPackage = await readFile(
+        path.join(projectDir, "packages/auth/package.json"),
+        "utf8",
+      );
+      const authCore = await readFile(path.join(projectDir, "packages/auth/src/index.ts"), "utf8");
+
+      expect(appModule).toContain('import { AuthModule } from "./auth/auth.module";');
+      expect(authController).toContain('import { auth } from "@nestjs-better-auth/auth";');
+      expect(authPackage).toContain('"name": "@nestjs-better-auth/auth"');
+      expect(authCore).toContain("export const auth = createAuth();");
+    });
   });
 
   describe("Valid Backend-Runtime Combinations", () => {

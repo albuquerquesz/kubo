@@ -1,6 +1,5 @@
 import {
   findFrontend,
-  hasAnyFrontend,
   hasNativeFrontend,
   hasReactFrontend,
   reactWebFrontends,
@@ -139,12 +138,20 @@ export async function processAuthTemplates(
     processTemplatesFromPrefix(
       vfs,
       templates,
-      config.backend === "nestjs"
-        ? "auth/better-auth/server/nestjs"
-        : `auth/${authProvider}/server/base`,
+      `auth/${authProvider}/server/base`,
       "packages/auth",
       config,
     );
+
+    if (config.backend === "nestjs" && authProvider === "better-auth") {
+      processTemplatesFromPrefix(
+        vfs,
+        templates,
+        "auth/better-auth/server/nestjs",
+        "apps/server",
+        config,
+      );
+    }
 
     if (config.orm !== "none" && config.database !== "none") {
       processTemplatesFromPrefix(

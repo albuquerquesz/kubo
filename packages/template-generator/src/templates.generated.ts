@@ -8695,7 +8695,7 @@ model Verification {
   @@map("verification")
 }
 `],
-  ["auth/better-auth/server/nestjs/src/auth.controller.ts.hbs", `import { Controller, All, Req, Res } from "@nestjs/common";
+  ["auth/better-auth/server/nestjs/src/auth/auth.controller.ts.hbs", `import { Controller, All, Req, Res } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { auth } from "@{{projectName}}/auth";
 import { toNodeHandler } from "better-auth/node";
@@ -8708,7 +8708,7 @@ export class AuthController {
   }
 }
 `],
-  ["auth/better-auth/server/nestjs/src/auth.module.ts", `import { Module } from "@nestjs/common";
+  ["auth/better-auth/server/nestjs/src/auth/auth.module.ts", `import { Module } from "@nestjs/common";
 
 import { AuthController } from "./auth.controller";
 
@@ -15169,9 +15169,6 @@ export default app;
 `],
   ["backend/server/nestjs/src/app.module.ts.hbs", `import { Module } from "@nestjs/common";
 import { HealthModule } from "./health/health.module";
-{{#if (and (eq api "orval") (includes examples "todo"))}}
-import { TodoModule } from "./todo/todo.module";
-{{/if}}
 {{#if (eq auth "better-auth")}}
 import { AuthModule } from "./auth/auth.module";
 {{/if}}
@@ -15179,9 +15176,6 @@ import { AuthModule } from "./auth/auth.module";
 @Module({
   imports: [
     HealthModule,
-{{#if (and (eq api "orval") (includes examples "todo"))}}
-    TodoModule,
-{{/if}}
 {{#if (eq auth "better-auth")}}
     AuthModule,
 {{/if}}
