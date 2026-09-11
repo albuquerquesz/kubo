@@ -8,7 +8,7 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "dist",
-    "types": ["node"]
+    "types": ["node", "bun"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "**/*.test.ts", "**/*.spec.ts"]

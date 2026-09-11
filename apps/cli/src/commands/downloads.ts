@@ -38,7 +38,8 @@ export type DownloadQueryOptions = {
   today?: string;
 };
 
-const defaultSleep: SleepImplementation = (milliseconds) => Bun.sleep(milliseconds);
+const defaultSleep: SleepImplementation = (milliseconds) =>
+  new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 function dateOnly(date: Date): string {
   return date.toISOString().slice(0, 10);
