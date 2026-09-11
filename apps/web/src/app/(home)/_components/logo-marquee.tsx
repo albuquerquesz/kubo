@@ -50,6 +50,16 @@ const LOGOS: LogoItem[] = [
     href: "https://notifique.dev",
     src: "https://notifique.dev/logo-notifique.png",
   },
+  {
+    name: "Resend",
+    href: "https://resend.com",
+    src: "/integrations/resend.svg",
+  },
+  {
+    name: "AraraHQ",
+    href: "https://ararahq.com",
+    src: "https://ararahq.com/favicon.svg",
+  },
 ];
 
 if (LOGOS.length !== LOGO_MARQUEE_CELL_COUNT) {
