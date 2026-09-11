@@ -206,7 +206,7 @@ describe("API Configurations", () => {
       expectSuccess(result);
     });
 
-    it("should reject Orval with a non-Hono backend", async () => {
+    it("should reject Orval with an unsupported backend", async () => {
       const result = await runTRPCTest({
         projectName: "orval-express-fail",
         api: "orval",
@@ -226,6 +226,28 @@ describe("API Configurations", () => {
       });
 
       expectError(result, "Orval API requires the Hono backend");
+    });
+
+    it("should reject Orval with NestJS until a server integration is available", async () => {
+      const result = await runTRPCTest({
+        projectName: "orval-nestjs-fail",
+        api: "orval",
+        frontend: ["tanstack-router"],
+        backend: "nestjs",
+        runtime: "bun",
+        database: "none",
+        orm: "none",
+        auth: "none",
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+        install: false,
+        expectError: true,
+      });
+
+      expectError(result, "NestJS currently supports no API layer yet");
     });
 
     it("should reject the todo example until it has REST handlers", async () => {

@@ -277,6 +277,8 @@ export function allowedApisForFrontends(
   frontends: Frontend[] = [],
   backend?: ProjectConfig["backend"],
 ) {
+  if (backend === "nestjs") return ["none"] as const;
+
   const includesNuxt = frontends.includes("nuxt");
   const includesSvelte = frontends.includes("svelte");
   const includesSolid = frontends.includes("solid");
@@ -306,6 +308,13 @@ export function isExampleTodoAllowed(
   // Todo requires both database and API to communicate
   if (database === "none" || api === "none") return false;
   return true;
+}
+
+export function isExampleAIAllowedForBackend(
+  backend: ProjectConfig["backend"] | undefined,
+  example: string,
+): boolean {
+  return example !== "ai" || backend !== "nestjs";
 }
 
 export function isExampleAIAllowed(backend?: ProjectConfig["backend"], frontends: Frontend[] = []) {
@@ -358,7 +367,7 @@ export function validateDockerServerDeploy(
 
   if (backend === "convex" || backend === "self") {
     return validationErr(
-      "'--server-deploy docker' requires a separate server backend (hono, express, fastify, elysia). For a fullstack 'self' backend, use '--web-deploy docker' instead.",
+      "'--server-deploy docker' requires a separate server backend (hono, express, fastify, elysia, nestjs). For a fullstack 'self' backend, use '--web-deploy docker' instead.",
     );
   }
 
@@ -380,7 +389,7 @@ export function validateVercelServerDeploy(
 
   if (backend === "convex" || backend === "self") {
     return validationErr(
-      "'--server-deploy vercel' requires a separate server backend (hono, express, fastify, elysia). For a fullstack 'self' backend, use '--web-deploy vercel' instead.",
+      "'--server-deploy vercel' requires a separate server backend (hono, express, fastify, elysia, nestjs). For a fullstack 'self' backend, use '--web-deploy vercel' instead.",
     );
   }
 
@@ -402,7 +411,7 @@ export function validateRailwayServerDeploy(
 
   if (backend === "convex" || backend === "self") {
     return validationErr(
-      "'--server-deploy railway' requires a separate server backend (hono, express, fastify, elysia). For a fullstack 'self' backend, use '--web-deploy railway' instead.",
+      "'--server-deploy railway' requires a separate server backend (hono, express, fastify, elysia, nestjs). For a fullstack 'self' backend, use '--web-deploy railway' instead.",
     );
   }
 
@@ -424,7 +433,7 @@ export function validateGuaraCloudServerDeploy(
 
   if (backend === "convex" || backend === "self") {
     return validationErr(
-      "'--server-deploy guaracloud' requires a separate server backend (hono, express, fastify, elysia). For a fullstack 'self' backend, use '--web-deploy guaracloud' instead.",
+      "'--server-deploy guaracloud' requires a separate server backend (hono, express, fastify, elysia, nestjs). For a fullstack 'self' backend, use '--web-deploy guaracloud' instead.",
     );
   }
 

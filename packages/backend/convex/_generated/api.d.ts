@@ -10,6 +10,7 @@
 
 import type * as analytics from "../analytics.js";
 import type * as analytics_date_utils from "../analytics_date_utils.js";
+import type * as analytics_event from "../analytics_event.js";
 import type * as healthCheck from "../healthCheck.js";
 import type * as hooks from "../hooks.js";
 import type * as http from "../http.js";
@@ -26,6 +27,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   analytics: typeof analytics;
   analytics_date_utils: typeof analytics_date_utils;
+  analytics_event: typeof analytics_event;
   healthCheck: typeof healthCheck;
   hooks: typeof hooks;
   http: typeof http;

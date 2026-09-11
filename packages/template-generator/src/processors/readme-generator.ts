@@ -731,6 +731,7 @@ function generateFeaturesList(
     express: "- **Express** - Fast, unopinionated web framework",
     fastify: "- **Fastify** - Fast, low-overhead web framework",
     elysia: "- **Elysia** - Type-safe, high-performance framework",
+    nestjs: "- **NestJS** - Opinionated, modular TypeScript server framework",
   };
 
   if (backendFeatures[backend]) {

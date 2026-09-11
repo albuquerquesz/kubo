@@ -1,9 +1,81 @@
-import { describe, it } from "bun:test";
+import { describe, expect, it } from "bun:test";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 
 import type { Backend, Frontend, Runtime } from "../src/types";
 import { expectError, expectSuccess, runTRPCTest, type TestConfig } from "./test-utils";
 
 describe("Backend and Runtime Combinations", () => {
+  describe("NestJS server packaging", () => {
+    it("should externalize optional NestJS peers when compiling the server", async () => {
+      const result = await runTRPCTest({
+        projectName: "nestjs-compile-script",
+        frontend: ["none"],
+        backend: "nestjs",
+        runtime: "bun",
+        api: "none",
+        database: "none",
+        orm: "none",
+        auth: "none",
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+        install: false,
+      });
+
+      expectSuccess(result);
+
+      const serverPackage = JSON.parse(
+        await readFile(path.join(result.projectDir!, "apps/server/package.json"), "utf8"),
+      ) as { scripts?: { compile?: string } };
+
+      expect(serverPackage.scripts?.compile).toContain("--external @nestjs/microservices");
+      expect(serverPackage.scripts?.compile).toContain("--external @nestjs/websockets");
+    });
+
+    it("keeps Better Auth core and NestJS adapter in their own packages", async () => {
+      const result = await runTRPCTest({
+        projectName: "nestjs-better-auth",
+        frontend: ["none"],
+        backend: "nestjs",
+        runtime: "bun",
+        api: "none",
+        database: "postgres",
+        orm: "prisma",
+        auth: "better-auth",
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+        install: false,
+      });
+
+      expectSuccess(result);
+      const projectDir = result.projectDir!;
+      const appModule = await readFile(
+        path.join(projectDir, "apps/server/src/app.module.ts"),
+        "utf8",
+      );
+      const authController = await readFile(
+        path.join(projectDir, "apps/server/src/auth/auth.controller.ts"),
+        "utf8",
+      );
+      const authPackage = await readFile(
+        path.join(projectDir, "packages/auth/package.json"),
+        "utf8",
+      );
+      const authCore = await readFile(path.join(projectDir, "packages/auth/src/index.ts"), "utf8");
+
+      expect(appModule).toContain('import { AuthModule } from "./auth/auth.module";');
+      expect(authController).toContain('import { auth } from "@nestjs-better-auth/auth";');
+      expect(authPackage).toContain('"name": "@nestjs-better-auth/auth"');
+      expect(authCore).toContain("export const auth = createAuth();");
+    });
+  });
+
   describe("Valid Backend-Runtime Combinations", () => {
     const validCombinations = [
       // Standard backend-runtime combinations
@@ -18,6 +90,9 @@ describe("Backend and Runtime Combinations", () => {
       { backend: "fastify" as const, runtime: "node" as const },
 
       { backend: "elysia" as const, runtime: "bun" as const },
+
+      { backend: "nestjs" as const, runtime: "bun" as const },
+      { backend: "nestjs" as const, runtime: "node" as const },
 
       // Special cases
       { backend: "convex" as const, runtime: "none" as const },
@@ -47,6 +122,11 @@ describe("Backend and Runtime Combinations", () => {
           config.auth = "clerk";
           config.api = "none";
         } else if (backend === "none") {
+          config.database = "none";
+          config.orm = "none";
+          config.auth = "none";
+          config.api = "none";
+        } else if (backend === "nestjs") {
           config.database = "none";
           config.orm = "none";
           config.auth = "none";

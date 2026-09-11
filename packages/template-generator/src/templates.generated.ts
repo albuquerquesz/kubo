@@ -8695,6 +8695,28 @@ model Verification {
   @@map("verification")
 }
 `],
+  ["auth/better-auth/server/nestjs/src/auth/auth.controller.ts.hbs", `import { Controller, All, Req, Res } from "@nestjs/common";
+import type { Request, Response } from "express";
+import { auth } from "@{{projectName}}/auth";
+import { toNodeHandler } from "better-auth/node";
+
+@Controller("api/auth")
+export class AuthController {
+  @All("*path")
+  handleAuth(@Req() request: Request, @Res() response: Response): void {
+    void toNodeHandler(auth)(request, response);
+  }
+}
+`],
+  ["auth/better-auth/server/nestjs/src/auth/auth.module.ts", `import { Module } from "@nestjs/common";
+
+import { AuthController } from "./auth.controller";
+
+@Module({
+  controllers: [AuthController],
+})
+export class AuthModule {}
+`],
   ["auth/better-auth/web/astro/src/components/SignInForm.astro.hbs", `---
 import { authClient } from "../lib/auth-client";
 ---
@@ -14106,7 +14128,7 @@ next-env.d.ts
 	"scripts": {
 		"build": "tsdown",
 		"check-types": "tsc -b",
-		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server"
+		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server{{#if (eq backend 'nestjs')}} --external @nestjs/microservices --external @nestjs/websockets{{/if}}"
 	},
 	"dependencies": {},
 	{{#if (eq dbSetup 'supabase')}}
@@ -14126,7 +14148,10 @@ next-env.d.ts
       "@/*": ["./src/*"]
     },
     "jsx": "react-jsx"{{#if (eq backend "hono")}},
-    "jsxImportSource": "hono/jsx"{{/if}}
+    "jsxImportSource": "hono/jsx"{{/if}}{{#if (eq backend "nestjs")}},
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false{{/if}}
   }
 }
 `],
@@ -15141,6 +15166,68 @@ export default app;
 export default app;
 {{/if}}
 {{/if}}
+`],
+  ["backend/server/nestjs/src/app.module.ts.hbs", `import { Module } from "@nestjs/common";
+import { HealthModule } from "./health/health.module";
+{{#if (eq auth "better-auth")}}
+import { AuthModule } from "./auth/auth.module";
+{{/if}}
+
+@Module({
+  imports: [
+    HealthModule,
+{{#if (eq auth "better-auth")}}
+    AuthModule,
+{{/if}}
+  ],
+})
+export class AppModule {}
+`],
+  ["backend/server/nestjs/src/health/health.controller.ts", `import { Controller, Get } from "@nestjs/common";
+
+@Controller("api")
+export class HealthController {
+  @Get("health")
+  getHealth(): { status: "ok" } {
+    return { status: "ok" };
+  }
+}
+`],
+  ["backend/server/nestjs/src/health/health.module.ts", `import { Module } from "@nestjs/common";
+
+import { HealthController } from "./health.controller";
+
+@Module({
+  controllers: [HealthController],
+})
+export class HealthModule {}
+`],
+  ["backend/server/nestjs/src/index.ts.hbs", `import "reflect-metadata";
+import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { env } from "@{{projectName}}/env/server";
+import { AppModule } from "./app.module";
+
+async function bootstrap(): Promise<void> {
+  const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
+
+  app.enableCors({
+    origin: env.CORS_ORIGIN,
+    credentials: {{#if (eq auth "better-auth")}}true{{else}}false{{/if}},
+  });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
+
+  await app.listen(Number(process.env.PORT ?? 3000));
+}
+
+void bootstrap();
 `],
   ["base/_gitignore", `# Dependencies
 node_modules
@@ -25441,7 +25528,6 @@ function TodosRoute() {
 		})
 	);
 	{{/if}}
-
 	function handleAddTodo(event: SubmitEvent) {
 		event.preventDefault();
 		const text = newTodoText.trim();
@@ -29476,7 +29562,7 @@ const items = computed<NavigationMenuItem[]>(() => [
 {{#if (eq backend "convex")}}
 import { api } from "@{{ projectName }}/backend/convex/_generated/api";
 import { useConvexQuery } from "convex-vue";
-{{else}}
+{{else if (eq api "orpc")}}
   {{#unless (eq api "none")}}
 const { $orpc } = useNuxtApp()
 import { useQuery } from '@tanstack/vue-query'
@@ -29504,7 +29590,7 @@ const TITLE_TEXT = \`
 
 {{#if (eq backend "convex")}}
 const healthCheck = useConvexQuery(api.healthCheck.get, {});
-{{else}}
+{{else if (eq api "orpc")}}
   {{#unless (eq api "none")}}
 const healthCheck = useQuery($orpc.healthCheck.queryOptions())
 
@@ -29562,7 +29648,7 @@ async function openCheckout() {
             }}
           </span>
         </div>
-        {{else}}
+        {{else if (eq api "orpc")}}
         {{#unless (eq api "none")}}
         <div class="flex items-center gap-2">
           <UIcon
@@ -29899,6 +29985,7 @@ export default function Home() {
     <div className="container mx-auto max-w-3xl px-4 py-2">
       <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
       <div className="grid gap-6">
+        {{#if (or (eq backend "convex") (eq api "trpc") (eq api "orpc"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">API Status</h2>
           {{#if (eq backend "convex")}}
@@ -29931,6 +30018,7 @@ export default function Home() {
             {{/unless}}
           {{/if}}
         </section>
+        {{/if}}
         {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Hosted Checkout</h2>
@@ -30010,13 +30098,16 @@ import { env } from "@{{projectName}}/env/web";
 {{/if}}
 {{else}}
 {{#unless (eq api "none")}}
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 {{#if (eq api "orpc")}}
 import { queryClient } from "@/utils/orpc";
 {{/if}}
 {{#if (eq api "trpc")}}
 import { queryClient } from "@/utils/trpc";
+{{/if}}
+{{#if (eq api "orval")}}
+const queryClient = new QueryClient();
 {{/if}}
 {{/unless}}
 {{/if}}
@@ -30291,6 +30382,10 @@ import { queryClient } from "./utils/orpc";
     {{#if (eq api "trpc")}}
 import { queryClient } from "./utils/trpc";
     {{/if}}
+    {{#if (eq api "orval")}}
+import { QueryClient } from "@tanstack/react-query";
+const queryClient = new QueryClient();
+    {{/if}}
   {{/unless}}
 {{/if}}
 
@@ -30415,7 +30510,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
       {{#unless (eq api "none")}}
       <ClerkApiAuthBridge />
       {{/unless}}
-      {{#if (eq api "orpc")}}
+      {{#if (or (eq api "orpc") (eq api "orval"))}}
       <QueryClientProvider client={queryClient}>
         <ThemeProvider
           attribute="class"
@@ -30464,7 +30559,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
     </ClerkProvider>
   );
 }
-{{else if (eq api "orpc")}}
+{{else if (or (eq api "orpc") (eq api "orval"))}}
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -30618,6 +30713,7 @@ export default function Home() {
     <div className="container mx-auto max-w-3xl px-4 py-2">
       <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
       <div className="grid gap-6">
+        {{#if (or (eq backend "convex") (eq api "trpc") (eq api "orpc"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">API Status</h2>
           {{#if (eq backend "convex")}}
@@ -30652,6 +30748,7 @@ export default function Home() {
             {{/unless}}
           {{/if}}
         </section>
+        {{/if}}
         {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Hosted Checkout</h2>
@@ -30824,6 +30921,10 @@ import { routeTree } from "./routeTree.gen";
   import { QueryClientProvider } from "@tanstack/react-query";
   import { queryClient, trpc } from "./utils/trpc";
 {{/if}}
+{{#if (eq api "orval")}}
+  import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+  const queryClient = new QueryClient();
+{{/if}}
 {{#if (or (eq backend "convex") (eq auth "clerk"))}}
   import { env } from "@{{projectName}}/env/web";
 {{/if}}
@@ -30899,6 +31000,11 @@ const router = createRouter({
       </QueryClientProvider>
       {{/if}}
     );
+  },
+  {{else if (eq api "orval")}}
+  context: {},
+  Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
   },
   {{else if (eq backend "convex")}}
   context: {},
@@ -31115,6 +31221,7 @@ function HomeComponent() {
     <div className="container mx-auto max-w-3xl px-4 py-2">
       <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
       <div className="grid gap-6">
+        {{#if (or (eq backend "convex") (eq api "trpc") (eq api "orpc"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">API Status</h2>
           {{#if (eq backend "convex")}}
@@ -31147,6 +31254,7 @@ function HomeComponent() {
             {{/unless}}
           {{/if}}
         </section>
+        {{/if}}
         {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Hosted Checkout</h2>
@@ -31271,6 +31379,8 @@ import { getClerkAuthToken } from "@/utils/clerk-auth";
 {{else if (eq api "orpc")}}
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import { createQueryClient, orpc } from "./utils/orpc";
+{{else if (eq api "orval")}}
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 {{/if}}
 {{/if}}
 
@@ -31365,6 +31475,8 @@ export const getRouter = () => {
 	});
 {{else if (eq api "orpc")}}
 	const queryClient = createQueryClient();
+{{else if (eq api "orval")}}
+	const queryClient = new QueryClient();
 {{/if}}
 
 	const router = createTanStackRouter({
@@ -31394,6 +31506,11 @@ export const getRouter = () => {
 		router,
 		queryClient,
 	});
+{{/if}}
+{{#if (eq api "orval")}}
+		Wrap: ({ children }) => (
+			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+		),
 {{/if}}
 
 	return router;
@@ -31727,6 +31844,7 @@ function HomeComponent() {
     <div className="container mx-auto max-w-3xl px-4 py-2">
       <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
       <div className="grid gap-6">
+        {{#if (or (eq backend "convex") (eq api "trpc") (eq api "orpc"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">API Status</h2>
           {{#if (eq backend "convex")}}
@@ -31759,6 +31877,7 @@ function HomeComponent() {
             {{/unless}}
           {{/if}}
         </section>
+        {{/if}}
         {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Hosted Checkout</h2>
@@ -37656,4 +37775,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 617;
+export const TEMPLATE_COUNT = 623;

@@ -25,6 +25,7 @@ const standardWeb = [
 const selfWeb = ["next", "tanstack-start"] as const;
 const nativeOptions = [undefined, "native-bare", "native-uniwind", "native-unistyles"] as const;
 const apiOptions = ["trpc", "orpc", "none"] as const;
+const CLERK_MATRIX_TIMEOUT_MS = 120_000;
 
 function buildFrontendCombos(
   webOptions: readonly (typeof standardWeb)[number][],
@@ -63,342 +64,346 @@ function needsServerClerkPublishableKey(backend: string, api: string) {
 }
 
 describe("Clerk matrix", () => {
-  it("should generate every supported Clerk combination", async () => {
-    const standardFrontendCombos = buildFrontendCombos(standardWeb);
-    const selfFrontendCombos = buildFrontendCombos(selfWeb, { requireWeb: true });
+  it(
+    "should generate every supported Clerk combination",
+    async () => {
+      const standardFrontendCombos = buildFrontendCombos(standardWeb);
+      const selfFrontendCombos = buildFrontendCombos(selfWeb, { requireWeb: true });
 
-    const combos = [
-      ...standardBackends.flatMap((pair) =>
-        standardFrontendCombos.flatMap((frontend) =>
+      const combos = [
+        ...standardBackends.flatMap((pair) =>
+          standardFrontendCombos.flatMap((frontend) =>
+            apiOptions.map((api) => ({
+              backend: pair.backend,
+              runtime: pair.runtime,
+              frontend,
+              api,
+            })),
+          ),
+        ),
+        ...selfFrontendCombos.flatMap((frontend) =>
           apiOptions.map((api) => ({
-            backend: pair.backend,
-            runtime: pair.runtime,
+            backend: "self",
+            runtime: "none",
             frontend,
             api,
           })),
         ),
-      ),
-      ...selfFrontendCombos.flatMap((frontend) =>
-        apiOptions.map((api) => ({
-          backend: "self",
+        ...standardFrontendCombos.map((frontend) => ({
+          backend: "convex",
           runtime: "none",
           frontend,
-          api,
+          api: "none",
         })),
-      ),
-      ...standardFrontendCombos.map((frontend) => ({
-        backend: "convex",
-        runtime: "none",
-        frontend,
-        api: "none",
-      })),
-    ];
+      ];
 
-    const failures: string[] = [];
+      const failures: string[] = [];
 
-    for (const [index, combo] of combos.entries()) {
-      const config = {
-        projectName: `clerk-matrix-${index}`,
-        frontend: combo.frontend,
-        backend: combo.backend,
-        runtime: combo.runtime,
-        database: combo.backend === "convex" || combo.api === "none" ? "none" : "sqlite",
-        orm: combo.backend === "convex" || combo.api === "none" ? "none" : "drizzle",
-        auth: "clerk" as const,
-        api: combo.api,
-        addons: ["none"] as const,
-        examples: ["none"] as const,
-        dbSetup: "none" as const,
-        webDeploy: "none" as const,
-        serverDeploy: combo.runtime === "workers" ? ("cloudflare" as const) : ("none" as const),
-        install: false,
-        git: false,
-        packageManager: "bun" as const,
-        payments: "none" as const,
-      };
+      for (const [index, combo] of combos.entries()) {
+        const config = {
+          projectName: `clerk-matrix-${index}`,
+          frontend: combo.frontend,
+          backend: combo.backend,
+          runtime: combo.runtime,
+          database: combo.backend === "convex" || combo.api === "none" ? "none" : "sqlite",
+          orm: combo.backend === "convex" || combo.api === "none" ? "none" : "drizzle",
+          auth: "clerk" as const,
+          api: combo.api,
+          addons: ["none"] as const,
+          examples: ["none"] as const,
+          dbSetup: "none" as const,
+          webDeploy: "none" as const,
+          serverDeploy: combo.runtime === "workers" ? ("cloudflare" as const) : ("none" as const),
+          install: false,
+          git: false,
+          packageManager: "bun" as const,
+          payments: "none" as const,
+        };
 
-      const validation = validateConfigCompatibility(config);
-      if (validation.isErr()) {
-        failures.push(
-          `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: ${validation.error.message}`,
-        );
-        continue;
-      }
-
-      const result = await createVirtual(config);
-      if (result.isErr()) {
-        failures.push(
-          `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: ${result.error.message}`,
-        );
-        continue;
-      }
-
-      const files = collectFiles(result.value.root, result.value.root.path);
-
-      if (combo.backend !== "convex" && combo.runtime !== "workers") {
-        const serverEnv = files.get("packages/env/src/server.ts");
-        if (!serverEnv?.includes("CLERK_SECRET_KEY")) {
+        const validation = validateConfigCompatibility(config);
+        if (validation.isErr()) {
           failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing CLERK_SECRET_KEY in packages/env/src/server.ts`,
+            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: ${validation.error.message}`,
           );
+          continue;
         }
 
-        if (
-          needsServerClerkPublishableKey(combo.backend, combo.api) &&
-          !serverEnv?.includes("CLERK_PUBLISHABLE_KEY")
-        ) {
+        const result = await createVirtual(config);
+        if (result.isErr()) {
           failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing CLERK_PUBLISHABLE_KEY in packages/env/src/server.ts`,
+            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: ${result.error.message}`,
           );
-        }
-      }
-
-      if (combo.backend !== "convex" && combo.api !== "none") {
-        const contextFile = files.get("apps/api/src/context.ts");
-        const expectedImport = expectedContextImport(combo.backend);
-
-        if (!contextFile?.includes(expectedImport)) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing ${expectedImport} in apps/api/src/context.ts`,
-          );
+          continue;
         }
 
-        if (!contextFile?.includes("type ClerkContextAuth")) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing ClerkContextAuth in apps/api/src/context.ts`,
-          );
-        }
+        const files = collectFiles(result.value.root, result.value.root.path);
 
-        if (!contextFile?.includes("type ClerkRequestContext")) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing ClerkRequestContext in apps/api/src/context.ts`,
-          );
-        }
-
-        if (
-          usesBackendClerkClient(combo.backend, combo.api) &&
-          !contextFile?.includes("publishableKey: env.CLERK_PUBLISHABLE_KEY")
-        ) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing publishableKey in apps/api/src/context.ts`,
-          );
-        }
-
-        if (
-          usesBackendClerkClient(combo.backend, combo.api) &&
-          !contextFile?.includes("authorizedParties: [env.CORS_ORIGIN]")
-        ) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing authorizedParties in apps/api/src/context.ts`,
-          );
-        }
-      }
-
-      if (needsServerClerkPublishableKey(combo.backend, combo.api)) {
-        const appEnvPath = combo.backend === "self" ? "apps/web/.env" : "apps/server/.env";
-        const appEnvFile = files.get(appEnvPath);
-
-        if (!appEnvFile?.includes("CLERK_PUBLISHABLE_KEY=")) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing CLERK_PUBLISHABLE_KEY in ${appEnvPath}`,
-          );
-        }
-      }
-
-      if (combo.frontend.includes("next")) {
-        const dashboard = files.get("apps/web/src/app/dashboard/page.tsx");
-        if (!dashboard) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing Next dashboard page`,
-          );
-        } else if (dashboard.includes("SignedIn") || dashboard.includes("SignedOut")) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: Next dashboard still uses SignedIn/SignedOut`,
-          );
-        } else if (
-          combo.backend !== "convex" &&
-          combo.api !== "none" &&
-          !dashboard.includes("privateData.queryOptions()")
-        ) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: Next dashboard is missing protected privateData query`,
-          );
-        }
-
-        if (combo.backend !== "convex") {
-          const proxyFile = files.get("apps/web/src/proxy.ts");
-          if (!proxyFile) {
+        if (combo.backend !== "convex" && combo.runtime !== "workers") {
+          const serverEnv = files.get("packages/env/src/server.ts");
+          if (!serverEnv?.includes("CLERK_SECRET_KEY")) {
             failures.push(
-              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing Next proxy file`,
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing CLERK_SECRET_KEY in packages/env/src/server.ts`,
+            );
+          }
+
+          if (
+            needsServerClerkPublishableKey(combo.backend, combo.api) &&
+            !serverEnv?.includes("CLERK_PUBLISHABLE_KEY")
+          ) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing CLERK_PUBLISHABLE_KEY in packages/env/src/server.ts`,
+            );
+          }
+        }
+
+        if (combo.backend !== "convex" && combo.api !== "none") {
+          const contextFile = files.get("apps/api/src/context.ts");
+          const expectedImport = expectedContextImport(combo.backend);
+
+          if (!contextFile?.includes(expectedImport)) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing ${expectedImport} in apps/api/src/context.ts`,
+            );
+          }
+
+          if (!contextFile?.includes("type ClerkContextAuth")) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing ClerkContextAuth in apps/api/src/context.ts`,
+            );
+          }
+
+          if (!contextFile?.includes("type ClerkRequestContext")) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing ClerkRequestContext in apps/api/src/context.ts`,
+            );
+          }
+
+          if (
+            usesBackendClerkClient(combo.backend, combo.api) &&
+            !contextFile?.includes("publishableKey: env.CLERK_PUBLISHABLE_KEY")
+          ) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing publishableKey in apps/api/src/context.ts`,
+            );
+          }
+
+          if (
+            usesBackendClerkClient(combo.backend, combo.api) &&
+            !contextFile?.includes("authorizedParties: [env.CORS_ORIGIN]")
+          ) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing authorizedParties in apps/api/src/context.ts`,
+            );
+          }
+        }
+
+        if (needsServerClerkPublishableKey(combo.backend, combo.api)) {
+          const appEnvPath = combo.backend === "self" ? "apps/web/.env" : "apps/server/.env";
+          const appEnvFile = files.get(appEnvPath);
+
+          if (!appEnvFile?.includes("CLERK_PUBLISHABLE_KEY=")) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing CLERK_PUBLISHABLE_KEY in ${appEnvPath}`,
+            );
+          }
+        }
+
+        if (combo.frontend.includes("next")) {
+          const dashboard = files.get("apps/web/src/app/dashboard/page.tsx");
+          if (!dashboard) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing Next dashboard page`,
+            );
+          } else if (dashboard.includes("SignedIn") || dashboard.includes("SignedOut")) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: Next dashboard still uses SignedIn/SignedOut`,
             );
           } else if (
-            proxyFile.includes('/env/server"') ||
-            proxyFile.includes("env.CLERK_SECRET_KEY")
+            combo.backend !== "convex" &&
+            combo.api !== "none" &&
+            !dashboard.includes("privateData.queryOptions()")
           ) {
             failures.push(
-              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: Next proxy still imports shared server env`,
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: Next dashboard is missing protected privateData query`,
             );
           }
-        }
-      }
 
-      if (combo.frontend.includes("react-router")) {
-        const dashboard = files.get("apps/web/src/routes/dashboard.tsx");
-        if (!dashboard) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing React Router dashboard route`,
-          );
-        } else if (dashboard.includes("SignedIn") || dashboard.includes("SignedOut")) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: React Router dashboard still uses SignedIn/SignedOut`,
-          );
-        } else if (
-          combo.backend !== "convex" &&
-          combo.api !== "none" &&
-          !dashboard.includes("privateData.queryOptions()")
-        ) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: React Router dashboard is missing protected privateData query`,
-          );
-        }
-      }
-
-      if (combo.frontend.includes("tanstack-router")) {
-        const authRoute = files.get("apps/web/src/routes/_auth/route.tsx");
-        const dashboard = files.get("apps/web/src/routes/_auth/dashboard.tsx");
-        if (!authRoute) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing TanStack Router auth layout route`,
-          );
-        }
-        if (!dashboard) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing TanStack Router dashboard route`,
-          );
-        } else if (dashboard.includes("SignedIn") || dashboard.includes("SignedOut")) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: TanStack Router dashboard still uses SignedIn/SignedOut`,
-          );
-        } else if (
-          combo.backend !== "convex" &&
-          combo.api !== "none" &&
-          !dashboard.includes("privateData.queryOptions()")
-        ) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: TanStack Router dashboard is missing protected privateData query`,
-          );
-        }
-      }
-
-      if (combo.frontend.includes("tanstack-start")) {
-        const authRoute = files.get("apps/web/src/routes/_auth/route.tsx");
-        const dashboard = files.get("apps/web/src/routes/_auth/dashboard.tsx");
-        if (!authRoute) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing TanStack Start auth layout route`,
-          );
-        }
-        if (!dashboard) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing TanStack Start dashboard route`,
-          );
-        } else if (dashboard.includes("SignedIn") || dashboard.includes("SignedOut")) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: TanStack Start dashboard still uses SignedIn/SignedOut`,
-          );
-        } else if (
-          combo.backend !== "convex" &&
-          combo.api !== "none" &&
-          !dashboard.includes("privateData.queryOptions()")
-        ) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: TanStack Start dashboard is missing protected privateData query`,
-          );
+          if (combo.backend !== "convex") {
+            const proxyFile = files.get("apps/web/src/proxy.ts");
+            if (!proxyFile) {
+              failures.push(
+                `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing Next proxy file`,
+              );
+            } else if (
+              proxyFile.includes('/env/server"') ||
+              proxyFile.includes("env.CLERK_SECRET_KEY")
+            ) {
+              failures.push(
+                `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: Next proxy still imports shared server env`,
+              );
+            }
+          }
         }
 
-        if (combo.backend !== "convex") {
-          const startFile = files.get("apps/web/src/start.ts");
-          if (!startFile) {
+        if (combo.frontend.includes("react-router")) {
+          const dashboard = files.get("apps/web/src/routes/dashboard.tsx");
+          if (!dashboard) {
             failures.push(
-              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing TanStack Start entry file`,
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing React Router dashboard route`,
+            );
+          } else if (dashboard.includes("SignedIn") || dashboard.includes("SignedOut")) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: React Router dashboard still uses SignedIn/SignedOut`,
             );
           } else if (
-            startFile.includes('/env/server"') ||
-            startFile.includes("env.CLERK_SECRET_KEY")
+            combo.backend !== "convex" &&
+            combo.api !== "none" &&
+            !dashboard.includes("privateData.queryOptions()")
           ) {
             failures.push(
-              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: TanStack Start entry still imports shared server env`,
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: React Router dashboard is missing protected privateData query`,
             );
+          }
+        }
+
+        if (combo.frontend.includes("tanstack-router")) {
+          const authRoute = files.get("apps/web/src/routes/_auth/route.tsx");
+          const dashboard = files.get("apps/web/src/routes/_auth/dashboard.tsx");
+          if (!authRoute) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing TanStack Router auth layout route`,
+            );
+          }
+          if (!dashboard) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing TanStack Router dashboard route`,
+            );
+          } else if (dashboard.includes("SignedIn") || dashboard.includes("SignedOut")) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: TanStack Router dashboard still uses SignedIn/SignedOut`,
+            );
+          } else if (
+            combo.backend !== "convex" &&
+            combo.api !== "none" &&
+            !dashboard.includes("privateData.queryOptions()")
+          ) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: TanStack Router dashboard is missing protected privateData query`,
+            );
+          }
+        }
+
+        if (combo.frontend.includes("tanstack-start")) {
+          const authRoute = files.get("apps/web/src/routes/_auth/route.tsx");
+          const dashboard = files.get("apps/web/src/routes/_auth/dashboard.tsx");
+          if (!authRoute) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing TanStack Start auth layout route`,
+            );
+          }
+          if (!dashboard) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing TanStack Start dashboard route`,
+            );
+          } else if (dashboard.includes("SignedIn") || dashboard.includes("SignedOut")) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: TanStack Start dashboard still uses SignedIn/SignedOut`,
+            );
+          } else if (
+            combo.backend !== "convex" &&
+            combo.api !== "none" &&
+            !dashboard.includes("privateData.queryOptions()")
+          ) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: TanStack Start dashboard is missing protected privateData query`,
+            );
+          }
+
+          if (combo.backend !== "convex") {
+            const startFile = files.get("apps/web/src/start.ts");
+            if (!startFile) {
+              failures.push(
+                `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing TanStack Start entry file`,
+              );
+            } else if (
+              startFile.includes('/env/server"') ||
+              startFile.includes("env.CLERK_SECRET_KEY")
+            ) {
+              failures.push(
+                `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: TanStack Start entry still imports shared server env`,
+              );
+            }
+          }
+        }
+
+        const nativeFrontend = combo.frontend.find((entry) => entry.startsWith("native-"));
+        if (nativeFrontend) {
+          const nativePackage = files.get("apps/native/package.json");
+          const nativeSignIn = files.get("apps/native/app/(auth)/sign-in.tsx");
+          const nativeSignUp = files.get("apps/native/app/(auth)/sign-up.tsx");
+
+          if (!nativePackage?.includes('"@clerk/expo": "^3.6.5"')) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: native package is missing @clerk/expo ^3.1.3`,
+            );
+          }
+
+          if (!nativeSignIn) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing native sign-in screen`,
+            );
+          } else {
+            if (nativeSignIn.includes("setActive") || nativeSignIn.includes("signIn.create")) {
+              failures.push(
+                `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: native sign-in still uses the legacy Clerk Expo API`,
+              );
+            }
+
+            if (
+              !nativeSignIn.includes("const { signIn, errors, fetchStatus } = useSignIn()") ||
+              !nativeSignIn.includes("await signIn.password") ||
+              !nativeSignIn.includes("await signIn.finalize")
+            ) {
+              failures.push(
+                `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: native sign-in is missing the current Clerk Expo flow`,
+              );
+            }
+          }
+
+          if (!nativeSignUp) {
+            failures.push(
+              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing native sign-up screen`,
+            );
+          } else {
+            if (
+              nativeSignUp.includes("setActive") ||
+              nativeSignUp.includes("prepareEmailAddressVerification") ||
+              nativeSignUp.includes("attemptEmailAddressVerification")
+            ) {
+              failures.push(
+                `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: native sign-up still uses the legacy Clerk Expo API`,
+              );
+            }
+
+            if (
+              !nativeSignUp.includes("const { signUp, errors, fetchStatus } = useSignUp()") ||
+              !nativeSignUp.includes("await signUp.password") ||
+              !nativeSignUp.includes("await signUp.verifications.sendEmailCode()") ||
+              !nativeSignUp.includes("await signUp.verifications.verifyEmailCode") ||
+              !nativeSignUp.includes("await signUp.finalize") ||
+              !nativeSignUp.includes('nativeID="clerk-captcha"')
+            ) {
+              failures.push(
+                `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: native sign-up is missing the current Clerk Expo flow`,
+              );
+            }
           }
         }
       }
 
-      const nativeFrontend = combo.frontend.find((entry) => entry.startsWith("native-"));
-      if (nativeFrontend) {
-        const nativePackage = files.get("apps/native/package.json");
-        const nativeSignIn = files.get("apps/native/app/(auth)/sign-in.tsx");
-        const nativeSignUp = files.get("apps/native/app/(auth)/sign-up.tsx");
-
-        if (!nativePackage?.includes('"@clerk/expo": "^3.6.5"')) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: native package is missing @clerk/expo ^3.1.3`,
-          );
-        }
-
-        if (!nativeSignIn) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing native sign-in screen`,
-          );
-        } else {
-          if (nativeSignIn.includes("setActive") || nativeSignIn.includes("signIn.create")) {
-            failures.push(
-              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: native sign-in still uses the legacy Clerk Expo API`,
-            );
-          }
-
-          if (
-            !nativeSignIn.includes("const { signIn, errors, fetchStatus } = useSignIn()") ||
-            !nativeSignIn.includes("await signIn.password") ||
-            !nativeSignIn.includes("await signIn.finalize")
-          ) {
-            failures.push(
-              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: native sign-in is missing the current Clerk Expo flow`,
-            );
-          }
-        }
-
-        if (!nativeSignUp) {
-          failures.push(
-            `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: missing native sign-up screen`,
-          );
-        } else {
-          if (
-            nativeSignUp.includes("setActive") ||
-            nativeSignUp.includes("prepareEmailAddressVerification") ||
-            nativeSignUp.includes("attemptEmailAddressVerification")
-          ) {
-            failures.push(
-              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: native sign-up still uses the legacy Clerk Expo API`,
-            );
-          }
-
-          if (
-            !nativeSignUp.includes("const { signUp, errors, fetchStatus } = useSignUp()") ||
-            !nativeSignUp.includes("await signUp.password") ||
-            !nativeSignUp.includes("await signUp.verifications.sendEmailCode()") ||
-            !nativeSignUp.includes("await signUp.verifications.verifyEmailCode") ||
-            !nativeSignUp.includes("await signUp.finalize") ||
-            !nativeSignUp.includes('nativeID="clerk-captcha"')
-          ) {
-            failures.push(
-              `${combo.backend}/${combo.runtime}/${combo.frontend.join("+")}/${combo.api}: native sign-up is missing the current Clerk Expo flow`,
-            );
-          }
-        }
-      }
-    }
-
-    expect(combos).toHaveLength(499);
-    expect(failures).toEqual([]);
-  }, 30_000);
+      expect(combos).toHaveLength(499);
+      expect(failures).toEqual([]);
+    },
+    CLERK_MATRIX_TIMEOUT_MS,
+  );
 });

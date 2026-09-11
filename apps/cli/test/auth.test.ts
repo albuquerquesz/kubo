@@ -563,6 +563,32 @@ describe("Authentication Configurations", () => {
       expectSuccess(result);
     });
 
+    it("should not scaffold NestJS auth files when auth is none", async () => {
+      const result = await runTRPCTest({
+        projectName: "nestjs-no-auth",
+        auth: "none",
+        backend: "nestjs",
+        runtime: "bun",
+        database: "none",
+        orm: "none",
+        api: "none",
+        frontend: ["none"],
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+        install: false,
+      });
+
+      expectSuccess(result);
+      if (!result.projectDir) {
+        throw new Error("Expected projectDir to be defined");
+      }
+
+      expect(await fs.pathExists(path.join(result.projectDir, "apps/server/src/auth"))).toBe(false);
+    });
+
     it("should work with auth none + convex", async () => {
       const result = await runTRPCTest({
         projectName: "no-auth-convex",

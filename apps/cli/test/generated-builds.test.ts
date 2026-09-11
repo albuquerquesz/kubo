@@ -92,6 +92,22 @@ const buildSamples: BuildSample[] = [
     },
   },
   {
+    name: "nestjs-better-auth-prisma",
+    config: {
+      ...baseConfig,
+      frontend: ["none"],
+      backend: "nestjs",
+      runtime: "bun",
+      database: "postgres",
+      orm: "prisma",
+      api: "none",
+      auth: "better-auth",
+      payments: "none",
+      addons: ["none"],
+      examples: ["none"],
+    },
+  },
+  {
     name: "nuxt-orpc",
     config: {
       ...baseConfig,

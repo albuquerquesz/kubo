@@ -438,6 +438,7 @@ import { env } from "@${config.projectName}/env/server";
 export const getMonitor = env.GETMONITOR_API_KEY
   ? new GetMonitor(env.GETMONITOR_API_KEY, {
       environment: env.NODE_ENV,
+      apiHost: "http://ingest.getmonitor.io",
     })
   : null;
 `,

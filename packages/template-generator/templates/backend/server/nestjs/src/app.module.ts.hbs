@@ -1,0 +1,15 @@
+import { Module } from "@nestjs/common";
+import { HealthModule } from "./health/health.module";
+{{#if (eq auth "better-auth")}}
+import { AuthModule } from "./auth/auth.module";
+{{/if}}
+
+@Module({
+  imports: [
+    HealthModule,
+{{#if (eq auth "better-auth")}}
+    AuthModule,
+{{/if}}
+  ],
+})
+export class AppModule {}
