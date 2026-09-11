@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { internalMutation, mutation, query } from "./_generated/server";
+import { internalMutation, query } from "./_generated/server";
 import { buildDailyWindow } from "./analytics_date_utils";
 
 const MAX_DAILY_STATS_WINDOW = 366;
@@ -337,7 +337,7 @@ export const getRecentEvents = query({
   },
 });
 
-export const backfillStats = mutation({
+export const backfillStats = internalMutation({
   args: {},
   returns: v.object({
     totalProcessed: v.number(),

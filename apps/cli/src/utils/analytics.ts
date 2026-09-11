@@ -29,16 +29,43 @@ export async function trackProjectCreation(
   if (!isTelemetryEnabled() || disableAnalytics) return;
 
   const {
-    projectName: _projectName,
-    projectDir: _projectDir,
-    relativePath: _relativePath,
-    ...safeConfig
+    database,
+    orm,
+    backend,
+    runtime,
+    frontend,
+    addons,
+    examples,
+    auth,
+    payments,
+    git,
+    packageManager,
+    install,
+    dbSetup,
+    api,
+    webDeploy,
+    serverDeploy,
   } = config;
 
   await Result.tryPromise({
     try: () =>
       sendConvexEvent({
-        ...safeConfig,
+        database,
+        orm,
+        backend,
+        runtime,
+        frontend,
+        addons,
+        examples,
+        auth,
+        payments,
+        git,
+        packageManager,
+        install,
+        dbSetup,
+        api,
+        webDeploy,
+        serverDeploy,
         cli_version: getLatestCLIVersion(),
         node_version: typeof process !== "undefined" ? process.version : "",
         platform: typeof process !== "undefined" ? process.platform : "",
