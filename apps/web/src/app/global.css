@@ -319,9 +319,9 @@
   color-scheme: dark;
   --color-fd-primary: #c49314;
   --color-fd-primary-foreground: #000000;
-  --color-fd-background: #000000;
-  /* Pure black canvas; gold reserved for accents. */
-  --background: #000000;
+  --color-fd-background: #11110d;
+  /* Warm near-black canvas; gold reserved for accents. */
+  --background: #11110d;
   --foreground: #f1f1f1;
   --card: #0c0c0c;
   --card-foreground: #f1f1f1;
