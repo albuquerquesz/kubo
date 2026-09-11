@@ -276,19 +276,8 @@ export function CTASection({ className }: CTASectionProps) {
           ref={bodyRef}
           className="mb-12 max-w-2xl text-lg leading-relaxed text-foreground/80 md:text-xl"
         >
-          Escolha as{" "}
-          <span className="decoration-primary underline decoration-2 underline-offset-4">
-            ferramentas
-          </span>{" "}
-          certas para sua ideia e comece a{" "}
-          <span className="decoration-primary underline decoration-2 underline-offset-4">
-            construir
-          </span>{" "}
-          sem partir do zero.
-          <span className="decoration-primary underline decoration-2 underline-offset-4">
-            Limpo
-          </span>
-          , preciso e do seu jeito.
+          Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.
+          Limpo, preciso e do seu jeito.
         </p>
 
         <div ref={ctaRef} className="flex max-w-full flex-wrap items-center justify-center gap-3">
