@@ -60,7 +60,7 @@ describe("GetMonitor observability", () => {
     expect(getmonitorClient).not.toContain("apiHost");
     expect(rootRoute).toContain("GetMonitorErrorBoundary");
     expect(serverGm).toContain("new GetMonitor");
-    expect(serverGm).not.toContain("apiHost");
+    expect(serverGm).toContain('apiHost: "http://ingest.getmonitor.io"');
     expect(serverIndex).toContain('from "./shared/getmonitor"');
     expect(files.has("apps/server/src/getmonitor.ts")).toBe(false);
 
