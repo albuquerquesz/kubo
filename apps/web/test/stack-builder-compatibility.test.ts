@@ -24,6 +24,53 @@ function createStack(overrides: Partial<StackState> = {}): StackState {
   };
 }
 
+describe("communication capability messages", () => {
+  test.each([
+    ["resend", "Resend"],
+    ["notifique", "Notifique"],
+    ["arara", "AraraHQ"],
+  ])("shows the catalog backend requirement for %s", (provider, name) => {
+    expect(getDisabledReason(createStack({ backend: "none" }), "communication", provider)).toBe(
+      `${name} exige um backend com runtime de servidor`,
+    );
+  });
+
+  test("blocks AraraHQ for Cloudflare deploy even when the runtime still says Node", () => {
+    const stack = createStack({ backend: "hono", runtime: "node", serverDeploy: "cloudflare" });
+    expect(getDisabledReason(stack, "communication", "arara")).toBe(
+      "AraraHQ exige o SDK Node e não é compatível com runtimes Edge/Workers. Use um servidor Node/Bun ou uma Node Action do Convex.",
+    );
+    expect(getDisabledReason(stack, "communication", "resend")).toBeNull();
+    expect(getDisabledReason(stack, "communication", "notifique")).toBeNull();
+  });
+
+  test("blocks AraraHQ on Workers runtime and still allows Resend", () => {
+    const stack = createStack({ backend: "hono", runtime: "workers", serverDeploy: "cloudflare" });
+    expect(getDisabledReason(stack, "communication", "arara")).toBe(
+      "AraraHQ exige o SDK Node e não é compatível com runtimes Edge/Workers. Use um servidor Node/Bun ou uma Node Action do Convex.",
+    );
+    expect(getDisabledReason(stack, "communication", "resend")).toBeNull();
+  });
+
+  test("allows AraraHQ in Convex Node Actions and self backends", () => {
+    expect(
+      getDisabledReason(
+        createStack({ backend: "convex", runtime: "workers", serverDeploy: "cloudflare" }),
+        "communication",
+        "arara",
+      ),
+    ).toBeNull();
+    expect(
+      getDisabledReason(
+        createStack({ backend: "self-next", runtime: "none", serverDeploy: "none" }),
+        "communication",
+        "arara",
+      ),
+    ).toBeNull();
+    expect(getDisabledReason(createStack({ backend: "none" }), "communication", "none")).toBeNull();
+  });
+});
+
 describe("stack builder D1 compatibility", () => {
   test("supports selecting multiple payment providers and emits both CLI values", () => {
     const stack = createStack({ payments: ["abacatepay", "stripe"] });
@@ -388,6 +435,21 @@ describe("stack builder D1 compatibility", () => {
       communication: "resend",
     });
     expect(getDisabledReason(noBackend, "communication", "resend")).toContain("backend");
+    expect(getDisabledReason(noBackend, "communication", "arara")).toContain("backend");
+    expect(
+      getDisabledReason(
+        createStack({ backend: "hono", runtime: "workers", communication: "arara" }),
+        "communication",
+        "arara",
+      ),
+    ).toContain("Workers");
+    expect(
+      getDisabledReason(
+        createStack({ backend: "hono", runtime: "workers", communication: "resend" }),
+        "communication",
+        "resend",
+      ),
+    ).toBeNull();
   });
 
   test("blocks the AI example for Astro frontends", () => {
