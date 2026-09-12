@@ -1,12 +1,46 @@
 import { describe, expect, it } from "bun:test";
 
-import { generateReproducibleCommand } from "@kubojs/template-generator";
+import {
+  EMBEDDED_TEMPLATES,
+  generate,
+  generateReproducibleCommand,
+} from "@kubojs/template-generator";
 
 import { DEFAULT_CONFIG } from "../src/constants";
 import { createVirtual } from "../src/index";
 import type { ProjectConfig } from "../src/types";
-import { processFlags } from "../src/utils/config-processing";
+import { normalizeObservability, processFlags } from "../src/utils/config-processing";
 import { collectFiles } from "./setup";
+
+describe("canonical observability normalization", () => {
+  it("keeps both providers and deduplicates selections through the generator", async () => {
+    const result = await generate({
+      config: { ...DEFAULT_CONFIG, observability: ["himetrica", "getmonitor", "himetrica"] },
+      templates: EMBEDDED_TEMPLATES,
+    });
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) throw result.error;
+    expect(result.value.config.observability).toEqual(["himetrica", "getmonitor"]);
+  });
+
+  it("returns a generator error instead of silently dropping an unknown provider", async () => {
+    // Simulate a config crossing an untyped JSON boundary.
+    const result = await generate({
+      config: { ...DEFAULT_CONFIG, observability: JSON.parse('["getmonitor", "unknown"]') },
+      templates: EMBEDDED_TEMPLATES,
+    });
+    expect(result.match({ ok: () => null, err: (error) => error.message })).toBe(
+      "Unsupported observability provider(s): unknown",
+    );
+  });
+
+  it("uses the same normalization contract through the CLI re-export", () => {
+    expect(normalizeObservability(["none", "himetrica", "himetrica"])).toEqual(["himetrica"]);
+    expect(() => normalizeObservability("unknown")).toThrow(
+      "Unsupported observability provider(s): unknown",
+    );
+  });
+});
 
 describe("GetMonitor observability", () => {
   it("generates the browser and Node SDK integrations with schema-backed env vars", async () => {

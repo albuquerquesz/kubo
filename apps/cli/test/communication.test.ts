@@ -5,6 +5,11 @@ import { generateReproducibleCommand } from "@kubojs/template-generator";
 import { DEFAULT_CONFIG } from "../src/constants";
 import { createVirtual } from "../src/index";
 import type { ProjectConfig } from "../src/types";
+import {
+  allowedApisForFrontends,
+  isExampleAIAllowedForBackend,
+  validateCommunicationCompatibility,
+} from "../src/utils/compatibility-rules";
 import { processFlags } from "../src/utils/config-processing";
 import { collectFiles } from "./setup";
 
@@ -268,5 +273,45 @@ describe("Resend communication", () => {
 
     const command = generateReproducibleCommand(config);
     expect(command).toContain("--communication resend");
+  });
+
+  it("maps communication issues to the current product messages", () => {
+    const resend = validateCommunicationCompatibility("resend", "none");
+    expect(resend.isErr()).toBe(true);
+    if (resend.isErr()) {
+      expect(resend.error.message).toContain("Resend communication requires a server backend");
+    }
+
+    const notifique = validateCommunicationCompatibility("notifique", "none");
+    expect(notifique.isErr()).toBe(true);
+    if (notifique.isErr()) {
+      expect(notifique.error.message).toContain(
+        "Notifique communication requires a server backend",
+      );
+    }
+
+    const arara = validateCommunicationCompatibility("arara", "none");
+    expect(arara.isErr()).toBe(true);
+    if (arara.isErr()) {
+      expect(arara.error.message).toContain("AraraHQ communication requires a server backend");
+    }
+
+    const workers = validateCommunicationCompatibility("arara", "hono", "workers", "cloudflare");
+    expect(workers.isErr()).toBe(true);
+    if (workers.isErr()) {
+      expect(workers.error.message).toContain("AraraHQ requires the official Node SDK");
+    }
+
+    expect(validateCommunicationCompatibility("resend", "hono", "workers").isOk()).toBe(true);
+    expect(validateCommunicationCompatibility("arara", "convex", "workers").isOk()).toBe(true);
+  });
+});
+
+describe("backend capabilities", () => {
+  it("treats NestJS as a hosted-server with no API layer", () => {
+    expect(allowedApisForFrontends(["tanstack-router"], "nestjs")).toEqual(["none"]);
+    expect(allowedApisForFrontends(["tanstack-router"], "hono")).not.toEqual(["none"]);
+    expect(isExampleAIAllowedForBackend("nestjs", "ai")).toBe(false);
+    expect(isExampleAIAllowedForBackend("hono", "ai")).toBe(true);
   });
 });

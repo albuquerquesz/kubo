@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { normalizePayments } from "@kubojs/types";
+import { normalizeObservability, normalizePayments } from "@kubojs/types";
 import { Result } from "better-result";
 
 import type {
@@ -10,8 +10,6 @@ import type {
   CLIInput,
   Database,
   DatabaseSetup,
-  Observability,
-  Communication,
   ORM,
   PackageManager,
   ProjectConfig,
@@ -77,7 +75,7 @@ export function processFlags(options: CLIInput, projectName?: string) {
   if (options.disableObservability) config.observability = [];
 
   if (options.communication !== undefined) {
-    config.communication = options.communication as Communication;
+    config.communication = options.communication;
   }
 
   if (options.git !== undefined) {
@@ -132,17 +130,7 @@ export function processFlags(options: CLIInput, projectName?: string) {
   return config;
 }
 
-export function normalizeObservability(value: unknown): Observability {
-  if (value === "none" || value === undefined) return [];
-  const values = Array.isArray(value) ? value : [value];
-  return [
-    ...new Set(
-      values.filter(
-        (item): item is Observability[number] => item === "getmonitor" || item === "himetrica",
-      ),
-    ),
-  ];
-}
+export { normalizeObservability };
 
 export function getProvidedFlags(options: CLIInput) {
   return new Set(

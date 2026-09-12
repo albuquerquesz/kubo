@@ -1,4 +1,11 @@
-import { getPaymentCompatibilityIssue, isDesktopWebFrontend } from "@kubojs/types";
+import {
+  getCommunicationCompatibilityIssue,
+  getPaymentCompatibilityIssue,
+  isCommunicationProvider,
+  isDesktopWebFrontend,
+  type CommunicationCompatibilityIssue,
+  type CommunicationProvider,
+} from "@kubojs/types";
 
 import { DEFAULT_STACK, type StackState, type TECH_OPTIONS } from "@/lib/constant";
 import { CATEGORY_ORDER } from "@/lib/stack-utils";
@@ -829,6 +836,12 @@ export const analyzeStackCompatibility = (stack: StackState): CompatibilityResul
   };
 };
 
+const COMMUNICATION_PRODUCT_NAME = {
+  resend: "Resend",
+  notifique: "Notifique",
+  arara: "AraraHQ",
+} satisfies Record<CommunicationProvider, string>;
+
 /**
  * Returns a reason why an option is disabled, or null if it's enabled.
  *
@@ -910,9 +923,6 @@ export const getDisabledReason = (
       return "Nenhum backend selecionado";
     }
     if (category === "payments" && optionId !== "none") {
-      return "Nenhum backend selecionado";
-    }
-    if (category === "communication" && optionId !== "none") {
       return "Nenhum backend selecionado";
     }
     if (category === "examples" && optionId !== "none") {
@@ -1102,12 +1112,19 @@ export const getDisabledReason = (
       return "AbacatePay v1 exige um banco SQL com Prisma ou Drizzle";
   }
 
-  if (category === "communication") {
-    if ((optionId === "resend" || optionId === "notifique") && currentStack.backend === "none") {
-      return optionId === "notifique"
-        ? "Notifique exige um backend com runtime de servidor"
-        : "Resend exige um backend com runtime de servidor";
-    }
+  if (category === "communication" && isCommunicationProvider(optionId)) {
+    const issue = getCommunicationCompatibilityIssue({
+      provider: optionId,
+      backend: currentStack.backend,
+      runtime: currentStack.runtime,
+      serverDeploy: currentStack.serverDeploy,
+    });
+    const messages = {
+      "requires-backend": `${COMMUNICATION_PRODUCT_NAME[optionId]} exige um backend com runtime de servidor`,
+      "workers-unsupported":
+        "AraraHQ exige o SDK Node e não é compatível com runtimes Edge/Workers. Use um servidor Node/Bun ou uma Node Action do Convex.",
+    } satisfies Record<CommunicationCompatibilityIssue, string>;
+    return issue ? messages[issue] : null;
   }
 
   if (category === "addons") {
