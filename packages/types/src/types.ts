@@ -15,6 +15,7 @@ import type {
   AuthSchema,
   PaymentProviderSchema,
   PaymentsSchema,
+  ObservabilityProviderSchema,
   ObservabilitySchema,
   CommunicationSchema,
   WebDeploySchema,
@@ -46,6 +47,7 @@ export type API = z.infer<typeof APISchema>;
 export type Auth = z.infer<typeof AuthSchema>;
 export type PaymentProvider = z.infer<typeof PaymentProviderSchema>;
 export type Payments = z.infer<typeof PaymentsSchema>;
+export type ObservabilityProvider = z.infer<typeof ObservabilityProviderSchema>;
 export type Observability = z.infer<typeof ObservabilitySchema>;
 export type Communication = z.infer<typeof CommunicationSchema>;
 export type WebDeploy = z.infer<typeof WebDeploySchema>;

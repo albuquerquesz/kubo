@@ -40,7 +40,8 @@
   },
   "scripts": {
     "build": "tsdown",
-    "prepublishOnly": "bun run build"
+    "prepublishOnly": "bun run build",
+    "test": "bun test"
   },
   "dependencies": {
     "zod": "^4.4.3"
