@@ -652,22 +652,6 @@ export function validateCommunicationCompatibility(
       "AraraHQ requires the official Node SDK and is not compatible with Edge/Workers runtimes. Use a Node/Bun server deployment or Convex Node Action.",
   } satisfies Record<CommunicationCompatibilityIssue, string>;
 
-  // Flag validation runs before the backend prompt. Delay requires-backend so
-  // `--communication resend` can still choose a backend, but keep the Workers
-  // rejection: `--runtime workers` / `--server-deploy cloudflare` already rule
-  // Convex out, so evaluate the catalog as a hosted server.
-  if (issue === "requires-backend" && backend === undefined) {
-    const workersIssue = getCommunicationCompatibilityIssue({
-      provider: communication,
-      backend: "hono",
-      runtime,
-      serverDeploy,
-    });
-    return workersIssue === "workers-unsupported"
-      ? validationErr(messages[workersIssue])
-      : Result.ok(undefined);
-  }
-
   return issue ? validationErr(messages[issue]) : Result.ok(undefined);
 }
 

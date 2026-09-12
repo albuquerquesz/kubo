@@ -27,7 +27,7 @@ describe("communication compatibility issues", () => {
     expect(getCommunicationCompatibilityIssue({ provider: "resend", backend: "none" })).toBe(
       "requires-backend",
     );
-    expect(getCommunicationCompatibilityIssue({ provider: "notifique" })).toBe("requires-backend");
+    expect(getCommunicationCompatibilityIssue({ provider: "notifique" })).toBeNull();
     expect(getCommunicationCompatibilityIssue({ provider: "arara", backend: "none" })).toBe(
       "requires-backend",
     );
@@ -65,10 +65,13 @@ describe("communication compatibility issues", () => {
     ).toBeNull();
   });
 
-  test("missing backend takes priority over the runtime restriction", () => {
+  test("unset backend still reports the Workers restriction", () => {
     expect(getCommunicationCompatibilityIssue({ provider: "arara", runtime: "workers" })).toBe(
-      "requires-backend",
+      "workers-unsupported",
     );
+    expect(
+      getCommunicationCompatibilityIssue({ provider: "resend", runtime: "workers" }),
+    ).toBeNull();
   });
 
   test.each(["resend", "notifique", "arara"])("allows %s in Convex Node Actions", (provider) => {
@@ -203,8 +206,11 @@ describe("backend compatibility issues", () => {
     expect(backendAllowsOnlyNoneApi(undefined)).toBe(false);
   });
 
-  test("missing API preserves the NestJS validation error", () => {
-    expect(getBackendCompatibilityIssue({ backend: "nestjs" })).toBe("api-unsupported");
+  test("unset NestJS fields are not violations", () => {
+    expect(getBackendCompatibilityIssue({ backend: "nestjs" })).toBeNull();
+    expect(getBackendCompatibilityIssue({ backend: "nestjs", api: "trpc" })).toBe(
+      "api-unsupported",
+    );
   });
 });
 

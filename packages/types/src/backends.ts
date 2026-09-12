@@ -128,11 +128,12 @@ export function getBackendCompatibilityIssue({
   const capabilities = getBackendCapabilities(backend);
 
   // Keep this order: CLI consumers preserve the first existing product error.
+  // Unset fields are not violations; only an explicit disallowed value is.
   const restrictions: readonly [BackendCompatibilityIssue, boolean][] = [
-    ["api-unsupported", !allowsValue(capabilities.apis, api ?? "")],
-    ["auth-unsupported", !allowsValue(capabilities.auth, auth ?? "none")],
-    ["database-unsupported", !!database && !allowsValue(capabilities.databases, database)],
-    ["orm-unsupported", !!orm && !allowsValue(capabilities.orms, orm)],
+    ["api-unsupported", rejectsValue(capabilities.apis, api)],
+    ["auth-unsupported", rejectsValue(capabilities.auth, auth)],
+    ["database-unsupported", rejectsValue(capabilities.databases, database)],
+    ["orm-unsupported", rejectsValue(capabilities.orms, orm)],
     ["example-ai-unsupported", examples.includes("ai") && !capabilities.examples.ai],
     ["payments-unsupported", payments.length > 0 && !capabilities.supportsPayments],
   ];
@@ -140,6 +141,6 @@ export function getBackendCompatibilityIssue({
   return restrictions.find(([, violated]) => violated)?.[0] ?? null;
 }
 
-function allowsValue(allowed: readonly string[] | undefined, value: string): boolean {
-  return allowed === undefined || allowed.includes(value);
+function rejectsValue(allowed: readonly string[] | undefined, value: string | undefined): boolean {
+  return value !== undefined && allowed !== undefined && !allowed.includes(value);
 }

@@ -66,7 +66,7 @@ Congelar o contrato de **communication**, **observability** e **backend kinds** 
 
 Issues:
 
-- `requires-backend` — provider escolhido com `backend` ausente ou `"none"`
+- `requires-backend` — provider escolhido com `backend === "none"` (campo ausente não é issue: o Create Path ainda pode perguntar o backend)
 - `workers-unsupported` — `supportsWorkers: false` e (`runtime === "workers"` ou `serverDeploy === "cloudflare"`), **exceto** `backend === "convex"` (Node Action)
 
 Mensagens CLI (inalteradas):
@@ -130,7 +130,7 @@ Mounts são declaração para #31; este passo **não** muda templates.
 
 Cobre o **issue**, não a implementação:
 
-- communication: none/undefined → null; resend sem backend → `requires-backend`; arara+workers → `workers-unsupported`; arara+convex+workers → null; resend+workers → null
+- communication: none/undefined → null; resend com `backend: "none"` → `requires-backend`; backend ausente → null; arara+workers → `workers-unsupported` mesmo sem backend; arara+convex+workers → null; resend+workers → null
 - observability: `none`/`undefined` → `[]`; string única e array; duplicata; provider inválido lança
 - backend: nestjs+trpc → `api-unsupported`; nestjs+none api → null; nestjs+clerk → `auth-unsupported`; nestjs+ai → `example-ai-unsupported`; hono+trpc → null; `examples.ai` false só nestjs/none
 

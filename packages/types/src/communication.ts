@@ -49,7 +49,7 @@ export function getCommunicationCompatibilityIssue({
   if (!isCommunicationProvider(provider)) return null;
   const capabilities = COMMUNICATION_PROVIDER_CAPABILITIES[provider];
 
-  if (capabilities.requiresBackend && (!backend || backend === "none")) {
+  if (capabilities.requiresBackend && backend === "none") {
     return "requires-backend";
   }
 
