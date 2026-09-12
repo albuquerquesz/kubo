@@ -1,4 +1,4 @@
-import { normalizePayments, type ProjectConfig } from "@kubojs/types";
+import { normalizeObservability, normalizePayments } from "@kubojs/types";
 import { Result } from "better-result";
 
 import { VirtualFileSystem } from "./core/virtual-fs";
@@ -131,17 +131,4 @@ export async function generate(
       });
     },
   });
-}
-
-function normalizeObservability(value: unknown): ProjectConfig["observability"] {
-  if (value === "none" || value === undefined) return [];
-  const values = Array.isArray(value) ? value : [value];
-  return [
-    ...new Set(
-      values.filter(
-        (item): item is ProjectConfig["observability"][number] =>
-          item === "getmonitor" || item === "himetrica",
-      ),
-    ),
-  ];
 }
