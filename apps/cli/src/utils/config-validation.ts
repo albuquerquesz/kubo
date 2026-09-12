@@ -1,3 +1,4 @@
+import { getBackendCompatibilityIssue, type BackendCompatibilityIssue } from "@kubojs/types";
 import { Result } from "better-result";
 
 import type { CLIInput, Database, DatabaseSetup, ProjectConfig, Runtime } from "../types";
@@ -14,7 +15,6 @@ import {
   validatePaymentsCompatibility,
   validateTestingAgainstFrontends,
   validateCommunicationCompatibility,
-  validateAraraRuntimeCompatibility,
   validateSelfBackendCompatibility,
   validateDockerServerDeploy,
   validateDockerWebDeployDesktopAddons,
@@ -396,6 +396,20 @@ export function validateSelfBackendConstraints(
   return Result.ok(undefined);
 }
 
+const NESTJS_ISSUE_MESSAGES = {
+  "api-unsupported": "NestJS currently supports no API layer yet. Please use '--api none'.",
+  "auth-unsupported":
+    "NestJS backend currently supports Better Auth or no authentication. Please use '--auth better-auth' or '--auth none'.",
+  "database-unsupported":
+    "NestJS backend currently supports PostgreSQL as its database. Please use '--database postgres'.",
+  "orm-unsupported":
+    "NestJS backend currently supports Prisma as its ORM. Please use '--orm prisma'.",
+  "example-ai-unsupported":
+    "The 'ai' example is not supported with NestJS yet. Please remove 'ai' from --examples.",
+  "payments-unsupported":
+    "Payment integrations are not supported with NestJS yet. Please remove payment providers.",
+} satisfies Record<BackendCompatibilityIssue, string>;
+
 export function validateBackendConstraints(
   config: Partial<ProjectConfig>,
   providedFlags: Set<string>,
@@ -403,40 +417,10 @@ export function validateBackendConstraints(
 ): ValidationResult {
   const { backend } = config;
 
+  // Other backend validations retain their existing order and product messages.
   if (backend === "nestjs") {
-    if (config.api !== "none") {
-      return validationErr("NestJS currently supports no API layer yet. Please use '--api none'.");
-    }
-
-    if (config.auth === "clerk") {
-      return validationErr(
-        "NestJS backend currently supports Better Auth or no authentication. Please use '--auth better-auth' or '--auth none'.",
-      );
-    }
-
-    if (config.database && config.database !== "none" && config.database !== "postgres") {
-      return validationErr(
-        "NestJS backend currently supports PostgreSQL as its database. Please use '--database postgres'.",
-      );
-    }
-
-    if (config.orm && config.orm !== "none" && config.orm !== "prisma") {
-      return validationErr(
-        "NestJS backend currently supports Prisma as its ORM. Please use '--orm prisma'.",
-      );
-    }
-
-    if (config.examples?.includes("ai")) {
-      return validationErr(
-        "The 'ai' example is not supported with NestJS yet. Please remove 'ai' from --examples.",
-      );
-    }
-
-    if (config.payments && config.payments.length > 0) {
-      return validationErr(
-        "Payment integrations are not supported with NestJS yet. Please remove payment providers.",
-      );
-    }
+    const issue = getBackendCompatibilityIssue(config);
+    if (issue) return validationErr(NESTJS_ISSUE_MESSAGES[issue]);
   }
 
   if (config.auth === "clerk" && config.frontend) {
@@ -622,8 +606,7 @@ export function validateFullConfig(
       config.database,
     );
 
-    yield* validateCommunicationCompatibility(config.communication, config.backend);
-    yield* validateAraraRuntimeCompatibility(
+    yield* validateCommunicationCompatibility(
       config.communication,
       config.backend,
       config.runtime,
@@ -654,8 +637,7 @@ export function validateConfigForProgrammaticUse(config: Partial<ProjectConfig>)
       config.database,
     );
 
-    yield* validateCommunicationCompatibility(config.communication, config.backend);
-    yield* validateAraraRuntimeCompatibility(
+    yield* validateCommunicationCompatibility(
       config.communication,
       config.backend,
       config.runtime,

@@ -1,4 +1,13 @@
-import { getPaymentCompatibilityIssue } from "@kubojs/types";
+import {
+  backendAllowsAiExample,
+  backendAllowsApi,
+  backendAllowsOnlyNoneApi,
+  getCommunicationCompatibilityIssue,
+  getPaymentCompatibilityIssue,
+  isCommunicationProvider,
+  type CommunicationCompatibilityIssue,
+  type CommunicationProvider,
+} from "@kubojs/types";
 import { Result } from "better-result";
 
 import { ADDON_COMPATIBILITY } from "../constants";
@@ -267,9 +276,7 @@ export function isFrontendAllowedWithBackend(
 
 export function supportsConvexBetterAuth(frontends: readonly Frontend[] = []) {
   return frontends.some((frontend) =>
-    CONVEX_BETTER_AUTH_SUPPORTED_FRONTENDS.includes(
-      frontend as (typeof CONVEX_BETTER_AUTH_SUPPORTED_FRONTENDS)[number],
-    ),
+    CONVEX_BETTER_AUTH_SUPPORTED_FRONTENDS.some((supported) => supported === frontend),
   );
 }
 
@@ -277,25 +284,22 @@ export function allowedApisForFrontends(
   frontends: Frontend[] = [],
   backend?: ProjectConfig["backend"],
 ) {
-  if (backend === "nestjs") return ["none"] as const;
+  if (backendAllowsOnlyNoneApi(backend)) return ["none"] as const;
 
-  const includesNuxt = frontends.includes("nuxt");
-  const includesSvelte = frontends.includes("svelte");
-  const includesSolid = frontends.includes("solid");
-  const includesAstro = frontends.includes("astro");
-  const base: API[] = ["trpc", "orpc", "none"];
-  if (backend === "hono") base.splice(2, 0, "orval");
-  if (includesNuxt || includesSvelte || includesSolid || includesAstro) {
-    return backend === "hono" ? ["orpc", "orval", "none"] : ["orpc", "none"];
-  }
-  return base;
+  const supportsTrpc = !frontends.some((frontend) =>
+    ["nuxt", "svelte", "solid", "astro"].includes(frontend),
+  );
+  const base: API[] = ["trpc", "orpc", "orval", "none"];
+  return base.filter(
+    (api) => (api !== "trpc" || supportsTrpc) && isApiCompatibleWithBackend(api, backend),
+  );
 }
 
 export function isApiCompatibleWithBackend(
   api: API | undefined,
   backend?: ProjectConfig["backend"],
 ): boolean {
-  return api !== "orval" || backend === "hono";
+  return api !== "orval" || backendAllowsApi(backend, "orval");
 }
 
 export function isExampleTodoAllowed(
@@ -314,7 +318,7 @@ export function isExampleAIAllowedForBackend(
   backend: ProjectConfig["backend"] | undefined,
   example: string,
 ): boolean {
-  return example !== "ai" || backend !== "nestjs";
+  return example !== "ai" || backendAllowsAiExample(backend);
 }
 
 export function isExampleAIAllowed(backend?: ProjectConfig["backend"], frontends: Frontend[] = []) {
@@ -621,37 +625,50 @@ export function validateAddonsAgainstConfig(
   );
 }
 
+const COMMUNICATION_PRODUCT_NAME = {
+  resend: "Resend",
+  notifique: "Notifique",
+  arara: "AraraHQ",
+} satisfies Record<CommunicationProvider, string>;
+
 export function validateCommunicationCompatibility(
   communication: Communication | undefined,
   backend: Backend | undefined,
+  runtime?: Runtime,
+  serverDeploy?: ServerDeploy,
 ): ValidationResult {
-  if (!communication || communication === "none") return Result.ok(undefined);
+  if (!isCommunicationProvider(communication)) return Result.ok(undefined);
 
-  if (
-    (communication === "resend" || communication === "notifique" || communication === "arara") &&
-    backend === "none"
-  ) {
-    return validationErr(
-      `${communication === "notifique" ? "Notifique" : communication === "arara" ? "AraraHQ" : "Resend"} communication requires a server backend. Please choose a backend or use '--communication none'.`,
-    );
-  }
+  const issue = getCommunicationCompatibilityIssue({
+    provider: communication,
+    backend,
+    runtime,
+    serverDeploy,
+  });
 
-  return Result.ok(undefined);
-}
-
-export function validateAraraRuntimeCompatibility(
-  communication: Communication | undefined,
-  backend: Backend | undefined,
-  runtime: Runtime | undefined,
-  serverDeploy: ServerDeploy | undefined,
-): ValidationResult {
-  if (communication !== "arara" || backend === "convex") return Result.ok(undefined);
-  if (runtime === "workers" || serverDeploy === "cloudflare") {
-    return validationErr(
+  const messages = {
+    "requires-backend": `${COMMUNICATION_PRODUCT_NAME[communication]} communication requires a server backend. Please choose a backend or use '--communication none'.`,
+    "workers-unsupported":
       "AraraHQ requires the official Node SDK and is not compatible with Edge/Workers runtimes. Use a Node/Bun server deployment or Convex Node Action.",
-    );
+  } satisfies Record<CommunicationCompatibilityIssue, string>;
+
+  // Flag validation runs before the backend prompt. Delay requires-backend so
+  // `--communication resend` can still choose a backend, but keep the Workers
+  // rejection: `--runtime workers` / `--server-deploy cloudflare` already rule
+  // Convex out, so evaluate the catalog as a hosted server.
+  if (issue === "requires-backend" && backend === undefined) {
+    const workersIssue = getCommunicationCompatibilityIssue({
+      provider: communication,
+      backend: "hono",
+      runtime,
+      serverDeploy,
+    });
+    return workersIssue === "workers-unsupported"
+      ? validationErr(messages[workersIssue])
+      : Result.ok(undefined);
   }
-  return Result.ok(undefined);
+
+  return issue ? validationErr(messages[issue]) : Result.ok(undefined);
 }
 
 export function validatePaymentsCompatibility(
