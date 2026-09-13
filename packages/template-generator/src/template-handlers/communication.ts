@@ -1,118 +1,82 @@
-import type { ProjectConfig } from "@kubojs/types";
+import type { CommunicationProvider, ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processSingleTemplate } from "./utils";
+
+type CommunicationArtifact = {
+  readonly templatePath: string;
+  readonly destinationPath: string;
+  readonly when?: (config: ProjectConfig) => boolean;
+};
+
+type CommunicationCatalogEntry = {
+  readonly provider: CommunicationProvider;
+  readonly artifacts: readonly CommunicationArtifact[];
+};
+
+const packageArtifacts = (
+  prefix: string,
+  paths: readonly string[],
+): readonly CommunicationArtifact[] =>
+  paths.map((path) => ({
+    templatePath: `${prefix}/${path}`,
+    destinationPath: `${prefix}/${path}`,
+  }));
+
+const COMMUNICATION_CATALOG: readonly CommunicationCatalogEntry[] = [
+  {
+    provider: "resend",
+    artifacts: packageArtifacts("packages/email", [
+      "package.json",
+      "tsconfig.json",
+      "src/index.ts",
+      "src/lib/resend.ts",
+    ]),
+  },
+  {
+    provider: "notifique",
+    artifacts: packageArtifacts("packages/notifique", [
+      "package.json",
+      "tsconfig.json",
+      "src/index.ts",
+      "src/notifique.ts",
+      "src/lib/sms.ts",
+      "src/lib/whatsapp.ts",
+      "src/lib/email.ts",
+    ]),
+  },
+  {
+    provider: "arara",
+    artifacts: [
+      ...packageArtifacts("packages/arara", [
+        "package.json",
+        "tsconfig.json",
+        "src/index.ts",
+        "src/lib/client.ts",
+      ]),
+      {
+        templatePath: "backend/convex/packages/backend/convex/arara.ts",
+        destinationPath: "packages/backend/convex/arara.ts",
+        when: (config) => config.backend === "convex",
+      },
+    ],
+  },
+];
 
 export async function processCommunicationTemplates(
   vfs: VirtualFileSystem,
   templates: TemplateData,
   config: ProjectConfig,
 ): Promise<void> {
-  if (!config.communication || config.communication === "none") return;
+  const provider = config.communication;
+  if (!provider || provider === "none") return;
 
-  if (config.communication === "resend") {
-    processSingleTemplate(
-      vfs,
-      templates,
-      "packages/email/package.json",
-      "packages/email/package.json",
-      config,
-    );
-    processSingleTemplate(
-      vfs,
-      templates,
-      "packages/email/tsconfig.json",
-      "packages/email/tsconfig.json",
-      config,
-    );
-    processSingleTemplate(
-      vfs,
-      templates,
-      "packages/email/src/index.ts",
-      "packages/email/src/index.ts",
-      config,
-    );
-    processSingleTemplate(
-      vfs,
-      templates,
-      "packages/email/src/lib/resend.ts",
-      "packages/email/src/lib/resend.ts",
-      config,
-    );
-    return;
-  }
+  const integration = COMMUNICATION_CATALOG.find((entry) => entry.provider === provider);
+  if (!integration) return;
 
-  if (config.communication === "notifique") {
-    processSingleTemplate(
-      vfs,
-      templates,
-      "packages/notifique/package.json",
-      "packages/notifique/package.json",
-      config,
-    );
-    processSingleTemplate(
-      vfs,
-      templates,
-      "packages/notifique/tsconfig.json",
-      "packages/notifique/tsconfig.json",
-      config,
-    );
-    processSingleTemplate(
-      vfs,
-      templates,
-      "packages/notifique/src/index.ts",
-      "packages/notifique/src/index.ts",
-      config,
-    );
-    processSingleTemplate(
-      vfs,
-      templates,
-      "packages/notifique/src/notifique.ts",
-      "packages/notifique/src/notifique.ts",
-      config,
-    );
-    processSingleTemplate(
-      vfs,
-      templates,
-      "packages/notifique/src/lib/sms.ts",
-      "packages/notifique/src/lib/sms.ts",
-      config,
-    );
-    processSingleTemplate(
-      vfs,
-      templates,
-      "packages/notifique/src/lib/whatsapp.ts",
-      "packages/notifique/src/lib/whatsapp.ts",
-      config,
-    );
-    processSingleTemplate(
-      vfs,
-      templates,
-      "packages/notifique/src/lib/email.ts",
-      "packages/notifique/src/lib/email.ts",
-      config,
-    );
-    return;
-  }
+  for (const artifact of integration.artifacts) {
+    if (artifact.when && !artifact.when(config)) continue;
 
-  if (config.communication === "arara") {
-    for (const path of [
-      "packages/arara/package.json",
-      "packages/arara/tsconfig.json",
-      "packages/arara/src/index.ts",
-      "packages/arara/src/lib/client.ts",
-    ]) {
-      processSingleTemplate(vfs, templates, path, path, config);
-    }
-
-    if (config.backend === "convex") {
-      processSingleTemplate(
-        vfs,
-        templates,
-        "backend/convex/packages/backend/convex/arara.ts",
-        "packages/backend/convex/arara.ts",
-        config,
-      );
-    }
+    processSingleTemplate(vfs, templates, artifact.templatePath, artifact.destinationPath, config);
   }
 }
