@@ -2,7 +2,10 @@
 
 ## Status
 
-Proposed. Etapa 1 implementada em `catalog/issue-29-canonical-evaluate`. Issue: [#29](https://github.com/albuquerquesz/kubo/issues/29). Parent: [#26](https://github.com/albuquerquesz/kubo/issues/26). Depende de [#27](https://github.com/albuquerquesz/kubo/issues/27) e [#28](https://github.com/albuquerquesz/kubo/issues/28).
+Implementada na branch `catalog/issue-29-canonical-evaluate`; a issue do GitHub permanece aberta
+para revisão/encerramento. Issue: [#29](https://github.com/albuquerquesz/kubo/issues/29). Parent:
+[#26](https://github.com/albuquerquesz/kubo/issues/26). Depende de [#27](https://github.com/albuquerquesz/kubo/issues/27)
+e [#28](https://github.com/albuquerquesz/kubo/issues/28).
 
 Esta spec divide a issue em etapas independentes. A issue não deve ser considerada concluída
 quando a primeira etapa terminar; cada etapa entrega uma redução verificável de duplicação e
@@ -10,7 +13,7 @@ mantém o comportamento público estável.
 
 ## Data
 
-2026-09-12
+2026-09-13
 
 ## Diagnóstico: o problema é válido
 
@@ -69,7 +72,7 @@ Builder:
 type CompatibilityIssue = {
   code: string;
   fields: readonly string[];
-  context?: Readonly<Record<string, string>>;
+  values?: readonly string[];
 };
 
 type CompatibilityEvaluation = {
@@ -77,7 +80,7 @@ type CompatibilityEvaluation = {
   issues: readonly CompatibilityIssue[];
 };
 
-evaluate(config: ProjectConfig): CompatibilityEvaluation;
+evaluate(config: Partial<ProjectConfigDraft>): CompatibilityEvaluation;
 ```
 
 O contrato final deve retornar todas as issues relevantes em ordem determinística, sem conhecer
@@ -114,7 +117,7 @@ Critérios:
 
 Entrega: um commit isolado de refactor, fácil de revisar e reverter.
 
-### Etapa 2 — congelar o contrato do motor
+### Etapa 2 — congelar o contrato do motor ✅
 
 Criar em `@kubojs/types` os tipos de issue e uma primeira `evaluate(config)` pura, começando pelas
 relações já duplicadas e estáveis:
@@ -126,10 +129,11 @@ relações já duplicadas e estáveis:
 - API e backend/frontend;
 - deploy web/servidor.
 
-Testar códigos e campos afetados, não mensagens. A função deve avaliar `ProjectConfig` completo;
-qualquer resolução de input parcial ou defaults deve ocorrer antes dela.
+Testar códigos e campos afetados, não mensagens. A função avalia uma configuração completa e
+aceita campos parciais apenas nos validadores da CLI, onde campos ainda não respondidos não podem
+ser tratados como violações. Entrega: `f1de47d0`.
 
-### Etapa 3 — adaptar a CLI
+### Etapa 3 — adaptar a CLI ✅
 
 Fazer `config-validation.ts` consumir o motor, mantendo no adaptador:
 
@@ -138,9 +142,9 @@ Fazer `config-validation.ts` consumir o motor, mantendo no adaptador:
 - conversão de issue em `ValidationError` com as mensagens atuais.
 
 As regras específicas de scaffolding que não forem compatibilidade de configuração permanecem
-fora do motor.
+fora do motor. Entrega: `b9906423`.
 
-### Etapa 4 — adaptar o Stack Builder
+### Etapa 4 — adaptar o Stack Builder ✅
 
 Fazer `analyzeStackCompatibility` e `getDisabledReason` consumirem o mesmo motor. A camada web
 continua responsável por:
@@ -153,7 +157,9 @@ continua responsável por:
 O resultado de um autoajuste deve passar por `ProjectConfigSchema` e ser aceito pelo adaptador
 da CLI.
 
-### Etapa 5 — remover duplicações e fechar a issue
+Entrega: `5cc23034`.
+
+### Etapa 5 — remover duplicações e fechar a issue ✅
 
 Após CLI e Builder estarem cobertos pelo contrato compartilhado:
 
@@ -161,7 +167,12 @@ Após CLI e Builder estarem cobertos pelo contrato compartilhado:
 - decompor `utils.ts` caso ainda exceda 1.000 linhas por responsabilidade de domínio;
 - adicionar contrato cruzado CLI ↔ Builder;
 - registrar qualquer diferença intencional entre rejeição da CLI e autoajuste do Builder;
-- atualizar a issue com os commits e marcar os critérios concluídos.
+- atualizar esta spec com os commits e marcar os critérios concluídos. A issue permanece aberta
+  para o encerramento humano, como combinado.
+
+Resultado: o motor retorna fatos/códigos; a CLI rejeita e mantém suas mensagens; o Builder avalia
+uma configuração candidata e normaliza autoajustes em uma operação separada. `utils.ts` foi
+reduzido para apresentação e reexports, e o adapter web ficou em módulo próprio.
 
 ## Fora de escopo
 
@@ -189,11 +200,11 @@ focados da regra alterada.
 
 ## Aceite final da issue
 
-- [ ] Existe uma `evaluate(config)` pura e canônica.
-- [ ] CLI e Builder não duplicam as regras de compatibilidade cobertas pelo motor.
-- [ ] Os quatro deploy validators usam dispatcher comum, sem clones por provider.
-- [ ] O autoajuste do Builder produz uma `ProjectConfig` aceita pela CLI.
-- [ ] `utils.ts` fica apenas com apresentação/política do Builder ou é fatiado abaixo de 1.000
+- [x] Existe uma `evaluate(config)` pura e canônica.
+- [x] CLI e Builder não duplicam as regras de compatibilidade cobertas pelo motor.
+- [x] Os quatro deploy validators usam dispatcher comum, sem clones por provider.
+- [x] O autoajuste do Builder produz uma `ProjectConfig` aceita pela CLI.
+- [x] `utils.ts` fica apenas com apresentação/política do Builder ou é fatiado abaixo de 1.000
       linhas sem perder clareza.
-- [ ] O comportamento público permanece estável, salvo decisões documentadas.
-- [ ] Cada etapa tem testes focados e commits isolados.
+- [x] O comportamento público permanece estável, salvo decisões documentadas.
+- [x] Cada etapa tem testes focados e commits isolados.

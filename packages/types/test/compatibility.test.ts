@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 
-import { evaluate } from "../src/compatibility";
+import { evaluate, normalizeCompatibility } from "../src/index";
 import type { ProjectConfigDraft } from "../src/types";
 
 const validConfig: ProjectConfigDraft = {
@@ -33,6 +33,47 @@ function codes(config: Partial<ProjectConfigDraft>) {
 describe("canonical compatibility evaluator", () => {
   it("accepts a valid project configuration", () => {
     expect(evaluate(validConfig)).toEqual({ valid: true, issues: [] });
+  });
+
+  it("normalizes representative invalid stacks into valid CLI configurations", () => {
+    const invalidStacks: ProjectConfigDraft[] = [
+      {
+        ...validConfig,
+        backend: "convex",
+        runtime: "bun",
+        database: "postgres",
+        orm: "prisma",
+        api: "trpc",
+        frontend: ["solid"],
+        payments: ["stripe"],
+        serverDeploy: "docker",
+      },
+      {
+        ...validConfig,
+        backend: "hono",
+        runtime: "workers",
+        database: "mongodb",
+        orm: "mongoose",
+        dbSetup: "docker",
+        serverDeploy: "vercel",
+      },
+      {
+        ...validConfig,
+        backend: "nestjs",
+        auth: "clerk",
+        database: "mysql",
+        orm: "drizzle",
+        api: "trpc",
+        examples: ["ai"],
+        payments: ["stripe"],
+      },
+    ];
+
+    for (const invalidStack of invalidStacks) {
+      const normalized = normalizeCompatibility(invalidStack).config;
+      expect(evaluate(normalized).valid).toBe(true);
+      expect(normalizeCompatibility(normalized).config).toEqual(normalized);
+    }
   });
 
   it("returns structured issues for unsupported backend capabilities", () => {
