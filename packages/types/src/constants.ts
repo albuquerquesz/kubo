@@ -1,3 +1,4 @@
+import { isWebFrontend } from "./frontend";
 import type { DesktopWebFrontend } from "./types";
 
 export const desktopWebFrontends = [
@@ -12,7 +13,7 @@ export const desktopWebFrontends = [
 ] as const satisfies readonly DesktopWebFrontend[];
 
 export function isDesktopWebFrontend(frontend: string): frontend is DesktopWebFrontend {
-  return desktopWebFrontends.some((candidate) => candidate === frontend);
+  return isWebFrontend(frontend);
 }
 
 export function getWebPort(frontends: readonly string[] = []): string {

@@ -8,6 +8,10 @@ export type FrontendCapabilities = {
   publicEnvPrefix: string | null;
 };
 
+export const SELF_HOSTED_FRONTENDS = ["next", "tanstack-start", "nuxt", "svelte", "astro"] as const;
+
+export type SelfHostedFrontend = (typeof SELF_HOSTED_FRONTENDS)[number];
+
 export const FRONTEND_CAPABILITIES = {
   "tanstack-router": { isWeb: true, isReact: true, isNative: false, publicEnvPrefix: "VITE_" },
   "react-router": { isWeb: true, isReact: true, isNative: false, publicEnvPrefix: "VITE_" },
@@ -32,8 +36,27 @@ export const reactWebFrontends = [
 
 const publicEnvFrontendPriority = ["next", "nuxt", "svelte", "astro"] as const;
 
-export function isFrontend(value: string): value is Frontend {
+export function isFrontend(value: unknown): value is Frontend {
+  if (typeof value !== "string") return false;
   return FRONTEND_VALUES.some((frontend) => frontend === value);
+}
+
+export function isWebFrontend(value: unknown): value is DesktopWebFrontend {
+  return typeof value === "string" && isFrontend(value) && FRONTEND_CAPABILITIES[value].isWeb;
+}
+
+export function isNativeFrontend(value: unknown): value is Exclude<NativeFrontend, "none"> {
+  return typeof value === "string" && isFrontend(value) && FRONTEND_CAPABILITIES[value].isNative;
+}
+
+export function isSelfHostedFrontend(value: unknown): value is SelfHostedFrontend {
+  return typeof value === "string" && SELF_HOSTED_FRONTENDS.some((frontend) => frontend === value);
+}
+
+export function getSelfHostedFrontend(
+  frontends: readonly string[],
+): SelfHostedFrontend | undefined {
+  return frontends.find(isSelfHostedFrontend);
 }
 
 export function hasWebFrontend(frontends: readonly string[]): boolean {
