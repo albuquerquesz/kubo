@@ -29,6 +29,7 @@ import type {
   AddInputSchema,
   CLIInputSchema,
   ProjectConfigSchema,
+  ProjectConfigDraftSchema,
   KubojsConfigSchema,
   InitResultSchema,
 } from "./schemas";
@@ -62,6 +63,7 @@ export type CreateInput = z.infer<typeof CreateInputSchema>;
 export type AddInput = z.infer<typeof AddInputSchema>;
 export type CLIInput = z.infer<typeof CLIInputSchema>;
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
+export type ProjectConfigDraft = z.infer<typeof ProjectConfigDraftSchema>;
 export type KubojsConfig = z.infer<typeof KubojsConfigSchema>;
 export type InitResult = z.infer<typeof InitResultSchema>;
 
@@ -84,9 +86,3 @@ export type NativeFrontend = Extract<
   Frontend,
   "native-bare" | "native-uniwind" | "native-unistyles" | "none"
 >;
-
-export function isNativeFrontend(frontend: string): boolean {
-  return (
-    frontend === "native-bare" || frontend === "native-uniwind" || frontend === "native-unistyles"
-  );
-}

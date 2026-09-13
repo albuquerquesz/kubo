@@ -4,12 +4,14 @@ import { toast } from "sonner";
 import { DEFAULT_STACK, PRESET_TEMPLATES, type StackState, TECH_OPTIONS } from "@/lib/constant";
 import { useKuboHimetrica } from "@/lib/himetrica-events";
 import { sanitizeStackState, TASK_RUNNER_ADDONS } from "@/lib/sanitize-stack-addons";
+import { getFrontendSelection, replaceFrontendSelection } from "@/lib/stack-state";
 import { useStackState } from "@/lib/stack-url-state.client";
 import {
   CATEGORY_ORDER,
   formatProjectName,
   generateStackCommand,
   generateStackSharingUrl,
+  getStackCategoryValue,
 } from "@/lib/stack-utils";
 import type { TechCategory } from "@/lib/types";
 
@@ -24,7 +26,7 @@ export type CategoryProgressItem = {
   done: boolean;
 };
 
-const CATEGORY_LIST = CATEGORY_ORDER as TechCategory[];
+const CATEGORY_LIST: TechCategory[] = CATEGORY_ORDER;
 
 function withFormattedProjectName(stack: StackState) {
   return {
@@ -43,10 +45,7 @@ export function getCompatibilityAdjustmentState(
   adjustedStack: StackState | null,
 ) {
   if (!adjustedStack) {
-    return {
-      adjustmentKey: "",
-      shouldApply: false,
-    };
+    return { adjustmentKey: "", shouldApply: false };
   }
 
   const adjustmentKey = getCompatibilityAdjustmentKey(stack, adjustedStack);
@@ -56,11 +55,29 @@ export function getCompatibilityAdjustmentState(
   };
 }
 
+function isFrontendCategory(category: TechCategory): category is "webFrontend" | "nativeFrontend" {
+  return category === "webFrontend" || category === "nativeFrontend";
+}
+
+function isMultiValueCategory(category: TechCategory): boolean {
+  return (
+    isFrontendCategory(category) ||
+    category === "addons" ||
+    category === "testing" ||
+    category === "examples" ||
+    category === "payments" ||
+    category === "observability"
+  );
+}
+
+function isTaskRunnerAddon(value: string): boolean {
+  return TASK_RUNNER_ADDONS.some((addon) => addon === value);
+}
+
 export function useStackBuilder() {
   const analytics = useKuboHimetrica();
   const [stack, setStack, viewMode, setViewMode, selectedFile, setSelectedFile] = useStackState();
 
-  const [command, setCommand] = useState("");
   const [copied, setCopied] = useState(false);
   const [lastSavedStack, setLastSavedStack] = useState<StackState | null>(null);
   const [, setLastChanges] = useState<Array<{ category: string; message: string }>>([]);
@@ -79,23 +96,24 @@ export function useStackBuilder() {
       const viewport = scrollAreaRef.current.querySelector<HTMLDivElement>(
         '[data-slot="scroll-area-viewport"]',
       );
-      if (viewport) {
-        contentRef.current = viewport;
-      }
+      if (viewport) contentRef.current = viewport;
     }
   }, [viewMode]);
 
   const compatibilityAnalysis = analyzeStackCompatibility(stack);
-  const projectNameError = validateProjectName(stack.projectName || "");
+  const projectNameError = validateProjectName(stack.projectName);
+  const stackToUse = compatibilityAnalysis.adjustedStack || stack;
+  const command = useMemo(
+    () => generateStackCommand(withFormattedProjectName(stackToUse)),
+    [stackToUse],
+  );
 
   useEffect(() => {
     const savedStack = localStorage.getItem("kubojsStackPreference");
-    if (!savedStack) {
-      return;
-    }
+    if (!savedStack) return;
 
     try {
-      const parsedStack = sanitizeStackState(JSON.parse(savedStack) as StackState);
+      const parsedStack = sanitizeStackState(JSON.parse(savedStack));
       setLastSavedStack(parsedStack);
     } catch (error) {
       console.error("Failed to parse saved stack", error);
@@ -111,7 +129,7 @@ export function useStackBuilder() {
       adjustedStack,
     );
 
-    if (!shouldApply) {
+    if (!adjustedStack || !shouldApply) {
       lastAppliedAdjustmentKey.current = adjustmentKey;
       return;
     }
@@ -125,43 +143,36 @@ export function useStackBuilder() {
         const message = `${compatibilityAnalysis.changes.length} ajustes de compatibilidade feitos:\n${compatibilityAnalysis.changes
           .map((change) => `• ${change.message}`)
           .join("\n")}`;
-
         toast.info(message, { duration: 5000 });
       }
 
       setLastChanges(compatibilityAnalysis.changes);
-      setStack(adjustedStack!);
+      setStack(adjustedStack);
       lastAppliedAdjustmentKey.current = adjustmentKey;
     });
   }, [stack, compatibilityAnalysis.adjustedStack, compatibilityAnalysis.changes, setStack]);
 
-  useEffect(() => {
-    const stackToUse = compatibilityAnalysis.adjustedStack || stack;
-    setCommand(generateStackCommand(withFormattedProjectName(stackToUse)));
-  }, [stack, compatibilityAnalysis.adjustedStack]);
-
   const categoryProgress = useMemo<Array<CategoryProgressItem>>(() => {
     return CATEGORY_LIST.map((category) => {
-      const options = TECH_OPTIONS[category] || [];
-      const selectedValue = stack[category as keyof StackState];
+      const options = TECH_OPTIONS[category];
+      const selectedValue = getStackCategoryValue(stack, category);
       const realOptionCount = options.filter((option) => option.id !== "none").length;
 
       if (Array.isArray(selectedValue)) {
         const selectedReal = selectedValue.filter(
           (id) => id !== "none" && options.some((option) => option.id === id),
         );
-        const selectedCount = selectedReal.length;
         return {
           category,
-          selected: selectedCount,
+          selected: selectedReal.length,
           total: Math.max(realOptionCount, 1),
-          done: selectedCount > 0,
+          done: selectedReal.length > 0,
         };
       }
 
       const isSelectedReal =
+        typeof selectedValue === "string" &&
         selectedValue !== "none" &&
-        selectedValue !== "false" &&
         options.some((option) => option.id === selectedValue);
 
       return {
@@ -173,42 +184,35 @@ export function useStackBuilder() {
     });
   }, [stack]);
 
-  const selectedCount = useMemo(() => {
-    return categoryProgress.reduce((total, entry) => total + entry.selected, 0);
-  }, [categoryProgress]);
+  const selectedCount = useMemo(
+    () => categoryProgress.reduce((total, entry) => total + entry.selected, 0),
+    [categoryProgress],
+  );
 
   function getStackUrl() {
-    const stackToUse = compatibilityAnalysis.adjustedStack || stack;
     return generateStackSharingUrl(withFormattedProjectName(stackToUse));
   }
 
-  function handleTechSelect(category: keyof typeof TECH_OPTIONS, techId: string) {
-    if (!isOptionCompatible(stack, category, techId)) {
-      return;
-    }
+  function handleTechSelect(category: TechCategory, techId: string) {
+    if (!isOptionCompatible(stack, category, techId)) return;
 
-    analytics.track("stack_option_selected", { category: String(category), value: techId });
+    analytics.track("stack_option_selected", { category, value: techId });
 
     startTransition(() => {
       setStack((currentStack: StackState) => {
-        const catKey = category as keyof StackState;
-        const update: Partial<StackState> = {};
-        const currentValue = currentStack[catKey];
+        let nextStack: StackState | null = null;
 
-        if (
-          catKey === "webFrontend" ||
-          catKey === "nativeFrontend" ||
-          catKey === "addons" ||
-          catKey === "testing" ||
-          catKey === "examples" ||
-          catKey === "payments" ||
-          catKey === "observability"
-        ) {
-          const currentArray = Array.isArray(currentValue) ? [...currentValue] : [];
+        if (isMultiValueCategory(category)) {
+          const categoryValue = getStackCategoryValue(currentStack, category);
+          const currentArray: string[] = isFrontendCategory(category)
+            ? getFrontendSelection(currentStack.frontend, category)
+            : Array.isArray(categoryValue)
+              ? [...categoryValue]
+              : [];
           let nextArray = [...currentArray];
           const isSelected = currentArray.includes(techId);
 
-          if (catKey === "webFrontend") {
+          if (isFrontendCategory(category)) {
             if (techId === "none") {
               nextArray = ["none"];
             } else if (isSelected) {
@@ -217,13 +221,7 @@ export function useStackBuilder() {
             } else {
               nextArray = [techId];
             }
-          } else if (catKey === "nativeFrontend") {
-            if (techId === "none" || isSelected) {
-              nextArray = ["none"];
-            } else {
-              nextArray = [techId];
-            }
-          } else if (catKey === "observability" || catKey === "payments") {
+          } else if (category === "observability" || category === "payments") {
             nextArray = isSelected
               ? nextArray.filter((id) => id !== techId)
               : [...nextArray, techId];
@@ -232,71 +230,72 @@ export function useStackBuilder() {
               ? nextArray.filter((id) => id !== techId)
               : [...nextArray, techId];
 
-            if (
-              catKey === "addons" &&
-              !isSelected &&
-              (TASK_RUNNER_ADDONS as readonly string[]).includes(techId)
-            ) {
-              nextArray = nextArray.filter(
-                (id) => id === techId || !(TASK_RUNNER_ADDONS as readonly string[]).includes(id),
-              );
+            if (category === "addons" && !isSelected && isTaskRunnerAddon(techId)) {
+              nextArray = nextArray.filter((id) => id === techId || !isTaskRunnerAddon(id));
             }
 
-            if (nextArray.length > 1) {
-              nextArray = nextArray.filter((id) => id !== "none");
-            }
-
-            if (
-              nextArray.length === 0 &&
-              catKey !== "addons" &&
-              catKey !== "testing" &&
-              catKey !== "examples" &&
-              catKey !== "payments" &&
-              catKey !== "observability"
-            ) {
-              nextArray = ["none"];
-            }
+            if (nextArray.length > 1) nextArray = nextArray.filter((id) => id !== "none");
           }
 
           const uniqueNext = [...new Set(nextArray)].sort();
           const uniqueCurrent = [...new Set(currentArray)].sort();
-
           if (JSON.stringify(uniqueNext) !== JSON.stringify(uniqueCurrent)) {
-            update[catKey] = uniqueNext as never;
+            if (isFrontendCategory(category)) {
+              nextStack = {
+                ...currentStack,
+                frontend: replaceFrontendSelection(currentStack.frontend, category, uniqueNext),
+              };
+            } else {
+              nextStack = sanitizeStackState({ ...currentStack, [category]: uniqueNext });
+            }
           }
-        } else if (currentValue !== techId) {
-          update[catKey] = techId as never;
-        } else if ((category === "git" || category === "install") && techId === "false") {
-          update[catKey] = "true" as never;
-        } else if ((category === "git" || category === "install") && techId === "true") {
-          update[catKey] = "false" as never;
+        } else if (category === "git") {
+          if (currentStack.git === (techId === "true")) {
+            nextStack = { ...currentStack, git: !currentStack.git };
+          }
+        } else if (category === "install") {
+          if (currentStack.install === (techId === "true")) {
+            nextStack = { ...currentStack, install: !currentStack.install };
+          }
+        } else {
+          const currentValue = getStackCategoryValue(currentStack, category);
+          if (typeof currentValue === "string" && currentValue !== techId) {
+            nextStack = sanitizeStackState({ ...currentStack, [category]: techId });
+          }
         }
 
-        return Object.keys(update).length > 0 ? update : {};
+        return nextStack ?? {};
       });
     });
   }
 
   function removeSelectedTech(category: TechCategory, techId: string) {
-    const categoryKey = category as keyof StackState;
-    const value = stack[categoryKey];
-    const options = TECH_OPTIONS[category] || [];
+    const isFrontend = isFrontendCategory(category);
+    const value = getStackCategoryValue(stack, category);
+    const options = TECH_OPTIONS[category];
     const hasNoneOption = options.some((option) => option.id === "none");
     const forceNoneFallback = category === "addons" || category === "examples";
 
-    if (Array.isArray(value)) {
-      const next = value.filter((id) => id !== techId);
+    if (isFrontend || Array.isArray(value)) {
+      const current = isFrontend
+        ? getFrontendSelection(stack.frontend, category)
+        : Array.isArray(value)
+          ? value
+          : [];
+      const next = current.filter((id) => id !== techId);
       const fallback = next.length === 0 && (hasNoneOption || forceNoneFallback) ? ["none"] : next;
       startTransition(() => {
-        setStack({ [categoryKey]: fallback } as Partial<StackState>);
+        if (isFrontend) {
+          setStack({ frontend: replaceFrontendSelection(stack.frontend, category, fallback) });
+        } else {
+          setStack(sanitizeStackState({ ...stack, [category]: fallback }));
+        }
       });
       return;
     }
 
     if (value === techId && hasNoneOption) {
-      startTransition(() => {
-        setStack({ [categoryKey]: "none" } as Partial<StackState>);
-      });
+      startTransition(() => setStack(sanitizeStackState({ ...stack, [category]: "none" })));
     }
   }
 
@@ -312,15 +311,13 @@ export function useStackBuilder() {
   }
 
   function resetStack() {
-    startTransition(() => {
-      setStack(DEFAULT_STACK);
-    });
+    startTransition(() => setStack({ ...DEFAULT_STACK }));
     analytics.track("stack_reset", {});
     contentRef.current?.scrollTo(0, 0);
   }
 
   function saveCurrentStack() {
-    const stackToSave = withFormattedProjectName(compatibilityAnalysis.adjustedStack || stack);
+    const stackToSave = withFormattedProjectName(stackToUse);
     localStorage.setItem("kubojsStackPreference", JSON.stringify(stackToSave));
     setLastSavedStack(stackToSave);
     analytics.track("stack_saved", {});
@@ -328,30 +325,18 @@ export function useStackBuilder() {
   }
 
   function loadSavedStack() {
-    if (!lastSavedStack) {
-      return;
-    }
-
-    startTransition(() => {
-      setStack(lastSavedStack);
-    });
-
+    if (!lastSavedStack) return;
+    startTransition(() => setStack({ ...lastSavedStack }));
     contentRef.current?.scrollTo(0, 0);
     toast.success("Configuração salva carregada");
   }
 
   function applyPreset(presetId: string) {
     const preset = PRESET_TEMPLATES.find((template) => template.id === presetId);
-    if (!preset) {
-      return;
-    }
+    if (!preset) return;
 
-    startTransition(() => {
-      setStack(preset.stack);
-    });
-
+    startTransition(() => setStack({ ...preset.stack, yolo: false }));
     analytics.track("preset_applied", { preset: preset.id });
-
     contentRef.current?.scrollTo(0, 0);
     toast.success(`Modelo aplicado: ${preset.name}`);
   }

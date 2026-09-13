@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { StackState } from "@/lib/constant";
 import { TECH_OPTIONS } from "@/lib/constant";
+import { getFrontendSelection } from "@/lib/stack-state";
 import { CATEGORY_ORDER } from "@/lib/stack-utils";
 import type { TechCategory } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -19,19 +20,20 @@ type TechCategoriesProps = {
   showAllCategories?: boolean;
 };
 
-export function getIsSelected(stack: StackState, category: keyof StackState, techId: string) {
-  const currentValue = stack[category];
+export function getIsSelected(stack: StackState, category: TechCategory, techId: string) {
+  const currentValue =
+    category === "webFrontend" || category === "nativeFrontend"
+      ? getFrontendSelection(stack.frontend, category)
+      : stack[category];
 
   if (
     category === "addons" ||
     category === "testing" ||
     category === "examples" ||
-    category === "webFrontend" ||
-    category === "nativeFrontend" ||
     category === "payments" ||
     category === "observability"
   ) {
-    return ((currentValue as string[]) || []).includes(techId);
+    return Array.isArray(currentValue) && currentValue.some((value) => value === techId);
   }
 
   return currentValue === techId;
@@ -50,7 +52,7 @@ export function TechCategories({
   return (
     <>
       {categories.map((categoryKey) => {
-        const categoryOptions = TECH_OPTIONS[categoryKey as keyof typeof TECH_OPTIONS] || [];
+        const categoryOptions = TECH_OPTIONS[categoryKey] || [];
         const categoryDisplayName = getCategoryDisplayName(categoryKey);
 
         if (categoryOptions.length === 0) return null;
@@ -96,14 +98,10 @@ export function TechCategories({
               )}
             >
               {categoryOptions.map((tech) => {
-                const category = categoryKey as keyof StackState;
+                const category = categoryKey;
                 const isSelected = getIsSelected(stack, category, tech.id);
-                const isDisabled = !isOptionCompatible(stack, categoryKey as TechCategory, tech.id);
-                const disabledReason = getDisabledReason(
-                  stack,
-                  categoryKey as TechCategory,
-                  tech.id,
-                );
+                const isDisabled = !isOptionCompatible(stack, category, tech.id);
+                const disabledReason = getDisabledReason(stack, category, tech.id);
 
                 const card = (
                   <motion.button
@@ -127,7 +125,7 @@ export function TechCategories({
                       if (isDisabled) {
                         return;
                       }
-                      onSelect(categoryKey as keyof typeof TECH_OPTIONS, tech.id);
+                      onSelect(category, tech.id);
                     }}
                   >
                     <div className="flex items-start">

@@ -422,6 +422,11 @@ export const ProjectConfigSchema = z.object({
   serverDeploy: ServerDeploySchema,
 });
 
+export const ProjectConfigDraftSchema = ProjectConfigSchema.omit({
+  projectDir: true,
+  relativePath: true,
+});
+
 export const KubojsConfigSchema = z.object({
   version: z.string().describe("CLI version used to create this project"),
   createdAt: z.string().describe("Timestamp when the project was created"),

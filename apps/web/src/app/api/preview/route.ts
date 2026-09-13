@@ -1,15 +1,14 @@
 import { generate, type VirtualNode } from "@kubojs/template-generator";
 import { EMBEDDED_TEMPLATES } from "@kubojs/template-generator";
-import { normalizePayments, type ProjectConfig } from "@kubojs/types";
 import { NextResponse } from "next/server";
 
-import type { StackState } from "@/lib/constant";
 import { sanitizeStackState } from "@/lib/sanitize-stack-addons";
+import { stackStateToProjectConfig } from "@/lib/stack-state";
 
 export async function POST(request: Request) {
   try {
-    const body = sanitizeStackState((await request.json()) as StackState);
-    const config = stackStateToConfig(body);
+    const body = sanitizeStackState(await request.json());
+    const config = stackStateToProjectConfig(body);
 
     const result = await generate({
       config,
@@ -59,56 +58,5 @@ function transformTree(node: VirtualNode): Record<string, unknown> {
     path: node.path,
     type: "directory" as const,
     children: node.children.map(transformTree),
-  };
-}
-
-function normalizeBoolean(value: boolean | string | undefined, fallback: boolean): boolean {
-  if (typeof value === "boolean") return value;
-  if (typeof value === "string") return value === "true";
-  return fallback;
-}
-
-function normalizeBackend(value?: string): ProjectConfig["backend"] {
-  if (!value) return "hono";
-  if (value.startsWith("self-")) return "self";
-  return value as ProjectConfig["backend"];
-}
-
-function stackStateToConfig(state: StackState): ProjectConfig {
-  const webFrontend = state.webFrontend || [];
-  const nativeFrontend = state.nativeFrontend || [];
-
-  const frontend = [
-    ...webFrontend.filter((f) => f !== "none"),
-    ...nativeFrontend.filter((f) => f !== "none"),
-  ] as ProjectConfig["frontend"];
-
-  const backend = normalizeBackend(state.backend);
-
-  const git = normalizeBoolean(state.git, false);
-
-  return {
-    projectName: state.projectName || "my-kubo-app",
-    projectDir: "/virtual",
-    relativePath: "./virtual",
-    database: (state.database || "none") as ProjectConfig["database"],
-    orm: (state.orm || "none") as ProjectConfig["orm"],
-    backend,
-    runtime: (state.runtime || "bun") as ProjectConfig["runtime"],
-    frontend: frontend.length > 0 ? frontend : ["none"],
-    addons: (state.addons || []).filter((a) => a !== "none") as ProjectConfig["addons"],
-    examples: (state.examples || []).filter((e) => e !== "none") as ProjectConfig["examples"],
-    testing: (state.testing || []).filter((t) => t !== "none") as ProjectConfig["testing"],
-    auth: (state.auth || "none") as ProjectConfig["auth"],
-    payments: normalizePayments(state.payments),
-    observability: state.observability as ProjectConfig["observability"],
-    communication: (state.communication || "none") as ProjectConfig["communication"],
-    git,
-    packageManager: (state.packageManager || "bun") as ProjectConfig["packageManager"],
-    install: false,
-    dbSetup: (state.dbSetup || "none") as ProjectConfig["dbSetup"],
-    api: (state.api || "trpc") as ProjectConfig["api"],
-    webDeploy: (state.webDeploy || "none") as ProjectConfig["webDeploy"],
-    serverDeploy: (state.serverDeploy || "none") as ProjectConfig["serverDeploy"],
   };
 }

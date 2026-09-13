@@ -71,7 +71,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
       hasSavedStack={!!lastSavedStack}
       stackUrl={stackUrl}
       stackState={effectiveStack}
-      yolo={stack.yolo === "true"}
+      yolo={stack.yolo}
       onYoloToggle={(yolo) => setStack({ yolo })}
     />
   );
