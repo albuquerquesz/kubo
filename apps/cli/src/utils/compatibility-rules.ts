@@ -362,88 +362,41 @@ export function validateServerDeployRequiresBackend(
   return Result.ok(undefined);
 }
 
-export function validateDockerServerDeploy(
+const SERVER_DEPLOY_TARGETS = {
+  docker: true,
+  vercel: true,
+  railway: true,
+  guaracloud: true,
+} satisfies Record<Exclude<ServerDeploy, "cloudflare" | "none">, true>;
+
+type DedicatedServerDeploy = keyof typeof SERVER_DEPLOY_TARGETS;
+
+function isDedicatedServerDeploy(
   serverDeploy: ServerDeploy | undefined,
-  backend: Backend | undefined,
-  runtime: Runtime | undefined,
-): ValidationResult {
-  if (serverDeploy !== "docker") return Result.ok(undefined);
-
-  if (backend === "convex" || backend === "self") {
-    return validationErr(
-      "'--server-deploy docker' requires a separate server backend (hono, express, fastify, elysia, nestjs). For a fullstack 'self' backend, use '--web-deploy docker' instead.",
-    );
-  }
-
-  if (runtime === "workers") {
-    return validationErr(
-      "'--server-deploy docker' is not compatible with '--runtime workers'. Use '--runtime bun' or '--runtime node', or choose '--server-deploy cloudflare'.",
-    );
-  }
-
-  return Result.ok(undefined);
+): serverDeploy is DedicatedServerDeploy {
+  return serverDeploy !== undefined && Object.hasOwn(SERVER_DEPLOY_TARGETS, serverDeploy);
 }
 
-export function validateVercelServerDeploy(
+/**
+ * Validates server deploys that require a separate server application.
+ * Cloudflare is validated by the Workers-specific rules below this layer.
+ */
+export function validateServerDeploy(
   serverDeploy: ServerDeploy | undefined,
   backend: Backend | undefined,
   runtime: Runtime | undefined,
 ): ValidationResult {
-  if (serverDeploy !== "vercel") return Result.ok(undefined);
+  if (!isDedicatedServerDeploy(serverDeploy)) return Result.ok(undefined);
 
   if (backend === "convex" || backend === "self") {
     return validationErr(
-      "'--server-deploy vercel' requires a separate server backend (hono, express, fastify, elysia, nestjs). For a fullstack 'self' backend, use '--web-deploy vercel' instead.",
+      `'--server-deploy ${serverDeploy}' requires a separate server backend (hono, express, fastify, elysia, nestjs). For a fullstack 'self' backend, use '--web-deploy ${serverDeploy}' instead.`,
     );
   }
 
   if (runtime === "workers") {
     return validationErr(
-      "'--server-deploy vercel' is not compatible with '--runtime workers'. Use '--runtime bun' or '--runtime node', or choose '--server-deploy cloudflare'.",
-    );
-  }
-
-  return Result.ok(undefined);
-}
-
-export function validateRailwayServerDeploy(
-  serverDeploy: ServerDeploy | undefined,
-  backend: Backend | undefined,
-  runtime: Runtime | undefined,
-): ValidationResult {
-  if (serverDeploy !== "railway") return Result.ok(undefined);
-
-  if (backend === "convex" || backend === "self") {
-    return validationErr(
-      "'--server-deploy railway' requires a separate server backend (hono, express, fastify, elysia, nestjs). For a fullstack 'self' backend, use '--web-deploy railway' instead.",
-    );
-  }
-
-  if (runtime === "workers") {
-    return validationErr(
-      "'--server-deploy railway' is not compatible with '--runtime workers'. Use '--runtime bun' or '--runtime node', or choose '--server-deploy cloudflare'.",
-    );
-  }
-
-  return Result.ok(undefined);
-}
-
-export function validateGuaraCloudServerDeploy(
-  serverDeploy: ServerDeploy | undefined,
-  backend: Backend | undefined,
-  runtime: Runtime | undefined,
-): ValidationResult {
-  if (serverDeploy !== "guaracloud") return Result.ok(undefined);
-
-  if (backend === "convex" || backend === "self") {
-    return validationErr(
-      "'--server-deploy guaracloud' requires a separate server backend (hono, express, fastify, elysia, nestjs). For a fullstack 'self' backend, use '--web-deploy guaracloud' instead.",
-    );
-  }
-
-  if (runtime === "workers") {
-    return validationErr(
-      "'--server-deploy guaracloud' is not compatible with '--runtime workers'. Use '--runtime bun' or '--runtime node', or choose '--server-deploy cloudflare'.",
+      `'--server-deploy ${serverDeploy}' is not compatible with '--runtime workers'. Use '--runtime bun' or '--runtime node', or choose '--server-deploy cloudflare'.`,
     );
   }
 

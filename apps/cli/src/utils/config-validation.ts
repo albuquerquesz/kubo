@@ -16,12 +16,9 @@ import {
   validateTestingAgainstFrontends,
   validateCommunicationCompatibility,
   validateSelfBackendCompatibility,
-  validateDockerServerDeploy,
   validateDockerWebDeployDesktopAddons,
-  validateGuaraCloudServerDeploy,
-  validateRailwayServerDeploy,
   validateServerDeployRequiresBackend,
-  validateVercelServerDeploy,
+  validateServerDeploy,
   validateWebDeployRequiresWebFrontend,
   validateWorkersCompatibility,
 } from "./compatibility-rules";
@@ -547,10 +544,7 @@ export function validateFullConfig(
     yield* validateApiConstraints(config, options);
 
     yield* validateServerDeployRequiresBackend(config.serverDeploy, config.backend);
-    yield* validateDockerServerDeploy(config.serverDeploy, config.backend, config.runtime);
-    yield* validateVercelServerDeploy(config.serverDeploy, config.backend, config.runtime);
-    yield* validateRailwayServerDeploy(config.serverDeploy, config.backend, config.runtime);
-    yield* validateGuaraCloudServerDeploy(config.serverDeploy, config.backend, config.runtime);
+    yield* validateServerDeploy(config.serverDeploy, config.backend, config.runtime);
     yield* validateDockerWebDeployDesktopAddons(
       config.webDeploy,
       config.addons,
