@@ -20,9 +20,11 @@ import {
   WEB_DEPLOY_VALUES,
   type Frontend,
   type ProjectConfig,
+  type ProjectConfigDraft,
 } from "@kubojs/types";
 
 import { DEFAULT_STACK, type StackState } from "./constant";
+import type { TechCategory } from "./types";
 
 export type FrontendCategory = "webFrontend" | "nativeFrontend";
 
@@ -194,11 +196,72 @@ export function replaceFrontendSelection(
 }
 
 export function stackStateToProjectConfig(stack: StackState): ProjectConfig {
-  const { yolo: ignoredYolo, ...draft } = stack;
-  void ignoredYolo;
+  const draft = stackStateToProjectConfigDraft(stack);
   return {
     ...draft,
     projectDir: "/virtual",
     relativePath: "./virtual",
   };
+}
+
+export function stackStateToProjectConfigDraft(stack: StackState): ProjectConfigDraft {
+  const { yolo: _yolo, ...draft } = stack;
+  return {
+    ...draft,
+    frontend: [...draft.frontend],
+    addons: [...draft.addons],
+    examples: [...draft.examples],
+    testing: [...draft.testing],
+    payments: [...draft.payments],
+    observability: [...draft.observability],
+  };
+}
+
+export function projectConfigDraftToStackState(
+  draft: ProjectConfigDraft,
+  yolo = false,
+): StackState {
+  return {
+    ...draft,
+    frontend: [...draft.frontend],
+    addons: [...draft.addons],
+    examples: [...draft.examples],
+    testing: [...draft.testing],
+    payments: [...draft.payments],
+    observability: [...draft.observability],
+    yolo,
+  };
+}
+
+export function stackStateWithOption(
+  stack: StackState,
+  category: TechCategory,
+  optionId: string,
+): StackState {
+  if (category === "webFrontend" || category === "nativeFrontend") {
+    return {
+      ...stack,
+      frontend: replaceFrontendSelection(stack.frontend, category, [optionId]),
+    };
+  }
+
+  if (
+    category === "addons" ||
+    category === "testing" ||
+    category === "examples" ||
+    category === "payments" ||
+    category === "observability"
+  ) {
+    const current = stack[category];
+    const values = Array.isArray(current) ? current : [];
+    const next =
+      optionId === "none" ? ["none"] : [...values.filter((value) => value !== "none"), optionId];
+    return normalizeStackState({ ...stack, [category]: [...new Set(next)] }) ?? stack;
+  }
+
+  if (category === "git" || category === "install") {
+    return normalizeStackState({ ...stack, [category]: optionId === "true" }) ?? stack;
+  }
+
+  return normalizeStackState({ ...stack, [category]: optionId }) ?? stack;
 }
