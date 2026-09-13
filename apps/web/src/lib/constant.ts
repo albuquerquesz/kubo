@@ -1,19 +1,41 @@
+import {
+  ADDONS_VALUES,
+  API_VALUES,
+  AUTH_VALUES,
+  BACKEND_VALUES,
+  COMMUNICATION_VALUES,
+  DATABASE_SETUP_VALUES,
+  DATABASE_VALUES,
+  EXAMPLES_VALUES,
+  FRONTEND_VALUES,
+  isDesktopWebFrontend,
+  isNativeFrontend,
+  OBSERVABILITY_VALUES,
+  ORM_VALUES,
+  PACKAGE_MANAGER_VALUES,
+  PAYMENTS_VALUES,
+  RUNTIME_VALUES,
+  SERVER_DEPLOY_VALUES,
+  TESTING_VALUES,
+  WEB_DEPLOY_VALUES,
+} from "@kubojs/types";
+import type { ProjectConfigDraft } from "@kubojs/types";
+
 import type { TechCategory } from "./types";
 
 export const ICON_BASE_URL = "/icon";
 
-export const TECH_OPTIONS: Record<
-  TechCategory,
-  {
-    id: string;
-    name: string;
-    description: string;
-    icon: string;
-    color: string;
-    default?: boolean;
-    className?: string;
-  }[]
-> = {
+export type TechOption = {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  default?: boolean;
+  className?: string;
+};
+
+const TECH_OPTION_METADATA: Record<TechCategory, TechOption[]> = {
   api: [
     {
       id: "trpc",
@@ -29,6 +51,13 @@ export const TECH_OPTIONS: Record<
       description: "APIs type-safe de forma simples",
       icon: `${ICON_BASE_URL}/orpc.svg`,
       color: "from-indigo-400 to-indigo-600",
+    },
+    {
+      id: "orval",
+      name: "Orval",
+      description: "Cliente TypeScript gerado a partir de OpenAPI",
+      icon: "",
+      color: "from-violet-400 to-violet-600",
     },
     {
       id: "none",
@@ -211,6 +240,13 @@ export const TECH_OPTIONS: Record<
       color: "from-gray-500 to-gray-700",
     },
     {
+      id: "nestjs",
+      name: "NestJS",
+      description: "Framework Node.js modular e escalável",
+      icon: "",
+      color: "from-red-500 to-red-700",
+    },
+    {
       id: "convex",
       name: "Convex",
       description: "Backend-as-a-service reativo",
@@ -218,39 +254,11 @@ export const TECH_OPTIONS: Record<
       color: "from-pink-500 to-pink-700",
     },
     {
-      id: "self-next",
-      name: "Next.js fullstack",
-      description: "Usa as rotas de API nativas do Next.js",
-      icon: `${ICON_BASE_URL}/nextjs.svg`,
+      id: "self",
+      name: "Fullstack self",
+      description: "Usa as rotas nativas do frontend selecionado",
+      icon: "",
       color: "from-gray-700 to-black",
-    },
-    {
-      id: "self-tanstack-start",
-      name: "TanStack Start fullstack",
-      description: "Usa as rotas de API nativas do TanStack Start",
-      icon: `${ICON_BASE_URL}/tanstack.svg`,
-      color: "from-purple-400 to-purple-600",
-    },
-    {
-      id: "self-nuxt",
-      name: "Nuxt fullstack",
-      description: "Usa as rotas de servidor nativas do Nuxt",
-      icon: `${ICON_BASE_URL}/nuxt.svg`,
-      color: "from-green-400 to-green-700",
-    },
-    {
-      id: "self-svelte",
-      name: "SvelteKit fullstack",
-      description: "Usa as rotas de servidor nativas do SvelteKit",
-      icon: `${ICON_BASE_URL}/svelte.svg`,
-      color: "from-orange-500 to-orange-700",
-    },
-    {
-      id: "self-astro",
-      name: "Astro fullstack",
-      description: "Usa as rotas de API nativas do Astro",
-      icon: `${ICON_BASE_URL}/astro.svg`,
-      color: "from-purple-500 to-orange-500",
     },
     {
       id: "none",
@@ -565,6 +573,13 @@ export const TECH_OPTIONS: Record<
       icon: "https://notifique.dev/favicon.ico",
       color: "from-amber-400 to-orange-600",
     },
+    {
+      id: "arara",
+      name: "Arara",
+      description: "Mensageria transacional para sua aplicação",
+      icon: "",
+      color: "from-pink-400 to-rose-600",
+    },
   ],
   packageManager: [
     {
@@ -696,6 +711,13 @@ export const TECH_OPTIONS: Record<
       color: "from-orange-500 to-amber-700",
       default: false,
     },
+    {
+      id: "none",
+      name: "Sem add-ons",
+      description: "Não adicionar extensões ao projeto",
+      icon: "",
+      color: "from-gray-400 to-gray-600",
+    },
   ],
   testing: [
     {
@@ -714,6 +736,13 @@ export const TECH_OPTIONS: Record<
       color: "from-teal-500 to-emerald-700",
       default: false,
     },
+    {
+      id: "none",
+      name: "Sem testes",
+      description: "Não adicionar ferramentas de teste",
+      icon: "",
+      color: "from-gray-400 to-gray-600",
+    },
   ],
   examples: [
     {
@@ -731,6 +760,13 @@ export const TECH_OPTIONS: Record<
       icon: "",
       color: "from-purple-500 to-purple-700",
       default: false,
+    },
+    {
+      id: "none",
+      name: "Sem exemplos",
+      description: "Não incluir exemplos no projeto",
+      icon: "",
+      color: "from-gray-400 to-gray-600",
     },
   ],
   git: [
@@ -769,6 +805,50 @@ export const TECH_OPTIONS: Record<
   ],
 };
 
+function buildTechOptions<T extends string>(
+  values: readonly T[],
+  metadata: readonly TechOption[],
+): TechOption[] {
+  return values.flatMap((id) => {
+    const option = metadata.find((candidate) => candidate.id === id);
+    return option ? [{ ...option, id }] : [];
+  });
+}
+
+const webFrontendValues = FRONTEND_VALUES.filter(
+  (frontend) => frontend === "none" || isDesktopWebFrontend(frontend),
+);
+const nativeFrontendValues = FRONTEND_VALUES.filter(
+  (frontend) => frontend === "none" || isNativeFrontend(frontend),
+);
+
+export const TECH_OPTIONS: Record<TechCategory, TechOption[]> = {
+  api: buildTechOptions(API_VALUES, TECH_OPTION_METADATA.api),
+  webFrontend: buildTechOptions(webFrontendValues, TECH_OPTION_METADATA.webFrontend),
+  nativeFrontend: buildTechOptions(nativeFrontendValues, TECH_OPTION_METADATA.nativeFrontend),
+  runtime: buildTechOptions(RUNTIME_VALUES, TECH_OPTION_METADATA.runtime),
+  backend: buildTechOptions(BACKEND_VALUES, TECH_OPTION_METADATA.backend),
+  database: buildTechOptions(DATABASE_VALUES, TECH_OPTION_METADATA.database),
+  orm: buildTechOptions(ORM_VALUES, TECH_OPTION_METADATA.orm),
+  dbSetup: buildTechOptions(DATABASE_SETUP_VALUES, TECH_OPTION_METADATA.dbSetup),
+  webDeploy: buildTechOptions(WEB_DEPLOY_VALUES, TECH_OPTION_METADATA.webDeploy),
+  serverDeploy: buildTechOptions(SERVER_DEPLOY_VALUES, TECH_OPTION_METADATA.serverDeploy),
+  auth: buildTechOptions(AUTH_VALUES, TECH_OPTION_METADATA.auth),
+  payments: buildTechOptions(PAYMENTS_VALUES, TECH_OPTION_METADATA.payments),
+  observability: buildTechOptions(OBSERVABILITY_VALUES, TECH_OPTION_METADATA.observability),
+  communication: buildTechOptions(COMMUNICATION_VALUES, TECH_OPTION_METADATA.communication),
+  packageManager: buildTechOptions(PACKAGE_MANAGER_VALUES, TECH_OPTION_METADATA.packageManager),
+  addons: buildTechOptions(ADDONS_VALUES, TECH_OPTION_METADATA.addons),
+  testing: buildTechOptions(TESTING_VALUES, TECH_OPTION_METADATA.testing),
+  examples: buildTechOptions(EXAMPLES_VALUES, TECH_OPTION_METADATA.examples),
+  git: buildTechOptions(["true", "false"], TECH_OPTION_METADATA.git),
+  install: buildTechOptions(["true", "false"], TECH_OPTION_METADATA.install),
+};
+
+export type StackState = ProjectConfigDraft & {
+  yolo: boolean;
+};
+
 export const PRESET_TEMPLATES = [
   {
     id: "mern",
@@ -776,8 +856,7 @@ export const PRESET_TEMPLATES = [
     description: "MongoDB + Express + React + Node.js — stack MERN clássica",
     stack: {
       projectName: "my-kubo-app",
-      webFrontend: ["react-router"],
-      nativeFrontend: ["none"],
+      frontend: ["react-router"],
       runtime: "node",
       backend: "express",
       database: "mongodb",
@@ -791,12 +870,11 @@ export const PRESET_TEMPLATES = [
       addons: ["turborepo"],
       testing: ["none"],
       examples: ["todo"],
-      git: "true",
-      install: "true",
+      git: true,
+      install: true,
       api: "orpc",
       webDeploy: "none",
       serverDeploy: "none",
-      yolo: "false",
     },
   },
   {
@@ -805,8 +883,7 @@ export const PRESET_TEMPLATES = [
     description: "PostgreSQL + Express + React + Node.js — stack PERN popular",
     stack: {
       projectName: "my-kubo-app",
-      webFrontend: ["tanstack-router"],
-      nativeFrontend: ["none"],
+      frontend: ["tanstack-router"],
       runtime: "node",
       backend: "express",
       database: "postgres",
@@ -820,12 +897,11 @@ export const PRESET_TEMPLATES = [
       addons: ["turborepo"],
       testing: ["none"],
       examples: ["todo"],
-      git: "true",
-      install: "true",
+      git: true,
+      install: true,
       api: "trpc",
       webDeploy: "none",
       serverDeploy: "none",
-      yolo: "false",
     },
   },
   {
@@ -834,10 +910,9 @@ export const PRESET_TEMPLATES = [
     description: "Next.js + tRPC + Prisma + PostgreSQL + Better Auth",
     stack: {
       projectName: "my-kubo-app",
-      webFrontend: ["next"],
-      nativeFrontend: ["none"],
+      frontend: ["next"],
       runtime: "none",
-      backend: "self-next",
+      backend: "self",
       database: "postgres",
       orm: "prisma",
       dbSetup: "none",
@@ -849,12 +924,11 @@ export const PRESET_TEMPLATES = [
       addons: ["biome", "turborepo"],
       testing: ["none"],
       examples: ["none"],
-      git: "true",
-      install: "true",
+      git: true,
+      install: true,
       api: "trpc",
       webDeploy: "none",
       serverDeploy: "none",
-      yolo: "false",
     },
   },
   {
@@ -863,8 +937,7 @@ export const PRESET_TEMPLATES = [
     description: "App nativo Expo + Uniwind sem serviços de backend",
     stack: {
       projectName: "my-kubo-app",
-      webFrontend: ["none"],
-      nativeFrontend: ["native-uniwind"],
+      frontend: ["native-uniwind"],
       runtime: "none",
       backend: "none",
       database: "none",
@@ -878,45 +951,23 @@ export const PRESET_TEMPLATES = [
       addons: ["none"],
       testing: ["none"],
       examples: ["none"],
-      git: "true",
-      install: "true",
+      git: true,
+      install: true,
       api: "none",
       webDeploy: "none",
       serverDeploy: "none",
-      yolo: "false",
     },
   },
-];
-
-export type StackState = {
-  projectName: string | null;
-  webFrontend: string[];
-  nativeFrontend: string[];
-  runtime: string;
-  backend: string;
-  database: string;
-  orm: string;
-  dbSetup: string;
-  auth: string;
-  payments: string[];
-  observability: string[];
-  communication: string;
-  packageManager: string;
-  addons: string[];
-  testing: string[];
-  examples: string[];
-  git: string;
-  install: string;
-  api: string;
-  webDeploy: string;
-  serverDeploy: string;
-  yolo: string;
-};
+] satisfies Array<{
+  id: string;
+  name: string;
+  description: string;
+  stack: ProjectConfigDraft;
+}>;
 
 export const DEFAULT_STACK: StackState = {
   projectName: "my-kubo-app",
-  webFrontend: ["tanstack-router"],
-  nativeFrontend: ["none"],
+  frontend: ["tanstack-router"],
   runtime: "bun",
   backend: "hono",
   database: "sqlite",
@@ -930,12 +981,12 @@ export const DEFAULT_STACK: StackState = {
   addons: ["turborepo"],
   testing: ["none"],
   examples: ["none"],
-  git: "true",
-  install: "true",
+  git: true,
+  install: true,
   api: "trpc",
   webDeploy: "none",
   serverDeploy: "none",
-  yolo: "false",
+  yolo: false,
 };
 
 export const isStackDefault = <K extends keyof StackState>(
@@ -952,17 +1003,6 @@ export const isStackDefault = <K extends keyof StackState>(
     if (key === "api" && value === "none") return true;
     if (key === "auth" && value === "none") return true;
     if (key === "dbSetup" && value === "none") return true;
-  }
-
-  if (key === "webFrontend" || key === "nativeFrontend" || key === "addons" || key === "examples") {
-    if (Array.isArray(defaultValue) && Array.isArray(value)) {
-      const sortedDefault = [...defaultValue].sort();
-      const sortedValue = [...value].sort();
-      return (
-        sortedDefault.length === sortedValue.length &&
-        sortedDefault.every((item, index) => item === sortedValue[index])
-      );
-    }
   }
 
   if (Array.isArray(defaultValue) && Array.isArray(value)) {

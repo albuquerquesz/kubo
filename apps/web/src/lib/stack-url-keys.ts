@@ -6,8 +6,7 @@ export const stackUrlKeys: UrlKeys<
   Record<keyof StackState, unknown> & { viewMode: unknown; selectedFile: unknown }
 > = {
   projectName: "name",
-  webFrontend: "fe-w",
-  nativeFrontend: "fe-n",
+  frontend: "fe",
   runtime: "rt",
   backend: "be",
   api: "api",
