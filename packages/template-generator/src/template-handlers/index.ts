@@ -8,6 +8,7 @@ export { processConfigPackage, processEnvPackage, processUiPackage } from "./pac
 export { processAuthTemplates } from "./auth";
 export { processPaymentsTemplates } from "./payments";
 export { processCommunicationTemplates } from "./communication";
+export { processObservabilityTemplates } from "./observability";
 export { processAddonTemplates } from "./addons";
 export { processExampleTemplates } from "./examples";
 export { processTestingTemplates } from "./testing";

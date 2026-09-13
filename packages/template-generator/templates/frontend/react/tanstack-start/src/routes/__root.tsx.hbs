@@ -14,6 +14,9 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Header from "../components/header";
 import appCss from "../index.css?url";
+{{#if (includes observability "getmonitor")}}
+import { GetMonitorErrorBoundary } from "../components/getmonitor";
+{{/if}}
 {{#if (eq backend "convex")}}
 import type { QueryClient } from "@tanstack/react-query";
 import type { ConvexQueryClient } from "@convex-dev/react-query";
@@ -94,6 +97,27 @@ export interface RouterAppContext {
   {{/if}}
 {{/if}}
 
+function GetMonitorOutlet() {
+  return (
+    {{#if (includes observability "getmonitor")}}
+    <GetMonitorErrorBoundary
+      fallback={(error, reset) => (
+        <div>
+          <p>Something went wrong.</p>
+          <button type="button" onClick={reset}>
+            Try again
+          </button>
+        </div>
+      )}
+    >
+    {{/if}}
+      <Outlet />
+    {{#if (includes observability "getmonitor")}}
+    </GetMonitorErrorBoundary>
+    {{/if}}
+  );
+}
+
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   head: () => ({
     meta: [
@@ -152,7 +176,7 @@ function RootDocument() {
           <body>
             <div className="grid h-svh grid-rows-[auto_1fr]">
               <Header />
-              <Outlet />
+              <GetMonitorOutlet />
             </div>
             <Toaster richColors />
             <TanStackRouterDevtools position="bottom-left" />
@@ -177,7 +201,7 @@ function RootDocument() {
         <body>
           <div className="grid h-svh grid-rows-[auto_1fr]">
             <Header />
-            <Outlet />
+            <GetMonitorOutlet />
           </div>
           <Toaster richColors />
           <TanStackRouterDevtools position="bottom-left" />
@@ -199,7 +223,7 @@ function RootDocument() {
         <body>
           <div className="grid h-svh grid-rows-[auto_1fr]">
             <Header />
-            <Outlet />
+            <GetMonitorOutlet />
           </div>
           <Toaster richColors />
           <TanStackRouterDevtools position="bottom-left" />
@@ -222,7 +246,7 @@ function RootDocument() {
         <body>
           <div className="grid h-svh grid-rows-[auto_1fr]">
             <Header />
-            <Outlet />
+            <GetMonitorOutlet />
           </div>
           <Toaster richColors />
           <TanStackRouterDevtools position="bottom-left" />
@@ -240,7 +264,7 @@ function RootDocument() {
       <body>
         <div className="grid h-svh grid-rows-[auto_1fr]">
           <Header />
-          <Outlet />
+          <GetMonitorOutlet />
         </div>
         <Toaster richColors />
         <TanStackRouterDevtools position="bottom-left" />

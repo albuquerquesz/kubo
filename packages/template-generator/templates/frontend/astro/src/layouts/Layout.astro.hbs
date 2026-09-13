@@ -1,6 +1,12 @@
 ---
 import "../styles/global.css";
 import Header from "../components/Header.astro";
+{{#if (includes observability "getmonitor")}}
+import "../lib/getmonitor";
+{{/if}}
+{{#if (includes observability "himetrica")}}
+import "../lib/himetrica";
+{{/if}}
 
 interface Props {
   title?: string;

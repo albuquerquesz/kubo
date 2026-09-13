@@ -2,6 +2,12 @@ import { RouterProvider, createRouter } from "@tanstack/solid-router";
 import { render } from "solid-js/web";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
+{{#if (includes observability "getmonitor")}}
+import "./lib/getmonitor";
+{{/if}}
+{{#if (includes observability "himetrica")}}
+import "./lib/himetrica";
+{{/if}}
 {{#if (eq api "orpc")}}
 import { QueryClientProvider } from "@tanstack/solid-query";
 import { orpc, queryClient } from "./utils/orpc";

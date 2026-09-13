@@ -1,0 +1,10 @@
+import { GetMonitor } from "@getmonitor/browser";
+
+export default defineNuxtPlugin(() => {
+  const apiKey = process.env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}};
+  if (!apiKey) return;
+
+  GetMonitor.init(apiKey, {
+    environment: process.env.NODE_ENV ?? "development",
+  });
+});

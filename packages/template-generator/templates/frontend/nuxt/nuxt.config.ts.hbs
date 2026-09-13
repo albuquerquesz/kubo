@@ -9,6 +9,9 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxt/ui'
+    {{#if (includes observability "getmonitor")}},
+    '@getmonitor/nuxt'
+    {{/if}}
     {{#if (eq backend "convex")}},
     'convex-nuxt'
     {{/if}}
@@ -21,7 +24,13 @@ export default defineNuxtConfig({
   convex: {
     url: process.env.NUXT_PUBLIC_CONVEX_URL,
   },
-  {{else if (or (and (ne backend "self") (ne backend "none")) (includes payments "stripe"))}}
+  {{/if}}
+  {{#if (includes observability "getmonitor")}}
+  getmonitor: {
+    authToken: process.env.GETMONITOR_AUTH_TOKEN,
+  },
+  {{/if}}
+  {{#if (and (not (eq backend "convex")) (or (and (ne backend "self") (ne backend "none")) (includes payments "stripe")))}}
   runtimeConfig: {
     // server-side override for SSR fetches (NUXT_SERVER_URL); falls back to the public URL
     serverUrl: "",

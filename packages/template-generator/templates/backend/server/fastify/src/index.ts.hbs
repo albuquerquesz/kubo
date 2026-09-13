@@ -1,6 +1,12 @@
 import { env } from "@{{projectName}}/env/server";
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
+{{#if (supportsNodeObservability backend runtime serverDeploy)}}
+{{#if (includes observability "getmonitor")}}
+import { getMonitor } from "./shared/getmonitor";
+void getMonitor;
+{{/if}}
+{{/if}}
 {{#if (includes payments "stripe")}}
 import fastifyRawBody from "fastify-raw-body";
 {{/if}}

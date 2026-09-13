@@ -1,6 +1,8 @@
 {{#if (eq backend "convex")}}
 <script lang="ts">
 	import '../app.css';
+    {{#if (includes observability "getmonitor")}}import '$lib/getmonitor';{{/if}}
+    {{#if (includes observability "himetrica")}}import '$lib/himetrica';{{/if}}
     import Header from '../components/Header.svelte';
     import { PUBLIC_CONVEX_URL } from '$env/static/public';
 	import { setupConvex } from 'convex-svelte';
@@ -21,6 +23,8 @@
     import { QueryClientProvider } from '@tanstack/svelte-query';
     import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
 	import '../app.css';
+    {{#if (includes observability "getmonitor")}}import '$lib/getmonitor';{{/if}}
+    {{#if (includes observability "himetrica")}}import '$lib/himetrica';{{/if}}
     import { queryClient } from '$lib/orpc';
     import Header from '../components/Header.svelte';
 
@@ -39,6 +43,8 @@
   {{else}}
 <script lang="ts">
 	import '../app.css';
+    {{#if (includes observability "getmonitor")}}import '$lib/getmonitor';{{/if}}
+    {{#if (includes observability "himetrica")}}import '$lib/himetrica';{{/if}}
     import Header from '../components/Header.svelte';
 
 	const { children } = $props();

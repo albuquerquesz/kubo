@@ -15,6 +15,10 @@ import { createContext } from "@{{projectName}}/api/context";
 {{/if}}
 import cors from "cors";
 import express from "express";
+{{#if (includes observability "getmonitor")}}
+import { setupExpressErrorHandler } from "@getmonitor/node";
+import { getMonitor } from "./shared/getmonitor";
+{{/if}}
 {{#if (includes examples "ai")}}
 import { pipeUIMessageStreamToResponse, streamText, toUIMessageStream, type UIMessage, convertToModelMessages, wrapLanguageModel } from "ai";
 import { google } from "@ai-sdk/google";
@@ -211,6 +215,9 @@ app.get("/", (_req, res) => {
 	res.status(200).send("OK");
 });
 
+{{#if (includes observability "getmonitor")}}
+if (getMonitor) setupExpressErrorHandler(getMonitor, app);
+{{/if}}
 app.listen(3000, () => {
 	console.log("Server is running on http://localhost:3000");
 });

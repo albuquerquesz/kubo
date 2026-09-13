@@ -22,6 +22,9 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import "../index.css";
+{{#if (includes observability "getmonitor")}}
+import { GetMonitorErrorBoundary } from "../components/getmonitor";
+{{/if}}
 
 {{#if (eq api "orpc")}}
 export interface RouterAppContext {
@@ -58,6 +61,27 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
   }),
 });
 
+function GetMonitorOutlet() {
+  return (
+    {{#if (includes observability "getmonitor")}}
+    <GetMonitorErrorBoundary
+      fallback={(error, reset) => (
+        <div>
+          <p>Something went wrong.</p>
+          <button type="button" onClick={reset}>
+            Try again
+          </button>
+        </div>
+      )}
+    >
+    {{/if}}
+      <Outlet />
+    {{#if (includes observability "getmonitor")}}
+    </GetMonitorErrorBoundary>
+    {{/if}}
+  );
+}
+
 function RootComponent() {
   {{#if (eq api "orpc")}}
   const [client] = useState<AppRouterClient>(() => createORPCClient(link));
@@ -76,7 +100,7 @@ function RootComponent() {
         >
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
-            <Outlet />
+            <GetMonitorOutlet />
           </div>
           <Toaster richColors />
         </ThemeProvider>
@@ -89,7 +113,7 @@ function RootComponent() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <Outlet />
+          <GetMonitorOutlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>

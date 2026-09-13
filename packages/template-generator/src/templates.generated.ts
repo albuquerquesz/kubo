@@ -14173,6 +14173,12 @@ import { node } from "@elysiajs/node";
 {{/if}}
 import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
+{{#if (supportsNodeObservability backend runtime serverDeploy)}}
+{{#if (includes observability "getmonitor")}}
+import { getMonitor } from "./shared/getmonitor";
+void getMonitor;
+{{/if}}
+{{/if}}
 {{#if (includes examples "ai")}}
 import { google } from "@ai-sdk/google";
 import { convertToModelMessages, createUIMessageStreamResponse, streamText, toUIMessageStream, type UIMessage, wrapLanguageModel } from "ai";
@@ -14395,6 +14401,10 @@ import { createContext } from "@{{projectName}}/api/context";
 {{/if}}
 import cors from "cors";
 import express from "express";
+{{#if (includes observability "getmonitor")}}
+import { setupExpressErrorHandler } from "@getmonitor/node";
+import { getMonitor } from "./shared/getmonitor";
+{{/if}}
 {{#if (includes examples "ai")}}
 import { pipeUIMessageStreamToResponse, streamText, toUIMessageStream, type UIMessage, convertToModelMessages, wrapLanguageModel } from "ai";
 import { google } from "@ai-sdk/google";
@@ -14591,6 +14601,9 @@ app.get("/", (_req, res) => {
 	res.status(200).send("OK");
 });
 
+{{#if (includes observability "getmonitor")}}
+if (getMonitor) setupExpressErrorHandler(getMonitor, app);
+{{/if}}
 app.listen(3000, () => {
 	console.log("Server is running on http://localhost:3000");
 });
@@ -14598,6 +14611,12 @@ app.listen(3000, () => {
   ["backend/server/fastify/src/index.ts.hbs", `import { env } from "@{{projectName}}/env/server";
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
+{{#if (supportsNodeObservability backend runtime serverDeploy)}}
+{{#if (includes observability "getmonitor")}}
+import { getMonitor } from "./shared/getmonitor";
+void getMonitor;
+{{/if}}
+{{/if}}
 {{#if (includes payments "stripe")}}
 import fastifyRawBody from "fastify-raw-body";
 {{/if}}
@@ -14925,6 +14944,12 @@ import {
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+{{#if (supportsNodeObservability backend runtime serverDeploy)}}
+{{#if (includes observability "getmonitor")}}
+import { getMonitor } from "./shared/getmonitor";
+void getMonitor;
+{{/if}}
+{{/if}}
 {{#if (and (includes examples "ai") (or (eq runtime "bun") (eq runtime "node")))}}
 import { createUIMessageStreamResponse, streamText, toUIMessageStream, convertToModelMessages, wrapLanguageModel } from "ai";
 import { google } from "@ai-sdk/google";
@@ -15207,6 +15232,11 @@ import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { env } from "@{{projectName}}/env/server";
 import { AppModule } from "./app.module";
+{{#if (supportsNodeObservability backend runtime serverDeploy)}}
+{{#if (includes observability "getmonitor")}}
+import { getMonitor } from "./shared/getmonitor";
+{{/if}}
+{{/if}}
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
@@ -15224,6 +15254,9 @@ async function bootstrap(): Promise<void> {
     }),
   );
 
+  {{#if (supportsNodeObservability backend runtime serverDeploy)}}
+  {{#if (includes observability "getmonitor")}}void getMonitor;{{/if}}
+  {{/if}}
   await app.listen(Number(process.env.PORT ?? 3000));
 }
 
@@ -25871,6 +25904,12 @@ const links = [
   ["frontend/astro/src/layouts/Layout.astro.hbs", `---
 import "../styles/global.css";
 import Header from "../components/Header.astro";
+{{#if (includes observability "getmonitor")}}
+import "../lib/getmonitor";
+{{/if}}
+{{#if (includes observability "himetrica")}}
+import "../lib/himetrica";
+{{/if}}
 
 interface Props {
   title?: string;
@@ -29706,6 +29745,9 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxt/ui'
+    {{#if (includes observability "getmonitor")}},
+    '@getmonitor/nuxt'
+    {{/if}}
     {{#if (eq backend "convex")}},
     'convex-nuxt'
     {{/if}}
@@ -29718,7 +29760,13 @@ export default defineNuxtConfig({
   convex: {
     url: process.env.NUXT_PUBLIC_CONVEX_URL,
   },
-  {{else if (or (and (ne backend "self") (ne backend "none")) (includes payments "stripe"))}}
+  {{/if}}
+  {{#if (includes observability "getmonitor")}}
+  getmonitor: {
+    authToken: process.env.GETMONITOR_AUTH_TOKEN,
+  },
+  {{/if}}
+  {{#if (and (not (eq backend "convex")) (or (and (ne backend "self") (ne backend "none")) (includes payments "stripe")))}}
   runtimeConfig: {
     // server-side override for SSR fetches (NUXT_SERVER_URL); falls back to the public URL
     serverUrl: "",
@@ -29789,6 +29837,9 @@ Disallow:
 {{#if (eq webDeploy "cloudflare")}}
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 {{/if}}
+{{#if (includes observability "getmonitor")}}
+import { withGetMonitor } from "@getmonitor/nextjs-config";
+{{/if}}
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -29807,7 +29858,15 @@ const nextConfig: NextConfig = {
 	{{/if}}
 };
 
+{{#if (includes observability "getmonitor")}}
+export default process.env.GETMONITOR_AUTH_TOKEN
+	? withGetMonitor(nextConfig, {
+			authToken: process.env.GETMONITOR_AUTH_TOKEN,
+		})
+	: nextConfig;
+{{else}}
 export default nextConfig;
+{{/if}}
 
 {{#if (eq webDeploy "cloudflare")}}
 initOpenNextCloudflareForDev();
@@ -29856,6 +29915,12 @@ import "../index.css";
 {{/if}}{{#if (and (eq backend "convex") (eq auth "better-auth"))}}
 import { getToken } from "@/lib/auth-server";
 {{/if}}
+{{#if (includes observability "getmonitor")}}
+import { GetMonitorProvider, GetMonitorBoundary } from "@/components/getmonitor";
+{{/if}}
+{{#if (includes observability "himetrica")}}
+import { KuboHimetricaProvider } from "@/components/himetrica";
+{{/if}}
 import Providers from "@/components/providers";
 import Header from "@/components/header";
 
@@ -29886,12 +29951,17 @@ export default async function RootLayout({
       <body
         className={\`\${geistSans.variable} \${geistMono.variable} antialiased\`}
       >
+        {{#if (includes observability "getmonitor")}}<GetMonitorProvider />
+        <GetMonitorBoundary>{{/if}}
+        {{#if (includes observability "himetrica")}}<KuboHimetricaProvider>{{/if}}
         <Providers initialToken={token}>
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
             {children}
           </div>
         </Providers>
+        {{#if (includes observability "himetrica")}}</KuboHimetricaProvider>{{/if}}
+        {{#if (includes observability "getmonitor")}}</GetMonitorBoundary>{{/if}}
       </body>
     </html>
   );
@@ -29906,8 +29976,11 @@ export default function RootLayout({
 		<html lang="en" suppressHydrationWarning>
 			<body
 				className={\`\${geistSans.variable} \${geistMono.variable} antialiased\`}
-			>
-				{{#if (eq auth "clerk")}}<ClerkProvider>
+				>
+					{{#if (includes observability "getmonitor")}}<GetMonitorProvider />
+					<GetMonitorBoundary>{{/if}}
+					{{#if (includes observability "himetrica")}}<KuboHimetricaProvider>{{/if}}
+					{{#if (eq auth "clerk")}}<ClerkProvider>
 					<Providers>
 						<div className="grid grid-rows-[auto_1fr] h-svh">
 							<Header />
@@ -29919,8 +29992,10 @@ export default function RootLayout({
 						<Header />
 						{children}
 					</div>
-				</Providers>{{/if}}
-			</body>
+					</Providers>{{/if}}
+					{{#if (includes observability "himetrica")}}</KuboHimetricaProvider>{{/if}}
+					{{#if (includes observability "getmonitor")}}</GetMonitorBoundary>{{/if}}
+				</body>
 		</html>
 	);
 }
@@ -30349,6 +30424,12 @@ export { useTheme } from "next-themes";
 } from "react-router";
 import type { Route } from "./+types/root";
 import "./index.css";
+{{#if (includes observability "getmonitor")}}
+import "./lib/getmonitor";
+{{/if}}
+{{#if (includes observability "himetrica")}}
+import "./lib/himetrica";
+{{/if}}
 import Header from "./components/header";
 import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "@{{projectName}}/ui/components/sonner";
@@ -30359,6 +30440,9 @@ import { clerkMiddleware, rootAuthLoader } from "@clerk/react-router/server";
 {{#if (and (eq auth "clerk") (ne backend "convex") (ne api "none"))}}
 import { useEffect } from "react";
 import { setClerkAuthTokenGetter } from "@/utils/clerk-auth";
+{{/if}}
+{{#if (includes observability "getmonitor")}}
+import { GetMonitorErrorBoundary } from "./components/getmonitor";
 {{/if}}
 
 {{#if (eq backend "convex")}}
@@ -30421,6 +30505,27 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+function GetMonitorOutlet() {
+  return (
+    {{#if (includes observability "getmonitor")}}
+    <GetMonitorErrorBoundary
+      fallback={(error, reset) => (
+        <div>
+          <p>Something went wrong.</p>
+          <button type="button" onClick={reset}>
+            Try again
+          </button>
+        </div>
+      )}
+    >
+    {{/if}}
+      <Outlet />
+    {{#if (includes observability "getmonitor")}}
+    </GetMonitorErrorBoundary>
+    {{/if}}
+  );
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -30460,7 +30565,7 @@ export default function App() {
         >
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
-            <Outlet />
+            <GetMonitorOutlet />
           </div>
           <Toaster richColors />
         </ThemeProvider>
@@ -30478,7 +30583,7 @@ export default function App() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <Outlet />
+          <GetMonitorOutlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -30495,7 +30600,7 @@ export default function App() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <Outlet />
+          <GetMonitorOutlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -30520,7 +30625,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
         >
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
-            <Outlet />
+            <GetMonitorOutlet />
           </div>
           <Toaster richColors />
         </ThemeProvider>
@@ -30536,7 +30641,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
         >
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
-            <Outlet />
+            <GetMonitorOutlet />
           </div>
           <Toaster richColors />
         </ThemeProvider>
@@ -30551,7 +30656,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <Outlet />
+          <GetMonitorOutlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -30571,7 +30676,7 @@ export default function App() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <Outlet />
+          <GetMonitorOutlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -30591,7 +30696,7 @@ export default function App() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <Outlet />
+          <GetMonitorOutlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -30610,7 +30715,7 @@ export default function App() {
     >
       <div className="grid grid-rows-[auto_1fr] h-svh">
         <Header />
-        <Outlet />
+        <GetMonitorOutlet />
       </div>
       <Toaster richColors />
     </ThemeProvider>
@@ -30912,6 +31017,12 @@ import { setClerkAuthTokenGetter } from "@/utils/clerk-auth";
 {{/if}}
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
+{{#if (includes observability "getmonitor")}}
+import "./lib/getmonitor";
+{{/if}}
+{{#if (includes observability "himetrica")}}
+import "./lib/himetrica";
+{{/if}}
 
 {{#if (eq api "orpc")}}
   import { QueryClientProvider } from "@tanstack/react-query";
@@ -31076,6 +31187,9 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import "../index.css";
+{{#if (includes observability "getmonitor")}}
+import { GetMonitorErrorBoundary } from "../components/getmonitor";
+{{/if}}
 
 {{#if (eq api "orpc")}}
 export interface RouterAppContext {
@@ -31112,6 +31226,27 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
   }),
 });
 
+function GetMonitorOutlet() {
+  return (
+    {{#if (includes observability "getmonitor")}}
+    <GetMonitorErrorBoundary
+      fallback={(error, reset) => (
+        <div>
+          <p>Something went wrong.</p>
+          <button type="button" onClick={reset}>
+            Try again
+          </button>
+        </div>
+      )}
+    >
+    {{/if}}
+      <Outlet />
+    {{#if (includes observability "getmonitor")}}
+    </GetMonitorErrorBoundary>
+    {{/if}}
+  );
+}
+
 function RootComponent() {
   {{#if (eq api "orpc")}}
   const [client] = useState<AppRouterClient>(() => createORPCClient(link));
@@ -31130,7 +31265,7 @@ function RootComponent() {
         >
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
-            <Outlet />
+            <GetMonitorOutlet />
           </div>
           <Toaster richColors />
         </ThemeProvider>
@@ -31143,7 +31278,7 @@ function RootComponent() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <Outlet />
+          <GetMonitorOutlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -31357,11 +31492,23 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { routeTree } from "./routeTree.gen";
 import Loader from "./components/loader";
+{{#if (includes observability "getmonitor")}}
+import "./lib/getmonitor";
+{{/if}}
+{{#if (includes observability "himetrica")}}
+import "./lib/himetrica";
+{{/if}}
 import { env } from "@{{projectName}}/env/web";
 {{else}}
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
+{{#if (includes observability "getmonitor")}}
+import "./lib/getmonitor";
+{{/if}}
+{{#if (includes observability "himetrica")}}
+import "./lib/himetrica";
+{{/if}}
 {{#if (eq api "trpc")}}
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
@@ -31539,6 +31686,9 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Header from "../components/header";
 import appCss from "../index.css?url";
+{{#if (includes observability "getmonitor")}}
+import { GetMonitorErrorBoundary } from "../components/getmonitor";
+{{/if}}
 {{#if (eq backend "convex")}}
 import type { QueryClient } from "@tanstack/react-query";
 import type { ConvexQueryClient } from "@convex-dev/react-query";
@@ -31619,6 +31769,27 @@ export interface RouterAppContext {
   {{/if}}
 {{/if}}
 
+function GetMonitorOutlet() {
+  return (
+    {{#if (includes observability "getmonitor")}}
+    <GetMonitorErrorBoundary
+      fallback={(error, reset) => (
+        <div>
+          <p>Something went wrong.</p>
+          <button type="button" onClick={reset}>
+            Try again
+          </button>
+        </div>
+      )}
+    >
+    {{/if}}
+      <Outlet />
+    {{#if (includes observability "getmonitor")}}
+    </GetMonitorErrorBoundary>
+    {{/if}}
+  );
+}
+
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   head: () => ({
     meta: [
@@ -31677,7 +31848,7 @@ function RootDocument() {
           <body>
             <div className="grid h-svh grid-rows-[auto_1fr]">
               <Header />
-              <Outlet />
+              <GetMonitorOutlet />
             </div>
             <Toaster richColors />
             <TanStackRouterDevtools position="bottom-left" />
@@ -31702,7 +31873,7 @@ function RootDocument() {
         <body>
           <div className="grid h-svh grid-rows-[auto_1fr]">
             <Header />
-            <Outlet />
+            <GetMonitorOutlet />
           </div>
           <Toaster richColors />
           <TanStackRouterDevtools position="bottom-left" />
@@ -31724,7 +31895,7 @@ function RootDocument() {
         <body>
           <div className="grid h-svh grid-rows-[auto_1fr]">
             <Header />
-            <Outlet />
+            <GetMonitorOutlet />
           </div>
           <Toaster richColors />
           <TanStackRouterDevtools position="bottom-left" />
@@ -31747,7 +31918,7 @@ function RootDocument() {
         <body>
           <div className="grid h-svh grid-rows-[auto_1fr]">
             <Header />
-            <Outlet />
+            <GetMonitorOutlet />
           </div>
           <Toaster richColors />
           <TanStackRouterDevtools position="bottom-left" />
@@ -31765,7 +31936,7 @@ function RootDocument() {
       <body>
         <div className="grid h-svh grid-rows-[auto_1fr]">
           <Header />
-          <Outlet />
+          <GetMonitorOutlet />
         </div>
         <Toaster richColors />
         <TanStackRouterDevtools position="bottom-left" />
@@ -32250,6 +32421,12 @@ export default function Loader() {
 import { render } from "solid-js/web";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
+{{#if (includes observability "getmonitor")}}
+import "./lib/getmonitor";
+{{/if}}
+{{#if (includes observability "himetrica")}}
+import "./lib/himetrica";
+{{/if}}
 {{#if (eq api "orpc")}}
 import { QueryClientProvider } from "@tanstack/solid-query";
 import { orpc, queryClient } from "./utils/orpc";
@@ -32627,6 +32804,8 @@ export {};
   ["frontend/svelte/src/routes/+layout.svelte.hbs", `{{#if (eq backend "convex")}}
 <script lang="ts">
 	import '../app.css';
+    {{#if (includes observability "getmonitor")}}import '$lib/getmonitor';{{/if}}
+    {{#if (includes observability "himetrica")}}import '$lib/himetrica';{{/if}}
     import Header from '../components/Header.svelte';
     import { PUBLIC_CONVEX_URL } from '$env/static/public';
 	import { setupConvex } from 'convex-svelte';
@@ -32647,6 +32826,8 @@ export {};
     import { QueryClientProvider } from '@tanstack/svelte-query';
     import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
 	import '../app.css';
+    {{#if (includes observability "getmonitor")}}import '$lib/getmonitor';{{/if}}
+    {{#if (includes observability "himetrica")}}import '$lib/himetrica';{{/if}}
     import { queryClient } from '$lib/orpc';
     import Header from '../components/Header.svelte';
 
@@ -32665,6 +32846,8 @@ export {};
   {{else}}
 <script lang="ts">
 	import '../app.css';
+    {{#if (includes observability "getmonitor")}}import '$lib/getmonitor';{{/if}}
+    {{#if (includes observability "himetrica")}}import '$lib/himetrica';{{/if}}
     import Header from '../components/Header.svelte';
 
 	const { children } = $props();
@@ -32874,6 +33057,120 @@ import { defineConfig } from "{{#if (includes addons "vite-plus")}}vite-plus{{el
 
 export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
+});
+`],
+  ["observability/getmonitor/browser.ts.hbs", `import { GetMonitor } from "@getmonitor/browser";
+import { env } from "@{{projectName}}/env/web";
+
+if (typeof window !== "undefined" && env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}}) {
+  GetMonitor.init(env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}}, {
+    environment: import.meta.env.MODE,
+    {{#if (hasReactFrontend frontend)}}// Avoid duplicate events: React logs boundary catches via console.error.
+    captureConsoleErrors: false,
+    {{/if}}
+  });
+}
+`],
+  ["observability/getmonitor/next.tsx.hbs", `"use client";
+
+import { useEffect } from "react";
+import { GetMonitor } from "@getmonitor/browser";
+import { GetMonitorErrorBoundary } from "@getmonitor/react";
+
+export function GetMonitorProvider() {
+  useEffect(() => {
+    const apiKey = process.env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}};
+    if (apiKey) {
+      GetMonitor.init(apiKey, {
+        environment: process.env.NODE_ENV ?? "development",
+        // Avoid duplicate events: React logs boundary catches via console.error.
+        captureConsoleErrors: false,
+      });
+    }
+  }, []);
+
+  return null;
+}
+
+export function GetMonitorBoundary({ children }: { children: React.ReactNode }) {
+  return (
+    <GetMonitorErrorBoundary
+      fallback={(error, reset) => (
+        <div>
+          <p>Something went wrong.</p>
+          <button type="button" onClick={reset}>
+            Try again
+          </button>
+        </div>
+      )}
+    >
+      {children}
+    </GetMonitorErrorBoundary>
+  );
+}
+`],
+  ["observability/getmonitor/nuxt.ts.hbs", `import { GetMonitor } from "@getmonitor/browser";
+
+export default defineNuxtPlugin(() => {
+  const apiKey = process.env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}};
+  if (!apiKey) return;
+
+  GetMonitor.init(apiKey, {
+    environment: process.env.NODE_ENV ?? "development",
+  });
+});
+`],
+  ["observability/getmonitor/server.ts.hbs", `import { GetMonitor } from "@getmonitor/node";
+import { env } from "@{{projectName}}/env/server";
+
+export const getMonitor = env.GETMONITOR_API_KEY
+  ? new GetMonitor(env.GETMONITOR_API_KEY, {
+      environment: env.NODE_ENV,
+      apiHost: "http://ingest.getmonitor.io",
+    })
+  : null;
+`],
+  ["observability/himetrica/browser.ts.hbs", `import { HimetricaClient } from "@himetrica/tracker-js";
+import { env } from "@{{projectName}}/env/web";
+
+export const himetrica =
+  typeof window !== "undefined" && env.{{publicEnvKey frontend "HIMETRICA_API_KEY"}}
+    ? new HimetricaClient({
+        apiKey: env.{{publicEnvKey frontend "HIMETRICA_API_KEY"}},
+        autoTrackPageViews: true,
+        autoTrackErrors: true,
+        trackVitals: true,
+      })
+    : null;
+`],
+  ["observability/himetrica/next.tsx.hbs", `"use client";
+
+import { HimetricaProvider } from "@himetrica/tracker-js/react";
+
+export function KuboHimetricaProvider({ children }: { children: React.ReactNode }) {
+  const apiKey = process.env.{{publicEnvKey frontend "HIMETRICA_API_KEY"}};
+
+  if (!apiKey) return children;
+
+  return (
+    <HimetricaProvider apiKey={apiKey} autoTrackErrors trackVitals>
+      {children}
+    </HimetricaProvider>
+  );
+}
+`],
+  ["observability/himetrica/nuxt.ts.hbs", `import { HimetricaClient } from "@himetrica/tracker-js";
+
+export default defineNuxtPlugin(() => {
+  const apiKey = process.env.{{publicEnvKey frontend "HIMETRICA_API_KEY"}};
+  if (!apiKey) return;
+
+  new HimetricaClient({
+    apiKey,
+    autoTrackPageViews: true,
+    autoTrackErrors: true,
+    trackVitals: true,
+  });
 });
 `],
   ["packages/arara/package.json.hbs", `{
@@ -37775,4 +38072,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 623;
+export const TEMPLATE_COUNT = 630;

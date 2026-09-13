@@ -1,0 +1,11 @@
+import { GetMonitor } from "@getmonitor/browser";
+import { env } from "@{{projectName}}/env/web";
+
+if (typeof window !== "undefined" && env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}}) {
+  GetMonitor.init(env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}}, {
+    environment: import.meta.env.MODE,
+    {{#if (hasReactFrontend frontend)}}// Avoid duplicate events: React logs boundary catches via console.error.
+    captureConsoleErrors: false,
+    {{/if}}
+  });
+}

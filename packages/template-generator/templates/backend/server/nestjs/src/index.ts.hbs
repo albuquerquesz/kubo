@@ -3,6 +3,11 @@ import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { env } from "@{{projectName}}/env/server";
 import { AppModule } from "./app.module";
+{{#if (supportsNodeObservability backend runtime serverDeploy)}}
+{{#if (includes observability "getmonitor")}}
+import { getMonitor } from "./shared/getmonitor";
+{{/if}}
+{{/if}}
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +25,9 @@ async function bootstrap(): Promise<void> {
     }),
   );
 
+  {{#if (supportsNodeObservability backend runtime serverDeploy)}}
+  {{#if (includes observability "getmonitor")}}void getMonitor;{{/if}}
+  {{/if}}
   await app.listen(Number(process.env.PORT ?? 3000));
 }
 

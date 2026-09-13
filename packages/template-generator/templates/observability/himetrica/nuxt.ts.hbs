@@ -1,0 +1,13 @@
+import { HimetricaClient } from "@himetrica/tracker-js";
+
+export default defineNuxtPlugin(() => {
+  const apiKey = process.env.{{publicEnvKey frontend "HIMETRICA_API_KEY"}};
+  if (!apiKey) return;
+
+  new HimetricaClient({
+    apiKey,
+    autoTrackPageViews: true,
+    autoTrackErrors: true,
+    trackVitals: true,
+  });
+});
