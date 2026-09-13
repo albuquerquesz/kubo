@@ -9,6 +9,12 @@ import {
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { getDbScriptSupport } from "../utils/db-scripts";
+import {
+  generateDeploymentCommands,
+  getGuaraCloudScriptSets,
+  getVercelScriptNames,
+} from "./readme-deployment";
+import { generateIntegrationSetups, getIntegrationFeatures } from "./readme-integrations";
 
 function getDesktopStaticBuildNote(frontend: ProjectConfig["frontend"]): string {
   const staticBuildFrontends = new Map([
@@ -211,11 +217,7 @@ ${getClerkSetupLines(frontend, backend, api, false).join("\n")}`
 }
 ${payments.includes("abacatepay") ? generateAbacatePaySetup(options, packageManagerRunCmd, webPort) : ""}
 ${payments.includes("stripe") ? generateStripeSetup(options, packageManagerRunCmd, webPort) : ""}
-${observability.includes("getmonitor") ? generateGetMonitorSetup() : ""}
-${observability.includes("himetrica") ? generateHimetricaSetup() : ""}
-${communication === "resend" ? generateResendSetup() : ""}
-${communication === "notifique" ? generateNotifiqueSetup() : ""}
-${communication === "arara" ? generateAraraSetup(options) : ""}
+${generateIntegrationSetups(options)}
 
 Then, run the development server:
 
@@ -433,40 +435,6 @@ The generated webhook verifies Stripe's signature and exposes the event metadata
 `;
 }
 
-function generateGetMonitorSetup(): string {
-  return `
-## GetMonitor Setup
-
-This project includes the [GetMonitor JavaScript error-tracking SDK](https://github.com/get-monitor/getmonitor-js).
-
-Keys are **optional for local first run** — the app starts without them and capture stays idle until you configure a project key.
-
-1. Create a GetMonitor project and copy its public project key (\`gm_xxx\`).
-2. Set the generated \`.env\` value ending in \`GETMONITOR_API_KEY\` for the web app and/or server when you are ready to send events.
-3. Ingestion uses a fixed host (\`http://ingest.getmonitor.io\`) — no \`apiHost\` env var is required.
-4. Optional (Next.js / Nuxt production builds): set \`GETMONITOR_AUTH_TOKEN\` (secret, never public) so source maps upload during \`next build\` / \`nuxt build\`.
-
-Browser uncaught errors are captured after the client bootstrap runs. React apps also wrap the tree in \`<GetMonitorErrorBoundary>\`. Node server errors are captured when the server key is configured.
-
-See the [browser](https://github.com/get-monitor/getmonitor-js/tree/main/packages/browser), [Node](https://github.com/get-monitor/getmonitor-js/tree/main/packages/node), [React](https://github.com/get-monitor/getmonitor-js/tree/main/packages/react), [Next.js](https://github.com/get-monitor/getmonitor-js/tree/main/packages/nextjs-config), and [Nuxt](https://github.com/get-monitor/getmonitor-js/tree/main/packages/nuxt) package guides.
-`;
-}
-
-function generateHimetricaSetup(): string {
-  return `
-## Himetrica Setup
-
-This project includes the [Himetrica TypeScript tracker](https://www.himetrica.com/docs/web).
-
-1. Create a Himetrica project and copy its public tracker key (\`hm_pk_...\`).
-2. Set the generated web \`.env\` value ending in \`HIMETRICA_API_KEY\`.
-3. Page views, uncaught errors, and Web Vitals are collected automatically when the key is configured.
-4. Add product events with the SDK's \`track\` method; do not send secrets, source code, or raw user input.
-
-The generated integration is browser-only. Keep Himetrica secret keys out of client projects and use the Himetrica Server API from a server-only module for trusted backend events.
-`;
-}
-
 function generateProjectStructure(config: ProjectConfig): string {
   const { projectName, frontend, backend, addons, api, auth, database, orm, payments } = config;
   const isConvex = backend === "convex";
@@ -551,103 +519,6 @@ function generateProjectStructure(config: ProjectConfig): string {
   return structure.join("\n");
 }
 
-function generateResendSetup(): string {
-  return `
-## Resend Setup
-
-This project includes a \`packages/email\` helper powered by [Resend](https://resend.com).
-
-Keys are **optional for local first run** — the app starts without them. \`sendEmail\` throws only when you call it without \`RESEND_API_KEY\`.
-
-1. Create an API key at [resend.com/api-keys](https://resend.com/api-keys).
-2. Set \`RESEND_API_KEY\` (and optionally \`RESEND_FROM_EMAIL\`) in the server \`.env\`.
-3. For production, verify a domain and replace the default test From address (\`onboarding@resend.dev\`).
-
-\`\`\`ts
-import { sendEmail } from "@your-project/email";
-
-await sendEmail({
-  to: "user@example.com",
-  subject: "Hello",
-  html: "<strong>It works!</strong>",
-});
-\`\`\`
-
-See the [Node.js guide](https://resend.com/docs/send-with-nodejs).
-`;
-}
-
-function generateNotifiqueSetup(): string {
-  return `
-## Notifique Setup
-
-This project includes a \`packages/notifique\` REST client for [Notifique](https://notifique.dev) (WhatsApp, SMS, email, and more).
-
-\`NOTIFIQUE_API_KEY\` is **required** by the Zod schema in \`packages/env\` (typed \`env.NOTIFIQUE_*\`). \`NOTIFIQUE_FROM_EMAIL\` has a default. Set \`SKIP_ENV_VALIDATION=1\` only if you need to boot before filling secrets.
-
-1. Create an API key in the [Developer panel](https://docs.notifique.dev/guides/api-key/index) (\`sk_live_…\` or sandbox \`sk_test_…\`).
-2. Grant the scopes you need (e.g. \`sms:send\`, \`whatsapp:send\`, \`email:send\`).
-3. Set \`NOTIFIQUE_API_KEY\` in the server \`.env\`. Optionally set \`NOTIFIQUE_WHATSAPP_INSTANCE_ID\` and a verified \`NOTIFIQUE_FROM_EMAIL\`.
-4. Auth is **Bearer only** — do not send \`x-workspace-id\`.
-
-\`\`\`ts
-import { sendSms, sendWhatsAppText, sendEmail } from "@your-project/notifique";
-
-await sendSms({
-  to: "5511999999999",
-  message: "Seu código é 123456",
-  idempotencyKey: "otp/user-123",
-});
-
-await sendWhatsAppText({
-  instanceId: "INSTANCE_ID",
-  to: "5511999999999",
-  message: "Olá!",
-});
-
-await sendEmail({
-  to: "cliente@example.com",
-  subject: "Pedido confirmado",
-  html: "<p>Obrigado!</p>",
-});
-\`\`\`
-
-Agent skill / API map:
-
-- https://docs.notifique.dev/skill.md
-- https://docs.notifique.dev/llms.txt
-`;
-}
-
-function generateAraraSetup(config: ProjectConfig): string {
-  const envPath = config.backend === "convex" ? "packages/backend/.env.local" : "the server .env";
-  const importPath = `@${config.projectName}/arara`;
-  return `
-## AraraHQ Setup
-
-This project includes the official [AraraHQ Node SDK](https://docs.ararahq.com/sdks/node) for WhatsApp messaging.
-
-1. Create an AraraHQ API key.
-2. Set \`ARARA_API_KEY\` in \`${envPath}\`.
-3. Use the SDK only from server code. AraraHQ is not generated for browser code or Edge/Workers runtimes.
-4. With Convex, call the generated \`api.arara.execute\` Node Action.
-
-\`\`\`ts
-import { arara } from "${importPath}";
-
-await arara.sendMessage({
-  receiver: "whatsapp:+5511999999999",
-  body: "Olá!",
-});
-
-await arara.getMessage("ara_msg_xxx");
-await arara.listTemplates();
-\`\`\`
-
-The package also exposes template creation and template-status helpers. See the [official SDK docs](https://docs.ararahq.com/sdks/node).
-`;
-}
-
 function generateFeaturesList(
   database: ProjectConfig["database"],
   auth: ProjectConfig["auth"],
@@ -670,27 +541,7 @@ function generateFeaturesList(
 
   const features = ["- **TypeScript** - For type safety and improved developer experience"];
 
-  if (observability.includes("getmonitor")) {
-    features.push("- **GetMonitor** - JavaScript error tracking for browser and server runtimes");
-  }
-
-  if (observability.includes("himetrica")) {
-    features.push("- **Himetrica** - Browser analytics, error tracking, and Web Vitals");
-  }
-
-  if (communication === "resend") {
-    features.push("- **Resend** - Transactional email via packages/email");
-  }
-
-  if (communication === "notifique") {
-    features.push(
-      "- **Notifique** - Omnichannel messaging (SMS, WhatsApp, email) via packages/notifique",
-    );
-  }
-
-  if (communication === "arara") {
-    features.push("- **AraraHQ** - WhatsApp messaging through the official Node SDK");
-  }
+  features.push(...getIntegrationFeatures(observability, communication));
 
   const frontendFeatures: Record<string, string> = {
     "tanstack-router": "- **TanStack Router** - File-based routing with full type safety",
@@ -1055,190 +906,6 @@ function generateScriptsList(
   return scripts;
 }
 
-function generateDeploymentCommands(
-  packageManagerRunCmd: string,
-  webDeploy: ProjectConfig["webDeploy"],
-  serverDeploy: ProjectConfig["serverDeploy"],
-  backend: ProjectConfig["backend"],
-): string {
-  const hasCloudflare = webDeploy === "cloudflare" || serverDeploy === "cloudflare";
-  const hasDocker = webDeploy === "docker" || serverDeploy === "docker";
-  const hasVercel = webDeploy === "vercel" || serverDeploy === "vercel";
-  const hasRailway = webDeploy === "railway" || serverDeploy === "railway";
-  const hasGuaraCloud = webDeploy === "guaracloud" || serverDeploy === "guaracloud";
-
-  if (!hasCloudflare && !hasDocker && !hasVercel && !hasRailway && !hasGuaraCloud) {
-    return "";
-  }
-
-  const lines: string[] = ["## Deployment"];
-
-  if (hasCloudflare) {
-    const targetLabel =
-      webDeploy === "cloudflare" && (serverDeploy === "cloudflare" || backend === "self")
-        ? "web + server"
-        : webDeploy === "cloudflare"
-          ? "web"
-          : "server";
-    const cfDeployScript = hasVercel
-      ? webDeploy === "cloudflare"
-        ? "deploy:web"
-        : "deploy:server"
-      : "deploy";
-
-    lines.push(
-      "",
-      "### Cloudflare via Alchemy",
-      "",
-      `- Target: ${targetLabel}`,
-      `- Dev: ${packageManagerRunCmd} dev`,
-      `- Deploy: ${packageManagerRunCmd} ${cfDeployScript}`,
-      `- Destroy: ${packageManagerRunCmd} destroy`,
-      "",
-      "For more details, see the guide on [Deploying to Cloudflare with Alchemy](https://www.kubojs.dev/docs/guides/cloudflare-alchemy).",
-    );
-  }
-
-  if (hasDocker) {
-    const targetLabel =
-      webDeploy === "docker" && (serverDeploy === "docker" || backend === "self")
-        ? "web + server"
-        : webDeploy === "docker"
-          ? "web"
-          : "server";
-
-    lines.push(
-      "",
-      "### Docker Compose",
-      "",
-      `- Target: ${targetLabel}`,
-      "- Config: `docker-compose.yml` (app Dockerfiles live in `apps/*/Dockerfile`)",
-      `- Build images: ${packageManagerRunCmd} docker:build`,
-      `- Start: ${packageManagerRunCmd} docker:up`,
-      `- Logs: ${packageManagerRunCmd} docker:logs`,
-      `- Stop: ${packageManagerRunCmd} docker:down`,
-      "",
-      "Environment variables are read from each app's `.env` file (baked into web builds for public variables) and overridden in `docker-compose.yml` for container networking.",
-      "",
-      "For more details, see the guide on [Deploying with Docker Compose](https://www.kubojs.dev/docs/guides/docker).",
-    );
-  }
-
-  if (hasVercel) {
-    const vercelNames = getVercelScriptNames(webDeploy, serverDeploy);
-    const targetLabel =
-      webDeploy === "vercel" && (serverDeploy === "vercel" || backend === "self")
-        ? "web + server"
-        : webDeploy === "vercel"
-          ? "web"
-          : "server";
-
-    lines.push(
-      "",
-      "### Vercel Services",
-      "",
-      `- Target: ${targetLabel}`,
-      "- Config: `vercel.json`",
-      `- Link the project first: ${packageManagerRunCmd} ${vercelNames.setup}`,
-      `- Local Vercel dev: ${packageManagerRunCmd} dev:vercel`,
-      `- Sync preview env: ${packageManagerRunCmd} ${vercelNames.envPreview}`,
-      `- Sync production env: ${packageManagerRunCmd} ${vercelNames.envProduction}`,
-      `- Dry-run check (no upload): ${packageManagerRunCmd} ${vercelNames.deployCheck}`,
-      `- Preview deploy: ${packageManagerRunCmd} ${vercelNames.deploy}`,
-      `- Production deploy: ${packageManagerRunCmd} ${vercelNames.deployProd}`,
-    );
-
-    if (webDeploy === "vercel" && serverDeploy === "vercel" && backend !== "self") {
-      lines.push(
-        "- Web requests under `/api/*` route to the server service and are rewritten before reaching the backend.",
-      );
-    }
-
-    lines.push(
-      "Vercel Services share project environment variables, but deploys do not upload local `.env` files automatically. Link the project with `vercel link`, then run the env sync command before your first deploy (otherwise the deployment starts with no env vars), or pass one-off envs with `vercel deploy -e KEY=value`.",
-      `Pass Vercel CLI flags to the env sync command directly, for example: \`${packageManagerRunCmd} ${vercelNames.envProduction} --scope your-team\`.`,
-      "",
-      "For more details, see the guide on [Deploying to Vercel](https://www.kubojs.dev/docs/guides/vercel).",
-    );
-  }
-
-  if (hasRailway) {
-    const targetLabel =
-      webDeploy === "railway" && (serverDeploy === "railway" || backend === "self")
-        ? "web + server"
-        : webDeploy === "railway"
-          ? "web"
-          : "server";
-    const usesTargetScopedRailwayScripts =
-      (webDeploy !== "none" && serverDeploy !== "none" && webDeploy !== serverDeploy) ||
-      (webDeploy === "railway" && serverDeploy === "railway");
-    const deployScript = usesTargetScopedRailwayScripts
-      ? webDeploy === "railway"
-        ? "deploy:web"
-        : "deploy:server"
-      : "deploy";
-    const configPaths = [
-      ...(webDeploy === "railway" ? ["`apps/web/railway.json`"] : []),
-      ...(serverDeploy === "railway" ? ["`apps/server/railway.json`"] : []),
-    ];
-
-    lines.push(
-      "",
-      "### Railway",
-      "",
-      `- Target: ${targetLabel}`,
-      `- Config: ${configPaths.join(" and ")}`,
-      "- Each app is a separate Railway service; import the monorepo, then select the matching app directory as its config path.",
-      `- Login: ${packageManagerRunCmd} railway:login`,
-      `- Deploy: ${packageManagerRunCmd} ${deployScript}`,
-      "- Set the generated app's environment variables in Railway before the first deploy.",
-    );
-
-    if (webDeploy === "railway" && serverDeploy === "railway") {
-      lines.push(`- Server deploy: ${packageManagerRunCmd} deploy:server`);
-    }
-  }
-
-  if (hasGuaraCloud) {
-    const scriptSets = getGuaraCloudScriptSets(webDeploy, serverDeploy);
-    const targetLabel =
-      webDeploy === "guaracloud" && (serverDeploy === "guaracloud" || backend === "self")
-        ? "web + server"
-        : webDeploy === "guaracloud"
-          ? "web"
-          : "server";
-
-    lines.push(
-      "",
-      "### Guara Cloud",
-      "",
-      `- Target: ${targetLabel}`,
-      "- Build source: app Dockerfiles in `apps/*/Dockerfile`",
-      `- Login: ${packageManagerRunCmd} deploy:login`,
-      "- One Guara service should be linked per app directory in this monorepo.",
-      "",
-      "Guara Cloud supports GitHub-connected monorepos and Docker-based deployments. Configure each service to build from its app directory, set environment variables in Guara Cloud (or via `guara env`), and attach custom domains after the first deploy.",
-      "",
-      "Docs referenced during integration: Introduction, Quickstart, Concepts, Pricing, Creating Services, Environment Variables, Service Scaling, Storage Volumes, Build Configuration, Health Checks, Managing Services, Deployments Overview, Service Domains, Guara CLI, Supported Technologies, Deploying from GitHub, and Deploying with Docker.",
-    );
-
-    for (const g of scriptSets) {
-      const label = g.target === "web" ? "Web" : "Server";
-      const appDir = g.target === "web" ? "apps/web" : "apps/server";
-      lines.push(
-        `- ${label} link: ${packageManagerRunCmd} ${g.link}`,
-        `- ${label} deploy: ${packageManagerRunCmd} ${g.deploy}`,
-        `- ${label} runtime logs: ${packageManagerRunCmd} ${g.logs}`,
-        `- ${label} build logs: ${packageManagerRunCmd} ${g.buildLogs}`,
-        `- ${label} roll back: ${packageManagerRunCmd} ${g.rollback}`,
-        `- Start by linking from \`${appDir}\` so Guara stores service metadata beside the app it deploys.`,
-      );
-    }
-  }
-
-  return `${lines.join("\n")}\n`;
-}
-
 function generateGitHooksSection(
   packageManagerRunCmd: string,
   addons: ProjectConfig["addons"],
@@ -1271,72 +938,4 @@ function generateGitHooksSection(
   }
 
   return `${lines.join("\n")}\n\n`;
-}
-
-function getVercelScriptNames(
-  webDeploy: ProjectConfig["webDeploy"] | undefined,
-  serverDeploy: ProjectConfig["serverDeploy"] | undefined,
-) {
-  const mixedCloud = webDeploy !== "none" && serverDeploy !== "none" && webDeploy !== serverDeploy;
-  const target = webDeploy === "vercel" ? "web" : "server";
-  const deploy = mixedCloud ? `deploy:${target}` : "deploy";
-  return {
-    setup: "deploy:setup",
-    envPreview: "env:preview",
-    envProduction: "env:production",
-    deploy,
-    deployProd: `${deploy}:prod`,
-    deployCheck: "deploy:check",
-  };
-}
-
-function getGuaraCloudScriptNames(
-  webDeploy: ProjectConfig["webDeploy"] | undefined,
-  serverDeploy: ProjectConfig["serverDeploy"] | undefined,
-) {
-  const splitTargets =
-    (webDeploy !== "none" && serverDeploy !== "none" && webDeploy !== serverDeploy) ||
-    (webDeploy === "guaracloud" && serverDeploy === "guaracloud");
-  const target = webDeploy === "guaracloud" ? "web" : "server";
-  const deploy = splitTargets ? `deploy:${target}` : "deploy";
-  return {
-    deploy,
-    link: `${deploy}:link`,
-    logs: `${deploy}:logs`,
-    buildLogs: `${deploy}:build-logs`,
-    rollback: splitTargets ? `rollback:${target}` : "rollback",
-  };
-}
-
-function getGuaraCloudScriptSets(
-  webDeploy: ProjectConfig["webDeploy"] | undefined,
-  serverDeploy: ProjectConfig["serverDeploy"] | undefined,
-) {
-  if (webDeploy === "guaracloud" && serverDeploy === "guaracloud") {
-    return [
-      {
-        target: "web" as const,
-        deploy: "deploy:web",
-        link: "deploy:web:link",
-        logs: "deploy:web:logs",
-        buildLogs: "deploy:web:build-logs",
-        rollback: "rollback:web",
-      },
-      {
-        target: "server" as const,
-        deploy: "deploy:server",
-        link: "deploy:server:link",
-        logs: "deploy:server:logs",
-        buildLogs: "deploy:server:build-logs",
-        rollback: "rollback:server",
-      },
-    ];
-  }
-
-  return [
-    {
-      target: webDeploy === "guaracloud" ? ("web" as const) : ("server" as const),
-      ...getGuaraCloudScriptNames(webDeploy, serverDeploy),
-    },
-  ];
 }

@@ -261,6 +261,73 @@ describe("GetMonitor observability", () => {
       expect(entry).toContain(frontend === "svelte" ? "$lib/getmonitor" : "../lib/getmonitor");
     }
   });
+
+  it("declares React router mounts in their source templates", async () => {
+    for (const frontend of ["react-router", "tanstack-start"] as const) {
+      const result = await createVirtual({
+        projectName: `${frontend}-getmonitor-app`,
+        frontend: [frontend],
+        backend: "hono",
+        runtime: "bun",
+        database: "none",
+        orm: "none",
+        auth: "none",
+        payments: "none",
+        observability: "getmonitor",
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        api: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+      });
+
+      expect(result.isOk()).toBe(true);
+      if (result.isErr()) continue;
+
+      const files = collectFiles(result.value.root, "/virtual");
+      const entry =
+        frontend === "react-router"
+          ? files.get("apps/web/src/root.tsx")
+          : files.get("apps/web/src/router.tsx");
+      const root =
+        frontend === "react-router"
+          ? (files.get("apps/web/src/root.tsx") ?? "")
+          : (files.get("apps/web/src/routes/__root.tsx") ?? "");
+
+      expect(entry).toContain('import "./lib/getmonitor";');
+      expect(root).toContain("GetMonitorErrorBoundary");
+    }
+  });
+
+  it("declares the Node mount in every hosted server template", async () => {
+    for (const backend of ["hono", "fastify", "elysia", "nestjs"] as const) {
+      const result = await createVirtual({
+        projectName: `${backend}-getmonitor-app`,
+        frontend: [],
+        backend,
+        runtime: "bun",
+        database: "none",
+        orm: "none",
+        auth: "none",
+        payments: "none",
+        observability: "getmonitor",
+        addons: ["none"],
+        examples: ["none"],
+        dbSetup: "none",
+        api: "none",
+        webDeploy: "none",
+        serverDeploy: "none",
+      });
+
+      expect(result.isOk()).toBe(true);
+      if (result.isErr()) continue;
+
+      const files = collectFiles(result.value.root, "/virtual");
+      expect(files.get("apps/server/src/index.ts")).toContain('from "./shared/getmonitor"');
+      expect(files.get("apps/server/src/shared/getmonitor.ts")).toContain("new GetMonitor");
+    }
+  });
 });
 
 describe("Himetrica observability", () => {
