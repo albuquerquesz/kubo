@@ -2,7 +2,8 @@
 
 ## Status
 
-Em implementação na branch `catalog/issue-30-compatibility-oracle`. Issue:
+Implementada na branch `catalog/issue-30-compatibility-oracle`; a issue do GitHub permanece aberta
+para revisão/encerramento humano. Issue:
 [\#30](https://github.com/albuquerquesz/kubo/issues/30). Parent:
 [\#26](https://github.com/albuquerquesz/kubo/issues/26). Depende de [\#27](https://github.com/albuquerquesz/kubo/issues/27)
 e [\#29](https://github.com/albuquerquesz/kubo/issues/29).
@@ -59,33 +60,44 @@ Ao tocar o caminho de validação e da matrix:
 
 ## Etapas
 
-### Etapa 1 — congelar diagnóstico e baseline
+### Etapa 1 — congelar diagnóstico e baseline ✅
 
 Registrar o problema, o contrato atual da matrix e os testes relevantes. Executar a suíte focada
 antes da migração para preservar comportamento e detectar mudanças de classificação.
 
-### Etapa 2 — derivar expectativas do catálogo
+Entrega: `4c2404a8`.
+
+### Etapa 2 — derivar expectativas do catálogo ✅
 
 Fazer `evaluateMatrixConfig` adaptar `ProjectConfig` para `evaluate()` e retornar os códigos
 canônicos. Remover listas locais e todas as regras duplicadas do Oracle. Cada `MatrixRule` deve ser
 um código/capability existente no catálogo.
 
-### Etapa 3 — transportar códigos estruturados
+Entrega: `c2b6287a`.
+
+### Etapa 3 — transportar códigos estruturados ✅
 
 Adicionar código opcional aos erros de validação/geração sem mudar mensagens. Fazer a matrix
 inspecionar o código estruturado, removendo `classifyMatrixError` e o acoplamento a copy.
 
-### Etapa 4 — provar cobertura e performance
+Entrega: `c2b6287a`.
+
+### Etapa 4 — provar cobertura e performance ✅
 
 Manter testes focados das mensagens, executar default, smoke e uma amostra/full matrix conforme a
 ADR. Adicionar teste que verifica que cada expectativa retornada pelo Oracle corresponde a um
 `CompatibilityIssueCode` do catálogo.
 
-### Etapa 5 — revisão arquitetural final
+Resultados: default `591 pass`, smoke `282 pass` e full shard `523 pass`.
+
+### Etapa 5 — revisão arquitetural final ✅
 
 Reexecutar a revisão thermo-nuclear: sem duplicação de catálogo, sem condicionais espalhadas,
 sem arquivo monolítico e sem regressão de tipos. Atualizar esta spec com os commits e deixar a
 issue do GitHub aberta até revisão humana.
+
+Resultado: Oracle reduzido de 502 para 56 linhas, sem listas locais ou parsing de mensagens; os
+avisos existentes do repositório permanecem fora do escopo.
 
 ## Fora de escopo
 
@@ -96,10 +108,10 @@ issue do GitHub aberta até revisão humana.
 
 ## Aceite
 
-- [ ] Listas de frontends/backends incompatíveis não são redefinidas no Oracle.
-- [ ] Cada `MatrixRule` mapeia para um `CompatibilityIssueCode` ou capability do catálogo.
-- [ ] Adicionar uma capability no catálogo não exige um PR paralelo de constantes do Oracle.
-- [ ] Default Suite, Matrix Smoke e Full Matrix continuam funcionando nos modos previstos pela ADR.
-- [ ] A matrix não depende de mensagens de erro para classificar falhas.
-- [ ] Mensagens continuam cobertas por testes de validação focados.
-- [ ] A branch passa typecheck, lint, testes relevantes e revisão thermo-nuclear.
+- [x] Listas de frontends/backends incompatíveis não são redefinidas no Oracle.
+- [x] Cada `MatrixRule` mapeia para um `CompatibilityIssueCode` ou capability do catálogo.
+- [x] Adicionar uma capability no catálogo não exige um PR paralelo de constantes do Oracle.
+- [x] Default Suite, Matrix Smoke e Full Matrix continuam funcionando nos modos previstos pela ADR.
+- [x] A matrix não depende de mensagens de erro para classificar falhas.
+- [x] Mensagens continuam cobertas por testes de validação focados.
+- [x] A branch passa typecheck, lint, testes relevantes e revisão thermo-nuclear.
