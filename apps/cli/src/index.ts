@@ -488,6 +488,7 @@ export async function createVirtual(
       new GeneratorError({
         message: validationResult.error.message,
         phase: "validation",
+        compatibilityCode: validationResult.error.compatibilityCode,
         cause: validationResult.error,
       }),
     );

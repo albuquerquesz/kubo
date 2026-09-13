@@ -1,4 +1,5 @@
 import { cancel } from "@clack/prompts";
+import type { CompatibilityIssueCode } from "@kubojs/types";
 import { Result, TaggedError } from "better-result";
 import pc from "picocolors";
 
@@ -29,9 +30,15 @@ export class CLIError extends TaggedError("CLIError")<{
 export class ValidationError extends TaggedError("ValidationError")<{
   field?: string;
   value?: unknown;
+  compatibilityCode?: CompatibilityIssueCode;
   message: string;
 }>() {
-  constructor(args: { field?: string; value?: unknown; message: string }) {
+  constructor(args: {
+    field?: string;
+    value?: unknown;
+    compatibilityCode?: CompatibilityIssueCode;
+    message: string;
+  }) {
     super(args);
   }
 }

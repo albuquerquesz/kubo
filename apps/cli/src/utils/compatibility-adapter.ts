@@ -43,8 +43,11 @@ const FIELD_FLAGS: Partial<Record<CompatibilityField, string>> = {
   payments: "--payments",
 };
 
-function validationErr(message: string): ValidationResult {
-  return Result.err(new ValidationError({ message }));
+function validationErr(
+  message: string,
+  compatibilityCode: CompatibilityIssueCode,
+): ValidationResult {
+  return Result.err(new ValidationError({ message, compatibilityCode }));
 }
 
 function normalizeCompatibilityInput(config: Partial<ProjectConfig>): Partial<ProjectConfig> {
@@ -372,7 +375,7 @@ export function validateWithCompatibilityEvaluator(
       .map((code) => issues.find((candidate) => candidate.code === code))
       .find((candidate): candidate is CompatibilityIssue => candidate !== undefined) ?? issues[0];
   return firstIssue
-    ? validationErr(getCompatibilityMessage(firstIssue, normalizedConfig, options))
+    ? validationErr(getCompatibilityMessage(firstIssue, normalizedConfig, options), firstIssue.code)
     : Result.ok(undefined);
 }
 

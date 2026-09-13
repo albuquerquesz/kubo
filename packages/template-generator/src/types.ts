@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubojs/types";
+import type { CompatibilityIssueCode, ProjectConfig } from "@kubojs/types";
 import { TaggedError } from "better-result";
 
 export interface VirtualFile {
@@ -40,5 +40,6 @@ export interface GeneratorOptions {
 export class GeneratorError extends TaggedError("GeneratorError")<{
   message: string;
   phase?: string;
+  compatibilityCode?: CompatibilityIssueCode;
   cause?: unknown;
 }>() {}

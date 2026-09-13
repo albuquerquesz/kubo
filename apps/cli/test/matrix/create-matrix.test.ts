@@ -11,7 +11,7 @@ import {
   type MatrixShard,
   type MatrixCase,
 } from "./cases";
-import { classifyMatrixError, formatMatrixConfig } from "./oracle";
+import { formatMatrixConfig } from "./oracle";
 
 const matrixMode = getMatrixMode();
 
@@ -137,11 +137,11 @@ async function checkMatrixCase(matrixCase: MatrixCase, stats: MatrixRunStats) {
     );
   }
 
-  const rule = classifyMatrixError(result.error.message);
-  if (rule === "unknown") {
+  const rule = result.error.compatibilityCode;
+  if (!rule) {
     failMatrixCase(
       matrixCase,
-      `Production validation returned an unclassified error: ${result.error.message}`,
+      `Production validation returned no compatibility code: ${result.error.message}`,
     );
   }
   if (!matrixCase.expected.rules.includes(rule)) {
