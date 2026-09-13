@@ -2,7 +2,12 @@
 
 ## Status
 
-Proposed. Issue: [#28](https://github.com/albuquerquesz/kubo/issues/28). Depends on the catalog contracts delivered by [#27](./spec-catalog-capabilities-issue-27.md).
+Implementada na `main`; a issue permanece aberta para registro do encerramento. Issue: [#28](https://github.com/albuquerquesz/kubo/issues/28). Depends on the catalog contracts delivered by [#27](./spec-catalog-capabilities-issue-27.md).
+
+Data da validação final: 2026-09-13.
+
+Entregas principais: `d10a238` (draft canônico em `@kubojs/types`), `df0d09fe` (estado canônico do Builder),
+`fefce71c` (migração dos consumidores web), `22d89772` (testes de migração) e `1929ed40` (merge da implementação).
 
 ## Objetivo
 
@@ -55,10 +60,20 @@ Validação mínima: `bun test apps/web/test/stack-builder-compatibility.test.ts
 
 ## Aceite
 
-- [ ] O builder persiste e compartilha o mesmo modelo canônico de escolhas da CLI.
-- [ ] `self-*` não aparece em estado persistido, URL nova ou comando reproduzível.
-- [ ] `TECH_OPTIONS` não mantém uma enumeração paralela de IDs e expõe `nestjs` com as regras da CLI.
-- [ ] O comando é serializado diretamente a partir da configuração normalizada.
-- [ ] Estados legados continuam carregáveis por uma migração explícita na borda.
-- [ ] Os testes cobrem paridade de catálogo, schema, round-trip, migração, comando e compatibilidade.
-- [ ] A área alterada fica sem listas duplicadas e casts usados apenas para mascarar o modelo divergente.
+- [x] O builder persiste e compartilha o mesmo modelo canônico de escolhas da CLI.
+- [x] `self-*` não aparece em estado persistido, URL nova ou comando reproduzível.
+- [x] `TECH_OPTIONS` deriva os IDs dos valores canônicos e expõe `nestjs`, `orval` e `arara` quando suportados.
+- [x] O comando é serializado diretamente a partir da configuração normalizada.
+- [x] Estados legados continuam carregáveis por uma migração explícita na borda.
+- [x] Os testes cobrem paridade de catálogo, schema, round-trip, migração, comando e compatibilidade.
+- [x] A área alterada fica sem listas duplicadas e casts usados apenas para mascarar o modelo divergente.
+
+## Validação executada
+
+- 89 testes direcionados passaram em `apps/web/test/stack-state.test.ts`,
+  `apps/web/test/stack-compatibility-invariant.test.ts`,
+  `apps/web/test/stack-builder-compatibility.test.ts`,
+  `apps/cli/test/backend-runtime.test.ts` e `apps/cli/test/cli-validation.test.ts`.
+- Build de `@kubojs/types` e typecheck da CLI passaram.
+- `oxfmt --check` passou em 908 arquivos.
+- `oxlint` passou sem erros; os 19 warnings já existentes ficaram fora do escopo desta issue.
