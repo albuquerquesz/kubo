@@ -4,6 +4,13 @@
 
 Kubo turns a stack selection into a reproducible TypeScript starter project.
 
+## Working principle
+
+Apply the Boy Scout rule to every repository activity: leave the codebase cleaner,
+more organized, and more coherent than it was found. Within the touched area,
+remove small, high-confidence sources of duplication, type noise, and stale
+structure without expanding the task's scope or changing unrelated behavior.
+
 ## Language
 
 **Project Configuration**:
