@@ -2,9 +2,10 @@
 
 ## Status
 
-Em implementação na branch `catalog/issue-31-generator-catalog`. A issue do GitHub permanece
-aberta para revisão humana. Issue: [#31](https://github.com/albuquerquesz/kubo/issues/31). Parent:
-[#26](https://github.com/albuquerquesz/kubo/issues/26). Depende de [#27](https://github.com/albuquerquesz/kubo/issues/27).
+Implementada na branch `catalog/issue-31-generator-catalog`; a issue do GitHub permanece aberta
+para revisão humana e merge posterior. Issue: [#31](https://github.com/albuquerquesz/kubo/issues/31).
+Parent: [#26](https://github.com/albuquerquesz/kubo/issues/26). Depende de
+[#27](https://github.com/albuquerquesz/kubo/issues/27).
 
 ## Diagnóstico: o problema é válido
 
@@ -57,32 +58,63 @@ Ao tocar o caminho de geração:
 
 ## Etapas
 
-### Etapa 1 — especificar e congelar baseline
+### Etapa 1 — especificar e congelar baseline ✅
 
 Registrar o diagnóstico, os pontos de montagem atuais e os testes existentes antes da migração.
 Entrega: esta spec.
 
-### Etapa 2 — catalogar comunicação
+### Etapa 2 — catalogar comunicação ✅
 
 Substituir as três ramificações do handler por uma tabela de artefatos e predicados. O caso
 específico de Arara no backend Convex deve permanecer uma declaração de artefato, não uma nova
 ramificação do handler.
 
-### Etapa 3 — mover observabilidade para templates
+### Etapa 3 — mover observabilidade para templates ✅
 
 Gerar helpers por templates e declarar suas montagens em Next, Nuxt, routers, entradas Vite e
 servidores. Reduzir `processors/observability.ts` à responsabilidade de dependências/metadata;
 ele não pode usar `String.replace` ou regex para patch de fonte.
 
-### Etapa 4 — isolar extensões do README
+### Etapa 4 — isolar extensões do README ✅
 
 Extrair setup e features de integrações para módulo/catalogo próprio. O orquestrador do README deve
 permanecer abaixo de 1000 linhas e não crescer com cada novo provider.
 
-### Etapa 5 — provar equivalência e revisar
+### Etapa 5 — provar equivalência e revisar ✅
 
 Executar testes focados, smoke/default da CLI, build/typecheck e a revisão thermo-nuclear. Registrar
 os resultados e os limites conhecidos nesta spec; a issue continua aberta até revisão humana.
+
+## Implementação e validação
+
+- Comunicação agora usa `COMMUNICATION_CATALOG`, com artefatos tipados e predicados nomeados.
+- Observabilidade agora compartilha `OBSERVABILITY_CATALOG` entre handler e processor; os pontos de
+  montagem vivem nos templates e `processors/observability.ts` ficou responsável apenas por
+  dependências.
+- Setup/features de integrações e comandos de deploy foram extraídos para
+  `readme-integrations.ts` e `readme-deployment.ts`; `readme-generator.ts` passou de 1342 para 941
+  linhas.
+- Foram preservados os caminhos de geração existentes e adicionados contratos para providers
+  individuais, combinação de providers, routers e servidores hospedados.
+
+Validações executadas:
+
+- `cd apps/cli && bun test`: 593 aprovados, 12 skips explícitos de build de amostras e 0 falhas
+  (605 testes em 46 arquivos).
+- Testes focados de observabilidade, comunicação e README: 33 aprovados e 0 falhas.
+- `cd packages/template-generator && bun run typecheck`: passou.
+- `bun run check`: passou com 0 erros; os 19 avisos são preexistentes e estão fora do escopo.
+- `NOTIFIQUE_API_KEY=build-placeholder NOTIFIQUE_FROM_EMAIL=build@example.com
+NOTIFIQUE_NEWSLETTER_LIST_ID=build-placeholder bun run build`: passou nos 4 tasks do build,
+  incluindo a compilação e geração estática do web. Os valores foram usados somente para satisfazer
+  o construtor do SDK durante a coleta de páginas.
+
+Commits da implementação:
+
+1. `ca487a05 docs(generator): specify catalog-driven integrations`
+2. `08195134 refactor(generator): catalog communication artifacts`
+3. `e5010fb8 refactor(generator): mount observability from templates`
+4. `7f682cd8 refactor(generator): split integration readme sections`
 
 ## Fora de escopo
 
@@ -94,12 +126,16 @@ os resultados e os limites conhecidos nesta spec; a issue continua aberta até r
 
 ## Aceite
 
-- [ ] Adicionar provider de comunicação exige apenas entrada de catálogo e templates.
-- [ ] O handler de comunicação não possui uma ramificação por provider.
-- [ ] `processors/observability.ts` não patcha fonte gerada por regex/string replacement.
-- [ ] GetMonitor e Himetrica são montados pelos templates nos targets suportados.
-- [ ] Os outputs atuais de comunicação e observabilidade permanecem equivalentes.
-- [ ] O README mantém setup/features de integração isolado e o gerador principal fica abaixo de 1000
+- [x] Adicionar provider de comunicação exige apenas entrada de catálogo e templates.
+- [x] O handler de comunicação não possui uma ramificação por provider.
+- [x] `processors/observability.ts` não patcha fonte gerada por regex/string replacement.
+- [x] GetMonitor e Himetrica são montados pelos templates nos targets suportados.
+- [x] Os outputs atuais de comunicação e observabilidade permanecem equivalentes.
+- [x] O README mantém setup/features de integração isolado e o gerador principal fica abaixo de 1000
       linhas.
-- [ ] Há testes para providers individuais, combinação de providers e geração sem integração.
-- [ ] A suíte relevante, build e revisão thermo-nuclear passam sem regressões.
+- [x] Há testes para providers individuais, combinação de providers e geração sem integração.
+- [x] A suíte relevante, build dos pacotes tocados e revisão thermo-nuclear passam sem regressões.
+
+O build sem variáveis falha antes da compilação do web por exigir as três variáveis do Notifique;
+isso foi confirmado como requisito de ambiente e não como falha da implementação. A branch não foi
+mergeada nem publicada, e a issue permanece aberta conforme o fluxo combinado.
