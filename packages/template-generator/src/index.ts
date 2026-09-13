@@ -2,6 +2,7 @@ export * from "./types";
 export * from "./core/virtual-fs";
 export * from "./core/template-processor";
 export * from "./generator";
+export { applyAddonCatalog, type AddonApplicationOptions } from "./addon-application";
 export { processAddonTemplates } from "./template-handlers/addons";
 export { processTestingTemplates } from "./template-handlers/testing";
 export { processAddonsDeps } from "./processors/addons-deps";

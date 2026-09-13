@@ -1,6 +1,7 @@
 import { normalizeObservability, normalizePayments } from "@kubojs/types";
 import { Result } from "better-result";
 
+import { applyAddonCatalog } from "./addon-application";
 import { VirtualFileSystem } from "./core/virtual-fs";
 import { writeKubojsConfigToVfs } from "./kubojs-config";
 import {
@@ -32,7 +33,6 @@ import {
   processPaymentsTemplates,
   processCommunicationTemplates,
   processObservabilityTemplates,
-  processAddonTemplates,
   processExampleTemplates,
   processTestingTemplates,
   processExtrasTemplates,
@@ -90,7 +90,7 @@ export async function generate(
       await processPaymentsTemplates(vfs, templates, config);
       await processCommunicationTemplates(vfs, templates, config);
       processObservabilityTemplates(vfs, templates, config);
-      await processAddonTemplates(vfs, templates, config);
+      await applyAddonCatalog(vfs, templates, config);
       await processExampleTemplates(vfs, templates, config);
       await processTestingTemplates(vfs, templates, config);
       await processExtrasTemplates(vfs, templates, config);

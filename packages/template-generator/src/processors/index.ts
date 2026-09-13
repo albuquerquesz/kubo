@@ -35,10 +35,7 @@ export function processDependencies(vfs: VirtualFileSystem, config: ProjectConfi
   processAuthDeps(vfs, config);
   processPaymentsDeps(vfs, config);
   processDeployDeps(vfs, config);
-  processAddonsDeps(vfs, config);
   processExamplesDeps(vfs, config);
-  processTurboConfig(vfs, config);
-  processVitePlusConfig(vfs, config);
 }
 
 export {
