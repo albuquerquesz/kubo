@@ -47,6 +47,11 @@ function validationErr(message: string): ValidationResult {
   return Result.err(new ValidationError({ message }));
 }
 
+function normalizeCompatibilityInput(config: Partial<ProjectConfig>): Partial<ProjectConfig> {
+  const payments: unknown = config.payments;
+  return payments === "none" ? { ...config, payments: [] } : config;
+}
+
 function firstIncompatibleFrontend(frontends: readonly string[]): string | undefined {
   return ["nuxt", "svelte", "solid", "astro"].find((frontend) => frontends.includes(frontend));
 }
@@ -78,6 +83,9 @@ function getDatabaseMessage(config: Partial<ProjectConfig>): string {
 }
 
 function getDatabaseSetupMessage(config: Partial<ProjectConfig>): string {
+  if (!config.database || config.database === "none") {
+    return "Database setup requires a database. Please choose a database or set '--db-setup none'.";
+  }
   switch (config.dbSetup) {
     case "turso":
       return "Turso setup requires SQLite database. Please use '--database sqlite' or choose a different setup.";
@@ -135,13 +143,16 @@ function getExampleMessage(config: Partial<ProjectConfig>, issue: CompatibilityI
     if (config.backend === "convex" && (incompatible === "nuxt" || incompatible === "svelte")) {
       return "The 'ai' example with Convex backend only supports React-based frontends (Next.js, TanStack Router, TanStack Start, React Router). Svelte and Nuxt are not supported with Convex AI.";
     }
-    return `The 'ai' example is not compatible with the ${incompatible ?? "selected"} frontend.`;
+    const frontendName = incompatible
+      ? incompatible.charAt(0).toUpperCase() + incompatible.slice(1)
+      : "selected";
+    return `The 'ai' example is not compatible with the ${frontendName} frontend.`;
   }
   if (issue.code === "example-todo-database") {
     return "The 'todo' example requires a database. Cannot use --examples todo when database is 'none'.";
   }
   if (issue.code === "example-todo-api") {
-    return "The 'todo' example requires an API layer (tRPC or oRPC). Cannot use --examples todo when api is 'none'.";
+    return "Cannot use '--examples todo' when '--api' is set to 'none'.";
   }
   return "The selected example is not compatible with this project configuration.";
 }
@@ -306,7 +317,13 @@ function getCompatibilityMessage(
       : `${providerName} communication requires a server backend. Please choose a backend or use '--communication none'.`;
   }
   if (issue.code === "payment") {
-    const provider = config.payments?.find((candidate) =>
+    const paymentValues: unknown = config.payments;
+    const providers = Array.isArray(paymentValues)
+      ? paymentValues
+      : typeof paymentValues === "string"
+        ? [paymentValues]
+        : [];
+    const provider = providers.find((candidate) =>
       getPaymentCompatibilityIssue({
         provider: candidate,
         backend: config.backend,
@@ -348,13 +365,14 @@ export function validateWithCompatibilityEvaluator(
   options?: CLIInput,
   preferredCodes: readonly CompatibilityIssueCode[] = [],
 ): ValidationResult {
-  const issues = evaluate(config).issues;
+  const normalizedConfig = normalizeCompatibilityInput(config);
+  const issues = evaluate(normalizedConfig).issues;
   const firstIssue =
     preferredCodes
       .map((code) => issues.find((candidate) => candidate.code === code))
       .find((candidate): candidate is CompatibilityIssue => candidate !== undefined) ?? issues[0];
   return firstIssue
-    ? validationErr(getCompatibilityMessage(firstIssue, config, options))
+    ? validationErr(getCompatibilityMessage(firstIssue, normalizedConfig, options))
     : Result.ok(undefined);
 }
 
