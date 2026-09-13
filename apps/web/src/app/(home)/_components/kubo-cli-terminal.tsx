@@ -137,7 +137,7 @@ export default function KuboCliTerminal() {
             </p>
 
             {state.showBanner ? (
-              <pre className="max-w-full overflow-x-auto whitespace-pre text-[0.38rem] text-yellow-300 leading-[1.08] sm:text-[0.48rem] lg:text-[0.62rem]">
+              <pre className="max-w-full overflow-x-auto whitespace-pre text-[0.5rem] text-yellow-300 leading-[1.08] sm:text-[0.75rem] lg:text-[0.9rem]">
                 {KUBO_CLI_BANNER}
               </pre>
             ) : null}
