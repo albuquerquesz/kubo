@@ -28,6 +28,13 @@ function pick<T>(rand: () => number, items: readonly T[]): T {
 
 function randomStack(rand: () => number): StackState {
   const ids = (category: keyof typeof TECH_OPTIONS) => TECH_OPTIONS[category].map((opt) => opt.id);
+  const backend = pick(rand, ids("backend")) as StackState["backend"];
+  const frontend =
+    backend === "self"
+      ? [pick(rand, ["next", "tanstack-start", "nuxt", "svelte", "astro"])]
+      : [pick(rand, ids("webFrontend")), pick(rand, ids("nativeFrontend"))].filter(
+          (frontend) => frontend !== "none",
+        );
 
   const multi = (category: "addons" | "examples") => {
     const pool = ids(category).filter((id) => id !== "none");
@@ -39,10 +46,9 @@ function randomStack(rand: () => number): StackState {
   return sanitizeStackState({
     ...DEFAULT_STACK,
     projectName: "invariant-test",
-    webFrontend: [pick(rand, ids("webFrontend"))],
-    nativeFrontend: [pick(rand, ids("nativeFrontend"))],
+    frontend,
     runtime: pick(rand, ids("runtime")) as StackState["runtime"],
-    backend: pick(rand, ids("backend")) as StackState["backend"],
+    backend,
     api: pick(rand, ids("api")) as StackState["api"],
     database: pick(rand, ids("database")) as StackState["database"],
     orm: pick(rand, ids("orm")) as StackState["orm"],
@@ -55,7 +61,7 @@ function randomStack(rand: () => number): StackState {
     serverDeploy: pick(rand, ids("serverDeploy")) as StackState["serverDeploy"],
     addons: multi("addons"),
     examples: multi("examples"),
-    yolo: "false",
+    yolo: false,
   });
 }
 
@@ -117,7 +123,7 @@ describe("compatibility adjustment invariants", () => {
   test("tauri is removed when Convex Better Auth targets Next.js or TanStack Start", () => {
     const stack = sanitizeStackState({
       ...DEFAULT_STACK,
-      webFrontend: ["next"],
+      frontend: ["next"],
       backend: "convex",
       auth: "better-auth",
       addons: ["tauri", "turborepo"],

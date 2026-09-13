@@ -14,7 +14,7 @@ Congelar o contrato de **communication**, **observability** e **backend kinds** 
 
 ## Non-goals
 
-- Unificar `self-next` / `ProjectConfig` (#28)
+- Unificar `self-next` / `ProjectConfig` ([#28](https://github.com/albuquerquesz/kubo/issues/28); [spec](./spec-stack-model-issue-28.md))
 - Motor `evaluate(config)` único (#29)
 - Oracle da matrix derivado do catálogo (#30)
 - Geração por catálogo / observability sem regex (#31)

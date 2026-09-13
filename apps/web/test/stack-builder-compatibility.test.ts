@@ -10,18 +10,15 @@ import {
   getDisabledReason,
 } from "../src/app/(home)/new/_components/utils";
 import { DEFAULT_STACK, type StackState } from "../src/lib/constant";
-import { sanitizeAddons, sanitizeTesting } from "../src/lib/sanitize-stack-addons";
+import {
+  sanitizeAddons,
+  sanitizeStackState,
+  sanitizeTesting,
+} from "../src/lib/sanitize-stack-addons";
 import { formatStackCommandForDisplay, generateStackCommand } from "../src/lib/stack-utils";
 
 function createStack(overrides: Partial<StackState> = {}): StackState {
-  return {
-    ...DEFAULT_STACK,
-    ...overrides,
-    webFrontend: [...(overrides.webFrontend ?? DEFAULT_STACK.webFrontend)],
-    nativeFrontend: [...(overrides.nativeFrontend ?? DEFAULT_STACK.nativeFrontend)],
-    addons: [...(overrides.addons ?? DEFAULT_STACK.addons)],
-    examples: [...(overrides.examples ?? DEFAULT_STACK.examples)],
-  };
+  return sanitizeStackState({ ...DEFAULT_STACK, ...overrides });
 }
 
 describe("communication capability messages", () => {
@@ -62,7 +59,7 @@ describe("communication capability messages", () => {
     ).toBeNull();
     expect(
       getDisabledReason(
-        createStack({ backend: "self-next", runtime: "none", serverDeploy: "none" }),
+        createStack({ backend: "self", frontend: ["next"], runtime: "none", serverDeploy: "none" }),
         "communication",
         "arara",
       ),
@@ -100,8 +97,8 @@ describe("stack builder D1 compatibility", () => {
 
   test("keeps self fullstack backends on the D1 + Cloudflare path", () => {
     const stack = createStack({
-      backend: "self-next",
-      webFrontend: ["next"],
+      backend: "self",
+      frontend: ["next"],
       runtime: "none",
       database: "sqlite",
       orm: "drizzle",
@@ -113,7 +110,7 @@ describe("stack builder D1 compatibility", () => {
     const result = analyzeStackCompatibility(stack);
 
     expect(result.adjustedStack).toMatchObject({
-      backend: "self-next",
+      backend: "self",
       runtime: "none",
       database: "sqlite",
       dbSetup: "d1",
@@ -143,10 +140,40 @@ describe("stack builder D1 compatibility", () => {
     });
   });
 
+  test("applies the canonical NestJS backend capabilities", () => {
+    const stack = createStack({
+      backend: "nestjs",
+      frontend: ["next"],
+      runtime: "none",
+      api: "trpc",
+      auth: "clerk",
+      database: "sqlite",
+      orm: "drizzle",
+      examples: ["ai"],
+      payments: ["stripe"],
+    });
+
+    expect(getDisabledReason(stack, "api", "trpc")).toContain("não é compatível");
+    expect(getDisabledReason(stack, "database", "sqlite")).toContain("não é compatível");
+    expect(getDisabledReason(stack, "orm", "drizzle")).toContain("não é compatível");
+    expect(getDisabledReason(stack, "examples", "ai")).toContain("não é compatível");
+    expect(getDisabledReason(stack, "payments", "stripe")).toContain("não são compatíveis");
+
+    expect(analyzeStackCompatibility(stack).adjustedStack).toMatchObject({
+      backend: "nestjs",
+      api: "none",
+      auth: "none",
+      database: "postgres",
+      orm: "prisma",
+      examples: ["none"],
+      payments: [],
+    });
+  });
+
   test("allows selecting D1 for self fullstack backends", () => {
     const stack = createStack({
-      backend: "self-next",
-      webFrontend: ["next"],
+      backend: "self",
+      frontend: ["next"],
       runtime: "none",
       database: "sqlite",
     });
@@ -156,8 +183,8 @@ describe("stack builder D1 compatibility", () => {
 
   test("blocks non-cloudflare web deployment for self fullstack D1 stacks", () => {
     const stack = createStack({
-      backend: "self-next",
-      webFrontend: ["next"],
+      backend: "self",
+      frontend: ["next"],
       runtime: "none",
       database: "sqlite",
       dbSetup: "d1",
@@ -204,8 +231,8 @@ describe("stack builder D1 compatibility", () => {
 
   test("reapplies the same D1 adjustment after leaving and returning to it", () => {
     const adjustedD1Stack = createStack({
-      backend: "self-next",
-      webFrontend: ["next"],
+      backend: "self",
+      frontend: ["next"],
       runtime: "none",
       database: "sqlite",
       dbSetup: "d1",
@@ -217,8 +244,8 @@ describe("stack builder D1 compatibility", () => {
       webDeploy: "none",
     });
     const tursoStack = createStack({
-      backend: "self-next",
-      webFrontend: ["next"],
+      backend: "self",
+      frontend: ["next"],
       runtime: "none",
       database: "sqlite",
       dbSetup: "turso",
@@ -252,8 +279,7 @@ describe("stack builder D1 compatibility", () => {
 
   test("blocks AbacatePay when there is no web frontend", () => {
     const stack = createStack({
-      webFrontend: ["none"],
-      nativeFrontend: ["none"],
+      frontend: ["none"],
       backend: "hono",
       database: "sqlite",
       orm: "drizzle",
@@ -266,8 +292,7 @@ describe("stack builder D1 compatibility", () => {
 
   test("blocks AbacatePay for native-only stacks", () => {
     const stack = createStack({
-      webFrontend: ["none"],
-      nativeFrontend: ["native-bare"],
+      frontend: ["native-bare"],
       backend: "hono",
       database: "sqlite",
       orm: "drizzle",
@@ -280,8 +305,7 @@ describe("stack builder D1 compatibility", () => {
 
   test("blocks AbacatePay for mixed web and native stacks", () => {
     const stack = createStack({
-      webFrontend: ["tanstack-router"],
-      nativeFrontend: ["native-bare"],
+      frontend: ["tanstack-router", "native-bare"],
       backend: "hono",
       runtime: "bun",
       database: "sqlite",
@@ -296,8 +320,7 @@ describe("stack builder D1 compatibility", () => {
 
   test("blocks AbacatePay for Convex stacks", () => {
     const stack = createStack({
-      webFrontend: ["next"],
-      nativeFrontend: ["none"],
+      frontend: ["next"],
       backend: "convex",
       runtime: "none",
       database: "none",
@@ -315,8 +338,7 @@ describe("stack builder D1 compatibility", () => {
 
   test("allows AbacatePay for web + SQL stacks and emits CLI flags", () => {
     const stack = createStack({
-      webFrontend: ["tanstack-router"],
-      nativeFrontend: ["none"],
+      frontend: ["tanstack-router"],
       backend: "hono",
       runtime: "bun",
       database: "sqlite",
@@ -342,8 +364,7 @@ describe("stack builder D1 compatibility", () => {
 
   test("allows Stripe without database setup and emits CLI flags", () => {
     const stack = createStack({
-      webFrontend: ["next"],
-      nativeFrontend: ["none"],
+      frontend: ["next"],
       backend: "hono",
       runtime: "bun",
       database: "none",
@@ -356,10 +377,9 @@ describe("stack builder D1 compatibility", () => {
   });
 
   test("blocks Stripe for Convex and native-only stacks", () => {
-    const convex = createStack({ webFrontend: ["next"], backend: "convex", payments: ["stripe"] });
+    const convex = createStack({ frontend: ["next"], backend: "convex", payments: ["stripe"] });
     const native = createStack({
-      webFrontend: ["none"],
-      nativeFrontend: ["native-bare"],
+      frontend: ["native-bare"],
       backend: "hono",
       payments: ["stripe"],
     });
@@ -371,7 +391,7 @@ describe("stack builder D1 compatibility", () => {
 
   test("clears incompatible payments when Convex is selected", () => {
     const result = analyzeStackCompatibility(
-      createStack({ webFrontend: ["next"], backend: "convex", payments: ["stripe"] }),
+      createStack({ frontend: ["next"], backend: "convex", payments: ["stripe"] }),
     );
 
     expect(result.adjustedStack).toMatchObject({ backend: "convex", payments: [] });
@@ -394,8 +414,7 @@ describe("stack builder D1 compatibility", () => {
   test("emits --disable-observability for backend-less stacks (Stack Builder → CLI)", () => {
     const stack = createStack({
       projectName: "atscopilot",
-      webFrontend: ["tanstack-router"],
-      nativeFrontend: ["none"],
+      frontend: ["tanstack-router"],
       backend: "none",
       runtime: "none",
       api: "none",
@@ -407,10 +426,10 @@ describe("stack builder D1 compatibility", () => {
       orm: "none",
       dbSetup: "none",
       packageManager: "bun",
-      git: "true",
+      git: true,
       webDeploy: "vercel",
       serverDeploy: "none",
-      install: "true",
+      install: true,
       addons: ["biome"],
       examples: ["none"],
     });
@@ -454,8 +473,8 @@ describe("stack builder D1 compatibility", () => {
 
   test("blocks the AI example for Astro frontends", () => {
     const stack = createStack({
-      webFrontend: ["astro"],
-      backend: "self-astro",
+      frontend: ["astro"],
+      backend: "self",
       api: "orpc",
     });
 
@@ -475,7 +494,7 @@ describe("stack builder D1 compatibility", () => {
 describe("stack builder Docker deployment compatibility", () => {
   test("allows Docker web deploy with a web frontend", () => {
     const stack = createStack({
-      webFrontend: ["tanstack-router"],
+      frontend: ["tanstack-router"],
       backend: "hono",
       runtime: "bun",
     });
@@ -528,8 +547,8 @@ describe("stack builder Docker deployment compatibility", () => {
 
   test("clears Docker server deploy for backends without a server app", () => {
     const stack = createStack({
-      webFrontend: ["next"],
-      backend: "self-next",
+      frontend: ["next"],
+      backend: "self",
       runtime: "none",
       serverDeploy: "docker",
     });
@@ -545,7 +564,7 @@ describe("stack builder Docker deployment compatibility", () => {
 describe("stack builder Vercel deployment compatibility", () => {
   test("allows Vercel web deploy with a web frontend", () => {
     const stack = createStack({
-      webFrontend: ["tanstack-router"],
+      frontend: ["tanstack-router"],
       backend: "hono",
       runtime: "bun",
     });
@@ -598,8 +617,8 @@ describe("stack builder Vercel deployment compatibility", () => {
 
   test("clears Vercel server deploy for backends without a server app", () => {
     const stack = createStack({
-      webFrontend: ["next"],
-      backend: "self-next",
+      frontend: ["next"],
+      backend: "self",
       runtime: "none",
       serverDeploy: "vercel",
     });
