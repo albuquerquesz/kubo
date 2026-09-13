@@ -7,6 +7,7 @@ import CustomStackPanel from "./_components/custom-stack-panel";
 import Footer from "./_components/footer";
 import HeroSection from "./_components/hero-section";
 import LogoMarquee from "./_components/logo-marquee";
+import StackFlowSection from "./_components/stack-flow-section";
 import Testimonials from "./_components/testimonials";
 
 export default async function HomePage() {
@@ -26,6 +27,7 @@ export default async function HomePage() {
     <main className="min-h-svh overflow-x-clip">
       <HeroSection />
       <LogoMarquee />
+      <StackFlowSection />
       <CustomStackPanel className="mb-0 sm:mb-0 lg:mb-0" showViewportBottomRule={false} />
       <CustomStackPanel
         variant="documentation"
