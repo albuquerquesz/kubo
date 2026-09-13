@@ -1,5 +1,5 @@
 import { FRONTEND_VALUES } from "./schemas";
-import type { Frontend } from "./types";
+import type { DesktopWebFrontend, Frontend, NativeFrontend } from "./types";
 
 export type FrontendCapabilities = {
   isWeb: boolean;
@@ -33,6 +33,23 @@ export const reactWebFrontends = [
   "tanstack-start",
   "next",
 ] as const;
+
+export const CONVEX_BETTER_AUTH_SUPPORTED_FRONTENDS = [
+  "tanstack-router",
+  "react-router",
+  "tanstack-start",
+  "next",
+  "native-bare",
+  "native-uniwind",
+  "native-unistyles",
+] as const satisfies readonly Frontend[];
+
+export const CONVEX_BETTER_AUTH_INCOMPATIBLE_FRONTENDS = [
+  "nuxt",
+  "svelte",
+  "solid",
+  "astro",
+] as const satisfies readonly Frontend[];
 
 const publicEnvFrontendPriority = ["next", "nuxt", "svelte", "astro"] as const;
 

@@ -1,4 +1,6 @@
 export * from "./backends";
+export * from "./compatibility";
+export * from "./compatibility-normalization";
 export * from "./communication";
 export * from "./constants";
 export * from "./frontend";
