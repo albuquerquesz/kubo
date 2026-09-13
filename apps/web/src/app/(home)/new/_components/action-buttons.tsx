@@ -20,7 +20,7 @@ type ActionButtonsProps = {
   stackUrl: string;
   stackState: StackState;
   yolo: boolean;
-  onYoloToggle: (yolo: string) => void;
+  onYoloToggle: (yolo: boolean) => void;
 };
 
 export function ActionButtons({
@@ -78,7 +78,7 @@ export function ActionButtons({
                 type="button"
                 variant="secondary"
                 size="default"
-                onClick={() => onYoloToggle(yolo ? "false" : "true")}
+                onClick={() => onYoloToggle(!yolo)}
                 aria-pressed={yolo}
                 className={cn(
                   "w-full font-mono",

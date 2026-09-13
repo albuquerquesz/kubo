@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 
 import type { StackState } from "@/lib/constant";
 import { TECH_OPTIONS } from "@/lib/constant";
-import { CATEGORY_ORDER } from "@/lib/stack-utils";
+import { CATEGORY_ORDER, getStackCategoryValue } from "@/lib/stack-utils";
 import type { TechCategory } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -19,20 +19,19 @@ type SelectedStackBadgesProps = {
 export function SelectedStackBadges({ stack, onRemove, onJump }: SelectedStackBadgesProps) {
   const selections = CATEGORY_ORDER.flatMap((category) => {
     const options = TECH_OPTIONS[category];
-    const selectedValue = stack[category as keyof StackState];
+    const selectedValue = getStackCategoryValue(stack, category);
     if (!options || selectedValue === undefined) return [];
 
-    const ids = Array.isArray(selectedValue) ? selectedValue : [selectedValue];
+    const ids = Array.isArray(selectedValue)
+      ? selectedValue
+      : typeof selectedValue === "boolean"
+        ? []
+        : [selectedValue];
     return ids
-      .filter(
-        (id) =>
-          id !== "none" &&
-          id !== "false" &&
-          !(["git", "install", "auth"].includes(category) && id === "true"),
-      )
+      .filter((id) => id !== "none")
       .flatMap((id) => {
         const tech = options.find((opt) => opt.id === id);
-        return tech ? [{ category: category as TechCategory, tech }] : [];
+        return tech ? [{ category, tech }] : [];
       });
   });
 

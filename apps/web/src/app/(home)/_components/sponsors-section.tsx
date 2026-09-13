@@ -83,11 +83,7 @@ const SHOW_CATEGORIES = [
 
 const SKIP_IDS = new Set([
   "none",
-  "self-next",
-  "self-tanstack-start",
-  "self-nuxt",
-  "self-svelte",
-  "self-astro",
+  "self",
   "prisma-postgres",
   "mongodb-atlas",
   "native-uniwind",
