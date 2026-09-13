@@ -2,9 +2,9 @@
 
 ## Status
 
-Em implementação na branch `catalog/issue-32-create-add-core`. A issue do GitHub permanece
-aberta para revisão humana. Issue: [#32](https://github.com/albuquerquesz/kubo/issues/32). Parent:
-[#26](https://github.com/albuquerquesz/kubo/issues/26). Depende de
+Implementada na branch `catalog/issue-32-create-add-core`; a issue do GitHub permanece aberta para
+revisão humana e merge posterior. Issue: [#32](https://github.com/albuquerquesz/kubo/issues/32).
+Parent: [#26](https://github.com/albuquerquesz/kubo/issues/26). Depende de
 [#31](https://github.com/albuquerquesz/kubo/issues/31).
 
 ## Diagnóstico: o problema é válido
@@ -50,25 +50,56 @@ gerados e `node_modules` não devem ser reescritos.
 
 ## Etapas
 
-### Etapa 1 — especificar e congelar baseline
+### Etapa 1 — especificar e congelar baseline ✅
 
 Registrar a divergência entre `generate` e `add-handler`, os destinos manuais e os contratos MCP.
 Entrega: esta spec.
 
-### Etapa 2 — extrair o núcleo de aplicação de addons
+### Etapa 2 — extrair o núcleo de aplicação de addons ✅
 
 Centralizar a sequência de templates, dependências e configurações de addons para que Create e Add
 usem os mesmos processors e o mesmo catálogo.
 
-### Etapa 3 — substituir mapas de paths por overlay seguro do VFS
+### Etapa 3 — substituir mapas de paths por overlay seguro do VFS ✅
 
 Carregar arquivos de texto existentes com rastreamento de conteúdo original. Escrever apenas o delta
 do VFS; excluir diretórios gerados, dependências e binários.
 
-### Etapa 4 — provar equivalência e revisar
+### Etapa 4 — provar equivalência e revisar ✅
 
 Cobrir addon individual, addon adicionado a projeto existente, combinação de addons, dry-run, MCP e
 preservação de arquivo não relacionado. Executar a suíte relevante, typecheck, build e check.
+
+## Implementação e validação
+
+- `applyAddonCatalog` é o núcleo compartilhado pelo `generate` e pelo Add Path. O Add fornece uma
+  configuração de templates limitada ao subset novo e usa a configuração completa apenas para
+  processors idempotentes.
+- O Add Path importa automaticamente a superfície textual editável do projeto para o VFS, sem
+  `ADD_*_PATHS`. Dependências, diretórios gerados, symlinks e binários não entram no overlay.
+- `VirtualFileSystem` rastreia o conteúdo original; o Add grava apenas arquivos novos ou
+  modificados com `writeSelected`.
+- O MCP continua delegando às APIs `create` e `add`, que agora compartilham esse núcleo.
+
+Validações executadas:
+
+- `cd apps/cli && bun test`: 595 aprovados, 12 skips explícitos de amostras de build e 0 falhas
+  (607 testes em 47 arquivos).
+- Testes focados de addons, MCP e Create/Add: 78 aprovados e 0 falhas.
+- `cd packages/template-generator && bun run typecheck`: passou.
+- `cd apps/cli && bun run check-types`: passou.
+- `bun run check`: passou com 0 erros; os 19 avisos são preexistentes e estão fora do escopo.
+- `NOTIFIQUE_API_KEY=build-placeholder NOTIFIQUE_FROM_EMAIL=build@example.com
+NOTIFIQUE_NEWSLETTER_LIST_ID=build-placeholder bun run build`: 4 tasks passaram, incluindo
+  compilação TypeScript e build estático do web.
+
+Commits da implementação:
+
+1. `517cc001 docs(cli): specify shared create add core`
+2. `72e30ea0 refactor(generator): share addon catalog application`
+3. `8b17378b refactor(cli): overlay existing projects through VFS`
+4. `09269dbb test(cli): cover shared create add catalog`
+5. `e0becf50 fix(cli): harden addon overlay boundaries`
 
 ## Fora de escopo
 
@@ -80,11 +111,15 @@ preservação de arquivo não relacionado. Executar a suíte relevante, typechec
 
 ## Aceite
 
-- [ ] Addon declarado no catálogo funciona em Create e Add sem um segundo registro de paths.
-- [ ] Add Path usa o mesmo núcleo de aplicação de addons que Create Path.
-- [ ] Add Path carrega arquivos existentes de forma segura e escreve somente alterações.
-- [ ] `ADD_PACKAGE_JSON_PATHS`, `ADD_ENV_FILE_PATHS` e `ADD_TEXT_FILE_PATHS` deixam de ser fonte de
+- [x] Addon declarado no catálogo funciona em Create e Add sem um segundo registro de paths.
+- [x] Add Path usa o mesmo núcleo de aplicação de addons que Create Path.
+- [x] Add Path carrega arquivos existentes de forma segura e escreve somente alterações.
+- [x] `ADD_PACKAGE_JSON_PATHS`, `ADD_ENV_FILE_PATHS` e `ADD_TEXT_FILE_PATHS` deixam de ser fonte de
       verdade.
-- [ ] A suíte focada cobre Add Path, dry-run e MCP sem entrar na Full Matrix Job.
-- [ ] O MCP continua usando os mesmos núcleos de `create` e `add`.
-- [ ] Suíte relevante, typecheck, build e check passam sem regressões.
+- [x] A suíte focada cobre Add Path, dry-run e MCP sem entrar na Full Matrix Job.
+- [x] O MCP continua usando os mesmos núcleos de `create` e `add`.
+- [x] Suíte relevante, typecheck, build e check passam sem regressões.
+
+O build sem as variáveis do Notifique falha na validação do ambiente antes da compilação do web;
+com placeholders locais, o build completo passa. A branch ainda não foi mergeada nem publicada, e
+a issue permanece aberta até a revisão humana.
