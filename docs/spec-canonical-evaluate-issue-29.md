@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed. Issue: [#29](https://github.com/albuquerquesz/kubo/issues/29). Parent: [#26](https://github.com/albuquerquesz/kubo/issues/26). Depende de [#27](https://github.com/albuquerquesz/kubo/issues/27) e [#28](https://github.com/albuquerquesz/kubo/issues/28).
+Proposed. Etapa 1 implementada em `catalog/issue-29-canonical-evaluate`. Issue: [#29](https://github.com/albuquerquesz/kubo/issues/29). Parent: [#26](https://github.com/albuquerquesz/kubo/issues/26). Depende de [#27](https://github.com/albuquerquesz/kubo/issues/27) e [#28](https://github.com/albuquerquesz/kubo/issues/28).
 
 Esta spec divide a issue em etapas independentes. A issue não deve ser considerada concluída
 quando a primeira etapa terminar; cada etapa entrega uma redução verificável de duplicação e
@@ -106,11 +106,11 @@ mesma regra para:
 
 Critérios:
 
-- manter as assinaturas públicas ou criar um adaptador compatível para os consumidores atuais;
-- manter exatamente as rejeições e mensagens existentes;
-- adicionar testes parametrizados para os quatro providers e seus casos válidos;
-- não migrar ainda o Builder nem introduzir o `evaluate` final;
-- deixar o arquivo menor ou, no mínimo, remover a duplicação estrutural identificada.
+- [x] manter as assinaturas públicas ou criar um adaptador compatível para os consumidores atuais;
+- [x] manter exatamente as rejeições e mensagens existentes;
+- [x] adicionar testes parametrizados para os quatro providers e seus casos válidos;
+- [x] não migrar ainda o Builder nem introduzir o `evaluate` final;
+- [x] deixar o arquivo menor ou, no mínimo, remover a duplicação estrutural identificada.
 
 Entrega: um commit isolado de refactor, fácil de revisar e reverter.
 
