@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
 import {
-  CORE_STACK_SUMMARY,
   getStackFlowTerminalState,
   KUBO_CLI_BANNER,
   PROJECT_TYPE_OPTIONS,
-  REPRODUCIBLE_COMMAND,
   WEB_OPTIONS,
   type TerminalOption,
 } from "@/lib/stack-flow-terminal";
@@ -78,25 +76,6 @@ function PromptBlock({
   );
 }
 
-function TerminalSummary() {
-  return (
-    <div className="space-y-3 border-t border-zinc-800 pt-4">
-      <p className="flex gap-2 text-yellow-300">
-        <span aria-hidden="true">◆</span>
-        <span className="text-zinc-100">Project configuration ready</span>
-      </p>
-      <dl className="grid min-w-0 gap-x-6 gap-y-1.5 sm:grid-cols-2">
-        {CORE_STACK_SUMMARY.map(([label, value]) => (
-          <div key={label} className="grid min-w-0 grid-cols-[auto_1fr] gap-2">
-            <dt className="text-zinc-500">{label}:</dt>
-            <dd className="min-w-0 break-words text-zinc-200">{value}</dd>
-          </div>
-        ))}
-      </dl>
-    </div>
-  );
-}
-
 function AccessibleTranscript() {
   return (
     <p className="sr-only">
@@ -110,6 +89,7 @@ function AccessibleTranscript() {
 export default function KuboCliTerminal() {
   const [elapsedMs, setElapsedMs] = useState(0);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setReducedMotion(prefersReducedMotion());
@@ -133,22 +113,23 @@ export default function KuboCliTerminal() {
 
   const state = getStackFlowTerminalState(elapsedMs, reducedMotion === true);
 
+  useEffect(() => {
+    const content = contentRef.current;
+    if (!content) return;
+
+    content.scrollTop = state.phase === "command" ? 0 : content.scrollHeight;
+  }, [state.phase]);
+
   return (
-    <div className="min-w-0">
+    <div className="h-full min-w-0">
       <div
         aria-hidden="true"
-        className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-100 shadow-[0_24px_80px_rgba(0,0,0,0.32)]"
+        className="flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-100 shadow-[0_24px_80px_rgba(0,0,0,0.32)]"
       >
-        <div className="flex items-center gap-2 border-zinc-800 border-b bg-zinc-900/80 px-5 py-3 sm:px-6">
-          <span className="size-2.5 rounded-full bg-red-400/90" />
-          <span className="size-2.5 rounded-full bg-yellow-300/90" />
-          <span className="size-2.5 rounded-full bg-emerald-400/90" />
-          <span className="ml-2 font-mono text-[0.65rem] text-zinc-500 uppercase tracking-[0.16em]">
-            kubojs · create
-          </span>
-        </div>
-
-        <div className="overflow-hidden p-5 font-mono text-[0.7rem] leading-relaxed sm:p-8 sm:text-xs lg:p-10 lg:text-sm">
+        <div
+          ref={contentRef}
+          className="min-h-0 flex-1 overflow-y-auto p-5 font-mono text-[0.7rem] leading-relaxed sm:p-8 sm:text-xs lg:p-10 lg:text-sm"
+        >
           <div className="min-w-0 space-y-5">
             <p className="break-words text-zinc-100">
               <span className="text-yellow-300">$</span> <span>{state.visibleCommand}</span>
@@ -215,22 +196,6 @@ export default function KuboCliTerminal() {
                 submitted={state.webFrameworkComplete}
                 value="TanStack Router"
               />
-            ) : null}
-
-            {state.showSummary ? <TerminalSummary /> : null}
-
-            {state.showReproducibleCommand ? (
-              <div className="space-y-2 border-t border-zinc-800 pt-4">
-                <p className="flex gap-2 text-emerald-300">
-                  <span aria-hidden="true">◇</span>
-                  <span className="text-zinc-100">
-                    You can reproduce this setup with the following command:
-                  </span>
-                </p>
-                <code className="block break-words rounded-lg bg-zinc-900 px-3 py-2 text-zinc-400">
-                  {REPRODUCIBLE_COMMAND}
-                </code>
-              </div>
             ) : null}
 
             {state.showSuccess ? (

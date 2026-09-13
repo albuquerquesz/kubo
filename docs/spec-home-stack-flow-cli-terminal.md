@@ -36,7 +36,8 @@ The outer section remains a dedicated `StackFlowSection` component below `LogoMa
 - Background: the existing yellow surface.
 - Internal padding: `64px` minimum at every breakpoint, so the yellow frame remains visible around
   the terminal.
-- Height: content-driven. Do not use the placeholder's fixed height.
+- Height: fixed at `800px` at every breakpoint. The terminal fills the fixed inner viewport and
+  scrolls internally as the transcript grows.
 - The terminal fills the available inner width and uses a dark shell, rounded corners, subtle border,
   terminal chrome, JetBrains Mono, yellow prompt accents, and green completion accents.
 - Long command and option text wraps inside the terminal on narrow screens.
@@ -86,6 +87,7 @@ That command is only a validation reference. The browser component must never in
 - Typed playback state and deterministic 16-second loop.
 - CLI-styled command, prompts, selections, summary, reproducible command, and success state.
 - Responsive layout with a 64px yellow frame.
+- Fixed 800px section height with internal terminal scrolling.
 - Reduced-motion and assistive-technology behavior.
 - Focused unit coverage for command, phase order, loop reset, reduced motion, and default values.
 
