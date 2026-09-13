@@ -50,7 +50,20 @@ async function loadDirectory(
     const relativePath = path.relative(projectDir, absolutePath);
     if (isBinaryFile(relativePath)) continue;
 
-    const content = await fs.readFile(absolutePath, "utf-8");
-    vfs.loadFile(relativePath, content);
+    const content = await fs.readFile(absolutePath);
+    if (isBinaryContent(content)) continue;
+
+    vfs.loadFile(relativePath, content.toString("utf-8"));
+  }
+}
+
+function isBinaryContent(content: Uint8Array): boolean {
+  if (content.includes(0)) return true;
+
+  try {
+    new TextDecoder("utf-8", { fatal: true }).decode(content);
+    return false;
+  } catch {
+    return true;
   }
 }

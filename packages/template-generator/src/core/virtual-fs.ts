@@ -138,10 +138,6 @@ export class VirtualFileSystem {
     });
   }
 
-  getChangedFileCount(): number {
-    return this.getChangedFiles().length;
-  }
-
   getDirectoryCount(): number {
     return this.getAllDirectories().length;
   }

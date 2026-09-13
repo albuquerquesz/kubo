@@ -29,7 +29,7 @@ describe("Create Path and Add Path", () => {
     if (!projectDir) throw new Error("Expected generated project directory");
 
     const userFilePath = join(projectDir, "apps/web/src/user-owned.ts");
-    const binaryFilePath = join(projectDir, "apps/web/public/user-owned.bin");
+    const binaryFilePath = join(projectDir, "apps/web/public/user-owned");
     const userFileContent = "export const userOwned = true;\n";
     const binaryFileContent = Uint8Array.from([0, 255, 12, 128]);
     await mkdir(dirname(userFilePath), { recursive: true });

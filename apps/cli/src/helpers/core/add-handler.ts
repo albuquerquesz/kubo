@@ -395,9 +395,10 @@ async function addHandlerInternal(
   }
 
   // Write VFS to disk
+  const changedFiles = new Set(vfs.getChangedFiles());
   const tree = {
     root: vfs.toTree(""),
-    fileCount: vfs.getChangedFileCount(),
+    fileCount: changedFiles.size,
     directoryCount: vfs.getDirectoryCount(),
     config: updatedConfig,
   };
@@ -405,7 +406,7 @@ async function addHandlerInternal(
   if (input.dryRun) {
     if (!isSilent()) {
       log.success(pc.green("Dry run validation passed. No addon files were written."));
-      log.info(pc.dim(`Planned addon files: ${vfs.getChangedFileCount()}`));
+      log.info(pc.dim(`Planned addon files: ${changedFiles.size}`));
       outro(cliColors.signal("Dry run complete."));
     }
 
@@ -418,7 +419,6 @@ async function addHandlerInternal(
     });
   }
 
-  const changedFiles = new Set(vfs.getChangedFiles());
   const writeResult = await writeSelected(tree, projectDir, (filePath) =>
     changedFiles.has(filePath),
   );
