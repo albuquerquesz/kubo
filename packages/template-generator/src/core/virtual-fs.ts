@@ -9,6 +9,7 @@ export class VirtualFileSystem {
   private _fs: ReturnType<typeof memfs>["fs"];
   private _vol: ReturnType<typeof memfs>["vol"];
   private _sourcePathMap: Map<string, string> = new Map();
+  private _originalContents: Map<string, string> = new Map();
 
   constructor() {
     const { fs, vol } = memfs();
@@ -25,7 +26,24 @@ export class VirtualFileSystem {
     this._fs.writeFileSync(path, content, { encoding: "utf-8" });
     if (sourcePath) {
       this._sourcePathMap.set(path, sourcePath);
+    } else {
+      this._sourcePathMap.delete(path);
     }
+  }
+
+  /**
+   * Loads an existing text file without marking it as generated.
+   * Consumers can later use getChangedFiles() to apply only the overlay delta.
+   */
+  loadFile(filePath: string, content: string): void {
+    const path = this.normalizePath(filePath);
+    const dir = dirname(path);
+    if (dir && dir !== "/" && dir !== ".") {
+      this._fs.mkdirSync(dir, { recursive: true });
+    }
+    this._fs.writeFileSync(path, content, { encoding: "utf-8" });
+    this._originalContents.set(path, content);
+    this._sourcePathMap.delete(path);
   }
 
   readFile(filePath: string): string | undefined {
@@ -112,6 +130,18 @@ export class VirtualFileSystem {
     return this.getAllFiles().length;
   }
 
+  getChangedFiles(): string[] {
+    return this.getAllFiles().filter((filePath) => {
+      const normalizedPath = this.normalizePath(filePath);
+      const originalContent = this._originalContents.get(normalizedPath);
+      return originalContent === undefined || this.readFile(filePath) !== originalContent;
+    });
+  }
+
+  getChangedFileCount(): number {
+    return this.getChangedFiles().length;
+  }
+
   getDirectoryCount(): number {
     return this.getAllDirectories().length;
   }
@@ -128,6 +158,7 @@ export class VirtualFileSystem {
     this._fs = fs;
     this._vol = vol;
     this._sourcePathMap.clear();
+    this._originalContents.clear();
   }
 
   getVolume() {

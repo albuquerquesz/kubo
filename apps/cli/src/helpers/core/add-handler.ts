@@ -3,16 +3,13 @@ import path from "node:path";
 import { intro, log, outro } from "@clack/prompts";
 import {
   EMBEDDED_TEMPLATES,
-  processAddonTemplates,
-  processAddonsDeps,
+  applyAddonCatalog,
   processPackageConfigs,
   processEnvVariables,
-  processTurboConfig,
-  processVitePlusConfig,
   processTemplateString,
   VirtualFileSystem,
 } from "@kubojs/template-generator";
-import { writeTree } from "@kubojs/template-generator/fs-writer";
+import { writeSelected } from "@kubojs/template-generator/fs-writer";
 import { Result } from "better-result";
 import fs from "fs-extra";
 import pc from "picocolors";
@@ -34,6 +31,7 @@ import { setupAddons } from "../addons/addons-setup";
 import { setupTesting } from "../testing/testing-setup";
 import { detectProjectConfig } from "./detect-project-config";
 import { installDependencies } from "./install-dependencies";
+import { loadProjectTextFiles } from "./project-vfs";
 
 export interface AddHandlerOptions {
   silent?: boolean;
@@ -47,33 +45,6 @@ export interface AddResult {
   plannedFileCount?: number;
   error?: string;
 }
-
-const ADD_PACKAGE_JSON_PATHS = [
-  "package.json",
-  "apps/server/package.json",
-  "apps/web/package.json",
-  "apps/native/package.json",
-  "apps/desktop/package.json",
-  "apps/docs/package.json",
-  "apps/api/package.json",
-  "packages/db/package.json",
-  "packages/auth/package.json",
-  "packages/backend/package.json",
-  "packages/config/package.json",
-  "packages/env/package.json",
-  "packages/infra/package.json",
-  "packages/ui/package.json",
-];
-
-const ADD_TEXT_FILE_PATHS = ["apps/web/vite.config.ts", "lefthook.yml"];
-const ADD_ENV_FILE_PATHS = [
-  ".env",
-  "apps/web/.env",
-  "apps/server/.env",
-  "apps/native/.env",
-  "packages/backend/.env.local",
-  "packages/infra/.env",
-];
 
 const HOOK_ADDONS = ["husky", "lefthook"] as const satisfies readonly Addons[];
 const HOOK_LINTER_ADDONS = ["biome", "oxlint", "vite-plus"] as const satisfies readonly Addons[];
@@ -398,41 +369,14 @@ async function addHandlerInternal(
 
   const vfs = new VirtualFileSystem();
 
-  // Pre-load existing files into VFS so addon processors can modify them.
-  for (const pkgPath of ADD_PACKAGE_JSON_PATHS) {
-    const fullPath = path.join(projectDir, pkgPath);
-    if (await fs.pathExists(fullPath)) {
-      const content = await fs.readFile(fullPath, "utf-8");
-      vfs.writeFile(pkgPath, content);
-    }
-  }
-  for (const filePath of ADD_TEXT_FILE_PATHS) {
-    const fullPath = path.join(projectDir, filePath);
-    if (await fs.pathExists(fullPath)) {
-      const content = await fs.readFile(fullPath, "utf-8");
-      vfs.writeFile(filePath, content);
-    }
-  }
-  for (const filePath of ADD_ENV_FILE_PATHS) {
-    const fullPath = path.join(projectDir, filePath);
-    if (await fs.pathExists(fullPath)) {
-      const content = await fs.readFile(fullPath, "utf-8");
-      vfs.writeFile(filePath, content);
-    }
-  }
+  await loadProjectTextFiles(vfs, projectDir);
 
-  await processAddonTemplates(vfs, EMBEDDED_TEMPLATES, config);
-
-  processAddonsDeps(vfs, config);
+  await applyAddonCatalog(vfs, EMBEDDED_TEMPLATES, updatedConfig, {
+    templateConfig: config,
+    refreshTaskRunner: addonsToAdd.includes("turborepo"),
+    refreshVitePlus: addonsToAdd.includes("vite-plus"),
+  });
   processEnvVariables(vfs, updatedConfig);
-
-  if (addonsToAdd.includes("turborepo")) {
-    processTurboConfig(vfs, updatedConfig);
-  }
-
-  if (addonsToAdd.includes("vite-plus")) {
-    processVitePlusConfig(vfs, updatedConfig);
-  }
 
   const hasTaskRunner = updatedAddons.some((addon) =>
     (TASK_RUNNER_ADDONS as readonly Addons[]).includes(addon),
@@ -453,7 +397,7 @@ async function addHandlerInternal(
   // Write VFS to disk
   const tree = {
     root: vfs.toTree(""),
-    fileCount: vfs.getFileCount(),
+    fileCount: vfs.getChangedFileCount(),
     directoryCount: vfs.getDirectoryCount(),
     config: updatedConfig,
   };
@@ -461,7 +405,7 @@ async function addHandlerInternal(
   if (input.dryRun) {
     if (!isSilent()) {
       log.success(pc.green("Dry run validation passed. No addon files were written."));
-      log.info(pc.dim(`Planned addon files: ${vfs.getFileCount()}`));
+      log.info(pc.dim(`Planned addon files: ${vfs.getChangedFileCount()}`));
       outro(cliColors.signal("Dry run complete."));
     }
 
@@ -474,7 +418,10 @@ async function addHandlerInternal(
     });
   }
 
-  const writeResult = await writeTree(tree, projectDir);
+  const changedFiles = new Set(vfs.getChangedFiles());
+  const writeResult = await writeSelected(tree, projectDir, (filePath) =>
+    changedFiles.has(filePath),
+  );
 
   if (writeResult.isErr()) {
     return Result.err(
@@ -484,8 +431,8 @@ async function addHandlerInternal(
     );
   }
 
-  if (vfs.getFileCount() > 0 && !isSilent()) {
-    log.info(pc.dim(`Wrote ${vfs.getFileCount()} addon files`));
+  if (changedFiles.size > 0 && !isSilent()) {
+    log.info(pc.dim(`Wrote ${changedFiles.size} addon files`));
   }
 
   // Drop previous exclusive linter files/deps before installing the replacement.
