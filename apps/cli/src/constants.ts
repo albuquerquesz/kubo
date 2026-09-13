@@ -51,20 +51,3 @@ export function getDefaultConfig() {
 export const DEFAULT_CONFIG = getDefaultConfig();
 
 export { desktopWebFrontends };
-
-export const ADDON_COMPATIBILITY = {
-  pwa: ["tanstack-router", "react-router", "solid", "next"],
-  tauri: desktopWebFrontends,
-  electrobun: desktopWebFrontends,
-  biome: [],
-  husky: [],
-  lefthook: [],
-  turborepo: [],
-  "vite-plus": [],
-  mcp: [],
-  oxlint: [],
-  opentui: [],
-  skills: [],
-  "s3-storage": [],
-  none: [],
-} as const;

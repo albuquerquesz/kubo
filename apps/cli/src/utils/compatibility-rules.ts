@@ -3,21 +3,20 @@ import {
   backendAllowsApi,
   backendAllowsOnlyNoneApi,
   getCommunicationCompatibilityIssue,
-  getPaymentCompatibilityIssue,
+  evaluate,
+  CONVEX_BETTER_AUTH_SUPPORTED_FRONTENDS,
+  WEB_FRONTENDS_REQUIRING_ORPC,
   isCommunicationProvider,
-  type CommunicationCompatibilityIssue,
-  type CommunicationProvider,
 } from "@kubojs/types";
 import { Result } from "better-result";
 
-import { ADDON_COMPATIBILITY } from "../constants";
 import type {
   Addons,
   API,
   Auth,
   Backend,
-  CLIInput,
   Frontend,
+  Examples,
   Payments,
   Communication,
   ProjectConfig,
@@ -27,6 +26,10 @@ import type {
   WebDeploy,
 } from "../types";
 import { WEB_FRAMEWORKS } from "./compatibility";
+import {
+  getCompatibilityValidationMessage,
+  validateWithCompatibilityEvaluator,
+} from "./compatibility-adapter";
 import { ValidationError } from "./errors";
 
 type ValidationResult = Result<void, ValidationError>;
@@ -34,10 +37,9 @@ type AddonCompatibilityConfig = Pick<ProjectConfig, "frontend" | "auth" | "backe
 const TASK_RUNNER_ADDONS: readonly Addons[] = ["turborepo", "vite-plus"];
 /** Mutually exclusive code-quality linters (one slot). */
 export const LINTER_ADDONS: readonly Addons[] = ["biome", "oxlint"];
-const STATIC_DESKTOP_ADDONS: readonly Addons[] = ["tauri", "electrobun"];
 
 export function isLinterAddon(addon: string): boolean {
-  return LINTER_ADDONS.includes(addon as Addons);
+  return LINTER_ADDONS.some((value) => value === addon);
 }
 
 /**
@@ -68,31 +70,10 @@ export function mergeAddonsExclusive(
 
   return { updatedAddons: result, removedAddons: [...removed] };
 }
-const TAURI_STATIC_EXPORT_FRONTENDS: readonly Frontend[] = [
-  "next",
-  "tanstack-start",
-] as const satisfies readonly Frontend[];
-
-export const CONVEX_BETTER_AUTH_INCOMPATIBLE_FRONTENDS = [
-  "nuxt",
-  "svelte",
-  "solid",
-  "astro",
-] as const;
-
-export const CONVEX_BETTER_AUTH_SUPPORTED_FRONTENDS = [
-  "tanstack-router",
-  "react-router",
-  "tanstack-start",
-  "next",
-  "native-bare",
-  "native-uniwind",
-  "native-unistyles",
-] as const;
-
-function validationErr(message: string): ValidationResult {
-  return Result.err(new ValidationError({ message }));
-}
+export {
+  CONVEX_BETTER_AUTH_INCOMPATIBLE_FRONTENDS,
+  CONVEX_BETTER_AUTH_SUPPORTED_FRONTENDS,
+} from "@kubojs/types";
 
 export function isWebFrontend(value: Frontend) {
   return WEB_FRAMEWORKS.includes(value);
@@ -106,10 +87,9 @@ export function validateTestingAgainstFrontends(
   testing: Testing[] = [],
   frontends: Frontend[] = [],
 ): ValidationResult {
-  if (testing.includes("playwright") && !isPlaywrightAllowed(frontends)) {
-    return validationErr("playwright testing requires a web frontend");
-  }
-  return Result.ok(undefined);
+  return validateWithCompatibilityEvaluator({ testing, frontend: frontends }, undefined, [
+    "testing-frontend",
+  ]);
 }
 
 export function splitFrontends(values: Frontend[] = []): {
@@ -123,155 +103,31 @@ export function splitFrontends(values: Frontend[] = []): {
   return { web, native };
 }
 
-export function ensureSingleWebAndNative(frontends: Frontend[]): ValidationResult {
-  const { web, native } = splitFrontends(frontends);
-  if (web.length > 1) {
-    return validationErr(
-      "Cannot select multiple web frameworks. Choose only one of: tanstack-router, tanstack-start, react-router, next, nuxt, svelte, solid, astro",
-    );
-  }
-  if (native.length > 1) {
-    return validationErr(
-      "Cannot select multiple native frameworks. Choose only one of: native-bare, native-uniwind, native-unistyles",
-    );
-  }
-  return Result.ok(undefined);
-}
-
-// Frontends that support backend="self" (fullstack mode with built-in server routes)
-const FULLSTACK_FRONTENDS: readonly Frontend[] = [
-  "next",
-  "tanstack-start",
-  "nuxt",
-  "svelte",
-  "astro",
-] as const;
-
-export function validateSelfBackendCompatibility(
-  providedFlags: Set<string>,
-  options: CLIInput,
-  config: Partial<ProjectConfig>,
-): ValidationResult {
-  const backend = config.backend || options.backend;
-  const frontends = config.frontend || options.frontend || [];
-
-  if (backend === "self") {
-    const { web, native } = splitFrontends(frontends);
-    const hasSupportedWeb = web.length === 1 && FULLSTACK_FRONTENDS.includes(web[0]);
-
-    if (!hasSupportedWeb) {
-      return validationErr(
-        "Backend 'self' (fullstack) currently only supports Next.js, TanStack Start, Nuxt, SvelteKit, and Astro frontends. Please use --frontend next, --frontend tanstack-start, --frontend nuxt, --frontend svelte, or --frontend astro.",
-      );
-    }
-
-    if (native.length > 1) {
-      return validationErr(
-        "Cannot select multiple native frameworks. Choose only one of: native-bare, native-uniwind, native-unistyles",
-      );
-    }
-  }
-
-  const hasFullstackFrontend = frontends.some((f) => FULLSTACK_FRONTENDS.includes(f));
-  if (providedFlags.has("backend") && !hasFullstackFrontend && backend === "self") {
-    return validationErr(
-      "Backend 'self' (fullstack) currently only supports Next.js, TanStack Start, Nuxt, SvelteKit, and Astro frontends. Please use --frontend next, --frontend tanstack-start, --frontend nuxt, --frontend svelte, --frontend astro, or choose a different backend.",
-    );
-  }
-
-  return Result.ok(undefined);
-}
-
-export function validateWorkersCompatibility(
-  providedFlags: Set<string>,
-  options: CLIInput,
-  config: Partial<ProjectConfig>,
-): ValidationResult {
-  if (
-    providedFlags.has("runtime") &&
-    options.runtime === "workers" &&
-    config.backend &&
-    config.backend !== "hono"
-  ) {
-    return validationErr(
-      `Cloudflare Workers runtime (--runtime workers) is only supported with Hono backend (--backend hono). Current backend: ${config.backend}. Please use '--backend hono' or choose a different runtime.`,
-    );
-  }
-
-  if (
-    providedFlags.has("backend") &&
-    config.backend &&
-    config.backend !== "hono" &&
-    config.runtime === "workers"
-  ) {
-    return validationErr(
-      `Backend '${config.backend}' is not compatible with Cloudflare Workers runtime. Cloudflare Workers runtime is only supported with Hono backend. Please use '--backend hono' or choose a different runtime.`,
-    );
-  }
-
-  if (
-    providedFlags.has("runtime") &&
-    options.runtime === "workers" &&
-    config.database === "mongodb"
-  ) {
-    return validationErr(
-      "Cloudflare Workers runtime (--runtime workers) is not compatible with MongoDB database. MongoDB requires Prisma or Mongoose ORM, but Workers runtime only supports Drizzle or Prisma ORM. Please use a different database or runtime.",
-    );
-  }
-
-  if (
-    providedFlags.has("database") &&
-    config.database === "mongodb" &&
-    config.runtime === "workers"
-  ) {
-    return validationErr(
-      "MongoDB database is not compatible with Cloudflare Workers runtime. MongoDB requires Prisma or Mongoose ORM, but Workers runtime only supports Drizzle or Prisma ORM. Please use a different database or runtime.",
-    );
-  }
-
-  return Result.ok(undefined);
-}
-
 export function validateApiFrontendCompatibility(
   api: API | undefined,
   frontends: Frontend[] = [],
 ): ValidationResult {
-  const includesNuxt = frontends.includes("nuxt");
-  const includesSvelte = frontends.includes("svelte");
-  const includesSolid = frontends.includes("solid");
-  const includesAstro = frontends.includes("astro");
-  if ((includesNuxt || includesSvelte || includesSolid || includesAstro) && api === "trpc") {
-    return validationErr(
-      `tRPC API is not supported with '${includesNuxt ? "nuxt" : includesSvelte ? "svelte" : includesSolid ? "solid" : "astro"}' frontend. Please use --api orpc or --api none or remove '${includesNuxt ? "nuxt" : includesSvelte ? "svelte" : includesSolid ? "solid" : "astro"}' from --frontend.`,
-    );
-  }
-  return Result.ok(undefined);
+  return validateWithCompatibilityEvaluator({ api, frontend: frontends }, undefined, [
+    "api-frontend",
+  ]);
 }
 
 export function isFrontendAllowedWithBackend(
   frontend: Frontend,
   backend?: ProjectConfig["backend"],
-  auth?: string,
+  auth?: Auth,
 ) {
-  if (backend === "convex") {
-    if (
-      auth === "better-auth" &&
-      CONVEX_BETTER_AUTH_INCOMPATIBLE_FRONTENDS.includes(
-        frontend as (typeof CONVEX_BETTER_AUTH_INCOMPATIBLE_FRONTENDS)[number],
-      )
-    ) {
-      return false;
-    }
-
-    if (frontend === "solid" || frontend === "astro") return false;
-  }
-
-  if (auth === "clerk") {
-    const incompatibleFrontends = ["nuxt", "svelte", "solid", "astro"];
-    if (incompatibleFrontends.includes(frontend)) return false;
-  }
-
-  return true;
+  const issueCodes = evaluate({ backend, auth, frontend: [frontend] }).issues.map(
+    ({ code }) => code,
+  );
+  return !issueCodes.some((code) =>
+    [
+      "backend-convex-frontend",
+      "backend-convex-better-auth-frontend",
+      "backend-self-frontend",
+      "auth-frontend",
+    ].includes(code),
+  );
 }
 
 export function supportsConvexBetterAuth(frontends: readonly Frontend[] = []) {
@@ -287,7 +143,7 @@ export function allowedApisForFrontends(
   if (backendAllowsOnlyNoneApi(backend)) return ["none"] as const;
 
   const supportsTrpc = !frontends.some((frontend) =>
-    ["nuxt", "svelte", "solid", "astro"].includes(frontend),
+    WEB_FRONTENDS_REQUIRING_ORPC.includes(frontend),
   );
   const base: API[] = ["trpc", "orpc", "orval", "none"];
   return base.filter(
@@ -307,11 +163,9 @@ export function isExampleTodoAllowed(
   database?: ProjectConfig["database"],
   api?: API,
 ) {
-  // Convex handles its own data layer, no need for database or API
-  if (backend === "convex") return true;
-  // Todo requires both database and API to communicate
-  if (database === "none" || api === "none") return false;
-  return true;
+  return !evaluate({ backend, database, api, examples: ["todo"] }).issues.some(({ code }) =>
+    ["example-todo-database", "example-todo-api", "example-todo-orval"].includes(code),
+  );
 }
 
 export function isExampleAIAllowedForBackend(
@@ -322,59 +176,29 @@ export function isExampleAIAllowedForBackend(
 }
 
 export function isExampleAIAllowed(backend?: ProjectConfig["backend"], frontends: Frontend[] = []) {
-  if (backend === "none") return false;
-
-  const includesSolid = frontends.includes("solid");
-  const includesAstro = frontends.includes("astro");
-  if (includesSolid || includesAstro) return false;
-
-  // Convex AI example only supports React-based frontends (not Svelte or Nuxt)
-  if (backend === "convex") {
-    const includesNuxt = frontends.includes("nuxt");
-    const includesSvelte = frontends.includes("svelte");
-    if (includesNuxt || includesSvelte) return false;
-  }
-
-  return true;
+  return !evaluate({ backend, frontend: frontends, examples: ["ai"] }).issues.some(({ code }) =>
+    ["example-ai-frontend", "example-ai-backend"].includes(code),
+  );
 }
 
 export function validateWebDeployRequiresWebFrontend(
   webDeploy: WebDeploy | undefined,
   hasWebFrontendFlag: boolean,
 ): ValidationResult {
-  if (webDeploy && webDeploy !== "none" && !hasWebFrontendFlag) {
-    return validationErr(
-      "'--web-deploy' requires a web frontend. Please select a web frontend or set '--web-deploy none'.",
-    );
-  }
-  return Result.ok(undefined);
+  return hasWebFrontendFlag
+    ? Result.ok(undefined)
+    : validateWithCompatibilityEvaluator({ webDeploy, frontend: [] }, undefined, [
+        "web-deploy-frontend",
+      ]);
 }
 
 export function validateServerDeployRequiresBackend(
   serverDeploy: ServerDeploy | undefined,
   backend: Backend | undefined,
 ): ValidationResult {
-  if (serverDeploy && serverDeploy !== "none" && (!backend || backend === "none")) {
-    return validationErr(
-      "'--server-deploy' requires a backend. Please select a backend or set '--server-deploy none'.",
-    );
-  }
-  return Result.ok(undefined);
-}
-
-const SERVER_DEPLOY_TARGETS = {
-  docker: true,
-  vercel: true,
-  railway: true,
-  guaracloud: true,
-} satisfies Record<Exclude<ServerDeploy, "cloudflare" | "none">, true>;
-
-type DedicatedServerDeploy = keyof typeof SERVER_DEPLOY_TARGETS;
-
-function isDedicatedServerDeploy(
-  serverDeploy: ServerDeploy | undefined,
-): serverDeploy is DedicatedServerDeploy {
-  return serverDeploy !== undefined && Object.hasOwn(SERVER_DEPLOY_TARGETS, serverDeploy);
+  return validateWithCompatibilityEvaluator({ serverDeploy, backend }, undefined, [
+    "server-deploy-backend",
+  ]);
 }
 
 /**
@@ -386,30 +210,11 @@ export function validateServerDeploy(
   backend: Backend | undefined,
   runtime: Runtime | undefined,
 ): ValidationResult {
-  if (!isDedicatedServerDeploy(serverDeploy)) return Result.ok(undefined);
-
-  if (backend === "convex" || backend === "self") {
-    return validationErr(
-      `'--server-deploy ${serverDeploy}' requires a separate server backend (hono, express, fastify, elysia, nestjs). For a fullstack 'self' backend, use '--web-deploy ${serverDeploy}' instead.`,
-    );
-  }
-
-  if (runtime === "workers") {
-    return validationErr(
-      `'--server-deploy ${serverDeploy}' is not compatible with '--runtime workers'. Use '--runtime bun' or '--runtime node', or choose '--server-deploy cloudflare'.`,
-    );
-  }
-
-  return Result.ok(undefined);
+  return validateWithCompatibilityEvaluator({ serverDeploy, backend, runtime }, undefined, [
+    "server-deploy-backend",
+    "server-deploy-runtime",
+  ]);
 }
-
-// Frontends whose docker image needs server output, which desktop addons replace with a static export
-const DOCKER_SERVER_OUTPUT_FRONTENDS: readonly Frontend[] = [
-  "next",
-  "svelte",
-  "astro",
-  "react-router",
-] as const satisfies readonly Frontend[];
 
 export function validateDockerWebDeployDesktopAddons(
   webDeploy: WebDeploy | undefined,
@@ -418,24 +223,10 @@ export function validateDockerWebDeployDesktopAddons(
   backend: Backend | undefined,
   auth: Auth | undefined,
 ): ValidationResult {
-  if (webDeploy !== "docker" || !addons || !frontend) return Result.ok(undefined);
-
-  const desktopAddons = addons.filter((addon) => STATIC_DESKTOP_ADDONS.includes(addon));
-  if (desktopAddons.length === 0) return Result.ok(undefined);
-
-  const affected = frontend.find((f) => DOCKER_SERVER_OUTPUT_FRONTENDS.includes(f));
-  if (!affected) return Result.ok(undefined);
-
-  // next + electrobun keeps standalone output when Convex Better Auth forces server bootstrap
-  const keepsServerOutput =
-    affected === "next" &&
-    !desktopAddons.includes("tauri") &&
-    backend === "convex" &&
-    auth === "better-auth";
-  if (keepsServerOutput) return Result.ok(undefined);
-
-  return validationErr(
-    `'--web-deploy docker' is not compatible with the ${desktopAddons.join(", ")} addon on '${affected}' because desktop addons switch the web build to a static export, which the docker image cannot serve. Remove the addon or use a static-serving frontend (tanstack-router, solid).`,
+  return validateWithCompatibilityEvaluator(
+    { webDeploy, addons, frontend, backend, auth },
+    undefined,
+    ["web-deploy-desktop-addon"],
   );
 }
 
@@ -446,61 +237,22 @@ export function validateAddonCompatibility(
   backend?: Backend,
   _runtime?: Runtime,
 ): { isCompatible: boolean; reason?: string } {
-  if (
-    STATIC_DESKTOP_ADDONS.includes(addon) &&
-    auth === "clerk" &&
-    frontend.includes("react-router")
-  ) {
-    return {
-      isCompatible: false,
-      reason: `${addon} addon forces React Router into a static export, but Clerk on React Router requires SSR middleware. Remove the addon or use a different auth/frontend.`,
-    };
-  }
-
-  if (backend === "self" && STATIC_DESKTOP_ADDONS.includes(addon)) {
-    return {
-      isCompatible: false,
-      reason: `${addon} addon requires a separate backend or no backend because backend 'self' emits server routes that cannot be bundled as static desktop assets.`,
-    };
-  }
-
-  if (
-    addon === "tauri" &&
-    backend === "convex" &&
-    auth === "better-auth" &&
-    frontend.some((f) => TAURI_STATIC_EXPORT_FRONTENDS.includes(f))
-  ) {
-    return {
-      isCompatible: false,
-      reason:
-        "tauri addon is not compatible with Convex Better Auth on Next.js or TanStack Start because those templates use server auth bootstrap and cannot be exported as static desktop assets.",
-    };
-  }
-
-  if (!(addon in ADDON_COMPATIBILITY)) {
-    return {
-      isCompatible: false,
-      reason: `${addon} is not a supported addon`,
-    };
-  }
-
-  const compatibleFrontends = ADDON_COMPATIBILITY[addon as keyof typeof ADDON_COMPATIBILITY];
-
-  if (compatibleFrontends.length > 0) {
-    const hasCompatibleFrontend = frontend.some((f) =>
-      compatibleFrontends.some((compatibleFrontend) => compatibleFrontend === f),
-    );
-
-    if (!hasCompatibleFrontend) {
-      const frontendList = compatibleFrontends.join(", ");
-      return {
+  const issue = evaluate({ addons: [addon], frontend, auth, backend }).issues.find(({ code }) =>
+    ["addon-task-runner", "addon-linter", "addon-frontend", "addon-backend", "addon-auth"].includes(
+      code,
+    ),
+  );
+  return issue
+    ? {
         isCompatible: false,
-        reason: `${addon} addon requires one of these frontends: ${frontendList}`,
-      };
-    }
-  }
-
-  return { isCompatible: true };
+        reason: getCompatibilityValidationMessage(issue, {
+          addons: [addon],
+          frontend,
+          auth,
+          backend,
+        }),
+      }
+    : { isCompatible: true };
 }
 
 export function getCompatibleAddons(
@@ -535,34 +287,11 @@ export function validateAddonsAgainstFrontends(
   backend?: Backend,
   runtime?: Runtime,
 ): ValidationResult {
-  const selectedTaskRunners = addons.filter((addon) => TASK_RUNNER_ADDONS.includes(addon));
-  if (selectedTaskRunners.length > 1) {
-    return validationErr(
-      "Cannot combine 'turborepo' and 'vite-plus' addons. Choose one task runner.",
-    );
-  }
-
-  const selectedLinters = [...new Set(addons.filter((addon) => LINTER_ADDONS.includes(addon)))];
-  if (selectedLinters.length > 1) {
-    return validationErr(
-      "Cannot combine 'biome' and 'oxlint' addons. Choose one code-quality linter.",
-    );
-  }
-
-  for (const addon of addons) {
-    if (addon === "none") continue;
-    const { isCompatible, reason } = validateAddonCompatibility(
-      addon,
-      frontends,
-      auth,
-      backend,
-      runtime,
-    );
-    if (!isCompatible) {
-      return validationErr(`Incompatible addon/frontend combination: ${reason}`);
-    }
-  }
-  return Result.ok(undefined);
+  return validateWithCompatibilityEvaluator(
+    { addons, frontend: frontends, auth, backend, runtime },
+    undefined,
+    ["addon-task-runner", "addon-linter", "addon-frontend", "addon-backend", "addon-auth"],
+  );
 }
 
 export function validateAddonsAgainstConfig(
@@ -578,12 +307,6 @@ export function validateAddonsAgainstConfig(
   );
 }
 
-const COMMUNICATION_PRODUCT_NAME = {
-  resend: "Resend",
-  notifique: "Notifique",
-  arara: "AraraHQ",
-} satisfies Record<CommunicationProvider, string>;
-
 export function validateCommunicationCompatibility(
   communication: Communication | undefined,
   backend: Backend | undefined,
@@ -591,21 +314,28 @@ export function validateCommunicationCompatibility(
   serverDeploy?: ServerDeploy,
 ): ValidationResult {
   if (!isCommunicationProvider(communication)) return Result.ok(undefined);
-
   const issue = getCommunicationCompatibilityIssue({
     provider: communication,
     backend,
     runtime,
     serverDeploy,
   });
-
-  const messages = {
-    "requires-backend": `${COMMUNICATION_PRODUCT_NAME[communication]} communication requires a server backend. Please choose a backend or use '--communication none'.`,
-    "workers-unsupported":
-      "AraraHQ requires the official Node SDK and is not compatible with Edge/Workers runtimes. Use a Node/Bun server deployment or Convex Node Action.",
-  } satisfies Record<CommunicationCompatibilityIssue, string>;
-
-  return issue ? validationErr(messages[issue]) : Result.ok(undefined);
+  if (!issue) return Result.ok(undefined);
+  if (issue === "workers-unsupported") {
+    return Result.err(
+      new ValidationError({
+        message:
+          "AraraHQ requires the official Node SDK and is not compatible with Edge/Workers runtimes. Use a Node/Bun server deployment or Convex Node Action.",
+      }),
+    );
+  }
+  const providerName =
+    communication === "resend" ? "Resend" : communication === "notifique" ? "Notifique" : "AraraHQ";
+  return Result.err(
+    new ValidationError({
+      message: `${providerName} communication requires a server backend. Please choose a backend or use '--communication none'.`,
+    }),
+  );
 }
 
 export function validatePaymentsCompatibility(
@@ -616,89 +346,29 @@ export function validatePaymentsCompatibility(
   orm?: ProjectConfig["orm"],
   database?: ProjectConfig["database"],
 ): ValidationResult {
-  if (!payments || payments.length === 0) return Result.ok(undefined);
-
-  for (const provider of payments) {
-    const issue = getPaymentCompatibilityIssue({
-      provider,
-      backend,
-      frontends,
-      database,
-      orm,
-    });
-    const label = provider === "stripe" ? "Stripe" : "AbacatePay";
-
-    if (issue === "convex-unsupported") {
-      return validationErr(
-        `${label} payments is not compatible with '--backend convex'. Please use a server backend or backend 'self'.`,
-      );
-    }
-    if (issue === "requires-web-frontend") {
-      return validationErr(
-        `${label} payments requires a web frontend. Please choose next, tanstack-start, tanstack-router, react-router, nuxt, svelte, solid, or astro.`,
-      );
-    }
-    if (issue === "native-only-unsupported") {
-      return validationErr(
-        `${label} payments is not compatible with native-only frontends. Please add a supported web frontend or leave payments unselected.`,
-      );
-    }
-    if (issue === "sql-database-required") {
-      return validationErr(
-        "AbacatePay payments v1 requires a SQL database with Drizzle or Prisma. MongoDB and Mongoose are not supported.",
-      );
-    }
-  }
-
-  return Result.ok(undefined);
+  return validateWithCompatibilityEvaluator(
+    { payments, auth, backend, frontend: frontends, orm, database },
+    undefined,
+    ["payment"],
+  );
 }
 
 export function validateExamplesCompatibility(
-  examples: string[] | undefined,
+  examples: Examples[] | undefined,
   backend: ProjectConfig["backend"] | undefined,
   database: ProjectConfig["database"] | undefined,
   frontend?: Frontend[],
   api?: API,
 ): ValidationResult {
-  const examplesArr = examples ?? [];
-  if (examplesArr.length === 0 || examplesArr.includes("none")) return Result.ok(undefined);
-
-  if (examplesArr.includes("todo") && backend !== "convex") {
-    if (database === "none") {
-      return validationErr(
-        "The 'todo' example requires a database. Cannot use --examples todo when database is 'none'.",
-      );
-    }
-    if (api === "none") {
-      return validationErr(
-        "The 'todo' example requires an API layer (tRPC or oRPC). Cannot use --examples todo when api is 'none'.",
-      );
-    }
-  }
-
-  if (examplesArr.includes("ai") && (frontend ?? []).includes("solid")) {
-    return validationErr("The 'ai' example is not compatible with the Solid frontend.");
-  }
-
-  if (examplesArr.includes("ai") && (frontend ?? []).includes("astro")) {
-    return validationErr("The 'ai' example is not compatible with the Astro frontend.");
-  }
-
-  if (examplesArr.includes("ai") && backend === "none") {
-    return validationErr("The 'ai' example requires a backend.");
-  }
-
-  // Convex AI example only supports React-based frontends
-  if (examplesArr.includes("ai") && backend === "convex") {
-    const frontendArr = frontend ?? [];
-    const includesNuxt = frontendArr.includes("nuxt");
-    const includesSvelte = frontendArr.includes("svelte");
-    if (includesNuxt || includesSvelte) {
-      return validationErr(
-        "The 'ai' example with Convex backend only supports React-based frontends (Next.js, TanStack Router, TanStack Start, React Router). Svelte and Nuxt are not supported with Convex AI.",
-      );
-    }
-  }
-
-  return Result.ok(undefined);
+  return validateWithCompatibilityEvaluator(
+    { examples, backend, database, frontend, api },
+    undefined,
+    [
+      "example-todo-database",
+      "example-todo-api",
+      "example-todo-orval",
+      "example-ai-frontend",
+      "example-ai-backend",
+    ],
+  );
 }
