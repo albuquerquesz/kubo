@@ -5,8 +5,11 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
 import {
   getStackFlowTerminalState,
+  BACKEND_OPTIONS,
+  DATABASE_OPTIONS,
   KUBO_CLI_BANNER,
   PROJECT_TYPE_OPTIONS,
+  RUNTIME_OPTIONS,
   WEB_OPTIONS,
   type TerminalOption,
 } from "@/lib/stack-flow-terminal";
@@ -91,8 +94,7 @@ function AccessibleTranscript() {
   return (
     <p className="sr-only">
       Demonstração animada do Create Path do Kubo. O comando bun create kubojs@latest seleciona o
-      projeto my-kubo-app com TanStack Router, Hono, Bun, tRPC, SQLite, Drizzle, Better Auth,
-      GetMonitor e Turborepo, e termina com o projeto criado com sucesso.
+      projeto my-kubo-app com TanStack Router, Elysia, Bun e PostgreSQL.
     </p>
   );
 }
@@ -139,7 +141,7 @@ export default function KuboCliTerminal() {
       >
         <div
           ref={contentRef}
-          className="min-h-0 flex-1 overflow-y-auto p-5 font-mono text-[0.7rem] leading-relaxed sm:p-8 sm:text-xs lg:p-10 lg:text-sm"
+          className="min-h-0 flex-1 overflow-y-auto p-5 font-mono text-xs leading-relaxed sm:p-8 sm:text-sm lg:p-10 lg:text-base"
         >
           <div className="min-w-0">
             <p className="break-words text-zinc-100">
@@ -148,15 +150,9 @@ export default function KuboCliTerminal() {
             </p>
 
             {state.showBanner ? (
-              <pre className="mt-5 max-w-full overflow-x-auto whitespace-pre text-[0.5rem] text-yellow-300 leading-[1.08] sm:text-[0.75rem] lg:text-[0.9rem]">
+              <pre className="mt-5 max-w-full overflow-x-auto whitespace-pre font-mono text-xs text-yellow-300 leading-[1.08] sm:text-sm lg:text-base">
                 {KUBO_CLI_BANNER}
               </pre>
-            ) : null}
-
-            {state.showIntro ? (
-              <p className="mt-5 text-yellow-300">
-                <span className="text-zinc-500">┌</span> Creating a new kubojs project
-              </p>
             ) : null}
 
             {state.showProjectName ? (
@@ -215,12 +211,36 @@ export default function KuboCliTerminal() {
               </TerminalTreeStep>
             ) : null}
 
-            {state.showSuccess ? (
+            {state.showBackend ? (
               <TerminalTreeStep>
-                <p className="flex gap-2 text-emerald-300">
-                  <span aria-hidden="true">└</span>
-                  <span>Project created successfully in 0.42 seconds!</span>
-                </p>
+                <PromptBlock
+                  message="Select backend"
+                  options={BACKEND_OPTIONS}
+                  submitted={state.backendComplete}
+                  value="Elysia"
+                />
+              </TerminalTreeStep>
+            ) : null}
+
+            {state.showRuntime ? (
+              <TerminalTreeStep>
+                <PromptBlock
+                  message="Select runtime"
+                  options={RUNTIME_OPTIONS}
+                  submitted={state.runtimeComplete}
+                  value="Bun"
+                />
+              </TerminalTreeStep>
+            ) : null}
+
+            {state.showDatabase ? (
+              <TerminalTreeStep>
+                <PromptBlock
+                  message="Select database"
+                  options={DATABASE_OPTIONS}
+                  submitted={state.databaseComplete}
+                  value="PostgreSQL"
+                />
               </TerminalTreeStep>
             ) : null}
           </div>

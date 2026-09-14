@@ -1,7 +1,9 @@
 import { describe, expect, test } from "bun:test";
 
 import {
+  BACKEND_OPTIONS,
   CORE_STACK_SUMMARY,
+  DATABASE_OPTIONS,
   getStackFlowTerminalState,
   STACK_FLOW_TERMINAL_COMMAND,
   STACK_FLOW_TERMINAL_LOOP_DURATION_MS,
@@ -16,17 +18,22 @@ describe("stack flow terminal playback", () => {
   test("reveals the demonstrative Create Path in order", () => {
     const commandState = getStackFlowTerminalState(0);
     const promptState = getStackFlowTerminalState(STACK_FLOW_TERMINAL_TIMELINE.projectTypeAtMs);
-    const summaryState = getStackFlowTerminalState(STACK_FLOW_TERMINAL_TIMELINE.summaryAtMs);
-    const successState = getStackFlowTerminalState(STACK_FLOW_TERMINAL_TIMELINE.successAtMs);
+    const backendState = getStackFlowTerminalState(STACK_FLOW_TERMINAL_TIMELINE.backendAtMs);
+    const runtimeState = getStackFlowTerminalState(STACK_FLOW_TERMINAL_TIMELINE.runtimeAtMs);
+    const databaseState = getStackFlowTerminalState(STACK_FLOW_TERMINAL_TIMELINE.databaseAtMs);
 
     expect(commandState.phase).toBe("command");
     expect(commandState.commandTyping).toBe(true);
     expect(promptState.phase).toBe("project-type");
     expect(promptState.projectTypeComplete).toBe(false);
-    expect(summaryState.phase).toBe("summary");
-    expect(summaryState.showReproducibleCommand).toBe(false);
-    expect(successState.phase).toBe("success");
-    expect(successState.showSuccess).toBe(true);
+    expect(backendState.phase).toBe("backend");
+    expect(backendState.backendComplete).toBe(false);
+    expect(runtimeState.phase).toBe("runtime");
+    expect(runtimeState.runtimeComplete).toBe(false);
+    expect(databaseState.phase).toBe("database");
+    expect(databaseState.showBackend).toBe(true);
+    expect(databaseState.showRuntime).toBe(true);
+    expect(databaseState.showDatabase).toBe(true);
   });
 
   test("loops back to the first frame without accumulating state", () => {
@@ -39,15 +46,17 @@ describe("stack flow terminal playback", () => {
   test("freezes on the complete transcript for reduced motion", () => {
     const state = getStackFlowTerminalState(0, true);
 
-    expect(state.phase).toBe("success");
+    expect(state.phase).toBe("database");
     expect(state.commandComplete).toBe(true);
     expect(state.projectNameComplete).toBe(true);
     expect(state.projectTypeComplete).toBe(true);
     expect(state.webFrameworkComplete).toBe(true);
-    expect(state.showSuccess).toBe(true);
+    expect(state.backendComplete).toBe(true);
+    expect(state.runtimeComplete).toBe(true);
+    expect(state.databaseComplete).toBe(true);
   });
 
-  test("keeps the displayed core stack aligned with the CLI defaults", () => {
+  test("keeps the core-stack parity fixture aligned with CLI defaults", () => {
     expect(Object.fromEntries(CORE_STACK_SUMMARY)).toEqual({
       "Project Name": "my-kubo-app",
       Frontend: "tanstack-router",
@@ -60,5 +69,10 @@ describe("stack flow terminal playback", () => {
       Observability: "getmonitor",
       Addons: "turborepo",
     });
+  });
+
+  test("uses Elysia and PostgreSQL for the animated selections", () => {
+    expect(BACKEND_OPTIONS.find((option) => option.selected)?.label).toBe("Elysia");
+    expect(DATABASE_OPTIONS.find((option) => option.selected)?.label).toBe("PostgreSQL");
   });
 });
