@@ -46,7 +46,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
       href={entry.href}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noreferrer" : undefined}
-      className="group flex min-w-0 flex-col bg-muted/10 transition-colors duration-150 ease-out hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+      className="group flex min-w-0 flex-col bg-muted/20 transition-colors duration-150 ease-out hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
     >
       <article className="flex min-h-[30rem] min-w-0 flex-col border-rule border-t border-l p-6 sm:min-h-[36rem] sm:p-8">
         {entry.image ? (
@@ -77,7 +77,7 @@ export default function CommunityLinksSection() {
   return (
     <section
       aria-label="Funcionalidades da CLI"
-      className="border-rule border-b px-5 pt-6 pb-16 sm:px-8 sm:pt-8 sm:pb-20 lg:px-10 lg:pt-10 lg:pb-24"
+      className="border-rule border-b px-5 pt-6 pb-16 sm:px-8 sm:pt-8 sm:pb-20 lg:px-10 lg:pt-10 lg:pb-16"
     >
       <div className="flex flex-col gap-6 pb-8 sm:pb-10 lg:flex-row lg:items-end lg:justify-between lg:pb-12">
         <div className="max-w-2xl">
