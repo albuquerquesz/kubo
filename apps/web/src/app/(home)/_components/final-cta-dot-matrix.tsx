@@ -14,7 +14,7 @@ const finalCtaPrimaryClassName =
 
 const finalCtaSecondaryClassName = cn(
   buttonVariants({ variant: "cta", size: "xl" }),
-  "no-underline bg-white/10 text-white hover:bg-white/15 hover:ring-white/20 focus-visible:outline-white",
+  "no-underline bg-white/20 text-white hover:bg-white/30 hover:ring-white/20 focus-visible:outline-white",
 );
 
 /** Final conversion CTA; yellow field, black dots, white copy. */
