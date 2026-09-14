@@ -1,6 +1,6 @@
 "use client";
 
-import { Star } from "lucide-react";
+import { Sparkles, Star } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -259,7 +259,10 @@ export function CTASection({ className }: CTASectionProps) {
       >
         <div ref={badgeRef} className="mb-3 flex flex-col items-center justify-center gap-6">
           <KuboMarkMotion ref={markRef} className="h-16 w-auto" />
-          <Badge>Crie projetos TypeScript</Badge>
+          <Badge>
+            <Sparkles aria-hidden className="size-3.5 shrink-0" />
+            Crie projetos TypeScript
+          </Badge>
         </div>
 
         <h1
