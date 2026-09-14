@@ -260,8 +260,8 @@ export function CTASection({ className }: CTASectionProps) {
         <div ref={badgeRef} className="mb-3 flex flex-col items-center justify-center gap-6">
           <KuboMarkMotion ref={markRef} className="h-16 w-auto" />
           <Badge>
-            <Sparkles aria-hidden className="size-3.5 shrink-0" />
-            Crie projetos TypeScript
+            <Sparkles aria-hidden className="size-5 shrink-0 text-primary" />
+            Stack Builder TypeScript
           </Badge>
         </div>
 
@@ -279,7 +279,7 @@ export function CTASection({ className }: CTASectionProps) {
 
         <p
           ref={bodyRef}
-          className="mb-12 max-w-2xl text-lg leading-relaxed text-foreground/80 md:text-xl"
+          className="mb-10 max-w-2xl text-lg leading-relaxed text-foreground/80 md:text-xl"
         >
           Escolha as ferramentas certas para sua ideia e comece a construir sem partir do zero.
           Limpo, preciso e do seu jeito.

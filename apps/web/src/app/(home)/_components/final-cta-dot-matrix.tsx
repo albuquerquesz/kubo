@@ -23,11 +23,11 @@ export default function FinalCtaDotMatrix() {
     <section
       id="cta"
       aria-labelledby="final-cta-title"
-      className="final-cta ui-scroll-target relative isolate min-h-[20.375rem] overflow-hidden border-b border-white/20 bg-[#c49314] text-white shadow-none"
+      className="final-cta ui-scroll-target relative isolate min-h-[24rem] overflow-hidden border-b border-white/20 bg-[#c49314] text-white shadow-none"
     >
       <DotMatrixBackdrop />
 
-      <div className="relative z-10 mx-auto flex min-h-[20.375rem] w-full max-w-[1200px] flex-col justify-center gap-6 py-20">
+      <div className="relative z-10 mx-auto flex min-h-[24rem] w-full max-w-[1200px] flex-col justify-center gap-6 py-20">
         <h2
           id="final-cta-title"
           className="ui-display max-w-[47.5rem] text-balance text-[clamp(2rem,3vw,3.5rem)] leading-[0.93] text-white"

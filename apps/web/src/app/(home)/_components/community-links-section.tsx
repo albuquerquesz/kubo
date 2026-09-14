@@ -48,7 +48,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
       rel={isExternal ? "noreferrer" : undefined}
       className="group flex min-w-0 flex-col bg-background transition-colors duration-150 ease-out hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
     >
-      <article className="flex min-h-[28rem] min-w-0 flex-col border-rule border-r p-6 sm:min-h-[32rem] sm:p-8">
+      <article className="flex min-h-[30rem] min-w-0 flex-col border-rule border-t border-l p-6 sm:min-h-[36rem] sm:p-8">
         {entry.image ? (
           <Image
             src={entry.image}
@@ -81,7 +81,7 @@ export default function CommunityLinksSection() {
     >
       <div className="flex flex-col gap-6 pb-8 sm:pb-10 lg:flex-row lg:items-end lg:justify-between lg:pb-12">
         <div className="max-w-2xl">
-          <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
             A CLI não para no scaffold.
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -92,7 +92,7 @@ export default function CommunityLinksSection() {
           Explorar recursos
         </Button>
       </div>
-      <div className="relative grid grid-cols-1 gap-px border-x border-rule bg-rule before:pointer-events-none before:absolute before:top-0 before:left-1/2 before:w-screen before:-translate-x-1/2 before:border-t before:border-rule after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:w-screen after:-translate-x-1/2 after:border-b after:border-rule sm:grid-cols-2 xl:grid-cols-4">
+      <div className="relative grid grid-cols-1 border-r border-b border-rule sm:grid-cols-2 xl:grid-cols-4">
         {communityEntries.map((entry) => (
           <CommunityCard key={entry.title} entry={entry} />
         ))}
