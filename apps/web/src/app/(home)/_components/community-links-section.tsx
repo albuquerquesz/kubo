@@ -88,7 +88,7 @@ export default function CommunityLinksSection() {
             Instale skills, conecte agentes e adicione recursos quando seu projeto pedir.
           </p>
         </div>
-        <Button nativeButton={false} render={<Link href="/docs/cli" />} variant="cta" size="lg">
+        <Button nativeButton={false} render={<Link href="/docs/cli" />} variant="cta" size="xl">
           Explorar recursos
         </Button>
       </div>
