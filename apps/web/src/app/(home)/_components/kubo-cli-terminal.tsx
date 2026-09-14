@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
 import {
@@ -29,6 +29,17 @@ function OptionRow({ option, multi = false }: { option: TerminalOption; multi?: 
       <span className={option.selected ? "text-yellow-300" : "text-zinc-600"}>{marker}</span>
       <span>{option.label}</span>
       <span className="text-zinc-500">({option.hint})</span>
+    </div>
+  );
+}
+
+function TerminalTreeStep({ children }: { children: ReactNode }) {
+  return (
+    <div className="relative mt-5">
+      <span aria-hidden="true" className="absolute -top-5 left-0 h-5 text-zinc-600 leading-5">
+        │
+      </span>
+      {children}
     </div>
   );
 }
@@ -130,79 +141,87 @@ export default function KuboCliTerminal() {
           ref={contentRef}
           className="min-h-0 flex-1 overflow-y-auto p-5 font-mono text-[0.7rem] leading-relaxed sm:p-8 sm:text-xs lg:p-10 lg:text-sm"
         >
-          <div className="min-w-0 space-y-5">
+          <div className="min-w-0">
             <p className="break-words text-zinc-100">
               <span className="text-yellow-300">$</span> <span>{state.visibleCommand}</span>
               {state.commandTyping ? <Cursor visible={state.commandCursorVisible} /> : null}
             </p>
 
             {state.showBanner ? (
-              <pre className="max-w-full overflow-x-auto whitespace-pre text-[0.5rem] text-yellow-300 leading-[1.08] sm:text-[0.75rem] lg:text-[0.9rem]">
+              <pre className="mt-5 max-w-full overflow-x-auto whitespace-pre text-[0.5rem] text-yellow-300 leading-[1.08] sm:text-[0.75rem] lg:text-[0.9rem]">
                 {KUBO_CLI_BANNER}
               </pre>
             ) : null}
 
             {state.showIntro ? (
-              <p className="text-yellow-300">
+              <p className="mt-5 text-yellow-300">
                 <span className="text-zinc-500">┌</span> Creating a new kubojs project
               </p>
             ) : null}
 
             {state.showProjectName ? (
-              <div className="space-y-2">
-                {state.projectNameComplete ? (
-                  <>
-                    <p className="flex gap-2 text-emerald-300">
-                      <span aria-hidden="true">◇</span>
-                      <span className="text-zinc-100">
-                        Enter your project name or path (relative to current directory)
-                      </span>
-                    </p>
-                    <p className="pl-6 text-zinc-400">my-kubo-app</p>
-                  </>
-                ) : (
-                  <>
-                    <p className="flex gap-2 text-yellow-300">
-                      <span aria-hidden="true">◆</span>
-                      <span className="text-zinc-100">
-                        Enter your project name or path (relative to current directory)
-                      </span>
-                    </p>
-                    <p className="pl-6 text-zinc-100">
-                      {state.visibleProjectName}
-                      {state.projectNameTyping ? (
-                        <Cursor visible={state.projectNameCursorVisible} />
-                      ) : null}
-                    </p>
-                  </>
-                )}
-              </div>
+              <TerminalTreeStep>
+                <div className="space-y-2">
+                  {state.projectNameComplete ? (
+                    <>
+                      <p className="flex gap-2 text-emerald-300">
+                        <span aria-hidden="true">◇</span>
+                        <span className="text-zinc-100">
+                          Enter your project name or path (relative to current directory)
+                        </span>
+                      </p>
+                      <p className="pl-6 text-zinc-400">my-kubo-app</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="flex gap-2 text-yellow-300">
+                        <span aria-hidden="true">◆</span>
+                        <span className="text-zinc-100">
+                          Enter your project name or path (relative to current directory)
+                        </span>
+                      </p>
+                      <p className="pl-6 text-zinc-100">
+                        {state.visibleProjectName}
+                        {state.projectNameTyping ? (
+                          <Cursor visible={state.projectNameCursorVisible} />
+                        ) : null}
+                      </p>
+                    </>
+                  )}
+                </div>
+              </TerminalTreeStep>
             ) : null}
 
             {state.showProjectType ? (
-              <PromptBlock
-                message="Select project type"
-                options={PROJECT_TYPE_OPTIONS}
-                submitted={state.projectTypeComplete}
-                value="Web"
-                multi
-              />
+              <TerminalTreeStep>
+                <PromptBlock
+                  message="Select project type"
+                  options={PROJECT_TYPE_OPTIONS}
+                  submitted={state.projectTypeComplete}
+                  value="Web"
+                  multi
+                />
+              </TerminalTreeStep>
             ) : null}
 
             {state.showWebFramework ? (
-              <PromptBlock
-                message="Choose web"
-                options={WEB_OPTIONS}
-                submitted={state.webFrameworkComplete}
-                value="TanStack Router"
-              />
+              <TerminalTreeStep>
+                <PromptBlock
+                  message="Choose web"
+                  options={WEB_OPTIONS}
+                  submitted={state.webFrameworkComplete}
+                  value="TanStack Router"
+                />
+              </TerminalTreeStep>
             ) : null}
 
             {state.showSuccess ? (
-              <p className="flex gap-2 text-emerald-300">
-                <span aria-hidden="true">└</span>
-                <span>Project created successfully in 0.42 seconds!</span>
-              </p>
+              <TerminalTreeStep>
+                <p className="flex gap-2 text-emerald-300">
+                  <span aria-hidden="true">└</span>
+                  <span>Project created successfully in 0.42 seconds!</span>
+                </p>
+              </TerminalTreeStep>
             ) : null}
           </div>
         </div>

@@ -24,6 +24,8 @@ The playback is a browser presentation, not Filesystem Scaffolding.
   Turborepo.
 - The simulation uses the actual prompt labels and selection markers from the CLI, then presents a
   compact core-stack summary before the success state.
+- The prompt sequence uses `│` connectors between stages and closes with `└` on success, matching
+  the CLI tree structure.
 - The loop duration is 16 seconds, with a short hold on the completed state before restarting.
 - `prefers-reduced-motion` disables the loop and cursor animation and shows the complete transcript.
 
