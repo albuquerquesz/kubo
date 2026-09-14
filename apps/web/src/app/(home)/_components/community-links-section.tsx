@@ -48,7 +48,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
       rel={isExternal ? "noreferrer" : undefined}
       className="group flex min-w-0 flex-col bg-background transition-colors duration-150 ease-out hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
     >
-      <article className="flex min-h-[28rem] min-w-0 flex-col p-6 sm:min-h-[32rem] sm:p-8">
+      <article className="flex min-h-[28rem] min-w-0 flex-col border-rule border-r p-6 sm:min-h-[32rem] sm:p-8">
         {entry.image ? (
           <Image
             src={entry.image}
@@ -88,7 +88,13 @@ export default function CommunityLinksSection() {
             Instale skills, conecte agentes e adicione recursos quando seu projeto pedir.
           </p>
         </div>
-        <Button nativeButton={false} render={<Link href="/docs/cli" />} className="shrink-0">
+        <Button
+          nativeButton={false}
+          render={<Link href="/docs/cli" />}
+          variant="primary"
+          size="lg"
+          className="h-12 shrink-0 rounded-none px-5 text-base font-semibold tracking-[-0.02em]"
+        >
           Explorar recursos
         </Button>
       </div>
