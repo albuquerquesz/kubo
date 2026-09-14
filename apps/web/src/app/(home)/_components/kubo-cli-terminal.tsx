@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
 import {
@@ -102,7 +102,6 @@ function AccessibleTranscript() {
 export default function KuboCliTerminal() {
   const [elapsedMs, setElapsedMs] = useState(0);
   const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setReducedMotion(prefersReducedMotion());
@@ -126,23 +125,13 @@ export default function KuboCliTerminal() {
 
   const state = getStackFlowTerminalState(elapsedMs, reducedMotion === true);
 
-  useEffect(() => {
-    const content = contentRef.current;
-    if (!content) return;
-
-    content.scrollTop = state.phase === "command" ? 0 : content.scrollHeight;
-  }, [state.phase]);
-
   return (
     <div className="h-full min-w-0">
       <div
         aria-hidden="true"
         className="flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-100 shadow-[0_24px_80px_rgba(0,0,0,0.32)]"
       >
-        <div
-          ref={contentRef}
-          className="min-h-0 flex-1 overflow-y-auto p-5 font-mono text-xs leading-relaxed sm:p-8 sm:text-sm lg:p-10 lg:text-base"
-        >
+        <div className="min-h-0 flex-1 overflow-hidden p-5 font-mono text-sm leading-relaxed sm:p-8 sm:text-base lg:p-10 lg:text-lg">
           <div className="min-w-0">
             <p className="break-words text-zinc-100">
               <span className="text-yellow-300">$</span> <span>{state.visibleCommand}</span>
@@ -150,7 +139,7 @@ export default function KuboCliTerminal() {
             </p>
 
             {state.showBanner ? (
-              <pre className="mt-5 max-w-full overflow-x-auto whitespace-pre font-mono text-xs text-yellow-300 leading-[1.08] sm:text-sm lg:text-base">
+              <pre className="mt-5 max-w-full overflow-hidden whitespace-pre font-mono text-sm text-yellow-300 leading-[1.08] sm:text-base lg:text-lg">
                 {KUBO_CLI_BANNER}
               </pre>
             ) : null}
