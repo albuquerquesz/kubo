@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronRight } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
@@ -134,7 +135,11 @@ export default function KuboCliTerminal() {
         <div className="min-h-0 flex-1 overflow-hidden p-5 font-mono text-sm leading-relaxed sm:p-8 sm:text-base lg:p-10 lg:text-lg">
           <div className="min-w-0">
             <p className="break-words text-zinc-100">
-              <span className="text-yellow-300">$</span> <span>{state.visibleCommand}</span>
+              <ChevronRight
+                aria-hidden
+                className="mr-1 inline-block size-5 align-[-0.2em] text-yellow-300"
+              />
+              <span>{state.visibleCommand}</span>
               {state.commandTyping ? <Cursor visible={state.commandCursorVisible} /> : null}
             </p>
 
