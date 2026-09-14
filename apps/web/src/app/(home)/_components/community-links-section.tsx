@@ -55,7 +55,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
             alt=""
             width={96}
             height={96}
-            className="size-16 object-contain object-left-top sm:size-20"
+            className="size-14 object-contain object-left-top sm:size-16"
             aria-hidden
             unoptimized
           />
@@ -88,7 +88,7 @@ export default function CommunityLinksSection() {
             Instale skills, conecte agentes e adicione recursos quando seu projeto pedir.
           </p>
         </div>
-        <Button nativeButton={false} render={<Link href="/docs/cli" />}>
+        <Button nativeButton={false} render={<Link href="/docs/cli" />} variant="cta" size="lg">
           Explorar recursos
         </Button>
       </div>
