@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { KuboMarkMotion, type KuboMarkMotionHandle } from "@/components/brand/kubo-mark-motion";
+import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { useWebGLTelemetry } from "@/components/webgl-telemetry";
 import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "@/lib/create-commands";
@@ -256,8 +257,9 @@ export function CTASection({ className }: CTASectionProps) {
         className="hero-content relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 text-center"
         data-hero-intro="pending"
       >
-        <div ref={badgeRef} className="mb-8 flex items-center justify-center" aria-hidden>
+        <div ref={badgeRef} className="mb-3 flex flex-col items-center justify-center gap-6">
           <KuboMarkMotion ref={markRef} className="h-16 w-auto" />
+          <Badge>Crie projetos TypeScript</Badge>
         </div>
 
         <h1
