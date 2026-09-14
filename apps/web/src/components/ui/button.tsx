@@ -19,8 +19,6 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: `${BUTTON_RADIUS} bg-primary text-primary-foreground [a]:hover:bg-primary/80`,
-        primary:
-          "rounded-none bg-primary text-primary-foreground transition-colors duration-150 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:ring-0",
         /**
          * Primary marketing action — shared geometry and interaction with secondary.
          * Do not use in the site header (header freezes its own chrome styles).

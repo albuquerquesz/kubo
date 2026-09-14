@@ -132,7 +132,7 @@ export default function KuboCliTerminal() {
         aria-hidden="true"
         className="flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-100 shadow-[0_24px_80px_rgba(0,0,0,0.32)]"
       >
-        <div className="min-h-0 flex-1 overflow-hidden p-5 font-mono text-sm leading-relaxed sm:p-8 sm:text-base lg:p-10 lg:text-lg">
+        <div className="relative min-h-0 flex-1 overflow-hidden p-5 font-mono text-sm leading-relaxed after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:z-10 after:h-36 after:bg-gradient-to-t after:from-zinc-950 after:via-zinc-950/55 after:to-transparent after:backdrop-blur-0 sm:p-8 sm:text-base lg:p-10 lg:text-lg">
           <div className="min-w-0">
             <p className="break-words text-zinc-100">
               <ChevronRight
