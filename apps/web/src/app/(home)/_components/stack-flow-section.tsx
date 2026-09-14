@@ -12,7 +12,7 @@ export default function StackFlowSection() {
 
   return (
     <div className="mx-auto my-12 w-[1200px] max-w-full sm:my-16">
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-6 px-1 text-zinc-100">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-6 px-1 text-zinc-100">
         <div className="max-w-2xl">
           <h2
             id="stack-flow-title"
