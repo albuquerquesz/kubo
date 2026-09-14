@@ -38,8 +38,8 @@ The outer section remains a dedicated `StackFlowSection` component below `LogoMa
 - Background: the existing yellow surface.
 - Internal padding: `64px` minimum at every breakpoint, so the yellow frame remains visible around
   the terminal.
-- Height: fixed at `800px` at every breakpoint. The terminal fills the fixed inner viewport and
-  scrolls internally as the transcript grows.
+- Height: fixed at `1080px` at every breakpoint. The terminal fills the fixed inner viewport, with
+  enough room for the complete transcript without an internal scrollbar.
 - The terminal fills the available inner width and uses a dark shell, rounded corners, subtle border,
   terminal chrome, JetBrains Mono, yellow prompt accents, and green completion accents.
 - Long command and option text wraps inside the terminal on narrow screens.
