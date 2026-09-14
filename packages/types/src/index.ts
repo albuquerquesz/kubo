@@ -1,4 +1,5 @@
 export * from "./backends";
+export * from "./branding";
 export * from "./compatibility";
 export * from "./compatibility-normalization";
 export * from "./communication";

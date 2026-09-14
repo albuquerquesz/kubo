@@ -1,16 +1,10 @@
+import { KUBO_CLI_TITLE } from "@kubojs/types";
 import gradient from "gradient-string";
 import pc from "picocolors";
 
 import { supportsTrueColor } from "./cli-colors";
 
-export const TITLE_TEXT = `
-██╗  ██╗██╗   ██╗██████╗  ██████╗
-██║ ██╔╝██║   ██║██╔══██╗██╔═══██╗
-█████╔╝ ██║   ██║██████╔╝██║   ██║
-██╔═██╗ ██║   ██║██╔══██╗██║   ██║
-██║  ██╗╚██████╔╝██████╔╝╚██████╔╝
-╚═╝  ╚═╝ ╚═════╝ ╚═════╝  ╚═════╝
-`;
+export const TITLE_TEXT = KUBO_CLI_TITLE;
 
 export const KUBO_TITLE_COLORS = [
   "#D6A72B",
