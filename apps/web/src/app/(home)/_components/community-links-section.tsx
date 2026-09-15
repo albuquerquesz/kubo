@@ -15,7 +15,7 @@ export default function CommunityLinksSection() {
         <h2 className="max-w-2xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:col-start-1 lg:row-start-1">
           O projeto não para na criação.
         </h2>
-        <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base lg:col-start-1 lg:row-start-2 lg:mt-0 lg:self-center">
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-lg lg:col-start-1 lg:row-start-2 lg:mt-0 lg:self-center">
           Instale skills, conecte agentes e adicione recursos quando seu projeto pedir.
         </p>
         <Button
