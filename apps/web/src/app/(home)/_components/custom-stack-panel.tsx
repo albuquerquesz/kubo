@@ -13,7 +13,7 @@ const stackFeatures = [
   "PRODUCTION-READY",
 ] as const;
 
-type PanelVariant = "stack-builder" | "documentation" | "templates" | "integrations";
+type PanelVariant = "stack-builder" | "documentation" | "templates" | "integrations" | "sponsor";
 
 type PanelContent = {
   title: string;
@@ -22,6 +22,7 @@ type PanelContent = {
   href: string;
   imageSrc: string;
   imageAlt: string;
+  features?: readonly string[];
 };
 
 const panelContent: Record<PanelVariant, PanelContent> = {
@@ -64,6 +65,15 @@ const panelContent: Record<PanelVariant, PanelContent> = {
     href: "/new",
     imageAlt: "Integrações brasileiras disponíveis no Stack Builder do Kubo",
   },
+  sponsor: {
+    title: "Patrocine o Kubo.",
+    description: "Ajude a manter o Kubo aberto e a acelerar o próximo release.",
+    cta: "Patrocinar no GitHub",
+    href: "https://github.com/sponsors/albuquerquesz",
+    imageSrc: "/assets/kubo-sponsor.png",
+    imageAlt: "Ilustração da rede de contribuições ao Kubo",
+    features: ["OPEN SOURCE", "COMUNIDADE", "NOVOS RELEASES"],
+  },
 };
 
 type CustomStackPanelProps = {
@@ -86,6 +96,7 @@ export default function CustomStackPanel({
   showViewportBottomRule = true,
 }: CustomStackPanelProps) {
   const content = panelContent[variant];
+  const isExternal = content.href.startsWith("http");
 
   return (
     <section
@@ -110,6 +121,8 @@ export default function CustomStackPanel({
         </h2>
         <Link
           href={content.href}
+          target={isExternal ? "_blank" : undefined}
+          rel={isExternal ? "noreferrer" : undefined}
           className={cn(
             buttonVariants({ variant: "cta", size: "xl" }),
             "shrink-0 self-start sm:self-center",
@@ -143,7 +156,7 @@ export default function CustomStackPanel({
       </div>
 
       <div className="flex flex-wrap gap-2 px-4 py-4 sm:px-6 lg:px-6">
-        {stackFeatures.map((feature) => (
+        {(content.features ?? stackFeatures).map((feature) => (
           <span
             key={feature}
             className="bg-muted px-2 py-1 font-mono text-[0.625rem] text-muted-foreground uppercase tracking-[0.04em]"
