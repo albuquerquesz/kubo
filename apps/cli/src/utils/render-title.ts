@@ -1,24 +1,11 @@
-import { KUBO_CLI_TITLE } from "@kubojs/types";
+import { KUBO_CLI_TITLE, KUBO_TITLE_COLORS } from "@kubojs/types";
 import gradient from "gradient-string";
 import pc from "picocolors";
 
 import { supportsTrueColor } from "./cli-colors";
 
 export const TITLE_TEXT = KUBO_CLI_TITLE;
-
-export const KUBO_TITLE_COLORS = [
-  "#D6A72B",
-  "#F5D76E",
-  "#E0B43E",
-  "#E08A2E",
-  "#E0B43E",
-  "#E8A43A",
-  "#E08A2E",
-  "#E08A2E",
-  "#C49314",
-  "#E8C978",
-  "#E5D3A5",
-] as const;
+export { KUBO_TITLE_COLORS };
 
 export const renderTitle = () => {
   const terminalWidth = process.stdout.columns || 80;
