@@ -259,7 +259,7 @@ export function CTASection({ className }: CTASectionProps) {
       >
         <KuboMarkMotion ref={markRef} className="mb-10 h-16 w-auto" />
         <div ref={badgeRef} className="mb-2 flex items-center justify-center">
-          <Badge className="bg-yellow-400/10 text-accent">
+          <Badge className="bg-yellow-400/15 text-accent">
             <Sparkles aria-hidden className="text-accent" />
             <span className="leading-none">Stack Builder TypeScript</span>
           </Badge>
