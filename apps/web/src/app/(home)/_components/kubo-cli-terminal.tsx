@@ -6,7 +6,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduced-motion";
 import {
   getStackFlowTerminalState,
-  BACKEND_OPTIONS,
   KUBO_CLI_BANNER,
   PROJECT_TYPE_OPTIONS,
   WEB_OPTIONS,
@@ -93,7 +92,7 @@ function AccessibleTranscript() {
   return (
     <p className="sr-only">
       Demonstração animada do Create Path do Kubo. O comando bun create kubojs@latest seleciona o
-      projeto my-kubo-app com TanStack Router e Elysia.
+      projeto my-kubo-app com TanStack Router.
     </p>
   );
 }
@@ -199,17 +198,6 @@ export default function KuboCliTerminal() {
                   options={WEB_OPTIONS}
                   submitted={state.webFrameworkComplete}
                   value="TanStack Router"
-                />
-              </TerminalTreeStep>
-            ) : null}
-
-            {state.showBackend ? (
-              <TerminalTreeStep>
-                <PromptBlock
-                  message="Select backend"
-                  options={BACKEND_OPTIONS}
-                  submitted={state.backendComplete}
-                  value="Elysia"
                 />
               </TerminalTreeStep>
             ) : null}

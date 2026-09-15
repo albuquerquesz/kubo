@@ -4,7 +4,7 @@ import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "./create-commands";
 
 export const STACK_FLOW_TERMINAL_COMMAND = getCreateCommand(DEFAULT_PACKAGE_MANAGER);
 export const STACK_FLOW_TERMINAL_PROJECT_NAME = "my-kubo-app";
-export const STACK_FLOW_TERMINAL_LOOP_DURATION_MS = 9_300;
+export const STACK_FLOW_TERMINAL_LOOP_DURATION_MS = 7_800;
 
 export const STACK_FLOW_TERMINAL_TIMELINE = {
   commandEndMs: 1_600,
@@ -15,8 +15,6 @@ export const STACK_FLOW_TERMINAL_TIMELINE = {
   projectTypeSubmittedAtMs: 5_100,
   webAtMs: 5_400,
   webSubmittedAtMs: 6_800,
-  backendAtMs: 7_100,
-  backendSubmittedAtMs: 8_100,
 } as const;
 
 export const KUBO_CLI_BANNER = KUBO_CLI_TITLE;
@@ -98,12 +96,7 @@ export const CORE_STACK_SUMMARY = [
 export const REPRODUCIBLE_COMMAND =
   "bun create kubojs@latest my-kubo-app --frontend tanstack-router --backend hono --runtime bun --database sqlite --orm drizzle --api trpc --auth better-auth --payments none --observability getmonitor --communication none --addons turborepo --examples none --testing none --db-setup none --web-deploy none --server-deploy none --git --package-manager bun --install";
 
-export type TerminalPlaybackPhase =
-  | "command"
-  | "project-name"
-  | "project-type"
-  | "web-framework"
-  | "backend";
+export type TerminalPlaybackPhase = "command" | "project-name" | "project-type" | "web-framework";
 
 export type TerminalPlaybackState = {
   elapsedMs: number;
@@ -122,8 +115,6 @@ export type TerminalPlaybackState = {
   projectTypeComplete: boolean;
   showWebFramework: boolean;
   webFrameworkComplete: boolean;
-  showBackend: boolean;
-  backendComplete: boolean;
 };
 
 function normalizeElapsedTime(elapsedMs: number, reducedMotion: boolean): number {
@@ -141,7 +132,6 @@ function getVisibleCharacters(value: string, startMs: number, endMs: number, ela
 }
 
 function getPhase(elapsedMs: number): TerminalPlaybackPhase {
-  if (elapsedMs >= STACK_FLOW_TERMINAL_TIMELINE.backendAtMs) return "backend";
   if (elapsedMs >= STACK_FLOW_TERMINAL_TIMELINE.webAtMs) return "web-framework";
   if (elapsedMs >= STACK_FLOW_TERMINAL_TIMELINE.projectTypeAtMs) return "project-type";
   if (elapsedMs >= STACK_FLOW_TERMINAL_TIMELINE.projectNameAtMs) return "project-name";
@@ -161,8 +151,6 @@ export function getStackFlowTerminalState(
     projectTypeSubmittedAtMs,
     webAtMs,
     webSubmittedAtMs,
-    backendAtMs,
-    backendSubmittedAtMs,
   } = STACK_FLOW_TERMINAL_TIMELINE;
   const commandComplete = normalizedElapsedMs >= commandEndMs;
   const projectNameComplete = normalizedElapsedMs >= projectNameSubmittedAtMs;
@@ -194,7 +182,5 @@ export function getStackFlowTerminalState(
     projectTypeComplete: normalizedElapsedMs >= projectTypeSubmittedAtMs,
     showWebFramework: normalizedElapsedMs >= webAtMs,
     webFrameworkComplete: normalizedElapsedMs >= webSubmittedAtMs,
-    showBackend: normalizedElapsedMs >= backendAtMs,
-    backendComplete: normalizedElapsedMs >= backendSubmittedAtMs,
   };
 }
