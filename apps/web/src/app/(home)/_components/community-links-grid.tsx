@@ -4,6 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+import { readAnimationProgress } from "./community-progress";
+
+import styles from "./community-links-grid.module.css";
+
 const AUTO_FOCUS_INTERVAL_MS = 2600;
 const AUTO_FOCUS_RESUME_DELAY_MS = 2000;
 const PROGRESS_EXIT_DURATION_MS = 220;
@@ -151,15 +155,12 @@ export default function CommunityLinksGrid() {
   }, [progressExit?.phase]);
 
   const activateCard = (index: number) => {
-    const progressTransform = progressRef.current
-      ? window.getComputedStyle(progressRef.current).transform
-      : "none";
-    const progressScale = Number(progressTransform.match(/^matrix\(([^,]+)/)?.[1]);
+    const progressScale = progressRef.current ? readAnimationProgress(progressRef.current) : null;
 
-    if (!isPaused && !prefersReducedMotion && Number.isFinite(progressScale)) {
+    if (!isPaused && !prefersReducedMotion && progressScale !== null) {
       setProgressExit({
         index: activeIndex,
-        progress: Math.min(Math.max(progressScale, 0), 1),
+        progress: progressScale,
         phase: "ready",
       });
     }
@@ -203,23 +204,27 @@ export default function CommunityLinksGrid() {
                 <span
                   key={`progress-${activeIndex}`}
                   ref={progressRef}
+                  data-community-progress=""
                   aria-hidden
-                  className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[3px] origin-left bg-primary"
-                  style={{
-                    animation: `community-card-progress ${AUTO_FOCUS_INTERVAL_MS}ms linear forwards`,
-                  }}
+                  className={`pointer-events-none absolute inset-x-0 top-0 z-10 h-[3px] bg-primary ${styles.progressFill}`}
+                  style={{ animationDuration: `${AUTO_FOCUS_INTERVAL_MS}ms` }}
                 />
               ) : null}
               {exitingProgress ? (
                 <span
+                  data-community-progress-exit=""
                   aria-hidden
-                  className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[3px] origin-left bg-primary"
+                  className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[3px] bg-primary"
                   style={{
-                    clipPath: exitingProgress.phase === "wiping" ? "inset(0 0 0 100%)" : "inset(0)",
-                    transform: `scaleX(${exitingProgress.phase === "ready" ? exitingProgress.progress : 1})`,
+                    clipPath:
+                      exitingProgress.phase === "wiping"
+                        ? "inset(0 0 0 100%)"
+                        : exitingProgress.phase === "ready"
+                          ? `inset(0 ${(1 - exitingProgress.progress) * 100}% 0 0)`
+                          : "inset(0)",
                     transition:
                       exitingProgress.phase === "completing"
-                        ? `transform ${PROGRESS_EXIT_DURATION_MS}ms linear`
+                        ? `clip-path ${PROGRESS_EXIT_DURATION_MS}ms linear`
                         : `clip-path ${PROGRESS_WIPE_DURATION_MS}ms ease-out`,
                   }}
                 />
