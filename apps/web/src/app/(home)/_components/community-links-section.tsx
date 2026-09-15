@@ -47,7 +47,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
       href={entry.href}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noreferrer" : undefined}
-      className="group flex min-w-0 flex-col bg-muted transition-colors duration-[800ms] ease-out hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+      className="group flex min-w-0 flex-col bg-muted transition-colors duration-300 ease-out hover:duration-[600ms] hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
     >
       <article className="flex min-h-[30rem] min-w-0 flex-col border-rule border-t border-l p-6 pb-6 sm:min-h-[36rem] sm:p-8 sm:pb-6">
         {entry.image ? (
@@ -65,7 +65,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
           <h3 className="min-w-0 max-w-full break-words text-balance text-lg font-semibold leading-tight tracking-tight sm:text-2xl">
             {entry.title}
           </h3>
-          <div className="mt-4 grid grid-rows-[auto] transition-[grid-template-rows,margin] duration-[300ms] ease-out lg:mt-0 lg:grid-rows-[0fr] lg:overflow-hidden lg:group-hover:duration-[800ms] lg:group-hover:mt-4 lg:group-hover:grid-rows-[1fr] lg:group-focus-within:duration-[800ms] lg:group-focus-within:mt-4 lg:group-focus-within:grid-rows-[1fr]">
+          <div className="mt-4 grid grid-rows-[auto] transition-[grid-template-rows,margin] duration-[300ms] ease-out lg:mt-0 lg:grid-rows-[0fr] lg:overflow-hidden lg:group-hover:duration-[600ms] lg:group-hover:mt-4 lg:group-hover:grid-rows-[1fr] lg:group-focus-within:duration-[600ms] lg:group-focus-within:mt-4 lg:group-focus-within:grid-rows-[1fr]">
             <p className="min-h-0 min-w-0 max-w-full break-words leading-relaxed text-pretty text-muted-foreground">
               {entry.description}
             </p>
