@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 const AUTO_FOCUS_INTERVAL_MS = 2200;
-const AUTO_FOCUS_RESUME_DELAY_MS = 3000;
+const AUTO_FOCUS_RESUME_DELAY_MS = 2000;
 
 type CommunityEntry = {
   title: string;
