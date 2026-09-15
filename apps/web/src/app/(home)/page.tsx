@@ -55,6 +55,15 @@ export default async function HomePage() {
         className="mt-0 sm:mt-0 lg:mt-0"
         showSideBorders
         showViewportTopRule={false}
+        showViewportBottomRule={false}
+      />
+      <CustomStackPanel
+        variant="sponsor"
+        sectionId="sponsor"
+        titleId="custom-stack-title-sponsor"
+        className="mt-0 sm:mt-0 lg:mt-0"
+        showSideBorders
+        showViewportTopRule={false}
       />
       <CommunityLinksSection />
       <Testimonials tweets={tweets} videos={videos} />
