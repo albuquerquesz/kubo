@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -46,7 +47,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
       href={entry.href}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noreferrer" : undefined}
-      className="group flex min-w-0 flex-col bg-muted transition-colors duration-150 ease-out hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+      className="group flex min-w-0 flex-col bg-muted transition-colors duration-[800ms] ease-out hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
     >
       <article className="flex min-h-[30rem] min-w-0 flex-col border-rule border-t border-l p-6 pb-6 sm:min-h-[36rem] sm:p-8 sm:pb-6">
         {entry.image ? (
@@ -96,6 +97,7 @@ export default function CommunityLinksSection() {
           size="xl"
         >
           Explorar recursos
+          <ArrowUpRight aria-hidden data-icon="inline-end" />
         </Button>
       </div>
       <div className="relative mt-4 grid grid-cols-1 border-r border-b border-rule sm:grid-cols-2 xl:grid-cols-4">
