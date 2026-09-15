@@ -51,7 +51,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
       rel={isExternal ? "noreferrer" : undefined}
       className={cn(
         "group flex min-w-0 flex-col transition-colors duration-150 ease-out hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring",
-        entry.surface === "light" ? "bg-muted" : "bg-muted/20",
+        entry.surface === "light" ? "bg-muted/30" : "bg-muted/20",
       )}
     >
       <article className="flex min-h-[30rem] min-w-0 flex-col border-rule border-t border-l p-6 pb-6 sm:min-h-[36rem] sm:p-8 sm:pb-6">
