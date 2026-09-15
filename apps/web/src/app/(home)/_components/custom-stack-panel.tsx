@@ -81,7 +81,12 @@ export default function CustomStackPanel({
         className,
       )}
     >
-      <div className="border-rule flex flex-col gap-4 border-t border-b px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-7 lg:min-h-[6.5rem] lg:px-6 lg:py-6">
+      <div
+        className={cn(
+          "border-rule flex flex-col gap-4 border-b px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-7 lg:min-h-[6.5rem] lg:px-6 lg:py-6",
+          !showViewportTopRule && "border-t",
+        )}
+      >
         <h2 id={titleId} className="ui-display text-[clamp(1.75rem,3.5vw,2.75rem)] leading-[0.95]">
           {content.title}
         </h2>
