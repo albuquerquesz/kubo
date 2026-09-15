@@ -29,6 +29,10 @@ const config: NextConfig = {
   reactCompiler: process.env.NODE_ENV === "production",
   reactStrictMode: true,
   images: {
+    localPatterns: [
+      { pathname: "**", search: "" },
+      { pathname: "/assets/kubo-sponsor.png", search: "?v=2" },
+    ],
     remotePatterns: [
       { protocol: "https", hostname: "pbs.twimg.com" },
       { protocol: "https", hostname: "abs.twimg.com" },

@@ -70,7 +70,7 @@ const panelContent: Record<PanelVariant, PanelContent> = {
     description: "Ajude a manter o Kubo aberto e a acelerar o próximo release.",
     cta: "Patrocinar no GitHub",
     href: "https://github.com/sponsors/albuquerquesz",
-    imageSrc: "/assets/kubo-sponsor.png",
+    imageSrc: "/assets/kubo-sponsor.png?v=2",
     imageAlt: "Ilustração da rede de contribuições ao Kubo",
     features: ["OPEN SOURCE", "COMUNIDADE", "NOVOS RELEASES"],
   },
