@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -12,8 +13,61 @@ const stackFeatures = [
   "PRODUCTION-READY",
 ] as const;
 
+type PanelVariant = "stack-builder" | "documentation" | "templates" | "integrations";
+
+type PanelContent = {
+  title: string;
+  description: ReactNode;
+  cta: string;
+  href: string;
+  imageSrc: string;
+  imageAlt: string;
+};
+
+const panelContent: Record<PanelVariant, PanelContent> = {
+  "stack-builder": {
+    title: "Explorar Integrações",
+    imageSrc: "/assets/kubo-bg-4.png",
+    description: (
+      <>
+        Construa com as melhores ferramentas e descubra o diferencial das{" "}
+        <span className="text-foreground">integrações brasileiras</span>.
+      </>
+    ),
+    cta: "Explorar Integrações",
+    href: "/new",
+    imageAlt: "Interface do Stack Builder do Kubo",
+  },
+  documentation: {
+    title: "Construa com o Kubo.",
+    description:
+      "Consulte guias práticos para entender cada camada, configurar seu projeto e colocá-lo em produção.",
+    cta: "Ler documentação",
+    href: "/docs",
+    imageSrc: "/assets/kubo-bg-3.png",
+    imageAlt: "Exemplo de código gerado pelo Kubo",
+  },
+  templates: {
+    title: "Comece por um template.",
+    description: "Escolha uma base pronta e adapte para seu projeto.",
+    cta: "Escolher template",
+    href: "/new",
+    imageSrc: "/assets/kubo-templates.png",
+    imageAlt: "Templates de stack disponíveis no Kubo",
+  },
+  integrations: {
+    title: "Monte sua stack",
+    imageSrc: "/assets/kubo-bg.png",
+    description:
+      "Escolha cada camada e gere uma base TypeScript pronta para evoluir com seu projeto.",
+    cta: "Monte sua stack",
+    href: "/new",
+    imageAlt: "Integrações brasileiras disponíveis no Stack Builder do Kubo",
+  },
+};
+
 type CustomStackPanelProps = {
-  variant?: "stack-builder" | "documentation" | "integrations";
+  variant?: PanelVariant;
   sectionId?: string;
   titleId?: string;
   className?: string;
@@ -31,43 +85,7 @@ export default function CustomStackPanel({
   showViewportTopRule = true,
   showViewportBottomRule = true,
 }: CustomStackPanelProps) {
-  const content =
-    variant === "documentation"
-      ? {
-          title: "Construa com o Kubo.",
-          description:
-            "Consulte guias práticos para entender cada camada, configurar seu projeto e colocá-lo em produção.",
-          cta: "Ler documentação",
-          href: "/docs",
-          imageSrc: "/assets/kubo-bg-3.png",
-          imageAlt: "Exemplo de código gerado pelo Kubo",
-        }
-      : variant === "integrations"
-        ? {
-            title: "Monte sua stack",
-            imageSrc: "/assets/kubo-bg.png",
-            description: (
-              <>
-                Escolha cada camada e gere uma base TypeScript pronta para evoluir com seu projeto.
-              </>
-            ),
-            cta: "Monte sua stack",
-            href: "/new",
-            imageAlt: "Integrações brasileiras disponíveis no Stack Builder do Kubo",
-          }
-        : {
-            title: "Explorar Integrações",
-            imageSrc: "/assets/kubo-bg-4.png",
-            description: (
-              <>
-                Construa com as melhores ferramentas e descubra o diferencial das{" "}
-                <span className="text-foreground">integrações brasileiras</span>.
-              </>
-            ),
-            cta: "Explorar Integrações",
-            href: "/new",
-            imageAlt: "Interface do Stack Builder do Kubo",
-          };
+  const content = panelContent[variant];
 
   return (
     <section
