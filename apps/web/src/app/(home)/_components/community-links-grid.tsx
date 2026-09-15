@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-const AUTO_FOCUS_INTERVAL_MS = 2200;
+const AUTO_FOCUS_INTERVAL_MS = 2600;
 const AUTO_FOCUS_RESUME_DELAY_MS = 2000;
 const PROGRESS_EXIT_DURATION_MS = 220;
 const PROGRESS_WIPE_DURATION_MS = 120;
@@ -185,7 +185,7 @@ export default function CommunityLinksGrid() {
             target={isExternal ? "_blank" : undefined}
             rel={isExternal ? "noreferrer" : undefined}
             data-active={activeIndex === index}
-            className="group flex min-w-0 flex-col bg-muted transition-colors duration-300 ease-out hover:bg-primary/10 data-[active=true]:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+            className="group flex min-w-0 flex-col bg-muted transition-colors duration-300 ease-out hover:bg-background data-[active=true]:bg-background focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
             onMouseEnter={() => {
               setIsHovered(true);
               activateCard(index);
@@ -204,7 +204,7 @@ export default function CommunityLinksGrid() {
                   key={`progress-${activeIndex}`}
                   ref={progressRef}
                   aria-hidden
-                  className="pointer-events-none absolute inset-x-0 top-0 z-10 h-0.5 origin-left bg-primary"
+                  className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[3px] origin-left bg-primary"
                   style={{
                     animation: `community-card-progress ${AUTO_FOCUS_INTERVAL_MS}ms linear forwards`,
                   }}
@@ -213,7 +213,7 @@ export default function CommunityLinksGrid() {
               {exitingProgress ? (
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute inset-x-0 top-0 z-10 h-0.5 origin-left bg-primary"
+                  className="pointer-events-none absolute inset-x-0 top-0 z-10 h-[3px] origin-left bg-primary"
                   style={{
                     clipPath: exitingProgress.phase === "wiping" ? "inset(0 0 0 100%)" : "inset(0)",
                     transform: `scaleX(${exitingProgress.phase === "ready" ? exitingProgress.progress : 1})`,
