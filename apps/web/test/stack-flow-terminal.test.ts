@@ -1,8 +1,11 @@
 import { describe, expect, test } from "bun:test";
 
+import { KUBO_TITLE_GRADIENT } from "@kubojs/types";
+
 import {
   CORE_STACK_SUMMARY,
   getStackFlowTerminalState,
+  KUBO_TITLE_GRADIENT as TERMINAL_TITLE_GRADIENT,
   STACK_FLOW_TERMINAL_COMMAND,
   STACK_FLOW_TERMINAL_LOOP_DURATION_MS,
   STACK_FLOW_TERMINAL_TIMELINE,
@@ -11,6 +14,12 @@ import {
 describe("stack flow terminal playback", () => {
   test("uses the canonical home create command", () => {
     expect(STACK_FLOW_TERMINAL_COMMAND).toBe("bun create kubojs@latest");
+  });
+
+  test("reuses the CLI title gradient", () => {
+    expect(TERMINAL_TITLE_GRADIENT).toBe(KUBO_TITLE_GRADIENT);
+    expect(TERMINAL_TITLE_GRADIENT).toContain("#D6A72B");
+    expect(TERMINAL_TITLE_GRADIENT).toContain("#E5D3A5");
   });
 
   test("reveals the demonstrative Create Path in order", () => {

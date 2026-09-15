@@ -7,6 +7,7 @@ import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduce
 import {
   getStackFlowTerminalState,
   KUBO_CLI_BANNER,
+  KUBO_TITLE_GRADIENT,
   PROJECT_TYPE_OPTIONS,
   WEB_OPTIONS,
   type TerminalOption,
@@ -141,7 +142,10 @@ export default function KuboCliTerminal() {
             </p>
 
             {state.showBanner ? (
-              <pre className="mt-5 max-w-full overflow-hidden whitespace-pre font-mono text-sm text-yellow-300 leading-[1.08] sm:text-base lg:text-lg">
+              <pre
+                className="mt-5 max-w-full overflow-hidden whitespace-pre bg-clip-text font-mono text-sm leading-[1.08] text-transparent sm:text-base lg:text-lg"
+                style={{ backgroundImage: KUBO_TITLE_GRADIENT }}
+              >
                 {KUBO_CLI_BANNER}
               </pre>
             ) : null}

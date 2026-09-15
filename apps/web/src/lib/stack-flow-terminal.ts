@@ -1,4 +1,4 @@
-import { KUBO_CLI_TITLE } from "@kubojs/types";
+import { KUBO_CLI_TITLE, KUBO_TITLE_GRADIENT } from "@kubojs/types";
 
 import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "./create-commands";
 
@@ -18,6 +18,7 @@ export const STACK_FLOW_TERMINAL_TIMELINE = {
 } as const;
 
 export const KUBO_CLI_BANNER = KUBO_CLI_TITLE;
+export { KUBO_TITLE_GRADIENT };
 
 export type TerminalOption = {
   label: string;
