@@ -2,12 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type CommunityEntry = {
   title: string;
   description: string;
   href: string;
   image?: string;
+  surface?: "default" | "light";
 };
 
 const communityEntries: CommunityEntry[] = [
@@ -35,6 +37,7 @@ const communityEntries: CommunityEntry[] = [
     description: "Use create-json, add-json, schema e dry-run em scripts, CI e fluxos com agentes.",
     href: "/docs/cli/agent-workflows",
     image: "/assets/gold-workflow.png",
+    surface: "light",
   },
 ];
 
@@ -46,9 +49,12 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
       href={entry.href}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noreferrer" : undefined}
-      className="group flex min-w-0 flex-col bg-muted/20 transition-colors duration-150 ease-out hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+      className={cn(
+        "group flex min-w-0 flex-col transition-colors duration-150 ease-out hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring",
+        entry.surface === "light" ? "bg-muted/50" : "bg-muted/20",
+      )}
     >
-      <article className="flex min-h-[30rem] min-w-0 flex-col border-rule border-t border-l p-6 sm:min-h-[36rem] sm:p-8">
+      <article className="flex min-h-[30rem] min-w-0 flex-col border-rule border-t border-l p-6 pb-6 sm:min-h-[36rem] sm:p-8 sm:pb-6">
         {entry.image ? (
           <Image
             src={entry.image}
@@ -64,7 +70,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
           <h3 className="min-w-0 max-w-full break-words text-balance text-lg font-semibold leading-tight tracking-tight transition-transform duration-300 ease-out sm:text-2xl lg:group-hover:duration-700 lg:group-hover:-translate-y-1 lg:group-focus-within:duration-700 lg:group-focus-within:-translate-y-1">
             {entry.title}
           </h3>
-          <p className="mt-4 min-w-0 max-w-full break-words leading-relaxed text-pretty text-muted-foreground transition-[max-height,opacity,transform] duration-[300ms] ease-out lg:max-h-0 lg:translate-y-2 lg:overflow-hidden lg:opacity-0 lg:group-hover:duration-[800ms] lg:group-hover:max-h-24 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-focus-within:duration-[800ms] lg:group-focus-within:max-h-24 lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100">
+          <p className="mt-4 min-w-0 max-w-full break-words leading-relaxed text-pretty text-muted-foreground transition-[max-height,margin,opacity,transform] duration-[300ms] ease-out lg:mt-0 lg:max-h-0 lg:translate-y-2 lg:overflow-hidden lg:opacity-0 lg:group-hover:duration-[800ms] lg:group-hover:mt-4 lg:group-hover:max-h-24 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-focus-within:duration-[800ms] lg:group-focus-within:mt-4 lg:group-focus-within:max-h-24 lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100">
             {entry.description}
           </p>
         </div>
@@ -92,7 +98,7 @@ export default function CommunityLinksSection() {
           Explorar recursos
         </Button>
       </div>
-      <div className="relative grid grid-cols-1 border-r border-b border-rule sm:grid-cols-2 xl:grid-cols-4">
+      <div className="relative mt-4 grid grid-cols-1 border-r border-b border-rule sm:grid-cols-2 xl:grid-cols-4">
         {communityEntries.map((entry) => (
           <CommunityCard key={entry.title} entry={entry} />
         ))}
