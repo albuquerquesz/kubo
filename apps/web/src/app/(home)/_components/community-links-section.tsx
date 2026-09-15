@@ -2,14 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 type CommunityEntry = {
   title: string;
   description: string;
   href: string;
   image?: string;
-  surface?: "default" | "light";
 };
 
 const communityEntries: CommunityEntry[] = [
@@ -37,7 +35,6 @@ const communityEntries: CommunityEntry[] = [
     description: "Use create-json, add-json, schema e dry-run em scripts, CI e fluxos com agentes.",
     href: "/docs/cli/agent-workflows",
     image: "/assets/gold-workflow.png",
-    surface: "light",
   },
 ];
 
@@ -49,10 +46,7 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
       href={entry.href}
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noreferrer" : undefined}
-      className={cn(
-        "group flex min-w-0 flex-col transition-colors duration-150 ease-out hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring",
-        entry.surface === "light" ? "bg-muted/30" : "bg-muted/20",
-      )}
+      className="group flex min-w-0 flex-col bg-foreground/[0.08] transition-colors duration-150 ease-out hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
     >
       <article className="flex min-h-[30rem] min-w-0 flex-col border-rule border-t border-l p-6 pb-6 sm:min-h-[36rem] sm:p-8 sm:pb-6">
         {entry.image ? (
@@ -66,11 +60,11 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
             unoptimized
           />
         ) : null}
-        <div className="mt-auto">
+        <div className="relative mt-auto">
           <h3 className="min-w-0 max-w-full break-words text-balance text-lg font-semibold leading-tight tracking-tight sm:text-2xl">
             {entry.title}
           </h3>
-          <p className="mt-4 min-w-0 max-w-full break-words leading-relaxed text-pretty text-muted-foreground transition-[max-height,margin,opacity,transform] duration-[300ms] ease-out lg:mt-0 lg:max-h-0 lg:translate-y-2 lg:overflow-hidden lg:opacity-0 lg:group-hover:duration-[800ms] lg:group-hover:mt-4 lg:group-hover:max-h-24 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-focus-within:duration-[800ms] lg:group-focus-within:mt-4 lg:group-focus-within:max-h-24 lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100">
+          <p className="mt-4 min-w-0 max-w-full break-words leading-relaxed text-pretty text-muted-foreground transition-[max-height,opacity,transform] duration-[300ms] ease-out lg:absolute lg:right-0 lg:bottom-full lg:left-0 lg:mt-0 lg:mb-4 lg:max-h-0 lg:translate-y-2 lg:overflow-hidden lg:opacity-0 lg:group-hover:duration-[800ms] lg:group-hover:max-h-24 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-focus-within:duration-[800ms] lg:group-focus-within:max-h-24 lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100">
             {entry.description}
           </p>
         </div>
