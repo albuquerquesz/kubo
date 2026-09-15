@@ -11,6 +11,8 @@ import { ShareButton } from "./share-button";
 
 /** Temporarily hidden from the stack builder actions row. */
 const SHOW_YOLO_BUTTON = false;
+const SIDEBAR_SECONDARY_BUTTON_CLASS =
+  "w-full bg-muted font-mono hover:bg-input hover:ring-muted/40";
 
 type ActionButtonsProps = {
   onReset: () => void;
@@ -40,7 +42,7 @@ export function ActionButtons({
         onClick={onSave}
         variant="secondary"
         size="default"
-        className="w-full font-mono"
+        className={SIDEBAR_SECONDARY_BUTTON_CLASS}
         title="Salvar preferências atuais"
       >
         <Star className="h-3 w-3" />
@@ -51,7 +53,7 @@ export function ActionButtons({
         onClick={onReset}
         variant="secondary"
         size="default"
-        className="w-full font-mono"
+        className={SIDEBAR_SECONDARY_BUTTON_CLASS}
         title="Restaurar padrões"
       >
         <RefreshCw className="h-3 w-3" />
@@ -62,14 +64,18 @@ export function ActionButtons({
         onClick={onLoad}
         variant="secondary"
         size="default"
-        className="w-full font-mono"
+        className={SIDEBAR_SECONDARY_BUTTON_CLASS}
         title="Carregar preferências salvas"
         disabled={!hasSavedStack}
       >
         <Settings className="h-3 w-3" />
         Carregar
       </Button>
-      <ShareButton stackUrl={stackUrl} stackState={stackState} />
+      <ShareButton
+        stackUrl={stackUrl}
+        stackState={stackState}
+        className={SIDEBAR_SECONDARY_BUTTON_CLASS}
+      />
       {SHOW_YOLO_BUTTON ? (
         <Tooltip delay={100}>
           <TooltipTrigger
@@ -81,7 +87,7 @@ export function ActionButtons({
                 onClick={() => onYoloToggle(!yolo)}
                 aria-pressed={yolo}
                 className={cn(
-                  "w-full font-mono",
+                  SIDEBAR_SECONDARY_BUTTON_CLASS,
                   yolo &&
                     "bg-destructive/15 text-destructive hover:bg-destructive/25 hover:text-destructive",
                 )}

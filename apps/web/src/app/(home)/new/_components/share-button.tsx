@@ -5,15 +5,23 @@ import { Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ShareDialog } from "@/components/ui/share-dialog";
 import type { StackState } from "@/lib/constant";
+import { cn } from "@/lib/utils";
 
 interface ShareButtonProps {
   stackUrl: string;
   stackState: StackState;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  className?: string;
 }
 
-export function ShareButton({ stackUrl, stackState, open, onOpenChange }: ShareButtonProps) {
+export function ShareButton({
+  stackUrl,
+  stackState,
+  open,
+  onOpenChange,
+  className,
+}: ShareButtonProps) {
   return (
     <ShareDialog
       stackUrl={stackUrl}
@@ -25,7 +33,7 @@ export function ShareButton({ stackUrl, stackState, open, onOpenChange }: ShareB
           type="button"
           variant="secondary"
           size="default"
-          className="w-full font-mono"
+          className={cn("w-full font-mono", className)}
           title="Compartilhar sua stack"
         />
       }
