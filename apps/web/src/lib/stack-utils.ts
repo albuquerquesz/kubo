@@ -82,6 +82,23 @@ export type SelectedTech = {
   icon: string;
 };
 
+export function stackValueToOptionIds(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((id): id is string => typeof id === "string");
+  }
+  if (typeof value === "boolean") {
+    return [value ? "true" : "false"];
+  }
+  if (typeof value === "string") {
+    return [value];
+  }
+  return [];
+}
+
+export function booleanFromTechId(techId: string): boolean {
+  return techId === "true";
+}
+
 export function getSelectedTechs(stack: ProjectConfigDraft): SelectedTech[] {
   const selected: SelectedTech[] = [];
   for (const category of CATEGORY_ORDER) {
@@ -89,8 +106,7 @@ export function getSelectedTechs(stack: ProjectConfigDraft): SelectedTech[] {
     const value = getStackCategoryValue(stack, category);
     if (!options || value === undefined) continue;
 
-    const ids = Array.isArray(value) ? value : typeof value === "boolean" ? [] : [value];
-    for (const id of ids) {
+    for (const id of stackValueToOptionIds(value)) {
       if (id === "none") {
         continue;
       }
@@ -111,8 +127,7 @@ export function generateStackSummary(stack: StackState) {
     if (!options) return [];
 
     const getTechNames = (value: string | string[] | boolean) => {
-      const values = Array.isArray(value) ? value : typeof value === "boolean" ? [] : [value];
-      return values
+      return stackValueToOptionIds(value)
         .filter((id) => id !== "none")
         .map((id) => options.find((opt) => opt.id === id)?.name)
         .filter(Boolean) as string[];

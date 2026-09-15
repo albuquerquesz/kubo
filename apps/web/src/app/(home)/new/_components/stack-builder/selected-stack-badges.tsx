@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 
 import type { StackState } from "@/lib/constant";
 import { TECH_OPTIONS } from "@/lib/constant";
-import { CATEGORY_ORDER, getStackCategoryValue } from "@/lib/stack-utils";
+import { CATEGORY_ORDER, getStackCategoryValue, stackValueToOptionIds } from "@/lib/stack-utils";
 import type { TechCategory } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -22,11 +22,7 @@ export function SelectedStackBadges({ stack, onRemove, onJump }: SelectedStackBa
     const selectedValue = getStackCategoryValue(stack, category);
     if (!options || selectedValue === undefined) return [];
 
-    const ids = Array.isArray(selectedValue)
-      ? selectedValue
-      : typeof selectedValue === "boolean"
-        ? []
-        : [selectedValue];
+    const ids = stackValueToOptionIds(selectedValue);
     return ids
       .filter((id) => id !== "none")
       .flatMap((id) => {

@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import type { StackState } from "@/lib/constant";
 import { TECH_OPTIONS } from "@/lib/constant";
 import { getFrontendSelection } from "@/lib/stack-state";
-import { CATEGORY_ORDER } from "@/lib/stack-utils";
+import { booleanFromTechId, CATEGORY_ORDER } from "@/lib/stack-utils";
 import type { TechCategory } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -26,14 +26,12 @@ export function getIsSelected(stack: StackState, category: TechCategory, techId:
       ? getFrontendSelection(stack.frontend, category)
       : stack[category];
 
-  if (
-    category === "addons" ||
-    category === "testing" ||
-    category === "examples" ||
-    category === "payments" ||
-    category === "observability"
-  ) {
-    return Array.isArray(currentValue) && currentValue.some((value) => value === techId);
+  if (Array.isArray(currentValue)) {
+    return currentValue.includes(techId);
+  }
+
+  if (typeof currentValue === "boolean") {
+    return currentValue === booleanFromTechId(techId);
   }
 
   return currentValue === techId;

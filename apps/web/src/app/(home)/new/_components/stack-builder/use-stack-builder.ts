@@ -7,6 +7,7 @@ import { sanitizeStackState, TASK_RUNNER_ADDONS } from "@/lib/sanitize-stack-add
 import { getFrontendSelection, replaceFrontendSelection } from "@/lib/stack-state";
 import { useStackState } from "@/lib/stack-url-state.client";
 import {
+  booleanFromTechId,
   CATEGORY_ORDER,
   formatProjectName,
   generateStackCommand,
@@ -72,6 +73,109 @@ function isMultiValueCategory(category: TechCategory): boolean {
 
 function isTaskRunnerAddon(value: string): boolean {
   return TASK_RUNNER_ADDONS.some((addon) => addon === value);
+}
+
+export function getCategoryProgress(stack: StackState): CategoryProgressItem[] {
+  return CATEGORY_LIST.map((category) => {
+    const options = TECH_OPTIONS[category];
+    const selectedValue = getStackCategoryValue(stack, category);
+    const realOptionCount = options.filter((option) => option.id !== "none").length;
+
+    if (Array.isArray(selectedValue)) {
+      const selectedReal = selectedValue.filter(
+        (id) => id !== "none" && options.some((option) => option.id === id),
+      );
+      return {
+        category,
+        selected: selectedReal.length,
+        total: Math.max(realOptionCount, 1),
+        done: selectedReal.length > 0,
+      };
+    }
+
+    if (typeof selectedValue === "boolean") {
+      return {
+        category,
+        selected: 1,
+        total: 1,
+        done: true,
+      };
+    }
+
+    const isSelectedReal =
+      typeof selectedValue === "string" &&
+      selectedValue !== "none" &&
+      options.some((option) => option.id === selectedValue);
+
+    return {
+      category,
+      selected: isSelectedReal ? 1 : 0,
+      total: 1,
+      done: isSelectedReal,
+    };
+  });
+}
+
+export function nextStackAfterTechSelect(
+  currentStack: StackState,
+  category: TechCategory,
+  techId: string,
+): Partial<StackState> | null {
+  if (isMultiValueCategory(category)) {
+    const categoryValue = getStackCategoryValue(currentStack, category);
+    const currentArray: string[] = isFrontendCategory(category)
+      ? getFrontendSelection(currentStack.frontend, category)
+      : Array.isArray(categoryValue)
+        ? [...categoryValue]
+        : [];
+    let nextArray = [...currentArray];
+    const isSelected = currentArray.includes(techId);
+
+    if (isFrontendCategory(category)) {
+      if (techId === "none") {
+        nextArray = ["none"];
+      } else if (isSelected) {
+        nextArray = currentArray.length > 1 ? nextArray.filter((id) => id !== techId) : ["none"];
+      } else {
+        nextArray = [techId];
+      }
+    } else {
+      nextArray = isSelected ? nextArray.filter((id) => id !== techId) : [...nextArray, techId];
+
+      if (category === "addons" && !isSelected && isTaskRunnerAddon(techId)) {
+        nextArray = nextArray.filter((id) => id === techId || !isTaskRunnerAddon(id));
+      }
+
+      if (nextArray.length > 1) nextArray = nextArray.filter((id) => id !== "none");
+    }
+
+    const uniqueNext = [...new Set(nextArray)].sort();
+    const uniqueCurrent = [...new Set(currentArray)].sort();
+    if (JSON.stringify(uniqueNext) === JSON.stringify(uniqueCurrent)) {
+      return null;
+    }
+
+    if (isFrontendCategory(category)) {
+      return {
+        ...currentStack,
+        frontend: replaceFrontendSelection(currentStack.frontend, category, uniqueNext),
+      };
+    }
+
+    return sanitizeStackState({ ...currentStack, [category]: uniqueNext });
+  }
+
+  const currentValue = getStackCategoryValue(currentStack, category);
+  if (typeof currentValue === "boolean") {
+    const nextValue = booleanFromTechId(techId);
+    return currentValue === nextValue ? null : { [category]: nextValue };
+  }
+
+  if (typeof currentValue === "string" && currentValue !== techId) {
+    return sanitizeStackState({ ...currentStack, [category]: techId });
+  }
+
+  return null;
 }
 
 export function useStackBuilder() {
@@ -152,37 +256,10 @@ export function useStackBuilder() {
     });
   }, [stack, compatibilityAnalysis.adjustedStack, compatibilityAnalysis.changes, setStack]);
 
-  const categoryProgress = useMemo<Array<CategoryProgressItem>>(() => {
-    return CATEGORY_LIST.map((category) => {
-      const options = TECH_OPTIONS[category];
-      const selectedValue = getStackCategoryValue(stack, category);
-      const realOptionCount = options.filter((option) => option.id !== "none").length;
-
-      if (Array.isArray(selectedValue)) {
-        const selectedReal = selectedValue.filter(
-          (id) => id !== "none" && options.some((option) => option.id === id),
-        );
-        return {
-          category,
-          selected: selectedReal.length,
-          total: Math.max(realOptionCount, 1),
-          done: selectedReal.length > 0,
-        };
-      }
-
-      const isSelectedReal =
-        typeof selectedValue === "string" &&
-        selectedValue !== "none" &&
-        options.some((option) => option.id === selectedValue);
-
-      return {
-        category,
-        selected: isSelectedReal ? 1 : 0,
-        total: 1,
-        done: isSelectedReal,
-      };
-    });
-  }, [stack]);
+  const categoryProgress = useMemo<Array<CategoryProgressItem>>(
+    () => getCategoryProgress(stack),
+    [stack],
+  );
 
   const selectedCount = useMemo(
     () => categoryProgress.reduce((total, entry) => total + entry.selected, 0),
@@ -199,73 +276,10 @@ export function useStackBuilder() {
     analytics.track("stack_option_selected", { category, value: techId });
 
     startTransition(() => {
-      setStack((currentStack: StackState) => {
-        let nextStack: StackState | null = null;
-
-        if (isMultiValueCategory(category)) {
-          const categoryValue = getStackCategoryValue(currentStack, category);
-          const currentArray: string[] = isFrontendCategory(category)
-            ? getFrontendSelection(currentStack.frontend, category)
-            : Array.isArray(categoryValue)
-              ? [...categoryValue]
-              : [];
-          let nextArray = [...currentArray];
-          const isSelected = currentArray.includes(techId);
-
-          if (isFrontendCategory(category)) {
-            if (techId === "none") {
-              nextArray = ["none"];
-            } else if (isSelected) {
-              nextArray =
-                currentArray.length > 1 ? nextArray.filter((id) => id !== techId) : ["none"];
-            } else {
-              nextArray = [techId];
-            }
-          } else if (category === "observability" || category === "payments") {
-            nextArray = isSelected
-              ? nextArray.filter((id) => id !== techId)
-              : [...nextArray, techId];
-          } else {
-            nextArray = isSelected
-              ? nextArray.filter((id) => id !== techId)
-              : [...nextArray, techId];
-
-            if (category === "addons" && !isSelected && isTaskRunnerAddon(techId)) {
-              nextArray = nextArray.filter((id) => id === techId || !isTaskRunnerAddon(id));
-            }
-
-            if (nextArray.length > 1) nextArray = nextArray.filter((id) => id !== "none");
-          }
-
-          const uniqueNext = [...new Set(nextArray)].sort();
-          const uniqueCurrent = [...new Set(currentArray)].sort();
-          if (JSON.stringify(uniqueNext) !== JSON.stringify(uniqueCurrent)) {
-            if (isFrontendCategory(category)) {
-              nextStack = {
-                ...currentStack,
-                frontend: replaceFrontendSelection(currentStack.frontend, category, uniqueNext),
-              };
-            } else {
-              nextStack = sanitizeStackState({ ...currentStack, [category]: uniqueNext });
-            }
-          }
-        } else if (category === "git") {
-          if (currentStack.git === (techId === "true")) {
-            nextStack = { ...currentStack, git: !currentStack.git };
-          }
-        } else if (category === "install") {
-          if (currentStack.install === (techId === "true")) {
-            nextStack = { ...currentStack, install: !currentStack.install };
-          }
-        } else {
-          const currentValue = getStackCategoryValue(currentStack, category);
-          if (typeof currentValue === "string" && currentValue !== techId) {
-            nextStack = sanitizeStackState({ ...currentStack, [category]: techId });
-          }
-        }
-
-        return nextStack ?? {};
-      });
+      setStack(
+        (currentStack: StackState) =>
+          nextStackAfterTechSelect(currentStack, category, techId) ?? {},
+      );
     });
   }
 
@@ -275,6 +289,13 @@ export function useStackBuilder() {
     const options = TECH_OPTIONS[category];
     const hasNoneOption = options.some((option) => option.id === "none");
     const forceNoneFallback = category === "addons" || category === "examples";
+
+    if (typeof value === "boolean") {
+      if (value === booleanFromTechId(techId)) {
+        startTransition(() => setStack({ [category]: !value }));
+      }
+      return;
+    }
 
     if (isFrontend || Array.isArray(value)) {
       const current = isFrontend
