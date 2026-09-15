@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-const AUTO_FOCUS_INTERVAL_MS = 2400;
+const AUTO_FOCUS_INTERVAL_MS = 2200;
 const AUTO_FOCUS_RESUME_DELAY_MS = 3000;
 
 type CommunityEntry = {
@@ -112,6 +112,7 @@ export default function CommunityLinksGrid() {
     >
       {communityEntries.map((entry, index) => {
         const isExternal = entry.href.startsWith("http");
+        const showProgress = activeIndex === index && !isPaused && !prefersReducedMotion;
 
         return (
           <Link
@@ -133,7 +134,17 @@ export default function CommunityLinksGrid() {
               setIsFocused(false);
             }}
           >
-            <article className="flex min-h-[30rem] min-w-0 flex-col border-rule border-t border-l p-6 pb-4 sm:min-h-[36rem] sm:p-8 sm:pb-4">
+            <article className="relative flex min-h-[30rem] min-w-0 flex-col border-rule border-t border-l p-6 pb-4 sm:min-h-[36rem] sm:p-8 sm:pb-4">
+              {showProgress ? (
+                <span
+                  key={`progress-${activeIndex}`}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 top-0 z-10 h-0.5 origin-left bg-primary"
+                  style={{
+                    animation: `community-card-progress ${AUTO_FOCUS_INTERVAL_MS}ms linear forwards`,
+                  }}
+                />
+              ) : null}
               <Image
                 src={entry.image}
                 alt=""

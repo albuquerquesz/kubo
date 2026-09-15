@@ -941,6 +941,16 @@
   }
 }
 
+@keyframes community-card-progress {
+  0% {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
 .terminal-scanlines {
   position: relative;
 }
