@@ -28,7 +28,7 @@ export default function StackFlowSection() {
       </div>
       <section
         aria-labelledby="stack-flow-title"
-        className="stack-flow-grid box-border h-[720px] w-full overflow-hidden bg-yellow-400 p-6 sm:p-10 lg:p-16"
+        className="box-border h-[720px] w-full overflow-hidden bg-gradient-to-br from-yellow-400 via-yellow-100 to-white p-6 sm:p-10 lg:p-16"
       >
         <KuboCliTerminal />
       </section>

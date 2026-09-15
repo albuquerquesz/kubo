@@ -578,21 +578,6 @@
   background-size: 3rem 3rem;
 }
 
-.stack-flow-grid {
-  background-image:
-    linear-gradient(
-      to right,
-      color-mix(in srgb, var(--background) 24%, transparent) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--background) 24%, transparent) 1px,
-      transparent 1px
-    );
-  background-size: 2.25rem 2.25rem;
-}
-
 .ui-scroll-target {
   scroll-margin-top: 4.5rem;
 }
