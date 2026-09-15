@@ -6,6 +6,16 @@ import { useEffect, useRef, useState } from "react";
 
 const AUTO_FOCUS_INTERVAL_MS = 2200;
 const AUTO_FOCUS_RESUME_DELAY_MS = 2000;
+const PROGRESS_EXIT_DURATION_MS = 220;
+const PROGRESS_WIPE_DURATION_MS = 120;
+
+type ProgressExitPhase = "ready" | "completing" | "wiping";
+
+type ProgressExit = {
+  index: number;
+  progress: number;
+  phase: ProgressExitPhase;
+};
 
 type CommunityEntry = {
   title: string;
@@ -48,7 +58,9 @@ export default function CommunityLinksGrid() {
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [progressExit, setProgressExit] = useState<ProgressExit | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -100,7 +112,58 @@ export default function CommunityLinksGrid() {
     return () => window.clearTimeout(resumeTimeout);
   }, [isFocused, isHovered]);
 
+  useEffect(() => {
+    if (!progressExit || progressExit.phase !== "ready") {
+      return;
+    }
+
+    const animationFrame = window.requestAnimationFrame(() => {
+      setProgressExit((currentExit) =>
+        currentExit ? { ...currentExit, phase: "completing" } : null,
+      );
+    });
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [progressExit]);
+
+  useEffect(() => {
+    if (progressExit?.phase !== "completing") {
+      return;
+    }
+
+    const completionTimeout = window.setTimeout(() => {
+      setProgressExit((currentExit) => (currentExit ? { ...currentExit, phase: "wiping" } : null));
+    }, PROGRESS_EXIT_DURATION_MS);
+
+    return () => window.clearTimeout(completionTimeout);
+  }, [progressExit?.phase]);
+
+  useEffect(() => {
+    if (progressExit?.phase !== "wiping") {
+      return;
+    }
+
+    const wipeTimeout = window.setTimeout(() => {
+      setProgressExit(null);
+    }, PROGRESS_WIPE_DURATION_MS);
+
+    return () => window.clearTimeout(wipeTimeout);
+  }, [progressExit?.phase]);
+
   const activateCard = (index: number) => {
+    const progressTransform = progressRef.current
+      ? window.getComputedStyle(progressRef.current).transform
+      : "none";
+    const progressScale = Number(progressTransform.match(/^matrix\(([^,]+)/)?.[1]);
+
+    if (!isPaused && !prefersReducedMotion && Number.isFinite(progressScale)) {
+      setProgressExit({
+        index: activeIndex,
+        progress: Math.min(Math.max(progressScale, 0), 1),
+        phase: "ready",
+      });
+    }
+
     setActiveIndex(index);
     setIsPaused(true);
   };
@@ -113,6 +176,7 @@ export default function CommunityLinksGrid() {
       {communityEntries.map((entry, index) => {
         const isExternal = entry.href.startsWith("http");
         const showProgress = activeIndex === index && !isPaused && !prefersReducedMotion;
+        const exitingProgress = progressExit?.index === index ? progressExit : null;
 
         return (
           <Link
@@ -138,10 +202,25 @@ export default function CommunityLinksGrid() {
               {showProgress ? (
                 <span
                   key={`progress-${activeIndex}`}
+                  ref={progressRef}
                   aria-hidden
                   className="pointer-events-none absolute inset-x-0 top-0 z-10 h-0.5 origin-left bg-primary"
                   style={{
                     animation: `community-card-progress ${AUTO_FOCUS_INTERVAL_MS}ms linear forwards`,
+                  }}
+                />
+              ) : null}
+              {exitingProgress ? (
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 top-0 z-10 h-0.5 origin-left bg-primary"
+                  style={{
+                    clipPath: exitingProgress.phase === "wiping" ? "inset(0 0 0 100%)" : "inset(0)",
+                    transform: `scaleX(${exitingProgress.phase === "ready" ? exitingProgress.progress : 1})`,
+                    transition:
+                      exitingProgress.phase === "completing"
+                        ? `transform ${PROGRESS_EXIT_DURATION_MS}ms linear`
+                        : `clip-path ${PROGRESS_WIPE_DURATION_MS}ms ease-out`,
                   }}
                 />
               ) : null}
