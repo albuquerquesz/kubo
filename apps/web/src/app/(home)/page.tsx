@@ -40,6 +40,15 @@ export default async function HomePage() {
         showViewportBottomRule={false}
       />
       <CustomStackPanel
+        variant="templates"
+        sectionId="templates"
+        titleId="custom-stack-title-templates"
+        className="mt-0 mb-0 sm:mt-0 sm:mb-0 lg:mt-0 lg:mb-0"
+        showSideBorders
+        showViewportTopRule={false}
+        showViewportBottomRule={false}
+      />
+      <CustomStackPanel
         variant="integrations"
         sectionId="integrations-panel"
         titleId="custom-stack-title-integrations"
