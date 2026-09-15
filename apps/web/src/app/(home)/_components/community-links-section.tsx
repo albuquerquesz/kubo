@@ -60,13 +60,15 @@ function CommunityCard({ entry }: { entry: CommunityEntry }) {
             unoptimized
           />
         ) : null}
-        <div className="relative mt-auto">
+        <div className="mt-auto">
           <h3 className="min-w-0 max-w-full break-words text-balance text-lg font-semibold leading-tight tracking-tight sm:text-2xl">
             {entry.title}
           </h3>
-          <p className="mt-4 min-w-0 max-w-full break-words leading-relaxed text-pretty text-muted-foreground transition-[max-height,opacity,transform] duration-[300ms] ease-out lg:absolute lg:right-0 lg:bottom-full lg:left-0 lg:mt-0 lg:mb-4 lg:max-h-0 lg:translate-y-2 lg:overflow-hidden lg:opacity-0 lg:group-hover:duration-[800ms] lg:group-hover:max-h-24 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-focus-within:duration-[800ms] lg:group-focus-within:max-h-24 lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100">
-            {entry.description}
-          </p>
+          <div className="mt-4 grid grid-rows-[auto] transition-[grid-template-rows,margin] duration-[300ms] ease-out lg:mt-0 lg:grid-rows-[0fr] lg:overflow-hidden lg:group-hover:duration-[800ms] lg:group-hover:mt-4 lg:group-hover:grid-rows-[1fr] lg:group-focus-within:duration-[800ms] lg:group-focus-within:mt-4 lg:group-focus-within:grid-rows-[1fr]">
+            <p className="min-h-0 min-w-0 max-w-full break-words leading-relaxed text-pretty text-muted-foreground">
+              {entry.description}
+            </p>
+          </div>
         </div>
       </article>
     </Link>
