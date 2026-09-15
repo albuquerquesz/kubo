@@ -7,6 +7,7 @@ import {
   parseAsStringEnum,
   useQueryStates,
 } from "nuqs";
+import { useRef } from "react";
 
 import { DEFAULT_STACK, type StackState } from "@/lib/constant";
 
@@ -60,6 +61,7 @@ export function useStackState() {
   const stack = sanitizeStackState(queryState);
   const viewMode = queryState.viewMode;
   const selectedFile = queryState.selectedFile;
+  const updateQueue = useRef(Promise.resolve());
 
   const clearLegacyFrontendQuery = {
     legacyWebFrontend: null,
@@ -69,9 +71,25 @@ export function useStackState() {
   const updateStack = async (
     updates: Partial<StackState> | ((prev: StackState) => Partial<StackState>),
   ) => {
-    const newStack = typeof updates === "function" ? updates(stack) : updates;
-    const finalStack = sanitizeStackState({ ...stack, ...newStack });
-    await setQueryState({ ...finalStack, viewMode, selectedFile, ...clearLegacyFrontendQuery });
+    const run = async () => {
+      await setQueryState((prev) => {
+        const current = sanitizeStackState(prev);
+        const newStack = typeof updates === "function" ? updates(current) : updates;
+        const finalStack = sanitizeStackState({ ...current, ...newStack });
+        return {
+          ...finalStack,
+          viewMode: prev.viewMode,
+          selectedFile: prev.selectedFile,
+          ...clearLegacyFrontendQuery,
+        };
+      });
+    };
+    const next = updateQueue.current.then(run, run);
+    updateQueue.current = next.then(
+      () => undefined,
+      () => undefined,
+    );
+    await next;
   };
 
   const setViewMode = async (mode: "command" | "preview") => {
