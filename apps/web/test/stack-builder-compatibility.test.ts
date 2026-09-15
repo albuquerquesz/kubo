@@ -2,8 +2,10 @@ import { describe, expect, test } from "bun:test";
 
 import { getIsSelected } from "../src/app/(home)/new/_components/stack-builder/tech-categories";
 import {
+  getCategoryProgress,
   getCompatibilityAdjustmentKey,
   getCompatibilityAdjustmentState,
+  nextStackAfterTechSelect,
 } from "../src/app/(home)/new/_components/stack-builder/use-stack-builder";
 import {
   analyzeStackCompatibility,
@@ -20,6 +22,51 @@ import { formatStackCommandForDisplay, generateStackCommand } from "../src/lib/s
 function createStack(overrides: Partial<StackState> = {}): StackState {
   return sanitizeStackState({ ...DEFAULT_STACK, ...overrides });
 }
+
+describe("stack builder git and install selection", () => {
+  test("marks default Git and Install cards as selected", () => {
+    const stack = createStack({});
+
+    expect(getIsSelected(stack, "git", "true")).toBe(true);
+    expect(getIsSelected(stack, "git", "false")).toBe(false);
+    expect(getIsSelected(stack, "install", "true")).toBe(true);
+    expect(getIsSelected(stack, "install", "false")).toBe(false);
+  });
+
+  test("selecting Sem Git and Pular instalação sets booleans and CLI flags", () => {
+    const withoutGit = createStack({
+      ...nextStackAfterTechSelect(createStack({}), "git", "false"),
+    });
+    expect(withoutGit.git).toBe(false);
+    expect(getIsSelected(withoutGit, "git", "false")).toBe(true);
+    expect(generateStackCommand(withoutGit)).toContain("--no-git");
+
+    const withoutInstall = createStack({
+      ...nextStackAfterTechSelect(createStack({}), "install", "false"),
+    });
+    expect(withoutInstall.install).toBe(false);
+    expect(getIsSelected(withoutInstall, "install", "false")).toBe(true);
+    expect(generateStackCommand(withoutInstall)).toContain("--no-install");
+  });
+
+  test("clicking the already selected Git or Install option is a no-op", () => {
+    const stack = createStack({ git: true, install: true });
+    expect(nextStackAfterTechSelect(stack, "git", "true")).toBeNull();
+    expect(nextStackAfterTechSelect(stack, "install", "true")).toBeNull();
+  });
+
+  test("counts git and install as completed categories", () => {
+    const progress = getCategoryProgress(createStack({ git: false, install: false }));
+    expect(progress.find((entry) => entry.category === "git")).toMatchObject({
+      selected: 1,
+      done: true,
+    });
+    expect(progress.find((entry) => entry.category === "install")).toMatchObject({
+      selected: 1,
+      done: true,
+    });
+  });
+});
 
 describe("communication capability messages", () => {
   test.each([
