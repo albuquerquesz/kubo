@@ -3,7 +3,6 @@ import { describe, expect, test } from "bun:test";
 import {
   BACKEND_OPTIONS,
   CORE_STACK_SUMMARY,
-  DATABASE_OPTIONS,
   getStackFlowTerminalState,
   STACK_FLOW_TERMINAL_COMMAND,
   STACK_FLOW_TERMINAL_LOOP_DURATION_MS,
@@ -19,8 +18,9 @@ describe("stack flow terminal playback", () => {
     const commandState = getStackFlowTerminalState(0);
     const promptState = getStackFlowTerminalState(STACK_FLOW_TERMINAL_TIMELINE.projectTypeAtMs);
     const backendState = getStackFlowTerminalState(STACK_FLOW_TERMINAL_TIMELINE.backendAtMs);
-    const runtimeState = getStackFlowTerminalState(STACK_FLOW_TERMINAL_TIMELINE.runtimeAtMs);
-    const databaseState = getStackFlowTerminalState(STACK_FLOW_TERMINAL_TIMELINE.databaseAtMs);
+    const completedBackendState = getStackFlowTerminalState(
+      STACK_FLOW_TERMINAL_TIMELINE.backendSubmittedAtMs,
+    );
 
     expect(commandState.phase).toBe("command");
     expect(commandState.commandTyping).toBe(true);
@@ -28,12 +28,8 @@ describe("stack flow terminal playback", () => {
     expect(promptState.projectTypeComplete).toBe(false);
     expect(backendState.phase).toBe("backend");
     expect(backendState.backendComplete).toBe(false);
-    expect(runtimeState.phase).toBe("runtime");
-    expect(runtimeState.runtimeComplete).toBe(false);
-    expect(databaseState.phase).toBe("database");
-    expect(databaseState.showBackend).toBe(true);
-    expect(databaseState.showRuntime).toBe(true);
-    expect(databaseState.showDatabase).toBe(true);
+    expect(completedBackendState.phase).toBe("backend");
+    expect(completedBackendState.backendComplete).toBe(true);
   });
 
   test("loops back to the first frame without accumulating state", () => {
@@ -46,14 +42,12 @@ describe("stack flow terminal playback", () => {
   test("freezes on the complete transcript for reduced motion", () => {
     const state = getStackFlowTerminalState(0, true);
 
-    expect(state.phase).toBe("database");
+    expect(state.phase).toBe("backend");
     expect(state.commandComplete).toBe(true);
     expect(state.projectNameComplete).toBe(true);
     expect(state.projectTypeComplete).toBe(true);
     expect(state.webFrameworkComplete).toBe(true);
     expect(state.backendComplete).toBe(true);
-    expect(state.runtimeComplete).toBe(true);
-    expect(state.databaseComplete).toBe(true);
   });
 
   test("keeps the core-stack parity fixture aligned with CLI defaults", () => {
@@ -71,8 +65,7 @@ describe("stack flow terminal playback", () => {
     });
   });
 
-  test("uses Elysia and PostgreSQL for the animated selections", () => {
+  test("uses Elysia for the animated backend selection", () => {
     expect(BACKEND_OPTIONS.find((option) => option.selected)?.label).toBe("Elysia");
-    expect(DATABASE_OPTIONS.find((option) => option.selected)?.label).toBe("PostgreSQL");
   });
 });

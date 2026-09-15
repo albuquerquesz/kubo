@@ -4,7 +4,7 @@ import { DEFAULT_PACKAGE_MANAGER, getCreateCommand } from "./create-commands";
 
 export const STACK_FLOW_TERMINAL_COMMAND = getCreateCommand(DEFAULT_PACKAGE_MANAGER);
 export const STACK_FLOW_TERMINAL_PROJECT_NAME = "my-kubo-app";
-export const STACK_FLOW_TERMINAL_LOOP_DURATION_MS = 12_000;
+export const STACK_FLOW_TERMINAL_LOOP_DURATION_MS = 9_300;
 
 export const STACK_FLOW_TERMINAL_TIMELINE = {
   commandEndMs: 1_600,
@@ -17,10 +17,6 @@ export const STACK_FLOW_TERMINAL_TIMELINE = {
   webSubmittedAtMs: 6_800,
   backendAtMs: 7_100,
   backendSubmittedAtMs: 8_100,
-  runtimeAtMs: 8_400,
-  runtimeSubmittedAtMs: 9_400,
-  databaseAtMs: 9_700,
-  databaseSubmittedAtMs: 10_700,
 } as const;
 
 export const KUBO_CLI_BANNER = KUBO_CLI_TITLE;
@@ -86,32 +82,6 @@ export const BACKEND_OPTIONS = [
   { label: "None", hint: "No backend server" },
 ] as const satisfies readonly TerminalOption[];
 
-export const RUNTIME_OPTIONS = [
-  { label: "Bun", hint: "Fast all-in-one JavaScript runtime", selected: true },
-  { label: "Node.js", hint: "Traditional Node.js runtime" },
-] as const satisfies readonly TerminalOption[];
-
-export const DATABASE_OPTIONS = [
-  { label: "None", hint: "No database setup" },
-  {
-    label: "SQLite",
-    hint: "lightweight, server-less, embedded relational database",
-  },
-  {
-    label: "PostgreSQL",
-    hint: "powerful, open source object-relational database system",
-    selected: true,
-  },
-  {
-    label: "MySQL",
-    hint: "popular open-source relational database system",
-  },
-  {
-    label: "MongoDB",
-    hint: "open-source NoSQL database that stores data in JSON-like documents called BSON",
-  },
-] as const satisfies readonly TerminalOption[];
-
 export const CORE_STACK_SUMMARY = [
   ["Project Name", STACK_FLOW_TERMINAL_PROJECT_NAME],
   ["Frontend", "tanstack-router"],
@@ -133,9 +103,7 @@ export type TerminalPlaybackPhase =
   | "project-name"
   | "project-type"
   | "web-framework"
-  | "backend"
-  | "runtime"
-  | "database";
+  | "backend";
 
 export type TerminalPlaybackState = {
   elapsedMs: number;
@@ -156,10 +124,6 @@ export type TerminalPlaybackState = {
   webFrameworkComplete: boolean;
   showBackend: boolean;
   backendComplete: boolean;
-  showRuntime: boolean;
-  runtimeComplete: boolean;
-  showDatabase: boolean;
-  databaseComplete: boolean;
 };
 
 function normalizeElapsedTime(elapsedMs: number, reducedMotion: boolean): number {
@@ -177,8 +141,6 @@ function getVisibleCharacters(value: string, startMs: number, endMs: number, ela
 }
 
 function getPhase(elapsedMs: number): TerminalPlaybackPhase {
-  if (elapsedMs >= STACK_FLOW_TERMINAL_TIMELINE.databaseAtMs) return "database";
-  if (elapsedMs >= STACK_FLOW_TERMINAL_TIMELINE.runtimeAtMs) return "runtime";
   if (elapsedMs >= STACK_FLOW_TERMINAL_TIMELINE.backendAtMs) return "backend";
   if (elapsedMs >= STACK_FLOW_TERMINAL_TIMELINE.webAtMs) return "web-framework";
   if (elapsedMs >= STACK_FLOW_TERMINAL_TIMELINE.projectTypeAtMs) return "project-type";
@@ -201,10 +163,6 @@ export function getStackFlowTerminalState(
     webSubmittedAtMs,
     backendAtMs,
     backendSubmittedAtMs,
-    runtimeAtMs,
-    runtimeSubmittedAtMs,
-    databaseAtMs,
-    databaseSubmittedAtMs,
   } = STACK_FLOW_TERMINAL_TIMELINE;
   const commandComplete = normalizedElapsedMs >= commandEndMs;
   const projectNameComplete = normalizedElapsedMs >= projectNameSubmittedAtMs;
@@ -238,9 +196,5 @@ export function getStackFlowTerminalState(
     webFrameworkComplete: normalizedElapsedMs >= webSubmittedAtMs,
     showBackend: normalizedElapsedMs >= backendAtMs,
     backendComplete: normalizedElapsedMs >= backendSubmittedAtMs,
-    showRuntime: normalizedElapsedMs >= runtimeAtMs,
-    runtimeComplete: normalizedElapsedMs >= runtimeSubmittedAtMs,
-    showDatabase: normalizedElapsedMs >= databaseAtMs,
-    databaseComplete: normalizedElapsedMs >= databaseSubmittedAtMs,
   };
 }

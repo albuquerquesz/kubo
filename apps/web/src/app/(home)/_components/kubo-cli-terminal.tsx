@@ -7,10 +7,8 @@ import { onReducedMotionChange, prefersReducedMotion } from "@/lib/motion/reduce
 import {
   getStackFlowTerminalState,
   BACKEND_OPTIONS,
-  DATABASE_OPTIONS,
   KUBO_CLI_BANNER,
   PROJECT_TYPE_OPTIONS,
-  RUNTIME_OPTIONS,
   WEB_OPTIONS,
   type TerminalOption,
 } from "@/lib/stack-flow-terminal";
@@ -95,7 +93,7 @@ function AccessibleTranscript() {
   return (
     <p className="sr-only">
       Demonstração animada do Create Path do Kubo. O comando bun create kubojs@latest seleciona o
-      projeto my-kubo-app com TanStack Router, Elysia, Bun e PostgreSQL.
+      projeto my-kubo-app com TanStack Router e Elysia.
     </p>
   );
 }
@@ -212,28 +210,6 @@ export default function KuboCliTerminal() {
                   options={BACKEND_OPTIONS}
                   submitted={state.backendComplete}
                   value="Elysia"
-                />
-              </TerminalTreeStep>
-            ) : null}
-
-            {state.showRuntime ? (
-              <TerminalTreeStep>
-                <PromptBlock
-                  message="Select runtime"
-                  options={RUNTIME_OPTIONS}
-                  submitted={state.runtimeComplete}
-                  value="Bun"
-                />
-              </TerminalTreeStep>
-            ) : null}
-
-            {state.showDatabase ? (
-              <TerminalTreeStep>
-                <PromptBlock
-                  message="Select database"
-                  options={DATABASE_OPTIONS}
-                  submitted={state.databaseComplete}
-                  value="PostgreSQL"
                 />
               </TerminalTreeStep>
             ) : null}
