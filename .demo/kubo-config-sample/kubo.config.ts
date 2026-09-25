@@ -1,6 +1,6 @@
 export default {
   version: "0.1.1",
-  createdAt: "2026-09-25T12:48:11.162Z",
+  createdAt: "2026-09-25T13:34:38.652Z",
   layout: {
     preset: "standard",
   },
@@ -9,7 +9,7 @@ export default {
   backend: "hono",
   runtime: "bun",
   frontend: ["tanstack-router"],
-  addons: ["turborepo", "biome"],
+  addons: ["turborepo"],
   examples: [],
   testing: [],
   auth: "none",

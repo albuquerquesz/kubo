@@ -7,7 +7,6 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
 import { getMonitor } from "./shared/getmonitor";
-
 void getMonitor;
 
 const app = new Hono();

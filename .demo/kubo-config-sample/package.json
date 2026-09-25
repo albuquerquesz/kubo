@@ -30,8 +30,7 @@
     "build": "turbo run build",
     "check-types": "turbo run check-types",
     "dev:web": "turbo run dev -F web",
-    "dev:server": "turbo run dev -F server",
-    "check": "biome check --write ."
+    "dev:server": "turbo run dev -F server"
   },
   "dependencies": {
     "@kubo-config-sample/env": "workspace:*",
@@ -39,7 +38,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.2",
     "@kubo-config-sample/config": "workspace:*",
     "@kubojs/config": "0.1.1",
     "@types/bun": "catalog:",

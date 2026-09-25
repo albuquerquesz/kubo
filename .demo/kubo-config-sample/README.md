@@ -13,7 +13,6 @@ This project was created with [kubojs](https://github.com/albuquerquesz/kubo), a
 - **tRPC** - End-to-end type-safe APIs
 - **Bun** - Runtime environment
 - **Turborepo** - Optimized monorepo build system
-- **Biome** - Linting and formatting
 
 ## Getting Started
 
@@ -73,10 +72,6 @@ import { Button } from "@kubo-config-sample/ui/components/button";
 
 If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
 
-## Git Hooks and Formatting
-
-- Run checks: `bun run check`
-
 ## Project Structure
 
 ```
@@ -96,4 +91,3 @@ kubo-config-sample/
 - `bun run dev:web`: Start only the web application
 - `bun run dev:server`: Start only the server
 - `bun run check-types`: Check TypeScript types across all apps
-- `bun run check`: Run Biome formatting and linting

@@ -9,7 +9,7 @@ import {
   useMessageScrollerVisibility,
 } from "@shadcn/react/message-scroller";
 import { ArrowDownIcon } from "lucide-react";
-import type * as React from "react";
+import * as React from "react";
 
 function MessageScrollerProvider(
   props: React.ComponentProps<typeof MessageScrollerPrimitive.Provider>,
@@ -41,7 +41,7 @@ function MessageScrollerViewport({
     <MessageScrollerPrimitive.Viewport
       data-slot="message-scroller-viewport"
       className={cn(
-        "cn-message-scroller-viewport scroll-fade-b scrollbar-thin scrollbar-gutter-stable data-autoscrolling:scrollbar-none size-full min-h-0 min-w-0 overflow-y-auto overscroll-contain contain-content",
+        "cn-message-scroller-viewport size-full min-h-0 min-w-0 scroll-fade-b scrollbar-thin scrollbar-gutter-stable overflow-y-auto overscroll-contain contain-content data-autoscrolling:scrollbar-none",
         className,
       )}
       {...props}
@@ -98,7 +98,7 @@ function MessageScrollerButton({
       data-size={size}
       direction={direction}
       className={cn(
-        "cn-message-scroller-button absolute inset-s-1/2 -translate-x-1/2 border-border bg-background text-foreground transition-[translate,scale,opacity] duration-200 hover:bg-muted hover:text-foreground data-[direction=end]:data-[active=false]:translate-y-full data-[direction=start]:data-[active=false]:-translate-y-full data-[active=false]:pointer-events-none data-[direction=start]:top-4 data-[direction=end]:bottom-4 data-[active=true]:translate-y-0 data-[active=false]:scale-95 data-[active=true]:scale-100 data-[active=false]:opacity-0 data-[active=true]:opacity-100 data-[active=false]:duration-400 data-[active=false]:ease-[cubic-bezier(0.7,0,0.84,0)] data-[active=true]:ease-[cubic-bezier(0.23,1,0.32,1)] rtl:translate-x-1/2 data-[direction=start]:[&_svg]:rotate-180",
+        "cn-message-scroller-button absolute inset-s-1/2 -translate-x-1/2 border-border bg-background text-foreground transition-[translate,scale,opacity] duration-200 hover:bg-muted hover:text-foreground data-[active=false]:pointer-events-none data-[active=false]:scale-95 data-[active=false]:opacity-0 data-[active=false]:duration-400 data-[active=false]:ease-[cubic-bezier(0.7,0,0.84,0)] data-[active=true]:translate-y-0 data-[active=true]:scale-100 data-[active=true]:opacity-100 data-[active=true]:ease-[cubic-bezier(0.23,1,0.32,1)] data-[direction=end]:bottom-4 data-[direction=end]:data-[active=false]:translate-y-full data-[direction=start]:top-4 data-[direction=start]:data-[active=false]:-translate-y-full rtl:translate-x-1/2 data-[direction=start]:[&_svg]:rotate-180",
         className,
       )}
       render={render ?? <Button variant={variant} size={size} />}
@@ -117,12 +117,12 @@ function MessageScrollerButton({
 }
 
 export {
+  MessageScrollerProvider,
   MessageScroller,
-  MessageScrollerButton,
+  MessageScrollerViewport,
   MessageScrollerContent,
   MessageScrollerItem,
-  MessageScrollerProvider,
-  MessageScrollerViewport,
+  MessageScrollerButton,
   useMessageScroller,
   useMessageScrollerScrollable,
   useMessageScrollerVisibility,
