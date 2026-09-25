@@ -1,0 +1,47 @@
+{
+  "name": "@kubojs/config",
+  "version": "0.1.1",
+  "description": "Authoring helpers for kubo.config.ts in KuboJS projects",
+  "keywords": [
+    "config",
+    "kubojs",
+    "layout"
+  ],
+  "homepage": "https://kubojs.dev/",
+  "license": "MIT",
+  "author": "Kubo",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/albuquerquesz/kubo.git",
+    "directory": "packages/config"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./presets": {
+      "types": "./dist/presets.d.mts",
+      "default": "./dist/presets.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepublishOnly": "bun run build",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@kubojs/types": "workspace:*"
+  },
+  "devDependencies": {
+    "tsdown": "^0.22.0",
+    "typescript": "^6.0.3"
+  }
+}
