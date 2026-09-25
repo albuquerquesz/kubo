@@ -3,7 +3,7 @@ import { Result } from "better-result";
 
 import { applyAddonCatalog } from "./addon-application";
 import { VirtualFileSystem } from "./core/virtual-fs";
-import { writeKubojsConfigToVfs } from "./kubojs-config";
+import { writeKuboConfigToVfs } from "./kubo-config";
 import {
   processCatalogs,
   processPackageConfigs,
@@ -110,7 +110,7 @@ export async function generate(
 
       if (options.version) {
         const reproducibleCommand = generateReproducibleCommand(config);
-        writeKubojsConfigToVfs(vfs, config, options.version, reproducibleCommand);
+        writeKuboConfigToVfs(vfs, config, options.version, reproducibleCommand);
       }
 
       const tree: VirtualFileTree = {

@@ -7,6 +7,7 @@ import type { ProjectConfig } from "@kubojs/types";
 import yaml from "yaml";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
+import { getCatalogPackagePaths } from "../layout-paths";
 
 type PackageJson = {
   name?: string;
@@ -29,23 +30,6 @@ type PackageInfo = {
   devDependencies: Record<string, string>;
 };
 
-const PACKAGE_PATHS = [
-  ".",
-  "apps/server",
-  "apps/web",
-  "apps/native",
-  "apps/desktop",
-  "apps/docs",
-  "apps/api",
-  "packages/db",
-  "packages/auth",
-  "packages/backend",
-  "packages/config",
-  "packages/env",
-  "packages/infra",
-  "packages/ui",
-];
-
 /**
  * Process dependency catalogs for pnpm/bun
  */
@@ -54,7 +38,7 @@ export function processCatalogs(vfs: VirtualFileSystem, config: ProjectConfig): 
 
   const packagesInfo: PackageInfo[] = [];
 
-  for (const pkgPath of PACKAGE_PATHS) {
+  for (const pkgPath of getCatalogPackagePaths(config)) {
     const jsonPath = pkgPath === "." ? "package.json" : `${pkgPath}/package.json`;
     const pkgJson = vfs.readJson<PackageJson>(jsonPath);
 

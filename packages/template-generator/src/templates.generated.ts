@@ -24,6 +24,7 @@ export const EMBEDDED_TEMPLATES: Map<string, string> = new Map([
 			"!**/src-tauri",
 			"!**/.nuxt",
 			"!kubojs.jsonrc",
+			"!kubo.config.ts",
 			"!**/.expo",
 			"!**/.wrangler",
 			"!**/.alchemy",
