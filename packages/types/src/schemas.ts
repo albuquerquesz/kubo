@@ -1,3 +1,5 @@
+import path from "node:path";
+
 import { z } from "zod";
 
 export const DatabaseSchema = z
@@ -320,6 +322,74 @@ export const DbSetupOptionsSchema = z
   })
   .describe("Database setup configuration");
 
+export const LayoutPresetSchema = z
+  .enum(["standard", "server-separated"])
+  .describe("Official project topology preset");
+
+export const LayoutAppIdSchema = z.enum(["web", "server", "native", "desktop", "docs", "api"]);
+
+export const LayoutPackageIdSchema = z.enum([
+  "db",
+  "auth",
+  "backend",
+  "config",
+  "env",
+  "infra",
+  "ui",
+  "storage",
+  "api",
+  "payments",
+  "email",
+  "arara",
+  "notifique",
+]);
+
+export const LayoutRelativePathSchema = z
+  .string()
+  .min(1, "Layout path cannot be empty")
+  .refine((value) => value !== "." && value !== "..", "Layout path cannot be . or ..")
+  .refine((value) => !path.isAbsolute(value), "Layout path must be relative to the project root")
+  .refine((value) => !value.split(/[/\\]/).includes(".."), "Layout path cannot contain .. segments")
+  .describe("Project-relative directory path");
+
+const LayoutAppsSchema = z
+  .object({
+    web: LayoutRelativePathSchema,
+    server: LayoutRelativePathSchema,
+    native: LayoutRelativePathSchema,
+    desktop: LayoutRelativePathSchema,
+    docs: LayoutRelativePathSchema,
+    api: LayoutRelativePathSchema,
+  })
+  .partial();
+
+const LayoutPackagesSchema = z
+  .object({
+    db: LayoutRelativePathSchema,
+    auth: LayoutRelativePathSchema,
+    backend: LayoutRelativePathSchema,
+    config: LayoutRelativePathSchema,
+    env: LayoutRelativePathSchema,
+    infra: LayoutRelativePathSchema,
+    ui: LayoutRelativePathSchema,
+    storage: LayoutRelativePathSchema,
+    api: LayoutRelativePathSchema,
+    payments: LayoutRelativePathSchema,
+    email: LayoutRelativePathSchema,
+    arara: LayoutRelativePathSchema,
+    notifique: LayoutRelativePathSchema,
+  })
+  .partial();
+
+export const LayoutConfigSchema = z
+  .object({
+    preset: LayoutPresetSchema.default("standard"),
+    apps: LayoutAppsSchema.optional(),
+    packages: LayoutPackagesSchema.optional(),
+  })
+  .strict()
+  .describe("Declarative project folder topology");
+
 export const ProjectNameSchema = z
   .string()
   .min(1, "Project name cannot be empty")
@@ -399,6 +469,7 @@ export const ProjectConfigSchema = z.object({
   projectName: z.string(),
   projectDir: z.string(),
   relativePath: z.string(),
+  layout: LayoutConfigSchema.optional(),
   addonOptions: AddonOptionsSchema.optional(),
   dbSetupOptions: DbSetupOptionsSchema.optional(),
   database: DatabaseSchema,
@@ -427,7 +498,7 @@ export const ProjectConfigDraftSchema = ProjectConfigSchema.omit({
   relativePath: true,
 });
 
-export const KubojsConfigSchema = z.object({
+const KuboStackConfigSchema = z.object({
   version: z.string().describe("CLI version used to create this project"),
   createdAt: z.string().describe("Timestamp when the project was created"),
   reproducibleCommand: z.string().optional().describe("Command to reproduce this project setup"),
@@ -452,6 +523,13 @@ export const KubojsConfigSchema = z.object({
   serverDeploy: ServerDeploySchema,
 });
 
+/** @deprecated Prefer {@link KuboConfigSchema} and `kubo.config.ts`. */
+export const KubojsConfigSchema = KuboStackConfigSchema;
+
+export const KuboConfigSchema = KuboStackConfigSchema.extend({
+  layout: LayoutConfigSchema.optional(),
+});
+
 export const KubojsConfigFileSchema = z
   .object({
     $schema: z.string().optional().describe("JSON Schema reference for validation"),
@@ -461,8 +539,14 @@ export const KubojsConfigFileSchema = z
   .meta({
     id: "https://r2.kubojs.dev/schema.json",
     title: "kubojs Configuration",
-    description: "Configuration file for kubojs projects",
+    description: "Legacy kubojs.jsonrc configuration (prefer kubo.config.ts)",
   });
+
+export const KuboConfigFileSchema = KuboConfigSchema.strict().meta({
+  id: "https://r2.kubojs.dev/kubo-config.schema.json",
+  title: "Kubo project configuration",
+  description: "Configuration exported from kubo.config.ts",
+});
 
 export const InitResultSchema = z.object({
   success: z.boolean(),

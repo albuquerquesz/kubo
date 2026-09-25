@@ -31,6 +31,12 @@ import type {
   ProjectConfigSchema,
   ProjectConfigDraftSchema,
   KubojsConfigSchema,
+  KuboConfigSchema,
+  KuboConfigFileSchema,
+  LayoutConfigSchema,
+  LayoutPresetSchema,
+  LayoutAppIdSchema,
+  LayoutPackageIdSchema,
   InitResultSchema,
 } from "./schemas";
 
@@ -65,7 +71,23 @@ export type CLIInput = z.infer<typeof CLIInputSchema>;
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
 export type ProjectConfigDraft = z.infer<typeof ProjectConfigDraftSchema>;
 export type KubojsConfig = z.infer<typeof KubojsConfigSchema>;
+export type KuboConfig = z.infer<typeof KuboConfigSchema>;
+export type LayoutConfig = z.infer<typeof LayoutConfigSchema>;
+export type LayoutPreset = z.infer<typeof LayoutPresetSchema>;
+export type LayoutAppId = z.infer<typeof LayoutAppIdSchema>;
+export type LayoutPackageId = z.infer<typeof LayoutPackageIdSchema>;
 export type InitResult = z.infer<typeof InitResultSchema>;
+
+export interface ResolvedLayout {
+  preset: LayoutPreset;
+  apps: Record<LayoutAppId, string>;
+  packages: Record<LayoutPackageId, string>;
+  path(logical: LayoutAppId, kind: "app"): string;
+  path(logical: LayoutPackageId, kind: "package"): string;
+  file(logical: LayoutAppId, kind: "app", ...segments: string[]): string;
+  file(logical: LayoutPackageId, kind: "package", ...segments: string[]): string;
+  rootPackagePath(): string;
+}
 
 export type WebFrontend = Extract<
   Frontend,

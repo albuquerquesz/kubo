@@ -27,6 +27,9 @@ import {
   ProjectConfigSchema,
   KubojsConfigSchema,
   KubojsConfigFileSchema,
+  KuboConfigSchema,
+  KuboConfigFileSchema,
+  LayoutConfigSchema,
   InitResultSchema,
 } from "./schemas";
 
@@ -134,6 +137,18 @@ export function getKubojsConfigFileJsonSchema() {
   return z.toJSONSchema(KubojsConfigFileSchema, { target: "draft-7" });
 }
 
+export function getKuboConfigJsonSchema() {
+  return z.toJSONSchema(KuboConfigSchema);
+}
+
+export function getKuboConfigFileJsonSchema() {
+  return z.toJSONSchema(KuboConfigFileSchema, { target: "draft-7" });
+}
+
+export function getLayoutConfigJsonSchema() {
+  return z.toJSONSchema(LayoutConfigSchema);
+}
+
 export function getInitResultJsonSchema() {
   return z.toJSONSchema(InitResultSchema);
 }
@@ -166,6 +181,9 @@ export function getAllJsonSchemas() {
     projectConfig: getProjectConfigJsonSchema(),
     kubojsConfig: getKubojsConfigJsonSchema(),
     kubojsConfigFile: getKubojsConfigFileJsonSchema(),
+    kuboConfig: getKuboConfigJsonSchema(),
+    kuboConfigFile: getKuboConfigFileJsonSchema(),
+    layoutConfig: getLayoutConfigJsonSchema(),
     initResult: getInitResultJsonSchema(),
   };
 }

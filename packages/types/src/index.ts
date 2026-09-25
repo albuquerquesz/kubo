@@ -9,3 +9,6 @@ export * from "./observability";
 export * from "./payments";
 export * from "./schemas";
 export * from "./types";
+export * from "./layout";
+export * from "./layout-presets";
+export { normalizeLegacyKuboConfig } from "./kubo-config-normalize";
