@@ -124,10 +124,9 @@ describe("scaffold quality fixes", () => {
     };
     expect(biomeJson.formatter?.indentStyle).toBe("space");
 
-    // §6 kubo.config.ts header intact after create
+    // §6 kubo.config.ts export intact after create
     const kuboConfig = await readFile(path.join(projectPath, "kubo.config.ts"), "utf8");
-    expect(kuboConfig).toContain("// KuboJS project config");
-    expect(kuboConfig).toContain("export default");
+    expect(kuboConfig).toMatch(/^export default \{/);
     expect(kuboConfig).toContain('"preset": "standard"');
 
     // routeTree.gen.ts shipped for day-1 typecheck (not gitignored)
@@ -200,7 +199,6 @@ describe("scaffold quality fixes", () => {
     expect(pkg.devDependencies?.["@biomejs/biome"]).toBeUndefined();
     expect(pkg.scripts?.check).toMatch(/oxlint/);
 
-    // §6 header still present after add rewrite
-    expect(kuboConfig).toContain("// KuboJS project config");
+    expect(kuboConfig).toMatch(/^export default \{/);
   });
 });

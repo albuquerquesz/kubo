@@ -22,12 +22,6 @@ const CONFIG_CANDIDATES = [
   "kubo.config.mjs",
 ] as const;
 
-function addCommandFor(packageManager: KuboConfig["packageManager"]): string {
-  if (packageManager === "npm") return "npx kubojs add";
-  if (packageManager === "pnpm") return "pnpm dlx kubojs add";
-  return "bun create kubojs add";
-}
-
 async function findConfigFile(projectDir: string): Promise<string | null> {
   for (const candidate of CONFIG_CANDIDATES) {
     const absolute = path.join(projectDir, candidate);
@@ -128,10 +122,7 @@ export async function updateProjectKuboConfig(
   };
 
   const configPath = (await findConfigFile(projectDir)) ?? path.join(projectDir, KUBO_CONFIG_FILE);
-  const content = serializeKuboConfigFile(merged, {
-    addCommand: addCommandFor(merged.packageManager),
-    cliVersion: merged.version,
-  });
+  const content = serializeKuboConfigFile(merged);
 
   await fs.writeFile(configPath, content, "utf-8");
 }
