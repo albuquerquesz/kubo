@@ -429,7 +429,7 @@ describe("MCP server", () => {
     expect(payload.error).toContain("already exists and is not empty");
   });
 
-  it("plans addon installation without mutating kubojs.jsonrc", async () => {
+  it("plans addon installation without mutating kubo.config.ts", async () => {
     const { client, cleanup } = await connectInMemoryClient();
     cleanups.push(cleanup);
 
@@ -482,7 +482,7 @@ describe("MCP server", () => {
     expect(after).toEqual(before);
   });
 
-  it("adds addons through MCP and persists them to kubojs.jsonrc", async () => {
+  it("adds addons through MCP and persists them to kubo.config.ts", async () => {
     const { client, cleanup } = await connectInMemoryClient();
     cleanups.push(cleanup);
 

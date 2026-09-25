@@ -1,10 +1,9 @@
 import path from "node:path";
 
 import { Result } from "better-result";
-import fs from "fs-extra";
 
 import { normalizeObservability } from "../../utils/config-processing";
-import { readKubojsConfig } from "../../utils/kubojs-config";
+import { isKubojsProject as detectKuboProject, readKubojsConfig } from "../../utils/kubojs-config";
 
 export async function detectProjectConfig(projectDir: string) {
   const result = await Result.tryPromise({
@@ -14,6 +13,7 @@ export async function detectProjectConfig(projectDir: string) {
         return {
           projectDir,
           projectName: path.basename(projectDir),
+          layout: kubojsConfig.layout,
           addonOptions: kubojsConfig.addonOptions,
           dbSetupOptions: kubojsConfig.dbSetupOptions,
           database: kubojsConfig.database,
@@ -45,10 +45,5 @@ export async function detectProjectConfig(projectDir: string) {
 }
 
 export async function isKubojsProject(projectDir: string): Promise<boolean> {
-  const result = await Result.tryPromise({
-    try: () => fs.pathExists(path.join(projectDir, "kubojs.jsonrc")),
-    catch: () => false,
-  });
-
-  return result.isOk() ? result.value : false;
+  return detectKuboProject(projectDir);
 }

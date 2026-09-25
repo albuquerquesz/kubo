@@ -124,10 +124,11 @@ describe("scaffold quality fixes", () => {
     };
     expect(biomeJson.formatter?.indentStyle).toBe("space");
 
-    // §6 kubojs.jsonrc header intact after create
-    const kubojsConfig = await readFile(path.join(projectPath, "kubojs.jsonrc"), "utf8");
-    expect(kubojsConfig).toContain("// kubojs");
-    expect(kubojsConfig).toContain("$schema");
+    // §6 kubo.config.ts header intact after create
+    const kuboConfig = await readFile(path.join(projectPath, "kubo.config.ts"), "utf8");
+    expect(kuboConfig).toContain("// KuboJS project config");
+    expect(kuboConfig).toContain("export default");
+    expect(kuboConfig).toContain('"preset": "standard"');
 
     // routeTree.gen.ts shipped for day-1 typecheck (not gitignored)
     expect(await fs.pathExists(path.join(projectPath, "apps/web/src/routeTree.gen.ts"))).toBe(true);
@@ -188,9 +189,9 @@ describe("scaffold quality fixes", () => {
     });
     expect(addResult?.success).toBe(true);
 
-    const kubojsConfig = await readFile(path.join(projectPath, "kubojs.jsonrc"), "utf8");
-    expect(kubojsConfig).toContain('"oxlint"');
-    expect(kubojsConfig).not.toMatch(/"addons"\s*:\s*\[[^\]]*"biome"/);
+    const kuboConfig = await readFile(path.join(projectPath, "kubo.config.ts"), "utf8");
+    expect(kuboConfig).toContain('"oxlint"');
+    expect(kuboConfig).not.toMatch(/"addons"\s*:\s*\[[^\]]*"biome"/);
 
     const pkg = JSON.parse(await readFile(path.join(projectPath, "package.json"), "utf8")) as {
       devDependencies?: Record<string, string>;
@@ -200,6 +201,6 @@ describe("scaffold quality fixes", () => {
     expect(pkg.scripts?.check).toMatch(/oxlint/);
 
     // §6 header still present after add rewrite
-    expect(kubojsConfig).toContain("// kubojs");
+    expect(kuboConfig).toContain("// KuboJS project config");
   });
 });

@@ -18,6 +18,7 @@ const formatOptions: FormatOptions = {
 /** Files that must not be rewritten by post-scaffold formatters. */
 const SKIP_FILE_NAMES = new Set([
   "kubojs.jsonrc",
+  "kubo.config.ts",
   "package-lock.json",
   "pnpm-lock.yaml",
   "yarn.lock",

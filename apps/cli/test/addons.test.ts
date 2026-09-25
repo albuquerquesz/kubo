@@ -696,9 +696,9 @@ describe("Addon Configurations", () => {
         "Cannot combine 'turborepo' and 'vite-plus' addons. Choose one task runner.",
       );
 
-      const kubojsConfig = await readFile(join(projectDir, "kubojs.jsonrc"), "utf8");
-      expect(kubojsConfig).toContain('"turborepo"');
-      expect(kubojsConfig).not.toContain('"vite-plus"');
+      const kuboConfig = await readFile(join(projectDir, "kubo.config.ts"), "utf8");
+      expect(kuboConfig).toContain('"turborepo"');
+      expect(kuboConfig).not.toContain('"vite-plus"');
     });
 
     it("should reject adding another task runner to a Vite+ project", async () => {
@@ -734,9 +734,9 @@ describe("Addon Configurations", () => {
         "Cannot combine 'turborepo' and 'vite-plus' addons. Choose one task runner.",
       );
 
-      const kubojsConfig = await readFile(join(projectDir, "kubojs.jsonrc"), "utf8");
-      expect(kubojsConfig).toContain('"vite-plus"');
-      expect(kubojsConfig).not.toContain('"turborepo"');
+      const kuboConfig = await readFile(join(projectDir, "kubo.config.ts"), "utf8");
+      expect(kuboConfig).toContain('"vite-plus"');
+      expect(kuboConfig).not.toContain('"turborepo"');
     });
 
     it("should refresh existing Git hook addons when Vite+ is added later", async () => {

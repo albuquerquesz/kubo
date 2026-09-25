@@ -4,9 +4,11 @@ import { intro, log, outro } from "@clack/prompts";
 import {
   EMBEDDED_TEMPLATES,
   applyAddonCatalog,
+  getWebAppPath,
   processPackageConfigs,
   processEnvVariables,
   processTemplateString,
+  resolveLayout,
   VirtualFileSystem,
 } from "@kubojs/template-generator";
 import { writeSelected } from "@kubojs/template-generator/fs-writer";
@@ -25,7 +27,7 @@ import {
 import { isSilent, runWithContextAsync } from "../../utils/context";
 import { CLIError, UserCancelledError, displayError } from "../../utils/errors";
 import { validateAgentSafePathInput } from "../../utils/input-hardening";
-import { updateKubojsConfig } from "../../utils/kubojs-config";
+import { updateProjectKuboConfig } from "../../utils/kubo-config";
 import { renderTitle } from "../../utils/render-title";
 import { setupAddons } from "../addons/addons-setup";
 import { setupTesting } from "../testing/testing-setup";
@@ -166,8 +168,8 @@ async function cleanupRemovedLinters(projectDir: string, removedAddons: Addons[]
   }
 }
 
-function updateViteConfigImportsForVitePlus(vfs: VirtualFileSystem): void {
-  const viteConfigPaths = ["apps/web/vite.config.ts"];
+function updateViteConfigImportsForVitePlus(vfs: VirtualFileSystem, webPath: string): void {
+  const viteConfigPaths = [`${webPath}/vite.config.ts`];
 
   for (const viteConfigPath of viteConfigPaths) {
     const content = vfs.readFile(viteConfigPath);
@@ -249,7 +251,7 @@ async function addHandlerInternal(
   if (!existingConfig) {
     return Result.err(
       new CLIError({
-        message: `No kubojs project found in ${projectDir}. Make sure kubojs.jsonrc exists.`,
+        message: `No kubojs project found in ${projectDir}. Make sure kubo.config.ts exists.`,
       }),
     );
   }
@@ -333,10 +335,26 @@ async function addHandlerInternal(
   }
 
   const mergedAddonOptions = mergeAddonOptions(existingConfig.addonOptions, input.addonOptions);
+  const layout = existingConfig.layout ?? { preset: "standard" as const };
+
+  try {
+    resolveLayout(layout, projectDir, {
+      backend: existingConfig.backend,
+      addonsToAdd,
+    });
+  } catch (error) {
+    return Result.err(
+      new CLIError({
+        message: error instanceof Error ? error.message : String(error),
+      }),
+    );
+  }
+
   const config: ProjectConfig = {
     projectName: existingConfig.projectName,
     projectDir,
     relativePath: ".",
+    layout,
     addonOptions: mergedAddonOptions,
     database: existingConfig.database,
     orm: existingConfig.orm,
@@ -387,7 +405,7 @@ async function addHandlerInternal(
   }
 
   if (updatedAddons.includes("vite-plus")) {
-    updateViteConfigImportsForVitePlus(vfs);
+    updateViteConfigImportsForVitePlus(vfs, getWebAppPath(updatedConfig));
   }
 
   if (shouldRefreshLefthook(addonsToAdd, updatedAddons)) {
@@ -466,11 +484,11 @@ async function addHandlerInternal(
   });
   if (testingSetupResult.isErr()) return Result.err(testingSetupResult.error);
 
-  // Update kubojs.jsonrc with final exclusive addon list (preserves JSONC comments)
-  await updateKubojsConfig(projectDir, {
+  await updateProjectKuboConfig(projectDir, {
     addons: updatedAddons,
     addonOptions: updatedConfig.addonOptions,
     testing: updatedTesting,
+    layout,
   });
 
   // Install dependencies if requested
