@@ -45,7 +45,8 @@
     "build": "tsdown",
     "prepublishOnly": "bun run build",
     "dev": "tsdown --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
   },
   "dependencies": {
     "@kubojs/types": "^0.1.1",
