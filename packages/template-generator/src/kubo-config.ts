@@ -10,12 +10,6 @@ type PackageJson = {
   [key: string]: unknown;
 };
 
-function addCommandFor(packageManager: ProjectConfig["packageManager"]): string {
-  if (packageManager === "npm") return "npx kubojs add";
-  if (packageManager === "pnpm") return "pnpm dlx kubojs add";
-  return "bun create kubojs add";
-}
-
 function ensureConfigDevDependency(vfs: VirtualFileSystem, cliVersion: string): void {
   const pkg = vfs.readJson<PackageJson>("package.json");
   if (!pkg) return;
@@ -34,13 +28,9 @@ export function writeKuboConfigToVfs(
   vfs: VirtualFileSystem,
   projectConfig: ProjectConfig,
   version: string,
-  reproducibleCommand?: string,
 ): void {
-  const kuboConfig = buildKuboConfigFromProject(projectConfig, version, reproducibleCommand);
-  const content = serializeKuboConfigFile(kuboConfig, {
-    addCommand: addCommandFor(projectConfig.packageManager),
-    cliVersion: version,
-  });
+  const kuboConfig = buildKuboConfigFromProject(projectConfig, version);
+  const content = serializeKuboConfigFile(kuboConfig);
 
   vfs.writeFile(KUBO_CONFIG_FILE, content);
   ensureConfigDevDependency(vfs, version);
@@ -51,7 +41,7 @@ export function writeKubojsConfigToVfs(
   vfs: VirtualFileSystem,
   projectConfig: ProjectConfig,
   version: string,
-  reproducibleCommand?: string,
+  _reproducibleCommand?: string,
 ): void {
-  writeKuboConfigToVfs(vfs, projectConfig, version, reproducibleCommand);
+  writeKuboConfigToVfs(vfs, projectConfig, version);
 }

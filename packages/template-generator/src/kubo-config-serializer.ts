@@ -1,32 +1,18 @@
 import type { KuboConfig, ProjectConfig } from "@kubojs/types";
 
-export function serializeKuboConfigFile(
-  config: KuboConfig,
-  options: { addCommand: string; cliVersion: string },
-): string {
-  const payload = JSON.stringify(config, null, 2);
-
-  return `// KuboJS project config (not IPFS Kubo)
-//
-// Website: https://www.kubojs.dev/
-// Stack Builder: https://www.kubojs.dev/new
-//
-// Add addons: ${options.addCommand}
-// Optional: import { defineKuboConfig } from "@kubojs/config" for typed edits.
-//
-export default ${payload};
-`;
+export function serializeKuboConfigFile(config: KuboConfig): string {
+  const { reproducibleCommand: _ignored, ...persisted } = config;
+  const payload = JSON.stringify(persisted, null, 2);
+  return `export default ${payload};\n`;
 }
 
 export function buildKuboConfigFromProject(
   projectConfig: ProjectConfig,
   version: string,
-  reproducibleCommand?: string,
 ): KuboConfig {
   return {
     version,
     createdAt: new Date().toISOString(),
-    reproducibleCommand,
     layout: projectConfig.layout ?? { preset: "standard" },
     addonOptions: projectConfig.addonOptions,
     dbSetupOptions: projectConfig.dbSetupOptions,

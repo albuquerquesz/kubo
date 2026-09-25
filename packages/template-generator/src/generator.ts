@@ -40,7 +40,6 @@ import {
 } from "./template-handlers";
 import type { GeneratorOptions, VirtualFileTree } from "./types";
 import { GeneratorError } from "./types";
-import { generateReproducibleCommand } from "./utils/reproducible-command";
 
 export type { TemplateData };
 
@@ -109,8 +108,7 @@ export async function generate(
       processReadme(vfs, config);
 
       if (options.version) {
-        const reproducibleCommand = generateReproducibleCommand(config);
-        writeKuboConfigToVfs(vfs, config, options.version, reproducibleCommand);
+        writeKuboConfigToVfs(vfs, config, options.version);
       }
 
       const tree: VirtualFileTree = {
