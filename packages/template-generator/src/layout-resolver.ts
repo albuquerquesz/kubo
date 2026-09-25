@@ -71,7 +71,12 @@ export function resolveLayout(
 
   if (missing.length > 0) {
     throw new Error(
-      `Layout paths not found on disk:\n${missing.map((entry) => `  - ${entry}`).join("\n")}`,
+      [
+        "The following paths from kubo.config.ts layout do not exist on disk:",
+        ...missing.map((entry) => `  - ${entry}`),
+        "",
+        "If you moved or renamed app or package folders, update layout.apps and layout.packages in kubo.config.ts to match, then run add again.",
+      ].join("\n"),
     );
   }
 
