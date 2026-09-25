@@ -13,6 +13,8 @@ Entregas principais: `d10a238` (draft canônico em `@kubojs/types`), `df0d09fe` 
 
 Fazer o Stack Builder usar a mesma representação de configuração da CLI, com `ProjectConfig` como fonte canônica para as escolhas da stack. A interface pode ter metadados de apresentação, mas não pode criar IDs paralelos para representar uma configuração válida.
 
+Projetos gerados persistem stack + layout em `kubo.config.ts` (`KuboConfig` / `defineKuboConfig` via `@kubojs/config`). `kubojs.jsonrc` permanece apenas como leitura legada.
+
 ## Problema confirmado
 
 - A CLI representa fullstack como `backend: "self"` + um frontend compatível.

@@ -1,6 +1,6 @@
 ---
 name: kubojs
-description: Practical guide for using KuboJS in projects created with KuboJS. Use when a repository has kubojs.jsonrc or when the user wants to create, inspect, or extend a KuboJS project with the CLI or MCP server.
+description: Practical guide for using KuboJS in projects created with KuboJS. Use when a repository has kubo.config.ts (or legacy kubojs.jsonrc) or when the user wants to create, inspect, or extend a KuboJS project with the CLI or MCP server.
 ---
 
 # Use KuboJS
@@ -12,14 +12,14 @@ repository or maintaining the CLI.
 ## Start here
 
 1. Confirm the working directory.
-2. Look for `kubojs.jsonrc`.
-3. Read `kubojs.jsonrc`, `package.json`, and the generated `README.md` before changing structure or scripts.
+2. Look for `kubo.config.ts` first, then legacy `kubojs.jsonrc`.
+3. Read `kubo.config.ts` (or `kubojs.jsonrc`), `package.json`, and the generated `README.md` before changing structure or scripts.
 4. Use the project's declared `packageManager` for commands (`npm`, `pnpm`, or `bun`).
 
-If `kubojs.jsonrc` exists, treat it as the record of the selected stack. Do not guess the frontend,
-backend, database, ORM, API, auth, deployment, or addon choices from folder names.
+If `kubo.config.ts` or `kubojs.jsonrc` exists, treat it as the record of the selected stack and layout. Do not guess the frontend,
+backend, database, ORM, API, auth, deployment, addon choices, or folder topology from paths alone.
 
-If it does not exist, do not run `kubojs add`. Confirm that the repository was created with KuboJS
+If neither file exists, do not run `kubojs add`. Confirm that the repository was created with KuboJS
 or treat the request as a new project scaffold.
 
 ## Main commands
