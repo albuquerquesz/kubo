@@ -1,0 +1,3 @@
+{
+  "extends": "@kubo-config-sample/config/tsconfig.base.json"
+}
