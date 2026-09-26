@@ -8,9 +8,11 @@
       "packages/*"
     ],
     "catalog": {
+      "@convex-dev/better-auth": "^0.12.5",
       "@erquhart/convex-oss-stats": "^0.8.2",
       "@types/fs-extra": "^11.0.4",
       "@types/node": "^25.7.0",
+      "better-auth": "1.6.15",
       "better-result": "^2.9.2",
       "convex": "^1.38.0",
       "convex-helpers": "^0.1.116",
