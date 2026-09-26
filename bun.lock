@@ -212,10 +212,6 @@
         "typescript": "^6.0.3",
       },
     },
-    "packages/discord": {
-      "name": "@kubojs/discord",
-      "version": "0.0.0",
-    },
     "packages/email": {
       "name": "@kubojs/email",
       "version": "0.0.0",
@@ -545,8 +541,6 @@
     "@kubojs/backend": ["@kubojs/backend@workspace:packages/backend"],
 
     "@kubojs/config": ["@kubojs/config@workspace:packages/config"],
-
-    "@kubojs/discord": ["@kubojs/discord@workspace:packages/discord"],
 
     "@kubojs/email": ["@kubojs/email@workspace:packages/email"],
 
