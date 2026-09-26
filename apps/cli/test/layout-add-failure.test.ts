@@ -47,9 +47,19 @@ describe("layout drift blocks add", () => {
     expect(addResult?.success).toBe(false);
     expect(addResult?.error).toContain("kubo.config.ts");
     expect(addResult?.error).toContain("apps/web");
+    expect(await fs.pathExists(path.join(projectPath, "biome.json"))).toBe(false);
 
     const afterConfig = await readFile(configPath, "utf8");
     expect(afterConfig).toBe(beforeConfig);
     expect(afterConfig).not.toContain('"biome"');
+
+    const dryRunResult = await add({
+      projectDir: projectPath,
+      addons: ["biome"],
+      install: false,
+      dryRun: true,
+    });
+    expect(dryRunResult?.success).toBe(false);
+    expect(await readFile(configPath, "utf8")).toBe(beforeConfig);
   });
 });

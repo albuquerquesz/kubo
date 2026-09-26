@@ -36,51 +36,54 @@ describe("resolveLayout", () => {
         await fs.ensureDir(path.join(projectDir, "apps/server"));
       },
       (projectDir) => {
-        const layout = resolveLayout({ preset: "standard" }, projectDir, {
+        const layoutResult = resolveLayout({ preset: "standard" }, projectDir, {
           backend: "hono",
         });
-        expect(layout.path("web", "app")).toBe("apps/web");
+        expect(layoutResult.isOk()).toBe(true);
+        if (layoutResult.isErr()) return;
+        expect(layoutResult.value.path("web", "app")).toBe("apps/web");
       },
     );
   });
 
-  it("throws when required layout paths are missing on disk", async () => {
+  it("returns missing_paths when required layout paths are absent", async () => {
     await withProjectDir(
       "missing-web",
       async (projectDir) => {
         await fs.ensureDir(path.join(projectDir, "apps/server"));
       },
       (projectDir) => {
-        expect(() =>
-          resolveLayout({ preset: "standard" }, projectDir, { backend: "hono" }),
-        ).toThrow(/kubo\.config\.ts/);
-        expect(() =>
-          resolveLayout({ preset: "standard" }, projectDir, { backend: "hono" }),
-        ).toThrow(/layout\.apps/);
-        expect(() =>
-          resolveLayout({ preset: "standard" }, projectDir, { backend: "hono" }),
-        ).toThrow(/apps\/web/);
+        const layoutResult = resolveLayout({ preset: "standard" }, projectDir, {
+          backend: "hono",
+        });
+        expect(layoutResult.isErr()).toBe(true);
+        if (layoutResult.isOk()) return;
+        expect(layoutResult.error.code).toBe("missing_paths");
+        expect(layoutResult.error.message).toContain("kubo.config.ts");
+        expect(layoutResult.error.message).toContain("layout.apps");
+        expect(layoutResult.error.message).toContain("apps/web");
       },
     );
   });
 
-  it("throws on layout path collision between logical ids", async () => {
+  it("returns path_collision when logical ids share a path", async () => {
     await withProjectDir(
       "collision",
       async (projectDir) => {
         await fs.ensureDir(path.join(projectDir, "apps/shared"));
       },
       (projectDir) => {
-        expect(() =>
-          resolveLayout(
-            {
-              preset: "standard",
-              apps: { web: "apps/shared", server: "apps/shared" },
-            },
-            projectDir,
-            { backend: "hono" },
-          ),
-        ).toThrow(/Layout path collision/);
+        const layoutResult = resolveLayout(
+          {
+            preset: "standard",
+            apps: { web: "apps/shared", server: "apps/shared" },
+          },
+          projectDir,
+          { backend: "hono" },
+        );
+        expect(layoutResult.isErr()).toBe(true);
+        if (layoutResult.isOk()) return;
+        expect(layoutResult.error.code).toBe("path_collision");
       },
     );
   });
@@ -93,9 +96,12 @@ describe("resolveLayout", () => {
         await fs.ensureDir(path.join(projectDir, "apps/server"));
       },
       (projectDir) => {
-        expect(() =>
-          resolveLayout({ preset: "standard" }, projectDir, { backend: "convex" }),
-        ).toThrow(/packages\/backend/);
+        const layoutResult = resolveLayout({ preset: "standard" }, projectDir, {
+          backend: "convex",
+        });
+        expect(layoutResult.isErr()).toBe(true);
+        if (layoutResult.isOk()) return;
+        expect(layoutResult.error.message).toContain("packages/backend");
       },
     );
 
@@ -106,10 +112,12 @@ describe("resolveLayout", () => {
         await fs.ensureDir(path.join(projectDir, "packages/backend"));
       },
       (projectDir) => {
-        const layout = resolveLayout({ preset: "standard" }, projectDir, {
+        const layoutResult = resolveLayout({ preset: "standard" }, projectDir, {
           backend: "convex",
         });
-        expect(layout.path("backend", "package")).toBe("packages/backend");
+        expect(layoutResult.isOk()).toBe(true);
+        if (layoutResult.isErr()) return;
+        expect(layoutResult.value.path("backend", "package")).toBe("packages/backend");
       },
     );
   });

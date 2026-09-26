@@ -347,15 +347,16 @@ async function addHandlerInternal(
   const mergedAddonOptions = mergeAddonOptions(existingConfig.addonOptions, input.addonOptions);
   const layout = existingConfig.layout ?? { preset: "standard" as const };
 
-  try {
-    resolveLayout(layout, projectDir, {
-      backend: existingConfig.backend,
-      addonsToAdd,
-    });
-  } catch (error) {
+  const layoutResult = resolveLayout(layout, projectDir, {
+    backend: existingConfig.backend,
+    addonsToAdd,
+  });
+
+  if (layoutResult.isErr()) {
     return Result.err(
       new CLIError({
-        message: error instanceof Error ? error.message : String(error),
+        message: layoutResult.error.message,
+        cause: layoutResult.error,
       }),
     );
   }

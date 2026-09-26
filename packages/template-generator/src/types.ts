@@ -43,3 +43,8 @@ export class GeneratorError extends TaggedError("GeneratorError")<{
   compatibilityCode?: CompatibilityIssueCode;
   cause?: unknown;
 }>() {}
+
+export class LayoutResolveError extends TaggedError("LayoutResolveError")<{
+  message: string;
+  code: "missing_paths" | "path_collision";
+}>() {}
