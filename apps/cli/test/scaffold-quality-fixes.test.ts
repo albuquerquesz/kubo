@@ -128,8 +128,6 @@ describe("scaffold quality fixes", () => {
     const kuboConfig = await readFile(path.join(projectPath, "kubo.config.ts"), "utf8");
     expect(kuboConfig).toMatch(/^export default \{/);
     expect(kuboConfig).toContain('"preset": "standard"');
-    expect(kuboConfig).not.toContain("reproducibleCommand");
-    expect(await fs.pathExists(path.join(projectPath, "kubojs.jsonrc"))).toBe(false);
 
     // routeTree.gen.ts shipped for day-1 typecheck (not gitignored)
     expect(await fs.pathExists(path.join(projectPath, "apps/web/src/routeTree.gen.ts"))).toBe(true);

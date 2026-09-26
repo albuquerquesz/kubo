@@ -46,9 +46,10 @@ describe("loadProjectKuboConfig", () => {
       "utf8",
     );
 
-    const config = await loadProjectKuboConfig(projectDir);
-    expect(config?.addons).toEqual(["biome"]);
-    expect(config?.layout).toEqual({ preset: "standard" });
+    const result = await loadProjectKuboConfig(projectDir);
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+    expect(result.value?.addons).toEqual(["biome"]);
   });
 
   it("loads legacy kubojs.jsonrc when no TS config exists", async () => {
@@ -61,9 +62,11 @@ describe("loadProjectKuboConfig", () => {
       "utf8",
     );
 
-    const config = await readKubojsConfig(projectDir);
-    expect(config?.frontend).toEqual(["tanstack-router"]);
-    expect(config?.layout).toEqual({ preset: "standard" });
+    const result = await readKubojsConfig(projectDir);
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+    expect(result.value?.frontend).toEqual(["tanstack-router"]);
+    expect(result.value?.layout).toEqual({ preset: "standard" });
   });
 
   it("prefers kubo.config.ts over kubojs.jsonrc", async () => {
@@ -81,11 +84,13 @@ describe("loadProjectKuboConfig", () => {
       "utf8",
     );
 
-    const config = await loadProjectKuboConfig(projectDir);
-    expect(config?.addons).toEqual(["biome"]);
+    const result = await loadProjectKuboConfig(projectDir);
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+    expect(result.value?.addons).toEqual(["biome"]);
   });
 
-  it("rejects kubo.config.ts with unknown keys", async () => {
+  it("returns err for kubo.config.ts with unknown keys", async () => {
     const projectDir = path.join(SMOKE_DIR, "kubo-config-loader-invalid");
     await fs.remove(projectDir);
     await fs.ensureDir(projectDir);
@@ -95,6 +100,20 @@ describe("loadProjectKuboConfig", () => {
       "utf8",
     );
 
-    await expect(loadProjectKuboConfig(projectDir)).rejects.toThrow(/Invalid kubo\.config\.ts/);
+    const result = await loadProjectKuboConfig(projectDir);
+    expect(result.isErr()).toBe(true);
+    if (result.isOk()) return;
+    expect(result.error.message).toContain("Invalid kubo.config.ts");
+  });
+
+  it("returns ok(null) when no config file exists", async () => {
+    const projectDir = path.join(SMOKE_DIR, "kubo-config-loader-empty");
+    await fs.remove(projectDir);
+    await fs.ensureDir(projectDir);
+
+    const result = await loadProjectKuboConfig(projectDir);
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+    expect(result.value).toBeNull();
   });
 });

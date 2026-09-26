@@ -383,8 +383,9 @@ describe("MCP server", () => {
     expect(payload.data?.projectDirectory).toBe(projectPath);
     expect(await fs.pathExists(projectPath)).toBe(true);
 
-    const kubojsConfig = await readKubojsConfig(projectPath);
-    expect(kubojsConfig?.frontend).toEqual(["next"]);
+    const kubojsConfigResult = await readKubojsConfig(projectPath);
+    expect(kubojsConfigResult.isOk()).toBe(true);
+    expect(kubojsConfigResult.value?.frontend).toEqual(["next"]);
   });
 
   it("rejects install=true during MCP project creation with an actionable error", async () => {
@@ -456,7 +457,8 @@ describe("MCP server", () => {
     });
     expect(createResult.isOk()).toBe(true);
 
-    const before = await readKubojsConfig(projectPath);
+    const beforeResult = await readKubojsConfig(projectPath);
+    expect(beforeResult.isOk()).toBe(true);
 
     const result = await client.callTool({
       name: "bts_plan_addons",
@@ -478,8 +480,9 @@ describe("MCP server", () => {
     expect(payload.data?.dryRun).toBe(true);
     expect(payload.data?.addedAddons).toEqual(["biome"]);
 
-    const after = await readKubojsConfig(projectPath);
-    expect(after).toEqual(before);
+    const afterResult = await readKubojsConfig(projectPath);
+    expect(afterResult.isOk()).toBe(true);
+    expect(afterResult.value).toEqual(beforeResult.value);
   });
 
   it("adds addons through MCP and persists them to kubo.config.ts", async () => {
@@ -528,8 +531,9 @@ describe("MCP server", () => {
     expect(payload.data?.success).toBe(true);
     expect(payload.data?.addedAddons).toEqual(["biome"]);
 
-    const after = await readKubojsConfig(projectPath);
-    expect(after?.addons).toEqual(expect.arrayContaining(["turborepo", "biome"]));
+    const afterResult = await readKubojsConfig(projectPath);
+    expect(afterResult.isOk()).toBe(true);
+    expect(afterResult.value?.addons).toEqual(expect.arrayContaining(["turborepo", "biome"]));
   });
 
   it("starts over stdio through the CLI entrypoint", async () => {

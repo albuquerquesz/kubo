@@ -16,6 +16,8 @@ repository or maintaining the CLI.
 3. Read `kubo.config.ts` (or `kubojs.jsonrc`), `package.json`, and the generated `README.md` before changing structure or scripts.
 4. Use the project's declared `packageManager` for commands (`npm`, `pnpm`, or `bun`).
 
+CLI config loaders return `Result` from `better-result`: no config file is `ok(null)`; invalid config is `err` (`KuboConfigInvalidError`), not a silent miss.
+
 If `kubo.config.ts` or `kubojs.jsonrc` exists, treat it as the record of the selected stack and layout. Do not guess the frontend,
 backend, database, ORM, API, auth, deployment, addon choices, or folder topology from paths alone.
 

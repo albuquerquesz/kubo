@@ -245,8 +245,18 @@ async function addHandlerInternal(
     intro(cliColors.signal("Add addons to your kubojs project"));
   }
 
-  // Detect existing project configuration
-  const existingConfig = await detectProjectConfig(projectDir);
+  const detectResult = await detectProjectConfig(projectDir);
+
+  if (detectResult.isErr()) {
+    return Result.err(
+      new CLIError({
+        message: detectResult.error.message,
+        cause: detectResult.error,
+      }),
+    );
+  }
+
+  const existingConfig = detectResult.value;
 
   if (!existingConfig) {
     return Result.err(
@@ -484,12 +494,21 @@ async function addHandlerInternal(
   });
   if (testingSetupResult.isErr()) return Result.err(testingSetupResult.error);
 
-  await updateProjectKuboConfig(projectDir, {
+  const configUpdateResult = await updateProjectKuboConfig(projectDir, {
     addons: updatedAddons,
     addonOptions: updatedConfig.addonOptions,
     testing: updatedTesting,
     layout,
   });
+
+  if (configUpdateResult.isErr()) {
+    return Result.err(
+      new CLIError({
+        message: configUpdateResult.error.message,
+        cause: configUpdateResult.error,
+      }),
+    );
+  }
 
   // Install dependencies if requested
   if (input.install) {

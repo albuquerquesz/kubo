@@ -7,9 +7,12 @@ import {
   normalizeLegacyKuboConfig,
   type KuboConfig,
 } from "@kubojs/types";
+import { Result } from "better-result";
 import fs from "fs-extra";
 import { createJiti } from "jiti";
 import { parse } from "jsonc-parser";
+
+import { KuboConfigInvalidError } from "./errors";
 
 export { KUBO_CONFIG_FILE };
 
@@ -32,34 +35,65 @@ async function findConfigFile(projectDir: string): Promise<string | null> {
   return null;
 }
 
-async function loadTypeScriptConfig(projectDir: string): Promise<KuboConfig | null> {
+function configInvalid(
+  file: string,
+  detail: string,
+  cause?: unknown,
+): Result<never, KuboConfigInvalidError> {
+  return Result.err(
+    new KuboConfigInvalidError({
+      file,
+      message: `Invalid ${file}: ${detail}`,
+      cause,
+    }),
+  );
+}
+
+async function loadTypeScriptConfig(
+  projectDir: string,
+): Promise<Result<KuboConfig | null, KuboConfigInvalidError>> {
   const configPath = await findConfigFile(projectDir);
   if (!configPath) {
-    return null;
+    return Result.ok(null);
   }
 
+  const fileName = path.basename(configPath);
   const jiti = createJiti(import.meta.url, {
     interopDefault: true,
     moduleCache: false,
   });
 
-  const loaded = await jiti.import(configPath);
+  const importResult = await Result.tryPromise({
+    try: () => jiti.import(configPath),
+    catch: (e: unknown) =>
+      new KuboConfigInvalidError({
+        file: fileName,
+        message: `Invalid ${fileName}: ${e instanceof Error ? e.message : String(e)}`,
+        cause: e,
+      }),
+  });
+
+  if (importResult.isErr()) {
+    return Result.err(importResult.error);
+  }
+
+  const loaded = importResult.value;
   const exported = (loaded as { default?: unknown }).default ?? loaded;
   const parsed = KuboConfigFileSchema.safeParse(exported);
 
   if (!parsed.success) {
-    throw new Error(
-      `Invalid ${path.basename(configPath)}: ${parsed.error.issues.map((issue) => issue.message).join("; ")}`,
-    );
+    return configInvalid(fileName, parsed.error.issues.map((issue) => issue.message).join("; "));
   }
 
-  return normalizeLegacyKuboConfig(parsed.data);
+  return Result.ok(normalizeLegacyKuboConfig(parsed.data));
 }
 
-async function loadLegacyJsonConfig(projectDir: string): Promise<KuboConfig | null> {
+async function loadLegacyJsonConfig(
+  projectDir: string,
+): Promise<Result<KuboConfig | null, KuboConfigInvalidError>> {
   const configPath = path.join(projectDir, LEGACY_CONFIG_FILE);
   if (!(await fs.pathExists(configPath))) {
-    return null;
+    return Result.ok(null);
   }
 
   const configContent = await fs.readFile(configPath, "utf-8");
@@ -67,28 +101,32 @@ async function loadLegacyJsonConfig(projectDir: string): Promise<KuboConfig | nu
   const parsed = KubojsConfigFileSchema.safeParse(raw);
 
   if (!parsed.success) {
-    throw new Error(
-      `Invalid ${LEGACY_CONFIG_FILE}: ${parsed.error.issues.map((issue) => issue.message).join("; ")}`,
+    return configInvalid(
+      LEGACY_CONFIG_FILE,
+      parsed.error.issues.map((issue) => issue.message).join("; "),
     );
   }
 
-  return normalizeLegacyKuboConfig(parsed.data);
+  return Result.ok(normalizeLegacyKuboConfig(parsed.data));
 }
 
-export async function loadProjectKuboConfig(projectDir: string): Promise<KuboConfig | null> {
-  const tsConfig = await loadTypeScriptConfig(projectDir);
-  if (tsConfig) {
-    const hasLegacy = await fs.pathExists(path.join(projectDir, LEGACY_CONFIG_FILE));
-    if (hasLegacy) {
-      // TS wins; legacy file is ignored for reads.
-    }
-    return tsConfig;
+export async function loadProjectKuboConfig(
+  projectDir: string,
+): Promise<Result<KuboConfig | null, KuboConfigInvalidError>> {
+  const tsResult = await loadTypeScriptConfig(projectDir);
+  if (tsResult.isErr()) {
+    return tsResult;
+  }
+  if (tsResult.value) {
+    return tsResult;
   }
 
   return loadLegacyJsonConfig(projectDir);
 }
 
-export async function readKubojsConfig(projectDir: string): Promise<KuboConfig | null> {
+export async function readKubojsConfig(
+  projectDir: string,
+): Promise<Result<KuboConfig | null, KuboConfigInvalidError>> {
   return loadProjectKuboConfig(projectDir);
 }
 
@@ -108,10 +146,15 @@ export type KuboConfigPatch = Partial<
 export async function updateProjectKuboConfig(
   projectDir: string,
   updates: KuboConfigPatch,
-): Promise<void> {
-  const existing = await loadProjectKuboConfig(projectDir);
+): Promise<Result<void, KuboConfigInvalidError>> {
+  const existingResult = await loadProjectKuboConfig(projectDir);
+  if (existingResult.isErr()) {
+    return Result.err(existingResult.error);
+  }
+
+  const existing = existingResult.value;
   if (!existing) {
-    return;
+    return Result.ok(undefined);
   }
 
   const merged: KuboConfig = {
@@ -125,14 +168,15 @@ export async function updateProjectKuboConfig(
   const content = serializeKuboConfigFile(merged);
 
   await fs.writeFile(configPath, content, "utf-8");
+  return Result.ok(undefined);
 }
 
 /** @deprecated Use {@link updateProjectKuboConfig}. */
 export async function updateKubojsConfig(
   projectDir: string,
   updates: KuboConfigPatch,
-): Promise<void> {
-  await updateProjectKuboConfig(projectDir, updates);
+): Promise<Result<void, KuboConfigInvalidError>> {
+  return updateProjectKuboConfig(projectDir, updates);
 }
 
 export async function isKubojsProject(projectDir: string): Promise<boolean> {

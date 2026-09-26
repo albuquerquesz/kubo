@@ -110,6 +110,19 @@ export class AddonSetupError extends TaggedError("AddonSetupError")<{
 }
 
 /**
+ * Invalid kubo.config.ts / kubojs.jsonrc content or failed config module load
+ */
+export class KuboConfigInvalidError extends TaggedError("KuboConfigInvalidError")<{
+  file: string;
+  message: string;
+  cause?: unknown;
+}>() {
+  constructor(args: { file: string; message: string; cause?: unknown }) {
+    super(args);
+  }
+}
+
+/**
  * All possible CLI errors
  */
 export type AppError =
@@ -120,7 +133,8 @@ export type AppError =
   | DirectoryConflictError
   | ProjectCreationError
   | DatabaseSetupError
-  | AddonSetupError;
+  | AddonSetupError
+  | KuboConfigInvalidError;
 
 /**
  * Create an error Result from a message string

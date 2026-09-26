@@ -6,7 +6,7 @@ import { navigableMultiselect, navigableSelect } from "../../prompts/navigable";
 import { navigableGroup } from "../../prompts/navigable-group";
 import type { AddonOptions, ProjectConfig } from "../../types";
 import { isSilent } from "../../utils/context";
-import { AddonSetupError, UserCancelledError } from "../../utils/errors";
+import { AddonSetupError, CLIError, UserCancelledError } from "../../utils/errors";
 import { shouldSkipExternalCommands } from "../../utils/external-commands";
 import { readKubojsConfig } from "../../utils/kubojs-config";
 import { getPackageRunnerPrefix } from "../../utils/package-runner";
@@ -348,7 +348,17 @@ export async function setupSkills(
   const { packageManager, projectDir } = config;
 
   // Load full config from kubojs.jsonrc to get all addons (existing + new)
-  const kubojsConfig = await readKubojsConfig(projectDir);
+  const kubojsConfigResult = await readKubojsConfig(projectDir);
+  if (kubojsConfigResult.isErr()) {
+    return Result.err(
+      new CLIError({
+        message: kubojsConfigResult.error.message,
+        cause: kubojsConfigResult.error,
+      }),
+    );
+  }
+
+  const kubojsConfig = kubojsConfigResult.value;
   const fullConfig: ProjectConfig = kubojsConfig
     ? {
         ...config,

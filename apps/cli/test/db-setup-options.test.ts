@@ -45,8 +45,9 @@ describe("Database setup options", () => {
     expect(result.value.reproducibleCommand).toContain("--manual-db");
     expect(result.value.reproducibleCommand).not.toContain("create-json --input");
 
-    const kubojsConfig = await readKubojsConfig(projectPath);
-    expect(kubojsConfig?.dbSetupOptions).toEqual({ mode: "manual" });
+    const kubojsConfigResult = await readKubojsConfig(projectPath);
+    expect(kubojsConfigResult.isOk()).toBe(true);
+    expect(kubojsConfigResult.value?.dbSetupOptions).toEqual({ mode: "manual" });
   });
 
   it("uses flags when dbSetupOptions only contains auto mode", async () => {
@@ -145,8 +146,9 @@ describe("Database setup options", () => {
 
     expect(result.value.projectConfig.dbSetupOptions).toBeUndefined();
 
-    const kubojsConfig = await readKubojsConfig(projectPath);
-    expect(kubojsConfig?.dbSetupOptions).toBeUndefined();
+    const kubojsConfigResult = await readKubojsConfig(projectPath);
+    expect(kubojsConfigResult.isOk()).toBe(true);
+    expect(kubojsConfigResult.value?.dbSetupOptions).toBeUndefined();
   });
 
   it("does not persist dbSetupOptions or force create-json when dbSetup is none", async () => {
@@ -180,8 +182,9 @@ describe("Database setup options", () => {
     expect(result.value.projectConfig.dbSetupOptions).toBeUndefined();
     expect(result.value.reproducibleCommand).not.toContain("create-json --input");
 
-    const kubojsConfig = await readKubojsConfig(projectPath);
-    expect(kubojsConfig?.dbSetupOptions).toBeUndefined();
+    const kubojsConfigResult = await readKubojsConfig(projectPath);
+    expect(kubojsConfigResult.isOk()).toBe(true);
+    expect(kubojsConfigResult.value?.dbSetupOptions).toBeUndefined();
   });
 
   it("skips Neon prompts when external commands are disabled", async () => {

@@ -1,10 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { readFile } from "node:fs/promises";
 import path from "node:path";
 
+import { serializeKuboConfigFile } from "@kubojs/template-generator";
 import fs from "fs-extra";
 
 import { add, create } from "../src/index";
+import { loadProjectKuboConfig } from "../src/utils/kubo-config";
 import { SMOKE_DIR } from "./setup";
 
 describe("layout-aware add", () => {
@@ -35,12 +36,25 @@ describe("layout-aware add", () => {
 
     await fs.move(path.join(projectPath, "apps/web"), path.join(projectPath, "packages/client"));
 
-    const configSource = await readFile(path.join(projectPath, "kubo.config.ts"), "utf8");
-    const updatedConfig = configSource.replace(
-      `"preset": "standard"`,
-      `"preset": "standard",\n    "apps": {\n      "web": "packages/client"\n    }`,
+    const loadedResult = await loadProjectKuboConfig(projectPath);
+    expect(loadedResult.isOk()).toBe(true);
+    if (loadedResult.isErr()) return;
+    const loaded = loadedResult.value;
+    expect(loaded).not.toBeNull();
+    if (!loaded) return;
+
+    const updated = {
+      ...loaded,
+      layout: {
+        preset: "standard" as const,
+        apps: { web: "packages/client" },
+      },
+    };
+    await fs.writeFile(
+      path.join(projectPath, "kubo.config.ts"),
+      serializeKuboConfigFile(updated),
+      "utf8",
     );
-    await fs.writeFile(path.join(projectPath, "kubo.config.ts"), updatedConfig, "utf8");
 
     const addResult = await add({
       projectDir: projectPath,
