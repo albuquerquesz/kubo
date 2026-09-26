@@ -140,88 +140,92 @@ function hasNativeFrontend(frontend: ProjectConfig["frontend"]): boolean {
   );
 }
 
+type RecommendationRule = {
+  when: (config: ProjectConfig) => boolean;
+  sources: readonly SourceKey[];
+};
+
+const RECOMMENDED_SOURCE_RULES = {
+  reactBasedFrontend: {
+    when: ({ frontend }) => hasReactBasedFrontend(frontend),
+    sources: ["vercel-labs/agent-skills", "shadcn/ui"],
+  },
+  vercelDeployment: {
+    when: ({ webDeploy, serverDeploy }) => webDeploy === "vercel" || serverDeploy === "vercel",
+    sources: ["vercel-labs/agent-skills"],
+  },
+  nextFrontend: {
+    when: ({ frontend }) => frontend.includes("next"),
+    sources: ["vercel-labs/next-skills"],
+  },
+  nuxtFrontend: {
+    when: ({ frontend }) => frontend.includes("nuxt"),
+    sources: ["nuxt/ui"],
+  },
+  nativeUniwindFrontend: {
+    when: ({ frontend }) => frontend.includes("native-uniwind"),
+    sources: ["heroui-inc/heroui"],
+  },
+  nativeFrontend: {
+    when: ({ frontend }) => hasNativeFrontend(frontend),
+    sources: ["expo/skills"],
+  },
+  betterAuth: {
+    when: ({ auth }) => auth === "better-auth",
+    sources: ["better-auth/skills"],
+  },
+  clerk: {
+    when: ({ auth }) => auth === "clerk",
+    sources: ["clerk/skills"],
+  },
+  neonDatabase: {
+    when: ({ dbSetup }) => dbSetup === "neon",
+    sources: ["neondatabase/agent-skills"],
+  },
+  supabaseDatabase: {
+    when: ({ dbSetup }) => dbSetup === "supabase",
+    sources: ["supabase/agent-skills"],
+  },
+  planetscaleDatabase: {
+    when: ({ dbSetup }) => dbSetup === "planetscale",
+    sources: ["planetscale/database-skills"],
+  },
+  prismaDatabase: {
+    when: ({ orm, dbSetup }) => orm === "prisma" || dbSetup === "prisma-postgres",
+    sources: ["prisma/skills"],
+  },
+  aiExample: {
+    when: ({ examples }) => examples.includes("ai"),
+    sources: ["vercel/ai"],
+  },
+  turborepoAddon: {
+    when: ({ addons }) => addons.includes("turborepo"),
+    sources: ["vercel/turborepo"],
+  },
+  honoBackend: {
+    when: ({ backend }) => backend === "hono",
+    sources: ["yusukebe/hono-skill"],
+  },
+  elysiaBackend: {
+    when: ({ backend }) => backend === "elysia",
+    sources: ["elysiajs/skills"],
+  },
+  convexBackend: {
+    when: ({ backend }) => backend === "convex",
+    sources: ["waynesutton/convexskills"],
+  },
+  opentuiAddon: {
+    when: ({ addons }) => addons.includes("opentui"),
+    sources: ["msmps/opentui-skill"],
+  },
+} satisfies Record<string, RecommendationRule>;
+
 function getRecommendedSourceKeys(config: ProjectConfig): SourceKey[] {
-  const sources: SourceKey[] = [];
-  const { frontend, backend, dbSetup, auth, examples, addons, orm, webDeploy, serverDeploy } =
-    config;
+  const sources = Object.values(RECOMMENDED_SOURCE_RULES).flatMap(({ when, sources }) =>
+    when(config) ? sources : [],
+  );
 
-  if (hasReactBasedFrontend(frontend)) {
-    sources.push("vercel-labs/agent-skills");
-    sources.push("shadcn/ui");
-  }
-
-  if (
-    (webDeploy === "vercel" || serverDeploy === "vercel") &&
-    !sources.includes("vercel-labs/agent-skills")
-  ) {
-    sources.push("vercel-labs/agent-skills");
-  }
-
-  if (frontend.includes("next")) {
-    sources.push("vercel-labs/next-skills");
-  }
-
-  if (frontend.includes("nuxt")) {
-    sources.push("nuxt/ui");
-  }
-
-  if (frontend.includes("native-uniwind")) {
-    sources.push("heroui-inc/heroui");
-  }
-
-  if (hasNativeFrontend(frontend)) {
-    sources.push("expo/skills");
-  }
-
-  if (auth === "better-auth") {
-    sources.push("better-auth/skills");
-  }
-
-  if (auth === "clerk") {
-    sources.push("clerk/skills");
-  }
-
-  if (dbSetup === "neon") {
-    sources.push("neondatabase/agent-skills");
-  }
-
-  if (dbSetup === "supabase") {
-    sources.push("supabase/agent-skills");
-  }
-
-  if (dbSetup === "planetscale") {
-    sources.push("planetscale/database-skills");
-  }
-
-  if (orm === "prisma" || dbSetup === "prisma-postgres") {
-    sources.push("prisma/skills");
-  }
-
-  if (examples.includes("ai")) {
-    sources.push("vercel/ai");
-  }
-
-  if (addons.includes("turborepo")) {
-    sources.push("vercel/turborepo");
-  }
-
-  if (backend === "hono") {
-    sources.push("yusukebe/hono-skill");
-  }
-
-  if (backend === "elysia") {
-    sources.push("elysiajs/skills");
-  }
-
-  if (backend === "convex") {
-    sources.push("waynesutton/convexskills");
-  }
-
-  if (addons.includes("opentui")) {
-    sources.push("msmps/opentui-skill");
-  }
-
-  return sources;
+  return uniqueValues(sources);
 }
 
 const CURATED_SKILLS_BY_SOURCE: Record<SourceKey, (config: ProjectConfig) => string[]> = {
@@ -330,7 +334,7 @@ function getCuratedSkillNamesForSourceKey(sourceKey: SourceKey, config: ProjectC
   return CURATED_SKILLS_BY_SOURCE[sourceKey](config);
 }
 
-function uniqueValues<T>(values: T[]): T[] {
+function uniqueValues<T>(values: readonly T[]): T[] {
   return Array.from(new Set(values));
 }
 
