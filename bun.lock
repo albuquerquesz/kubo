@@ -108,6 +108,7 @@
         "@gsap/react": "^2.1.2",
         "@himetrica/tracker-js": "0.1.36",
         "@kubojs/backend": "workspace:*",
+        "@kubojs/datetime": "workspace:*",
         "@kubojs/email": "workspace:*",
         "@kubojs/env": "workspace:*",
         "@kubojs/template-generator": "workspace:*",
@@ -137,7 +138,6 @@
         "create-kubojs": "workspace:*",
         "culori": "^4.0.2",
         "d3-array": "^3.2.4",
-        "date-fns": "^4.1.0",
         "fumadocs-core": "16.8.10",
         "fumadocs-mdx": "15.0.4",
         "fumadocs-ui": "npm:@fumadocs/base-ui@16.8.10",
@@ -212,6 +212,17 @@
         "typescript": "^6.0.3",
       },
     },
+    "packages/datetime": {
+      "name": "@kubojs/datetime",
+      "version": "0.0.0",
+      "dependencies": {
+        "@date-fns/tz": "catalog:",
+        "date-fns": "catalog:",
+      },
+      "devDependencies": {
+        "typescript": "catalog:",
+      },
+    },
     "packages/email": {
       "name": "@kubojs/email",
       "version": "0.0.0",
@@ -276,12 +287,14 @@
     },
   },
   "catalog": {
+    "@date-fns/tz": "^1.2.0",
     "@erquhart/convex-oss-stats": "^0.8.2",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.7.0",
     "better-result": "^2.9.2",
     "convex": "^1.38.0",
     "convex-helpers": "^0.1.116",
+    "date-fns": "^4.1.0",
     "handlebars": "^4.7.9",
     "oxfmt": "^0.49.0",
     "ts-morph": "^28.0.0",
@@ -337,6 +350,8 @@
     "@clack/prompts": ["@clack/prompts@1.5.1", "", { "dependencies": { "@clack/core": "1.4.1", "fast-string-width": "^3.0.2", "fast-wrap-ansi": "^0.2.0", "sisteransi": "^1.0.5" } }, "sha512-zccHj2z2oCCO4yrDiRSlFOxWerGqRiysP7a5jPK6uoI9URKAquwY42Dd/iUP8JWHxEzdRe4TlbvZCo8z1/mhrw=="],
 
     "@convex-dev/crons": ["@convex-dev/crons@0.2.0", "", { "dependencies": { "cron-parser": "^4.9.0" }, "peerDependencies": { "convex": "^1.24.8" } }, "sha512-JowF/DDPl8FuhXml2/0jmEa6uIKr/UK1UwP+FdbPt2BRVxACRX4CNlzDQEtHbO2p2FVKiJh4zEg8p5/YM27PEA=="],
+
+    "@date-fns/tz": ["@date-fns/tz@1.5.0", "", {}, "sha512-lwYN/vDPeNRULcepoE/LO2Pgx+7/RV+S9ARfbc9lr2DtGkOD7pAiruHvbR1RX3Qyf6ja47EWJDMsNK5vK08DJg=="],
 
     "@dimforge/rapier3d-compat": ["@dimforge/rapier3d-compat@0.12.0", "", {}, "sha512-uekIGetywIgopfD97oDL5PfeezkFpNhwlzlaEYNOA0N6ghdsOvh/HYjSMek5Q2O1PYvRSDFcqFVJl4r4ZBwOow=="],
 
@@ -541,6 +556,8 @@
     "@kubojs/backend": ["@kubojs/backend@workspace:packages/backend"],
 
     "@kubojs/config": ["@kubojs/config@workspace:packages/config"],
+
+    "@kubojs/datetime": ["@kubojs/datetime@workspace:packages/datetime"],
 
     "@kubojs/email": ["@kubojs/email@workspace:packages/email"],
 

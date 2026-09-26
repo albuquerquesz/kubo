@@ -1,3 +1,4 @@
+import { formatDate } from "@kubojs/datetime";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
@@ -101,7 +102,7 @@ export default function Footer() {
 
       <div className="grid border-rule border-t sm:grid-cols-2">
         <p className="ui-kicker flex min-h-16 items-center px-5 text-muted-foreground sm:px-8">
-          © {new Date().getFullYear()} Kubo
+          © {formatDate(Date.now(), "year")} Kubo
         </p>
       </div>
     </footer>

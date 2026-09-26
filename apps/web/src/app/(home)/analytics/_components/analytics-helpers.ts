@@ -1,5 +1,9 @@
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import {
+  formatDate as formatSharedDate,
+  utcCalendarDays,
+  utcDateKey,
+  utcDayOfWeek,
+} from "@kubojs/datetime";
 
 import type {
   ComboMatrix,
@@ -27,8 +31,6 @@ const precisePercentFormatter = new Intl.NumberFormat("pt-BR", {
   maximumFractionDigits: 1,
 });
 
-const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
-
 export function formatCompactNumber(value: number): string {
   return compactNumberFormatter.format(value);
 }
@@ -49,11 +51,12 @@ export function formatDelta(value: number | null): string {
 }
 
 export function formatDateLabel(date: string): string {
-  return format(new Date(`${date}T00:00:00`), "d MMM", { locale: ptBR });
+  return formatSharedDate(`${date}T00:00:00`, "analyticsDay");
 }
 
-export function formatMonthLabel(month: string, pattern = "MMM yyyy"): string {
-  return format(new Date(`${month}-01T00:00:00`), pattern, { locale: ptBR });
+export function formatMonthLabel(month: string, shortYear = false): string {
+  const preset = shortYear ? "analyticsMonthShortYear" : "analyticsMonth";
+  return formatSharedDate(`${month}-01T00:00:00`, preset);
 }
 
 export function formatHourLabel(hour: string): string {
@@ -153,22 +156,23 @@ export function buildWeekdayDistribution(timeSeries: TimeSeriesPoint[]): Weekday
 
   const countsByDate = new Map(timeSeries.map((point) => [point.date, point.count]));
   const sortedDates = Array.from(countsByDate.keys()).sort((a, b) => a.localeCompare(b));
-  const start = Date.parse(`${sortedDates[0]}T00:00:00Z`);
-  const end = Date.parse(`${sortedDates.at(-1)}T00:00:00Z`);
+  const firstDate = sortedDates[0];
+  const lastDate = sortedDates.at(-1);
+  const calendarDays = firstDate && lastDate ? utcCalendarDays(firstDate, lastDate) : null;
 
-  if (Number.isNaN(start) || Number.isNaN(end) || end < start) {
+  if (!calendarDays) {
     return seed.map(({ dayCount: _dayCount, ...day }) => ({
       ...day,
       averageDailyProjects: 0,
     }));
   }
 
-  for (let timestamp = start; timestamp <= end; timestamp += MILLISECONDS_PER_DAY) {
-    const date = new Date(timestamp).toISOString().slice(0, 10);
-    const dayIndex = new Date(timestamp).getUTCDay();
+  for (const date of calendarDays) {
+    const dateKey = utcDateKey(date);
+    const dayIndex = utcDayOfWeek(date);
     const target = seed.find((day) => day.dayIndex === dayIndex);
     if (!target) continue;
-    target.count += countsByDate.get(date) || 0;
+    target.count += countsByDate.get(dateKey) || 0;
     target.dayCount += 1;
   }
 

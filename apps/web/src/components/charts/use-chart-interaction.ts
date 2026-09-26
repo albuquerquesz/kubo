@@ -1,5 +1,6 @@
 "use client";
 
+import { epochMilliseconds } from "@kubojs/datetime";
 import { localPoint } from "@visx/event";
 import type { scaleLinear, scaleTime } from "@visx/scale";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -81,9 +82,10 @@ export function useChartInteraction({
       let d = d0;
       let finalIndex = index - 1;
       if (d1) {
-        const d0Time = xAccessor(d0).getTime();
-        const d1Time = xAccessor(d1).getTime();
-        if (x0.getTime() - d0Time > d1Time - x0.getTime()) {
+        const d0Time = epochMilliseconds(xAccessor(d0));
+        const d1Time = epochMilliseconds(xAccessor(d1));
+        const pointerTime = epochMilliseconds(x0);
+        if (pointerTime - d0Time > d1Time - pointerTime) {
           d = d1;
           finalIndex = index;
         }
@@ -118,9 +120,10 @@ export function useChartInteraction({
         return 0;
       }
       if (d1) {
-        const d0Time = xAccessor(d0).getTime();
-        const d1Time = xAccessor(d1).getTime();
-        if (x0.getTime() - d0Time > d1Time - x0.getTime()) {
+        const d0Time = epochMilliseconds(xAccessor(d0));
+        const d1Time = epochMilliseconds(xAccessor(d1));
+        const pointerTime = epochMilliseconds(x0);
+        if (pointerTime - d0Time > d1Time - pointerTime) {
           return index;
         }
       }

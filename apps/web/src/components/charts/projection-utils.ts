@@ -1,3 +1,5 @@
+import { epochMilliseconds, toDate, toValidDate } from "@kubojs/datetime";
+
 export type ProjectionMode = "auto" | "target" | "manual";
 export type ProjectionAutoMethod = "linearRegression" | "lastSegment";
 /** How the projection segment is drawn between anchor and horizon. */
@@ -29,19 +31,7 @@ export interface BuildProjectionPathOptions {
 }
 
 function readDate(row: Record<string, unknown>, xDataKey: string): Date | null {
-  const raw = row[xDataKey];
-  if (raw instanceof Date && !Number.isNaN(raw.getTime())) {
-    return raw;
-  }
-  if (typeof raw === "number" && Number.isFinite(raw)) {
-    const date = new Date(raw);
-    return Number.isNaN(date.getTime()) ? null : date;
-  }
-  if (typeof raw === "string") {
-    const date = new Date(raw);
-    return Number.isNaN(date.getTime()) ? null : date;
-  }
-  return null;
+  return toValidDate(row[xDataKey]);
 }
 
 function readValue(row: Record<string, unknown>, seriesKey: string): number | null {
@@ -74,7 +64,7 @@ function intervalFromAdjacentRows(
   if (!(prev && current)) {
     return null;
   }
-  const delta = current.getTime() - prev.getTime();
+  const delta = epochMilliseconds(current) - epochMilliseconds(prev);
   return delta > 0 ? delta : null;
 }
 
@@ -92,7 +82,7 @@ function intervalFromSeriesSpan(
   if (!(first && last)) {
     return null;
   }
-  const span = last.getTime() - first.getTime();
+  const span = epochMilliseconds(last) - epochMilliseconds(first);
   return span > 0 ? span / (sourceData.length - 1) : null;
 }
 
@@ -166,17 +156,17 @@ function buildAutoFutureValues(options: {
     const endTime = anchorTime + intervalMs * horizonPoints;
     const endValue = anchorValue + slope * intervalMs * horizonPoints;
     return [
-      { date: new Date(anchorTime), value: anchorValue },
-      { date: new Date(endTime), value: endValue },
+      { date: toDate(anchorTime), value: anchorValue },
+      { date: toDate(endTime), value: endValue },
     ];
   }
 
-  const result: ProjectionPoint[] = [{ date: new Date(anchorTime), value: anchorValue }];
+  const result: ProjectionPoint[] = [{ date: toDate(anchorTime), value: anchorValue }];
 
   for (let i = 1; i <= horizonPoints; i++) {
     const t = anchorTime + intervalMs * i;
     const value = anchorValue + slope * intervalMs * i;
-    result.push({ date: new Date(t), value });
+    result.push({ date: toDate(t), value });
   }
 
   return result;
@@ -202,7 +192,7 @@ export function computeProjectionAnchorTangentSlope(
     const date = readDate(row, xDataKey);
     const value = readValue(row, seriesKey);
     if (date && value != null) {
-      historyPoints.push({ t: date.getTime(), y: value });
+      historyPoints.push({ t: epochMilliseconds(date), y: value });
     }
   }
   if (historyPoints.length < 2) {
@@ -246,8 +236,8 @@ function buildTargetPath(options: {
   const { anchorTime, anchorValue, endValue, horizonPoints, intervalMs } = options;
   const endTime = anchorTime + intervalMs * horizonPoints;
   return [
-    { date: new Date(anchorTime), value: anchorValue },
-    { date: new Date(endTime), value: endValue },
+    { date: toDate(anchorTime), value: anchorValue },
+    { date: toDate(endTime), value: endValue },
   ];
 }
 
@@ -268,7 +258,7 @@ export function buildProjectionPath(options: BuildProjectionPathOptions): Projec
 
   if (mode === "manual" && points && points.length >= 2) {
     return points.map((point) => ({
-      date: new Date(point.date),
+      date: toDate(point.date),
       value: point.value,
     }));
   }
@@ -290,7 +280,7 @@ export function buildProjectionPath(options: BuildProjectionPathOptions): Projec
   }
 
   const intervalMs = resolveIntervalMs(sourceData, xDataKey, startIndex);
-  const anchorTime = anchorDate.getTime();
+  const anchorTime = epochMilliseconds(anchorDate);
 
   const historyPoints: { t: number; y: number }[] = [];
   for (let i = 0; i <= startIndex; i++) {
@@ -301,7 +291,7 @@ export function buildProjectionPath(options: BuildProjectionPathOptions): Projec
     const date = readDate(row, xDataKey);
     const value = readValue(row, seriesKey);
     if (date && value != null) {
-      historyPoints.push({ t: date.getTime(), y: value });
+      historyPoints.push({ t: epochMilliseconds(date), y: value });
     }
   }
 
@@ -360,7 +350,7 @@ export function projectionDateExtents(
 
   for (const path of paths) {
     for (const point of path) {
-      const time = point.date.getTime();
+      const time = epochMilliseconds(point.date);
       if (time < minTime) {
         minTime = time;
       }

@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 
-import { intFmt } from "../chart-formatters";
+const intFmt = new Intl.NumberFormat("en-US").format;
 
 export interface TooltipRow {
   color: string;

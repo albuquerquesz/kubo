@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDate, isDate, toDate } from "@kubojs/datetime";
 import { localPoint } from "@visx/event";
 import { ParentSize } from "@visx/responsive";
 import { scaleBand, scaleLinear } from "@visx/scale";
@@ -30,7 +31,6 @@ import {
 } from "./chart-child-passthrough";
 import { ChartProvider, type LineConfig, type Margin, type TooltipData } from "./chart-context";
 import { isGradientDefComponent, isPatternDefComponent } from "./chart-defs";
-import { shortDateFmt } from "./chart-formatters";
 import {
   type ChartPhase,
   type ChartStatus,
@@ -200,8 +200,8 @@ const ChartCore = memo(function ChartCore({
   const categoryAccessor = useCallback(
     (d: Record<string, unknown>): string => {
       const value = d[xDataKey];
-      if (value instanceof Date) {
-        return shortDateFmt.format(value);
+      if (isDate(value)) {
+        return formatDate(value, "chartShortDate");
       }
       return String(value ?? "");
     },
@@ -212,10 +212,10 @@ const ChartCore = memo(function ChartCore({
   const xAccessorDate = useCallback(
     (d: Record<string, unknown>): Date => {
       const value = d[xDataKey];
-      if (value instanceof Date) {
+      if (isDate(value)) {
         return value;
       }
-      return new Date();
+      return toDate(Date.now());
     },
     [xDataKey],
   );
@@ -343,9 +343,9 @@ const ChartCore = memo(function ChartCore({
     const start = now - data.length * 24 * 60 * 60 * 1000;
     const scale = {
       ...categoryScale,
-      domain: () => [new Date(start), new Date(now)],
+      domain: () => [toDate(start), toDate(now)],
       range: () => [0, innerWidth] as [number, number],
-      invert: (x: number) => new Date(start + (x / innerWidth) * (now - start)),
+      invert: (x: number) => toDate(start + (x / innerWidth) * (now - start)),
       copy: () => scale,
     };
     return scale;

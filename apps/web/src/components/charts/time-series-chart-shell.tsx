@@ -1,5 +1,6 @@
 "use client";
 
+import { epochMilliseconds, formatDate, toDate, toValidDate } from "@kubojs/datetime";
 import { scaleLinear, scaleTime } from "@visx/scale";
 import { bisector, extent } from "d3-array";
 import type { Transition } from "motion/react";
@@ -25,7 +26,6 @@ import {
 } from "./chart-child-passthrough";
 import { ChartProvider, type LineConfig, type Margin } from "./chart-context";
 import { isGradientDefComponent, isPatternDefComponent } from "./chart-defs";
-import { shortDateFmt } from "./chart-formatters";
 import {
   type ChartPhase,
   type ChartStatus,
@@ -241,7 +241,7 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
   const xAccessor = useCallback(
     (d: Record<string, unknown>): Date => {
       const value = d[xDataKey];
-      return value instanceof Date ? value : new Date(value as string | number);
+      return toValidDate(value) ?? toDate(Number.NaN);
     },
     [xDataKey],
   );
@@ -262,11 +262,11 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
 
   const xScale = useMemo(() => {
     const minTime = xDomain
-      ? xDomain[0].getTime()
-      : (extent(plotData, (d) => xAccessor(d).getTime())[0] ?? 0);
+      ? epochMilliseconds(xDomain[0])
+      : (extent(plotData, (d) => epochMilliseconds(xAccessor(d)))[0] ?? 0);
     let maxTime = xDomain
-      ? xDomain[1].getTime()
-      : (extent(plotData, (d) => xAccessor(d).getTime())[1] ?? minTime);
+      ? epochMilliseconds(xDomain[1])
+      : (extent(plotData, (d) => epochMilliseconds(xAccessor(d)))[1] ?? minTime);
     // Brush defines the viewport — projection horizon is included via brush
     // track extent, not by extending past the selection on the main chart.
     if (!xDomain) {
@@ -359,7 +359,7 @@ const TimeSeriesChartCore = memo(function TimeSeriesChartCore({
   );
 
   const dateLabels = useMemo(
-    () => visiblePlotData.map((d) => shortDateFmt.format(xAccessor(d))),
+    () => visiblePlotData.map((d) => formatDate(xAccessor(d), "chartShortDate")),
     [visiblePlotData, xAccessor],
   );
 

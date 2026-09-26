@@ -22,7 +22,7 @@ export function TimelineSection({ data }: { data: AggregatedAnalyticsData }) {
     average: Number(point.rollingAverage.toFixed(2)),
   }));
   const monthlyData = data.monthlyTimeSeries.map((point) => ({
-    month: formatMonthLabel(point.month, "MMM yy"),
+    month: formatMonthLabel(point.month, true),
     projects: point.totalProjects,
   }));
   const weekdayData = data.weekdayDistribution.map((point) => ({

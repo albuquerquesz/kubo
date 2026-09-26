@@ -1,6 +1,7 @@
 "use client";
 
 import { api } from "@kubojs/backend/convex/_generated/api";
+import { toDate, utcCalendarDayCount, utcIsoString } from "@kubojs/datetime";
 import { type Preloaded, useConvexConnectionState, usePreloadedQuery } from "convex/react";
 import { useEffect, useState } from "react";
 
@@ -49,8 +50,6 @@ type MonthlyStats = {
 };
 type ConnectionStatus = "online" | "connecting" | "reconnecting" | "offline";
 
-const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
-
 function getConnectionStatus({
   isWebSocketConnected,
   hasEverConnected,
@@ -83,14 +82,7 @@ function getCalendarDaySpan(timeSeries: DailyStats[]): number {
   const lastDate = timeSeries[timeSeries.length - 1]?.date;
   if (!firstDate || !lastDate) return 1;
 
-  const start = Date.parse(`${firstDate}T00:00:00Z`);
-  const end = Date.parse(`${lastDate}T00:00:00Z`);
-
-  if (Number.isNaN(start) || Number.isNaN(end) || end < start) {
-    return Math.max(timeSeries.length, 1);
-  }
-
-  return Math.floor((end - start) / MILLISECONDS_PER_DAY) + 1;
+  return utcCalendarDayCount(firstDate, lastDate) ?? Math.max(timeSeries.length, 1);
 }
 
 function getCalendarDaySpanFromRange(
@@ -102,14 +94,7 @@ function getCalendarDaySpanFromRange(
     return getCalendarDaySpan(fallbackSeries);
   }
 
-  const start = Date.parse(`${firstDate}T00:00:00Z`);
-  const end = Date.parse(`${lastDate}T00:00:00Z`);
-
-  if (Number.isNaN(start) || Number.isNaN(end) || end < start) {
-    return getCalendarDaySpan(fallbackSeries);
-  }
-
-  return Math.floor((end - start) / MILLISECONDS_PER_DAY) + 1;
+  return utcCalendarDayCount(firstDate, lastDate) ?? getCalendarDaySpan(fallbackSeries);
 }
 
 function buildTimeSeries(dailyStats: DailyStats[]): TimeSeriesPoint[] {
@@ -124,7 +109,7 @@ function buildTimeSeries(dailyStats: DailyStats[]): TimeSeriesPoint[] {
 
     return {
       date: day.date,
-      dateValue: new Date(`${day.date}T00:00:00`),
+      dateValue: toDate(`${day.date}T00:00:00`),
       count: day.count,
       rollingAverage,
       cumulativeProjects,
@@ -141,7 +126,7 @@ function buildMonthlyTimeSeries(monthlyStats: MonthlyStats["monthly"]) {
       cumulativeProjects += month.totalProjects;
       return {
         month: month.month,
-        monthDate: new Date(`${month.month}-01T00:00:00`),
+        monthDate: toDate(`${month.month}-01T00:00:00`),
         totalProjects: month.totalProjects,
         cumulativeProjects,
       };
@@ -231,7 +216,7 @@ function buildFromPrecomputed(
     busiestHourCandidate && busiestHourCandidate.count > 0 ? busiestHourCandidate : null;
 
   return {
-    lastUpdated: new Date(stats.lastEventTime).toISOString(),
+    lastUpdated: utcIsoString(stats.lastEventTime),
     totalProjects,
     avgProjectsPerDay: totalProjects / Math.max(calendarDaySpan, 1),
     timeSeries,

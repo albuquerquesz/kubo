@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDate } from "@kubojs/datetime";
 import { motion, useSpring } from "motion/react";
 import { memo, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
@@ -10,7 +11,6 @@ import {
   useChartConfig,
 } from "../chart-config-context";
 import { chartCssVars, type LineConfig, useChart, useChartStable } from "../chart-context";
-import { weekdayDateFmt } from "../chart-formatters";
 import type { IndicatorFadeEdges } from "../indicator-fade";
 import { DateTicker } from "./date-ticker";
 import { TooltipBox } from "./tooltip-box";
@@ -195,7 +195,7 @@ const ChartTooltipInner = memo(function ChartTooltipInner({
       return barXAccessor(tooltipData.point);
     }
     // For line/area charts, use the date
-    return weekdayDateFmt.format(xAccessor(tooltipData.point));
+    return formatDate(xAccessor(tooltipData.point), "chartWeekdayDate");
   }, [tooltipData, barXAccessor, xAccessor]);
 
   const tooltipContent = (

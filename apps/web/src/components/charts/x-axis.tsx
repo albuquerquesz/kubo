@@ -1,12 +1,12 @@
 "use client";
 
+import { epochMilliseconds, formatDate, toDate } from "@kubojs/datetime";
 import { memo, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { cn } from "@/lib/utils";
 
 import { useChart, useChartStable } from "./chart-context";
-import { shortDateFmt } from "./chart-formatters";
 import { DEFAULT_Y_DOMAIN_TWEEN_MS } from "./chart-phase";
 import { LINE_LOADING_PULSE_EASE } from "./line-loading-timing";
 
@@ -183,7 +183,7 @@ function dedupeIndicesByLabel(
     if (!point) {
       continue;
     }
-    const label = dateLabels[index] ?? shortDateFmt.format(xAccessor(point));
+    const label = dateLabels[index] ?? formatDate(xAccessor(point), "chartShortDate");
     if (seenLabels.has(label)) {
       continue;
     }
@@ -398,7 +398,7 @@ function buildDataAlignedTicks({
       continue;
     }
     const date = xAccessor(point);
-    const label = dateLabels[index] ?? shortDateFmt.format(date);
+    const label = dateLabels[index] ?? formatDate(date, "chartShortDate");
     if (seenLabels.has(label)) {
       continue;
     }
@@ -433,8 +433,8 @@ function buildDomainTicks({
     return [];
   }
 
-  const startTime = startDate.getTime();
-  const endTime = endDate.getTime();
+  const startTime = epochMilliseconds(startDate);
+  const endTime = epochMilliseconds(endDate);
   const timeRange = endTime - startTime;
   const tickCount = Math.max(2, numTicks);
   const seenLabels = new Set<string>();
@@ -442,8 +442,8 @@ function buildDomainTicks({
 
   for (let i = 0; i < tickCount; i++) {
     const t = i / (tickCount - 1);
-    const date = new Date(startTime + t * timeRange);
-    const label = shortDateFmt.format(date);
+    const date = toDate(startTime + t * timeRange);
+    const label = formatDate(date, "chartShortDate");
     if (seenLabels.has(label)) {
       continue;
     }
@@ -471,7 +471,7 @@ function domainExtendsPastData(
   if (!(domainEnd && lastPoint)) {
     return false;
   }
-  return domainEnd.getTime() > xAccessor(lastPoint).getTime();
+  return epochMilliseconds(domainEnd) > epochMilliseconds(xAccessor(lastPoint));
 }
 
 /** Domain ticks for the projection tail when brush keeps data-aligned labels. */
@@ -497,8 +497,8 @@ function appendProjectionTailTicks(
   }
 
   const lastDate = xAccessor(lastPoint);
-  const startTime = lastDate.getTime();
-  const endTime = domainEnd.getTime();
+  const startTime = epochMilliseconds(lastDate);
+  const endTime = epochMilliseconds(domainEnd);
   if (endTime <= startTime) {
     return ticks;
   }
@@ -508,8 +508,8 @@ function appendProjectionTailTicks(
   const extraCount = Math.min(maxExtraTicks, 3);
 
   for (let i = 1; i <= extraCount; i++) {
-    const date = new Date(startTime + (i / (extraCount + 1)) * (endTime - startTime));
-    const label = shortDateFmt.format(date);
+    const date = toDate(startTime + (i / (extraCount + 1)) * (endTime - startTime));
+    const label = formatDate(date, "chartShortDate");
     if (seenLabels.has(label)) {
       continue;
     }
@@ -521,7 +521,7 @@ function appendProjectionTailTicks(
     });
   }
 
-  const endLabel = shortDateFmt.format(domainEnd);
+  const endLabel = formatDate(domainEnd, "chartShortDate");
   if (!seenLabels.has(endLabel)) {
     extras.push({
       date: domainEnd,
@@ -610,7 +610,8 @@ const XAxisInner = memo(function XAxisInner({
   const crosshairX = tooltipData ? tooltipData.x + margin.left : null;
   const hoveredLabel =
     isHovering && tooltipData
-      ? (dateLabels[tooltipData.index] ?? shortDateFmt.format(xAccessor(tooltipData.point)))
+      ? (dateLabels[tooltipData.index] ??
+        formatDate(xAccessor(tooltipData.point), "chartShortDate"))
       : null;
 
   return createPortal(
@@ -621,7 +622,7 @@ const XAxisInner = memo(function XAxisInner({
           crosshairX={crosshairX}
           hoveredLabel={hoveredLabel}
           isHovering={isHovering}
-          key={`${item.date.getTime()}-${item.x}`}
+          key={`${epochMilliseconds(item.date)}-${item.x}`}
           label={item.label}
           tickerHalfWidth={tickerHalfWidth}
           x={item.x}

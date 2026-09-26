@@ -1,6 +1,7 @@
 "use client";
 
 import { api } from "@kubojs/backend/convex/_generated/api";
+import { formatDate as formatSharedDate } from "@kubojs/datetime";
 import { useQuery } from "convex/react";
 import { Activity, ChevronRight, Radio } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -31,14 +32,6 @@ const LOG_FIELD_ORDER = [
   "git",
   "install",
 ] as const;
-
-const eventTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
-  month: "short",
-  day: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
-});
 
 function formatValue(value: unknown): string {
   if (Array.isArray(value)) return value.length > 0 ? value.join(",") : "none";
@@ -143,7 +136,7 @@ export function LiveLogs() {
                 <div className="divide-y divide-border/35">
                   <AnimatePresence initial={false} mode="popLayout">
                     {events.map((event, index) => {
-                      const time = eventTimeFormatter.format(new Date(event._creationTime));
+                      const time = formatSharedDate(event._creationTime, "liveLogDateTime");
                       const eventRecord = event as Record<string, unknown>;
                       const logFields = LOG_FIELD_ORDER.flatMap((key) =>
                         hasLogValue(eventRecord[key])

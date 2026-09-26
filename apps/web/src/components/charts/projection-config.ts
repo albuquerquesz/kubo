@@ -1,3 +1,4 @@
+import { toDate } from "@kubojs/datetime";
 import { Children, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
 
 import { isChartClipPassthrough } from "./chart-child-passthrough";
@@ -29,7 +30,7 @@ function normalizeProjectionData(data: ProjectionPoint[] | undefined): Projectio
     return [];
   }
   return data.map((point) => ({
-    date: point.date instanceof Date ? point.date : new Date(point.date),
+    date: toDate(point.date),
     value: point.value,
   }));
 }

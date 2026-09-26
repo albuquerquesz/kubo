@@ -1,5 +1,6 @@
 "use client";
 
+import { toDate, utcDateKey } from "@kubojs/datetime";
 import NumberFlow from "@number-flow/react";
 import { AreaChart, Flame, Gauge, Radar, Sparkles, Sunrise } from "lucide-react";
 
@@ -55,11 +56,11 @@ export function MetricsCards({ data }: { data: AggregatedAnalyticsData }) {
       ? data.timeSeries
       : [
           {
-            dateValue: new Date(),
+            dateValue: toDate(Date.now()),
             count: 0,
             rollingAverage: 0,
             cumulativeProjects: 0,
-            date: new Date().toISOString().slice(0, 10),
+            date: utcDateKey(Date.now()),
           },
         ]
   ).map((point) => ({

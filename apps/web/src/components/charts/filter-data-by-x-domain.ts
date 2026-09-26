@@ -1,15 +1,17 @@
+import { epochMilliseconds, toDate } from "@kubojs/datetime";
+
 export function filterDataByXDomain(
   data: Record<string, unknown>[],
   xDomain: [Date, Date],
   xAccessor: (d: Record<string, unknown>) => Date,
 ): Record<string, unknown>[] {
-  const start = xDomain[0].getTime();
-  const end = xDomain[1].getTime();
+  const start = epochMilliseconds(xDomain[0]);
+  const end = epochMilliseconds(xDomain[1]);
   const minTime = Math.min(start, end);
   const maxTime = Math.max(start, end);
 
   return data.filter((d) => {
-    const time = xAccessor(d).getTime();
+    const time = epochMilliseconds(xAccessor(d));
     return time >= minTime && time <= maxTime;
   });
 }
@@ -26,7 +28,7 @@ export function resolveDataXExtent(
   let maxTime = Number.NEGATIVE_INFINITY;
 
   for (const point of data) {
-    const time = xAccessor(point).getTime();
+    const time = epochMilliseconds(xAccessor(point));
     if (time < minTime) {
       minTime = time;
     }
@@ -39,7 +41,7 @@ export function resolveDataXExtent(
     return null;
   }
 
-  return [new Date(minTime), new Date(maxTime)];
+  return [toDate(minTime), toDate(maxTime)];
 }
 
 /** Brush track extent — optionally extends past the last data row (e.g. projections). */
@@ -52,7 +54,7 @@ export function resolveBrushTrackXExtent(
   if (!extent) {
     return null;
   }
-  if (!xExtentMax || xExtentMax.getTime() <= extent[1].getTime()) {
+  if (!xExtentMax || epochMilliseconds(xExtentMax) <= epochMilliseconds(extent[1])) {
     return extent;
   }
   return [extent[0], xExtentMax];

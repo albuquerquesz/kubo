@@ -1,3 +1,4 @@
+import { formatDate as formatSharedDate } from "@kubojs/datetime";
 import { Activity, DatabaseZap, Terminal } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -8,18 +9,8 @@ import { formatCompactNumber } from "./analytics-helpers";
 // tracked era's projects-per-download ratio (~0.64)
 const UNTRACKED_ERA_PROJECT_ESTIMATE = 59_000;
 
-const utcDateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
-  timeZone: "UTC",
-});
-
 function formatUtcDateTime(value: string) {
-  return `${utcDateTimeFormatter.format(new Date(value))} UTC`;
+  return `${formatSharedDate(value, "analyticsUtcDateTime")} UTC`;
 }
 
 function HeaderStat({
