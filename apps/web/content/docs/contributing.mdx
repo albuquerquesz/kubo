@@ -63,7 +63,24 @@ Copie a URL do Convex de `packages/backend/.env.local` para `apps/web/.env`:
 
 ```
 NEXT_PUBLIC_CONVEX_URL=http://127.0.0.1:3210/
+NEXT_PUBLIC_CONVEX_SITE_URL=http://127.0.0.1:3211/
 ```
+
+### Configurar autenticação Google
+
+O dashboard usa Better Auth no deployment Convex. Configure os valores abaixo no diretório
+`packages/backend`; mantenha os valores reais fora do repositório:
+
+```bash
+bunx convex env set SITE_URL http://localhost:3333
+bunx convex env set BETTER_AUTH_SECRET "<segredo-aleatorio-com-pelo-menos-32-bytes>"
+bunx convex env set GOOGLE_CLIENT_ID "<google-client-id>"
+bunx convex env set GOOGLE_CLIENT_SECRET "<google-client-secret>"
+```
+
+No cliente OAuth do Google, cadastre `http://localhost:3333` como origem autorizada e
+`http://localhost:3333/api/auth/callback/google` como URI de redirecionamento. Em produção,
+use `https://kubojs.dev` e `https://kubojs.dev/api/auth/callback/google`, respectivamente.
 
 Agora rode `bun dev` na raiz. Ele vai reclamar do token do GitHub, então rode isto em `packages/backend`:
 
