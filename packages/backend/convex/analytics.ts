@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 
+import { buildDailyWindow } from "../shared/analytics-date-utils";
 import { internalMutation, query } from "./_generated/server";
-import { buildDailyWindow } from "./analytics_date_utils";
 
 const MAX_DAILY_STATS_WINDOW = 366;
 

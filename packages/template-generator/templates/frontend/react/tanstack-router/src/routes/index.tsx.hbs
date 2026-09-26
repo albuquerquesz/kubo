@@ -43,7 +43,7 @@ function HomeComponent() {
   const healthCheck = useQuery(trpc.healthCheck.queryOptions());
   {{/if}}
   {{#if (eq backend "convex")}}
-  const healthCheck = useQuery(api.healthCheck.get);
+  const healthCheck = useQuery(api.healthcheck.get);
   {{/if}}
   {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
   async function openCheckout() {

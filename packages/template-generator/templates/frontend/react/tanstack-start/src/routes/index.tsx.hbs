@@ -38,7 +38,7 @@ const TITLE_TEXT = `
 
 function HomeComponent() {
   {{#if (eq backend "convex")}}
-  const healthCheck = useQuery(convexQuery(api.healthCheck.get, {}));
+  const healthCheck = useQuery(convexQuery(api.healthcheck.get, {}));
   {{else if (eq api "trpc")}}
   const trpc = useTRPC();
   const healthCheck = useQuery(trpc.healthCheck.queryOptions());

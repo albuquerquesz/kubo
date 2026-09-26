@@ -29,7 +29,7 @@ const TITLE_TEXT = `
  `;
 
 {{#if (eq backend "convex")}}
-const healthCheck = useConvexQuery(api.healthCheck.get, {});
+const healthCheck = useConvexQuery(api.healthcheck.get, {});
 {{else if (eq api "orpc")}}
   {{#unless (eq api "none")}}
 const healthCheck = useQuery($orpc.healthCheck.queryOptions())

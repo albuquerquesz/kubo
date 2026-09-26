@@ -9,11 +9,15 @@
  */
 
 import type * as analytics from "../analytics.js";
-import type * as analytics_date_utils from "../analytics_date_utils.js";
-import type * as analytics_event from "../analytics_event.js";
-import type * as healthCheck from "../healthCheck.js";
+import type * as healthcheck from "../healthcheck.js";
 import type * as hooks from "../hooks.js";
 import type * as http from "../http.js";
+import type * as schema_analyticsDailyStats from "../schema/analyticsDailyStats.js";
+import type * as schema_analyticsEvents from "../schema/analyticsEvents.js";
+import type * as schema_analyticsStats from "../schema/analyticsStats.js";
+import type * as schema_showcase from "../schema/showcase.js";
+import type * as schema_tweets from "../schema/tweets.js";
+import type * as schema_videos from "../schema/videos.js";
 import type * as showcase from "../showcase.js";
 import type * as stats from "../stats.js";
 import type * as testimonials from "../testimonials.js";
@@ -26,11 +30,15 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   analytics: typeof analytics;
-  analytics_date_utils: typeof analytics_date_utils;
-  analytics_event: typeof analytics_event;
-  healthCheck: typeof healthCheck;
+  healthcheck: typeof healthcheck;
   hooks: typeof hooks;
   http: typeof http;
+  "schema/analyticsDailyStats": typeof schema_analyticsDailyStats;
+  "schema/analyticsEvents": typeof schema_analyticsEvents;
+  "schema/analyticsStats": typeof schema_analyticsStats;
+  "schema/showcase": typeof schema_showcase;
+  "schema/tweets": typeof schema_tweets;
+  "schema/videos": typeof schema_videos;
   showcase: typeof showcase;
   stats: typeof stats;
   testimonials: typeof testimonials;

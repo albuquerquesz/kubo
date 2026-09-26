@@ -44,18 +44,18 @@ const healthCheck = useQuery(trpc.healthCheck.queryOptions());
 {{/if}}
 {{#if (and (eq backend "convex") (eq auth "clerk"))}}
 const { user } = useUser();
-const healthCheck = useQuery(api.healthCheck.get);
+const healthCheck = useQuery(api.healthcheck.get);
 const privateData = useQuery(api.privateData.get);
 {{else if (and (ne backend "convex") (eq auth "clerk"))}}
 const { isLoaded, isSignedIn } = useAuth();
 const { user } = useUser();
 {{else if (and (eq backend "convex") (eq auth "better-auth"))}}
-const healthCheck = useQuery(api.healthCheck.get);
+const healthCheck = useQuery(api.healthcheck.get);
 const { isAuthenticated } = useConvexAuth();
 const user = useQuery(api.auth.getCurrentUser, isAuthenticated ? {} : "skip");
 
 {{else if (eq backend "convex")}}
-const healthCheck = useQuery(api.healthCheck.get);
+const healthCheck = useQuery(api.healthcheck.get);
 {{/if}}
 
 return (

@@ -13914,7 +13914,7 @@ app.use(agent);
 
 export default app;
 `],
-  ["backend/convex/packages/backend/convex/healthCheck.ts.hbs", `import { query } from "./_generated/server";
+  ["backend/convex/packages/backend/convex/healthcheck.ts.hbs", `import { query } from "./_generated/server";
 
 export const get = query({
   handler: async () => {
@@ -26567,18 +26567,18 @@ const healthCheck = useQuery(trpc.healthCheck.queryOptions());
 {{/if}}
 {{#if (and (eq backend "convex") (eq auth "clerk"))}}
 const { user } = useUser();
-const healthCheck = useQuery(api.healthCheck.get);
+const healthCheck = useQuery(api.healthcheck.get);
 const privateData = useQuery(api.privateData.get);
 {{else if (and (ne backend "convex") (eq auth "clerk"))}}
 const { isLoaded, isSignedIn } = useAuth();
 const { user } = useUser();
 {{else if (and (eq backend "convex") (eq auth "better-auth"))}}
-const healthCheck = useQuery(api.healthCheck.get);
+const healthCheck = useQuery(api.healthcheck.get);
 const { isAuthenticated } = useConvexAuth();
 const user = useQuery(api.auth.getCurrentUser, isAuthenticated ? {} : "skip");
 
 {{else if (eq backend "convex")}}
-const healthCheck = useQuery(api.healthCheck.get);
+const healthCheck = useQuery(api.healthcheck.get);
 {{/if}}
 
 return (
@@ -27760,18 +27760,18 @@ export default function Home() {
   {{/if}}
   {{#if (and (eq backend "convex") (eq auth "clerk"))}}
   const { user } = useUser();
-  const healthCheck = useQuery(api.healthCheck.get);
+  const healthCheck = useQuery(api.healthcheck.get);
   const privateData = useQuery(api.privateData.get);
   {{else if (and (ne backend "convex") (eq auth "clerk"))}}
   const { isLoaded, isSignedIn } = useAuth();
   const { user } = useUser();
   {{else if (and (eq backend "convex") (eq auth "better-auth"))}}
-  const healthCheck = useQuery(api.healthCheck.get);
+  const healthCheck = useQuery(api.healthcheck.get);
   const { isAuthenticated } = useConvexAuth();
   const user = useQuery(api.auth.getCurrentUser, isAuthenticated ? {} : "skip");
 
   {{else if (eq backend "convex")}}
-  const healthCheck = useQuery(api.healthCheck.get);
+  const healthCheck = useQuery(api.healthcheck.get);
   {{/if}}
 
   return (
@@ -28982,18 +28982,18 @@ const healthCheck = useQuery(trpc.healthCheck.queryOptions());
 {{/if}}
 {{#if (and (eq backend "convex") (eq auth "clerk"))}}
 const { user } = useUser();
-const healthCheck = useQuery(api.healthCheck.get);
+const healthCheck = useQuery(api.healthcheck.get);
 const privateData = useQuery(api.privateData.get);
 {{else if (and (ne backend "convex") (eq auth "clerk"))}}
 const { isLoaded, isSignedIn } = useAuth();
 const { user } = useUser();
 {{else if (and (eq backend "convex") (eq auth "better-auth"))}}
-const healthCheck = useQuery(api.healthCheck.get);
+const healthCheck = useQuery(api.healthcheck.get);
 const { isAuthenticated } = useConvexAuth();
 const user = useQuery(api.auth.getCurrentUser, isAuthenticated ? {} : "skip");
 
 {{else if (eq backend "convex")}}
-const healthCheck = useQuery(api.healthCheck.get);
+const healthCheck = useQuery(api.healthcheck.get);
 {{/if}}
 {{#unless (eq backend "none")}}
 const successColor = useThemeColor("success");
@@ -29629,7 +29629,7 @@ const TITLE_TEXT = \`
  \`;
 
 {{#if (eq backend "convex")}}
-const healthCheck = useConvexQuery(api.healthCheck.get, {});
+const healthCheck = useConvexQuery(api.healthcheck.get, {});
 {{else if (eq api "orpc")}}
   {{#unless (eq api "none")}}
 const healthCheck = useQuery($orpc.healthCheck.queryOptions())
@@ -30037,7 +30037,7 @@ const TITLE_TEXT = \`
 
 export default function Home() {
   {{#if (eq backend "convex")}}
-  const healthCheck = useQuery(api.healthCheck.get);
+  const healthCheck = useQuery(api.healthcheck.get);
   {{else if (eq api "orpc")}}
   const healthCheck = useQuery(orpc.healthCheck.queryOptions());
   {{else if (eq api "trpc")}}
@@ -30795,7 +30795,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   {{#if (eq backend "convex")}}
-  const healthCheck = useQuery(api.healthCheck.get);
+  const healthCheck = useQuery(api.healthcheck.get);
   {{else if (eq api "orpc")}}
   const healthCheck = useQuery(orpc.healthCheck.queryOptions());
   {{else if (eq api "trpc")}}
@@ -31337,7 +31337,7 @@ function HomeComponent() {
   const healthCheck = useQuery(trpc.healthCheck.queryOptions());
   {{/if}}
   {{#if (eq backend "convex")}}
-  const healthCheck = useQuery(api.healthCheck.get);
+  const healthCheck = useQuery(api.healthcheck.get);
   {{/if}}
   {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
   async function openCheckout() {
@@ -31991,7 +31991,7 @@ const TITLE_TEXT = \`
 
 function HomeComponent() {
   {{#if (eq backend "convex")}}
-  const healthCheck = useQuery(convexQuery(api.healthCheck.get, {}));
+  const healthCheck = useQuery(convexQuery(api.healthcheck.get, {}));
   {{else if (eq api "trpc")}}
   const trpc = useTRPC();
   const healthCheck = useQuery(trpc.healthCheck.queryOptions());
@@ -32868,7 +32868,7 @@ export {};
 import { useQuery } from 'convex-svelte';
 import { api } from "@{{projectName}}/backend/convex/_generated/api";
 
-const healthCheck = useQuery(api.healthCheck.get, {});
+const healthCheck = useQuery(api.healthcheck.get, {});
 
 const TITLE_TEXT = \`
    ██████╗ ███████╗████████╗████████╗███████╗██████╗

@@ -1,8 +1,8 @@
 import { httpRouter } from "convex/server";
 
+import { parseAnalyticsEventPayload } from "../shared/analytics-event";
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
-import { parseAnalyticsEventPayload } from "./analytics_event";
 import { ossStats } from "./stats";
 
 const http = httpRouter();

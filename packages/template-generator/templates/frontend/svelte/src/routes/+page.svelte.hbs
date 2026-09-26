@@ -3,7 +3,7 @@
 import { useQuery } from 'convex-svelte';
 import { api } from "@{{projectName}}/backend/convex/_generated/api";
 
-const healthCheck = useQuery(api.healthCheck.get, {});
+const healthCheck = useQuery(api.healthcheck.get, {});
 
 const TITLE_TEXT = `
    ██████╗ ███████╗████████╗████████╗███████╗██████╗

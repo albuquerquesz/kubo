@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 
-import { parseAnalyticsEventPayload } from "../convex/analytics_event";
+import { parseAnalyticsEventPayload } from "../shared/analytics-event";
 
 describe("parseAnalyticsEventPayload", () => {
   it("accepts CLI payloads and normalizes payment providers", () => {
