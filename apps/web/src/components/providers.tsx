@@ -10,7 +10,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/env/client";
 import { authClient } from "@/lib/auth-client";
 
-const convex = new ConvexReactClient(env.NEXT_PUBLIC_CONVEX_URL ?? "");
+const convex = new ConvexReactClient(env.NEXT_PUBLIC_CONVEX_URL);
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (

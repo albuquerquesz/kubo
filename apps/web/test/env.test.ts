@@ -24,20 +24,23 @@ describe("web env schemas", () => {
     expect(parsed.NOTIFIQUE_NEWSLETTER_LIST_ID).toBe("list_1");
   });
 
-  test("client schema treats public keys as optional", () => {
+  test("client schema requires Convex URLs and treats analytics keys as optional", () => {
     const clientSchema = z.object({
-      NEXT_PUBLIC_CONVEX_URL: z.url().optional(),
+      NEXT_PUBLIC_CONVEX_URL: z.url(),
+      NEXT_PUBLIC_CONVEX_SITE_URL: z.url(),
       NEXT_PUBLIC_HIMETRICA_API_KEY: z.string().min(1).optional(),
     });
 
-    expect(clientSchema.parse({})).toEqual({});
+    expect(() => clientSchema.parse({})).toThrow();
     expect(
       clientSchema.parse({
         NEXT_PUBLIC_CONVEX_URL: "https://example.convex.cloud",
+        NEXT_PUBLIC_CONVEX_SITE_URL: "https://example.convex.site",
         NEXT_PUBLIC_HIMETRICA_API_KEY: "hm_test",
       }),
     ).toEqual({
       NEXT_PUBLIC_CONVEX_URL: "https://example.convex.cloud",
+      NEXT_PUBLIC_CONVEX_SITE_URL: "https://example.convex.site",
       NEXT_PUBLIC_HIMETRICA_API_KEY: "hm_test",
     });
   });

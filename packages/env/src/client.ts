@@ -4,8 +4,8 @@ import { z } from "zod";
 export const env = createEnv({
   clientPrefix: "NEXT_PUBLIC_",
   client: {
-    NEXT_PUBLIC_CONVEX_URL: z.url().optional(),
-    NEXT_PUBLIC_CONVEX_SITE_URL: z.url().optional(),
+    NEXT_PUBLIC_CONVEX_URL: z.url(),
+    NEXT_PUBLIC_CONVEX_SITE_URL: z.url(),
     NEXT_PUBLIC_HIMETRICA_API_KEY: z.string().min(1).optional(),
   },
   runtimeEnv: {
