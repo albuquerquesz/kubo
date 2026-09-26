@@ -197,6 +197,7 @@
         "@convex-dev/better-auth": "catalog:",
         "@convex-dev/crons": "^0.2.0",
         "@erquhart/convex-oss-stats": "catalog:",
+        "@kubojs/env": "workspace:*",
         "better-auth": "catalog:",
         "convex": "catalog:",
         "convex-helpers": "catalog:",

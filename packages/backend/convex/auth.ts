@@ -1,5 +1,6 @@
 import { createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
+import { env } from "@kubojs/env/convex";
 import { betterAuth } from "better-auth/minimal";
 
 import { components } from "./_generated/api";
@@ -7,35 +8,18 @@ import type { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 import authConfig from "./auth.config";
 
-type AuthEnvironmentVariable =
-  | "BETTER_AUTH_SECRET"
-  | "GOOGLE_CLIENT_ID"
-  | "GOOGLE_CLIENT_SECRET"
-  | "SITE_URL";
-
-function getRequiredEnvironmentVariable(name: AuthEnvironmentVariable): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing required Convex environment variable: ${name}`);
-  }
-
-  return value;
-}
-
 export const authComponent = createClient<DataModel>(components.betterAuth);
 
 export function createAuth(ctx: GenericCtx<DataModel>) {
-  const siteUrl = getRequiredEnvironmentVariable("SITE_URL");
-
   return betterAuth({
-    baseURL: siteUrl,
-    secret: getRequiredEnvironmentVariable("BETTER_AUTH_SECRET"),
-    trustedOrigins: [siteUrl],
+    baseURL: env.SITE_URL,
+    secret: env.BETTER_AUTH_SECRET,
+    trustedOrigins: [env.SITE_URL],
     database: authComponent.adapter(ctx),
     socialProviders: {
       google: {
-        clientId: getRequiredEnvironmentVariable("GOOGLE_CLIENT_ID"),
-        clientSecret: getRequiredEnvironmentVariable("GOOGLE_CLIENT_SECRET"),
+        clientId: env.GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET,
       },
     },
     plugins: [
