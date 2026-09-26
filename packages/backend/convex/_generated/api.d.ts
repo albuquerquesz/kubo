@@ -9,6 +9,7 @@
  */
 
 import type * as analytics from "../analytics.js";
+import type * as auth from "../auth.js";
 import type * as healthcheck from "../healthcheck.js";
 import type * as hooks from "../hooks.js";
 import type * as http from "../http.js";
@@ -30,6 +31,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   analytics: typeof analytics;
+  auth: typeof auth;
   healthcheck: typeof healthcheck;
   hooks: typeof hooks;
   http: typeof http;
@@ -71,5 +73,6 @@ export declare const internal: FilterApi<
 >;
 
 export declare const components: {
+  betterAuth: import("@convex-dev/better-auth/_generated/component.js").ComponentApi<"betterAuth">;
   ossStats: import("@erquhart/convex-oss-stats/_generated/component.js").ComponentApi<"ossStats">;
 };
