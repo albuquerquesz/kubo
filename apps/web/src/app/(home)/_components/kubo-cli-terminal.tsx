@@ -143,8 +143,12 @@ export default function KuboCliTerminal() {
 
             {state.showBanner ? (
               <pre
-                className="mt-5 max-w-full overflow-hidden whitespace-pre bg-clip-text font-mono text-sm leading-[1.08] text-transparent sm:text-base lg:text-lg"
-                style={{ backgroundImage: KUBO_TITLE_GRADIENT }}
+                className="mt-5 max-w-full overflow-hidden whitespace-pre bg-clip-text text-sm leading-[1.08] text-transparent sm:text-base lg:text-lg"
+                style={{
+                  backgroundImage: KUBO_TITLE_GRADIENT,
+                  fontFamily: "ui-monospace, monospace",
+                  letterSpacing: "normal",
+                }}
               >
                 {KUBO_CLI_BANNER}
               </pre>
