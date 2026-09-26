@@ -1,9 +1,0 @@
-import { GetMonitor } from "@getmonitor/node";
-import { env } from "@kubo-config-sample/env/server";
-
-export const getMonitor = env.GETMONITOR_API_KEY
-  ? new GetMonitor(env.GETMONITOR_API_KEY, {
-      environment: env.NODE_ENV,
-      apiHost: "http://ingest.getmonitor.io",
-    })
-  : null;
