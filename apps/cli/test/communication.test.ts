@@ -14,8 +14,8 @@ import { processFlags } from "../src/utils/config-processing";
 import { collectFiles } from "./setup";
 
 describe("Resend communication", () => {
-  it("defaults communication to an empty selection", () => {
-    expect(DEFAULT_CONFIG.communication).toEqual([]);
+  it("defaults communication to AraraHQ", () => {
+    expect(DEFAULT_CONFIG.communication).toEqual(["arara"]);
   });
 
   it("generates packages/email with Resend helper and env placeholders", async () => {

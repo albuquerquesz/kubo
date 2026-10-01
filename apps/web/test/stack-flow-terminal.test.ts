@@ -68,6 +68,7 @@ describe("stack flow terminal playback", () => {
       ORM: "drizzle",
       Auth: "better-auth",
       Observability: "getmonitor",
+      Communication: "arara",
       Addons: "turborepo",
     });
   });

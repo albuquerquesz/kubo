@@ -10,12 +10,17 @@ export type CommunicationCompatibilityInput = {
 };
 
 export const COMMUNICATION_PRODUCT_NAMES = {
+  arara: "AraraHQ",
   resend: "Resend",
   notifique: "Notifique",
-  arara: "AraraHQ",
 } as const satisfies Record<CommunicationProvider, string>;
 
 export const COMMUNICATION_PROVIDER_CAPABILITIES = {
+  arara: {
+    requiresBackend: true,
+    supportsConvex: true,
+    supportsWorkers: false,
+  },
   resend: {
     requiresBackend: true,
     supportsConvex: true,
@@ -25,11 +30,6 @@ export const COMMUNICATION_PROVIDER_CAPABILITIES = {
     requiresBackend: true,
     supportsConvex: true,
     supportsWorkers: true,
-  },
-  arara: {
-    requiresBackend: true,
-    supportsConvex: true,
-    supportsWorkers: false,
   },
 } as const satisfies Record<
   CommunicationProvider,

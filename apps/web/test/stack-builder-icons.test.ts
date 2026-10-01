@@ -46,4 +46,21 @@ describe("stack builder technology icons", () => {
     expect(himetrica?.default).toBeUndefined();
     expect(getMonitor?.description.toLowerCase()).toContain("error");
   });
+
+  test("uses the AraraHQ favicon only for the AraraHQ option", () => {
+    const arara = TECH_OPTIONS.communication.find((option) => option.id === "arara");
+
+    expect(arara?.icon).toBe("https://ararahq.com/favicon.svg");
+  });
+
+  test("features AraraHQ as the default communication provider", () => {
+    const arara = TECH_OPTIONS.communication.find((option) => option.id === "arara");
+    const resend = TECH_OPTIONS.communication.find((option) => option.id === "resend");
+
+    expect(TECH_OPTIONS.communication[0]?.id).toBe("arara");
+    expect(arara?.default).toBe(true);
+    expect(resend?.default).toBeUndefined();
+    expect(arara?.name).toBe("AraraHQ");
+    expect(arara?.description.toLowerCase()).toContain("whatsapp");
+  });
 });

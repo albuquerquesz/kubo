@@ -20,7 +20,7 @@ export const DEFAULT_CONFIG_BASE = {
   auth: "better-auth",
   payments: [],
   observability: ["getmonitor"],
-  communication: [],
+  communication: ["arara"],
   addons: ["turborepo"],
   examples: [],
   testing: [],
