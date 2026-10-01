@@ -54,6 +54,7 @@ const TECH_HREFS: Record<string, string> = {
   clerk: "https://clerk.com",
   abacatepay: "https://www.abacatepay.com",
   getmonitor: "https://getmonitor.io",
+  arara: "https://ararahq.com",
   guaracloud: "https://guaracloud.com",
   npm: "https://www.npmjs.com",
   pnpm: "https://pnpm.io",
@@ -76,6 +77,7 @@ const SHOW_CATEGORIES = [
   "auth",
   "payments",
   "observability",
+  "communication",
   "webDeploy",
   "packageManager",
   "addons",
@@ -108,6 +110,12 @@ const BR_INTEGRATIONS: EcosystemItem[] = [
     name: "GetMonitor",
     href: TECH_HREFS.getmonitor,
     iconSrc: "https://getmonitor.io/logo.svg",
+  },
+  {
+    id: "arara",
+    name: "AraraHQ",
+    href: TECH_HREFS.arara,
+    iconSrc: "/integrations/arara.svg",
   },
 ];
 

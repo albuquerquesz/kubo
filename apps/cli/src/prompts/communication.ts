@@ -6,6 +6,11 @@ import { isCancel, navigableMultiselect } from "./navigable";
 
 const options = [
   {
+    value: "arara" as CommunicationProvider,
+    label: "AraraHQ",
+    hint: "Recommended — WhatsApp messaging via the official Node SDK",
+  },
+  {
     value: "resend" as CommunicationProvider,
     label: "Resend",
     hint: "Transactional email for developers",
@@ -14,11 +19,6 @@ const options = [
     value: "notifique" as CommunicationProvider,
     label: "Notifique",
     hint: "Omnichannel BR messaging API",
-  },
-  {
-    value: "arara" as CommunicationProvider,
-    label: "AraraHQ",
-    hint: "WhatsApp messaging via the official Node SDK",
   },
 ];
 

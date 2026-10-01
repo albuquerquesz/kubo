@@ -557,6 +557,13 @@ const TECH_OPTION_METADATA: Record<TechCategory, TechOption[]> = {
       description: "Sem provider de email/comunicação",
       icon: "",
       color: "from-gray-400 to-gray-600",
+    },
+    {
+      id: "arara",
+      name: "AraraHQ",
+      description: "WhatsApp e mensageria via SDK Node oficial",
+      icon: "https://ararahq.com/favicon.svg",
+      color: "from-pink-400 to-rose-600",
       default: true,
     },
     {
@@ -572,13 +579,6 @@ const TECH_OPTION_METADATA: Record<TechCategory, TechOption[]> = {
       description: "Mensageria omnichannel",
       icon: "https://notifique.dev/favicon.ico",
       color: "from-amber-400 to-orange-600",
-    },
-    {
-      id: "arara",
-      name: "Arara",
-      description: "Mensageria transacional para sua aplicação",
-      icon: "",
-      color: "from-pink-400 to-rose-600",
     },
   ],
   packageManager: [
@@ -976,7 +976,7 @@ export const DEFAULT_STACK: StackState = {
   auth: "better-auth",
   payments: [],
   observability: ["getmonitor"],
-  communication: [],
+  communication: ["arara"],
   packageManager: "bun",
   addons: ["turborepo"],
   testing: ["none"],

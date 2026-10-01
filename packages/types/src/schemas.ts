@@ -129,7 +129,7 @@ export const ObservabilitySchema = selectedProvidersSchema(
   "Observability providers must be unique",
 ).describe("Selected observability providers");
 
-export const CommunicationProviderSchema = z.enum(["resend", "notifique", "arara"]);
+export const CommunicationProviderSchema = z.enum(["arara", "resend", "notifique"]);
 
 export const CommunicationSchema = selectedProvidersSchema(
   CommunicationProviderSchema,

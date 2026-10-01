@@ -74,13 +74,22 @@ describe("communication capability messages", () => {
     ["notifique", "Notifique"],
     ["arara", "AraraHQ"],
   ])("shows the catalog backend requirement for %s", (provider, name) => {
-    expect(getDisabledReason(createStack({ backend: "none" }), "communication", provider)).toBe(
-      `${name} exige um backend com runtime de servidor`,
-    );
+    expect(
+      getDisabledReason(
+        createStack({ backend: "none", communication: [] }),
+        "communication",
+        provider,
+      ),
+    ).toBe(`${name} exige um backend com runtime de servidor`);
   });
 
   test("blocks AraraHQ for Cloudflare deploy even when the runtime still says Node", () => {
-    const stack = createStack({ backend: "hono", runtime: "node", serverDeploy: "cloudflare" });
+    const stack = createStack({
+      backend: "hono",
+      runtime: "node",
+      serverDeploy: "cloudflare",
+      communication: [],
+    });
     expect(getDisabledReason(stack, "communication", "arara")).toBe(
       "AraraHQ exige o SDK Node e não é compatível com runtimes Edge/Workers. Use um servidor Node/Bun ou uma Node Action do Convex.",
     );
@@ -89,7 +98,12 @@ describe("communication capability messages", () => {
   });
 
   test("blocks AraraHQ on Workers runtime and still allows Resend", () => {
-    const stack = createStack({ backend: "hono", runtime: "workers", serverDeploy: "cloudflare" });
+    const stack = createStack({
+      backend: "hono",
+      runtime: "workers",
+      serverDeploy: "cloudflare",
+      communication: [],
+    });
     expect(getDisabledReason(stack, "communication", "arara")).toBe(
       "AraraHQ exige o SDK Node e não é compatível com runtimes Edge/Workers. Use um servidor Node/Bun ou uma Node Action do Convex.",
     );
@@ -450,12 +464,14 @@ describe("stack builder D1 compatibility", () => {
     );
   });
 
-  test("default stack implies GetMonitor and short --yes command", () => {
+  test("default stack implies GetMonitor and AraraHQ and short --yes command", () => {
     expect(DEFAULT_STACK.observability).toEqual(["getmonitor"]);
+    expect(DEFAULT_STACK.communication).toEqual(["arara"]);
 
     const command = generateStackCommand(createStack({}));
     expect(command).toMatch(/--yes\s*$/);
     expect(command).not.toContain("--observability");
+    expect(command).not.toContain("--communication");
   });
 
   test("emits --disable-observability for backend-less stacks (Stack Builder → CLI)", () => {

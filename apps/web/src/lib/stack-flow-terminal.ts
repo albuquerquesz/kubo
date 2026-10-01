@@ -91,11 +91,12 @@ export const CORE_STACK_SUMMARY = [
   ["ORM", "drizzle"],
   ["Auth", "better-auth"],
   ["Observability", "getmonitor"],
+  ["Communication", "arara"],
   ["Addons", "turborepo"],
 ] as const satisfies readonly (readonly [string, string])[];
 
 export const REPRODUCIBLE_COMMAND =
-  "bun create kubojs@latest my-kubo-app --frontend tanstack-router --backend hono --runtime bun --database sqlite --orm drizzle --api trpc --auth better-auth --payments none --observability getmonitor --communication none --addons turborepo --examples none --testing none --db-setup none --web-deploy none --server-deploy none --git --package-manager bun --install";
+  "bun create kubojs@latest my-kubo-app --frontend tanstack-router --backend hono --runtime bun --database sqlite --orm drizzle --api trpc --auth better-auth --payments none --observability getmonitor --communication arara --addons turborepo --examples none --testing none --db-setup none --web-deploy none --server-deploy none --git --package-manager bun --install";
 
 export type TerminalPlaybackPhase = "command" | "project-name" | "project-type" | "web-framework";
 

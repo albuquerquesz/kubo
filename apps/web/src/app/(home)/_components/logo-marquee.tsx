@@ -58,7 +58,7 @@ const LOGOS: LogoItem[] = [
   {
     name: "AraraHQ",
     href: "https://ararahq.com",
-    src: "https://ararahq.com/favicon.svg",
+    src: "/integrations/arara.svg",
   },
 ];
 

@@ -137,6 +137,9 @@ describe("shipped markup + assets", () => {
     expect(src).toContain("https://notifique.dev/logo-notifique.png");
     expect(src).toContain('href: "https://resend.com"');
     expect(src).toContain("/integrations/resend.svg");
+    expect(src).toContain("AraraHQ");
+    expect(src).toContain('href: "https://ararahq.com"');
+    expect(src).toContain("/integrations/arara.svg");
     expect(src).toContain("LOGO_MARQUEE_AUTOPLAY_PX_PER_SEC");
     expect(src).toContain("requestAnimationFrame");
     expect(src).toContain("prefersReducedMotion");
@@ -146,6 +149,7 @@ describe("shipped markup + assets", () => {
     const dir = join(webRoot, "public/integrations");
     expect(readFileSync(join(dir, "abacatepay.svg"), "utf8").length).toBeGreaterThan(100);
     expect(readFileSync(join(dir, "getmonitor.svg"), "utf8").length).toBeGreaterThan(50);
+    expect(readFileSync(join(dir, "arara.svg"), "utf8").length).toBeGreaterThan(50);
     expect(readFileSync(join(dir, "resend.svg"), "utf8").length).toBeGreaterThan(50);
     expect(readFileSync(join(dir, "resend.svg"), "utf8")).not.toContain('fill="#000');
     // PNG is binary — just ensure readable non-empty
