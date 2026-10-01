@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { normalizeObservability, normalizePayments } from "@kubojs/types";
+import { normalizeCommunication, normalizeObservability, normalizePayments } from "@kubojs/types";
 import { Result } from "better-result";
 
 import type {
@@ -75,7 +75,7 @@ export function processFlags(options: CLIInput, projectName?: string) {
   if (options.disableObservability) config.observability = [];
 
   if (options.communication !== undefined) {
-    config.communication = options.communication;
+    config.communication = normalizeCommunication(options.communication);
   }
 
   if (options.git !== undefined) {
@@ -130,7 +130,7 @@ export function processFlags(options: CLIInput, projectName?: string) {
   return config;
 }
 
-export { normalizeObservability };
+export { normalizeCommunication, normalizeObservability };
 
 export function getProvidedFlags(options: CLIInput) {
   return new Set(

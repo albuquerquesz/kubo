@@ -313,29 +313,32 @@ export function validateCommunicationCompatibility(
   runtime?: Runtime,
   serverDeploy?: ServerDeploy,
 ): ValidationResult {
-  if (!isCommunicationProvider(communication)) return Result.ok(undefined);
-  const issue = getCommunicationCompatibilityIssue({
-    provider: communication,
-    backend,
-    runtime,
-    serverDeploy,
-  });
-  if (!issue) return Result.ok(undefined);
-  if (issue === "workers-unsupported") {
+  for (const provider of communication ?? []) {
+    if (!isCommunicationProvider(provider)) continue;
+    const issue = getCommunicationCompatibilityIssue({
+      provider,
+      backend,
+      runtime,
+      serverDeploy,
+    });
+    if (!issue) continue;
+    if (issue === "workers-unsupported") {
+      return Result.err(
+        new ValidationError({
+          message:
+            "AraraHQ requires the official Node SDK and is not compatible with Edge/Workers runtimes. Use a Node/Bun server deployment or Convex Node Action.",
+        }),
+      );
+    }
+    const providerName =
+      provider === "resend" ? "Resend" : provider === "notifique" ? "Notifique" : "AraraHQ";
     return Result.err(
       new ValidationError({
-        message:
-          "AraraHQ requires the official Node SDK and is not compatible with Edge/Workers runtimes. Use a Node/Bun server deployment or Convex Node Action.",
+        message: `${providerName} communication requires a server backend. Please choose a backend or use '--communication none'.`,
       }),
     );
   }
-  const providerName =
-    communication === "resend" ? "Resend" : communication === "notifique" ? "Notifique" : "AraraHQ";
-  return Result.err(
-    new ValidationError({
-      message: `${providerName} communication requires a server backend. Please choose a backend or use '--communication none'.`,
-    }),
-  );
+  return Result.ok(undefined);
 }
 
 export function validatePaymentsCompatibility(

@@ -68,7 +68,7 @@ describe("catalog consumers preserve CLI product messages", () => {
     ["notifique", "Notifique"],
     ["arara", "AraraHQ"],
   ] as const)("preserves the %s backend error and allows the backend prompt", (provider, name) => {
-    const result = validateCommunicationCompatibility(provider, "none");
+    const result = validateCommunicationCompatibility([provider], "none");
     expect(result.match({ ok: () => null, err: (error) => error.message })).toBe(
       `${name} communication requires a server backend. Please choose a backend or use '--communication none'.`,
     );
@@ -81,8 +81,8 @@ describe("catalog consumers preserve CLI product messages", () => {
 
   test("keeps the AraraHQ runtime message for either Workers signal", () => {
     const results = [
-      validateCommunicationCompatibility("arara", "hono", "workers"),
-      validateCommunicationCompatibility("arara", "hono", "node", "cloudflare"),
+      validateCommunicationCompatibility(["arara"], "hono", "workers"),
+      validateCommunicationCompatibility(["arara"], "hono", "node", "cloudflare"),
     ];
     for (const result of results) {
       expect(result.match({ ok: () => null, err: (error) => error.message })).toBe(

@@ -41,9 +41,11 @@ describe("Input schemas", () => {
   });
 
   it("accepts Resend and Notifique as communication providers", () => {
-    expect(CommunicationSchema.safeParse("resend").success).toBe(true);
-    expect(CommunicationSchema.safeParse("notifique").success).toBe(true);
-    expect(CommunicationSchema.safeParse("none").success).toBe(true);
+    expect(CommunicationSchema.parse("resend")).toEqual(["resend"]);
+    expect(CommunicationSchema.parse("notifique")).toEqual(["notifique"]);
+    expect(CommunicationSchema.parse("none")).toEqual([]);
+    expect(CommunicationSchema.parse(undefined)).toEqual([]);
+    expect(CommunicationSchema.parse(["resend", "notifique"])).toEqual(["resend", "notifique"]);
     expect(
       CreateInputSchema.safeParse({ projectName: "app", communication: "resend" }).success,
     ).toBe(true);

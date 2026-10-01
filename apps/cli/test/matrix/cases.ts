@@ -111,7 +111,7 @@ const BASE_VALID_CONFIG: MatrixConfigInput = {
   auth: "none",
   payments: "none",
   observability: "none",
-  communication: "none",
+  communication: [],
   dbSetup: "none",
   webDeploy: "none",
   serverDeploy: "none",

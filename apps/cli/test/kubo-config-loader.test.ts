@@ -21,7 +21,7 @@ function minimalConfigPayload(overrides: Record<string, unknown> = {}) {
     auth: "none",
     payments: [],
     observability: [],
-    communication: "none",
+    communication: [],
     packageManager: "bun",
     dbSetup: "none",
     api: "trpc",
@@ -67,6 +67,33 @@ describe("loadProjectKuboConfig", () => {
     if (result.isErr()) return;
     expect(result.value?.frontend).toEqual(["tanstack-router"]);
     expect(result.value?.layout).toEqual({ preset: "standard" });
+  });
+
+  it("coerces legacy communication string values when loading kubojs.jsonrc", async () => {
+    const projectDir = path.join(SMOKE_DIR, "kubo-config-loader-legacy-comm");
+    await fs.remove(projectDir);
+    await fs.ensureDir(projectDir);
+    await fs.writeFile(
+      path.join(projectDir, "kubojs.jsonrc"),
+      JSON.stringify(minimalConfigPayload({ communication: "none" }), null, 2),
+      "utf8",
+    );
+
+    const noneResult = await readKubojsConfig(projectDir);
+    expect(noneResult.isOk()).toBe(true);
+    if (noneResult.isErr()) return;
+    expect(noneResult.value?.communication).toEqual([]);
+
+    await fs.writeFile(
+      path.join(projectDir, "kubojs.jsonrc"),
+      JSON.stringify(minimalConfigPayload({ communication: "resend" }), null, 2),
+      "utf8",
+    );
+
+    const resendResult = await readKubojsConfig(projectDir);
+    expect(resendResult.isOk()).toBe(true);
+    if (resendResult.isErr()) return;
+    expect(resendResult.value?.communication).toEqual(["resend"]);
   });
 
   it("prefers kubo.config.ts over kubojs.jsonrc", async () => {

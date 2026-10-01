@@ -46,6 +46,7 @@ import {
   PaymentsSchema,
   type Communication,
   CommunicationSchema,
+  normalizeCommunication,
   type ProjectConfig,
   ProjectNameSchema,
   type Runtime,
@@ -449,7 +450,7 @@ export async function createVirtual(
           : rawObservability
             ? [rawObservability]
             : [],
-    communication: options.communication || "none",
+    communication: options.communication ? normalizeCommunication(options.communication) : [],
     git: options.git ?? false,
     packageManager: options.packageManager || "bun",
     install: false,

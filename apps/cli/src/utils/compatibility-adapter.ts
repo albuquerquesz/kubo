@@ -3,9 +3,11 @@ import {
   CONVEX_BETTER_AUTH_INCOMPATIBLE_FRONTENDS,
   CONVEX_BETTER_AUTH_SUPPORTED_FRONTENDS,
   evaluate,
+  COMMUNICATION_PRODUCT_NAMES,
   getCommunicationCompatibilityIssue,
   getPaymentCompatibilityIssue,
   isCommunicationProvider,
+  normalizeCommunication,
   type CompatibilityIssue,
   type CompatibilityIssueCode,
   type CompatibilityField,
@@ -304,20 +306,27 @@ function getCompatibilityMessage(
     return getExampleMessage(config, issue);
   }
   if (issue.code === "communication") {
-    const provider = config.communication;
-    const providerName =
-      provider === "resend" ? "Resend" : provider === "notifique" ? "Notifique" : "AraraHQ";
-    const communicationIssue = isCommunicationProvider(provider)
-      ? getCommunicationCompatibilityIssue({
-          provider,
-          backend: config.backend,
-          runtime: config.runtime,
-          serverDeploy: config.serverDeploy,
-        })
-      : null;
+    const failingProvider = normalizeCommunication(config.communication ?? []).find((candidate) => {
+      if (!isCommunicationProvider(candidate)) return false;
+      return getCommunicationCompatibilityIssue({
+        provider: candidate,
+        backend: config.backend,
+        runtime: config.runtime,
+        serverDeploy: config.serverDeploy,
+      });
+    });
+    if (!failingProvider || !isCommunicationProvider(failingProvider)) {
+      return "Communication is incompatible with the selected configuration.";
+    }
+    const communicationIssue = getCommunicationCompatibilityIssue({
+      provider: failingProvider,
+      backend: config.backend,
+      runtime: config.runtime,
+      serverDeploy: config.serverDeploy,
+    });
     return communicationIssue === "workers-unsupported"
       ? "AraraHQ requires the official Node SDK and is not compatible with Edge/Workers runtimes. Use a Node/Bun server deployment or Convex Node Action."
-      : `${providerName} communication requires a server backend. Please choose a backend or use '--communication none'.`;
+      : `${COMMUNICATION_PRODUCT_NAMES[failingProvider]} communication requires a server backend. Please choose a backend or use '--communication none'.`;
   }
   if (issue.code === "payment") {
     const paymentValues: unknown = config.payments;

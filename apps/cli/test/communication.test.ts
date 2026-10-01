@@ -14,8 +14,8 @@ import { processFlags } from "../src/utils/config-processing";
 import { collectFiles } from "./setup";
 
 describe("Resend communication", () => {
-  it("defaults communication to none", () => {
-    expect(DEFAULT_CONFIG.communication).toBe("none");
+  it("defaults communication to an empty selection", () => {
+    expect(DEFAULT_CONFIG.communication).toEqual([]);
   });
 
   it("generates packages/email with Resend helper and env placeholders", async () => {
@@ -29,7 +29,7 @@ describe("Resend communication", () => {
       auth: "none",
       payments: [],
       observability: "none",
-      communication: "resend",
+      communication: ["resend"],
       addons: ["none"],
       examples: ["none"],
       dbSetup: "none",
@@ -62,7 +62,38 @@ describe("Resend communication", () => {
     expect(readme).toContain("Resend");
   });
 
-  it("does not generate packages/email when communication is none", async () => {
+  it("generates Resend and Notifique packages when both are selected", async () => {
+    const result = await createVirtual({
+      projectName: "multi-comm-app",
+      frontend: ["tanstack-router"],
+      backend: "hono",
+      runtime: "bun",
+      database: "sqlite",
+      orm: "drizzle",
+      auth: "none",
+      payments: [],
+      observability: [],
+      communication: ["resend", "notifique"],
+      addons: ["none"],
+      examples: ["none"],
+      dbSetup: "none",
+      api: "trpc",
+      webDeploy: "none",
+      serverDeploy: "none",
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+
+    const files = collectFiles(result.value.root, "/virtual");
+    expect(files.has("packages/email/package.json")).toBe(true);
+    expect(files.has("packages/notifique/package.json")).toBe(true);
+    const serverEnv = files.get("apps/server/.env") ?? "";
+    expect(serverEnv).toContain("RESEND_API_KEY=");
+    expect(serverEnv).toContain("NOTIFIQUE_API_KEY=");
+  });
+
+  it("does not generate packages/email when communication is empty", async () => {
     const result = await createVirtual({
       projectName: "no-email-app",
       frontend: ["tanstack-router"],
@@ -73,7 +104,7 @@ describe("Resend communication", () => {
       auth: "none",
       payments: "none",
       observability: "none",
-      communication: "none",
+      communication: [],
       addons: ["none"],
       examples: ["none"],
       dbSetup: "none",
@@ -94,19 +125,25 @@ describe("Resend communication", () => {
       communication: "none",
       backend: "hono",
     });
-    expect(noneConfig.communication).toBe("none");
+    expect(noneConfig.communication).toEqual([]);
 
     const resendConfig = processFlags({
       communication: "resend",
       backend: "hono",
     });
-    expect(resendConfig.communication).toBe("resend");
+    expect(resendConfig.communication).toEqual(["resend"]);
+
+    const multiConfig = processFlags({
+      communication: ["resend", "notifique"],
+      backend: "hono",
+    });
+    expect(multiConfig.communication).toEqual(["resend", "notifique"]);
 
     const araraConfig = processFlags({
       communication: "arara",
       backend: "hono",
     });
-    expect(araraConfig.communication).toBe("arara");
+    expect(araraConfig.communication).toEqual(["arara"]);
   });
 
   it("generates the AraraHQ SDK package and server integration", async () => {
@@ -120,7 +157,7 @@ describe("Resend communication", () => {
       auth: "none",
       payments: "none",
       observability: "none",
-      communication: "arara",
+      communication: ["arara"],
       addons: ["none"],
       examples: ["none"],
       dbSetup: "none",
@@ -161,7 +198,7 @@ describe("Resend communication", () => {
       auth: "none",
       payments: "none",
       observability: "none",
-      communication: "arara",
+      communication: ["arara"],
       addons: ["none"],
       examples: ["none"],
       dbSetup: "none",
@@ -198,7 +235,7 @@ describe("Resend communication", () => {
       auth: "none",
       payments: "none",
       observability: "none",
-      communication: "notifique",
+      communication: ["notifique"],
       addons: ["none"],
       examples: ["none"],
       dbSetup: "none",
@@ -259,8 +296,8 @@ describe("Resend communication", () => {
       api: "trpc",
       auth: "none",
       payments: [],
-      observability: "none",
-      communication: "resend",
+      observability: [],
+      communication: ["resend"],
       addons: [],
       examples: [],
       dbSetup: "none",
@@ -276,13 +313,13 @@ describe("Resend communication", () => {
   });
 
   it("maps communication issues to the current product messages", () => {
-    const resend = validateCommunicationCompatibility("resend", "none");
+    const resend = validateCommunicationCompatibility(["resend"], "none");
     expect(resend.isErr()).toBe(true);
     if (resend.isErr()) {
       expect(resend.error.message).toContain("Resend communication requires a server backend");
     }
 
-    const notifique = validateCommunicationCompatibility("notifique", "none");
+    const notifique = validateCommunicationCompatibility(["notifique"], "none");
     expect(notifique.isErr()).toBe(true);
     if (notifique.isErr()) {
       expect(notifique.error.message).toContain(
@@ -290,20 +327,20 @@ describe("Resend communication", () => {
       );
     }
 
-    const arara = validateCommunicationCompatibility("arara", "none");
+    const arara = validateCommunicationCompatibility(["arara"], "none");
     expect(arara.isErr()).toBe(true);
     if (arara.isErr()) {
       expect(arara.error.message).toContain("AraraHQ communication requires a server backend");
     }
 
-    const workers = validateCommunicationCompatibility("arara", "hono", "workers", "cloudflare");
+    const workers = validateCommunicationCompatibility(["arara"], "hono", "workers", "cloudflare");
     expect(workers.isErr()).toBe(true);
     if (workers.isErr()) {
       expect(workers.error.message).toContain("AraraHQ requires the official Node SDK");
     }
 
-    expect(validateCommunicationCompatibility("resend", "hono", "workers").isOk()).toBe(true);
-    expect(validateCommunicationCompatibility("arara", "convex", "workers").isOk()).toBe(true);
+    expect(validateCommunicationCompatibility(["resend"], "hono", "workers").isOk()).toBe(true);
+    expect(validateCommunicationCompatibility(["arara"], "convex", "workers").isOk()).toBe(true);
   });
 });
 

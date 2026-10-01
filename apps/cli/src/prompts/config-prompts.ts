@@ -19,6 +19,7 @@ import type {
   Testing,
   WebDeploy,
 } from "../types";
+import { normalizeCommunication } from "../utils/config-processing";
 import { isSilent } from "../utils/context";
 import { UserCancelledError } from "../utils/errors";
 import { getAddonsChoice } from "./addons";
@@ -85,7 +86,7 @@ export async function gatherConfig(
       auth: flags.auth ?? DEFAULT_CONFIG.auth,
       payments: flags.payments ?? DEFAULT_CONFIG.payments,
       observability: flags.observability ?? DEFAULT_CONFIG.observability,
-      communication: flags.communication ?? DEFAULT_CONFIG.communication,
+      communication: normalizeCommunication(flags.communication ?? DEFAULT_CONFIG.communication),
       addons: flags.addons ?? [...DEFAULT_CONFIG.addons],
       examples: flags.examples ?? [...DEFAULT_CONFIG.examples],
       testing: flags.testing ?? [...DEFAULT_CONFIG.testing],
