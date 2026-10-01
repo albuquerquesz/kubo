@@ -1,5 +1,9 @@
 import { getBackendCapabilities, isBackend } from "./backends";
-import { getCommunicationCompatibilityIssue, isCommunicationProvider } from "./communication";
+import {
+  getCommunicationCompatibilityIssue,
+  isCommunicationProvider,
+  normalizeCommunication,
+} from "./communication";
 import {
   CONVEX_BETTER_AUTH_SUPPORTED_FRONTENDS,
   CONVEX_BETTER_AUTH_INCOMPATIBLE_FRONTENDS,
@@ -226,7 +230,12 @@ function getBackendOwnershipIssues(config: CompatibilityConfig): CompatibilityIs
       ["serverDeploy", config.serverDeploy, "backend-none-server-deploy"],
     ];
     for (const [field, value, code] of noneFields) {
-      const selected = Array.isArray(value) ? value.length > 0 : value && value !== "none";
+      const selected =
+        field === "communication"
+          ? normalizeCommunication(value ?? []).length > 0
+          : Array.isArray(value)
+            ? value.length > 0
+            : value && value !== "none";
       if (selected) issues.push(issue(code, [field]));
     }
   }
@@ -560,9 +569,10 @@ function getAuthenticationIssues(config: CompatibilityConfig): CompatibilityIssu
 
 function getProviderIssues(config: CompatibilityConfig): CompatibilityIssue[] {
   const issues: CompatibilityIssue[] = [];
-  if (isCommunicationProvider(config.communication)) {
+  for (const provider of normalizeCommunication(config.communication ?? [])) {
+    if (!isCommunicationProvider(provider)) continue;
     const communicationIssue = getCommunicationCompatibilityIssue({
-      provider: config.communication,
+      provider,
       backend: config.backend,
       runtime: config.runtime,
       serverDeploy: config.serverDeploy,

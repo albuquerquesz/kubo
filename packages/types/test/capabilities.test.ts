@@ -8,7 +8,9 @@ import {
   backendAllowsApi,
   backendAllowsOnlyNoneApi,
   getBackendCompatibilityIssue,
+  CommunicationProviderSchema,
   getCommunicationCompatibilityIssue,
+  normalizeCommunication,
   normalizeObservability,
   isBackend,
   isCommunicationProvider,
@@ -83,6 +85,37 @@ describe("communication compatibility issues", () => {
         serverDeploy: "cloudflare",
       }),
     ).toBeNull();
+  });
+});
+
+describe("normalizeCommunication", () => {
+  test("none and undefined become an empty selection", () => {
+    expect(normalizeCommunication(undefined)).toEqual([]);
+    expect(normalizeCommunication("none")).toEqual([]);
+  });
+
+  test("accepts a single provider or a unique array", () => {
+    expect(normalizeCommunication("resend")).toEqual(["resend"]);
+    expect(normalizeCommunication(["notifique", "resend", "notifique"])).toEqual([
+      "notifique",
+      "resend",
+    ]);
+  });
+
+  test("unknown providers fail at the type boundary", () => {
+    expect(() => normalizeCommunication("smtp")).toThrow(/Unsupported communication provider/);
+  });
+
+  test("normalizes every schema provider without dropping a selection", () => {
+    for (const provider of CommunicationProviderSchema.options) {
+      expect(normalizeCommunication(provider)).toEqual([provider]);
+    }
+    expect(normalizeCommunication(["none", "arara", "none"])).toEqual(["arara"]);
+    expect(normalizeCommunication([])).toEqual([]);
+  });
+
+  test.each([[null], [123], [{}], [["resend", "unknown"]]])("rejects invalid input %j", (value) => {
+    expect(() => normalizeCommunication(value)).toThrow(/Unsupported communication provider/);
   });
 });
 

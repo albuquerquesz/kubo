@@ -17,6 +17,7 @@ import type {
   PaymentsSchema,
   ObservabilityProviderSchema,
   ObservabilitySchema,
+  CommunicationProviderSchema,
   CommunicationSchema,
   WebDeploySchema,
   ServerDeploySchema,
@@ -56,6 +57,7 @@ export type PaymentProvider = z.infer<typeof PaymentProviderSchema>;
 export type Payments = z.infer<typeof PaymentsSchema>;
 export type ObservabilityProvider = z.infer<typeof ObservabilityProviderSchema>;
 export type Observability = z.infer<typeof ObservabilitySchema>;
+export type CommunicationProvider = z.infer<typeof CommunicationProviderSchema>;
 export type Communication = z.infer<typeof CommunicationSchema>;
 export type WebDeploy = z.infer<typeof WebDeploySchema>;
 export type ServerDeploy = z.infer<typeof ServerDeploySchema>;

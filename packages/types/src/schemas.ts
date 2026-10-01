@@ -92,49 +92,50 @@ export const AuthSchema = z
 
 export const PaymentProviderSchema = z.enum(["abacatepay", "stripe"]);
 
-export const PaymentsSchema = z
-  .preprocess(
+function selectedProvidersSchema<T extends z.ZodTypeAny>(
+  providerSchema: T,
+  uniqueMessage: string,
+  options?: { treatUndefinedAsEmpty?: boolean },
+) {
+  const treatUndefinedAsEmpty = options?.treatUndefinedAsEmpty ?? false;
+  return z.preprocess(
     (value) => {
-      if (value === "none" || value === undefined) return [];
+      if (value === "none" || (treatUndefinedAsEmpty && value === undefined)) return [];
       if (typeof value === "string") return [value];
       if (Array.isArray(value)) return value.filter((item) => item !== "none");
       return value;
     },
-    z.array(PaymentProviderSchema).superRefine((providers, ctx) => {
+    z.array(providerSchema).superRefine((providers, ctx) => {
       if (new Set(providers).size !== providers.length) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Payment providers must be unique",
+          message: uniqueMessage,
         });
       }
     }),
-  )
-  .describe("Selected payment providers");
+  );
+}
+
+export const PaymentsSchema = selectedProvidersSchema(
+  PaymentProviderSchema,
+  "Payment providers must be unique",
+  { treatUndefinedAsEmpty: true },
+).describe("Selected payment providers");
 
 export const ObservabilityProviderSchema = z.enum(["getmonitor", "himetrica"]);
 
-export const ObservabilitySchema = z
-  .preprocess(
-    (value) => {
-      if (value === "none") return [];
-      if (typeof value === "string") return [value];
-      if (Array.isArray(value)) return value.filter((item) => item !== "none");
-      return value;
-    },
-    z.array(ObservabilityProviderSchema).superRefine((providers, ctx) => {
-      if (new Set(providers).size !== providers.length) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Observability providers must be unique",
-        });
-      }
-    }),
-  )
-  .describe("Selected observability providers");
+export const ObservabilitySchema = selectedProvidersSchema(
+  ObservabilityProviderSchema,
+  "Observability providers must be unique",
+).describe("Selected observability providers");
 
-export const CommunicationSchema = z
-  .enum(["none", "resend", "notifique", "arara"])
-  .describe("Communication provider (email / messaging)");
+export const CommunicationProviderSchema = z.enum(["resend", "notifique", "arara"]);
+
+export const CommunicationSchema = selectedProvidersSchema(
+  CommunicationProviderSchema,
+  "Communication providers must be unique",
+  { treatUndefinedAsEmpty: true },
+).describe("Selected communication providers");
 
 export const WebDeploySchema = z
   .enum(["cloudflare", "docker", "vercel", "railway", "guaracloud", "none"])
@@ -573,7 +574,7 @@ export const API_VALUES = APISchema.options;
 export const AUTH_VALUES = AuthSchema.options;
 export const PAYMENTS_VALUES = PaymentProviderSchema.options;
 export const OBSERVABILITY_VALUES = ObservabilityProviderSchema.options;
-export const COMMUNICATION_VALUES = CommunicationSchema.options;
+export const COMMUNICATION_VALUES = CommunicationProviderSchema.options;
 export const WEB_DEPLOY_VALUES = WebDeploySchema.options;
 export const SERVER_DEPLOY_VALUES = ServerDeploySchema.options;
 export const DIRECTORY_CONFLICT_VALUES = DirectoryConflictSchema.options;

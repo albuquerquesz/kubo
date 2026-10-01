@@ -1,6 +1,4 @@
-import type { Communication } from "./types";
-
-export type CommunicationProvider = Exclude<Communication, "none">;
+import type { Communication, CommunicationProvider } from "./types";
 
 export type CommunicationCompatibilityIssue = "requires-backend" | "workers-unsupported";
 
@@ -10,6 +8,12 @@ export type CommunicationCompatibilityInput = {
   runtime?: string;
   serverDeploy?: string;
 };
+
+export const COMMUNICATION_PRODUCT_NAMES = {
+  resend: "Resend",
+  notifique: "Notifique",
+  arara: "AraraHQ",
+} as const satisfies Record<CommunicationProvider, string>;
 
 export const COMMUNICATION_PROVIDER_CAPABILITIES = {
   resend: {
@@ -38,6 +42,20 @@ export const COMMUNICATION_PROVIDER_CAPABILITIES = {
 
 export function isCommunicationProvider(value: unknown): value is CommunicationProvider {
   return typeof value === "string" && Object.hasOwn(COMMUNICATION_PROVIDER_CAPABILITIES, value);
+}
+
+export function normalizeCommunication(value: unknown): Communication {
+  if (value === undefined || value === "none") return [];
+
+  const values = Array.isArray(value) ? value : [value];
+  const providers = values.filter((item) => item !== "none");
+  const unsupported = providers.filter((item) => !isCommunicationProvider(item));
+
+  if (unsupported.length > 0) {
+    throw new Error(`Unsupported communication provider(s): ${unsupported.join(", ")}`);
+  }
+
+  return [...new Set(providers.filter(isCommunicationProvider))];
 }
 
 export function getCommunicationCompatibilityIssue({
