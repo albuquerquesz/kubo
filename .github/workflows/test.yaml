@@ -39,6 +39,10 @@ jobs:
         env:
           BTS_TELEMETRY: 0
 
+      - name: Test Environment Package
+        working-directory: packages/env
+        run: bun run test
+
       - name: Build Types
         run: cd packages/types && bun run build
 

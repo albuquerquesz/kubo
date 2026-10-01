@@ -4,18 +4,19 @@ import {
   CLERK_FRONTENDS,
   CONVEX_BETTER_AUTH_INCOMPATIBLE_FRONTENDS,
   evaluate,
+  COMMUNICATION_PRODUCT_NAMES,
   getCommunicationCompatibilityIssue,
   getPaymentCompatibilityIssue,
   isCommunicationProvider,
   isDesktopWebFrontend,
   isSelfHostedFrontend,
+  normalizeCommunication,
   normalizeCompatibility,
   WEB_FRONTENDS_REQUIRING_ORPC,
   type CompatibilityField,
   type CompatibilityIssue,
   type CompatibilityIssueCode,
   type CommunicationCompatibilityIssue,
-  type CommunicationProvider,
   type ProjectConfigDraft,
 } from "@kubojs/types";
 
@@ -33,12 +34,6 @@ export type CompatibilityResult = {
   notes: Record<string, { notes: string[]; hasIssue: boolean }>;
   changes: Array<{ category: string; message: string }>;
 };
-
-const COMMUNICATION_PRODUCT_NAME = {
-  resend: "Resend",
-  notifique: "Notifique",
-  arara: "AraraHQ",
-} satisfies Record<CommunicationProvider, string>;
 
 const CATEGORY_FIELDS: Record<TechCategory, CompatibilityField> = {
   webFrontend: "frontend",
@@ -364,19 +359,22 @@ function getPaymentMessage(config: ProjectConfigDraft): string {
 }
 
 function getCommunicationMessage(config: ProjectConfigDraft): string | null {
-  if (!isCommunicationProvider(config.communication)) return null;
-  const issue = getCommunicationCompatibilityIssue({
-    provider: config.communication,
-    backend: config.backend,
-    runtime: config.runtime,
-    serverDeploy: config.serverDeploy,
-  });
-  const messages = {
-    "requires-backend": `${COMMUNICATION_PRODUCT_NAME[config.communication]} exige um backend com runtime de servidor`,
-    "workers-unsupported":
-      "AraraHQ exige o SDK Node e não é compatível com runtimes Edge/Workers. Use um servidor Node/Bun ou uma Node Action do Convex.",
-  } satisfies Record<CommunicationCompatibilityIssue, string>;
-  return issue ? messages[issue] : null;
+  for (const provider of normalizeCommunication(config.communication ?? [])) {
+    if (!isCommunicationProvider(provider)) continue;
+    const issue = getCommunicationCompatibilityIssue({
+      provider,
+      backend: config.backend,
+      runtime: config.runtime,
+      serverDeploy: config.serverDeploy,
+    });
+    const messages = {
+      "requires-backend": `${COMMUNICATION_PRODUCT_NAMES[provider]} exige um backend com runtime de servidor`,
+      "workers-unsupported":
+        "AraraHQ exige o SDK Node e não é compatível com runtimes Edge/Workers. Use um servidor Node/Bun ou uma Node Action do Convex.",
+    } satisfies Record<CommunicationCompatibilityIssue, string>;
+    if (issue) return messages[issue];
+  }
+  return null;
 }
 
 function getIssueMessage(issue: CompatibilityIssue, config: ProjectConfigDraft): string {

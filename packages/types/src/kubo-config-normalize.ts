@@ -1,3 +1,4 @@
+import { normalizeCommunication } from "./communication";
 import type { KuboConfig, KubojsConfig, LayoutConfig } from "./types";
 
 const DEFAULT_LAYOUT: LayoutConfig = { preset: "standard" };
@@ -11,5 +12,8 @@ export function normalizeLegacyKuboConfig(
       ? config
       : { ...config, layout: layout ?? DEFAULT_LAYOUT };
 
-  return withLayout as KuboConfig;
+  return {
+    ...withLayout,
+    communication: normalizeCommunication(withLayout.communication ?? []),
+  };
 }

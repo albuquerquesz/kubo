@@ -119,7 +119,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
 
   if (packages.email) {
     const emailDeps: AvailableDependencies[] = [...commonDeps];
-    if (config.communication === "resend") {
+    if (config.communication.includes("resend")) {
       emailDeps.push("resend");
     }
     addPackageDependency({
@@ -173,7 +173,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
 
   if (packages.backend) {
     const backendDeps: Record<string, string> = {};
-    if (config.communication === "arara" && packages.arara) {
+    if (config.communication.includes("arara") && packages.arara) {
       backendDeps[`@${projectName}/arara`] = workspaceVersion;
     }
     addPackageDependency({

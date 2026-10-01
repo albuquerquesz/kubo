@@ -1,46 +1,43 @@
 import { DEFAULT_CONFIG } from "../constants";
-import type { Backend, Communication } from "../types";
+import type { Backend, Communication, CommunicationProvider } from "../types";
+import { normalizeCommunication } from "../utils/config-processing";
 import { UserCancelledError } from "../utils/errors";
-import { isCancel, navigableSelect, preferValidInitial } from "./navigable";
+import { isCancel, navigableMultiselect } from "./navigable";
+
+const options = [
+  {
+    value: "resend" as CommunicationProvider,
+    label: "Resend",
+    hint: "Transactional email for developers",
+  },
+  {
+    value: "notifique" as CommunicationProvider,
+    label: "Notifique",
+    hint: "Omnichannel BR messaging API",
+  },
+  {
+    value: "arara" as CommunicationProvider,
+    label: "AraraHQ",
+    hint: "WhatsApp messaging via the official Node SDK",
+  },
+];
 
 export async function getCommunicationChoice(
   communication?: Communication,
   backend?: Backend,
   previousValue?: Communication,
 ) {
-  if (communication !== undefined) return communication;
+  if (communication !== undefined) return normalizeCommunication(communication);
 
   if (backend === "none") {
-    return "none" as Communication;
+    return [] as Communication;
   }
 
-  const options = [
-    {
-      value: "none" as Communication,
-      label: "None",
-      hint: "No email/communication provider",
-    },
-    {
-      value: "resend" as Communication,
-      label: "Resend",
-      hint: "Transactional email for developers",
-    },
-    {
-      value: "notifique" as Communication,
-      label: "Notifique",
-      hint: "Omnichannel BR messaging API",
-    },
-    {
-      value: "arara" as Communication,
-      label: "AraraHQ",
-      hint: "WhatsApp messaging via the official Node SDK",
-    },
-  ];
-
-  const response = await navigableSelect<Communication>({
-    message: "Select communication provider",
+  const response = await navigableMultiselect<CommunicationProvider>({
+    message: "Select communication providers",
     options,
-    initialValue: preferValidInitial(options, previousValue, DEFAULT_CONFIG.communication),
+    required: false,
+    initialValues: previousValue ?? DEFAULT_CONFIG.communication,
   });
 
   if (isCancel(response)) throw new UserCancelledError({ message: "Operation cancelled" });

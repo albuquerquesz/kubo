@@ -468,7 +468,7 @@ describe("stack builder D1 compatibility", () => {
       auth: "none",
       payments: [],
       observability: [],
-      communication: "none",
+      communication: [],
       database: "none",
       orm: "none",
       dbSetup: "none",
@@ -491,27 +491,33 @@ describe("stack builder D1 compatibility", () => {
 
   test("emits --communication resend and disables Resend without backend", () => {
     const withResend = createStack({
-      communication: "resend",
+      communication: ["resend"],
       backend: "hono",
     });
     expect(generateStackCommand(withResend)).toContain("--communication resend");
 
+    const withBoth = createStack({
+      communication: ["resend", "notifique"],
+      backend: "hono",
+    });
+    expect(generateStackCommand(withBoth)).toContain("--communication resend notifique");
+
     const noBackend = createStack({
       backend: "none",
-      communication: "resend",
+      communication: ["resend"],
     });
     expect(getDisabledReason(noBackend, "communication", "resend")).toContain("backend");
     expect(getDisabledReason(noBackend, "communication", "arara")).toContain("backend");
     expect(
       getDisabledReason(
-        createStack({ backend: "hono", runtime: "workers", communication: "arara" }),
+        createStack({ backend: "hono", runtime: "workers", communication: ["arara"] }),
         "communication",
         "arara",
       ),
     ).toContain("Workers");
     expect(
       getDisabledReason(
-        createStack({ backend: "hono", runtime: "workers", communication: "resend" }),
+        createStack({ backend: "hono", runtime: "workers", communication: ["resend"] }),
         "communication",
         "resend",
       ),

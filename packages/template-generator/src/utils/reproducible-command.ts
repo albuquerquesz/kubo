@@ -51,7 +51,8 @@ export function generateReproducibleCommand(config: ProjectConfig): string {
   } else {
     flags.push(`--observability ${observability.join(" ")}`);
   }
-  flags.push(`--communication ${config.communication}`);
+  const communication = normalizeMultiValues(config.communication);
+  flags.push(`--communication ${communication.join(" ") || "none"}`);
 
   flags.push(formatMultiFlag("--addons", addons));
   flags.push(formatMultiFlag("--examples", examples));

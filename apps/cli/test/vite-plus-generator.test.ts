@@ -14,7 +14,7 @@ const baseConfig: ProjectConfig = {
   auth: "none",
   payments: "none",
   observability: "none",
-  communication: "none",
+  communication: [],
   addons: ["vite-plus"],
   examples: [],
   git: false,

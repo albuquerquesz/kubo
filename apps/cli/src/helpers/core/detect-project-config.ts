@@ -2,7 +2,7 @@ import path from "node:path";
 
 import { Result } from "better-result";
 
-import { normalizeObservability } from "../../utils/config-processing";
+import { normalizeCommunication, normalizeObservability } from "../../utils/config-processing";
 import type { KuboConfigInvalidError } from "../../utils/errors";
 import { isKubojsProject as detectKuboProject, readKubojsConfig } from "../../utils/kubojs-config";
 
@@ -34,7 +34,7 @@ export async function detectProjectConfig(projectDir: string) {
     auth: kubojsConfig.auth,
     payments: kubojsConfig.payments,
     observability: normalizeObservability(kubojsConfig.observability),
-    communication: kubojsConfig.communication ?? "none",
+    communication: normalizeCommunication(kubojsConfig.communication ?? []),
     packageManager: kubojsConfig.packageManager,
     dbSetup: kubojsConfig.dbSetup,
     api: kubojsConfig.api,

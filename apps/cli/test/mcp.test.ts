@@ -40,7 +40,7 @@ function getExplicitCreateInput(projectPath: string) {
     auth: "better-auth" as const,
     payments: "none" as const,
     observability: ["getmonitor"] as const,
-    communication: "none" as const,
+    communication: [] as const,
     addons: ["turborepo"] as const,
     examples: [] as const,
     testing: [] as const,

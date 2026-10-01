@@ -13,6 +13,7 @@ import type {
 } from "../../types";
 import { desktopWebFrontends, getWebPort } from "../../types";
 import { cliColors } from "../../utils/cli-colors";
+import { normalizeCommunication } from "../../utils/config-processing";
 import { getDockerStatus } from "../../utils/docker-utils";
 import { cliConsola } from "../../utils/terminal-output";
 
@@ -58,8 +59,9 @@ export async function displayPostInstallInstructions(
     webDeploy,
     serverDeploy,
     observability,
-    communication,
+    communication: rawCommunication,
   } = config;
+  const communication = normalizeCommunication(rawCommunication ?? []);
 
   const isConvex = backend === "convex";
   const isBackendSelf = backend === "self";
@@ -124,9 +126,11 @@ export async function displayPostInstallInstructions(
   const getMonitorInstructions = observability.includes("getmonitor")
     ? getGetMonitorInstructions()
     : "";
-  const resendInstructions = communication === "resend" ? getResendInstructions() : "";
-  const notifiqueInstructions = communication === "notifique" ? getNotifiqueInstructions() : "";
-  const araraInstructions = communication === "arara" ? getAraraInstructions(backend) : "";
+  const resendInstructions = communication.includes("resend") ? getResendInstructions() : "";
+  const notifiqueInstructions = communication.includes("notifique")
+    ? getNotifiqueInstructions()
+    : "";
+  const araraInstructions = communication.includes("arara") ? getAraraInstructions(backend) : "";
 
   const hasWeb = frontend?.some((f) => (desktopWebFrontends as readonly string[]).includes(f));
   const hasNative =

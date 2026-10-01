@@ -16,7 +16,7 @@ const validConfig: ProjectConfigDraft = {
   auth: "none",
   payments: [],
   observability: [],
-  communication: "none",
+  communication: [],
   git: false,
   packageManager: "bun",
   install: false,
@@ -133,11 +133,20 @@ describe("canonical compatibility evaluator", () => {
     ).toContain("database-setup-target");
   });
 
+  it("treats legacy communication strings like provider arrays in evaluate()", () => {
+    const legacyString = codes({
+      ...validConfig,
+      backend: "none",
+      communication: "resend" as unknown as ProjectConfigDraft["communication"],
+    });
+    expect(legacyString).toContain("communication");
+  });
+
   it("evaluates provider, addon, testing, and example relationships", () => {
     const issueCodes = codes({
       backend: "none",
       frontend: ["native-bare"],
-      communication: "resend",
+      communication: ["resend", "notifique"],
       payments: ["stripe"],
       addons: ["tauri", "electrobun", "turborepo", "vite-plus"],
       testing: ["playwright"],

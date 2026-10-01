@@ -20,6 +20,7 @@
   "dependencies": {
     "@base-ui/react": "^1.4.1",
     "@base-ui/utils": "^0.2.8",
+    "@convex-dev/better-auth": "catalog:",
     "@erquhart/convex-oss-stats": "catalog:",
     "@gsap/react": "^2.1.2",
     "@himetrica/tracker-js": "0.1.36",
@@ -46,6 +47,7 @@
     "@visx/scale": "4.0.1-alpha.0",
     "@visx/shape": "4.0.1-alpha.0",
     "babel-plugin-react-compiler": "^1.0.0",
+    "better-auth": "catalog:",
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

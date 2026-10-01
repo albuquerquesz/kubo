@@ -68,7 +68,7 @@ describe("S3-compatible storage addon", () => {
       auth: "none",
       payments: "none",
       observability: "none",
-      communication: "none",
+      communication: [],
       addons: ["s3-storage"],
       examples: ["none"],
       dbSetup: "none",

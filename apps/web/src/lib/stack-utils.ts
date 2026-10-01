@@ -200,7 +200,7 @@ export function generateStackCommand(input: StackBuilderInput) {
     stack.observability.length > 0
       ? `--observability ${stack.observability.join(" ")}`
       : "--disable-observability",
-    `--communication ${stack.communication || "none"}`,
+    `--communication ${stack.communication.join(" ") || "none"}`,
     `--database ${stack.database}`,
     `--orm ${stack.orm}`,
     `--db-setup ${stack.dbSetup}`,

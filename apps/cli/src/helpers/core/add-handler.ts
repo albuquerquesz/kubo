@@ -24,6 +24,7 @@ import {
   mergeAddonsExclusive,
   validateAddonsAgainstConfig,
 } from "../../utils/compatibility-rules";
+import { normalizeCommunication } from "../../utils/config-processing";
 import { isSilent, runWithContextAsync } from "../../utils/context";
 import { CLIError, UserCancelledError, displayError } from "../../utils/errors";
 import { validateAgentSafePathInput } from "../../utils/input-hardening";
@@ -377,7 +378,7 @@ async function addHandlerInternal(
     auth: existingConfig.auth,
     payments: existingConfig.payments,
     observability: existingConfig.observability,
-    communication: existingConfig.communication ?? "none",
+    communication: normalizeCommunication(existingConfig.communication ?? []),
     testing: updatedTesting,
     git: false,
     packageManager: input.packageManager || existingConfig.packageManager,

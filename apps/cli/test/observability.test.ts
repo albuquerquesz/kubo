@@ -446,7 +446,7 @@ describe("observability CLI flag processing", () => {
       auth: "none",
       payments: [],
       observability: "none",
-      communication: "none",
+      communication: [],
       addons: ["biome"],
       examples: [],
       dbSetup: "none",

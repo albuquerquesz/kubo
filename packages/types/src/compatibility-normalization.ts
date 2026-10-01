@@ -95,7 +95,7 @@ function setBackendOwnedFields(
   setField(config, adjustments, "payments", [], code);
   if (backend === "none") {
     setField(config, adjustments, "auth", "none", code);
-    setField(config, adjustments, "communication", "none", code);
+    setField(config, adjustments, "communication", [], code);
     setField(config, adjustments, "examples", ["none"], code);
   }
 }

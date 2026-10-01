@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./convex": {
+      "types": "./src/convex.ts",
+      "default": "./src/convex.ts"
+    },
     "./server": {
       "types": "./src/server.ts",
       "default": "./src/server.ts"
@@ -14,6 +18,7 @@
     }
   },
   "scripts": {
+    "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -2,6 +2,7 @@ import pc from "picocolors";
 
 import type { ProjectConfig } from "../types";
 import { cliColors } from "./cli-colors";
+import { normalizeCommunication } from "./config-processing";
 
 export function displayConfig(config: Partial<ProjectConfig>) {
   const configDisplay: string[] = [];
@@ -45,7 +46,10 @@ export function displayConfig(config: Partial<ProjectConfig>) {
     configDisplay.push(`${cliColors.signal("Payments:")} ${config.payments.join(", ") || "none"}`);
   }
   if (config.communication !== undefined) {
-    configDisplay.push(`${cliColors.signal("Communication:")} ${String(config.communication)}`);
+    const communication = normalizeCommunication(config.communication);
+    configDisplay.push(
+      `${cliColors.signal("Communication:")} ${communication.join(", ") || "none"}`,
+    );
   }
 
   if (config.observability !== undefined) {

@@ -33262,7 +33262,7 @@ export const arara = new NodeSDK({ apiKey: process.env.ARARA_API_KEY });
   "devDependencies": {}
 }
 `],
-  ["packages/email/src/index.ts.hbs", `{{#if (eq communication "resend")}}
+  ["packages/email/src/index.ts.hbs", `{{#if (includes communication "resend")}}
 export * from "./lib/resend";
 {{/if}}
 export {};
@@ -33549,12 +33549,12 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		GETMONITOR_API_KEY: z.string().min(1).optional(),
 	{{/if}}
-	{{#if (eq communication "resend")}}
+	{{#if (includes communication "resend")}}
 		RESEND_API_KEY: z.string().min(1).optional(),
 		// Test-only default; replace with a verified domain sender for production.
 		RESEND_FROM_EMAIL: z.string().min(1).default("Acme <onboarding@resend.dev>"),
 	{{/if}}
-	{{#if (eq communication "notifique")}}
+	{{#if (includes communication "notifique")}}
 		NOTIFIQUE_API_KEY: z.string().min(1),
 		NOTIFIQUE_WHATSAPP_INSTANCE_ID: z.string().min(1).optional(),
 		NOTIFIQUE_FROM_EMAIL: z.string().min(1).default("Acme <noreply@example.com>"),

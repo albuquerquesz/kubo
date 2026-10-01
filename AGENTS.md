@@ -89,6 +89,8 @@ branching and type noise encountered in the touched area:
 
 For practical KuboJS usage in a generated project, use the [KuboJS guide](.agents/skills/kubojs/SKILL.md).
 
+For Better Auth implementation, use the [Better Auth best practices skill](.agents/skills/better-auth-best-practices/SKILL.md) and the project-scoped Better Auth documentation MCP configured in `.codex/config.toml`.
+
 ### Issue tracker
 
 Issues are tracked in GitHub Issues for `albuquerquesz/kubo` using the `gh` CLI. See `docs/agents/issue-tracker.md`.

@@ -23,7 +23,7 @@ function createTuiConfig(overrides: Partial<ProjectConfig> = {}): ProjectConfig 
     auth: "none",
     payments: "none",
     observability: "none",
-    communication: "none",
+    communication: [],
     git: true,
     packageManager: "bun",
     install: false,

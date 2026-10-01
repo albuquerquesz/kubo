@@ -1,4 +1,4 @@
-import { normalizeObservability, normalizePayments } from "@kubojs/types";
+import { normalizeCommunication, normalizeObservability, normalizePayments } from "@kubojs/types";
 import { Result } from "better-result";
 
 import { applyAddonCatalog } from "./addon-application";
@@ -65,6 +65,7 @@ export async function generate(
         ...options.config,
         payments: normalizePayments(options.config.payments),
         observability: normalizeObservability(options.config.observability),
+        communication: normalizeCommunication(options.config.communication ?? []),
       };
       const { templates } = options;
 

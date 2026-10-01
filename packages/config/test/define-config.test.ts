@@ -18,7 +18,7 @@ describe("defineKuboConfig", () => {
       auth: "none",
       payments: [],
       observability: [],
-      communication: "none",
+      communication: [],
       packageManager: "bun",
       dbSetup: "none",
       api: "trpc",

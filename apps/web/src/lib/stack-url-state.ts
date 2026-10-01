@@ -30,7 +30,7 @@ const canonicalServerStackParsers = {
   auth: parseAsStringServer.withDefault(DEFAULT_STACK.auth),
   payments: parseAsArrayOfServer(parseAsStringServer).withDefault(DEFAULT_STACK.payments),
   observability: parseAsArrayOfServer(parseAsStringServer).withDefault(DEFAULT_STACK.observability),
-  communication: parseAsStringServer.withDefault(DEFAULT_STACK.communication),
+  communication: parseAsArrayOfServer(parseAsStringServer).withDefault(DEFAULT_STACK.communication),
   packageManager: parseAsStringServer.withDefault(DEFAULT_STACK.packageManager),
   addons: parseAsArrayOfServer(parseAsStringServer).withDefault(DEFAULT_STACK.addons),
   testing: parseAsArrayOfServer(parseAsStringServer).withDefault(DEFAULT_STACK.testing),

@@ -342,7 +342,7 @@ function buildConvexBackendVars(
 
   const vars: EnvVariable[] = [];
 
-  if (communication === "arara") {
+  if (communication.includes("arara")) {
     vars.push({
       key: "ARARA_API_KEY",
       value: "",
@@ -553,37 +553,37 @@ function buildServerVars(
     {
       key: "RESEND_API_KEY",
       value: "",
-      condition: communication === "resend",
+      condition: communication.includes("resend"),
       comment: "Resend API key (re_xxx) — optional until you send email",
     },
     {
       key: "RESEND_FROM_EMAIL",
       value: "Acme <onboarding@resend.dev>",
-      condition: communication === "resend",
+      condition: communication.includes("resend"),
       comment: "Default From address (test domain until you verify your own)",
     },
     {
       key: "NOTIFIQUE_API_KEY",
       value: "",
-      condition: communication === "notifique",
+      condition: communication.includes("notifique"),
       comment: "Notifique API key (sk_live_… or sk_test_…) — required by packages/env schema",
     },
     {
       key: "NOTIFIQUE_WHATSAPP_INSTANCE_ID",
       value: "",
-      condition: communication === "notifique",
+      condition: communication.includes("notifique"),
       comment: "Optional WhatsApp instance id — pass to sendWhatsAppText({ instanceId })",
     },
     {
       key: "NOTIFIQUE_FROM_EMAIL",
       value: "Acme <noreply@example.com>",
-      condition: communication === "notifique",
+      condition: communication.includes("notifique"),
       comment: "Default From (replace with a VERIFIED domain sender)",
     },
     {
       key: "ARARA_API_KEY",
       value: "",
-      condition: communication === "arara",
+      condition: communication.includes("arara"),
       comment: "AraraHQ API key — used only by server-side Node SDK code",
     },
     {

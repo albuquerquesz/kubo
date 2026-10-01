@@ -3,9 +3,12 @@ import { httpRouter } from "convex/server";
 import { parseAnalyticsEventPayload } from "../shared/analytics-event";
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
+import { authComponent, createAuth } from "./auth";
 import { ossStats } from "./stats";
 
 const http = httpRouter();
+
+authComponent.registerRoutesLazy(http, createAuth);
 
 http.route({
   path: "/api/analytics/ingest",

@@ -67,7 +67,8 @@ function isMultiValueCategory(category: TechCategory): boolean {
     category === "testing" ||
     category === "examples" ||
     category === "payments" ||
-    category === "observability"
+    category === "observability" ||
+    category === "communication"
   );
 }
 
