@@ -1,6 +1,6 @@
 {
   "name": "@kubojs/template-generator",
-  "version": "0.1.1",
+  "version": "0.3.0",
   "description": "Virtual file system generator for kubojs templates - works in browsers and Node.js",
   "keywords": [
     "cli",
@@ -49,7 +49,7 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@kubojs/types": "^0.1.1",
+    "@kubojs/types": "^0.3.0",
     "better-result": "^2.9.2",
     "handlebars": "^4.7.9",
     "memfs": "4.65.0",
