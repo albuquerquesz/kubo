@@ -146,11 +146,7 @@ export function normalizeStackState(value: unknown): StackState | null {
       ["getmonitor", "himetrica"] as const,
       DEFAULT_STACK.observability,
     ),
-    communication: selectValue(
-      raw.communication,
-      COMMUNICATION_VALUES,
-      DEFAULT_STACK.communication,
-    ),
+    communication: selectValues(raw.communication, COMMUNICATION_VALUES),
     git: readBoolean(raw.git, DEFAULT_STACK.git),
     packageManager: selectValue(
       raw.packageManager,
@@ -214,6 +210,7 @@ export function stackStateToProjectConfigDraft(stack: StackState): ProjectConfig
     testing: [...draft.testing],
     payments: [...draft.payments],
     observability: [...draft.observability],
+    communication: [...draft.communication],
   };
 }
 
@@ -229,6 +226,7 @@ export function projectConfigDraftToStackState(
     testing: [...draft.testing],
     payments: [...draft.payments],
     observability: [...draft.observability],
+    communication: [...draft.communication],
     yolo,
   };
 }
@@ -250,7 +248,8 @@ export function stackStateWithOption(
     category === "testing" ||
     category === "examples" ||
     category === "payments" ||
-    category === "observability"
+    category === "observability" ||
+    category === "communication"
   ) {
     const current = stack[category];
     const values = Array.isArray(current) ? current : [];

@@ -33,7 +33,7 @@ export const stackParsers = {
   auth: parseAsString.withDefault(DEFAULT_STACK.auth),
   payments: parseAsArrayOf(parseAsString).withDefault(DEFAULT_STACK.payments),
   observability: parseAsArrayOf(parseAsString).withDefault(DEFAULT_STACK.observability),
-  communication: parseAsString.withDefault(DEFAULT_STACK.communication),
+  communication: parseAsArrayOf(parseAsString).withDefault(DEFAULT_STACK.communication),
   packageManager: parseAsString.withDefault(DEFAULT_STACK.packageManager),
   addons: parseAsArrayOf(parseAsString).withDefault(DEFAULT_STACK.addons),
   testing: parseAsArrayOf(parseAsString).withDefault(DEFAULT_STACK.testing),
