@@ -68,15 +68,20 @@ export async function processCommunicationTemplates(
   templates: TemplateData,
   config: ProjectConfig,
 ): Promise<void> {
-  const provider = config.communication;
-  if (!provider || provider === "none") return;
+  for (const provider of config.communication) {
+    const integration = COMMUNICATION_CATALOG.find((entry) => entry.provider === provider);
+    if (!integration) continue;
 
-  const integration = COMMUNICATION_CATALOG.find((entry) => entry.provider === provider);
-  if (!integration) return;
+    for (const artifact of integration.artifacts) {
+      if (artifact.when && !artifact.when(config)) continue;
 
-  for (const artifact of integration.artifacts) {
-    if (artifact.when && !artifact.when(config)) continue;
-
-    processSingleTemplate(vfs, templates, artifact.templatePath, artifact.destinationPath, config);
+      processSingleTemplate(
+        vfs,
+        templates,
+        artifact.templatePath,
+        artifact.destinationPath,
+        config,
+      );
+    }
   }
 }

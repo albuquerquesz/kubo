@@ -145,12 +145,18 @@ const INTEGRATION_SETUPS: readonly IntegrationSetup[] = [
     enabled: (config) => config.observability.includes("himetrica"),
     render: () => generateHimetricaSetup(),
   },
-  { enabled: (config) => config.communication === "resend", render: () => generateResendSetup() },
   {
-    enabled: (config) => config.communication === "notifique",
+    enabled: (config) => config.communication.includes("resend"),
+    render: () => generateResendSetup(),
+  },
+  {
+    enabled: (config) => config.communication.includes("notifique"),
     render: () => generateNotifiqueSetup(),
   },
-  { enabled: (config) => config.communication === "arara", render: generateAraraSetup },
+  {
+    enabled: (config) => config.communication.includes("arara"),
+    render: generateAraraSetup,
+  },
 ];
 
 const INTEGRATION_FEATURES: readonly IntegrationFeature[] = [
@@ -163,16 +169,16 @@ const INTEGRATION_FEATURES: readonly IntegrationFeature[] = [
     content: "- **Himetrica** - Browser analytics, error tracking, and Web Vitals",
   },
   {
-    enabled: (_observability, communication) => communication === "resend",
+    enabled: (_observability, communication) => communication.includes("resend"),
     content: "- **Resend** - Transactional email via packages/email",
   },
   {
-    enabled: (_observability, communication) => communication === "notifique",
+    enabled: (_observability, communication) => communication.includes("notifique"),
     content:
       "- **Notifique** - Omnichannel messaging (SMS, WhatsApp, email) via packages/notifique",
   },
   {
-    enabled: (_observability, communication) => communication === "arara",
+    enabled: (_observability, communication) => communication.includes("arara"),
     content: "- **AraraHQ** - WhatsApp messaging through the official Node SDK",
   },
 ];
