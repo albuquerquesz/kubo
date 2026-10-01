@@ -171,25 +171,8 @@ jobs:
       - name: Post-publish npm view verify
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          # npm registry can 404 briefly after publish; retry with backoff.
-          wait_for_npm_version() {
-            local pkg="$1"
-            local version="$2"
-            local attempts=12
-            local delay=5
-            local i got
-            for i in $(seq 1 "$attempts"); do
-              got=$(npm view "$pkg@$version" version 2>/dev/null || true)
-              if [ "$got" = "$version" ]; then
-                echo "OK $pkg@$got (attempt $i)"
-                return 0
-              fi
-              echo "Waiting for $pkg@$version (attempt $i/$attempts, got='${got:-missing}')..."
-              sleep "$delay"
-            done
-            echo "Error: expected $pkg@$version after $attempts attempts"
-            return 1
-          }
+          # shellcheck source=scripts/wait-for-npm-version.sh
+          source scripts/wait-for-npm-version.sh
 
           for pkg in create-kubojs @kubojs/cli @kubojs/types @kubojs/template-generator; do
             wait_for_npm_version "$pkg" "$VERSION"
@@ -414,25 +397,11 @@ jobs:
         if: steps.check-version.outputs.exists == 'false'
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          # npm registry can 404 briefly after publish; retry with backoff.
-          wait_for_npm_version() {
-            local pkg="$1"
-            local version="$2"
-            local attempts=12
-            local delay=5
-            local i got
-            for i in $(seq 1 "$attempts"); do
-              got=$(npm view "$pkg@$version" version 2>/dev/null || true)
-              if [ "$got" = "$version" ]; then
-                echo "OK $pkg@$got (attempt $i)"
-                return 0
-              fi
-              echo "Waiting for $pkg@$version (attempt $i/$attempts, got='${got:-missing}')..."
-              sleep "$delay"
-            done
-            echo "Error: expected $pkg@$version after $attempts attempts"
-            return 1
-          }
+          # create-kubojs often indexes slower than @kubojs/cli (same tarball, two names).
+          echo "Pausing before npm verify (registry indexing can take a few minutes)..."
+          sleep 30
+          # shellcheck source=scripts/wait-for-npm-version.sh
+          source scripts/wait-for-npm-version.sh
 
           for pkg in create-kubojs @kubojs/cli @kubojs/types @kubojs/template-generator; do
             wait_for_npm_version "$pkg" "$VERSION"

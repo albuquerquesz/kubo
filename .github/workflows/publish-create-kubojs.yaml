@@ -86,6 +86,9 @@ jobs:
 
       - name: Verify
         run: |
-          npm view create-kubojs version
+          VERSION="${{ inputs.version }}"
+          # shellcheck source=scripts/wait-for-npm-version.sh
+          source scripts/wait-for-npm-version.sh
+          wait_for_npm_version create-kubojs "$VERSION"
           npm view create-kubojs bin
           npm view create-kubojs name
