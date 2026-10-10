@@ -1423,7 +1423,6 @@ export abstract class HealthService {
   ["api/orpc/server/src/modules/todo/service.ts.hbs", `export abstract class TodoService {}
 `],
   ["api/orpc/server/src/routers/index.ts.hbs", `{{#if (eq api "orpc")}}
-import { {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}protectedProcedure, {{/if}}publicProcedure } from "../index";
 import type { RouterClient } from "@orpc/server";
 {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
 import { authModule } from "./modules/auth";
@@ -1447,10 +1446,7 @@ export const appRouter = {
 export type AppRouter = typeof appRouter;
 export type AppRouterClient = RouterClient<typeof appRouter>;
 {{else if (eq api "trpc")}}
-import {
-  {{#if (eq auth "better-auth")}}protectedProcedure, {{/if}}publicProcedure,
-  router,
-} from "../index";
+import { router } from "../index";
 {{#if (eq auth "better-auth")}}
 import { authModule } from "./modules/auth";
 {{/if}}
@@ -2469,7 +2465,6 @@ export abstract class HealthService {
   ["api/trpc/server/src/modules/todo/service.ts.hbs", `export abstract class TodoService {}
 `],
   ["api/trpc/server/src/routers/index.ts.hbs", `{{#if (eq api "orpc")}}
-import { {{#if (eq auth "better-auth")}}protectedProcedure, {{/if}}publicProcedure } from "../index";
 import type { RouterClient } from "@orpc/server";
 {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
 import { authModule } from "./modules/auth";
@@ -2493,10 +2488,7 @@ export const appRouter = {
 export type AppRouter = typeof appRouter;
 export type AppRouterClient = RouterClient<typeof appRouter>;
 {{else if (eq api "trpc")}}
-import {
-  {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}protectedProcedure, {{/if}}publicProcedure,
-  router,
-} from "../index";
+import { router } from "../index";
 {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
 import { authModule } from "./modules/auth";
 {{/if}}
@@ -27120,7 +27112,8 @@ module.exports = config;
     "android": "expo run:android",
     "ios": "expo run:ios",
     "prebuild": "expo prebuild",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@expo/ui": "~57.0.1",
@@ -28356,7 +28349,8 @@ module.exports = config;
     "dev": "expo start --clear",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
@@ -29423,7 +29417,8 @@ module.exports = uniwindConfig;
     "android": "expo run:android",
     "ios": "expo run:ios",
     "prebuild": "expo prebuild",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@expo/metro-runtime": "~57.0.2",
@@ -29861,9 +29856,9 @@ const nextConfig: NextConfig = {
 
 {{#if (includes observability "getmonitor")}}
 export default process.env.GETMONITOR_AUTH_TOKEN
-	? withGetMonitor(nextConfig, {
+	? (withGetMonitor(nextConfig as Parameters<typeof withGetMonitor>[0], {
 			authToken: process.env.GETMONITOR_AUTH_TOKEN,
-		})
+		}) as NextConfig)
 	: nextConfig;
 {{else}}
 export default nextConfig;
@@ -30443,7 +30438,7 @@ import { useEffect } from "react";
 import { setClerkAuthTokenGetter } from "@/utils/clerk-auth";
 {{/if}}
 {{#if (includes observability "getmonitor")}}
-import { GetMonitorErrorBoundary } from "./components/getmonitor";
+import { GetMonitorErrorBoundary } from "@getmonitor/react";
 {{/if}}
 
 {{#if (eq backend "convex")}}
@@ -31189,7 +31184,7 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import "../index.css";
 {{#if (includes observability "getmonitor")}}
-import { GetMonitorErrorBoundary } from "../components/getmonitor";
+import { GetMonitorErrorBoundary } from "@getmonitor/react";
 {{/if}}
 
 {{#if (eq api "orpc")}}
@@ -31688,7 +31683,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Header from "../components/header";
 import appCss from "../index.css?url";
 {{#if (includes observability "getmonitor")}}
-import { GetMonitorErrorBoundary } from "../components/getmonitor";
+import { GetMonitorErrorBoundary } from "@getmonitor/react";
 {{/if}}
 {{#if (eq backend "convex")}}
 import type { QueryClient } from "@tanstack/react-query";
@@ -33066,6 +33061,7 @@ import { env } from "@{{projectName}}/env/web";
 if (typeof window !== "undefined" && env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}}) {
   GetMonitor.init(env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}}, {
     environment: import.meta.env.MODE,
+    apiHost: "http://ingest.getmonitor.io",
     {{#if (hasReactFrontend frontend)}}// Avoid duplicate events: React logs boundary catches via console.error.
     captureConsoleErrors: false,
     {{/if}}
@@ -33084,6 +33080,7 @@ export function GetMonitorProvider() {
     if (apiKey) {
       GetMonitor.init(apiKey, {
         environment: process.env.NODE_ENV ?? "development",
+        apiHost: "http://ingest.getmonitor.io",
         // Avoid duplicate events: React logs boundary catches via console.error.
         captureConsoleErrors: false,
       });
@@ -33118,6 +33115,7 @@ export default defineNuxtPlugin(() => {
 
   GetMonitor.init(apiKey, {
     environment: process.env.NODE_ENV ?? "development",
+    apiHost: "http://ingest.getmonitor.io",
   });
 });
 `],
@@ -33462,7 +33460,7 @@ export const env = new Proxy({} as Env, {
 export { env } from "cloudflare:workers";
 {{else}}
 import { config } from "dotenv";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
@@ -33470,7 +33468,7 @@ import { z } from "zod";
 // Load monorepo package env relative to this file (not process.cwd()).
 // Turbo/\`bun run\` from the workspace root would otherwise miss apps/*/ .env.
 const envFilePath = resolve(
-	fileURLToPath(new URL(".", import.meta.url)),
+	dirname(fileURLToPath(import.meta.url)),
 {{#if (eq backend "self")}}
 	"../../../apps/web/.env",
 {{else}}

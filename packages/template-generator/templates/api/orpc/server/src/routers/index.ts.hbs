@@ -1,5 +1,4 @@
 {{#if (eq api "orpc")}}
-import { {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}protectedProcedure, {{/if}}publicProcedure } from "../index";
 import type { RouterClient } from "@orpc/server";
 {{#if (or (eq auth "better-auth") (eq auth "clerk"))}}
 import { authModule } from "./modules/auth";
@@ -23,10 +22,7 @@ export const appRouter = {
 export type AppRouter = typeof appRouter;
 export type AppRouterClient = RouterClient<typeof appRouter>;
 {{else if (eq api "trpc")}}
-import {
-  {{#if (eq auth "better-auth")}}protectedProcedure, {{/if}}publicProcedure,
-  router,
-} from "../index";
+import { router } from "../index";
 {{#if (eq auth "better-auth")}}
 import { authModule } from "./modules/auth";
 {{/if}}

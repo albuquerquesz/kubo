@@ -25,9 +25,9 @@ const nextConfig: NextConfig = {
 
 {{#if (includes observability "getmonitor")}}
 export default process.env.GETMONITOR_AUTH_TOKEN
-	? withGetMonitor(nextConfig, {
+	? (withGetMonitor(nextConfig as Parameters<typeof withGetMonitor>[0], {
 			authToken: process.env.GETMONITOR_AUTH_TOKEN,
-		})
+		}) as NextConfig)
 	: nextConfig;
 {{else}}
 export default nextConfig;

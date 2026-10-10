@@ -10,6 +10,7 @@ export function GetMonitorProvider() {
     if (apiKey) {
       GetMonitor.init(apiKey, {
         environment: process.env.NODE_ENV ?? "development",
+        apiHost: "http://ingest.getmonitor.io",
         // Avoid duplicate events: React logs boundary catches via console.error.
         captureConsoleErrors: false,
       });

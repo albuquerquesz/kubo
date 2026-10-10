@@ -6,5 +6,6 @@ export default defineNuxtPlugin(() => {
 
   GetMonitor.init(apiKey, {
     environment: process.env.NODE_ENV ?? "development",
+    apiHost: "http://ingest.getmonitor.io",
   });
 });

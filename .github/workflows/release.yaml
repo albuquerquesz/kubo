@@ -80,7 +80,7 @@ jobs:
       - name: Guard repository.url for OIDC provenance
         run: |
           EXPECTED='git+https://github.com/albuquerquesz/kubo.git'
-          for pkg in apps/cli/package.json packages/types/package.json packages/template-generator/package.json; do
+          for pkg in apps/cli/package.json packages/types/package.json packages/config/package.json packages/template-generator/package.json; do
             url=$(jq -r '.repository.url // empty' "$pkg")
             if [ "$url" != "$EXPECTED" ]; then
               echo "Error: $pkg repository.url is '$url', expected '$EXPECTED'"
@@ -125,6 +125,10 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
           cd packages/types
           jq --arg v "$VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
+          cd ../config
+          jq --arg v "$VERSION" --arg dep "$VERSION" \
+            '.version = $v | .dependencies["@kubojs/types"] = $dep' \
+            package.json > tmp.json && mv tmp.json package.json
           cd ../template-generator
           jq --arg v "$VERSION" --arg dep "$VERSION" \
             '.version = $v | .dependencies["@kubojs/types"] = $dep' \
@@ -137,6 +141,7 @@ jobs:
       - name: Build packages
         run: |
           cd packages/types && bun run build
+          cd ../config && bun run build
           cd ../template-generator && bun run build
           cd ../../apps/cli && bun run build
         env:
@@ -153,6 +158,9 @@ jobs:
       # OIDC only — do NOT set NODE_AUTH_TOKEN on canary publish steps
       - name: Publish types (OIDC canary)
         run: cd packages/types && npm publish --access public --provenance --tag oidc-canary
+
+      - name: Publish config (OIDC canary)
+        run: cd packages/config && npm publish --access public --provenance --tag oidc-canary
 
       - name: Publish template-generator (OIDC canary)
         run: cd packages/template-generator && npm publish --access public --provenance --tag oidc-canary
@@ -174,7 +182,7 @@ jobs:
           # shellcheck source=scripts/wait-for-npm-version.sh
           source scripts/wait-for-npm-version.sh
 
-          for pkg in create-kubojs @kubojs/cli @kubojs/types @kubojs/template-generator; do
+          for pkg in create-kubojs @kubojs/cli @kubojs/types @kubojs/config @kubojs/template-generator; do
             wait_for_npm_version "$pkg" "$VERSION"
           done
 
@@ -252,7 +260,7 @@ jobs:
       - name: Guard repository.url for OIDC provenance
         run: |
           EXPECTED='git+https://github.com/albuquerquesz/kubo.git'
-          for pkg in apps/cli/package.json packages/types/package.json packages/template-generator/package.json; do
+          for pkg in apps/cli/package.json packages/types/package.json packages/config/package.json packages/template-generator/package.json; do
             url=$(jq -r '.repository.url // empty' "$pkg")
             if [ "$url" != "$EXPECTED" ]; then
               echo "Error: $pkg repository.url is '$url', expected '$EXPECTED'"
@@ -308,6 +316,17 @@ jobs:
       - name: Build types package
         if: steps.check-version.outputs.exists == 'false'
         run: cd packages/types && bun run build
+
+      - name: Update config package version and types dependency
+        if: steps.check-version.outputs.exists == 'false'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          cd packages/config
+          jq --arg v "$VERSION" --arg dep "^$VERSION" '.version = $v | .dependencies["@kubojs/types"] = $dep' package.json > tmp.json && mv tmp.json package.json
+
+      - name: Build config package
+        if: steps.check-version.outputs.exists == 'false'
+        run: cd packages/config && bun run build
 
       - name: Update template-generator package version and types dependency
         if: steps.check-version.outputs.exists == 'false'
@@ -365,6 +384,14 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # Generated projects depend on @kubojs/config@<cli version>; it must ship every release.
+      - name: Publish config to NPM
+        if: steps.check-version.outputs.exists == 'false'
+        run: cd packages/config && npm publish --access public --tag latest
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Publish template-generator to NPM
         if: steps.check-version.outputs.exists == 'false'
         run: cd packages/template-generator && npm publish --access public --tag latest
@@ -403,7 +430,7 @@ jobs:
           # shellcheck source=scripts/wait-for-npm-version.sh
           source scripts/wait-for-npm-version.sh
 
-          for pkg in create-kubojs @kubojs/cli @kubojs/types @kubojs/template-generator; do
+          for pkg in create-kubojs @kubojs/cli @kubojs/types @kubojs/config @kubojs/template-generator; do
             wait_for_npm_version "$pkg" "$VERSION"
           done
 
@@ -445,6 +472,7 @@ jobs:
           echo "- [create-kubojs@$VERSION](https://www.npmjs.com/package/create-kubojs/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
           echo "- [@kubojs/cli@$VERSION](https://www.npmjs.com/package/@kubojs/cli/v/$VERSION) (compat alias)" >> $GITHUB_STEP_SUMMARY
           echo "- [@kubojs/types@$VERSION](https://www.npmjs.com/package/@kubojs/types/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
+          echo "- [@kubojs/config@$VERSION](https://www.npmjs.com/package/@kubojs/config/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
           echo "- [@kubojs/template-generator@$VERSION](https://www.npmjs.com/package/@kubojs/template-generator/v/$VERSION)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### GitHub Release" >> $GITHUB_STEP_SUMMARY

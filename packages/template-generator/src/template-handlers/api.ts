@@ -8,10 +8,15 @@ import {
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix, processSingleTemplate } from "./utils";
 
-function moveGeneratedFile(vfs: VirtualFileSystem, from: string, to: string): void {
+function moveGeneratedFile(
+  vfs: VirtualFileSystem,
+  from: string,
+  to: string,
+  transform?: (content: string) => string,
+): void {
   const content = vfs.readFile(from);
   if (content === undefined) return;
-  vfs.writeFile(to, content);
+  vfs.writeFile(to, transform ? transform(content) : content);
   vfs.deleteFile(from);
 }
 
@@ -37,7 +42,11 @@ export async function processApiTemplates(
     );
     return;
   }
-  moveGeneratedFile(vfs, "apps/api/src/routers/index.ts", "apps/api/src/router.ts");
+  // src/routers/index.ts moves up one level to src/router.ts, so its parent-relative
+  // imports (e.g. "../index") must become sibling-relative ("./index").
+  moveGeneratedFile(vfs, "apps/api/src/routers/index.ts", "apps/api/src/router.ts", (content) =>
+    content.replace(/(from\s+["'])\.\.\//g, "$1./"),
+  );
   vfs.writeFile("apps/api/src/routers/index.ts", 'export * from "../router";\n');
 
   const hasReactWeb = hasReactFrontend(config.frontend);

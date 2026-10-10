@@ -192,7 +192,7 @@ export const dependencyVersionMap = {
   "@getmonitor/browser": "^0.1.0",
   "@getmonitor/node": "^0.1.0",
   "@getmonitor/react": "^0.1.0",
-  "@getmonitor/nextjs-config": "^0.1.0",
+  "@getmonitor/nextjs-config": "^0.3.5",
   "@getmonitor/nuxt": "^0.1.0",
 
   resend: "^6.19.0",

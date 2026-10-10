@@ -15,7 +15,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Header from "../components/header";
 import appCss from "../index.css?url";
 {{#if (includes observability "getmonitor")}}
-import { GetMonitorErrorBoundary } from "../components/getmonitor";
+import { GetMonitorErrorBoundary } from "@getmonitor/react";
 {{/if}}
 {{#if (eq backend "convex")}}
 import type { QueryClient } from "@tanstack/react-query";

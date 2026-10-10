@@ -6,6 +6,7 @@ import { $ } from "bun";
 
 const CLI_PACKAGE_JSON_PATH = join(process.cwd(), "apps/cli/package.json");
 const TYPES_PACKAGE_JSON_PATH = join(process.cwd(), "packages/types/package.json");
+const CONFIG_PACKAGE_JSON_PATH = join(process.cwd(), "packages/config/package.json");
 const TEMPLATE_GENERATOR_PACKAGE_JSON_PATH = join(
   process.cwd(),
   "packages/template-generator/package.json",
@@ -106,6 +107,13 @@ async function main(): Promise<void> {
   typesPackageJson.version = newVersion;
   await writeFile(TYPES_PACKAGE_JSON_PATH, `${JSON.stringify(typesPackageJson, null, 2)}\n`);
 
+  // Update config package version and types dependency (generated projects
+  // depend on @kubojs/config@<cli version>, so it must be released in lockstep)
+  const configPackageJson = JSON.parse(await readFile(CONFIG_PACKAGE_JSON_PATH, "utf-8"));
+  configPackageJson.version = newVersion;
+  configPackageJson.dependencies["@kubojs/types"] = `^${newVersion}`;
+  await writeFile(CONFIG_PACKAGE_JSON_PATH, `${JSON.stringify(configPackageJson, null, 2)}\n`);
+
   // Update template-generator package version and types dependency
   const templateGeneratorPackageJson = JSON.parse(
     await readFile(TEMPLATE_GENERATOR_PACKAGE_JSON_PATH, "utf-8"),
@@ -119,7 +127,7 @@ async function main(): Promise<void> {
 
   await $`bun install`;
   await $`bun run build:cli`;
-  await $`git add apps/cli/package.json packages/types/package.json packages/template-generator/package.json bun.lock`;
+  await $`git add apps/cli/package.json packages/types/package.json packages/config/package.json packages/template-generator/package.json bun.lock`;
   await $`git commit -m "chore(release): ${newVersion}"`;
 
   // Push the release branch
@@ -136,6 +144,7 @@ This PR bumps the version to \`${newVersion}\`.
 ### Changes
 - Updated \`create-kubojs\` to v${newVersion}
 - Updated \`@kubojs/types\` to v${newVersion}
+- Updated \`@kubojs/config\` to v${newVersion}
 - Updated \`@kubojs/template-generator\` to v${newVersion}
 ### Preview Release
 A preview release will be published automatically and posted as a PR comment.
