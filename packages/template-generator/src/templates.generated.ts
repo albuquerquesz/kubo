@@ -33547,6 +33547,12 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		GETMONITOR_API_KEY: z.string().min(1).optional(),
 	{{/if}}
+	{{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: z.string().min(1),
+    MILLIONSEND_BASE_URL: z.url().default("https://api.millionsend.com"),
+    // Placeholder only; replace with a verified sender before sending.
+    MILLIONSEND_FROM_EMAIL: z.string().min(1).default("Acme <noreply@example.com>"),
+  {{/if}}
 	{{#if (includes communication "resend")}}
 		RESEND_API_KEY: z.string().min(1).optional(),
 		// Test-only default; replace with a verified domain sender for production.
@@ -33857,6 +33863,11 @@ export const server = await Worker("server", {
     DATABASE_URL: alchemy.secret.env.DATABASE_URL!,
     {{/if}}
     CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+    {{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: alchemy.secret.env.MILLIONSEND_API_KEY!,
+    MILLIONSEND_BASE_URL: alchemy.env.MILLIONSEND_BASE_URL ?? "https://api.millionsend.com",
+    MILLIONSEND_FROM_EMAIL: alchemy.env.MILLIONSEND_FROM_EMAIL ?? "Acme <noreply@example.com>",
+    {{/if}}
     {{#if (eq auth "better-auth")}}
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
@@ -33925,6 +33936,13 @@ export const web = await Nextjs("web", {
     {{/if}}
     {{#if (ne backend "convex")}}
     CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+    {{#if (eq backend "self")}}
+    {{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: alchemy.secret.env.MILLIONSEND_API_KEY!,
+    MILLIONSEND_BASE_URL: alchemy.env.MILLIONSEND_BASE_URL ?? "https://api.millionsend.com",
+    MILLIONSEND_FROM_EMAIL: alchemy.env.MILLIONSEND_FROM_EMAIL ?? "Acme <noreply@example.com>",
+    {{/if}}
+    {{/if}}
     {{#if (eq auth "better-auth")}}
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
@@ -33994,6 +34012,13 @@ export const web = await Nuxt("web", {
     {{/if}}
     {{#if (ne backend "convex")}}
     CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+    {{#if (eq backend "self")}}
+    {{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: alchemy.secret.env.MILLIONSEND_API_KEY!,
+    MILLIONSEND_BASE_URL: alchemy.env.MILLIONSEND_BASE_URL ?? "https://api.millionsend.com",
+    MILLIONSEND_FROM_EMAIL: alchemy.env.MILLIONSEND_FROM_EMAIL ?? "Acme <noreply@example.com>",
+    {{/if}}
+    {{/if}}
     {{#if (eq auth "better-auth")}}
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
@@ -34058,6 +34083,13 @@ export const web = await SvelteKit("web", {
     DATABASE_URL: alchemy.secret.env.DATABASE_URL!,
     {{/if}}
     CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+    {{#if (eq backend "self")}}
+    {{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: alchemy.secret.env.MILLIONSEND_API_KEY!,
+    MILLIONSEND_BASE_URL: alchemy.env.MILLIONSEND_BASE_URL ?? "https://api.millionsend.com",
+    MILLIONSEND_FROM_EMAIL: alchemy.env.MILLIONSEND_FROM_EMAIL ?? "Acme <noreply@example.com>",
+    {{/if}}
+    {{/if}}
     {{#if (eq auth "better-auth")}}
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
@@ -34118,6 +34150,13 @@ export const web = await TanStackStart("web", {
     {{/if}}
     {{#if (ne backend "convex")}}
     CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+    {{#if (eq backend "self")}}
+    {{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: alchemy.secret.env.MILLIONSEND_API_KEY!,
+    MILLIONSEND_BASE_URL: alchemy.env.MILLIONSEND_BASE_URL ?? "https://api.millionsend.com",
+    MILLIONSEND_FROM_EMAIL: alchemy.env.MILLIONSEND_FROM_EMAIL ?? "Acme <noreply@example.com>",
+    {{/if}}
+    {{/if}}
     {{#if (eq auth "better-auth")}}
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
@@ -34237,6 +34276,13 @@ export const web = await Astro("web", {
     DATABASE_URL: alchemy.secret.env.DATABASE_URL!,
     {{/if}}
     CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+    {{#if (eq backend "self")}}
+    {{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: alchemy.secret.env.MILLIONSEND_API_KEY!,
+    MILLIONSEND_BASE_URL: alchemy.env.MILLIONSEND_BASE_URL ?? "https://api.millionsend.com",
+    MILLIONSEND_FROM_EMAIL: alchemy.env.MILLIONSEND_FROM_EMAIL ?? "Acme <noreply@example.com>",
+    {{/if}}
+    {{/if}}
     {{#if (eq auth "better-auth")}}
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
@@ -34290,6 +34336,86 @@ await app.finalize();
     "dev": "alchemy dev",
     "deploy": "alchemy deploy",
     "destroy": "alchemy destroy"
+  }
+}
+`],
+  ["packages/millionsend/package.json.hbs", `{
+  "name": "@{{projectName}}/millionsend",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "devDependencies": {}
+}
+`],
+  ["packages/millionsend/src/index.ts.hbs", `export { millionsend } from "./lib/client";
+export { sendEmail, type SendEmailInput } from "./lib/email";
+`],
+  ["packages/millionsend/src/lib/client.ts.hbs", `import { MillionSend } from "millionsend";
+{{#if (eq backend "convex")}}
+
+const apiKey = process.env.MILLIONSEND_API_KEY;
+const baseUrl = process.env.MILLIONSEND_BASE_URL;
+{{else}}
+import { env } from "@{{projectName}}/env/server";
+
+const apiKey = env.MILLIONSEND_API_KEY;
+const baseUrl = env.MILLIONSEND_BASE_URL;
+{{/if}}
+
+export const millionsend = new MillionSend(apiKey, {
+  baseUrl: baseUrl ?? "https://api.millionsend.com",
+});
+`],
+  ["packages/millionsend/src/lib/email.ts.hbs", `import { millionsend } from "./client";
+{{#unless (eq backend "convex")}}
+import { env } from "@{{projectName}}/env/server";
+{{/unless}}
+
+export type SendEmailInput = {
+  to: string | string[];
+  subject: string;
+  html: string;
+  from?: string;
+  replyTo?: string | string[];
+  /** Reuse this key when retrying the same send. */
+  idempotencyKey?: string;
+};
+
+/** Send a transactional email via MillionSend. */
+export async function sendEmail(input: SendEmailInput) {
+  const { idempotencyKey, from, ...message } = input;
+{{#if (eq backend "convex")}}
+  const defaultFrom = process.env.MILLIONSEND_FROM_EMAIL;
+{{else}}
+  const defaultFrom = env.MILLIONSEND_FROM_EMAIL;
+{{/if}}
+  const { data, error } = await millionsend.emails.send(
+    {
+      ...message,
+      from: from ?? defaultFrom ?? "Acme <noreply@example.com>",
+    },
+    idempotencyKey ? { idempotencyKey } : undefined,
+  );
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+`],
+  ["packages/millionsend/tsconfig.json.hbs", `{
+  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "composite": true
   }
 }
 `],
@@ -38071,4 +38197,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 630;
+export const TEMPLATE_COUNT = 635;

@@ -179,6 +179,12 @@ export const env = createEnv({
 {{#if (includes observability "getmonitor")}}
 		GETMONITOR_API_KEY: z.string().min(1).optional(),
 	{{/if}}
+	{{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: z.string().min(1),
+    MILLIONSEND_BASE_URL: z.url().default("https://api.millionsend.com"),
+    // Placeholder only; replace with a verified sender before sending.
+    MILLIONSEND_FROM_EMAIL: z.string().min(1).default("Acme <noreply@example.com>"),
+  {{/if}}
 	{{#if (includes communication "resend")}}
 		RESEND_API_KEY: z.string().min(1).optional(),
 		// Test-only default; replace with a verified domain sender for production.

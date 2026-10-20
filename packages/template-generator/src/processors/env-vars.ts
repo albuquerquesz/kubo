@@ -22,6 +22,31 @@ type AddEnvVariablesOptions = {
 const CONVEX_URL_PLACEHOLDER = "https://example.convex.cloud";
 const CONVEX_SITE_URL_PLACEHOLDER = "https://example.convex.site";
 
+function buildMillionSendVars(communication: ProjectConfig["communication"]): EnvVariable[] {
+  if (!communication.includes("millionsend")) return [];
+
+  return [
+    {
+      key: "MILLIONSEND_API_KEY",
+      value: "",
+      condition: true,
+      comment: "MillionSend API key (ms_...) — required before importing the client",
+    },
+    {
+      key: "MILLIONSEND_BASE_URL",
+      value: "https://api.millionsend.com",
+      condition: true,
+      comment: "Optional API origin — replace for self-hosting",
+    },
+    {
+      key: "MILLIONSEND_FROM_EMAIL",
+      value: "Acme <noreply@example.com>",
+      condition: true,
+      comment: "Replace this placeholder with a verified domain sender before sending",
+    },
+  ];
+}
+
 function buildS3StorageVars(addons: ProjectConfig["addons"]): EnvVariable[] {
   if (!addons.includes("s3-storage")) return [];
 
@@ -74,13 +99,13 @@ function generateRandomString(length: number, charset: string) {
       }
     }
     return result;
-  } else {
-    // Fallback for environments without crypto
-    for (let i = 0; i < length; i++) {
-      result += charset[Math.floor(Math.random() * charset.length)];
-    }
-    return result;
   }
+
+  // Fallback for environments without crypto
+  for (let i = 0; i < length; i++) {
+    result += charset[Math.floor(Math.random() * charset.length)];
+  }
+  return result;
 }
 
 function generateAuthSecret() {
@@ -340,7 +365,7 @@ function buildConvexBackendVars(
   const defaultSiteUrl =
     hasNative && !hasWeb ? "http://localhost:8081" : `http://localhost:${getWebPort(frontend)}`;
 
-  const vars: EnvVariable[] = [];
+  const vars: EnvVariable[] = buildMillionSendVars(communication);
 
   if (communication.includes("arara")) {
     vars.push({
@@ -550,6 +575,7 @@ function buildServerVars(
       condition: observability.includes("getmonitor"),
       comment: "GetMonitor public project key (gm_xxx)",
     },
+    ...buildMillionSendVars(communication),
     {
       key: "RESEND_API_KEY",
       value: "",

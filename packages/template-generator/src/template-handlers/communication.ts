@@ -25,6 +25,16 @@ const packageArtifacts = (
 
 const COMMUNICATION_CATALOG: readonly CommunicationCatalogEntry[] = [
   {
+    provider: "millionsend",
+    artifacts: packageArtifacts("packages/millionsend", [
+      "package.json",
+      "tsconfig.json",
+      "src/index.ts",
+      "src/lib/client.ts",
+      "src/lib/email.ts",
+    ]),
+  },
+  {
     provider: "resend",
     artifacts: packageArtifacts("packages/email", [
       "package.json",

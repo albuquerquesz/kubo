@@ -26,6 +26,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     payments: vfs.exists("packages/payments/package.json"),
     email: vfs.exists("packages/email/package.json"),
     notifique: vfs.exists("packages/notifique/package.json"),
+    millionsend: vfs.exists("packages/millionsend/package.json"),
     arara: vfs.exists("packages/arara/package.json"),
     api: vfs.exists("apps/api/package.json"),
     ui: vfs.exists("packages/ui/package.json"),
@@ -132,6 +133,17 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     });
   }
 
+  if (packages.millionsend) {
+    addPackageDependency({
+      vfs,
+      packagePath: "packages/millionsend/package.json",
+      dependencies: ["millionsend"],
+      devDependencies: ["typescript"],
+      customDependencies: backend === "convex" ? {} : envDep,
+      customDevDependencies: configDep,
+    });
+  }
+
   if (packages.notifique) {
     addPackageDependency({
       vfs,
@@ -173,6 +185,9 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
 
   if (packages.backend) {
     const backendDeps: Record<string, string> = {};
+    if (packages.millionsend) {
+      backendDeps[`@${projectName}/millionsend`] = workspaceVersion;
+    }
     if (config.communication.includes("arara") && packages.arara) {
       backendDeps[`@${projectName}/arara`] = workspaceVersion;
     }
@@ -192,6 +207,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     if (auth !== "none" && packages.auth) serverDeps[`@${projectName}/auth`] = workspaceVersion;
     if (database !== "none" && packages.db) serverDeps[`@${projectName}/db`] = workspaceVersion;
     if (packages.payments) serverDeps[`@${projectName}/payments`] = workspaceVersion;
+    if (packages.millionsend) serverDeps[`@${projectName}/millionsend`] = workspaceVersion;
     if (packages.email) serverDeps[`@${projectName}/email`] = workspaceVersion;
     if (packages.notifique) serverDeps[`@${projectName}/notifique`] = workspaceVersion;
     if (packages.arara) serverDeps[`@${projectName}/arara`] = workspaceVersion;
@@ -214,6 +230,9 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     }
     if (backend === "self" && packages.payments) {
       webPackageDeps[`@${projectName}/payments`] = workspaceVersion;
+    }
+    if (backend === "self" && packages.millionsend) {
+      webPackageDeps[`@${projectName}/millionsend`] = workspaceVersion;
     }
     if (backend === "self" && packages.email) {
       webPackageDeps[`@${projectName}/email`] = workspaceVersion;
@@ -262,8 +281,5 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
 }
 
 function getRuntimeDevDeps(runtime: ProjectConfig["runtime"]): AvailableDependencies[] {
-  if (runtime === "none") return ["@types/node"];
-  if (runtime === "node" || runtime === "workers") return ["@types/node"];
-  if (runtime === "bun") return ["@types/bun"];
-  return [];
+  return runtime === "bun" ? ["@types/bun"] : ["@types/node"];
 }

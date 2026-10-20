@@ -43,6 +43,47 @@ This project includes the [Himetrica TypeScript tracker](https://www.himetrica.c
 The generated integration is browser-only. Keep Himetrica secret keys out of client projects and use the Himetrica Server API from a server-only module for trusted backend events.
 `;
 
+const generateMillionSendSetup = (config: ProjectConfig): string => {
+  const envPath =
+    config.backend === "convex"
+      ? "packages/backend/.env.local"
+      : config.backend === "self"
+        ? "apps/web/.env"
+        : "apps/server/.env";
+  const convexNote =
+    config.backend === "convex"
+      ? "For hosted Convex, configure these values in the Convex deployment environment (for example with `bunx convex env set MILLIONSEND_API_KEY <key>`). Import the package only from backend Actions; no web env loader is used."
+      : "";
+
+  return `
+## MillionSend Setup
+
+This project includes the official [MillionSend TypeScript SDK](https://github.com/MillionSend/millionsend-node) through \`packages/millionsend\`.
+
+1. Set \`MILLIONSEND_API_KEY\` (\`ms_...\`) in \`${envPath}\` **before importing the client**. The SDK creates the client once and throws if the key is missing.
+2. Replace \`MILLIONSEND_FROM_EMAIL\` with a verified domain sender. The generated \`noreply@example.com\` address is a placeholder.
+3. Cloud uses \`https://api.millionsend.com\`. For self-hosting, set \`MILLIONSEND_BASE_URL\` to your API origin. Loopback HTTP is allowed; other plain HTTP origins require explicitly changing the client's SDK options to \`allowInsecureHttp: true\`. HTTPS is recommended.
+
+${convexNote}
+
+\`\`\`ts
+import { millionsend, sendEmail } from "@${config.projectName}/millionsend";
+
+await sendEmail({
+  to: "user@example.com",
+  subject: "Hello",
+  html: "<strong>It works!</strong>",
+  idempotencyKey: "welcome/user-123",
+});
+
+// The complete SDK is available, including received mail and inboxes.
+const { data, error } = await millionsend.emails.receiving.list({ inboxId: "your-inbox-id" });
+\`\`\`
+
+Reuse an idempotency key for retries of the same send. The helper returns the sent data and throws on SDK errors; the raw client returns \`{ data, error }\`.
+`;
+};
+
 const generateResendSetup = (): string => `
 ## Resend Setup
 
@@ -146,6 +187,10 @@ const INTEGRATION_SETUPS: readonly IntegrationSetup[] = [
     render: () => generateHimetricaSetup(),
   },
   {
+    enabled: (config) => config.communication.includes("millionsend"),
+    render: generateMillionSendSetup,
+  },
+  {
     enabled: (config) => config.communication.includes("resend"),
     render: () => generateResendSetup(),
   },
@@ -167,6 +212,10 @@ const INTEGRATION_FEATURES: readonly IntegrationFeature[] = [
   {
     enabled: (observability) => observability.includes("himetrica"),
     content: "- **Himetrica** - Browser analytics, error tracking, and Web Vitals",
+  },
+  {
+    enabled: (_observability, communication) => communication.includes("millionsend"),
+    content: "- **MillionSend** - Cloud or self-hosted email via packages/millionsend",
   },
   {
     enabled: (_observability, communication) => communication.includes("resend"),

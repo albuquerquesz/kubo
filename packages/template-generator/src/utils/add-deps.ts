@@ -196,6 +196,7 @@ export const dependencyVersionMap = {
   "@getmonitor/nuxt": "^0.1.0",
 
   resend: "^6.19.0",
+  millionsend: "^0.10.0",
   "@ararahq/sdk": "^1.8.1",
   stripe: "^22.4.0",
   "@stripe/stripe-js": "^7.9.0",
@@ -233,7 +234,7 @@ export function addPackageDependency(options: AddDepsOptions): void {
 
   for (const dep of dependencies) {
     if (!pkgJson.dependencies[dep]) {
-      const version = dependencyVersionMap[dep as AvailableDependencies];
+      const version = dependencyVersionMap[dep];
       if (!version) {
         throw new Error(
           `Missing version for dependency: ${dep}. Add it to dependencyVersionMap in add-deps.ts`,
@@ -247,7 +248,7 @@ export function addPackageDependency(options: AddDepsOptions): void {
 
   for (const dep of devDependencies) {
     if (!pkgJson.devDependencies[dep] && !pkgJson.dependencies[dep]) {
-      const version = dependencyVersionMap[dep as AvailableDependencies];
+      const version = dependencyVersionMap[dep];
       if (!version) {
         throw new Error(
           `Missing version for devDependency: ${dep}. Add it to dependencyVersionMap in add-deps.ts`,

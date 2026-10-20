@@ -24,6 +24,27 @@ async function withProjectDir(
 }
 
 describe("resolveLayout", () => {
+  it("resolves custom MillionSend package paths and files", async () => {
+    await withProjectDir(
+      "millionsend-layout",
+      async (projectDir) => {
+        await fs.ensureDir(path.join(projectDir, "apps/web"));
+      },
+      (projectDir) => {
+        const result = resolveLayout(
+          { preset: "standard", packages: { millionsend: "packages/mail" } },
+          projectDir,
+        );
+        if (result.isErr()) throw result.error;
+        expect(result.value.path("millionsend", "package")).toBe("packages/mail");
+        expect(result.value.file("millionsend", "package", "src", "index.ts")).toBe(
+          "packages/mail/src/index.ts",
+        );
+        expect(result.value.file("web", "app", "src", "index.ts")).toBe("apps/web/src/index.ts");
+      },
+    );
+  });
+
   afterEach(async () => {
     await fs.remove(FIXTURE_ROOT);
   });

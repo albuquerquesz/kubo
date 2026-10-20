@@ -1,0 +1,15 @@
+import { MillionSend } from "millionsend";
+{{#if (eq backend "convex")}}
+
+const apiKey = process.env.MILLIONSEND_API_KEY;
+const baseUrl = process.env.MILLIONSEND_BASE_URL;
+{{else}}
+import { env } from "@{{projectName}}/env/server";
+
+const apiKey = env.MILLIONSEND_API_KEY;
+const baseUrl = env.MILLIONSEND_BASE_URL;
+{{/if}}
+
+export const millionsend = new MillionSend(apiKey, {
+  baseUrl: baseUrl ?? "https://api.millionsend.com",
+});

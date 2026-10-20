@@ -1,0 +1,34 @@
+import { millionsend } from "./client";
+{{#unless (eq backend "convex")}}
+import { env } from "@{{projectName}}/env/server";
+{{/unless}}
+
+export type SendEmailInput = {
+  to: string | string[];
+  subject: string;
+  html: string;
+  from?: string;
+  replyTo?: string | string[];
+  /** Reuse this key when retrying the same send. */
+  idempotencyKey?: string;
+};
+
+/** Send a transactional email via MillionSend. */
+export async function sendEmail(input: SendEmailInput) {
+  const { idempotencyKey, from, ...message } = input;
+{{#if (eq backend "convex")}}
+  const defaultFrom = process.env.MILLIONSEND_FROM_EMAIL;
+{{else}}
+  const defaultFrom = env.MILLIONSEND_FROM_EMAIL;
+{{/if}}
+  const { data, error } = await millionsend.emails.send(
+    {
+      ...message,
+      from: from ?? defaultFrom ?? "Acme <noreply@example.com>",
+    },
+    idempotencyKey ? { idempotencyKey } : undefined,
+  );
+
+  if (error) throw new Error(error.message);
+  return data;
+}

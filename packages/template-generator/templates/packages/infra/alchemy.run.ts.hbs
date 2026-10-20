@@ -63,6 +63,11 @@ export const server = await Worker("server", {
     DATABASE_URL: alchemy.secret.env.DATABASE_URL!,
     {{/if}}
     CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+    {{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: alchemy.secret.env.MILLIONSEND_API_KEY!,
+    MILLIONSEND_BASE_URL: alchemy.env.MILLIONSEND_BASE_URL ?? "https://api.millionsend.com",
+    MILLIONSEND_FROM_EMAIL: alchemy.env.MILLIONSEND_FROM_EMAIL ?? "Acme <noreply@example.com>",
+    {{/if}}
     {{#if (eq auth "better-auth")}}
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
@@ -131,6 +136,13 @@ export const web = await Nextjs("web", {
     {{/if}}
     {{#if (ne backend "convex")}}
     CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+    {{#if (eq backend "self")}}
+    {{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: alchemy.secret.env.MILLIONSEND_API_KEY!,
+    MILLIONSEND_BASE_URL: alchemy.env.MILLIONSEND_BASE_URL ?? "https://api.millionsend.com",
+    MILLIONSEND_FROM_EMAIL: alchemy.env.MILLIONSEND_FROM_EMAIL ?? "Acme <noreply@example.com>",
+    {{/if}}
+    {{/if}}
     {{#if (eq auth "better-auth")}}
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
@@ -200,6 +212,13 @@ export const web = await Nuxt("web", {
     {{/if}}
     {{#if (ne backend "convex")}}
     CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+    {{#if (eq backend "self")}}
+    {{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: alchemy.secret.env.MILLIONSEND_API_KEY!,
+    MILLIONSEND_BASE_URL: alchemy.env.MILLIONSEND_BASE_URL ?? "https://api.millionsend.com",
+    MILLIONSEND_FROM_EMAIL: alchemy.env.MILLIONSEND_FROM_EMAIL ?? "Acme <noreply@example.com>",
+    {{/if}}
+    {{/if}}
     {{#if (eq auth "better-auth")}}
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
@@ -264,6 +283,13 @@ export const web = await SvelteKit("web", {
     DATABASE_URL: alchemy.secret.env.DATABASE_URL!,
     {{/if}}
     CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+    {{#if (eq backend "self")}}
+    {{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: alchemy.secret.env.MILLIONSEND_API_KEY!,
+    MILLIONSEND_BASE_URL: alchemy.env.MILLIONSEND_BASE_URL ?? "https://api.millionsend.com",
+    MILLIONSEND_FROM_EMAIL: alchemy.env.MILLIONSEND_FROM_EMAIL ?? "Acme <noreply@example.com>",
+    {{/if}}
+    {{/if}}
     {{#if (eq auth "better-auth")}}
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
@@ -324,6 +350,13 @@ export const web = await TanStackStart("web", {
     {{/if}}
     {{#if (ne backend "convex")}}
     CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+    {{#if (eq backend "self")}}
+    {{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: alchemy.secret.env.MILLIONSEND_API_KEY!,
+    MILLIONSEND_BASE_URL: alchemy.env.MILLIONSEND_BASE_URL ?? "https://api.millionsend.com",
+    MILLIONSEND_FROM_EMAIL: alchemy.env.MILLIONSEND_FROM_EMAIL ?? "Acme <noreply@example.com>",
+    {{/if}}
+    {{/if}}
     {{#if (eq auth "better-auth")}}
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
@@ -443,6 +476,13 @@ export const web = await Astro("web", {
     DATABASE_URL: alchemy.secret.env.DATABASE_URL!,
     {{/if}}
     CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
+    {{#if (eq backend "self")}}
+    {{#if (includes communication "millionsend")}}
+    MILLIONSEND_API_KEY: alchemy.secret.env.MILLIONSEND_API_KEY!,
+    MILLIONSEND_BASE_URL: alchemy.env.MILLIONSEND_BASE_URL ?? "https://api.millionsend.com",
+    MILLIONSEND_FROM_EMAIL: alchemy.env.MILLIONSEND_FROM_EMAIL ?? "Acme <noreply@example.com>",
+    {{/if}}
+    {{/if}}
     {{#if (eq auth "better-auth")}}
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,

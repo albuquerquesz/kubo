@@ -92,26 +92,21 @@ export function resolveLayout(
     );
   }
 
+  function resolvePath(logical: LayoutAppId | LayoutPackageId, kind: "app" | "package"): string {
+    const paths: Partial<Record<string, string>> =
+      kind === "app" ? expanded.apps : expanded.packages;
+    const value = paths[logical];
+    if (!value) throw new Error(`Unknown layout ${kind} id: ${logical}`);
+    return value;
+  }
+
   const resolver: ResolvedLayout = {
     preset: expanded.preset,
     apps: expanded.apps,
     packages: expanded.packages,
-    path(logical, kind) {
-      if (kind === "app") {
-        const value = expanded.apps[logical as LayoutAppId];
-        if (!value) {
-          throw new Error(`Unknown layout app id: ${logical}`);
-        }
-        return value;
-      }
-      const value = expanded.packages[logical as LayoutPackageId];
-      if (!value) {
-        throw new Error(`Unknown layout package id: ${logical}`);
-      }
-      return value;
-    },
+    path: resolvePath,
     file(logical, kind, ...segments) {
-      return path.join(resolver.path(logical, kind), ...segments);
+      return path.join(resolvePath(logical, kind), ...segments);
     },
     rootPackagePath() {
       return ".";
