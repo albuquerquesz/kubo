@@ -452,3 +452,22 @@ kubojs \
   --addons none \
   --examples none
 ```
+
+### `--communication <providers...>`
+
+Seleciona provedores de comunicação: `arara`, `resend`, `notifique` e `millionsend`.
+Use `none` para desativar. Exige backend e permite selecionar vários provedores.
+
+```bash
+kubojs my-app --communication millionsend
+kubojs my-app --communication resend millionsend notifique
+```
+
+MillionSend gera o pacote `@my-app/millionsend`, com o cliente `millionsend` e o
+helper `sendEmail`. Configure `MILLIONSEND_API_KEY` no ambiente do backend antes
+de importar o pacote e substitua `MILLIONSEND_FROM_EMAIL` por um remetente
+verificado. `MILLIONSEND_BASE_URL` usa `https://api.millionsend.com` por padrão;
+para self-hosting, informe a origem da sua API.
+
+O cliente exportado também disponibiliza recebimento e inboxes pelo SDK oficial.
+No Convex, importe o pacote em Actions e configure as variáveis no deployment.

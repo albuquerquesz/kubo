@@ -51,6 +51,22 @@ const catalogValues = {
 } as const;
 
 describe("canonical stack state", () => {
+  test("preserves MillionSend through selection, commands and shared URLs", async () => {
+    const stack = sanitizeStackState({
+      ...DEFAULT_STACK,
+      backend: "hono",
+      communication: ["millionsend", "resend"],
+    });
+    expect(stack.communication).toEqual(["millionsend", "resend"]);
+    expect(generateStackCommand(stack)).toContain("--communication millionsend resend");
+    const url = new URL(generateStackUrlFromState(stack, "https://example.test"));
+    const loaded = await loadStackParams(Object.fromEntries(url.searchParams));
+    expect(loaded.communication).toEqual(["millionsend", "resend"]);
+    expect(TECH_OPTIONS.communication.find((option) => option.id === "millionsend")?.name).toBe(
+      "MillionSend",
+    );
+  });
+
   test("exposes every canonical catalog value in the builder category", () => {
     for (const [category, values] of Object.entries(catalogValues)) {
       const optionIds = TECH_OPTIONS[category as keyof typeof TECH_OPTIONS].map(

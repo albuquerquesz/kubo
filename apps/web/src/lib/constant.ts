@@ -574,6 +574,13 @@ const TECH_OPTION_METADATA: Record<TechCategory, TechOption[]> = {
       color: "from-zinc-600 to-black",
     },
     {
+      id: "millionsend",
+      name: "MillionSend",
+      description: "Email compatível com Resend, Cloud ou self-hosted",
+      icon: "https://github.com/MillionSend.png",
+      color: "from-sky-500 to-blue-700",
+    },
+    {
       id: "notifique",
       name: "Notifique",
       description: "Mensageria omnichannel",
