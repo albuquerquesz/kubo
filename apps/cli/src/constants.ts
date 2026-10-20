@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { desktopWebFrontends, type PaymentProvider } from "@kubojs/types";
+import { desktopWebFrontends, type ProjectConfig } from "@kubojs/types";
 
 import { getUserPkgManager } from "./utils/get-package-manager";
 
@@ -34,14 +34,15 @@ export const DEFAULT_CONFIG_BASE = {
   serverDeploy: "none",
 } as const;
 
-export function getDefaultConfig() {
+export function getDefaultConfig(): ProjectConfig {
   return {
     ...DEFAULT_CONFIG_BASE,
     projectDir: path.resolve(process.cwd(), DEFAULT_CONFIG_BASE.projectName),
     packageManager: getUserPkgManager(),
     frontend: [...DEFAULT_CONFIG_BASE.frontend],
-    payments: [...(DEFAULT_CONFIG_BASE.payments as readonly PaymentProvider[])],
+    payments: [...DEFAULT_CONFIG_BASE.payments],
     observability: [...DEFAULT_CONFIG_BASE.observability],
+    communication: [...DEFAULT_CONFIG_BASE.communication],
     addons: [...DEFAULT_CONFIG_BASE.addons],
     examples: [...DEFAULT_CONFIG_BASE.examples],
     testing: [...DEFAULT_CONFIG_BASE.testing],

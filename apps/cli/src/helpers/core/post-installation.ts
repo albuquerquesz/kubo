@@ -11,7 +11,7 @@ import type {
   ServerDeploy,
   WebDeploy,
 } from "../../types";
-import { desktopWebFrontends, getWebPort } from "../../types";
+import { isDesktopWebFrontend, getWebPort } from "../../types";
 import { cliColors } from "../../utils/cli-colors";
 import { normalizeCommunication } from "../../utils/config-processing";
 import { getDockerStatus } from "../../utils/docker-utils";
@@ -126,13 +126,16 @@ export async function displayPostInstallInstructions(
   const getMonitorInstructions = observability.includes("getmonitor")
     ? getGetMonitorInstructions()
     : "";
+  const millionSendInstructions = communication.includes("millionsend")
+    ? getMillionSendInstructions(backend)
+    : "";
   const resendInstructions = communication.includes("resend") ? getResendInstructions() : "";
   const notifiqueInstructions = communication.includes("notifique")
     ? getNotifiqueInstructions()
     : "";
   const araraInstructions = communication.includes("arara") ? getAraraInstructions(backend) : "";
 
-  const hasWeb = frontend?.some((f) => (desktopWebFrontends as readonly string[]).includes(f));
+  const hasWeb = frontend?.some(isDesktopWebFrontend);
   const hasNative =
     frontend?.includes("native-bare") ||
     frontend?.includes("native-uniwind") ||
@@ -234,6 +237,7 @@ export async function displayPostInstallInstructions(
   if (clerkInstructions) output += `\n${clerkInstructions.trim()}\n`;
   if (betterAuthConvexInstructions) output += `\n${betterAuthConvexInstructions.trim()}\n`;
   if (getMonitorInstructions) output += `\n${getMonitorInstructions.trim()}\n`;
+  if (millionSendInstructions) output += `\n${millionSendInstructions.trim()}\n`;
   if (resendInstructions) output += `\n${resendInstructions.trim()}\n`;
   if (notifiqueInstructions) output += `\n${notifiqueInstructions.trim()}\n`;
   if (araraInstructions) output += `\n${araraInstructions.trim()}\n`;
@@ -482,6 +486,21 @@ function getGetMonitorInstructions() {
   )} Opt out next time with --disable-observability\n${pc.dim(
     "   https://github.com/get-monitor/getmonitor-js",
   )}`;
+}
+
+function getMillionSendInstructions(backend: Backend) {
+  const envPath =
+    backend === "convex"
+      ? "packages/backend/.env.local (and the Convex deployment environment)"
+      : backend === "self"
+        ? "apps/web/.env"
+        : "apps/server/.env";
+  return `${pc.bold("MillionSend communication:")}
+${pc.cyan("•")} Set MILLIONSEND_API_KEY in ${envPath} before importing the client
+${pc.cyan("•")} Import millionsend / sendEmail from @project/millionsend (server-side only)
+${pc.cyan("•")} Replace MILLIONSEND_FROM_EMAIL with a verified domain sender before sending
+${pc.cyan("•")} Cloud is the default; set MILLIONSEND_BASE_URL for self-hosting
+${pc.dim("   https://github.com/MillionSend/millionsend-node")}`;
 }
 
 function getResendInstructions() {

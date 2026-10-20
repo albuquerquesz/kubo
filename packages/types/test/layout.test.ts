@@ -19,6 +19,7 @@ describe("layout schema", () => {
     const expanded = expandLayoutConfig({ preset: "standard" });
     expect(expanded.apps.web).toBe("apps/web");
     expect(expanded.packages.db).toBe("packages/db");
+    expect(expanded.packages.millionsend).toBe("packages/millionsend");
   });
 
   it("merges custom app overrides", () => {

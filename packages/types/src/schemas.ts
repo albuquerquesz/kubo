@@ -129,7 +129,7 @@ export const ObservabilitySchema = selectedProvidersSchema(
   "Observability providers must be unique",
 ).describe("Selected observability providers");
 
-export const CommunicationProviderSchema = z.enum(["arara", "resend", "notifique"]);
+export const CommunicationProviderSchema = z.enum(["arara", "resend", "notifique", "millionsend"]);
 
 export const CommunicationSchema = selectedProvidersSchema(
   CommunicationProviderSchema,
@@ -343,6 +343,7 @@ export const LayoutPackageIdSchema = z.enum([
   "email",
   "arara",
   "notifique",
+  "millionsend",
 ]);
 
 export const LayoutRelativePathSchema = z
@@ -379,6 +380,7 @@ const LayoutPackagesSchema = z
     email: LayoutRelativePathSchema,
     arara: LayoutRelativePathSchema,
     notifique: LayoutRelativePathSchema,
+    millionsend: LayoutRelativePathSchema,
   })
   .partial();
 

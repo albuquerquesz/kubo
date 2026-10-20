@@ -13,6 +13,7 @@ export const COMMUNICATION_PRODUCT_NAMES = {
   arara: "AraraHQ",
   resend: "Resend",
   notifique: "Notifique",
+  millionsend: "MillionSend",
 } as const satisfies Record<CommunicationProvider, string>;
 
 export const COMMUNICATION_PROVIDER_CAPABILITIES = {
@@ -22,6 +23,11 @@ export const COMMUNICATION_PROVIDER_CAPABILITIES = {
     supportsWorkers: false,
   },
   resend: {
+    requiresBackend: true,
+    supportsConvex: true,
+    supportsWorkers: true,
+  },
+  millionsend: {
     requiresBackend: true,
     supportsConvex: true,
     supportsWorkers: true,

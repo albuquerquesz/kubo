@@ -4,19 +4,24 @@ import { normalizeCommunication } from "../utils/config-processing";
 import { UserCancelledError } from "../utils/errors";
 import { isCancel, navigableMultiselect } from "./navigable";
 
-const options = [
+const options: { value: CommunicationProvider; label: string; hint: string }[] = [
   {
-    value: "arara" as CommunicationProvider,
+    value: "arara",
     label: "AraraHQ",
     hint: "Recommended — WhatsApp messaging via the official Node SDK",
   },
   {
-    value: "resend" as CommunicationProvider,
+    value: "resend",
     label: "Resend",
     hint: "Transactional email for developers",
   },
   {
-    value: "notifique" as CommunicationProvider,
+    value: "millionsend",
+    label: "MillionSend",
+    hint: "Resend-compatible email via Cloud or self-hosting",
+  },
+  {
+    value: "notifique",
     label: "Notifique",
     hint: "Omnichannel BR messaging API",
   },
@@ -30,7 +35,7 @@ export async function getCommunicationChoice(
   if (communication !== undefined) return normalizeCommunication(communication);
 
   if (backend === "none") {
-    return [] as Communication;
+    return [];
   }
 
   const response = await navigableMultiselect<CommunicationProvider>({

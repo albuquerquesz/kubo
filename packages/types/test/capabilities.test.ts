@@ -19,6 +19,20 @@ import {
 } from "../src/index.ts";
 
 describe("communication compatibility issues", () => {
+  test("requires a backend for MillionSend and supports Workers", () => {
+    expect(getCommunicationCompatibilityIssue({ provider: "millionsend", backend: "none" })).toBe(
+      "requires-backend",
+    );
+    expect(
+      getCommunicationCompatibilityIssue({
+        provider: "millionsend",
+        backend: "hono",
+        runtime: "workers",
+        serverDeploy: "cloudflare",
+      }),
+    ).toBeNull();
+  });
+
   test("none or unknown provider yields no issue", () => {
     expect(getCommunicationCompatibilityIssue({ provider: "none", backend: "none" })).toBeNull();
     expect(getCommunicationCompatibilityIssue({ provider: undefined })).toBeNull();
@@ -76,16 +90,19 @@ describe("communication compatibility issues", () => {
     ).toBeNull();
   });
 
-  test.each(["resend", "notifique", "arara"])("allows %s in Convex Node Actions", (provider) => {
-    expect(
-      getCommunicationCompatibilityIssue({
-        provider,
-        backend: "convex",
-        runtime: "workers",
-        serverDeploy: "cloudflare",
-      }),
-    ).toBeNull();
-  });
+  test.each(["resend", "notifique", "arara", "millionsend"])(
+    "allows %s in Convex Node Actions",
+    (provider) => {
+      expect(
+        getCommunicationCompatibilityIssue({
+          provider,
+          backend: "convex",
+          runtime: "workers",
+          serverDeploy: "cloudflare",
+        }),
+      ).toBeNull();
+    },
+  );
 });
 
 describe("normalizeCommunication", () => {

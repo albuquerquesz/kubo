@@ -29,7 +29,7 @@ export type ProjectHistoryEntry = {
     auth: string;
     payments: string[];
     observability: string[];
-    communication: string;
+    communication: ProjectConfig["communication"] | string;
     api: string;
     addons: string[];
     examples: string[];

@@ -14,6 +14,7 @@ const STANDARD_PACKAGES = {
   email: "packages/email",
   arara: "packages/arara",
   notifique: "packages/notifique",
+  millionsend: "packages/millionsend",
 } as const;
 
 export const standardLayout = {

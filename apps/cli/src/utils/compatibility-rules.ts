@@ -3,6 +3,7 @@ import {
   backendAllowsApi,
   backendAllowsOnlyNoneApi,
   getCommunicationCompatibilityIssue,
+  COMMUNICATION_PRODUCT_NAMES,
   evaluate,
   CONVEX_BETTER_AUTH_SUPPORTED_FRONTENDS,
   WEB_FRONTENDS_REQUIRING_ORPC,
@@ -330,8 +331,7 @@ export function validateCommunicationCompatibility(
         }),
       );
     }
-    const providerName =
-      provider === "resend" ? "Resend" : provider === "notifique" ? "Notifique" : "AraraHQ";
+    const providerName = COMMUNICATION_PRODUCT_NAMES[provider];
     return Result.err(
       new ValidationError({
         message: `${providerName} communication requires a server backend. Please choose a backend or use '--communication none'.`,
