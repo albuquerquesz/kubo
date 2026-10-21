@@ -122,7 +122,7 @@ export const PaymentsSchema = selectedProvidersSchema(
   { treatUndefinedAsEmpty: true },
 ).describe("Selected payment providers");
 
-export const ObservabilityProviderSchema = z.enum(["getmonitor", "himetrica"]);
+export const ObservabilityProviderSchema = z.enum(["himetrica"]);
 
 export const ObservabilitySchema = selectedProvidersSchema(
   ObservabilityProviderSchema,

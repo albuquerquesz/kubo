@@ -143,11 +143,13 @@ describe("normalizeObservability", () => {
   });
 
   test("accepts a single provider or a unique array", () => {
-    expect(normalizeObservability("getmonitor")).toEqual(["getmonitor"]);
-    expect(normalizeObservability(["himetrica", "getmonitor", "himetrica"])).toEqual([
-      "himetrica",
-      "getmonitor",
-    ]);
+    expect(normalizeObservability("himetrica")).toEqual(["himetrica"]);
+    expect(normalizeObservability(["himetrica", "himetrica"])).toEqual(["himetrica"]);
+  });
+
+  test("drops the removed GetMonitor provider from legacy configs", () => {
+    expect(normalizeObservability("getmonitor")).toEqual([]);
+    expect(normalizeObservability(["getmonitor", "himetrica"])).toEqual(["himetrica"]);
   });
 
   test("unknown providers fail at the type boundary", () => {
@@ -162,7 +164,7 @@ describe("normalizeObservability", () => {
     expect(normalizeObservability([])).toEqual([]);
   });
 
-  test.each([[null], [123], [{}], [["getmonitor", "unknown"]]])(
+  test.each([[null], [123], [{}], [["himetrica", "unknown"]]])(
     "rejects invalid input %j",
     (value) => {
       expect(() => normalizeObservability(value)).toThrow(/Unsupported observability provider/);

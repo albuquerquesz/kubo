@@ -1,15 +1,8 @@
 import type { Observability, ObservabilityProvider } from "./types";
 
-export type ObservabilityMount =
-  | "web-browser"
-  | "next-config"
-  | "react-error-boundary"
-  | "node-server";
+export type ObservabilityMount = "web-browser";
 
 export const OBSERVABILITY_PROVIDER_CAPABILITIES = {
-  getmonitor: {
-    mounts: ["web-browser", "next-config", "react-error-boundary", "node-server"],
-  },
   himetrica: {
     mounts: ["web-browser"],
   },
@@ -24,11 +17,14 @@ export function isObservabilityProvider(value: unknown): value is ObservabilityP
   return typeof value === "string" && Object.hasOwn(OBSERVABILITY_PROVIDER_CAPABILITIES, value);
 }
 
+// Providers dropped from the catalog; existing project configs may still list them.
+const REMOVED_OBSERVABILITY_PROVIDERS: readonly unknown[] = ["none", "getmonitor"];
+
 export function normalizeObservability(value: unknown): Observability {
   if (value === undefined || value === "none") return [];
 
   const values = Array.isArray(value) ? value : [value];
-  const providers = values.filter((item) => item !== "none");
+  const providers = values.filter((item) => !REMOVED_OBSERVABILITY_PROVIDERS.includes(item));
   const unsupported = providers.filter((item) => !isObservabilityProvider(item));
 
   if (unsupported.length > 0) {
