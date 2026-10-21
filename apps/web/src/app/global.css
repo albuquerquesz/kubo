@@ -1044,3 +1044,41 @@
 [data-dot-matrix-ready="true"] .dot-matrix-fallback {
   opacity: 0;
 }
+
+/* Auth modal showcase: two columns of tiles drifting in opposite directions */
+.auth-showcase {
+  mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+}
+
+.auth-showcase__track {
+  padding-bottom: 0.75rem;
+  animation: auth-showcase-up 48s linear infinite;
+}
+
+.auth-showcase__track[data-direction="down"] {
+  animation-name: auth-showcase-down;
+}
+
+@keyframes auth-showcase-up {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+@keyframes auth-showcase-down {
+  from {
+    transform: translate3d(0, -50%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-showcase__track {
+    animation: none;
+  }
+}

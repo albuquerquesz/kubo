@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { FaGithub, FaXTwitter } from "react-icons/fa6";
 
+import { HeaderAccount } from "@/components/auth/header-account";
 import { KuboMark } from "@/components/brand/kubo-mark";
 import { cn } from "@/lib/utils";
 
@@ -88,6 +89,7 @@ export function SiteHeader({ className }: { className?: string }) {
             </a>
           );
         })}
+        <HeaderAccount className={cn(utilityLinkClass, headerRowClass)} />
         <Link
           href="/new"
           className={cn(
