@@ -9534,6 +9534,8 @@ import { createAuth } from "@{{projectName}}/auth";
 {{else}}
 import { auth } from "@{{projectName}}/auth";
 {{/if}}
+{{else}}
+import { authClient } from "@/lib/auth-client";
 {{/if}}
 
 
@@ -29820,7 +29822,8 @@ initOpenNextCloudflareForDev();
   "scripts": {
     "dev": "next dev --port 3001",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@{{projectName}}/ui": "{{#if (eq packageManager "npm")}}*{{else}}workspace:*{{/if}}",

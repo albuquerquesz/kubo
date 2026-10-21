@@ -156,6 +156,45 @@ describe("scaffold quality fixes", () => {
     expect(readme).not.toContain("SQLite/Turso");
   });
 
+  it("scaffold: next + express better-auth dashboard imports authClient", async () => {
+    const projectPath = path.join(SMOKE_DIR, "next-express-dashboard");
+    await fs.remove(projectPath);
+
+    const result = await create(projectPath, {
+      frontend: ["next"],
+      backend: "express",
+      runtime: "bun",
+      database: "sqlite",
+      orm: "drizzle",
+      auth: "better-auth",
+      payments: "none",
+      api: "trpc",
+      addons: ["turborepo"],
+      examples: ["none"],
+      dbSetup: "none",
+      webDeploy: "none",
+      serverDeploy: "none",
+      packageManager: "bun",
+      install: false,
+      disableAnalytics: true,
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+
+    const dashboardPage = await readFile(
+      path.join(projectPath, "apps/web/src/app/dashboard/page.tsx"),
+      "utf8",
+    );
+    expect(dashboardPage).toContain("authClient.getSession(");
+    expect(dashboardPage).toContain('import { authClient } from "@/lib/auth-client";');
+
+    const webPkg = JSON.parse(
+      await readFile(path.join(projectPath, "apps/web/package.json"), "utf8"),
+    ) as { scripts?: Record<string, string> };
+    expect(webPkg.scripts?.["check-types"]).toBe("tsc --noEmit");
+  });
+
   it("add oxlint replaces biome exclusively", async () => {
     const projectPath = path.join(SMOKE_DIR, "linter-switch");
     await fs.remove(projectPath);
