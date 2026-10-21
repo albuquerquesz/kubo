@@ -10,6 +10,7 @@ import {
   isFrontend,
   isNativeFrontend,
   isWebFrontend,
+  OBSERVABILITY_VALUES,
   ORM_VALUES,
   PACKAGE_MANAGER_VALUES,
   PAYMENTS_VALUES,
@@ -143,7 +144,7 @@ export function normalizeStackState(value: unknown): StackState | null {
     payments: selectValues(raw.payments, PAYMENTS_VALUES),
     observability: selectValues(
       raw.observability,
-      ["getmonitor", "himetrica"] as const,
+      OBSERVABILITY_VALUES,
       DEFAULT_STACK.observability,
     ),
     communication: selectValues(raw.communication, COMMUNICATION_VALUES),

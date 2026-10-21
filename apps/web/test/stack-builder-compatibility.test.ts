@@ -149,9 +149,8 @@ describe("stack builder D1 compatibility", () => {
   });
 
   test("renders observability providers as selected when present in the array", () => {
-    const stack = createStack({ observability: ["getmonitor", "himetrica"] });
+    const stack = createStack({ observability: ["himetrica"] });
 
-    expect(getIsSelected(stack, "observability", "getmonitor")).toBe(true);
     expect(getIsSelected(stack, "observability", "himetrica")).toBe(true);
     expect(getIsSelected(stack, "observability", "missing")).toBe(false);
   });
@@ -405,20 +404,20 @@ describe("stack builder D1 compatibility", () => {
       database: "sqlite",
       orm: "drizzle",
       payments: ["abacatepay"],
-      observability: ["getmonitor"],
+      observability: ["himetrica"],
       webDeploy: "guaracloud",
       serverDeploy: "guaracloud",
     });
 
     expect(getDisabledReason(stack, "payments", "abacatepay")).toBeNull();
-    expect(getDisabledReason(stack, "observability", "getmonitor")).toBeNull();
+    expect(getDisabledReason(stack, "observability", "himetrica")).toBeNull();
     expect(getDisabledReason(stack, "webDeploy", "guaracloud")).toBeNull();
     expect(getDisabledReason(stack, "serverDeploy", "guaracloud")).toBeNull();
     expect(analyzeStackCompatibility(stack).adjustedStack).toBeNull();
 
     const command = generateStackCommand(stack);
     expect(command).toContain("--payments abacatepay");
-    expect(command).toContain("--observability getmonitor");
+    expect(command).toContain("--observability himetrica");
     expect(command).toContain("--web-deploy guaracloud");
     expect(command).toContain("--server-deploy guaracloud");
   });
@@ -464,13 +463,13 @@ describe("stack builder D1 compatibility", () => {
     );
   });
 
-  test("default stack implies GetMonitor and AraraHQ and short --yes command", () => {
-    expect(DEFAULT_STACK.observability).toEqual(["getmonitor"]);
+  test("default stack implies no observability, AraraHQ, and short --yes command", () => {
+    expect(DEFAULT_STACK.observability).toEqual([]);
     expect(DEFAULT_STACK.communication).toEqual(["arara"]);
 
     const command = generateStackCommand(createStack({}));
     expect(command).toMatch(/--yes\s*$/);
-    expect(command).not.toContain("--observability");
+    expect(command).not.toContain("observability");
     expect(command).not.toContain("--communication");
   });
 

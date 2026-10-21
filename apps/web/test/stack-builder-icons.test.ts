@@ -31,20 +31,9 @@ describe("stack builder technology icons", () => {
     expect(remoteIcons).toEqual([]);
   });
 
-  test("uses the GetMonitor favicon only for the GetMonitor option", () => {
-    const getMonitor = TECH_OPTIONS.observability.find((option) => option.id === "getmonitor");
-
-    expect(getMonitor?.icon).toBe("https://getmonitor.io/favicon.png");
-  });
-
-  test("features GetMonitor as the default observability option", () => {
-    const getMonitor = TECH_OPTIONS.observability.find((option) => option.id === "getmonitor");
-    const himetrica = TECH_OPTIONS.observability.find((option) => option.id === "himetrica");
-
-    expect(TECH_OPTIONS.observability[0]?.id).toBe("getmonitor");
-    expect(getMonitor?.default).toBe(true);
-    expect(himetrica?.default).toBeUndefined();
-    expect(getMonitor?.description.toLowerCase()).toContain("error");
+  test("no longer offers GetMonitor and has no default observability option", () => {
+    expect(TECH_OPTIONS.observability.map((option) => option.id)).toEqual(["himetrica"]);
+    expect(TECH_OPTIONS.observability.some((option) => option.default)).toBe(false);
   });
 
   test("uses the AraraHQ favicon only for the AraraHQ option", () => {

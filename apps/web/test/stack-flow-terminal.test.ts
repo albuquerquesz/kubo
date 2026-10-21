@@ -67,7 +67,7 @@ describe("stack flow terminal playback", () => {
       Database: "sqlite",
       ORM: "drizzle",
       Auth: "better-auth",
-      Observability: "getmonitor",
+      Observability: "none",
       Communication: "arara",
       Addons: "turborepo",
     });
