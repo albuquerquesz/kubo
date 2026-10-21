@@ -5,9 +5,6 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { routeTree } from "./routeTree.gen";
 import Loader from "./components/loader";
-{{#if (includes observability "getmonitor")}}
-import "./lib/getmonitor";
-{{/if}}
 {{#if (includes observability "himetrica")}}
 import "./lib/himetrica";
 {{/if}}
@@ -16,9 +13,6 @@ import { env } from "@{{projectName}}/env/web";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
-{{#if (includes observability "getmonitor")}}
-import "./lib/getmonitor";
-{{/if}}
 {{#if (includes observability "himetrica")}}
 import "./lib/himetrica";
 {{/if}}

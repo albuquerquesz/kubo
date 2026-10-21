@@ -8,9 +8,6 @@ import {
 } from "react-router";
 import type { Route } from "./+types/root";
 import "./index.css";
-{{#if (includes observability "getmonitor")}}
-import "./lib/getmonitor";
-{{/if}}
 {{#if (includes observability "himetrica")}}
 import "./lib/himetrica";
 {{/if}}
@@ -24,9 +21,6 @@ import { clerkMiddleware, rootAuthLoader } from "@clerk/react-router/server";
 {{#if (and (eq auth "clerk") (ne backend "convex") (ne api "none"))}}
 import { useEffect } from "react";
 import { setClerkAuthTokenGetter } from "@/utils/clerk-auth";
-{{/if}}
-{{#if (includes observability "getmonitor")}}
-import { GetMonitorErrorBoundary } from "@getmonitor/react";
 {{/if}}
 
 {{#if (eq backend "convex")}}
@@ -89,27 +83,6 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-function GetMonitorOutlet() {
-  return (
-    {{#if (includes observability "getmonitor")}}
-    <GetMonitorErrorBoundary
-      fallback={(error, reset) => (
-        <div>
-          <p>Something went wrong.</p>
-          <button type="button" onClick={reset}>
-            Try again
-          </button>
-        </div>
-      )}
-    >
-    {{/if}}
-      <Outlet />
-    {{#if (includes observability "getmonitor")}}
-    </GetMonitorErrorBoundary>
-    {{/if}}
-  );
-}
-
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -149,7 +122,7 @@ export default function App() {
         >
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
-            <GetMonitorOutlet />
+            <Outlet />
           </div>
           <Toaster richColors />
         </ThemeProvider>
@@ -167,7 +140,7 @@ export default function App() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <GetMonitorOutlet />
+          <Outlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -184,7 +157,7 @@ export default function App() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <GetMonitorOutlet />
+          <Outlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -209,7 +182,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
         >
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
-            <GetMonitorOutlet />
+            <Outlet />
           </div>
           <Toaster richColors />
         </ThemeProvider>
@@ -225,7 +198,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
         >
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
-            <GetMonitorOutlet />
+            <Outlet />
           </div>
           <Toaster richColors />
         </ThemeProvider>
@@ -240,7 +213,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <GetMonitorOutlet />
+          <Outlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -260,7 +233,7 @@ export default function App() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <GetMonitorOutlet />
+          <Outlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -280,7 +253,7 @@ export default function App() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <GetMonitorOutlet />
+          <Outlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -299,7 +272,7 @@ export default function App() {
     >
       <div className="grid grid-rows-[auto_1fr] h-svh">
         <Header />
-        <GetMonitorOutlet />
+        <Outlet />
       </div>
       <Toaster richColors />
     </ThemeProvider>

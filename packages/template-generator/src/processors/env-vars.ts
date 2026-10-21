@@ -266,24 +266,6 @@ function buildClientVars(
     }
   }
 
-  if (observability.includes("getmonitor")) {
-    const getMonitorKey = getPublicEnvKey(frontend, "GETMONITOR_API_KEY");
-    vars.push({
-      key: getMonitorKey,
-      value: "",
-      condition: true,
-      comment: "GetMonitor public project key (gm_xxx)",
-    });
-    if (hasNextJs || frontend.includes("nuxt")) {
-      vars.push({
-        key: "GETMONITOR_AUTH_TOKEN",
-        value: "",
-        condition: true,
-        comment: "GetMonitor source-map upload token (server/build only — never expose publicly)",
-      });
-    }
-  }
-
   if (observability.includes("himetrica")) {
     const himetricaKey = getPublicEnvKey(frontend, "HIMETRICA_API_KEY");
     vars.push({
@@ -478,7 +460,6 @@ function buildServerVars(
   serverDeploy: ProjectConfig["serverDeploy"],
   payments: ProjectConfig["payments"],
   examples: ProjectConfig["examples"],
-  observability: ProjectConfig["observability"],
   communication: ProjectConfig["communication"],
   addons: ProjectConfig["addons"],
 ): EnvVariable[] {
@@ -568,12 +549,6 @@ function buildServerVars(
       key: "GOOGLE_GENERATIVE_AI_API_KEY",
       value: "",
       condition: examples?.includes("ai") || false,
-    },
-    {
-      key: "GETMONITOR_API_KEY",
-      value: "",
-      condition: observability.includes("getmonitor"),
-      comment: "GetMonitor public project key (gm_xxx)",
     },
     ...buildMillionSendVars(communication),
     {
@@ -790,7 +765,6 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
     serverDeploy,
     payments,
     examples,
-    observability,
     communication,
     addons,
   );

@@ -9,9 +9,6 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxt/ui'
-    {{#if (includes observability "getmonitor")}},
-    '@getmonitor/nuxt'
-    {{/if}}
     {{#if (eq backend "convex")}},
     'convex-nuxt'
     {{/if}}
@@ -23,11 +20,6 @@ export default defineNuxtConfig({
   {{#if (eq backend "convex")}}
   convex: {
     url: process.env.NUXT_PUBLIC_CONVEX_URL,
-  },
-  {{/if}}
-  {{#if (includes observability "getmonitor")}}
-  getmonitor: {
-    authToken: process.env.GETMONITOR_AUTH_TOKEN,
   },
   {{/if}}
   {{#if (and (not (eq backend "convex")) (or (and (ne backend "self") (ne backend "none")) (includes payments "stripe")))}}

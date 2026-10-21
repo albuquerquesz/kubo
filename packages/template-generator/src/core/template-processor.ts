@@ -30,13 +30,6 @@ Handlebars.registerHelper("publicEnvKey", (frontend, suffix) => {
 Handlebars.registerHelper("hasReactFrontend", (frontend) => {
   return hasReactFrontend(Array.isArray(frontend) ? frontend : []);
 });
-Handlebars.registerHelper(
-  "supportsNodeObservability",
-  (backend, runtime, serverDeploy) =>
-    !["none", "self", "convex"].includes(String(backend)) &&
-    runtime !== "workers" &&
-    serverDeploy !== "cloudflare",
-);
 
 // Shared across every web client template (oRPC/tRPC/better-auth) so the
 // same-origin URL normalization for Vercel deploys has one source of truth.

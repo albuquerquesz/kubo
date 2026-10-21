@@ -6,9 +6,6 @@ import { setClerkAuthTokenGetter } from "@/utils/clerk-auth";
 {{/if}}
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
-{{#if (includes observability "getmonitor")}}
-import "./lib/getmonitor";
-{{/if}}
 {{#if (includes observability "himetrica")}}
 import "./lib/himetrica";
 {{/if}}

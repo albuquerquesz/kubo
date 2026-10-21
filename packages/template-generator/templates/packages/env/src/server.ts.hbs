@@ -176,9 +176,6 @@ export const env = createEnv({
 {{/if}}
 		CORS_ORIGIN: z.url(),
 		NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-{{#if (includes observability "getmonitor")}}
-		GETMONITOR_API_KEY: z.string().min(1).optional(),
-	{{/if}}
 	{{#if (includes communication "millionsend")}}
     MILLIONSEND_API_KEY: z.string().min(1),
     MILLIONSEND_BASE_URL: z.url().default("https://api.millionsend.com"),

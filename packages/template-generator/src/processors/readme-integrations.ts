@@ -13,23 +13,6 @@ type IntegrationFeature = {
   readonly content: string;
 };
 
-const generateGetMonitorSetup = (): string => `
-## GetMonitor Setup
-
-This project includes the [GetMonitor JavaScript error-tracking SDK](https://github.com/get-monitor/getmonitor-js).
-
-Keys are **optional for local first run** — the app starts without them and capture stays idle until you configure a project key.
-
-1. Create a GetMonitor project and copy its public project key (\`gm_xxx\`).
-2. Set the generated \`.env\` value ending in \`GETMONITOR_API_KEY\` for the web app and/or server when you are ready to send events.
-3. Ingestion uses a fixed host (\`http://ingest.getmonitor.io\`) — no \`apiHost\` env var is required.
-4. Optional (Next.js / Nuxt production builds): set \`GETMONITOR_AUTH_TOKEN\` (secret, never public) so source maps upload during \`next build\` / \`nuxt build\`.
-
-Browser uncaught errors are captured after the client bootstrap runs. React apps also wrap the tree in \`<GetMonitorErrorBoundary>\`. Node server errors are captured when the server key is configured.
-
-See the [browser](https://github.com/get-monitor/getmonitor-js/tree/main/packages/browser), [Node](https://github.com/get-monitor/getmonitor-js/tree/main/packages/node), [React](https://github.com/get-monitor/getmonitor-js/tree/main/packages/react), [Next.js](https://github.com/get-monitor/getmonitor-js/tree/main/packages/nextjs-config), and [Nuxt](https://github.com/get-monitor/getmonitor-js/tree/main/packages/nuxt) package guides.
-`;
-
 const generateHimetricaSetup = (): string => `
 ## Himetrica Setup
 
@@ -179,10 +162,6 @@ The package also exposes template creation and template-status helpers. See the 
 
 const INTEGRATION_SETUPS: readonly IntegrationSetup[] = [
   {
-    enabled: (config) => config.observability.includes("getmonitor"),
-    render: () => generateGetMonitorSetup(),
-  },
-  {
     enabled: (config) => config.observability.includes("himetrica"),
     render: () => generateHimetricaSetup(),
   },
@@ -205,10 +184,6 @@ const INTEGRATION_SETUPS: readonly IntegrationSetup[] = [
 ];
 
 const INTEGRATION_FEATURES: readonly IntegrationFeature[] = [
-  {
-    enabled: (observability) => observability.includes("getmonitor"),
-    content: "- **GetMonitor** - JavaScript error tracking for browser and server runtimes",
-  },
   {
     enabled: (observability) => observability.includes("himetrica"),
     content: "- **Himetrica** - Browser analytics, error tracking, and Web Vitals",

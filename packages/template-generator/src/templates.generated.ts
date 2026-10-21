@@ -14166,12 +14166,6 @@ import { node } from "@elysiajs/node";
 {{/if}}
 import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
-{{#if (supportsNodeObservability backend runtime serverDeploy)}}
-{{#if (includes observability "getmonitor")}}
-import { getMonitor } from "./shared/getmonitor";
-void getMonitor;
-{{/if}}
-{{/if}}
 {{#if (includes examples "ai")}}
 import { google } from "@ai-sdk/google";
 import { convertToModelMessages, createUIMessageStreamResponse, streamText, toUIMessageStream, type UIMessage, wrapLanguageModel } from "ai";
@@ -14394,10 +14388,6 @@ import { createContext } from "@{{projectName}}/api/context";
 {{/if}}
 import cors from "cors";
 import express from "express";
-{{#if (includes observability "getmonitor")}}
-import { setupExpressErrorHandler } from "@getmonitor/node";
-import { getMonitor } from "./shared/getmonitor";
-{{/if}}
 {{#if (includes examples "ai")}}
 import { pipeUIMessageStreamToResponse, streamText, toUIMessageStream, type UIMessage, convertToModelMessages, wrapLanguageModel } from "ai";
 import { google } from "@ai-sdk/google";
@@ -14594,9 +14584,6 @@ app.get("/", (_req, res) => {
 	res.status(200).send("OK");
 });
 
-{{#if (includes observability "getmonitor")}}
-if (getMonitor) setupExpressErrorHandler(getMonitor, app);
-{{/if}}
 app.listen(3000, () => {
 	console.log("Server is running on http://localhost:3000");
 });
@@ -14604,12 +14591,6 @@ app.listen(3000, () => {
   ["backend/server/fastify/src/index.ts.hbs", `import { env } from "@{{projectName}}/env/server";
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
-{{#if (supportsNodeObservability backend runtime serverDeploy)}}
-{{#if (includes observability "getmonitor")}}
-import { getMonitor } from "./shared/getmonitor";
-void getMonitor;
-{{/if}}
-{{/if}}
 {{#if (includes payments "stripe")}}
 import fastifyRawBody from "fastify-raw-body";
 {{/if}}
@@ -14937,12 +14918,6 @@ import {
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-{{#if (supportsNodeObservability backend runtime serverDeploy)}}
-{{#if (includes observability "getmonitor")}}
-import { getMonitor } from "./shared/getmonitor";
-void getMonitor;
-{{/if}}
-{{/if}}
 {{#if (and (includes examples "ai") (or (eq runtime "bun") (eq runtime "node")))}}
 import { createUIMessageStreamResponse, streamText, toUIMessageStream, convertToModelMessages, wrapLanguageModel } from "ai";
 import { google } from "@ai-sdk/google";
@@ -15225,11 +15200,6 @@ import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { env } from "@{{projectName}}/env/server";
 import { AppModule } from "./app.module";
-{{#if (supportsNodeObservability backend runtime serverDeploy)}}
-{{#if (includes observability "getmonitor")}}
-import { getMonitor } from "./shared/getmonitor";
-{{/if}}
-{{/if}}
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
@@ -15247,9 +15217,6 @@ async function bootstrap(): Promise<void> {
     }),
   );
 
-  {{#if (supportsNodeObservability backend runtime serverDeploy)}}
-  {{#if (includes observability "getmonitor")}}void getMonitor;{{/if}}
-  {{/if}}
   await app.listen(Number(process.env.PORT ?? 3000));
 }
 
@@ -25897,9 +25864,6 @@ const links = [
   ["frontend/astro/src/layouts/Layout.astro.hbs", `---
 import "../styles/global.css";
 import Header from "../components/Header.astro";
-{{#if (includes observability "getmonitor")}}
-import "../lib/getmonitor";
-{{/if}}
 {{#if (includes observability "himetrica")}}
 import "../lib/himetrica";
 {{/if}}
@@ -29741,9 +29705,6 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxt/ui'
-    {{#if (includes observability "getmonitor")}},
-    '@getmonitor/nuxt'
-    {{/if}}
     {{#if (eq backend "convex")}},
     'convex-nuxt'
     {{/if}}
@@ -29755,11 +29716,6 @@ export default defineNuxtConfig({
   {{#if (eq backend "convex")}}
   convex: {
     url: process.env.NUXT_PUBLIC_CONVEX_URL,
-  },
-  {{/if}}
-  {{#if (includes observability "getmonitor")}}
-  getmonitor: {
-    authToken: process.env.GETMONITOR_AUTH_TOKEN,
   },
   {{/if}}
   {{#if (and (not (eq backend "convex")) (or (and (ne backend "self") (ne backend "none")) (includes payments "stripe")))}}
@@ -29833,9 +29789,6 @@ Disallow:
 {{#if (eq webDeploy "cloudflare")}}
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-import { withGetMonitor } from "@getmonitor/nextjs-config";
-{{/if}}
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -29854,15 +29807,7 @@ const nextConfig: NextConfig = {
 	{{/if}}
 };
 
-{{#if (includes observability "getmonitor")}}
-export default process.env.GETMONITOR_AUTH_TOKEN
-	? (withGetMonitor(nextConfig as Parameters<typeof withGetMonitor>[0], {
-			authToken: process.env.GETMONITOR_AUTH_TOKEN,
-		}) as NextConfig)
-	: nextConfig;
-{{else}}
 export default nextConfig;
-{{/if}}
 
 {{#if (eq webDeploy "cloudflare")}}
 initOpenNextCloudflareForDev();
@@ -29911,9 +29856,6 @@ import "../index.css";
 {{/if}}{{#if (and (eq backend "convex") (eq auth "better-auth"))}}
 import { getToken } from "@/lib/auth-server";
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-import { GetMonitorProvider, GetMonitorBoundary } from "@/components/getmonitor";
-{{/if}}
 {{#if (includes observability "himetrica")}}
 import { KuboHimetricaProvider } from "@/components/himetrica";
 {{/if}}
@@ -29947,8 +29889,6 @@ export default async function RootLayout({
       <body
         className={\`\${geistSans.variable} \${geistMono.variable} antialiased\`}
       >
-        {{#if (includes observability "getmonitor")}}<GetMonitorProvider />
-        <GetMonitorBoundary>{{/if}}
         {{#if (includes observability "himetrica")}}<KuboHimetricaProvider>{{/if}}
         <Providers initialToken={token}>
           <div className="grid grid-rows-[auto_1fr] h-svh">
@@ -29957,7 +29897,6 @@ export default async function RootLayout({
           </div>
         </Providers>
         {{#if (includes observability "himetrica")}}</KuboHimetricaProvider>{{/if}}
-        {{#if (includes observability "getmonitor")}}</GetMonitorBoundary>{{/if}}
       </body>
     </html>
   );
@@ -29973,8 +29912,6 @@ export default function RootLayout({
 			<body
 				className={\`\${geistSans.variable} \${geistMono.variable} antialiased\`}
 				>
-					{{#if (includes observability "getmonitor")}}<GetMonitorProvider />
-					<GetMonitorBoundary>{{/if}}
 					{{#if (includes observability "himetrica")}}<KuboHimetricaProvider>{{/if}}
 					{{#if (eq auth "clerk")}}<ClerkProvider>
 					<Providers>
@@ -29990,7 +29927,6 @@ export default function RootLayout({
 					</div>
 					</Providers>{{/if}}
 					{{#if (includes observability "himetrica")}}</KuboHimetricaProvider>{{/if}}
-					{{#if (includes observability "getmonitor")}}</GetMonitorBoundary>{{/if}}
 				</body>
 		</html>
 	);
@@ -30420,9 +30356,6 @@ export { useTheme } from "next-themes";
 } from "react-router";
 import type { Route } from "./+types/root";
 import "./index.css";
-{{#if (includes observability "getmonitor")}}
-import "./lib/getmonitor";
-{{/if}}
 {{#if (includes observability "himetrica")}}
 import "./lib/himetrica";
 {{/if}}
@@ -30436,9 +30369,6 @@ import { clerkMiddleware, rootAuthLoader } from "@clerk/react-router/server";
 {{#if (and (eq auth "clerk") (ne backend "convex") (ne api "none"))}}
 import { useEffect } from "react";
 import { setClerkAuthTokenGetter } from "@/utils/clerk-auth";
-{{/if}}
-{{#if (includes observability "getmonitor")}}
-import { GetMonitorErrorBoundary } from "@getmonitor/react";
 {{/if}}
 
 {{#if (eq backend "convex")}}
@@ -30501,27 +30431,6 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-function GetMonitorOutlet() {
-  return (
-    {{#if (includes observability "getmonitor")}}
-    <GetMonitorErrorBoundary
-      fallback={(error, reset) => (
-        <div>
-          <p>Something went wrong.</p>
-          <button type="button" onClick={reset}>
-            Try again
-          </button>
-        </div>
-      )}
-    >
-    {{/if}}
-      <Outlet />
-    {{#if (includes observability "getmonitor")}}
-    </GetMonitorErrorBoundary>
-    {{/if}}
-  );
-}
-
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -30561,7 +30470,7 @@ export default function App() {
         >
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
-            <GetMonitorOutlet />
+            <Outlet />
           </div>
           <Toaster richColors />
         </ThemeProvider>
@@ -30579,7 +30488,7 @@ export default function App() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <GetMonitorOutlet />
+          <Outlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -30596,7 +30505,7 @@ export default function App() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <GetMonitorOutlet />
+          <Outlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -30621,7 +30530,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
         >
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
-            <GetMonitorOutlet />
+            <Outlet />
           </div>
           <Toaster richColors />
         </ThemeProvider>
@@ -30637,7 +30546,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
         >
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
-            <GetMonitorOutlet />
+            <Outlet />
           </div>
           <Toaster richColors />
         </ThemeProvider>
@@ -30652,7 +30561,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <GetMonitorOutlet />
+          <Outlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -30672,7 +30581,7 @@ export default function App() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <GetMonitorOutlet />
+          <Outlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -30692,7 +30601,7 @@ export default function App() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <GetMonitorOutlet />
+          <Outlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -30711,7 +30620,7 @@ export default function App() {
     >
       <div className="grid grid-rows-[auto_1fr] h-svh">
         <Header />
-        <GetMonitorOutlet />
+        <Outlet />
       </div>
       <Toaster richColors />
     </ThemeProvider>
@@ -31013,9 +30922,6 @@ import { setClerkAuthTokenGetter } from "@/utils/clerk-auth";
 {{/if}}
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
-{{#if (includes observability "getmonitor")}}
-import "./lib/getmonitor";
-{{/if}}
 {{#if (includes observability "himetrica")}}
 import "./lib/himetrica";
 {{/if}}
@@ -31183,9 +31089,6 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import "../index.css";
-{{#if (includes observability "getmonitor")}}
-import { GetMonitorErrorBoundary } from "@getmonitor/react";
-{{/if}}
 
 {{#if (eq api "orpc")}}
 export interface RouterAppContext {
@@ -31222,27 +31125,6 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
   }),
 });
 
-function GetMonitorOutlet() {
-  return (
-    {{#if (includes observability "getmonitor")}}
-    <GetMonitorErrorBoundary
-      fallback={(error, reset) => (
-        <div>
-          <p>Something went wrong.</p>
-          <button type="button" onClick={reset}>
-            Try again
-          </button>
-        </div>
-      )}
-    >
-    {{/if}}
-      <Outlet />
-    {{#if (includes observability "getmonitor")}}
-    </GetMonitorErrorBoundary>
-    {{/if}}
-  );
-}
-
 function RootComponent() {
   {{#if (eq api "orpc")}}
   const [client] = useState<AppRouterClient>(() => createORPCClient(link));
@@ -31261,7 +31143,7 @@ function RootComponent() {
         >
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header />
-            <GetMonitorOutlet />
+            <Outlet />
           </div>
           <Toaster richColors />
         </ThemeProvider>
@@ -31274,7 +31156,7 @@ function RootComponent() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
-          <GetMonitorOutlet />
+          <Outlet />
         </div>
         <Toaster richColors />
       </ThemeProvider>
@@ -31488,9 +31370,6 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { routeTree } from "./routeTree.gen";
 import Loader from "./components/loader";
-{{#if (includes observability "getmonitor")}}
-import "./lib/getmonitor";
-{{/if}}
 {{#if (includes observability "himetrica")}}
 import "./lib/himetrica";
 {{/if}}
@@ -31499,9 +31378,6 @@ import { env } from "@{{projectName}}/env/web";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
-{{#if (includes observability "getmonitor")}}
-import "./lib/getmonitor";
-{{/if}}
 {{#if (includes observability "himetrica")}}
 import "./lib/himetrica";
 {{/if}}
@@ -31682,9 +31558,6 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Header from "../components/header";
 import appCss from "../index.css?url";
-{{#if (includes observability "getmonitor")}}
-import { GetMonitorErrorBoundary } from "@getmonitor/react";
-{{/if}}
 {{#if (eq backend "convex")}}
 import type { QueryClient } from "@tanstack/react-query";
 import type { ConvexQueryClient } from "@convex-dev/react-query";
@@ -31765,27 +31638,6 @@ export interface RouterAppContext {
   {{/if}}
 {{/if}}
 
-function GetMonitorOutlet() {
-  return (
-    {{#if (includes observability "getmonitor")}}
-    <GetMonitorErrorBoundary
-      fallback={(error, reset) => (
-        <div>
-          <p>Something went wrong.</p>
-          <button type="button" onClick={reset}>
-            Try again
-          </button>
-        </div>
-      )}
-    >
-    {{/if}}
-      <Outlet />
-    {{#if (includes observability "getmonitor")}}
-    </GetMonitorErrorBoundary>
-    {{/if}}
-  );
-}
-
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   head: () => ({
     meta: [
@@ -31844,7 +31696,7 @@ function RootDocument() {
           <body>
             <div className="grid h-svh grid-rows-[auto_1fr]">
               <Header />
-              <GetMonitorOutlet />
+              <Outlet />
             </div>
             <Toaster richColors />
             <TanStackRouterDevtools position="bottom-left" />
@@ -31869,7 +31721,7 @@ function RootDocument() {
         <body>
           <div className="grid h-svh grid-rows-[auto_1fr]">
             <Header />
-            <GetMonitorOutlet />
+            <Outlet />
           </div>
           <Toaster richColors />
           <TanStackRouterDevtools position="bottom-left" />
@@ -31891,7 +31743,7 @@ function RootDocument() {
         <body>
           <div className="grid h-svh grid-rows-[auto_1fr]">
             <Header />
-            <GetMonitorOutlet />
+            <Outlet />
           </div>
           <Toaster richColors />
           <TanStackRouterDevtools position="bottom-left" />
@@ -31914,7 +31766,7 @@ function RootDocument() {
         <body>
           <div className="grid h-svh grid-rows-[auto_1fr]">
             <Header />
-            <GetMonitorOutlet />
+            <Outlet />
           </div>
           <Toaster richColors />
           <TanStackRouterDevtools position="bottom-left" />
@@ -31932,7 +31784,7 @@ function RootDocument() {
       <body>
         <div className="grid h-svh grid-rows-[auto_1fr]">
           <Header />
-          <GetMonitorOutlet />
+          <Outlet />
         </div>
         <Toaster richColors />
         <TanStackRouterDevtools position="bottom-left" />
@@ -32417,9 +32269,6 @@ export default function Loader() {
 import { render } from "solid-js/web";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
-{{#if (includes observability "getmonitor")}}
-import "./lib/getmonitor";
-{{/if}}
 {{#if (includes observability "himetrica")}}
 import "./lib/himetrica";
 {{/if}}
@@ -32800,7 +32649,6 @@ export {};
   ["frontend/svelte/src/routes/+layout.svelte.hbs", `{{#if (eq backend "convex")}}
 <script lang="ts">
 	import '../app.css';
-    {{#if (includes observability "getmonitor")}}import '$lib/getmonitor';{{/if}}
     {{#if (includes observability "himetrica")}}import '$lib/himetrica';{{/if}}
     import Header from '../components/Header.svelte';
     import { PUBLIC_CONVEX_URL } from '$env/static/public';
@@ -32822,7 +32670,6 @@ export {};
     import { QueryClientProvider } from '@tanstack/svelte-query';
     import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
 	import '../app.css';
-    {{#if (includes observability "getmonitor")}}import '$lib/getmonitor';{{/if}}
     {{#if (includes observability "himetrica")}}import '$lib/himetrica';{{/if}}
     import { queryClient } from '$lib/orpc';
     import Header from '../components/Header.svelte';
@@ -32842,7 +32689,6 @@ export {};
   {{else}}
 <script lang="ts">
 	import '../app.css';
-    {{#if (includes observability "getmonitor")}}import '$lib/getmonitor';{{/if}}
     {{#if (includes observability "himetrica")}}import '$lib/himetrica';{{/if}}
     import Header from '../components/Header.svelte';
 
@@ -33054,80 +32900,6 @@ import { defineConfig } from "{{#if (includes addons "vite-plus")}}vite-plus{{el
 export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
 });
-`],
-  ["observability/getmonitor/browser.ts.hbs", `import { GetMonitor } from "@getmonitor/browser";
-import { env } from "@{{projectName}}/env/web";
-
-if (typeof window !== "undefined" && env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}}) {
-  GetMonitor.init(env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}}, {
-    environment: import.meta.env.MODE,
-    apiHost: "http://ingest.getmonitor.io",
-    {{#if (hasReactFrontend frontend)}}// Avoid duplicate events: React logs boundary catches via console.error.
-    captureConsoleErrors: false,
-    {{/if}}
-  });
-}
-`],
-  ["observability/getmonitor/next.tsx.hbs", `"use client";
-
-import { useEffect } from "react";
-import { GetMonitor } from "@getmonitor/browser";
-import { GetMonitorErrorBoundary } from "@getmonitor/react";
-
-export function GetMonitorProvider() {
-  useEffect(() => {
-    const apiKey = process.env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}};
-    if (apiKey) {
-      GetMonitor.init(apiKey, {
-        environment: process.env.NODE_ENV ?? "development",
-        apiHost: "http://ingest.getmonitor.io",
-        // Avoid duplicate events: React logs boundary catches via console.error.
-        captureConsoleErrors: false,
-      });
-    }
-  }, []);
-
-  return null;
-}
-
-export function GetMonitorBoundary({ children }: { children: React.ReactNode }) {
-  return (
-    <GetMonitorErrorBoundary
-      fallback={(error, reset) => (
-        <div>
-          <p>Something went wrong.</p>
-          <button type="button" onClick={reset}>
-            Try again
-          </button>
-        </div>
-      )}
-    >
-      {children}
-    </GetMonitorErrorBoundary>
-  );
-}
-`],
-  ["observability/getmonitor/nuxt.ts.hbs", `import { GetMonitor } from "@getmonitor/browser";
-
-export default defineNuxtPlugin(() => {
-  const apiKey = process.env.{{publicEnvKey frontend "GETMONITOR_API_KEY"}};
-  if (!apiKey) return;
-
-  GetMonitor.init(apiKey, {
-    environment: process.env.NODE_ENV ?? "development",
-    apiHost: "http://ingest.getmonitor.io",
-  });
-});
-`],
-  ["observability/getmonitor/server.ts.hbs", `import { GetMonitor } from "@getmonitor/node";
-import { env } from "@{{projectName}}/env/server";
-
-export const getMonitor = env.GETMONITOR_API_KEY
-  ? new GetMonitor(env.GETMONITOR_API_KEY, {
-      environment: env.NODE_ENV,
-      apiHost: "http://ingest.getmonitor.io",
-    })
-  : null;
 `],
   ["observability/himetrica/browser.ts.hbs", `import { HimetricaClient } from "@himetrica/tracker-js";
 import { env } from "@{{projectName}}/env/web";
@@ -33544,9 +33316,6 @@ export const env = createEnv({
 {{/if}}
 		CORS_ORIGIN: z.url(),
 		NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-{{#if (includes observability "getmonitor")}}
-		GETMONITOR_API_KEY: z.string().min(1).optional(),
-	{{/if}}
 	{{#if (includes communication "millionsend")}}
     MILLIONSEND_API_KEY: z.string().min(1),
     MILLIONSEND_BASE_URL: z.url().default("https://api.millionsend.com"),
@@ -33614,9 +33383,6 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 {{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
@@ -33629,9 +33395,6 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
-{{/if}}
 	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 	{{/if}}
@@ -33639,9 +33402,6 @@ export const env = createEnv({
 {{else if (includes frontend "nuxt")}}
 	client: {
 		NUXT_PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
-{{#if (includes observability "getmonitor")}}
-		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 {{#if (includes payments "stripe")}}
 		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
@@ -33650,9 +33410,6 @@ export const env = createEnv({
 	clientPrefix: "PUBLIC_",
 	client: {
 		PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
-{{#if (includes observability "getmonitor")}}
-		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 {{#if (includes payments "stripe")}}
 		PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
@@ -33668,9 +33425,6 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 {{#if (includes payments "stripe")}}
 		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
@@ -33683,9 +33437,6 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 {{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
@@ -33694,18 +33445,12 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
-{{/if}}
 	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 	{{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
 	client: {
-{{#if (includes observability "getmonitor")}}
-		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 {{#if (includes payments "stripe")}}
 		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
@@ -33715,9 +33460,6 @@ export const env = createEnv({
 	client: {
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
-{{/if}}
-{{#if (includes observability "getmonitor")}}
-		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 {{#if (includes payments "stripe")}}
 		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
@@ -33732,9 +33474,6 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
@@ -33744,9 +33483,6 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
-{{/if}}
 	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 	{{/if}}
@@ -33754,9 +33490,6 @@ export const env = createEnv({
 {{else if (includes frontend "nuxt")}}
 	client: {
 		NUXT_PUBLIC_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
-{{#if (includes observability "getmonitor")}}
-		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 	{{#if (includes payments "stripe")}}
 		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
@@ -33765,9 +33498,6 @@ export const env = createEnv({
 	clientPrefix: "PUBLIC_",
 	client: {
 		PUBLIC_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
-{{#if (includes observability "getmonitor")}}
-		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 	{{#if (includes payments "stripe")}}
 		PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
@@ -33779,9 +33509,6 @@ export const env = createEnv({
 		VITE_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
-{{/if}}
-{{#if (includes observability "getmonitor")}}
-		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	{{#if (includes payments "stripe")}}
 		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
@@ -38197,4 +37924,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 635;
+export const TEMPLATE_COUNT = 631;

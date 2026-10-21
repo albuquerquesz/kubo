@@ -42,9 +42,6 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 {{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
@@ -57,9 +54,6 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
-{{/if}}
 	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 	{{/if}}
@@ -67,9 +61,6 @@ export const env = createEnv({
 {{else if (includes frontend "nuxt")}}
 	client: {
 		NUXT_PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
-{{#if (includes observability "getmonitor")}}
-		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 {{#if (includes payments "stripe")}}
 		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
@@ -78,9 +69,6 @@ export const env = createEnv({
 	clientPrefix: "PUBLIC_",
 	client: {
 		PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
-{{#if (includes observability "getmonitor")}}
-		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 {{#if (includes payments "stripe")}}
 		PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
@@ -96,9 +84,6 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 {{#if (includes payments "stripe")}}
 		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
@@ -111,9 +96,6 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 {{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
@@ -122,18 +104,12 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
-{{/if}}
 	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 	{{/if}}
 	},
 {{else if (includes frontend "nuxt")}}
 	client: {
-{{#if (includes observability "getmonitor")}}
-		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 {{#if (includes payments "stripe")}}
 		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
@@ -143,9 +119,6 @@ export const env = createEnv({
 	client: {
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
-{{/if}}
-{{#if (includes observability "getmonitor")}}
-		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 {{#if (includes payments "stripe")}}
 		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
@@ -160,9 +133,6 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		NEXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
@@ -172,9 +142,6 @@ export const env = createEnv({
 {{#if (eq auth "clerk")}}
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-		NEXT_PUBLIC_GETMONITOR_API_KEY: process.env.NEXT_PUBLIC_GETMONITOR_API_KEY,
-{{/if}}
 	{{#if (includes payments "stripe")}}
 		NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 	{{/if}}
@@ -182,9 +149,6 @@ export const env = createEnv({
 {{else if (includes frontend "nuxt")}}
 	client: {
 		NUXT_PUBLIC_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
-{{#if (includes observability "getmonitor")}}
-		NUXT_PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 	{{#if (includes payments "stripe")}}
 		NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
@@ -193,9 +157,6 @@ export const env = createEnv({
 	clientPrefix: "PUBLIC_",
 	client: {
 		PUBLIC_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
-{{#if (includes observability "getmonitor")}}
-		PUBLIC_GETMONITOR_API_KEY: z.string().min(1).optional(),
-{{/if}}
 	{{#if (includes payments "stripe")}}
 		PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 	{{/if}}
@@ -207,9 +168,6 @@ export const env = createEnv({
 		VITE_SERVER_URL: {{#if (and (eq webDeploy "vercel") (eq serverDeploy "vercel"))}}serverUrlSchema{{else}}z.url(){{/if}},
 {{#if (eq auth "clerk")}}
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1),
-{{/if}}
-{{#if (includes observability "getmonitor")}}
-		VITE_GETMONITOR_API_KEY: z.string().min(1).optional(),
 {{/if}}
 	{{#if (includes payments "stripe")}}
 		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1),

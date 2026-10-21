@@ -2,9 +2,6 @@ import "@{{projectName}}/env/web";
 {{#if (eq webDeploy "cloudflare")}}
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-import { withGetMonitor } from "@getmonitor/nextjs-config";
-{{/if}}
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -23,15 +20,7 @@ const nextConfig: NextConfig = {
 	{{/if}}
 };
 
-{{#if (includes observability "getmonitor")}}
-export default process.env.GETMONITOR_AUTH_TOKEN
-	? (withGetMonitor(nextConfig as Parameters<typeof withGetMonitor>[0], {
-			authToken: process.env.GETMONITOR_AUTH_TOKEN,
-		}) as NextConfig)
-	: nextConfig;
-{{else}}
 export default nextConfig;
-{{/if}}
 
 {{#if (eq webDeploy "cloudflare")}}
 initOpenNextCloudflareForDev();

@@ -5,9 +5,6 @@ import "../index.css";
 {{/if}}{{#if (and (eq backend "convex") (eq auth "better-auth"))}}
 import { getToken } from "@/lib/auth-server";
 {{/if}}
-{{#if (includes observability "getmonitor")}}
-import { GetMonitorProvider, GetMonitorBoundary } from "@/components/getmonitor";
-{{/if}}
 {{#if (includes observability "himetrica")}}
 import { KuboHimetricaProvider } from "@/components/himetrica";
 {{/if}}
@@ -41,8 +38,6 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {{#if (includes observability "getmonitor")}}<GetMonitorProvider />
-        <GetMonitorBoundary>{{/if}}
         {{#if (includes observability "himetrica")}}<KuboHimetricaProvider>{{/if}}
         <Providers initialToken={token}>
           <div className="grid grid-rows-[auto_1fr] h-svh">
@@ -51,7 +46,6 @@ export default async function RootLayout({
           </div>
         </Providers>
         {{#if (includes observability "himetrica")}}</KuboHimetricaProvider>{{/if}}
-        {{#if (includes observability "getmonitor")}}</GetMonitorBoundary>{{/if}}
       </body>
     </html>
   );
@@ -67,8 +61,6 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 				>
-					{{#if (includes observability "getmonitor")}}<GetMonitorProvider />
-					<GetMonitorBoundary>{{/if}}
 					{{#if (includes observability "himetrica")}}<KuboHimetricaProvider>{{/if}}
 					{{#if (eq auth "clerk")}}<ClerkProvider>
 					<Providers>
@@ -84,7 +76,6 @@ export default function RootLayout({
 					</div>
 					</Providers>{{/if}}
 					{{#if (includes observability "himetrica")}}</KuboHimetricaProvider>{{/if}}
-					{{#if (includes observability "getmonitor")}}</GetMonitorBoundary>{{/if}}
 				</body>
 		</html>
 	);
