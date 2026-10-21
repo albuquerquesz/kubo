@@ -13,3 +13,8 @@ export type ReleaseChangelogEmailProps = {
   docsUrl?: string;
   npmUrl?: string;
 };
+
+export type MagicLinkEmailProps = {
+  url: string;
+  expiresInMinutes?: number;
+};
