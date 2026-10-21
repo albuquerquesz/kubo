@@ -58,7 +58,6 @@ export async function displayPostInstallInstructions(
     dbSetup,
     webDeploy,
     serverDeploy,
-    observability,
     communication: rawCommunication,
   } = config;
   const communication = normalizeCommunication(rawCommunication ?? []);
@@ -123,9 +122,6 @@ export async function displayPostInstallInstructions(
     serverDeploy,
     backend,
   );
-  const getMonitorInstructions = observability.includes("getmonitor")
-    ? getGetMonitorInstructions()
-    : "";
   const millionSendInstructions = communication.includes("millionsend")
     ? getMillionSendInstructions(backend)
     : "";
@@ -236,7 +232,6 @@ export async function displayPostInstallInstructions(
   if (playwrightInstructions) output += `\n${playwrightInstructions.trim()}\n`;
   if (clerkInstructions) output += `\n${clerkInstructions.trim()}\n`;
   if (betterAuthConvexInstructions) output += `\n${betterAuthConvexInstructions.trim()}\n`;
-  if (getMonitorInstructions) output += `\n${getMonitorInstructions.trim()}\n`;
   if (millionSendInstructions) output += `\n${millionSendInstructions.trim()}\n`;
   if (resendInstructions) output += `\n${resendInstructions.trim()}\n`;
   if (notifiqueInstructions) output += `\n${notifiqueInstructions.trim()}\n`;
@@ -468,24 +463,6 @@ function getNoOrmWarning() {
   return `\n${pc.yellow(
     "WARNING:",
   )} Database selected without an ORM. Features requiring\n   database access (e.g., examples, auth) need manual setup.`;
-}
-
-function getGetMonitorInstructions() {
-  return `${pc.bold("GetMonitor observability:")}\n${pc.cyan(
-    "•",
-  )} Keys are optional on first run — the app starts without them; capture stays idle until configured\n${pc.cyan(
-    "•",
-  )} When ready, set GETMONITOR_API_KEY (public gm_xxx) in the web and/or server .env\n${pc.cyan(
-    "•",
-  )} Ingestion host is fixed (http://ingest.getmonitor.io) — no apiHost env var\n${pc.cyan(
-    "•",
-  )} Optional: set GETMONITOR_AUTH_TOKEN for Next/Nuxt source-map upload on production builds\n${pc.cyan(
-    "•",
-  )} Browser/Node capture is automatic; React trees include GetMonitorErrorBoundary\n${pc.cyan(
-    "•",
-  )} Opt out next time with --disable-observability\n${pc.dim(
-    "   https://github.com/get-monitor/getmonitor-js",
-  )}`;
 }
 
 function getMillionSendInstructions(backend: Backend) {

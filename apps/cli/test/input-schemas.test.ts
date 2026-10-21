@@ -11,11 +11,12 @@ import {
 import { getSchemaResult, SchemaNameSchema } from "../src/index";
 
 describe("Input schemas", () => {
-  it("accepts GetMonitor as an observability provider", () => {
-    expect(ObservabilitySchema.safeParse("getmonitor").success).toBe(true);
+  it("rejects the removed GetMonitor observability provider", () => {
+    expect(ObservabilitySchema.safeParse("himetrica").success).toBe(true);
+    expect(ObservabilitySchema.safeParse("getmonitor").success).toBe(false);
     expect(
       CreateInputSchema.safeParse({ projectName: "app", observability: "getmonitor" }).success,
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it("accepts Stripe as a payments provider", () => {

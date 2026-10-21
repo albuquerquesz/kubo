@@ -5,14 +5,9 @@ import { isCancel, navigableMultiselect } from "./navigable";
 
 type ObservabilityProvider = Observability[number];
 
-const options = [
+const options: { value: ObservabilityProvider; label: string; hint: string }[] = [
   {
-    value: "getmonitor" as ObservabilityProvider,
-    label: "GetMonitor",
-    hint: "Recommended — JS/TS error tracking for browser and server",
-  },
-  {
-    value: "himetrica" as ObservabilityProvider,
+    value: "himetrica",
     label: "Himetrica",
     hint: "Product analytics, errors, and Web Vitals for web apps",
   },

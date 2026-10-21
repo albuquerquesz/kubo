@@ -19,7 +19,7 @@ export const DEFAULT_CONFIG_BASE = {
   orm: "drizzle",
   auth: "better-auth",
   payments: [],
-  observability: ["getmonitor"],
+  observability: [],
   communication: ["arara"],
   addons: ["turborepo"],
   examples: [],

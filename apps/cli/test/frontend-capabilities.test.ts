@@ -4,13 +4,13 @@ import { getPublicEnvKey, hasReactFrontend, hasWebFrontend } from "@kubojs/types
 
 describe("frontend capabilities", () => {
   it.each([
-    [["next"], "NEXT_PUBLIC_GETMONITOR_API_KEY"],
-    [["nuxt"], "NUXT_PUBLIC_GETMONITOR_API_KEY"],
-    [["svelte"], "PUBLIC_GETMONITOR_API_KEY"],
-    [["astro"], "PUBLIC_GETMONITOR_API_KEY"],
-    [["tanstack-router"], "VITE_GETMONITOR_API_KEY"],
+    [["next"], "NEXT_PUBLIC_HIMETRICA_API_KEY"],
+    [["nuxt"], "NUXT_PUBLIC_HIMETRICA_API_KEY"],
+    [["svelte"], "PUBLIC_HIMETRICA_API_KEY"],
+    [["astro"], "PUBLIC_HIMETRICA_API_KEY"],
+    [["tanstack-router"], "VITE_HIMETRICA_API_KEY"],
   ])("resolves the public env key for %j", (frontends, expected) => {
-    expect(getPublicEnvKey(frontends, "GETMONITOR_API_KEY")).toBe(expected);
+    expect(getPublicEnvKey(frontends, "HIMETRICA_API_KEY")).toBe(expected);
   });
 
   it("preserves the existing precedence for mixed frontend configurations", () => {

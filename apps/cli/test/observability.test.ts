@@ -13,20 +13,24 @@ import { normalizeObservability, processFlags } from "../src/utils/config-proces
 import { collectFiles } from "./setup";
 
 describe("canonical observability normalization", () => {
-  it("keeps both providers and deduplicates selections through the generator", async () => {
+  it("deduplicates selections and drops the removed GetMonitor provider", async () => {
+    // Older kubo.jsonc files may still list GetMonitor.
     const result = await generate({
-      config: { ...DEFAULT_CONFIG, observability: ["himetrica", "getmonitor", "himetrica"] },
+      config: {
+        ...DEFAULT_CONFIG,
+        observability: JSON.parse('["himetrica", "getmonitor", "himetrica"]'),
+      },
       templates: EMBEDDED_TEMPLATES,
     });
     expect(result.isOk()).toBe(true);
     if (result.isErr()) throw result.error;
-    expect(result.value.config.observability).toEqual(["himetrica", "getmonitor"]);
+    expect(result.value.config.observability).toEqual(["himetrica"]);
   });
 
   it("returns a generator error instead of silently dropping an unknown provider", async () => {
     // Simulate a config crossing an untyped JSON boundary.
     const result = await generate({
-      config: { ...DEFAULT_CONFIG, observability: JSON.parse('["getmonitor", "unknown"]') },
+      config: { ...DEFAULT_CONFIG, observability: JSON.parse('["himetrica", "unknown"]') },
       templates: EMBEDDED_TEMPLATES,
     });
     expect(result.match({ ok: () => null, err: (error) => error.message })).toBe(
@@ -42,202 +46,22 @@ describe("canonical observability normalization", () => {
   });
 });
 
-describe("GetMonitor observability", () => {
-  it("generates the browser and Node SDK integrations with schema-backed env vars", async () => {
-    const result = await createVirtual({
-      projectName: "getmonitor-app",
-      frontend: ["tanstack-router"],
-      backend: "hono",
-      runtime: "bun",
-      database: "sqlite",
-      orm: "drizzle",
-      auth: "none",
-      payments: "none",
-      observability: "getmonitor",
-      addons: ["none"],
-      examples: ["none"],
-      dbSetup: "none",
-      api: "trpc",
-      webDeploy: "none",
-      serverDeploy: "none",
-    });
-
-    expect(result.isOk()).toBe(true);
-    if (result.isErr()) return;
-
-    const files = collectFiles(result.value.root, "/virtual");
-    const readme = files.get("README.md");
-    const webPackage = JSON.parse(files.get("apps/web/package.json") ?? "{}");
-    const serverPackage = JSON.parse(files.get("apps/server/package.json") ?? "{}");
-    const getmonitorClient = files.get("apps/web/src/lib/getmonitor.ts") ?? "";
-    const rootRoute = files.get("apps/web/src/routes/__root.tsx") ?? "";
-    const serverGm = files.get("apps/server/src/shared/getmonitor.ts") ?? "";
-    const serverIndex = files.get("apps/server/src/index.ts") ?? "";
-    const webEnv = files.get("apps/web/.env") ?? "";
-    const serverEnv = files.get("apps/server/.env") ?? "";
-    const webEnvSchema = files.get("packages/env/src/web.ts") ?? "";
-    const serverEnvSchema = files.get("packages/env/src/server.ts") ?? "";
-
-    expect(readme).toContain("## GetMonitor Setup");
-    expect(readme).toContain("JavaScript error-tracking SDK");
-    expect(readme).toContain("ingest.getmonitor.io");
-    expect(readme).not.toContain("uptime monitoring");
-    expect(readme).not.toContain("GETMONITOR_API_HOST");
-    expect(readme).not.toContain("getmonitor.com");
-
-    expect(webPackage.dependencies["@getmonitor/browser"]).toBe("^0.1.0");
-    expect(webPackage.dependencies["@getmonitor/react"]).toBe("^0.1.0");
-    expect(serverPackage.dependencies["@getmonitor/node"]).toBe("^0.1.0");
-
-    expect(getmonitorClient).toContain("GetMonitor.init");
-    expect(getmonitorClient).toContain("captureConsoleErrors: false");
-    expect(getmonitorClient).not.toContain("apiHost");
-    expect(rootRoute).toContain("GetMonitorErrorBoundary");
-    expect(serverGm).toContain("new GetMonitor");
-    expect(serverGm).toContain('apiHost: "http://ingest.getmonitor.io"');
-    expect(serverIndex).toContain('from "./shared/getmonitor"');
-    expect(files.has("apps/server/src/getmonitor.ts")).toBe(false);
-
-    expect(webEnv).toContain("VITE_GETMONITOR_API_KEY=");
-    expect(webEnv).not.toContain("GETMONITOR_API_HOST");
-    expect(webEnv).not.toContain("VITE_GETMONITOR_API_HOST");
-    expect(serverEnv).toContain("GETMONITOR_API_KEY=");
-    expect(serverEnv).not.toContain("GETMONITOR_API_HOST");
-
-    expect(webEnvSchema).toContain("VITE_GETMONITOR_API_KEY");
-    expect(webEnvSchema).not.toContain("GETMONITOR_API_HOST");
-    expect(serverEnvSchema).toContain("GETMONITOR_API_KEY");
-    expect(serverEnvSchema).not.toContain("GETMONITOR_API_HOST");
+describe("GetMonitor removal", () => {
+  it("ignores GetMonitor when it comes from a legacy project config", () => {
+    expect(normalizeObservability(["getmonitor"])).toEqual([]);
   });
 
-  it("keeps Express error handling in the generated pipeline", async () => {
-    const result = await createVirtual({
-      projectName: "getmonitor-express-app",
-      frontend: [],
-      backend: "express",
-      runtime: "bun",
-      database: "none",
-      orm: "none",
-      auth: "none",
-      payments: "none",
-      observability: "getmonitor",
-      addons: ["none"],
-      examples: ["none"],
-      dbSetup: "none",
-      api: "none",
-      webDeploy: "none",
-      serverDeploy: "none",
-    });
-
-    expect(result.isOk()).toBe(true);
-    if (result.isErr()) return;
-
-    const files = collectFiles(result.value.root, "/virtual");
-    const server = files.get("apps/server/src/index.ts") ?? "";
-    expect(server).toContain("setupExpressErrorHandler(getMonitor, app)");
-    expect(server).toContain('from "@getmonitor/node"');
-    expect(server).toContain('from "./shared/getmonitor"');
-    expect(files.has("apps/server/src/shared/getmonitor.ts")).toBe(true);
-  });
-
-  it("wires Next.js ErrorBoundary and conditional source-map upload", async () => {
-    const result = await createVirtual({
-      projectName: "getmonitor-next-app",
-      frontend: ["next"],
-      backend: "hono",
-      runtime: "bun",
-      database: "none",
-      orm: "none",
-      auth: "none",
-      payments: "none",
-      observability: "getmonitor",
-      addons: ["none"],
-      examples: ["none"],
-      dbSetup: "none",
-      api: "trpc",
-      webDeploy: "none",
-      serverDeploy: "none",
-    });
-
-    expect(result.isOk()).toBe(true);
-    if (result.isErr()) return;
-
-    const files = collectFiles(result.value.root, "/virtual");
-    const webPackage = JSON.parse(files.get("apps/web/package.json") ?? "{}");
-    const provider = files.get("apps/web/src/components/getmonitor.tsx") ?? "";
-    const layout = files.get("apps/web/src/app/layout.tsx") ?? "";
-    const nextConfig = files.get("apps/web/next.config.ts") ?? "";
-    const webEnv = files.get("apps/web/.env") ?? "";
-
-    expect(webPackage.dependencies["@getmonitor/browser"]).toBe("^0.1.0");
-    expect(webPackage.dependencies["@getmonitor/react"]).toBe("^0.1.0");
-    expect(webPackage.devDependencies["@getmonitor/nextjs-config"]).toBe("^0.1.0");
-
-    expect(provider).toContain("GetMonitor.init");
-    expect(provider).toContain("captureConsoleErrors: false");
-    expect(provider).toContain("GetMonitorErrorBoundary");
-    expect(provider).not.toContain("apiHost");
-    expect(layout).toContain("GetMonitorProvider");
-    expect(layout).toContain("GetMonitorBoundary");
-
-    expect(nextConfig).toContain("withGetMonitor");
-    expect(nextConfig).toContain("GETMONITOR_AUTH_TOKEN");
-    expect(webEnv).toContain("NEXT_PUBLIC_GETMONITOR_API_KEY=");
-    expect(webEnv).toContain("GETMONITOR_AUTH_TOKEN=");
-    expect(webEnv).not.toContain("GETMONITOR_API_HOST");
-  });
-
-  it("wires Nuxt client plugin and source-map module", async () => {
-    const result = await createVirtual({
-      projectName: "getmonitor-nuxt-app",
-      frontend: ["nuxt"],
-      backend: "hono",
-      runtime: "bun",
-      database: "none",
-      orm: "none",
-      auth: "none",
-      payments: "none",
-      observability: "getmonitor",
-      addons: ["none"],
-      examples: ["none"],
-      dbSetup: "none",
-      api: "orpc",
-      webDeploy: "none",
-      serverDeploy: "none",
-    });
-
-    expect(result.isOk()).toBe(true);
-    if (result.isErr()) return;
-
-    const files = collectFiles(result.value.root, "/virtual");
-    const webPackage = JSON.parse(files.get("apps/web/package.json") ?? "{}");
-    const plugin = files.get("apps/web/app/plugins/getmonitor.client.ts") ?? "";
-    const nuxtConfig = files.get("apps/web/nuxt.config.ts") ?? "";
-    const webEnv = files.get("apps/web/.env") ?? "";
-
-    expect(webPackage.dependencies["@getmonitor/browser"]).toBe("^0.1.0");
-    expect(webPackage.devDependencies["@getmonitor/nuxt"]).toBe("^0.1.0");
-    expect(plugin).toContain("GetMonitor.init");
-    expect(plugin).not.toContain("apiHost");
-    expect(nuxtConfig).toContain("@getmonitor/nuxt");
-    expect(nuxtConfig).toContain("getmonitor:");
-    expect(nuxtConfig).toContain("GETMONITOR_AUTH_TOKEN");
-    expect(webEnv).toContain("NUXT_PUBLIC_GETMONITOR_API_KEY=");
-    expect(webEnv).toContain("GETMONITOR_AUTH_TOKEN=");
-  });
-
-  it("wires browser observability for Svelte and Astro", async () => {
-    for (const frontend of ["svelte", "astro"] as const) {
+  it("emits no GetMonitor code, deps, or env vars for full-stack projects", async () => {
+    for (const frontend of ["tanstack-router", "next", "nuxt", "react-router"] as const) {
       const result = await createVirtual({
-        projectName: `${frontend}-getmonitor-app`,
+        projectName: `${frontend}-app`,
         frontend: [frontend],
-        backend: "hono",
-        runtime: "bun",
+        backend: "express",
+        runtime: "node",
         database: "none",
         orm: "none",
         auth: "none",
         payments: "none",
-        observability: "getmonitor",
         addons: ["none"],
         examples: ["none"],
         dbSetup: "none",
@@ -250,82 +74,9 @@ describe("GetMonitor observability", () => {
       if (result.isErr()) continue;
 
       const files = collectFiles(result.value.root, "/virtual");
-      const client = files.get("apps/web/src/lib/getmonitor.ts") ?? "";
-      const entry =
-        frontend === "svelte"
-          ? files.get("apps/web/src/routes/+layout.svelte")
-          : files.get("apps/web/src/layouts/Layout.astro");
-
-      expect(client).toContain("GetMonitor.init");
-      expect(client).toContain("PUBLIC_GETMONITOR_API_KEY");
-      expect(entry).toContain(frontend === "svelte" ? "$lib/getmonitor" : "../lib/getmonitor");
-    }
-  });
-
-  it("declares React router mounts in their source templates", async () => {
-    for (const frontend of ["react-router", "tanstack-start"] as const) {
-      const result = await createVirtual({
-        projectName: `${frontend}-getmonitor-app`,
-        frontend: [frontend],
-        backend: "hono",
-        runtime: "bun",
-        database: "none",
-        orm: "none",
-        auth: "none",
-        payments: "none",
-        observability: "getmonitor",
-        addons: ["none"],
-        examples: ["none"],
-        dbSetup: "none",
-        api: "none",
-        webDeploy: "none",
-        serverDeploy: "none",
-      });
-
-      expect(result.isOk()).toBe(true);
-      if (result.isErr()) continue;
-
-      const files = collectFiles(result.value.root, "/virtual");
-      const entry =
-        frontend === "react-router"
-          ? files.get("apps/web/src/root.tsx")
-          : files.get("apps/web/src/router.tsx");
-      const root =
-        frontend === "react-router"
-          ? (files.get("apps/web/src/root.tsx") ?? "")
-          : (files.get("apps/web/src/routes/__root.tsx") ?? "");
-
-      expect(entry).toContain('import "./lib/getmonitor";');
-      expect(root).toContain("GetMonitorErrorBoundary");
-    }
-  });
-
-  it("declares the Node mount in every hosted server template", async () => {
-    for (const backend of ["hono", "fastify", "elysia", "nestjs"] as const) {
-      const result = await createVirtual({
-        projectName: `${backend}-getmonitor-app`,
-        frontend: [],
-        backend,
-        runtime: "bun",
-        database: "none",
-        orm: "none",
-        auth: "none",
-        payments: "none",
-        observability: "getmonitor",
-        addons: ["none"],
-        examples: ["none"],
-        dbSetup: "none",
-        api: "none",
-        webDeploy: "none",
-        serverDeploy: "none",
-      });
-
-      expect(result.isOk()).toBe(true);
-      if (result.isErr()) continue;
-
-      const files = collectFiles(result.value.root, "/virtual");
-      expect(files.get("apps/server/src/index.ts")).toContain('from "./shared/getmonitor"');
-      expect(files.get("apps/server/src/shared/getmonitor.ts")).toContain("new GetMonitor");
+      for (const [path, content] of files) {
+        expect(`${path}: ${content}`).not.toMatch(/getmonitor/i);
+      }
     }
   });
 });
@@ -366,7 +117,6 @@ describe("Himetrica observability", () => {
     expect(entry).toContain('import "./lib/himetrica";');
     expect(webEnv).toContain("VITE_HIMETRICA_API_KEY=");
     expect(readme).toContain("## Himetrica Setup");
-    expect(readme).not.toContain("## GetMonitor Setup");
   });
 
   it("wraps generated Next.js providers with the Himetrica React provider", async () => {
@@ -406,8 +156,8 @@ describe("Himetrica observability", () => {
 });
 
 describe("observability CLI flag processing", () => {
-  it("defaults interactive and --yes paths to getmonitor", () => {
-    expect(DEFAULT_CONFIG.observability).toEqual(["getmonitor"]);
+  it("defaults interactive and --yes paths to no observability provider", () => {
+    expect(DEFAULT_CONFIG.observability).toEqual([]);
   });
 
   it("keeps --observability from Stack Builder commands in processFlags", () => {
@@ -418,12 +168,6 @@ describe("observability CLI flag processing", () => {
     });
     expect(noneConfig.observability).toEqual([]);
     expect(noneConfig.payments).toEqual([]);
-
-    const getMonitorConfig = processFlags({
-      observability: "getmonitor",
-      backend: "hono",
-    });
-    expect(getMonitorConfig.observability).toEqual(["getmonitor"]);
 
     const himetricaConfig = processFlags({
       observability: "himetrica",
@@ -460,37 +204,5 @@ describe("observability CLI flag processing", () => {
     const command = generateReproducibleCommand(config);
     expect(command).toContain("--disable-observability");
     expect(command).toContain("--payments none");
-  });
-
-  it("preserves both providers in a combined configuration", async () => {
-    const result = await createVirtual({
-      projectName: "combined-observability-app",
-      frontend: ["tanstack-router"],
-      backend: "hono",
-      runtime: "bun",
-      database: "none",
-      orm: "none",
-      auth: "none",
-      payments: "none",
-      observability: ["getmonitor", "himetrica"],
-      addons: [],
-      examples: [],
-      dbSetup: "none",
-      api: "none",
-      webDeploy: "none",
-      serverDeploy: "none",
-    });
-
-    expect(result.isOk()).toBe(true);
-    if (result.isErr()) return;
-    const files = collectFiles(result.value.root, "/virtual");
-    const readme = files.get("README.md") ?? "";
-    const webPackage = JSON.parse(files.get("apps/web/package.json") ?? "{}");
-    expect(webPackage.dependencies["@getmonitor/browser"]).toBe("^0.1.0");
-    expect(webPackage.dependencies["@himetrica/tracker-js"]).toBe("^0.1.36");
-    expect(files.get("apps/web/src/lib/getmonitor.ts")).toContain("GetMonitor.init");
-    expect(files.get("apps/web/src/lib/himetrica.ts")).toContain("HimetricaClient");
-    expect(readme).toContain("## GetMonitor Setup");
-    expect(readme).toContain("## Himetrica Setup");
   });
 });
