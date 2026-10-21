@@ -3,6 +3,7 @@ import { Notifique } from "@notifique/sdk-node";
 import { createElement } from "react";
 import { render, toPlainText } from "react-email";
 
+import { MagicLinkEmail } from "./magic-link-email";
 import { ReleaseChangelogEmail } from "./release-changelog-email";
 import type { ReleaseChangelogEmailProps } from "./types";
 
@@ -44,4 +45,25 @@ export async function mail(input: SendReleaseChangelogEmail) {
   const response = await notifique.email.send(email, { idempotencyKey: input.idempotencyKey });
 
   return response;
+}
+
+export type SendMagicLinkEmail = {
+  to: string;
+  url: string;
+};
+
+export async function sendMagicLinkEmail(input: SendMagicLinkEmail) {
+  const html = await render(createElement(MagicLinkEmail, { url: input.url }));
+  const text = toPlainText(html);
+
+  return notifique.email.send(
+    {
+      from: env.NOTIFIQUE_FROM_EMAIL,
+      to: [input.to],
+      subject: "Seu link de acesso ao Kubo",
+      html,
+      text,
+    },
+    { idempotencyKey: `magic-link:${input.url}` },
+  );
 }
