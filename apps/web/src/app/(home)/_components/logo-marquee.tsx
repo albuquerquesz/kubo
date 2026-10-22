@@ -56,6 +56,11 @@ const LOGOS: LogoItem[] = [
     src: "/integrations/resend.svg",
   },
   {
+    name: "MillionSend",
+    href: "https://millionsend.com",
+    src: "/integrations/millionsend.svg",
+  },
+  {
     name: "AraraHQ",
     href: "https://ararahq.com",
     src: "/integrations/arara.svg",
