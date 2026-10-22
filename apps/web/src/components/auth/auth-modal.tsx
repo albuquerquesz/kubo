@@ -145,7 +145,13 @@ function AuthModalForm({ reason, callbackURL }: Pick<AuthModalProps, "reason" | 
                 disabled={isSending}
                 className="h-11 rounded-[0.375rem] px-3.5 text-sm md:text-sm"
               />
-              <Button type="submit" size="lg" className="h-11 w-full" disabled={isSending}>
+              <Button
+                type="submit"
+                variant="cta"
+                size="lg"
+                className="h-11 w-full"
+                disabled={isSending}
+              >
                 {isSending ? <Spinner /> : null}
                 Continuar com email
                 {isSending ? null : <ArrowRight data-icon="inline-end" />}
@@ -159,7 +165,7 @@ function AuthModalForm({ reason, callbackURL }: Pick<AuthModalProps, "reason" | 
             </div>
 
             <Button
-              variant="outline"
+              variant="secondary"
               size="lg"
               className="h-11 w-full text-sm"
               onClick={() => void handleGoogle()}
