@@ -1077,8 +1077,27 @@
   }
 }
 
+/* Auth modal footer: Brazilian integration logos drifting left */
+.auth-showcase-marquee {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.auth-showcase-marquee__track {
+  animation: auth-showcase-marquee 24s linear infinite;
+}
+
+@keyframes auth-showcase-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .auth-showcase__track {
+  .auth-showcase__track,
+  .auth-showcase-marquee__track {
     animation: none;
   }
 }

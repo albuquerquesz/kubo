@@ -40,7 +40,16 @@ const rightColumn: readonly ShowcaseTile[] = [
   { kind: "stack", caption: "Turborepo + Bun", icons: ["turborepo", "bun", "biome"] },
 ];
 
-const footerIcons = ["nextjs", "convex", "better-auth", "drizzle", "prisma", "vercel"] as const;
+/** Brazilian integrations shipped by Kubo (same assets as the home logo marquee). */
+const brazilianIntegrations = [
+  { name: "AbacatePay", src: "/integrations/abacatepay.svg" },
+  { name: "Guara Cloud", src: "/integrations/guaracloud.png" },
+  { name: "GetMonitor", src: "https://getmonitor.io/logo.svg" },
+  { name: "Himetrica", src: "https://www.himetrica.com/himetrica.png" },
+  { name: "Notifique.dev", src: "https://notifique.dev/logo-notifique.png" },
+  { name: "MillionSend", src: "/integrations/millionsend.svg" },
+  { name: "AraraHQ", src: "/integrations/arara.svg" },
+] as const;
 
 export function AuthModalShowcase({ className }: { className?: string }) {
   return (
@@ -55,21 +64,23 @@ export function AuthModalShowcase({ className }: { className?: string }) {
           <ShowcaseColumn tiles={rightColumn} direction="down" />
         </div>
 
-        <div className="border-rule border-t px-6 py-5">
+        <div className="border-rule border-t px-6 pt-5 pb-8">
           <p className="font-mono text-[0.6875rem] text-muted-foreground uppercase tracking-[0.12em]">
-            Stacks que você monta em minutos
+            Integrações brasileiras
           </p>
-          <div className="mt-4 flex items-center gap-5">
-            {footerIcons.map((icon) => (
-              <Image
-                key={icon}
-                src={`/icon/${icon}.svg`}
-                alt=""
-                width={22}
-                height={22}
-                className="size-5.5 opacity-60 grayscale"
-              />
-            ))}
+          <div className="auth-showcase-marquee mt-9 overflow-hidden">
+            <div className="auth-showcase-marquee__track flex w-max items-center">
+              {[...brazilianIntegrations, ...brazilianIntegrations].map((logo, index) => (
+                <img
+                  key={`${logo.name}-${index}`}
+                  src={logo.src}
+                  alt=""
+                  title={logo.name}
+                  className="mr-10 h-8 w-auto max-w-36 object-contain opacity-60 grayscale"
+                  draggable={false}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
