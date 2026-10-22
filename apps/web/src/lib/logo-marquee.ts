@@ -4,7 +4,7 @@
  */
 
 /** Unique BR integrations shown in the home logo marquee. */
-export const LOGO_MARQUEE_CELL_COUNT = 7;
+export const LOGO_MARQUEE_CELL_COUNT = 8;
 
 /** Compact (<768): 160px cells, no border overlap. */
 export const LOGO_MARQUEE_COMPACT = {
@@ -12,7 +12,7 @@ export const LOGO_MARQUEE_COMPACT = {
   step: 160,
   logoMaxW: 80,
   logoMaxH: 40,
-  sequenceWidth: 160 * LOGO_MARQUEE_CELL_COUNT, // 480
+  sequenceWidth: 160 * LOGO_MARQUEE_CELL_COUNT, // 1280
 } as const;
 
 /**
@@ -25,7 +25,7 @@ export const LOGO_MARQUEE_DESKTOP = {
   logoMaxW: 112,
   logoMaxH: 60,
   /** N × 271 — also N×272 − N×1 (every cell has margin-left: −1px) */
-  sequenceWidth: 271 * LOGO_MARQUEE_CELL_COUNT, // 813
+  sequenceWidth: 271 * LOGO_MARQUEE_CELL_COUNT, // 2168
 } as const;
 
 export const LOGO_MARQUEE_BREAKPOINT_PX = 768;
