@@ -31,7 +31,7 @@ const emailSchema = z.email();
 export function AuthModal({ open, onOpenChange, reason, callbackURL }: AuthModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[calc(100dvh-2rem)] gap-0 overflow-hidden rounded-[0.75rem] bg-background p-0 ring-0 sm:max-w-[min(62rem,calc(100%-2rem))] md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+      <DialogContent className="max-h-[calc(100dvh-2rem)] gap-0 overflow-hidden rounded-[0.75rem] bg-muted p-0 ring-0 sm:max-w-[min(62rem,calc(100%-2rem))] md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <AuthModalForm reason={reason} callbackURL={callbackURL} />
         <AuthModalShowcase className="hidden md:block" />
       </DialogContent>

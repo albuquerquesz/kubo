@@ -55,7 +55,7 @@ export function AuthModalShowcase({ className }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={cn("relative overflow-hidden border-rule border-l bg-background", className)}
+      className={cn("relative overflow-hidden border-rule border-l bg-muted", className)}
     >
       {/* Absolute so the scrolling columns never stretch the dialog height. */}
       <div className="absolute inset-0 flex flex-col">
