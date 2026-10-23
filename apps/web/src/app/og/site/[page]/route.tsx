@@ -23,12 +23,6 @@ const PAGES: Record<
     description: "Escolha sua stack e receba um comando pronto para rodar",
     command: "bun create kubojs@latest my-app --yes",
   },
-  analytics: {
-    path: "~/analytics",
-    section: "análise",
-    title: "Análise",
-    description: "Insights de uso em tempo real da CLI kubojs",
-  },
 };
 
 export async function GET(_req: Request, { params }: RouteContext<"/og/site/[page]">) {

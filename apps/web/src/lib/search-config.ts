@@ -7,12 +7,6 @@ export interface CustomSearchItem {
 
 export const customSearchItems: CustomSearchItem[] = [
   {
-    title: "Análise",
-    url: "/analytics",
-    content: "Análise de criação de projetos e telemetria do CLI",
-    tags: ["analise", "analytics", "insights", "estatisticas", "dados", "metricas"],
-  },
-  {
     title: "Builder",
     url: "/new",
     content: "Construtor visual de stack",
