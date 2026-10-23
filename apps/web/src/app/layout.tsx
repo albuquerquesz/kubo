@@ -1,6 +1,6 @@
 import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata, Viewport } from "next";
-import { Archivo, IBM_Plex_Mono, Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 
 import Providers from "@/components/providers";
@@ -8,30 +8,37 @@ import Providers from "@/components/providers";
 import "./global.css";
 import { cn } from "@/lib/utils";
 
-const archivo = Archivo({
-  subsets: ["latin"],
+// Self-hosted (Fontsource, latin subset) so the build never fetches from Google Fonts.
+const archivo = localFont({
+  src: "./fonts/archivo-latin-wght-normal.woff2",
+  weight: "100 900",
   variable: "--font-archivo",
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const ibmPlexMono = localFont({
+  src: [
+    { path: "./fonts/ibm-plex-mono-latin-400-normal.woff2", weight: "400" },
+    { path: "./fonts/ibm-plex-mono-latin-500-normal.woff2", weight: "500" },
+    { path: "./fonts/ibm-plex-mono-latin-600-normal.woff2", weight: "600" },
+  ],
   variable: "--font-ibm-plex-mono",
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const jetbrainsMono = localFont({
+  src: "./fonts/jetbrains-mono-latin-wght-normal.woff2",
+  weight: "100 800",
   variable: "--font-jetbrains-mono",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: "./fonts/inter-latin-wght-normal.woff2",
+  weight: "100 900",
   variable: "--font-inter",
 });
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
+const spaceGrotesk = localFont({
+  src: "./fonts/space-grotesk-latin-wght-normal.woff2",
+  weight: "300 700",
   variable: "--font-space-grotesk",
 });
 
