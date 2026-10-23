@@ -1,7 +1,6 @@
 "use client";
 
-import { useTrackEvent } from "@himetrica/tracker-js/react";
-import { useCallback, useMemo } from "react";
+import { getHimetricaClient } from "@/lib/himetrica";
 
 type HimetricaEventProperties = {
   builder_started: Record<string, never>;
@@ -26,18 +25,29 @@ export type WebGLSurface = "hero_dithering" | "cta_dot_matrix";
 
 export type KuboHimetricaEvent = keyof HimetricaEventProperties;
 
+export type KuboErrorContext = {
+  boundary: "route" | "global" | "manual";
+  route: string;
+  digest?: string;
+};
+
+function trackKuboEvent<EventName extends KuboHimetricaEvent>(
+  eventName: EventName,
+  properties: HimetricaEventProperties[EventName],
+) {
+  getHimetricaClient()?.track(eventName, properties);
+}
+
+const kuboHimetrica = { track: trackKuboEvent };
+
 export function useKuboHimetrica() {
-  const track = useTrackEvent();
+  return kuboHimetrica;
+}
 
-  const trackKuboEvent = useCallback(
-    <EventName extends KuboHimetricaEvent>(
-      eventName: EventName,
-      properties: HimetricaEventProperties[EventName],
-    ) => {
-      track(eventName, properties);
-    },
-    [track],
-  );
+export function captureKuboError(error: Error, context: KuboErrorContext) {
+  getHimetricaClient()?.captureError(error, context);
+}
 
-  return useMemo(() => ({ track: trackKuboEvent }), [trackKuboEvent]);
+export function useKuboCaptureError() {
+  return captureKuboError;
 }
