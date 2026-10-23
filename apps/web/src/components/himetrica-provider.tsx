@@ -1,19 +1,13 @@
 "use client";
 
-import { HimetricaProvider } from "@himetrica/tracker-js/react";
+import { useEffect } from "react";
 
-import { env } from "@/env/client";
+import { getHimetricaClient } from "@/lib/himetrica";
 
 export function KuboHimetricaProvider({ children }: { children: React.ReactNode }) {
-  const apiKey = env.NEXT_PUBLIC_HIMETRICA_API_KEY;
+  useEffect(() => {
+    getHimetricaClient();
+  }, []);
 
-  if (!apiKey) {
-    return children;
-  }
-
-  return (
-    <HimetricaProvider apiKey={apiKey} autoTrackErrors trackVitals>
-      {children}
-    </HimetricaProvider>
-  );
+  return children;
 }
