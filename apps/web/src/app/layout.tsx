@@ -4,7 +4,6 @@ import { Archivo, IBM_Plex_Mono, Inter, JetBrains_Mono, Space_Grotesk } from "ne
 import type { ReactNode } from "react";
 
 import Providers from "@/components/providers";
-import UmamiScript from "@/components/umami-script";
 
 import "./global.css";
 import { cn } from "@/lib/utils";
@@ -142,7 +141,6 @@ export default function Layout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <body>
-        <UmamiScript />
         <RootProvider
           search={{
             options: {
