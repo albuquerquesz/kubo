@@ -1,3 +1,6 @@
+import { log } from "@clack/prompts";
+import pc from "picocolors";
+
 import { DEFAULT_CONFIG } from "../constants";
 import type {
   Addons,
@@ -65,13 +68,26 @@ type PromptGroupResults = {
   serverDeploy: ServerDeploy;
 };
 
+/** Prompts need a TTY on stdin; without one (CI, pipes, agents) they never resolve. */
+export function canPromptForInput(stdin: { isTTY?: boolean } = process.stdin): boolean {
+  return stdin.isTTY === true;
+}
+
 export async function gatherConfig(
   flags: Partial<ProjectConfig>,
   projectName: string,
   projectDir: string,
   relativePath: string,
+  stdin: { isTTY?: boolean } = process.stdin,
 ) {
-  if (isSilent()) {
+  if (isSilent() || !canPromptForInput(stdin)) {
+    if (!isSilent()) {
+      log.info(
+        pc.yellow(
+          "No interactive terminal detected; using defaults for options not passed as flags.",
+        ),
+      );
+    }
     return {
       projectName,
       projectDir,
