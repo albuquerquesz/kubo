@@ -14,17 +14,18 @@ ARG NOTIFIQUE_BASE_URL
 ARG NOTIFIQUE_FROM_EMAIL
 ARG NOTIFIQUE_NEWSLETTER_LIST_ID
 ARG SKIP_ENV_VALIDATION
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_TELEMETRY_DISABLED=1 NEXT_OUTPUT_STANDALONE=1
 
 COPY . .
 RUN bun install --frozen-lockfile --ignore-scripts
 RUN cd apps/web && bun x fumadocs-mdx && cd ../.. && bun run build:web
 
+# Runtime ships only Next's traced standalone server plus static assets.
 FROM node:22-slim
-COPY --from=bun /usr/local/bin/bun /usr/local/bin/bun
 WORKDIR /app
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0
-COPY --from=build /app /app
-WORKDIR /app/apps/web
+COPY --from=build /app/apps/web/.next/standalone ./
+COPY --from=build /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=build /app/apps/web/public ./apps/web/public
 EXPOSE 3000
-CMD ["node", "node_modules/next/dist/bin/next", "start", "--port", "3000", "--hostname", "0.0.0.0"]
+CMD ["node", "apps/web/server.js"]
