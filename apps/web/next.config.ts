@@ -28,6 +28,11 @@ const config: NextConfig = {
   // for production builds; skip in `next dev` so cold compile does not balloon RAM.
   reactCompiler: process.env.NODE_ENV === "production",
   reactStrictMode: true,
+  // Docker image (Dockerfile at repo root) ships only the traced server, not the whole monorepo.
+  ...(process.env.NEXT_OUTPUT_STANDALONE === "1" && {
+    output: "standalone",
+    outputFileTracingRoot: monorepoRoot,
+  }),
   images: {
     localPatterns: [
       { pathname: "**", search: "" },
