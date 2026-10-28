@@ -1,0 +1,14 @@
+**/node_modules
+**/.next
+**/.turbo
+**/.vercel
+**/.source
+**/dist
+**/coverage
+**/output
+**/.env
+**/.env.*
+!**/.env.example
+.git
+.tmp
+.playwright-cli
