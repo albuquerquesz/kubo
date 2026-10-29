@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { SITE_URL } from "@/lib/site";
+
 import Footer from "../../_components/footer";
 
 export const metadata: Metadata = {
@@ -11,7 +13,7 @@ export const metadata: Metadata = {
     title: "A newsletter do Kubo está chegando",
     description:
       "Lançamentos, decisões de produto e guias curtos para montar projetos TypeScript com mais clareza.",
-    url: "https://kubojs.dev/updates/newsletter",
+    url: `${SITE_URL}/updates/newsletter`,
     type: "article",
   },
 };

@@ -2,6 +2,7 @@ import { isDesktopWebFrontend, isSelfHostedFrontend, type ProjectConfigDraft } f
 
 import { isStackDefault, type StackState, TECH_OPTIONS } from "@/lib/constant";
 import { CREATE_COMMANDS, DEFAULT_PACKAGE_MANAGER } from "@/lib/create-commands";
+import { SITE_URL } from "@/lib/site";
 import { getFrontendSelection } from "@/lib/stack-state";
 import { stackUrlKeys } from "@/lib/stack-url-keys";
 
@@ -236,7 +237,7 @@ export function formatStackCommandForDisplay(command: string) {
 }
 
 export function generateStackUrlFromState(input: StackBuilderInput, baseUrl?: string) {
-  const origin = baseUrl || "https://kubojs.dev";
+  const origin = baseUrl || SITE_URL;
   const stack = withBuilderState(input);
   const searchString = serializeStackToSearchString(stack);
   return `${origin}/new${searchString ? `?${searchString}` : ""}`;

@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import Providers from "@/components/providers";
 
 import "./global.css";
+import { SITE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 // Self-hosted (Fontsource, latin subset) so the build never fetches from Google Fonts.
@@ -42,7 +43,7 @@ const spaceGrotesk = localFont({
   variable: "--font-space-grotesk",
 });
 
-const ogImage = "https://kubojs.dev/assets/kubo-social.jpg";
+const ogImage = `${SITE_URL}/assets/kubo-social.jpg`;
 
 export const metadata: Metadata = {
   title: "kubojs — crie projetos TypeScript type-safe",
@@ -76,7 +77,7 @@ export const metadata: Metadata = {
     email: false,
     telephone: false,
   },
-  metadataBase: new URL("https://kubojs.dev"),
+  metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: "/",
   },
@@ -84,7 +85,7 @@ export const metadata: Metadata = {
     title: "kubojs — crie projetos TypeScript type-safe",
     description:
       "CLI moderna para criar projetos TypeScript end-to-end com type safety, boas práticas e configurações personalizáveis",
-    url: "https://kubojs.dev",
+    url: SITE_URL,
     siteName: "kubojs",
     images: [
       {

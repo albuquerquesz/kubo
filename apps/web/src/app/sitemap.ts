@@ -2,28 +2,30 @@ export const dynamic = "force-static";
 
 import type { MetadataRoute } from "next";
 
+import { SITE_URL } from "@/lib/site";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: "https://kubojs.dev/",
+      url: `${SITE_URL}/`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: "https://kubojs.dev/new",
+      url: `${SITE_URL}/new`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: "https://kubojs.dev/docs",
+      url: `${SITE_URL}/docs`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.5,
     },
     {
-      url: "https://kubojs.dev/updates/newsletter",
+      url: `${SITE_URL}/updates/newsletter`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.6,

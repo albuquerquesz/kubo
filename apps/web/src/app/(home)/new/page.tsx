@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
+import { SITE_URL } from "@/lib/site";
+
 import { StackBuilder } from "./_components/stack-builder";
 
 export const metadata: Metadata = {
@@ -9,10 +11,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Stack Builder - kubojs",
     description: "Interface interativa para montar a sua stack",
-    url: "https://kubojs.dev/new",
+    url: `${SITE_URL}/new`,
     images: [
       {
-        url: "https://kubojs.dev/og/site/new.png",
+        url: `${SITE_URL}/og/site/new.png`,
         width: 1200,
         height: 630,
         alt: "Stack Builder kubojs",
@@ -23,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Stack Builder - kubojs",
     description: "Interface interativa para montar a sua stack",
-    images: ["https://kubojs.dev/og/site/new.png"],
+    images: [`${SITE_URL}/og/site/new.png`],
   },
 };
 
