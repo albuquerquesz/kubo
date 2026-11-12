@@ -17,6 +17,14 @@ export type SendReleaseChangelogEmail = {
 
 export class EmailDeliveryError extends Error {
   override readonly name = "EmailDeliveryError";
+
+  // Not `ErrorOptions.cause`: Convex typechecks this package with `lib: ES2021`.
+  constructor(
+    message: string,
+    readonly reason: unknown,
+  ) {
+    super(message);
+  }
 }
 
 // Created on first send so importing this module (Convex push analysis, tests) needs no API key.
@@ -53,7 +61,7 @@ export async function mail(input: SendReleaseChangelogEmail) {
   );
 
   if (error) {
-    throw new EmailDeliveryError(`Resend rejected the email: ${error.message}`, { cause: error });
+    throw new EmailDeliveryError(`Resend rejected the email: ${error.message}`, error);
   }
 
   return data;
