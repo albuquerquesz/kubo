@@ -18,10 +18,10 @@
   },
   "dependencies": {
     "@kubojs/env": "workspace:*",
-    "@notifique/sdk-node": "0.2.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-email": "^6.9.2"
+    "react-email": "^6.9.2",
+    "resend": "6.38.0"
   },
   "devDependencies": {
     "@react-email/ui": "^6.9.2",

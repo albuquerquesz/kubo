@@ -3,25 +3,19 @@ import { describe, expect, test } from "bun:test";
 import { z } from "zod";
 
 describe("web env schemas", () => {
-  test("server schema requires Notifique keys and defaults base URL", () => {
+  test("server schema requires Resend API key and sender", () => {
     const serverSchema = z.object({
-      NOTIFIQUE_API_KEY: z.string().min(1),
-      NOTIFIQUE_NEWSLETTER_LIST_ID: z.string().trim().min(1),
+      RESEND_API_KEY: z.string().min(1),
+      EMAIL_FROM: z.string().min(1),
     });
 
     expect(() =>
-      serverSchema.parse({
-        NOTIFIQUE_API_KEY: undefined,
-        NOTIFIQUE_NEWSLETTER_LIST_ID: "list_1",
-      }),
+      serverSchema.parse({ RESEND_API_KEY: undefined, EMAIL_FROM: "Kubo <noreply@kubojs.dev>" }),
     ).toThrow();
 
-    const parsed = serverSchema.parse({
-      NOTIFIQUE_API_KEY: "sk_test",
-      NOTIFIQUE_NEWSLETTER_LIST_ID: " list_1 ",
-    });
-
-    expect(parsed.NOTIFIQUE_NEWSLETTER_LIST_ID).toBe("list_1");
+    expect(
+      serverSchema.parse({ RESEND_API_KEY: "re_test", EMAIL_FROM: "Kubo <noreply@kubojs.dev>" }),
+    ).toEqual({ RESEND_API_KEY: "re_test", EMAIL_FROM: "Kubo <noreply@kubojs.dev>" });
   });
 
   test("client schema requires Convex URLs and treats analytics keys as optional", () => {
