@@ -1,42 +1,29 @@
-import { subscribeToNewsletter } from "@kubojs/email";
+import { api } from "@kubojs/backend/convex/_generated/api";
+import { fetchMutation } from "convex/nextjs";
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
-import { env } from "@/env/server";
+type NewsletterOutcome = "subscribed" | "invalid" | "error";
 
-const subscriptionSchema = z.object({
-  email: z.email(),
-});
+function redirectTo(outcome: NewsletterOutcome, request: Request) {
+  return NextResponse.redirect(
+    new URL(`/?newsletter=${outcome}#newsletter-title`, request.url),
+    303,
+  );
+}
 
 export async function POST(request: Request) {
   const formData = await request.formData();
-  const result = subscriptionSchema.safeParse({
-    email: formData.get("email"),
-  });
-
-  if (!result.success) {
-    return NextResponse.redirect(
-      new URL("/?newsletter=invalid#newsletter-title", request.url),
-      303,
-    );
+  const email = formData.get("email");
+  if (typeof email !== "string") {
+    return redirectTo("invalid", request);
   }
 
-  const subscriptionFailed = await subscribeToNewsletter({
-    email: result.data.email,
-    listId: env.NOTIFIQUE_NEWSLETTER_LIST_ID,
-  })
-    .then(() => false)
-    .catch((error: unknown) => {
+  const outcome = await fetchMutation(api.newsletter.subscribe, { email }).catch(
+    (error: unknown): NewsletterOutcome => {
       console.error("Newsletter subscription failed", error);
-      return true;
-    });
-
-  if (subscriptionFailed) {
-    return NextResponse.redirect(new URL("/?newsletter=error#newsletter-title", request.url), 303);
-  }
-
-  return NextResponse.redirect(
-    new URL("/?newsletter=subscribed#newsletter-title", request.url),
-    303,
+      return "error";
+    },
   );
+
+  return redirectTo(outcome, request);
 }
