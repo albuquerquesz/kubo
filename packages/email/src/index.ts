@@ -44,21 +44,18 @@ function unsubscribeHeaders(url: string | undefined): Record<string, string> | u
   };
 }
 
-export async function mail(input: SendReleaseChangelogEmail) {
-  const html = await render(createElement(ReleaseChangelogEmail, input.release));
+type OutgoingEmail = {
+  to: string[];
+  subject: string;
+  html: string;
+  idempotencyKey?: string;
+  headers?: Record<string, string>;
+};
 
+async function sendEmail({ idempotencyKey, ...email }: OutgoingEmail) {
   const { data, error } = await getResend().emails.send(
-    {
-      from: env.EMAIL_FROM,
-      to: Array.isArray(input.to) ? input.to : [input.to],
-      subject:
-        input.subject ??
-        `KuboJS ${input.release.version}: o que mudou e o que você pode usar agora.`,
-      html,
-      text: toPlainText(html),
-      headers: unsubscribeHeaders(input.unsubscribeUrl),
-    },
-    { idempotencyKey: input.idempotencyKey },
+    { from: env.EMAIL_FROM, text: toPlainText(email.html), ...email },
+    { idempotencyKey },
   );
 
   if (error) {
@@ -68,23 +65,34 @@ export async function mail(input: SendReleaseChangelogEmail) {
   return data;
 }
 
+export async function mail(input: SendReleaseChangelogEmail) {
+  return sendEmail({
+    to: Array.isArray(input.to) ? input.to : [input.to],
+    subject:
+      input.subject ?? `KuboJS ${input.release.version}: o que mudou e o que você pode usar agora.`,
+    html: await render(createElement(ReleaseChangelogEmail, input.release)),
+    idempotencyKey: input.idempotencyKey,
+    headers: unsubscribeHeaders(input.unsubscribeUrl),
+  });
+}
+
 export type SendMagicLinkEmail = {
   to: string;
   url: string;
 };
 
-export async function sendMagicLinkEmail(input: SendMagicLinkEmail) {
-  const html = await render(createElement(MagicLinkEmail, { url: input.url }));
-  const text = toPlainText(html);
+/** Resend caps idempotency keys at 256 chars; magic-link URLs carry a long token, so hash them. */
+async function magicLinkIdempotencyKey(url: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(url));
+  const hex = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0"));
+  return `magic-link:${hex.join("")}`;
+}
 
-  return notifique.email.send(
-    {
-      from: env.NOTIFIQUE_FROM_EMAIL,
-      to: [input.to],
-      subject: "Seu link de acesso ao Kubo",
-      html,
-      text,
-    },
-    { idempotencyKey: `magic-link:${input.url}` },
-  );
+export async function sendMagicLinkEmail(input: SendMagicLinkEmail) {
+  return sendEmail({
+    to: [input.to],
+    subject: "Seu link de acesso ao Kubo",
+    html: await render(createElement(MagicLinkEmail, { url: input.url })),
+    idempotencyKey: await magicLinkIdempotencyKey(input.url),
+  });
 }
