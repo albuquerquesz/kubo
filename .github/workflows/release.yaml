@@ -225,6 +225,12 @@ jobs:
       startsWith(github.event.head_commit.message, 'chore(release):')
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # Job-level so every build sees it: `npm publish` re-runs the CLI build via
+    # prepublishOnly, and tsdown inlines these at build time (an empty URL
+    # compiles telemetry to a no-op).
+    env:
+      BTS_TELEMETRY: 1
+      CONVEX_INGEST_URL: ${{ secrets.CONVEX_INGEST_URL }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
