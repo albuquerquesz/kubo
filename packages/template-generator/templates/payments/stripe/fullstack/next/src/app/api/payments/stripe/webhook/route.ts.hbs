@@ -1,4 +1,4 @@
-import { processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+import { processStripeWebhook } from "{{packageScope}}/payments/lib/stripe";
 
 export async function POST(request: Request) {
 	const signature = request.headers.get("stripe-signature");

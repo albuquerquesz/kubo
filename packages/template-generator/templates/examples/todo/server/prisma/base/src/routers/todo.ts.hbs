@@ -1,9 +1,9 @@
 {{#if (eq api "orpc")}}
 import z from "zod";
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createPrismaClient } from "@{{projectName}}/db";
+import { createPrismaClient } from "{{packageScope}}/db";
 {{else}}
-import prisma from "@{{projectName}}/db";
+import prisma from "{{packageScope}}/db";
 {{/if}}
 import { publicProcedure } from "../../index";
 
@@ -69,9 +69,9 @@ export const todoRouter = {
 import { TRPCError } from "@trpc/server";
 import z from "zod";
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createPrismaClient } from "@{{projectName}}/db";
+import { createPrismaClient } from "{{packageScope}}/db";
 {{else}}
-import prisma from "@{{projectName}}/db";
+import prisma from "{{packageScope}}/db";
 {{/if}}
 import { publicProcedure, router } from "../../index";
 

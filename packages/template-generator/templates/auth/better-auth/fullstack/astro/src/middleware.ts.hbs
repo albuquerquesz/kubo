@@ -1,7 +1,7 @@
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 import { defineMiddleware } from "astro:middleware";
 

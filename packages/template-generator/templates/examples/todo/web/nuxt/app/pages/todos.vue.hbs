@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 {{#if (eq backend "convex")}}
-import { api } from "@{{ projectName }}/backend/convex/_generated/api";
-import type { Id } from "@{{ projectName }}/backend/convex/_generated/dataModel";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
+import type { Id } from "{{packageScope}}/backend/convex/_generated/dataModel";
 import { useConvexMutation, useConvexQuery } from "convex-vue";
 
 const { data, error, isPending } = useConvexQuery(api.todos.getAll, {});

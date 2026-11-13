@@ -1,12 +1,12 @@
 {{#if (eq auth "better-auth")}}
 import { headers } from "next/headers";
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
-import { createAbacatePayHostedCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+import { createAbacatePayHostedCheckout } from "{{packageScope}}/payments/lib/abacatepay";
 
 export async function POST() {
 	{{#if (eq auth "better-auth")}}

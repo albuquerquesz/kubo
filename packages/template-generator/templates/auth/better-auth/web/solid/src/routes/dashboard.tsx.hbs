@@ -1,5 +1,5 @@
 {{#if (includes payments "abacatepay")}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 import { authClient } from "@/lib/auth-client";
 {{#if (eq api "orpc")}}

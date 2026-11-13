@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/solid-router";
 import { createSignal, onMount } from "solid-js";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 export const Route = createFileRoute("/checkout/return")({ component: CheckoutReturnPage });
 function CheckoutReturnPage() {

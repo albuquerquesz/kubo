@@ -2,9 +2,9 @@ import { authClient } from "@/lib/auth-client";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import z from "zod";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 import { useRouter } from "next/navigation";
 
 export default function SignInForm({

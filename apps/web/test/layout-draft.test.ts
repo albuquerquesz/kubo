@@ -42,6 +42,29 @@ describe("layout draft", () => {
     expect(result.conflicts[0]?.code).toBe("path_collision");
   });
 
+  test("keeps a valid scope and rejects a malformed one", () => {
+    const draft = layoutToDraft(undefined);
+    draft.scope = " @acme ";
+    expect(validateLayoutDraft(draft).layout).toEqual({
+      version: 1,
+      preset: "standard",
+      scope: "@acme",
+    });
+    expect(layoutToDraft({ preset: "standard", scope: "@acme" }).scope).toBe("@acme");
+    draft.scope = "acme";
+    const result = validateLayoutDraft(draft);
+    expect(result.layout).toBeUndefined();
+    expect(result.fieldErrors.scope).toBeDefined();
+  });
+
+  test("a scope alone is not the standard layout", () => {
+    expect(parseStackLayout({ preset: "standard", scope: "@acme" })).toEqual({
+      version: 1,
+      preset: "standard",
+      scope: "@acme",
+    });
+  });
+
   test("placeholder follows the convention dir", () => {
     const draft = layoutToDraft({ preset: "libs" });
     expect(getConventionPath(draft, "packages", "ui")).toBe("libs/ui");
@@ -61,9 +84,9 @@ describe("stack layout state", () => {
   test("normalizeStackState keeps a valid layout", () => {
     const stack = normalizeStackState({ ...DEFAULT_STACK, layout: { preset: "libs" } });
     expect(stack?.layout).toEqual({ version: 1, preset: "libs" });
-    expect(normalizeStackState({ ...DEFAULT_STACK, layout: { apps: { web: "../x" } } })?.layout).toBe(
-      undefined,
-    );
+    expect(
+      normalizeStackState({ ...DEFAULT_STACK, layout: { apps: { web: "../x" } } })?.layout,
+    ).toBe(undefined);
   });
 
   test("the command carries --layout only for non-standard layouts", () => {
@@ -75,22 +98,27 @@ describe("stack layout state", () => {
       ...DEFAULT_STACK,
       layout: { preset: "libs", apps: { web: "web" } },
     })!;
-    expect(generateStackCommand(custom)).toContain(`--layout '{"preset":"libs","apps":{"web":"web"}}'`);
+    expect(generateStackCommand(custom)).toContain(
+      `--layout '{"preset":"libs","apps":{"web":"web"}}'`,
+    );
   });
 
   test("the share URL includes the layout", () => {
     const libs = normalizeStackState({ ...DEFAULT_STACK, layout: { preset: "libs" } })!;
     const url = new URL(generateStackUrlFromState(libs));
-    expect(JSON.parse(url.searchParams.get("lay") ?? "null")).toEqual({ version: 1, preset: "libs" });
+    expect(JSON.parse(url.searchParams.get("lay") ?? "null")).toEqual({
+      version: 1,
+      preset: "libs",
+    });
   });
 });
 
 describe("withLayoutCode", () => {
   test("replaces inline layout flags with the code", async () => {
     const { withLayoutCode } = await import("../src/lib/stack-utils");
-    expect(withLayoutCode("bun create kubojs@latest app --yes --layout libs", "AAAA-BBBB-CCCC")).toBe(
-      "bun create kubojs@latest app --yes --layout-code AAAA-BBBB-CCCC",
-    );
+    expect(
+      withLayoutCode("bun create kubojs@latest app --yes --layout libs", "AAAA-BBBB-CCCC"),
+    ).toBe("bun create kubojs@latest app --yes --layout-code AAAA-BBBB-CCCC");
     expect(
       withLayoutCode(
         `bun create kubojs@latest app --frontend next --layout '{"preset":"libs","apps":{"web":"web"}}' --yolo`,

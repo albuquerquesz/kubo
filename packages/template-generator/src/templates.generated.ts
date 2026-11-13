@@ -322,7 +322,7 @@ export default defineConfig({
 });
 `],
   ["addons/s3-storage/packages/storage/package.json.hbs", `{
-  "name": "@{{projectName}}/storage",
+  "name": "{{packageScope}}/storage",
   "private": true,
   "type": "module",
   "exports": {
@@ -508,8 +508,8 @@ import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { RPCHandler } from "@orpc/server/fetch";
 import { onError } from "@orpc/server";
-import { appRouter } from "@{{projectName}}/api/routers/index";
-import { createContext } from "@{{projectName}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
 
 const handler = new RPCHandler(appRouter, {
   interceptors: [
@@ -552,8 +552,8 @@ export const ALL: APIRoute = async ({ request }) => {
   return new Response("Not found", { status: 404 });
 };
 `],
-  ["api/orpc/fullstack/next/src/app/api/rpc/[[...rest]]/route.ts.hbs", `import { createContext } from "@{{projectName}}/api/context";
-import { appRouter } from "@{{projectName}}/api/routers/index";
+  ["api/orpc/fullstack/next/src/app/api/rpc/[[...rest]]/route.ts.hbs", `import { createContext } from "{{packageScope}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
@@ -602,7 +602,7 @@ export const POST = handleRequest;
 export const PUT = handleRequest;
 export const PATCH = handleRequest;
 export const DELETE = handleRequest;`],
-  ["api/orpc/fullstack/nuxt/app/plugins/orpc.client.ts.hbs", `import type { AppRouterClient } from "@{{projectName}}/api/routers/index";
+  ["api/orpc/fullstack/nuxt/app/plugins/orpc.client.ts.hbs", `import type { AppRouterClient } from "{{packageScope}}/api/routers/index";
 import { createORPCClient } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
@@ -632,8 +632,8 @@ export default defineNuxtPlugin(() => {
 `],
   ["api/orpc/fullstack/nuxt/app/plugins/orpc.server.ts.hbs", `import { createRouterClient } from "@orpc/server";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
-import { appRouter } from "@{{projectName}}/api/routers/index";
-import { createContext } from "@{{projectName}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
 
 export default defineNuxtPlugin(async () => {
   const event = useRequestEvent();
@@ -661,8 +661,8 @@ import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { onError } from "@orpc/server";
 import { BatchHandlerPlugin } from "@orpc/server/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
-import { appRouter } from "@{{projectName}}/api/routers/index";
-import { createContext } from "@{{projectName}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
 
 const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [
@@ -709,10 +709,10 @@ export default defineEventHandler(async (event) => {
   ["api/orpc/fullstack/nuxt/server/routes/rpc/index.ts.hbs", `export { default } from "./[...]";
 `],
   ["api/orpc/fullstack/svelte/src/lib/orpc.server.ts.hbs", `import { getRequestEvent } from "$app/server";
-import { createContext } from "@{{projectName}}/api/context";
-import { appRouter, type AppRouterClient } from "@{{projectName}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
+import { appRouter, type AppRouterClient } from "{{packageScope}}/api/routers/index";
 {{#if (eq webDeploy "cloudflare")}}
-import { env as localEnv } from "@{{projectName}}/env/server";
+import { env as localEnv } from "{{packageScope}}/env/server";
 {{/if}}
 import { createRouterClient } from "@orpc/server";
 
@@ -740,10 +740,10 @@ const serverClient: AppRouterClient = createRouterClient(appRouter, {
 // reuse the in-process server client during SSR and fall back to HTTP in the browser.
 globalThis.$client = serverClient;
 `],
-  ["api/orpc/fullstack/svelte/src/routes/rpc/[...rest]/+server.ts.hbs", `import { createContext } from "@{{projectName}}/api/context";
-import { appRouter } from "@{{projectName}}/api/routers/index";
+  ["api/orpc/fullstack/svelte/src/routes/rpc/[...rest]/+server.ts.hbs", `import { createContext } from "{{packageScope}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
 {{#if (eq webDeploy "cloudflare")}}
-import { env as localEnv } from "@{{projectName}}/env/server";
+import { env as localEnv } from "{{packageScope}}/env/server";
 {{/if}}
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
@@ -807,8 +807,8 @@ export const PUT = handle;
 export const PATCH = handle;
 export const DELETE = handle;
 `],
-  ["api/orpc/fullstack/tanstack-start/src/routes/api/rpc/$.ts.hbs", `import { createContext } from "@{{projectName}}/api/context";
-import { appRouter } from "@{{projectName}}/api/routers/index";
+  ["api/orpc/fullstack/tanstack-start/src/routes/api/rpc/$.ts.hbs", `import { createContext } from "{{packageScope}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
@@ -869,8 +869,8 @@ export const Route = createFileRoute('/api/rpc/$')({
 import { RPCLink } from "@orpc/client/fetch";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
-import type { AppRouterClient } from "@{{projectName}}/api/routers/index";
-import { env } from "@{{projectName}}/env/native";
+import type { AppRouterClient } from "{{packageScope}}/api/routers/index";
+import { env } from "{{packageScope}}/env/native";
 {{#if (eq auth "better-auth")}}
 import { authClient } from "@/lib/auth-client";
 import { Platform } from "react-native";
@@ -978,7 +978,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 `],
   ["api/orpc/server/package.json.hbs", `{
-  "name": "@{{projectName}}/api",
+  "name": "{{packageScope}}/api",
   "exports": {
     ".": {
       "default": "./src/index.ts"
@@ -1011,7 +1011,7 @@ function toClerkContextAuth(auth: { userId: string | null } | null): ClerkContex
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
 {{else}}
 import { createClerkClient } from "@clerk/backend";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 const clerkClient = createClerkClient({
 	secretKey: env.CLERK_SECRET_KEY,
@@ -1031,9 +1031,9 @@ async function authenticateClerkRequest(request: Request): Promise<ClerkContextA
 import type { NextRequest } from "next/server";
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 
@@ -1063,9 +1063,9 @@ export async function createContext({{#if (eq auth "none")}}_req{{else}}req{{/if
 {{else if (and (eq backend 'self') (includes frontend "tanstack-start"))}}
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 
@@ -1095,9 +1095,9 @@ export async function createContext({{#if (eq auth "none")}}_options{{else}}{ re
 {{else if (and (eq backend 'self') (includes frontend "nuxt"))}}
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 
@@ -1123,13 +1123,13 @@ export async function createContext({{#if (eq auth "none")}}_options{{else}}{ he
 {{else if (and (eq backend 'self') (includes frontend "svelte"))}}
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 {{#if (eq webDeploy "cloudflare")}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{/if}}
 
 export type CreateContextOptions = {
@@ -1163,9 +1163,9 @@ export async function createContext({{#if (eq auth "none")}}{{#if (eq webDeploy 
 {{else if (and (eq backend 'self') (includes frontend "astro"))}}
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 
@@ -1192,9 +1192,9 @@ export async function createContext({{#if (eq auth "none")}}_options{{else}}{ he
 import type { Context as HonoContext } from "hono";
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 
@@ -1228,7 +1228,7 @@ export async function createContext({{#if (eq auth "none")}}_options{{else}}{ co
 {{else if (eq backend 'elysia')}}
 import type { Context as ElysiaContext } from "elysia";
 {{#if (eq auth "better-auth")}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 
 export type CreateContextOptions = {
@@ -1262,7 +1262,7 @@ export async function createContext({{#if (eq auth "none")}}_options{{else}}{ co
 import type { Request } from "express";
 {{#if (eq auth "better-auth")}}
 import { fromNodeHeaders } from "better-auth/node";
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{else if (eq auth "clerk")}}
 import { getAuth } from "@clerk/express";
 {{/if}}
@@ -1298,7 +1298,7 @@ export async function createContext({{#if (eq auth "none")}}_opts{{else}}opts{{/
 {{#if (eq auth "better-auth")}}
 import type { IncomingHttpHeaders } from "node:http";
 import { fromNodeHeaders } from "better-auth/node";
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{else if (eq auth "clerk")}}
 import { getAuth } from "@clerk/fastify";
 {{else}}
@@ -1473,7 +1473,7 @@ export type AppRouter = typeof appRouter;
 {{/if}}
 `],
   ["api/orpc/server/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
@@ -1482,7 +1482,7 @@ export type AppRouter = typeof appRouter;
     "composite": true
   }
 }`],
-  ["api/orpc/web/astro/src/lib/orpc.ts.hbs", `import type { AppRouterClient } from "@{{projectName}}/api/routers/index";
+  ["api/orpc/web/astro/src/lib/orpc.ts.hbs", `import type { AppRouterClient } from "{{packageScope}}/api/routers/index";
 
 import { createORPCClient } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
@@ -1513,7 +1513,7 @@ export const link = new RPCLink({
 export const orpc: AppRouterClient = createORPCClient(link);
 `],
   ["api/orpc/web/nuxt/app/plugins/orpc.ts.hbs", `import { defineNuxtPlugin } from '#app'
-import type { AppRouterClient } from "@{{projectName}}/api/routers/index";
+import type { AppRouterClient } from "{{packageScope}}/api/routers/index";
 import { createORPCClient } from '@orpc/client'
 import { RPCLink } from '@orpc/client/fetch'
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
@@ -1621,19 +1621,19 @@ import { createRouterClient } from "@orpc/server";
 import type { RouterClient } from "@orpc/server";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { appRouter } from "@{{projectName}}/api/routers/index";
-import { createContext } from "@{{projectName}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
 {{else if (includes frontend "tanstack-start")}}
 import type { RouterClient } from "@orpc/server";
-import type { AppRouter } from "@{{projectName}}/api/routers/index";
-import { env } from "@{{projectName}}/env/web";
+import type { AppRouter } from "{{packageScope}}/api/routers/index";
+import { env } from "{{packageScope}}/env/web";
 {{#if (eq auth "clerk")}}
 import { getClerkAuthToken } from "@/utils/clerk-auth";
 {{/if}}
 {{else}}
-import type { AppRouterClient } from "@{{projectName}}/api/routers/index";
+import type { AppRouterClient } from "{{packageScope}}/api/routers/index";
 {{#unless (eq backend "self")}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/unless}}
 {{#if (eq auth "clerk")}}
 import { getClerkAuthToken } from "@/utils/clerk-auth";
@@ -1775,8 +1775,8 @@ export const orpc = createTanstackQueryUtils(client)
 import { RPCLink } from "@orpc/client/fetch";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { QueryCache, QueryClient } from "@tanstack/solid-query";
-import type { AppRouterClient } from "@{{projectName}}/api/routers/index";
-import { env } from "@{{projectName}}/env/web";
+import type { AppRouterClient } from "{{packageScope}}/api/routers/index";
+import { env } from "{{packageScope}}/env/web";
 
 export const queryClient = new QueryClient({
 	queryCache: new QueryCache({
@@ -1811,7 +1811,7 @@ import { createORPCClient } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
 import { QueryCache, QueryClient } from "@tanstack/svelte-query";
-import type { AppRouterClient } from "@{{projectName}}/api/routers/index";
+import type { AppRouterClient } from "{{packageScope}}/api/routers/index";
 
 export const queryClient = new QueryClient({
 	queryCache: new QueryCache({
@@ -1927,7 +1927,7 @@ export default defineConfig({
 });
 `],
   ["api/orval/server/package.json.hbs", `{
-  "name": "@{{projectName}}/api",
+  "name": "{{packageScope}}/api",
   "exports": {
     ".": {
       "default": "./src/index.ts"
@@ -1977,7 +1977,7 @@ export default routes;
   ["api/orval/server/src/index.ts.hbs", `export * from "./generated/client";
 `],
   ["api/orval/server/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
@@ -1988,8 +1988,8 @@ export default routes;
 }
 `],
   ["api/trpc/fullstack/next/src/app/api/trpc/[trpc]/route.ts.hbs", `import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { appRouter } from "@{{projectName}}/api/routers/index";
-import { createContext } from "@{{projectName}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
 import { NextRequest } from "next/server";
 
 function handler(req: NextRequest) {
@@ -2003,8 +2003,8 @@ function handler(req: NextRequest) {
 export { handler as GET, handler as POST };
 `],
   ["api/trpc/fullstack/tanstack-start/src/routes/api/trpc/$.ts.hbs", `import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
-import { appRouter } from '@{{projectName}}/api/routers/index'
-import { createContext } from '@{{projectName}}/api/context'
+import { appRouter } from '{{packageScope}}/api/routers/index'
+import { createContext } from '{{packageScope}}/api/context'
 import { createFileRoute } from '@tanstack/react-router'
 
 function handler({ request }: { request: Request }) {
@@ -2034,8 +2034,8 @@ import { getClerkAuthToken } from "@/utils/clerk-auth";
 import { QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import type { AppRouter } from "@{{projectName}}/api/routers/index";
-import { env } from "@{{projectName}}/env/native";
+import type { AppRouter } from "{{packageScope}}/api/routers/index";
+import { env } from "{{packageScope}}/env/native";
 
 export const queryClient = new QueryClient();
 
@@ -2118,7 +2118,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 `],
   ["api/trpc/server/package.json.hbs", `{
-  "name": "@{{projectName}}/api",
+  "name": "{{packageScope}}/api",
   "exports": {
     ".": {
       "default": "./src/index.ts"
@@ -2148,7 +2148,7 @@ function toClerkContextAuth(auth: { userId: string | null } | null): ClerkContex
 
 {{#if (and (eq auth "clerk") (or (eq backend 'self') (eq backend 'hono') (eq backend 'elysia')))}}
 import { createClerkClient } from "@clerk/backend";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 const clerkClient = createClerkClient({
 	secretKey: env.CLERK_SECRET_KEY,
@@ -2167,9 +2167,9 @@ async function authenticateClerkRequest(request: Request): Promise<ClerkContextA
 import type { NextRequest } from "next/server";
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 
@@ -2199,9 +2199,9 @@ export async function createContext({{#if (eq auth "none")}}_req{{else}}req{{/if
 {{else if (and (eq backend 'self') (includes frontend "tanstack-start"))}}
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 
@@ -2232,9 +2232,9 @@ export async function createContext({{#if (eq auth "none")}}_options{{else}}{ re
 import type { Context as HonoContext } from "hono";
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 
@@ -2268,7 +2268,7 @@ export async function createContext({{#if (eq auth "none")}}_options{{else}}{ co
 {{else if (eq backend 'elysia')}}
 import type { Context as ElysiaContext } from "elysia";
 {{#if (eq auth "better-auth")}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 
 export type CreateContextOptions = {
@@ -2302,7 +2302,7 @@ export async function createContext({{#if (eq auth "none")}}_options{{else}}{ co
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 {{#if (eq auth "better-auth")}}
 import { fromNodeHeaders } from "better-auth/node";
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{else if (eq auth "clerk")}}
 import { getAuth } from "@clerk/express";
 {{/if}}
@@ -2334,7 +2334,7 @@ export async function createContext({{#if (eq auth "none")}}_opts{{else}}opts{{/
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 {{#if (eq auth "better-auth")}}
 import { fromNodeHeaders } from "better-auth/node";
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{else if (eq auth "clerk")}}
 import { getAuth } from "@clerk/fastify";
 {{/if}}
@@ -2515,7 +2515,7 @@ export type AppRouter = typeof appRouter;
 {{/if}}
 `],
   ["api/trpc/server/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
@@ -2528,10 +2528,10 @@ export type AppRouter = typeof appRouter;
 import { QueryCache, QueryClient } from '@tanstack/react-query';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
-import type { AppRouter } from "@{{projectName}}/api/routers/index";
+import type { AppRouter } from "{{packageScope}}/api/routers/index";
 import { toast } from 'sonner';
 {{#unless (eq backend "self")}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 {{> getServerUrl}}
 {{/unless}}
@@ -2595,18 +2595,18 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
 
 {{else if (includes frontend 'tanstack-start')}}
 import { createTRPCContext } from "@trpc/tanstack-react-query";
-import type { AppRouter } from "@{{projectName}}/api/routers/index";
+import type { AppRouter } from "{{packageScope}}/api/routers/index";
 
 export const { TRPCProvider, useTRPC, useTRPCClient } =
 	createTRPCContext<AppRouter>();
 
 {{else}}
-import type { AppRouter } from "@{{projectName}}/api/routers/index";
+import type { AppRouter } from "{{packageScope}}/api/routers/index";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { toast } from "sonner";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{#if (eq auth "clerk")}}
 import { getClerkAuthToken } from "@/utils/clerk-auth";
 {{/if}}
@@ -3250,7 +3250,7 @@ import { expoClient } from "@better-auth/expo/client";
 import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
-import { env } from "@{{projectName}}/env/native";
+import { env } from "{{packageScope}}/env/native";
 
 export const authClient = createAuthClient({
 	baseURL: env.EXPO_PUBLIC_CONVEX_SITE_URL,
@@ -4066,7 +4066,7 @@ import SignInForm from "@/components/sign-in-form";
 import SignUpForm from "@/components/sign-up-form";
 import UserMenu from "@/components/user-menu";
 
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import {
     Authenticated,
     AuthLoading,
@@ -4115,9 +4115,9 @@ export default function DashboardPage() {
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import z from "zod";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 import { useRouter } from "next/navigation";
 
 export default function SignInForm({
@@ -4245,9 +4245,9 @@ export default function SignInForm({
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import z from "zod";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 import { useRouter } from "next/navigation";
 
 export default function SignUpForm({
@@ -4404,12 +4404,12 @@ export default function SignUpForm({
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@{{projectName}}/ui/components/dropdown-menu";
+} from "{{packageScope}}/ui/components/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Button } from "{{packageScope}}/ui/components/button";
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 
 export default function UserMenu() {
 	const router = useRouter();
@@ -4453,7 +4453,7 @@ export const authClient = createAuthClient({
 });
 `],
   ["auth/better-auth/convex/web/react/next/src/lib/auth-server.ts.hbs", `import { convexBetterAuthNextJs } from "@convex-dev/better-auth/nextjs";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 export const {
 	handler,
@@ -4473,9 +4473,9 @@ import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import z from "zod";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 
 export default function SignInForm({
   onSwitchToSignUp,
@@ -4604,9 +4604,9 @@ import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import z from "zod";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 
 export default function SignUpForm({
   onSwitchToSignIn,
@@ -4765,12 +4765,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@{{projectName}}/ui/components/dropdown-menu";
+} from "{{packageScope}}/ui/components/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Button } from "{{packageScope}}/ui/components/button";
 
 export default function UserMenu() {
   const navigate = useNavigate();
@@ -4811,7 +4811,7 @@ import {
   convexClient,
   crossDomainClient,
 } from "@convex-dev/better-auth/client/plugins";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 export const authClient = createAuthClient({
   baseURL: env.VITE_CONVEX_SITE_URL,
@@ -4822,7 +4822,7 @@ export const authClient = createAuthClient({
 import SignUpForm from "@/components/sign-up-form";
 import UserMenu from "@/components/user-menu";
 
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import {
   Authenticated,
   AuthLoading,
@@ -4872,9 +4872,9 @@ import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 
 export default function SignInForm({
     onSwitchToSignUp,
@@ -5006,9 +5006,9 @@ import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 
 export default function SignUpForm({
     onSwitchToSignIn,
@@ -5170,12 +5170,12 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@{{projectName}}/ui/components/dropdown-menu";
+} from "{{packageScope}}/ui/components/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Button } from "{{packageScope}}/ui/components/button";
 
 export default function UserMenu() {
     const navigate = useNavigate();
@@ -5218,7 +5218,7 @@ import {
 	convexClient,
 	crossDomainClient,
 } from "@convex-dev/better-auth/client/plugins";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 export const authClient = createAuthClient({
 	baseURL: env.VITE_CONVEX_SITE_URL,
@@ -5227,7 +5227,7 @@ export const authClient = createAuthClient({
 `],
   ["auth/better-auth/convex/web/react/tanstack-router/src/routes/_auth/dashboard.tsx.hbs", `import UserMenu from "@/components/user-menu";
 
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 
@@ -5286,9 +5286,9 @@ import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 
 export default function SignInForm({
     onSwitchToSignUp,
@@ -5420,9 +5420,9 @@ import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 
 export default function SignUpForm({
     onSwitchToSignIn,
@@ -5582,12 +5582,12 @@ export default function SignUpForm({
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@{{projectName}}/ui/components/dropdown-menu";
+} from "{{packageScope}}/ui/components/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Button } from "{{packageScope}}/ui/components/button";
 
 export default function UserMenu() {
     const user = useQuery(api.auth.getCurrentUser)
@@ -5629,7 +5629,7 @@ export const authClient = createAuthClient({
   plugins: [convexClient()],
 });`],
   ["auth/better-auth/convex/web/react/tanstack-start/src/lib/auth-server.ts.hbs", `import { convexBetterAuthReactStart } from "@convex-dev/better-auth/react-start";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 export const {
 	handler,
@@ -5644,7 +5644,7 @@ export const {
 `],
   ["auth/better-auth/convex/web/react/tanstack-start/src/routes/_auth/dashboard.tsx.hbs", `import UserMenu from "@/components/user-menu";
 
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 
@@ -5720,9 +5720,9 @@ declare namespace App {
 }
 `],
   ["auth/better-auth/fullstack/astro/src/middleware.ts.hbs", `{{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 import { defineMiddleware } from "astro:middleware";
 
@@ -5746,9 +5746,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 });
 `],
   ["auth/better-auth/fullstack/astro/src/pages/api/auth/[...all].ts.hbs", `{{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 import type { APIRoute } from "astro";
 
@@ -5760,9 +5760,9 @@ export const ALL: APIRoute = async (ctx) => {
 };
 `],
   ["auth/better-auth/fullstack/next/src/app/api/auth/[...all]/route.ts.hbs", `{{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 import { toNextJsHandler } from "better-auth/next-js";
 
@@ -5779,9 +5779,9 @@ export const { GET, POST } = toNextJsHandler(auth);
 {{/if}}
 `],
   ["auth/better-auth/fullstack/nuxt/server/api/auth/[...all].ts.hbs", `{{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 
 export default defineEventHandler((event) => {
@@ -5796,12 +5796,12 @@ import "./lib/orpc.server";
 {{/if}}
 import { building } from "$app/environment";
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare"))}}
-import { env as localEnv } from "@{{projectName}}/env/server";
+import { env as localEnv } from "{{packageScope}}/env/server";
 {{/if}}
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import type { Handle } from "@sveltejs/kit";
@@ -5831,9 +5831,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 };
 `],
   ["auth/better-auth/fullstack/tanstack-start/src/routes/api/auth/$.ts.hbs", `{{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from '@{{projectName}}/auth'
+import { createAuth } from '{{packageScope}}/auth'
 {{else}}
-import { auth } from '@{{projectName}}/auth'
+import { auth } from '{{packageScope}}/auth'
 {{/if}}
 import { createFileRoute } from '@tanstack/react-router'
 
@@ -6567,7 +6567,7 @@ export { SignUp };
 import { createAuthClient } from "better-auth/react";
 import * as SecureStore from "expo-secure-store";
 import Constants from "expo-constants";
-import { env } from "@{{projectName}}/env/native";
+import { env } from "{{packageScope}}/env/native";
 export const authClient = createAuthClient({
 	baseURL: env.EXPO_PUBLIC_SERVER_URL,
 	plugins: [
@@ -7778,7 +7778,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 `],
   ["auth/better-auth/server/base/package.json.hbs", `{
-  "name": "@{{projectName}}/auth",
+  "name": "{{packageScope}}/auth",
   "exports": {
     ".": {
       "default": "./src/index.ts"
@@ -7795,12 +7795,12 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 
-import { createPrismaClient } from "@{{projectName}}/db";
+import { createPrismaClient } from "{{packageScope}}/db";
 
 export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
 	const prisma = createPrismaClient({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env{{/if}});
@@ -7851,13 +7851,13 @@ export const auth = createAuth();
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 
-import { createDb } from "@{{projectName}}/db";
-import * as schema from "@{{projectName}}/db/schema/auth";
+import { createDb } from "{{packageScope}}/db";
+import * as schema from "{{packageScope}}/db/schema/auth";
 
 
 export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
@@ -7906,10 +7906,10 @@ export const auth = createAuth();
 {{#if (eq runtime "workers")}}
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
-import { createDb } from "@{{projectName}}/db";
-import * as schema from "@{{projectName}}/db/schema/auth";
+import { createDb } from "{{packageScope}}/db";
+import * as schema from "{{packageScope}}/db/schema/auth";
 
 
 export function createAuth() {
@@ -7965,12 +7965,12 @@ export function createAuth() {
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 
-import { client } from "@{{projectName}}/db";
+import { client } from "{{packageScope}}/db";
 
 export function createAuth({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
 	return betterAuth({
@@ -8009,9 +8009,9 @@ export const auth = createAuth();
 {{#if (eq orm "none")}}
 import { betterAuth } from "better-auth";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 
 
@@ -8051,7 +8051,7 @@ export const auth = createAuth();
 {{/if}}
 `],
   ["auth/better-auth/server/base/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
@@ -8690,7 +8690,7 @@ model Verification {
 `],
   ["auth/better-auth/server/nestjs/src/auth/auth.controller.ts.hbs", `import { Controller, All, Req, Res } from "@nestjs/common";
 import type { Request, Response } from "express";
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 import { toNodeHandler } from "better-auth/node";
 
 @Controller("api/auth")
@@ -8989,7 +8989,7 @@ import Layout from "../layouts/Layout.astro";
   import { orpc } from "../lib/orpc";
   {{/if}}
   {{#if (and (includes payments "abacatepay") (ne backend "self"))}}
-  import { env } from "@{{projectName}}/env/web";
+  import { env } from "{{packageScope}}/env/web";
   {{/if}}
 
   const dashboardContent = document.getElementById("dashboard-content")!;
@@ -9452,7 +9452,7 @@ export default defineNuxtPlugin(() => {
 `],
   ["auth/better-auth/web/react/base/src/lib/auth-client.ts.hbs", `import { createAuthClient } from "better-auth/react";
 {{#unless (eq backend "self")}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 {{> getServerUrl}}
 {{/unless}}
@@ -9467,8 +9467,8 @@ export const authClient = createAuthClient({
 `],
   ["auth/better-auth/web/react/next/src/app/dashboard/dashboard.tsx.hbs", `"use client";
 {{#if (includes payments "abacatepay")}}
-import { Button } from "@{{projectName}}/ui/components/button";
-import { env } from "@{{projectName}}/env/web";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 import { authClient } from "@/lib/auth-client";
 {{#if (eq api "orpc")}}
@@ -9530,9 +9530,9 @@ import Dashboard from "./dashboard";
 import { headers } from "next/headers";
 {{#if (eq backend "self")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{else}}
 import { authClient } from "@/lib/auth-client";
@@ -9590,9 +9590,9 @@ import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import z from "zod";
 import Loader from "./loader";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 import { useRouter } from "next/navigation";
 
 export default function SignInForm({
@@ -9726,9 +9726,9 @@ import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import z from "zod";
 import Loader from "./loader";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 import { useRouter } from "next/navigation";
 
 export default function SignUpForm({
@@ -9893,11 +9893,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@{{projectName}}/ui/components/dropdown-menu";
+} from "{{packageScope}}/ui/components/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
 
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Skeleton } from "@{{projectName}}/ui/components/skeleton";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Skeleton } from "{{packageScope}}/ui/components/skeleton";
 
 export default function UserMenu() {
   const router = useRouter();
@@ -9951,9 +9951,9 @@ import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import z from "zod";
 import Loader from "./loader";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 
 export default function SignInForm({
   onSwitchToSignUp,
@@ -10087,9 +10087,9 @@ import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import z from "zod";
 import Loader from "./loader";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 
 export default function SignUpForm({
   onSwitchToSignIn,
@@ -10252,11 +10252,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@{{projectName}}/ui/components/dropdown-menu";
+} from "{{packageScope}}/ui/components/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
 
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Skeleton } from "@{{projectName}}/ui/components/skeleton";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Skeleton } from "{{packageScope}}/ui/components/skeleton";
 
 export default function UserMenu() {
   const navigate = useNavigate();
@@ -10305,8 +10305,8 @@ export default function UserMenu() {
 }
 `],
   ["auth/better-auth/web/react/react-router/src/routes/dashboard.tsx.hbs", `{{#if (includes payments "abacatepay")}}
-import { Button } from "@{{projectName}}/ui/components/button";
-import { env } from "@{{projectName}}/env/web";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 import { authClient } from "@/lib/auth-client";
 {{#if (eq api "orpc")}}
@@ -10395,9 +10395,9 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
 import Loader from "./loader";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) {
   const navigate = useNavigate({
@@ -10531,9 +10531,9 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
 import Loader from "./loader";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 
 export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) {
   const navigate = useNavigate({
@@ -10696,11 +10696,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@{{projectName}}/ui/components/dropdown-menu";
+} from "{{packageScope}}/ui/components/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
 
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Skeleton } from "@{{projectName}}/ui/components/skeleton";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Skeleton } from "{{packageScope}}/ui/components/skeleton";
 
 export default function UserMenu() {
   const navigate = useNavigate();
@@ -10751,8 +10751,8 @@ export default function UserMenu() {
 }
 `],
   ["auth/better-auth/web/react/tanstack-router/src/routes/_auth/dashboard.tsx.hbs", `{{#if (includes payments "abacatepay")}}
-import { Button } from "@{{projectName}}/ui/components/button";
-import { env } from "@{{projectName}}/env/web";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 {{#if (eq api "orpc")}}
 import { orpc } from "@/utils/orpc";
@@ -10856,9 +10856,9 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
 import Loader from "./loader";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) {
   const navigate = useNavigate({
@@ -10992,9 +10992,9 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
 import Loader from "./loader";
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Input } from "@{{projectName}}/ui/components/input";
-import { Label } from "@{{projectName}}/ui/components/label";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Input } from "{{packageScope}}/ui/components/input";
+import { Label } from "{{packageScope}}/ui/components/label";
 
 export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () => void }) {
   const navigate = useNavigate({
@@ -11157,11 +11157,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@{{projectName}}/ui/components/dropdown-menu";
+} from "{{packageScope}}/ui/components/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
 
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Skeleton } from "@{{projectName}}/ui/components/skeleton";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Skeleton } from "{{packageScope}}/ui/components/skeleton";
 
 export default function UserMenu() {
   const navigate = useNavigate();
@@ -11219,9 +11219,9 @@ export const getUser = createServerFn({ method: "GET" }).middleware([authMiddlew
 })`],
   ["auth/better-auth/web/react/tanstack-start/src/middleware/auth.ts.hbs", `{{#if (eq backend "self")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 import { createMiddleware } from "@tanstack/react-start";
 
@@ -11254,8 +11254,8 @@ export const authMiddleware = createMiddleware().server(
 {{/if}}
 `],
   ["auth/better-auth/web/react/tanstack-start/src/routes/_auth/dashboard.tsx.hbs", `{{#if (includes payments "abacatepay") }}
-import { Button } from "@{{projectName}}/ui/components/button";
-import { env } from "@{{projectName}}/env/web";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 {{#if (eq api "trpc") }}
 import { useTRPC } from "@/utils/trpc";
@@ -11719,7 +11719,7 @@ export default function UserMenu() {
 }
 `],
   ["auth/better-auth/web/solid/src/lib/auth-client.ts.hbs", `import { createAuthClient } from "better-auth/solid";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 {{> getServerUrl}}
 
@@ -11730,7 +11730,7 @@ export const authClient = createAuthClient({
 });
 `],
   ["auth/better-auth/web/solid/src/routes/dashboard.tsx.hbs", `{{#if (includes payments "abacatepay")}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 import { authClient } from "@/lib/auth-client";
 {{#if (eq api "orpc")}}
@@ -12763,7 +12763,7 @@ export const SignOutButton = () => {
 `],
   ["auth/clerk/convex/web/react/next/src/app/dashboard/page.tsx.hbs", `"use client";
 
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { Authenticated, AuthLoading, Unauthenticated, useQuery } from "convex/react";
 
@@ -12805,7 +12805,7 @@ export const config = {
 };
 `],
   ["auth/clerk/convex/web/react/react-router/src/routes/dashboard.tsx.hbs", `import { SignInButton, UserButton, useUser } from "@clerk/react-router";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import {
 	Authenticated,
 	AuthLoading,
@@ -12838,7 +12838,7 @@ export default function Dashboard() {
 }
 `],
   ["auth/clerk/convex/web/react/tanstack-router/src/routes/_auth/dashboard.tsx.hbs", `import { UserButton, useUser } from "@clerk/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 
@@ -12885,7 +12885,7 @@ function AuthLayout() {
 }
 `],
   ["auth/clerk/convex/web/react/tanstack-start/src/routes/_auth/dashboard.tsx.hbs", `import { UserButton, useUser } from "@clerk/tanstack-react-start";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "convex/react";
 
@@ -13844,7 +13844,7 @@ export const httpAction = httpActionGeneric;
 
 import { v } from "convex/values";
 import { action } from "./_generated/server";
-import { arara } from "@{{projectName}}/arara";
+import { arara } from "{{packageScope}}/arara";
 
 const messageInput = v.object({
   receiver: v.string(),
@@ -14045,7 +14045,7 @@ export default defineSchema({
 }
 `],
   ["backend/convex/packages/backend/package.json.hbs", `{
-  "name": "@{{projectName}}/backend",
+  "name": "{{packageScope}}/backend",
   "version": "1.0.0",
   "scripts": {
     "dev": "convex dev",
@@ -14135,7 +14135,7 @@ next-env.d.ts
 }
 `],
   ["backend/server/base/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
 		"outDir": "dist",
@@ -14158,11 +14158,11 @@ export default defineConfig({
     outDir: './dist',
     clean: true,
     deps: {
-        alwaysBundle: [/@{{projectName}}\\/.*/],
+        alwaysBundle: [/{{packageScope}}\\/.*/],
     },
 });
 `],
-  ["backend/server/elysia/src/index.ts.hbs", `import { env } from "@{{projectName}}/env/server";
+  ["backend/server/elysia/src/index.ts.hbs", `import { env } from "{{packageScope}}/env/server";
 {{#if (eq runtime "node")}}
 import { node } from "@elysiajs/node";
 {{/if}}
@@ -14174,8 +14174,8 @@ import { convertToModelMessages, createUIMessageStreamResponse, streamText, toUI
 import { devToolsMiddleware } from "@ai-sdk/devtools";
 {{/if}}
 {{#if (eq api "trpc")}}
-import { createContext } from "@{{projectName}}/api/context";
-import { appRouter } from "@{{projectName}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 {{/if}}
 {{#if (eq api "orpc")}}
@@ -14184,21 +14184,21 @@ import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { RPCHandler } from "@orpc/server/fetch";
 import { onError } from "@orpc/server";
-import { appRouter } from "@{{projectName}}/api/routers/index";
-import { createContext } from "@{{projectName}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
 {{/if}}
 {{#if (eq auth "better-auth")}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{#if (includes payments "abacatepay")}}
 import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
-} from "@{{projectName}}/payments/lib/abacatepay";
+} from "{{packageScope}}/payments/lib/abacatepay";
 {{/if}}
 {{#if (includes payments "stripe")}}
-import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "{{packageScope}}/payments/lib/stripe";
 {{/if}}
 
 {{#if (eq api "orpc")}}
@@ -14373,11 +14373,11 @@ if (!process.env.VERCEL) {
 	});
 {{/if}}
 `],
-  ["backend/server/express/src/index.ts.hbs", `import { env } from "@{{projectName}}/env/server";
+  ["backend/server/express/src/index.ts.hbs", `import { env } from "{{packageScope}}/env/server";
 {{#if (eq api "trpc")}}
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { createContext } from "@{{projectName}}/api/context";
-import { appRouter } from "@{{projectName}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
 {{/if}}
 {{#if (eq api "orpc")}}
 import { OpenAPIHandler } from "@orpc/openapi/node";
@@ -14385,8 +14385,8 @@ import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { RPCHandler } from "@orpc/server/node";
 import { onError } from "@orpc/server";
-import { appRouter } from "@{{projectName}}/api/routers/index";
-import { createContext } from "@{{projectName}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
 {{/if}}
 import cors from "cors";
 import express from "express";
@@ -14396,7 +14396,7 @@ import { google } from "@ai-sdk/google";
 import { devToolsMiddleware } from "@ai-sdk/devtools";
 {{/if}}
 {{#if (eq auth "better-auth")}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 import { toNodeHandler } from "better-auth/node";
 {{/if}}
 {{#if (includes payments "abacatepay")}}
@@ -14404,10 +14404,10 @@ import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
-} from "@{{projectName}}/payments/lib/abacatepay";
+} from "{{packageScope}}/payments/lib/abacatepay";
 {{/if}}
 {{#if (includes payments "stripe")}}
-import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "{{packageScope}}/payments/lib/stripe";
 {{/if}}
 {{#if (eq auth "clerk")}}
 import { clerkMiddleware } from "@clerk/express";
@@ -14590,7 +14590,7 @@ app.listen(3000, () => {
 	console.log("Server is running on http://localhost:3000");
 });
 `],
-  ["backend/server/fastify/src/index.ts.hbs", `import { env } from "@{{projectName}}/env/server";
+  ["backend/server/fastify/src/index.ts.hbs", `import { env } from "{{packageScope}}/env/server";
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 {{#if (includes payments "stripe")}}
@@ -14599,8 +14599,8 @@ import fastifyRawBody from "fastify-raw-body";
 
 {{#if (eq api "trpc")}}
 import { fastifyTRPCPlugin, type FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
-import { createContext } from "@{{projectName}}/api/context";
-import { appRouter, type AppRouter } from "@{{projectName}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
+import { appRouter, type AppRouter } from "{{packageScope}}/api/routers/index";
 {{/if}}
 
 {{#if (eq api "orpc")}}
@@ -14609,8 +14609,8 @@ import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { RPCHandler } from "@orpc/server/fastify";
 import { onError } from "@orpc/server";
-import { createContext } from "@{{projectName}}/api/context";
-import { appRouter } from "@{{projectName}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
 {{/if}}
 
 {{#if (includes examples "ai")}}
@@ -14620,17 +14620,17 @@ import { devToolsMiddleware } from "@ai-sdk/devtools";
 {{/if}}
 
 {{#if (eq auth "better-auth")}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{#if (includes payments "abacatepay")}}
 import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
-} from "@{{projectName}}/payments/lib/abacatepay";
+} from "{{packageScope}}/payments/lib/abacatepay";
 {{/if}}
 {{#if (includes payments "stripe")}}
-import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "{{packageScope}}/payments/lib/stripe";
 {{/if}}
 {{#if (eq auth "clerk")}}
 import { clerkPlugin } from "@clerk/fastify";
@@ -14878,29 +14878,29 @@ fastify.listen({ port: 3000{{#if (eq serverDeploy "docker")}}, host: "0.0.0.0"{{
 	console.log("Server running on port 3000");
 });
 `],
-  ["backend/server/hono/src/index.ts.hbs", `import { env } from "@{{projectName}}/env/server";
+  ["backend/server/hono/src/index.ts.hbs", `import { env } from "{{packageScope}}/env/server";
 {{#if (eq api "orpc")}}
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { RPCHandler } from "@orpc/server/fetch";
 import { onError } from "@orpc/server";
-import { createContext } from "@{{projectName}}/api/context";
-import { appRouter } from "@{{projectName}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
 {{/if}}
 {{#if (eq api "trpc")}}
 import { trpcServer } from "@hono/trpc-server";
-import { createContext } from "@{{projectName}}/api/context";
-import { appRouter } from "@{{projectName}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
 {{/if}}
 {{#if (eq api "orval")}}
 import orvalRoutes from "./generated/routes";
 {{/if}}
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 {{#if (includes payments "abacatepay")}}
@@ -14908,14 +14908,14 @@ import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
-} from "@{{projectName}}/payments/lib/abacatepay";
+} from "{{packageScope}}/payments/lib/abacatepay";
 {{/if}}
 {{#if (includes payments "stripe")}}
 import {
 	createStripeEmbeddedCheckout,
 	getStripeCheckoutSession,
 	processStripeWebhook,
-} from "@{{projectName}}/payments/lib/stripe";
+} from "{{packageScope}}/payments/lib/stripe";
 {{/if}}
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -15200,7 +15200,7 @@ export class HealthModule {}
   ["backend/server/nestjs/src/index.ts.hbs", `import "reflect-metadata";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 import { AppModule } from "./app.module";
 
 async function bootstrap(): Promise<void> {
@@ -15294,7 +15294,7 @@ local.db-*
 }
 `],
   ["base/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
 }
 `],
   ["db-setup/docker-compose/mongodb/docker-compose.yml.hbs", `name: {{projectName}}
@@ -15404,7 +15404,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 `],
   ["db/base/package.json.hbs", `{
-  "name": "@{{projectName}}/db",
+  "name": "{{packageScope}}/db",
   "type": "module",
   "exports": {
     ".": {
@@ -15418,7 +15418,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
   "devDependencies": {}
 }`],
   ["db/base/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
@@ -15460,9 +15460,9 @@ export default defineConfig({
 `],
   ["db/drizzle/mysql/src/index.ts.hbs", `{{#if (or (eq runtime "bun") (eq runtime "node") (eq runtime "none"))}}
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 import * as schema from "./schema";
 
@@ -15503,7 +15503,7 @@ import * as schema from "./schema";
 
 {{#if (eq dbSetup "planetscale")}}
 import { drizzle } from "drizzle-orm/planetscale-serverless";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 export function createDb() {
 	return drizzle({
@@ -15517,7 +15517,7 @@ export function createDb() {
 }
 {{else}}
 import { drizzle } from "drizzle-orm/mysql2";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 export function createDb() {
 	return drizzle({
@@ -15553,9 +15553,9 @@ export default defineConfig({
 `],
   ["db/drizzle/postgres/src/index.ts.hbs", `{{#if (or (eq runtime "bun") (eq runtime "node") (eq runtime "none"))}}
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 import * as schema from "./schema";
 
@@ -15598,7 +15598,7 @@ import * as schema from "./schema";
 {{#if (eq dbSetup "neon")}}
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 export function createDb() {
 	const sql = neon(env.DATABASE_URL || "");
@@ -15606,7 +15606,7 @@ export function createDb() {
 }
 {{else}}
 import { drizzle } from "drizzle-orm/node-postgres";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 import { Pool } from "pg";
 
 export function createDb() {
@@ -15654,9 +15654,9 @@ export default defineConfig({
 import * as schema from "./schema";
 import { drizzle } from "drizzle-orm/d1";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 
 export function createDb({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
@@ -15664,9 +15664,9 @@ export function createDb({{#if (and (eq backend "self") (eq webDeploy "cloudflar
 }
 {{else if (or (eq runtime "bun") (eq runtime "node") (eq runtime "none"))}}
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 import * as schema from "./schema";
 import { drizzle } from "drizzle-orm/libsql";
@@ -15689,7 +15689,7 @@ export const db = createDb();
 {{else if (eq runtime "workers")}}
 import * as schema from "./schema";
 import { drizzle } from "drizzle-orm/libsql";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 import { createClient } from "@libsql/client";
 
 export function createDb() {
@@ -15706,7 +15706,7 @@ export function createDb() {
 `],
   ["db/drizzle/sqlite/src/migrations/.gitkeep", ``],
   ["db/mongoose/mongodb/src/index.ts.hbs", `import mongoose from "mongoose";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 await mongoose.connect(env.DATABASE_URL);
 
@@ -15803,7 +15803,7 @@ datasource db {
 }`],
   ["db/prisma/mysql/src/index.ts.hbs", `{{#if (eq runtime "workers")}}
 import { PrismaClient } from "../prisma/generated/client";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 {{#if (eq dbSetup "planetscale")}}
 import { PrismaPlanetScale } from "@prisma/adapter-planetscale";
@@ -15833,9 +15833,9 @@ export function createPrismaClient() {
 {{else}}
 import { PrismaClient } from "../prisma/generated/client";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 
 {{#if (eq dbSetup "planetscale")}}
@@ -15916,7 +15916,7 @@ datasource db {
 `],
   ["db/prisma/postgres/src/index.ts.hbs", `{{#if (eq runtime "workers")}}
 import { PrismaClient } from "../prisma/generated/client";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{#if (eq dbSetup "neon")}}
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { neonConfig } from "@neondatabase/serverless";
@@ -15958,9 +15958,9 @@ export function createPrismaClient() {
 {{else}}
 import { PrismaClient } from "../prisma/generated/client";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 {{#if (eq dbSetup "neon")}}
 import { PrismaNeon } from "@prisma/adapter-neon";
@@ -16057,9 +16057,9 @@ datasource db {
 {{#if (eq dbSetup "d1")}}
 import { PrismaD1 } from "@prisma/adapter-d1";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 
 export function createPrismaClient({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
@@ -16074,9 +16074,9 @@ export default prisma;
 {{else}}
 import { PrismaLibSql } from "@prisma/adapter-libsql";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 
 export function createPrismaClient({{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}env: Env{{/if}}) {
@@ -17136,7 +17136,7 @@ import {
   useUIMessages,
   useSmoothText,
 } from "@convex-dev/agent/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { useRef, useEffect, useState } from "react";
 import {
@@ -17663,7 +17663,7 @@ import { DefaultChatTransport } from "ai";
 import { Container } from "@/components/container";
 import { useColorScheme } from "@/lib/use-color-scheme";
 import { NAV_THEME } from "@/lib/constants";
-import { env } from "@{{projectName}}/env/native";
+import { env } from "{{packageScope}}/env/native";
 
 const starterPrompts = [
   {
@@ -18228,7 +18228,7 @@ import {
   useUIMessages,
   useSmoothText,
 } from "@convex-dev/agent/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { useRef, useEffect, useState } from "react";
 import {
@@ -18759,7 +18759,7 @@ import { DefaultChatTransport } from "ai";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { Container } from "@/components/container";
-import { env } from "@{{projectName}}/env/native";
+import { env } from "{{packageScope}}/env/native";
 
 const starterPrompts = [
   {
@@ -19316,7 +19316,7 @@ import {
   useUIMessages,
   useSmoothText,
 } from "@convex-dev/agent/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Button, Separator, Spinner, Surface, Input, TextField, useThemeColor } from "heroui-native";
 import { useRef, useEffect, useState } from "react";
@@ -19602,7 +19602,7 @@ import { DefaultChatTransport } from "ai";
 import { Ionicons } from "@expo/vector-icons";
 import { Container } from "@/components/container";
 import { Button, Separator, FieldError, Spinner, Surface, Input, TextField, useThemeColor } from "heroui-native";
-import { env } from "@{{projectName}}/env/native";
+import { env } from "{{packageScope}}/env/native";
 
 const starterPrompts = [
   {
@@ -20030,7 +20030,7 @@ async function handleSubmit(e: Event) {
   ["examples/ai/web/react/next/src/app/ai/page.tsx.hbs", `{{#if (eq backend "convex")}}
 "use client";
 
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import {
   useSmoothText,
   useUIMessages,
@@ -20061,26 +20061,26 @@ import { Streamdown } from "streamdown";
 {{/if}}
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 
-import { Bubble, BubbleContent } from "@{{projectName}}/ui/components/bubble";
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Bubble, BubbleContent } from "{{packageScope}}/ui/components/bubble";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@{{projectName}}/ui/components/empty";
+} from "{{packageScope}}/ui/components/empty";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
-} from "@{{projectName}}/ui/components/input-group";
+} from "{{packageScope}}/ui/components/input-group";
 import {
   Message,
   MessageContent as MessageBody,
   MessageHeader,
-} from "@{{projectName}}/ui/components/message";
+} from "{{packageScope}}/ui/components/message";
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -20088,12 +20088,12 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from "@{{projectName}}/ui/components/message-scroller";
+} from "{{packageScope}}/ui/components/message-scroller";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@{{projectName}}/ui/components/tooltip";
+} from "{{packageScope}}/ui/components/tooltip";
 
 function StreamingMessageText({
   text,
@@ -20337,26 +20337,26 @@ import { Streamdown } from "streamdown";
 {{/if}}
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 
-import { Bubble, BubbleContent } from "@{{projectName}}/ui/components/bubble";
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Bubble, BubbleContent } from "{{packageScope}}/ui/components/bubble";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@{{projectName}}/ui/components/empty";
+} from "{{packageScope}}/ui/components/empty";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
-} from "@{{projectName}}/ui/components/input-group";
+} from "{{packageScope}}/ui/components/input-group";
 import {
   Message,
   MessageContent as MessageBody,
   MessageHeader,
-} from "@{{projectName}}/ui/components/message";
+} from "{{packageScope}}/ui/components/message";
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -20364,13 +20364,13 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from "@{{projectName}}/ui/components/message-scroller";
+} from "{{packageScope}}/ui/components/message-scroller";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@{{projectName}}/ui/components/tooltip";
-import { env } from "@{{projectName}}/env/web";
+} from "{{packageScope}}/ui/components/tooltip";
+import { env } from "{{packageScope}}/env/web";
 
 export default function AIPage() {
   const [input, setInput] = useState("");
@@ -20555,7 +20555,7 @@ export default function AIPage() {
 {{/if}}
 `],
   ["examples/ai/web/react/react-router/src/routes/ai.tsx.hbs", `{{#if (eq backend "convex")}}
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import {
   useSmoothText,
   useUIMessages,
@@ -20570,26 +20570,26 @@ import {
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { Streamdown } from "streamdown";
 
-import { Bubble, BubbleContent } from "@{{projectName}}/ui/components/bubble";
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Bubble, BubbleContent } from "{{packageScope}}/ui/components/bubble";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@{{projectName}}/ui/components/empty";
+} from "{{packageScope}}/ui/components/empty";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
-} from "@{{projectName}}/ui/components/input-group";
+} from "{{packageScope}}/ui/components/input-group";
 import {
   Message,
   MessageContent as MessageBody,
   MessageHeader,
-} from "@{{projectName}}/ui/components/message";
+} from "{{packageScope}}/ui/components/message";
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -20597,12 +20597,12 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from "@{{projectName}}/ui/components/message-scroller";
+} from "{{packageScope}}/ui/components/message-scroller";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@{{projectName}}/ui/components/tooltip";
+} from "{{packageScope}}/ui/components/tooltip";
 
 function StreamingMessageText({
   text,
@@ -20827,28 +20827,28 @@ import {
 } from "lucide-react";
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { Streamdown } from "streamdown";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
-import { Bubble, BubbleContent } from "@{{projectName}}/ui/components/bubble";
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Bubble, BubbleContent } from "{{packageScope}}/ui/components/bubble";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@{{projectName}}/ui/components/empty";
+} from "{{packageScope}}/ui/components/empty";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
-} from "@{{projectName}}/ui/components/input-group";
+} from "{{packageScope}}/ui/components/input-group";
 import {
   Message,
   MessageContent as MessageBody,
   MessageHeader,
-} from "@{{projectName}}/ui/components/message";
+} from "{{packageScope}}/ui/components/message";
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -20856,12 +20856,12 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from "@{{projectName}}/ui/components/message-scroller";
+} from "{{packageScope}}/ui/components/message-scroller";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@{{projectName}}/ui/components/tooltip";
+} from "{{packageScope}}/ui/components/tooltip";
 
 export default function AI() {
   const [input, setInput] = useState("");
@@ -21046,7 +21046,7 @@ export default function AI() {
 {{/if}}
 `],
   ["examples/ai/web/react/tanstack-router/src/routes/ai.tsx.hbs", `{{#if (eq backend "convex")}}
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import {
   useSmoothText,
   useUIMessages,
@@ -21062,26 +21062,26 @@ import {
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { Streamdown } from "streamdown";
 
-import { Bubble, BubbleContent } from "@{{projectName}}/ui/components/bubble";
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Bubble, BubbleContent } from "{{packageScope}}/ui/components/bubble";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@{{projectName}}/ui/components/empty";
+} from "{{packageScope}}/ui/components/empty";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
-} from "@{{projectName}}/ui/components/input-group";
+} from "{{packageScope}}/ui/components/input-group";
 import {
   Message,
   MessageContent as MessageBody,
   MessageHeader,
-} from "@{{projectName}}/ui/components/message";
+} from "{{packageScope}}/ui/components/message";
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -21089,12 +21089,12 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from "@{{projectName}}/ui/components/message-scroller";
+} from "{{packageScope}}/ui/components/message-scroller";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@{{projectName}}/ui/components/tooltip";
+} from "{{packageScope}}/ui/components/tooltip";
 
 export const Route = createFileRoute("/ai")({
   component: RouteComponent,
@@ -21325,29 +21325,29 @@ import {
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { Streamdown } from "streamdown";
 {{#unless (eq backend "self")}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/unless}}
 
-import { Bubble, BubbleContent } from "@{{projectName}}/ui/components/bubble";
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Bubble, BubbleContent } from "{{packageScope}}/ui/components/bubble";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@{{projectName}}/ui/components/empty";
+} from "{{packageScope}}/ui/components/empty";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
-} from "@{{projectName}}/ui/components/input-group";
+} from "{{packageScope}}/ui/components/input-group";
 import {
   Message,
   MessageContent as MessageBody,
   MessageHeader,
-} from "@{{projectName}}/ui/components/message";
+} from "{{packageScope}}/ui/components/message";
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -21355,12 +21355,12 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from "@{{projectName}}/ui/components/message-scroller";
+} from "{{packageScope}}/ui/components/message-scroller";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@{{projectName}}/ui/components/tooltip";
+} from "{{packageScope}}/ui/components/tooltip";
 
 export const Route = createFileRoute("/ai")({
   component: RouteComponent,
@@ -21549,7 +21549,7 @@ function RouteComponent() {
 {{/if}}
 `],
   ["examples/ai/web/react/tanstack-start/src/routes/ai.tsx.hbs", `{{#if (eq backend "convex")}}
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import {
   useSmoothText,
   useUIMessages,
@@ -21565,26 +21565,26 @@ import {
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { Streamdown } from "streamdown";
 
-import { Bubble, BubbleContent } from "@{{projectName}}/ui/components/bubble";
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Bubble, BubbleContent } from "{{packageScope}}/ui/components/bubble";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@{{projectName}}/ui/components/empty";
+} from "{{packageScope}}/ui/components/empty";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
-} from "@{{projectName}}/ui/components/input-group";
+} from "{{packageScope}}/ui/components/input-group";
 import {
   Message,
   MessageContent as MessageBody,
   MessageHeader,
-} from "@{{projectName}}/ui/components/message";
+} from "{{packageScope}}/ui/components/message";
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -21592,12 +21592,12 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from "@{{projectName}}/ui/components/message-scroller";
+} from "{{packageScope}}/ui/components/message-scroller";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@{{projectName}}/ui/components/tooltip";
+} from "{{packageScope}}/ui/components/tooltip";
 
 export const Route = createFileRoute("/ai")({
   component: RouteComponent,
@@ -21828,29 +21828,29 @@ import {
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { Streamdown } from "streamdown";
 {{#unless (eq backend "self")}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/unless}}
 
-import { Bubble, BubbleContent } from "@{{projectName}}/ui/components/bubble";
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Bubble, BubbleContent } from "{{packageScope}}/ui/components/bubble";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@{{projectName}}/ui/components/empty";
+} from "{{packageScope}}/ui/components/empty";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
-} from "@{{projectName}}/ui/components/input-group";
+} from "{{packageScope}}/ui/components/input-group";
 import {
   Message,
   MessageContent as MessageBody,
   MessageHeader,
-} from "@{{projectName}}/ui/components/message";
+} from "{{packageScope}}/ui/components/message";
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -21858,12 +21858,12 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from "@{{projectName}}/ui/components/message-scroller";
+} from "{{packageScope}}/ui/components/message-scroller";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@{{projectName}}/ui/components/tooltip";
+} from "{{packageScope}}/ui/components/tooltip";
 
 export const Route = createFileRoute("/ai")({
   component: RouteComponent,
@@ -22221,8 +22221,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 {{#if (eq backend "convex")}}
 import { useMutation, useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
-import type { Doc, Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
+import type { Doc, Id } from "{{packageScope}}/backend/convex/_generated/dataModel";
 {{else}}
 import { useMutation, useQuery } from "@tanstack/react-query";
 {{/if}}
@@ -22745,8 +22745,8 @@ import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 {{#if (eq backend "convex")}}
 import { useMutation, useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
-import type { Doc, Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
+import type { Doc, Id } from "{{packageScope}}/backend/convex/_generated/dataModel";
 {{else}}
 import { useMutation, useQuery } from "@tanstack/react-query";
 {{/if}}
@@ -23076,8 +23076,8 @@ import { View, Text, ScrollView, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 {{#if (eq backend "convex")}}
 import { useMutation, useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
-import type { Doc, Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
+import type { Doc, Id } from "{{packageScope}}/backend/convex/_generated/dataModel";
 {{else}}
 import { useMutation, useQuery } from "@tanstack/react-query";
 {{/if}}
@@ -23358,11 +23358,11 @@ export default function TodosScreen() {
 import { eq } from "drizzle-orm";
 import z from "zod";
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createDb } from "@{{projectName}}/db";
+import { createDb } from "{{packageScope}}/db";
 {{else}}
-import { db } from "@{{projectName}}/db";
+import { db } from "{{packageScope}}/db";
 {{/if}}
-import { todo } from "@{{projectName}}/db/schema/todo";
+import { todo } from "{{packageScope}}/db/schema/todo";
 import { publicProcedure } from "../../index";
 
 export const todoRouter = {
@@ -23412,12 +23412,12 @@ export const todoRouter = {
 {{#if (eq api "trpc")}}
 import z from "zod";
 import { router, publicProcedure } from "../../index";
-import { todo } from "@{{projectName}}/db/schema/todo";
+import { todo } from "{{packageScope}}/db/schema/todo";
 import { eq } from "drizzle-orm";
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createDb } from "@{{projectName}}/db";
+import { createDb } from "{{packageScope}}/db";
 {{else}}
-import { db } from "@{{projectName}}/db";
+import { db } from "{{packageScope}}/db";
 {{/if}}
 
 export const todoRouter = router({
@@ -23488,9 +23488,9 @@ export const todo = sqliteTable("todo", {
 `],
   ["examples/todo/server/mongoose/base/src/routers/todo.ts.hbs", `{{#if (eq api "orpc")}}
 import z from "zod";
-import "@{{projectName}}/db";
+import "{{packageScope}}/db";
 import { publicProcedure } from "../../index";
-import { Todo } from "@{{projectName}}/db/models/todo.model";
+import { Todo } from "{{packageScope}}/db/models/todo.model";
 
 export const todoRouter = {
     getAll: publicProcedure.handler(async () => {
@@ -23525,9 +23525,9 @@ export const todoRouter = {
 
 {{#if (eq api "trpc")}}
 import z from "zod";
-import "@{{projectName}}/db";
+import "{{packageScope}}/db";
 import { router, publicProcedure } from "../../index";
-import { Todo } from "@{{projectName}}/db/models/todo.model";
+import { Todo } from "{{packageScope}}/db/models/todo.model";
 
 export const todoRouter = router({
     getAll: publicProcedure.query(async () => {
@@ -23589,9 +23589,9 @@ export { Todo };
   ["examples/todo/server/prisma/base/src/routers/todo.ts.hbs", `{{#if (eq api "orpc")}}
 import z from "zod";
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createPrismaClient } from "@{{projectName}}/db";
+import { createPrismaClient } from "{{packageScope}}/db";
 {{else}}
-import prisma from "@{{projectName}}/db";
+import prisma from "{{packageScope}}/db";
 {{/if}}
 import { publicProcedure } from "../../index";
 
@@ -23657,9 +23657,9 @@ export const todoRouter = {
 import { TRPCError } from "@trpc/server";
 import z from "zod";
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createPrismaClient } from "@{{projectName}}/db";
+import { createPrismaClient } from "{{packageScope}}/db";
 {{else}}
-import prisma from "@{{projectName}}/db";
+import prisma from "{{packageScope}}/db";
 {{/if}}
 import { publicProcedure, router } from "../../index";
 
@@ -23934,8 +23934,8 @@ import Layout from "../layouts/Layout.astro";
   ["examples/todo/web/nuxt/app/pages/todos.vue.hbs", `<script setup lang="ts">
 import { ref } from 'vue'
 {{#if (eq backend "convex")}}
-import { api } from "@{{ projectName }}/backend/convex/_generated/api";
-import type { Id } from "@{{ projectName }}/backend/convex/_generated/dataModel";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
+import type { Id } from "{{packageScope}}/backend/convex/_generated/dataModel";
 import { useConvexMutation, useConvexQuery } from "convex-vue";
 
 const { data, error, isPending } = useConvexQuery(api.todos.getAll, {});
@@ -24160,23 +24160,23 @@ function handleDeleteTodo(id: number) {
 `],
   ["examples/todo/web/react/next/src/app/todos/page.tsx.hbs", `"use client"
 
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@{{projectName}}/ui/components/card";
-import { Checkbox } from "@{{projectName}}/ui/components/checkbox";
-import { Input } from "@{{projectName}}/ui/components/input";
+} from "{{packageScope}}/ui/components/card";
+import { Checkbox } from "{{packageScope}}/ui/components/checkbox";
+import { Input } from "{{packageScope}}/ui/components/input";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 {{#if (eq backend "convex")}}
 import { useMutation, useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
-import type { Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
+import type { Id } from "{{packageScope}}/backend/convex/_generated/dataModel";
 {{else}}
 import { useMutation, useQuery } from "@tanstack/react-query";
   {{#if (eq api "orpc")}}
@@ -24407,23 +24407,23 @@ export default function TodosPage() {
   );
 }
 `],
-  ["examples/todo/web/react/react-router/src/routes/todos.tsx.hbs", `import { Button } from "@{{projectName}}/ui/components/button";
+  ["examples/todo/web/react/react-router/src/routes/todos.tsx.hbs", `import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@{{projectName}}/ui/components/card";
-import { Checkbox } from "@{{projectName}}/ui/components/checkbox";
-import { Input } from "@{{projectName}}/ui/components/input";
+} from "{{packageScope}}/ui/components/card";
+import { Checkbox } from "{{packageScope}}/ui/components/checkbox";
+import { Input } from "{{packageScope}}/ui/components/input";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 {{#if (eq backend "convex")}}
 import { useMutation, useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
-import type { Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
+import type { Id } from "{{packageScope}}/backend/convex/_generated/dataModel";
 {{else}}
   {{#if (eq api "orpc")}}
   import { orpc } from "@/utils/orpc";
@@ -24654,24 +24654,24 @@ export default function Todos() {
   );
 }
 `],
-  ["examples/todo/web/react/tanstack-router/src/routes/todos.tsx.hbs", `import { Button } from "@{{projectName}}/ui/components/button";
+  ["examples/todo/web/react/tanstack-router/src/routes/todos.tsx.hbs", `import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@{{projectName}}/ui/components/card";
-import { Checkbox } from "@{{projectName}}/ui/components/checkbox";
-import { Input } from "@{{projectName}}/ui/components/input";
+} from "{{packageScope}}/ui/components/card";
+import { Checkbox } from "{{packageScope}}/ui/components/checkbox";
+import { Input } from "{{packageScope}}/ui/components/input";
 import { createFileRoute } from "@tanstack/react-router";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 {{#if (eq backend "convex")}}
 import { useMutation, useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
-import type { Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
+import type { Id } from "{{packageScope}}/backend/convex/_generated/dataModel";
 {{else}}
   {{#if (eq api "orpc")}}
   import { orpc } from "@/utils/orpc";
@@ -24906,16 +24906,16 @@ function TodosRoute() {
   );
 }
 `],
-  ["examples/todo/web/react/tanstack-start/src/routes/todos.tsx.hbs", `import { Button } from "@{{projectName}}/ui/components/button";
+  ["examples/todo/web/react/tanstack-start/src/routes/todos.tsx.hbs", `import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@{{projectName}}/ui/components/card";
-import { Checkbox } from "@{{projectName}}/ui/components/checkbox";
-import { Input } from "@{{projectName}}/ui/components/input";
+} from "{{packageScope}}/ui/components/card";
+import { Checkbox } from "{{packageScope}}/ui/components/checkbox";
+import { Input } from "{{packageScope}}/ui/components/input";
 import { createFileRoute } from "@tanstack/react-router";
 {{#if (eq backend "convex")}}
 import { Trash2 } from "lucide-react";
@@ -24928,8 +24928,8 @@ import { useState, type FormEvent } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { convexQuery } from "@convex-dev/react-query";
 import { useMutation } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
-import type { Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
+import type { Id } from "{{packageScope}}/backend/convex/_generated/dataModel";
 {{else}}
 {{#if (eq api "trpc")}}
 import { useTRPC } from "@/utils/trpc";
@@ -25319,8 +25319,8 @@ function TodosRoute() {
   ["examples/todo/web/svelte/src/routes/todos/+page.svelte.hbs", `{{#if (eq backend "convex")}}
 <script lang="ts">
 	import { useQuery, useConvexClient } from 'convex-svelte';
-	import { api } from '@{{projectName}}/backend/convex/_generated/api';
-	import type { Id } from '@{{projectName}}/backend/convex/_generated/dataModel';
+	import { api } from '{{packageScope}}/backend/convex/_generated/api';
+	import type { Id } from '{{packageScope}}/backend/convex/_generated/dataModel';
 
 	let newTodoText = $state('');
 	let isAdding = $state(false);
@@ -25639,9 +25639,9 @@ shamefully-hoist=true
 strict-peer-dependencies=false
 {{/if}}`],
   ["extras/env.d.ts.hbs", `{{#if (eq serverDeploy "cloudflare")}}
-import { type server } from "@{{projectName}}/infra/alchemy.run";
+import { type server } from "{{packageScope}}/infra/alchemy.run";
 {{else}}
-import { type web as server } from "@{{projectName}}/infra/alchemy.run";
+import { type web as server } from "{{packageScope}}/infra/alchemy.run";
 {{/if}}
 
 // This file infers types for the cloudflare:workers environment from your Alchemy Worker.
@@ -26071,7 +26071,7 @@ import { setClerkAuthTokenGetter } from "@/utils/clerk-auth";
 {{#if (and (ne backend "convex") (eq auth "clerk"))}}
 import { ClerkProvider{{#unless (eq api "none")}}, useAuth{{/unless}} } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
-import { env } from "@{{projectName}}/env/native";
+import { env } from "{{packageScope}}/env/native";
 {{/if}}
 
 {{#if (eq backend "convex")}}
@@ -26079,10 +26079,10 @@ import { env } from "@{{projectName}}/env/native";
     import { ConvexReactClient } from "convex/react";
     import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
     import { authClient } from "@/lib/auth-client";
-    import { env } from "@{{projectName}}/env/native";
+    import { env } from "{{packageScope}}/env/native";
   {{else}}
     import { ConvexProvider, ConvexReactClient } from "convex/react";
-    import { env } from "@{{projectName}}/env/native";
+    import { env } from "{{packageScope}}/env/native";
   {{/if}}
   {{#if (eq auth "clerk")}}
     import { ClerkProvider, useAuth } from "@clerk/expo";
@@ -26496,7 +26496,7 @@ import { trpc } from "@/utils/trpc";
 {{#if (and (eq backend "convex") (eq auth "clerk"))}}
 import { router } from "expo-router";
 import { Authenticated, AuthLoading, Unauthenticated, useQuery } from "convex/react";
-import { api } from "@{{ projectName }}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { useUser } from "@clerk/expo";
 import { SignOutButton } from "@/components/sign-out-button";
 {{else if (and (ne backend "convex") (eq auth "clerk"))}}
@@ -26505,13 +26505,13 @@ import { useAuth, useUser } from "@clerk/expo";
 import { SignOutButton } from "@/components/sign-out-button";
 {{else if (and (eq backend "convex") (eq auth "better-auth"))}}
 import { useConvexAuth, useQuery } from "convex/react";
-import { api } from "@{{ projectName }}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { SignIn } from "@/components/sign-in";
 import { SignUp } from "@/components/sign-up";
 {{else if (eq backend "convex")}}
 import { useQuery } from "convex/react";
-import { api } from "@{{ projectName }}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 {{/if}}
 
 export default function Home() {
@@ -27223,7 +27223,7 @@ import { setClerkAuthTokenGetter } from "@/utils/clerk-auth";
 {{#if (and (ne backend "convex") (eq auth "clerk"))}}
 import { ClerkProvider{{#unless (eq api "none")}}, useAuth{{/unless}} } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
-import { env } from "@{{projectName}}/env/native";
+import { env } from "{{packageScope}}/env/native";
 {{/if}}
 {{#if (eq api "trpc")}}
 import { queryClient } from "@/utils/trpc";
@@ -27236,10 +27236,10 @@ import { queryClient } from "@/utils/orpc";
 import { ConvexReactClient } from "convex/react";
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { authClient } from "@/lib/auth-client";
-import { env } from "@{{projectName}}/env/native";
+import { env } from "{{packageScope}}/env/native";
 {{else}}
 import { ConvexProvider, ConvexReactClient } from "convex/react";
-import { env } from "@{{projectName}}/env/native";
+import { env } from "{{packageScope}}/env/native";
 {{/if}}
 {{#if (eq auth "clerk")}}
 import { ClerkProvider, useAuth } from "@clerk/expo";
@@ -27692,7 +27692,7 @@ import { trpc } from "@/utils/trpc";
 {{#if (and (eq backend "convex") (eq auth "clerk"))}}
 import { Link } from "expo-router";
 import { Authenticated, AuthLoading, Unauthenticated, useQuery } from "convex/react";
-import { api } from "@{{ projectName }}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { useUser } from "@clerk/expo";
 import { SignOutButton } from "@/components/sign-out-button";
 {{else if (and (ne backend "convex") (eq auth "clerk"))}}
@@ -27701,13 +27701,13 @@ import { useAuth, useUser } from "@clerk/expo";
 import { SignOutButton } from "@/components/sign-out-button";
 {{else if (and (eq backend "convex") (eq auth "better-auth"))}}
 import { useConvexAuth, useQuery } from "convex/react";
-import { api } from "@{{ projectName }}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { SignIn } from "@/components/sign-in";
 import { SignUp } from "@/components/sign-up";
 {{else if (eq backend "convex")}}
 import { useQuery } from "convex/react";
-import { api } from "@{{ projectName }}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 {{/if}}
 
 export default function Home() {
@@ -28552,7 +28552,7 @@ import "@/global.css";
 {{#if (and (ne backend "convex") (eq auth "clerk"))}}
 import { ClerkProvider{{#unless (eq api "none")}}, useAuth{{/unless}} } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
-import { env } from "@{{projectName}}/env/native";
+import { env } from "{{packageScope}}/env/native";
 {{/if}}
 
 {{#if (eq backend "convex")}}
@@ -28560,10 +28560,10 @@ import { env } from "@{{projectName}}/env/native";
     import { ConvexReactClient } from "convex/react";
     import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
     import { authClient } from "@/lib/auth-client";
-    import { env } from "@{{projectName}}/env/native";
+    import { env } from "{{packageScope}}/env/native";
   {{else}}
     import { ConvexProvider, ConvexReactClient } from "convex/react";
-    import { env } from "@{{projectName}}/env/native";
+    import { env } from "{{packageScope}}/env/native";
   {{/if}}
 
   {{#if (eq auth "clerk")}}
@@ -28911,7 +28911,7 @@ import { trpc } from "@/utils/trpc";
 {{#if (and (eq backend "convex") (eq auth "clerk"))}}
 import { Link } from "expo-router";
 import { Authenticated, AuthLoading, Unauthenticated, useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { useUser } from "@clerk/expo";
 import { SignOutButton } from "@/components/sign-out-button";
 {{else if (and (ne backend "convex") (eq auth "clerk"))}}
@@ -28920,13 +28920,13 @@ import { useAuth, useUser } from "@clerk/expo";
 import { SignOutButton } from "@/components/sign-out-button";
 {{else if (and (eq backend "convex") (eq auth "better-auth"))}}
 import { useConvexAuth, useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { SignIn } from "@/components/sign-in";
 import { SignUp } from "@/components/sign-up";
 {{else if (eq backend "convex")}}
 import { useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 {{/if}}
 {{#unless (or (eq backend "none") (and (eq backend "convex") (eq auth "better-auth")))}}
 import { Ionicons } from "@expo/vector-icons";
@@ -29561,7 +29561,7 @@ const items = computed<NavigationMenuItem[]>(() => [
 `],
   ["frontend/nuxt/app/pages/index.vue.hbs", `<script setup lang="ts">
 {{#if (eq backend "convex")}}
-import { api } from "@{{ projectName }}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { useConvexQuery } from "convex-vue";
 {{else if (eq api "orpc")}}
   {{#unless (eq api "none")}}
@@ -29696,7 +29696,7 @@ async function openCheckout() {
   </UContainer>
 </template>
 `],
-  ["frontend/nuxt/nuxt.config.ts.hbs", `import "@{{projectName}}/env/web";
+  ["frontend/nuxt/nuxt.config.ts.hbs", `import "{{packageScope}}/env/web";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -29787,7 +29787,7 @@ Disallow:
 // NOTE: This file should not be edited
 // see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
 `],
-  ["frontend/react/next/next.config.ts.hbs", `import "@{{projectName}}/env/web";
+  ["frontend/react/next/next.config.ts.hbs", `import "{{packageScope}}/env/web";
 {{#if (eq webDeploy "cloudflare")}}
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 {{/if}}
@@ -29826,7 +29826,7 @@ initOpenNextCloudflareForDev();
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@{{projectName}}/ui": "{{#if (eq packageManager "npm")}}*{{else}}workspace:*{{/if}}",
+    "{{packageScope}}/ui": "{{#if (eq packageManager "npm")}}*{{else}}workspace:*{{/if}}",
     "@swc/helpers": "^0.5.23",
     "lucide-react": "^1.23.0",
     "next": "^16.2.0",
@@ -29938,11 +29938,11 @@ export default function RootLayout({
 `],
   ["frontend/react/next/src/app/page.tsx.hbs", `"use client"
 {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 {{#if (eq backend "convex")}}
 import { useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 {{else if (or (eq api "orpc") (eq api "trpc"))}}
 import { useQuery } from "@tanstack/react-query";
   {{#if (eq api "orpc")}}
@@ -30050,13 +30050,13 @@ export default function Home() {
 import * as React from "react"
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-import { Button } from "@{{projectName}}/ui/components/button"
+import { Button } from "{{packageScope}}/ui/components/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@{{projectName}}/ui/components/dropdown-menu"
+} from "{{packageScope}}/ui/components/dropdown-menu"
 
 export function ModeToggle() {
   const { setTheme } = useTheme()
@@ -30096,15 +30096,15 @@ import { useAuth } from "@clerk/nextjs";
 {{#if (eq auth "clerk")}}
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{else if (eq auth "better-auth")}}
 import { ConvexReactClient } from "convex/react";
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { authClient } from "@/lib/auth-client";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{else}}
 import { ConvexProvider, ConvexReactClient } from "convex/react";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 {{else}}
 {{#unless (eq api "none")}}
@@ -30122,7 +30122,7 @@ const queryClient = new QueryClient();
 {{/unless}}
 {{/if}}
 import { ThemeProvider } from "./theme-provider";
-import { Toaster } from "@{{projectName}}/ui/components/sonner";
+import { Toaster } from "{{packageScope}}/ui/components/sonner";
 
 {{#if (eq backend "convex")}}
 const convex = new ConvexReactClient(env.NEXT_PUBLIC_CONVEX_URL);
@@ -30236,7 +30236,7 @@ export function ThemeProvider({
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@{{projectName}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
+      "{{packageScope}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
     }{{#if (or (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}},
     "types": [
       "@cloudflare/workers-types"
@@ -30268,7 +30268,7 @@ export function ThemeProvider({
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
-    "@{{projectName}}/ui": "{{#if (eq packageManager "npm")}}*{{else}}workspace:*{{/if}}",
+    "{{packageScope}}/ui": "{{#if (eq packageManager "npm")}}*{{else}}workspace:*{{/if}}",
     "@react-router/fs-routes": "^8.1.0",
     "@react-router/node": "^8.1.0",
     "@react-router/serve": "^8.1.0",
@@ -30309,13 +30309,13 @@ export default {
 `],
   ["frontend/react/react-router/src/components/mode-toggle.tsx.hbs", `import { Moon, Sun } from "lucide-react";
 
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@{{projectName}}/ui/components/dropdown-menu";
+} from "{{packageScope}}/ui/components/dropdown-menu";
 import { useTheme } from "@/components/theme-provider";
 
 export function ModeToggle() {
@@ -30364,7 +30364,7 @@ import "./lib/himetrica";
 {{/if}}
 import Header from "./components/header";
 import { ThemeProvider } from "./components/theme-provider";
-import { Toaster } from "@{{projectName}}/ui/components/sonner";
+import { Toaster } from "{{packageScope}}/ui/components/sonner";
 {{#if (eq auth "clerk")}}
 import { ClerkProvider{{#if (or (eq backend "convex") (ne api "none"))}}, useAuth{{/if}} } from "@clerk/react-router";
 import { clerkMiddleware, rootAuthLoader } from "@clerk/react-router/server";
@@ -30376,7 +30376,7 @@ import { setClerkAuthTokenGetter } from "@/utils/clerk-auth";
 
 {{#if (eq backend "convex")}}
 import { ConvexReactClient } from "convex/react";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
   {{#if (eq auth "clerk")}}
 import { ConvexProviderWithClerk } from "convex/react-clerk";
   {{else if (eq auth "better-auth")}}
@@ -30665,11 +30665,11 @@ export default flatRoutes() satisfies RouteConfig;
 `],
   ["frontend/react/react-router/src/routes/_index.tsx.hbs", `import type { Route } from "./+types/_index";
 {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 {{#if (eq backend "convex")}}
 import { useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 {{else if (or (eq api "orpc") (eq api "trpc"))}}
 import { useQuery } from "@tanstack/react-query";
   {{#if (eq api "orpc")}}
@@ -30795,7 +30795,7 @@ export default function Home() {
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "@/*": ["./src/*"],
-      "@{{projectName}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
+      "{{packageScope}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
     },
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,
@@ -30853,7 +30853,7 @@ export default defineConfig({
 	},
 	"dependencies": {
         "@hookform/resolvers": "^5.4.0",
-        "@{{projectName}}/ui": "{{#if (eq packageManager "npm")}}*{{else}}workspace:*{{/if}}",
+        "{{packageScope}}/ui": "{{#if (eq packageManager "npm")}}*{{else}}workspace:*{{/if}}",
 		"@tailwindcss/vite": "^4.3.2",
 		"@tanstack/react-router": "^1.170.17",
 		"lucide-react": "^1.23.0",
@@ -30877,13 +30877,13 @@ export default defineConfig({
 `],
   ["frontend/react/tanstack-router/src/components/mode-toggle.tsx.hbs", `import { Moon, Sun } from "lucide-react";
 
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@{{projectName}}/ui/components/dropdown-menu";
+} from "{{packageScope}}/ui/components/dropdown-menu";
 import { useTheme } from "@/components/theme-provider";
 
 export function ModeToggle() {
@@ -30942,7 +30942,7 @@ import "./lib/himetrica";
   const queryClient = new QueryClient();
 {{/if}}
 {{#if (or (eq backend "convex") (eq auth "clerk"))}}
-  import { env } from "@{{projectName}}/env/web";
+  import { env } from "{{packageScope}}/env/web";
 {{/if}}
 {{#if (eq auth "clerk")}}
   import { ClerkProvider{{#if (or (eq backend "convex") (ne api "none"))}}, useAuth{{/if}} } from "@clerk/react";
@@ -31070,14 +31070,14 @@ if (!rootElement.innerHTML) {
 `],
   ["frontend/react/tanstack-router/src/routes/__root.tsx.hbs", `import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@{{projectName}}/ui/components/sonner";
+import { Toaster } from "{{packageScope}}/ui/components/sonner";
 {{#if (eq api "orpc")}}
 import { link, orpc } from "@/utils/orpc";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
-import type { AppRouterClient } from "@{{projectName}}/api/routers/index";
+import type { AppRouterClient } from "{{packageScope}}/api/routers/index";
 import { createORPCClient } from "@orpc/client";
 {{/if}}
 {{#if (eq api "trpc")}}
@@ -31174,7 +31174,7 @@ function RootComponent() {
 `],
   ["frontend/react/tanstack-router/src/routes/index.tsx.hbs", `import { createFileRoute } from "@tanstack/react-router";
 {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 {{#if (eq api "orpc")}}
 import { orpc } from "@/utils/orpc";
@@ -31186,7 +31186,7 @@ import { useQuery } from "@tanstack/react-query";
 {{/if}}
 {{#if (eq backend "convex")}}
 import { useQuery } from "convex/react";
-import { api } from "@{{ projectName }}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 {{/if}}
 
 export const Route = createFileRoute("/")({
@@ -31300,7 +31300,7 @@ function HomeComponent() {
     "rootDirs": ["."],
     "paths": {
       "@/*": ["./src/*"],
-      "@{{projectName}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
+      "{{packageScope}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
     }
   }
 }
@@ -31337,7 +31337,7 @@ export default defineConfig({
     "dev": "vite dev"
   },
   "dependencies": {
-    "@{{projectName}}/ui": "{{#if (eq packageManager "npm")}}*{{else}}workspace:*{{/if}}",
+    "{{packageScope}}/ui": "{{#if (eq packageManager "npm")}}*{{else}}workspace:*{{/if}}",
     "@tailwindcss/vite": "^4.3.2",
     "@tanstack/react-query": "^5.101.2",
     "@tanstack/react-router": "^1.170.17",
@@ -31376,7 +31376,7 @@ import Loader from "./components/loader";
 {{#if (includes observability "himetrica")}}
 import "./lib/himetrica";
 {{/if}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{else}}
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import Loader from "./components/loader";
@@ -31390,10 +31390,10 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { toast } from "sonner";
-import type { AppRouter } from "@{{projectName}}/api/routers/index";
+import type { AppRouter } from "{{packageScope}}/api/routers/index";
 import { TRPCProvider } from "./utils/trpc";
 {{#unless (eq backend "self")}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/unless}}
 {{#if (eq auth "clerk")}}
 import { getClerkAuthToken } from "@/utils/clerk-auth";
@@ -31545,7 +31545,7 @@ declare module "@tanstack/react-router" {
 	}
 }
 `],
-  ["frontend/react/tanstack-start/src/routes/__root.tsx.hbs", `import { Toaster } from "@{{projectName}}/ui/components/sonner";
+  ["frontend/react/tanstack-start/src/routes/__root.tsx.hbs", `import { Toaster } from "{{packageScope}}/ui/components/sonner";
 {{#unless (eq backend "convex")}} {{#unless (eq api "none")}}
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 {{/unless}} {{/unless}}
@@ -31624,7 +31624,7 @@ export interface RouterAppContext {
 {{else}}
   {{#if (eq api "trpc")}}
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import type { AppRouter } from "@{{projectName}}/api/routers/index";
+import type { AppRouter } from "{{packageScope}}/api/routers/index";
 export interface RouterAppContext {
   trpc: TRPCOptionsProxy<AppRouter>;
   queryClient: QueryClient;
@@ -31803,12 +31803,12 @@ function RootDocument() {
 `],
   ["frontend/react/tanstack-start/src/routes/index.tsx.hbs", `import { createFileRoute } from "@tanstack/react-router";
 {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 {{#if (eq backend "convex")}}
 import { convexQuery } from "@convex-dev/react-query";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 {{else if (or (eq api "trpc") (eq api "orpc"))}}
 import { useQuery } from "@tanstack/react-query";
   {{#if (eq api "trpc")}}
@@ -31939,7 +31939,7 @@ function HomeComponent() {
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@{{projectName}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
+      "{{packageScope}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
     }
   }
 }
@@ -32061,8 +32061,8 @@ dev-dist
   "iconLibrary": "lucide",
   "aliases": {
     "components": "@/components",
-    "utils": "@{{projectName}}/ui/lib/utils",
-    "ui": "@{{projectName}}/ui/components",
+    "utils": "{{packageScope}}/ui/lib/utils",
+    "ui": "{{packageScope}}/ui/components",
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
@@ -32160,7 +32160,7 @@ export default function Loader() {
   );
 }
 `],
-  ["frontend/react/web-base/src/index.css.hbs", `@import '@{{projectName}}/ui/globals.css';
+  ["frontend/react/web-base/src/index.css.hbs", `@import '{{packageScope}}/ui/globals.css';
 {{#if (includes examples "ai")}}
 @source "../node_modules/streamdown/dist/*.js";
 {{/if}}
@@ -32350,7 +32350,7 @@ function RootComponent() {
 `],
   ["frontend/solid/src/routes/index.tsx.hbs", `import { createFileRoute } from "@tanstack/solid-router";
 {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 {{#if (eq api "orpc")}}
 import { useQuery } from "@tanstack/solid-query";
@@ -32572,7 +32572,7 @@ body {
 /// <reference path="{{layoutRelative "app:web/src" "package:env" "env.d.ts"}}" />
 {{/if}}
 {{#if (and (eq backend "self") (eq api "orpc"))}}
-import type { AppRouterClient } from "@{{projectName}}/api/routers/index";
+import type { AppRouterClient } from "{{packageScope}}/api/routers/index";
 
 {{/if}}
 // See https://svelte.dev/docs/kit/types#app.d.ts
@@ -32710,7 +32710,7 @@ export {};
   ["frontend/svelte/src/routes/+page.svelte.hbs", `{{#if (eq backend "convex")}}
 <script lang="ts">
 import { useQuery } from 'convex-svelte';
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 
 const healthCheck = useQuery(api.healthcheck.get, {});
 
@@ -32759,7 +32759,7 @@ import { createQuery } from "@tanstack/svelte-query";
 const healthCheck = createQuery(() => orpc.healthCheck.queryOptions());
 {{/if}}
 {{#if (and (includes payments "abacatepay") (ne backend "self"))}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 
 const TITLE_TEXT = \`
@@ -32905,7 +32905,7 @@ export default defineConfig({
 });
 `],
   ["observability/himetrica/browser.ts.hbs", `import { HimetricaClient } from "@himetrica/tracker-js";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 export const himetrica =
   typeof window !== "undefined" && env.{{publicEnvKey frontend "HIMETRICA_API_KEY"}}
@@ -32948,7 +32948,7 @@ export default defineNuxtPlugin(() => {
 });
 `],
   ["packages/arara/package.json.hbs", `{
-  "name": "@{{projectName}}/arara",
+  "name": "{{packageScope}}/arara",
   "type": "module",
   "exports": {
     ".": {
@@ -32971,7 +32971,7 @@ export type AraraClient = NodeSDK;
 export const arara = new NodeSDK({ apiKey: process.env.ARARA_API_KEY });
 `],
   ["packages/arara/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
@@ -32982,7 +32982,7 @@ export const arara = new NodeSDK({ apiKey: process.env.ARARA_API_KEY });
 }
 `],
   ["packages/config/package.json.hbs", `{
-  "name": "@{{projectName}}/config",
+  "name": "{{packageScope}}/config",
   "version": "0.0.0",
   "private": true
 }
@@ -33021,7 +33021,7 @@ export const arara = new NodeSDK({ apiKey: process.env.ARARA_API_KEY });
   }
 }`],
   ["packages/email/package.json.hbs", `{
-  "name": "@{{projectName}}/email",
+  "name": "{{packageScope}}/email",
   "type": "module",
   "exports": {
     ".": {
@@ -33041,7 +33041,7 @@ export * from "./lib/resend";
 export {};
 `],
   ["packages/email/src/lib/resend.ts.hbs", `import { Resend } from "resend";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 export const resend = new Resend(env.RESEND_API_KEY);
 
@@ -33077,7 +33077,7 @@ export async function sendEmail(input: SendEmailInput) {
 }
 `],
   ["packages/email/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
@@ -33088,7 +33088,7 @@ export async function sendEmail(input: SendEmailInput) {
 }
 `],
   ["packages/env/package.json.hbs", `{
-	"name": "@{{projectName}}/env",
+	"name": "{{packageScope}}/env",
 	"version": "0.0.0",
 	"private": true,
 	"type": "module",
@@ -33525,7 +33525,7 @@ export const env = createEnv({
 });
 `],
   ["packages/env/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
 }
 `],
   ["packages/infra/alchemy.run.ts.hbs", `import alchemy from "alchemy";
@@ -34059,7 +34059,7 @@ console.log(\`Server -> \${server.url}\`);
 await app.finalize();
 `],
   ["packages/infra/package.json.hbs", `{
-  "name": "@{{projectName}}/infra",
+  "name": "{{packageScope}}/infra",
   "private": true,
   "type": "module",
   "scripts": {
@@ -34070,7 +34070,7 @@ await app.finalize();
 }
 `],
   ["packages/millionsend/package.json.hbs", `{
-  "name": "@{{projectName}}/millionsend",
+  "name": "{{packageScope}}/millionsend",
   "type": "module",
   "exports": {
     ".": {
@@ -34093,7 +34093,7 @@ export { sendEmail, type SendEmailInput } from "./lib/email";
 const apiKey = process.env.MILLIONSEND_API_KEY;
 const baseUrl = process.env.MILLIONSEND_BASE_URL;
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 const apiKey = env.MILLIONSEND_API_KEY;
 const baseUrl = env.MILLIONSEND_BASE_URL;
@@ -34105,7 +34105,7 @@ export const millionsend = new MillionSend(apiKey, {
 `],
   ["packages/millionsend/src/lib/email.ts.hbs", `import { millionsend } from "./client";
 {{#unless (eq backend "convex")}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/unless}}
 
 export type SendEmailInput = {
@@ -34139,7 +34139,7 @@ export async function sendEmail(input: SendEmailInput) {
 }
 `],
   ["packages/millionsend/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
@@ -34150,7 +34150,7 @@ export async function sendEmail(input: SendEmailInput) {
 }
 `],
   ["packages/notifique/package.json.hbs", `{
-  "name": "@{{projectName}}/notifique",
+  "name": "{{packageScope}}/notifique",
   "type": "module",
   "exports": {
     ".": {
@@ -34172,7 +34172,7 @@ export { sendSms } from "./lib/sms";
 export { sendWhatsAppText } from "./lib/whatsapp";
 export { sendEmail } from "./lib/email";
 `],
-  ["packages/notifique/src/lib/email.ts.hbs", `import { env } from "@{{projectName}}/env/server";
+  ["packages/notifique/src/lib/email.ts.hbs", `import { env } from "{{packageScope}}/env/server";
 import { notifique } from "../notifique";
 
 export type NotifiqueEmailPriority = "high" | "normal" | "low";
@@ -34270,12 +34270,12 @@ export async function sendWhatsAppText(
 }
 `],
   ["packages/notifique/src/notifique.ts.hbs", `import { Notifique } from "@notifique/sdk-node";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 export const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
 `],
   ["packages/notifique/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
@@ -34286,7 +34286,7 @@ export const notifique = new Notifique({ apiKey: env.NOTIFIQUE_API_KEY });
 }
 `],
   ["packages/payments/package.json.hbs", `{
-  "name": "@{{projectName}}/payments",
+  "name": "{{packageScope}}/payments",
   "type": "module",
   "exports": {
     ".": {
@@ -34320,7 +34320,7 @@ export * from "./lib/stripe";
 export {};
 `],
   ["packages/payments/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
@@ -34344,11 +34344,11 @@ export {};
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@{{projectName}}/ui/components",
-    "utils": "@{{projectName}}/ui/lib/utils",
-    "hooks": "@{{projectName}}/ui/hooks",
-    "lib": "@{{projectName}}/ui/lib",
-    "ui": "@{{projectName}}/ui/components"
+    "components": "{{packageScope}}/ui/components",
+    "utils": "{{packageScope}}/ui/lib/utils",
+    "hooks": "{{packageScope}}/ui/hooks",
+    "lib": "{{packageScope}}/ui/lib",
+    "ui": "{{packageScope}}/ui/components"
   },
   "menuColor": "default",
   "menuAccent": "subtle",
@@ -34356,7 +34356,7 @@ export {};
 }
 `],
   ["packages/ui/package.json.hbs", `{
-  "name": "@{{projectName}}/ui",
+  "name": "{{packageScope}}/ui",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -34403,8 +34403,8 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
-import { Button } from "@{{projectName}}/ui/components/button"
+import { cn } from "{{packageScope}}/ui/lib/utils"
+import { Button } from "{{packageScope}}/ui/components/button"
 
 const attachmentVariants = cva(
   "group/attachment relative flex w-fit max-w-full min-w-0 shrink-0 flex-wrap rounded-none border bg-card text-card-foreground transition-colors focus-within:ring-1 focus-within:ring-ring/50 has-[>a,>button]:hover:bg-muted/50 data-[state=error]:border-destructive/30 data-[state=idle]:border-dashed",
@@ -34615,7 +34615,7 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
+import { cn } from "{{packageScope}}/ui/lib/utils"
 
 function BubbleGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -34742,7 +34742,7 @@ export { BubbleGroup, Bubble, BubbleContent, BubbleReactions }
   ["packages/ui/src/components/button.tsx.hbs", `import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
+import { cn } from "{{packageScope}}/ui/lib/utils"
 
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-none border border-transparent bg-clip-padding text-xs font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -34798,7 +34798,7 @@ export { Button, buttonVariants }
 `],
   ["packages/ui/src/components/card.tsx.hbs", `import * as React from "react"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
+import { cn } from "{{packageScope}}/ui/lib/utils"
 
 function Card({
   className,
@@ -34904,7 +34904,7 @@ export {
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
+import { cn } from "{{packageScope}}/ui/lib/utils"
 import { CheckIcon } from "lucide-react"
 
 function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
@@ -34934,7 +34934,7 @@ export { Checkbox }
 import * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
+import { cn } from "{{packageScope}}/ui/lib/utils"
 import { ChevronRightIcon, CheckIcon } from "lucide-react"
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
@@ -35204,7 +35204,7 @@ export {
 `],
   ["packages/ui/src/components/empty.tsx.hbs", `import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
+import { cn } from "{{packageScope}}/ui/lib/utils"
 
 function Empty({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -35309,10 +35309,10 @@ export {
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
-import { Button } from "@{{projectName}}/ui/components/button"
-import { Input } from "@{{projectName}}/ui/components/input"
-import { Textarea } from "@{{projectName}}/ui/components/textarea"
+import { cn } from "{{packageScope}}/ui/lib/utils"
+import { Button } from "{{packageScope}}/ui/components/button"
+import { Input } from "{{packageScope}}/ui/components/input"
+import { Textarea } from "{{packageScope}}/ui/components/textarea"
 
 function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -35472,7 +35472,7 @@ export {
   ["packages/ui/src/components/input.tsx.hbs", `import * as React from "react"
 import { Input as InputPrimitive } from "@base-ui/react/input"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
+import { cn } from "{{packageScope}}/ui/lib/utils"
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
@@ -35494,7 +35494,7 @@ export { Input }
 
 import * as React from "react"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
+import { cn } from "{{packageScope}}/ui/lib/utils"
 
 function Label({ className, ...props }: React.ComponentProps<"label">) {
   return (
@@ -35516,7 +35516,7 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
+import { cn } from "{{packageScope}}/ui/lib/utils"
 
 const markerVariants = cva(
   "group/marker relative flex min-h-4 w-full items-center gap-2 text-left text-xs text-muted-foreground [&_svg:not([class*='size-'])]:size-3.5 [a]:underline [a]:underline-offset-3 [a]:hover:text-foreground",
@@ -35593,8 +35593,8 @@ import {
   useMessageScrollerVisibility,
 } from "@shadcn/react/message-scroller"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
-import { Button } from "@{{projectName}}/ui/components/button"
+import { cn } from "{{packageScope}}/ui/lib/utils"
+import { Button } from "{{packageScope}}/ui/components/button"
 import { ArrowDownIcon } from "lucide-react"
 
 function MessageScrollerProvider(
@@ -35719,7 +35719,7 @@ export {
 `],
   ["packages/ui/src/components/message.tsx.hbs", `import * as React from "react"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
+import { cn } from "{{packageScope}}/ui/lib/utils"
 
 function MessageGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -35810,7 +35810,7 @@ export {
   MessageHeader,
 }
 `],
-  ["packages/ui/src/components/skeleton.tsx.hbs", `import { cn } from "@{{projectName}}/ui/lib/utils"
+  ["packages/ui/src/components/skeleton.tsx.hbs", `import { cn } from "{{packageScope}}/ui/lib/utils"
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -35877,7 +35877,7 @@ export { Toaster }
 `],
   ["packages/ui/src/components/textarea.tsx.hbs", `import * as React from "react"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
+import { cn } from "{{packageScope}}/ui/lib/utils"
 
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
@@ -35898,7 +35898,7 @@ export { Textarea }
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 
-import { cn } from "@{{projectName}}/ui/lib/utils"
+import { cn } from "{{packageScope}}/ui/lib/utils"
 
 function TooltipProvider({
   delay = 0,
@@ -36101,13 +36101,13 @@ export function cn(...inputs: ClassValue[]) {
 }
 `],
   ["packages/ui/tsconfig.json.hbs", `{
-  "extends": "@{{projectName}}/config/tsconfig.base.json",
+  "extends": "{{packageScope}}/config/tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": [],
     "paths": {
-      "@{{projectName}}/ui/*": ["./src/*"]
+      "{{packageScope}}/ui/*": ["./src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
@@ -36116,7 +36116,7 @@ export function cn(...inputs: ClassValue[]) {
 `],
   ["payments/abacatepay/db/drizzle/mysql/src/abacatepay.ts.hbs", `import { eq } from "drizzle-orm";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 import { createDb{{#if (and (ne serverDeploy "cloudflare") (or (ne backend "self") (ne webDeploy "cloudflare")))}}, db{{/if}} } from "./index";
 import { abacatePayCheckout, abacatePayWebhookEvent } from "./schema/abacatepay";
@@ -36215,7 +36215,7 @@ export const abacatePayWebhookEvent = mysqlTable("abacatepay_webhook_event", {
 `],
   ["payments/abacatepay/db/drizzle/postgres/src/abacatepay.ts.hbs", `import { eq } from "drizzle-orm";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 import { createDb{{#if (and (ne serverDeploy "cloudflare") (or (ne backend "self") (ne webDeploy "cloudflare")))}}, db{{/if}} } from "./index";
 import { abacatePayCheckout, abacatePayWebhookEvent } from "./schema/abacatepay";
@@ -36314,7 +36314,7 @@ export const abacatePayWebhookEvent = pgTable("abacatepay_webhook_event", {
 `],
   ["payments/abacatepay/db/drizzle/sqlite/src/abacatepay.ts.hbs", `import { eq } from "drizzle-orm";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 import { createDb{{#if (and (ne serverDeploy "cloudflare") (or (ne backend "self") (ne webDeploy "cloudflare")))}}, db{{/if}} } from "./index";
 import { abacatePayCheckout, abacatePayWebhookEvent } from "./schema/abacatepay";
@@ -36445,7 +36445,7 @@ model AbacatePayWebhookEvent {
 }
 `],
   ["payments/abacatepay/db/prisma/mysql/src/abacatepay.ts.hbs", `{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 import { createPrismaClient{{#if (and (ne serverDeploy "cloudflare") (or (ne backend "self") (ne webDeploy "cloudflare")))}}, default as prisma{{/if}} } from "./index";
 
@@ -36537,7 +36537,7 @@ model AbacatePayWebhookEvent {
 }
 `],
   ["payments/abacatepay/db/prisma/postgres/src/abacatepay.ts.hbs", `{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 import { createPrismaClient{{#if (and (ne serverDeploy "cloudflare") (or (ne backend "self") (ne webDeploy "cloudflare")))}}, default as prisma{{/if}} } from "./index";
 
@@ -36629,7 +36629,7 @@ model AbacatePayWebhookEvent {
 }
 `],
   ["payments/abacatepay/db/prisma/sqlite/src/abacatepay.ts.hbs", `{{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 import { createPrismaClient{{#if (and (ne serverDeploy "cloudflare") (or (ne backend "self") (ne webDeploy "cloudflare")))}}, default as prisma{{/if}} } from "./index";
 
@@ -36695,7 +36695,7 @@ export async function markAbacatePayCheckoutCompleted(input: {
 	});
 }
 `],
-  ["payments/abacatepay/fullstack/astro/src/pages/api/payments/abacatepay/checkout/[checkoutId].ts.hbs", `import { getStoredAbacatePayCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+  ["payments/abacatepay/fullstack/astro/src/pages/api/payments/abacatepay/checkout/[checkoutId].ts.hbs", `import { getStoredAbacatePayCheckout } from "{{packageScope}}/payments/lib/abacatepay";
 import type { APIRoute } from "astro";
 
 export const prerender = false;
@@ -36711,12 +36711,12 @@ export const GET: APIRoute = async ({ params }) => {
 `],
   ["payments/abacatepay/fullstack/astro/src/pages/api/payments/abacatepay/checkout/index.ts.hbs", `{{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
-import { createAbacatePayHostedCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+import { createAbacatePayHostedCheckout } from "{{packageScope}}/payments/lib/abacatepay";
 import type { APIRoute } from "astro";
 
 export const prerender = false;
@@ -36739,8 +36739,8 @@ export const POST: APIRoute = async ({ request }) => {
   return Response.json({ data: checkout, success: true, error: null });
 };
 `],
-  ["payments/abacatepay/fullstack/astro/src/pages/api/payments/abacatepay/webhook.ts.hbs", `import { env } from "@{{projectName}}/env/server";
-import { processAbacatePayWebhook } from "@{{projectName}}/payments/lib/abacatepay";
+  ["payments/abacatepay/fullstack/astro/src/pages/api/payments/abacatepay/webhook.ts.hbs", `import { env } from "{{packageScope}}/env/server";
+import { processAbacatePayWebhook } from "{{packageScope}}/payments/lib/abacatepay";
 import type { APIRoute } from "astro";
 
 export const prerender = false;
@@ -36761,7 +36761,7 @@ export const POST: APIRoute = async ({ request }) => {
   return Response.json(result.body, { status: result.status });
 };
 `],
-  ["payments/abacatepay/fullstack/next/src/app/api/payments/abacatepay/checkout/[checkoutId]/route.ts.hbs", `import { getStoredAbacatePayCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+  ["payments/abacatepay/fullstack/next/src/app/api/payments/abacatepay/checkout/[checkoutId]/route.ts.hbs", `import { getStoredAbacatePayCheckout } from "{{packageScope}}/payments/lib/abacatepay";
 
 export async function GET(
 	_request: Request,
@@ -36780,12 +36780,12 @@ export async function GET(
   ["payments/abacatepay/fullstack/next/src/app/api/payments/abacatepay/checkout/route.ts.hbs", `{{#if (eq auth "better-auth")}}
 import { headers } from "next/headers";
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
-import { createAbacatePayHostedCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+import { createAbacatePayHostedCheckout } from "{{packageScope}}/payments/lib/abacatepay";
 
 export async function POST() {
 	{{#if (eq auth "better-auth")}}
@@ -36802,8 +36802,8 @@ export async function POST() {
 	return Response.json({ data: checkout, success: true, error: null });
 }
 `],
-  ["payments/abacatepay/fullstack/next/src/app/api/payments/abacatepay/webhook/route.ts.hbs", `import { env } from "@{{projectName}}/env/server";
-import { processAbacatePayWebhook } from "@{{projectName}}/payments/lib/abacatepay";
+  ["payments/abacatepay/fullstack/next/src/app/api/payments/abacatepay/webhook/route.ts.hbs", `import { env } from "{{packageScope}}/env/server";
+import { processAbacatePayWebhook } from "{{packageScope}}/payments/lib/abacatepay";
 
 export async function POST(request: Request) {
 	const requestUrl = new URL(request.url);
@@ -36823,12 +36823,12 @@ export async function POST(request: Request) {
 `],
   ["payments/abacatepay/fullstack/nuxt/server/api/payments/abacatepay/checkout.post.ts.hbs", `{{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
-import { createAbacatePayHostedCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+import { createAbacatePayHostedCheckout } from "{{packageScope}}/payments/lib/abacatepay";
 
 export default defineEventHandler(async (event) => {
 {{#if (and (eq auth "better-auth") (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare"))))}}
@@ -36848,7 +36848,7 @@ export default defineEventHandler(async (event) => {
   return { data: checkout, success: true, error: null };
 });
 `],
-  ["payments/abacatepay/fullstack/nuxt/server/api/payments/abacatepay/checkout/[checkoutId].get.ts.hbs", `import { getStoredAbacatePayCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+  ["payments/abacatepay/fullstack/nuxt/server/api/payments/abacatepay/checkout/[checkoutId].get.ts.hbs", `import { getStoredAbacatePayCheckout } from "{{packageScope}}/payments/lib/abacatepay";
 
 export default defineEventHandler(async (event) => {
   const checkoutId = getRouterParam(event, "checkoutId");
@@ -36864,8 +36864,8 @@ export default defineEventHandler(async (event) => {
   return { data: checkout, success: true, error: null };
 });
 `],
-  ["payments/abacatepay/fullstack/nuxt/server/api/payments/abacatepay/webhook.post.ts.hbs", `import { env } from "@{{projectName}}/env/server";
-import { processAbacatePayWebhook } from "@{{projectName}}/payments/lib/abacatepay";
+  ["payments/abacatepay/fullstack/nuxt/server/api/payments/abacatepay/webhook.post.ts.hbs", `import { env } from "{{packageScope}}/env/server";
+import { processAbacatePayWebhook } from "{{packageScope}}/payments/lib/abacatepay";
 
 export default defineEventHandler(async (event) => {
   const requestUrl = getRequestURL(event);
@@ -36884,7 +36884,7 @@ export default defineEventHandler(async (event) => {
   return result.body;
 });
 `],
-  ["payments/abacatepay/fullstack/svelte/src/routes/api/payments/abacatepay/checkout/[checkoutId]/+server.ts.hbs", `import { getStoredAbacatePayCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+  ["payments/abacatepay/fullstack/svelte/src/routes/api/payments/abacatepay/checkout/[checkoutId]/+server.ts.hbs", `import { getStoredAbacatePayCheckout } from "{{packageScope}}/payments/lib/abacatepay";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ params }) => {
@@ -36898,12 +36898,12 @@ export const GET: RequestHandler = async ({ params }) => {
 `],
   ["payments/abacatepay/fullstack/svelte/src/routes/api/payments/abacatepay/checkout/+server.ts.hbs", `{{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
-import { createAbacatePayHostedCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+import { createAbacatePayHostedCheckout } from "{{packageScope}}/payments/lib/abacatepay";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -36924,8 +36924,8 @@ export const POST: RequestHandler = async ({ request }) => {
 	return Response.json({ data: checkout, success: true, error: null });
 };
 `],
-  ["payments/abacatepay/fullstack/svelte/src/routes/api/payments/abacatepay/webhook/+server.ts.hbs", `import { env } from "@{{projectName}}/env/server";
-import { processAbacatePayWebhook } from "@{{projectName}}/payments/lib/abacatepay";
+  ["payments/abacatepay/fullstack/svelte/src/routes/api/payments/abacatepay/webhook/+server.ts.hbs", `import { env } from "{{packageScope}}/env/server";
+import { processAbacatePayWebhook } from "{{packageScope}}/payments/lib/abacatepay";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -36946,12 +36946,12 @@ export const POST: RequestHandler = async ({ request }) => {
 `],
   ["payments/abacatepay/fullstack/tanstack-start/src/routes/api/payments/abacatepay/checkout.ts.hbs", `{{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
-import { createAbacatePayHostedCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+import { createAbacatePayHostedCheckout } from "{{packageScope}}/payments/lib/abacatepay";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/api/payments/abacatepay/checkout")({
@@ -36975,7 +36975,7 @@ export const Route = createFileRoute("/api/payments/abacatepay/checkout")({
 	},
 });
 `],
-  ["payments/abacatepay/fullstack/tanstack-start/src/routes/api/payments/abacatepay/checkout/$checkoutId.ts.hbs", `import { getStoredAbacatePayCheckout } from "@{{projectName}}/payments/lib/abacatepay";
+  ["payments/abacatepay/fullstack/tanstack-start/src/routes/api/payments/abacatepay/checkout/$checkoutId.ts.hbs", `import { getStoredAbacatePayCheckout } from "{{packageScope}}/payments/lib/abacatepay";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/api/payments/abacatepay/checkout/$checkoutId")({
@@ -36993,8 +36993,8 @@ export const Route = createFileRoute("/api/payments/abacatepay/checkout/$checkou
 	},
 });
 `],
-  ["payments/abacatepay/fullstack/tanstack-start/src/routes/api/payments/abacatepay/webhook.ts.hbs", `import { env } from "@{{projectName}}/env/server";
-import { processAbacatePayWebhook } from "@{{projectName}}/payments/lib/abacatepay";
+  ["payments/abacatepay/fullstack/tanstack-start/src/routes/api/payments/abacatepay/webhook.ts.hbs", `import { env } from "{{packageScope}}/env/server";
+import { processAbacatePayWebhook } from "{{packageScope}}/payments/lib/abacatepay";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/api/payments/abacatepay/webhook")({
@@ -37020,14 +37020,14 @@ export const Route = createFileRoute("/api/payments/abacatepay/webhook")({
 });
 `],
   ["payments/abacatepay/server/base/src/lib/abacatepay.ts.hbs", `import crypto from "node:crypto";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 import {
 	createAbacatePayCheckout,
 	getAbacatePayCheckoutByCheckoutId,
 	hasAbacatePayWebhookEvent,
 	markAbacatePayCheckoutCompleted,
 	recordAbacatePayWebhookEvent,
-} from "@{{projectName}}/db/abacatepay";
+} from "{{packageScope}}/db/abacatepay";
 
 const ABACATEPAY_API_BASE_URL = "https://api.abacatepay.com/v2";
 const ABACATEPAY_PRODUCT_ID = "prod_your_product_id";
@@ -37242,7 +37242,7 @@ onMounted(async () => {
   </div>
 </template>
 `],
-  ["payments/abacatepay/web/react/next/src/app/success/page.tsx.hbs", `import { env } from "@{{projectName}}/env/web";
+  ["payments/abacatepay/web/react/next/src/app/success/page.tsx.hbs", `import { env } from "{{packageScope}}/env/web";
 
 async function getCheckoutStatus(checkoutId: string) {
 	const baseUrl = {{#if (eq backend "self")}}""{{else}}env.NEXT_PUBLIC_SERVER_URL{{/if}};
@@ -37282,7 +37282,7 @@ export default async function SuccessPage({
 	);
 }
 `],
-  ["payments/abacatepay/web/react/react-router/src/routes/success.tsx.hbs", `import { env } from "@{{projectName}}/env/web";
+  ["payments/abacatepay/web/react/react-router/src/routes/success.tsx.hbs", `import { env } from "{{packageScope}}/env/web";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
@@ -37325,7 +37325,7 @@ export default function SuccessPage() {
 	);
 }
 `],
-  ["payments/abacatepay/web/react/tanstack-router/src/routes/success.tsx.hbs", `import { env } from "@{{projectName}}/env/web";
+  ["payments/abacatepay/web/react/tanstack-router/src/routes/success.tsx.hbs", `import { env } from "{{packageScope}}/env/web";
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
@@ -37374,7 +37374,7 @@ function SuccessPage() {
 	);
 }
 `],
-  ["payments/abacatepay/web/react/tanstack-start/src/routes/success.tsx.hbs", `import { env } from "@{{projectName}}/env/web";
+  ["payments/abacatepay/web/react/tanstack-start/src/routes/success.tsx.hbs", `import { env } from "{{packageScope}}/env/web";
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
@@ -37423,7 +37423,7 @@ function SuccessPage() {
 	);
 }
 `],
-  ["payments/abacatepay/web/solid/src/routes/success.tsx.hbs", `import { env } from "@{{projectName}}/env/web";
+  ["payments/abacatepay/web/solid/src/routes/success.tsx.hbs", `import { env } from "{{packageScope}}/env/web";
 import { createFileRoute } from "@tanstack/solid-router";
 import { Show, createResource } from "solid-js";
 
@@ -37460,7 +37460,7 @@ function SuccessPage() {
 }
 `],
   ["payments/abacatepay/web/svelte/src/routes/success/+page.svelte.hbs", `<script lang="ts">
-	import { env } from '@{{projectName}}/env/web';
+	import { env } from '{{packageScope}}/env/web';
 	import { page } from '$app/state';
 
 	const checkoutId = $derived(page.url.searchParams.get('checkout_id'));
@@ -37497,19 +37497,19 @@ function SuccessPage() {
 </div>
 `],
   ["payments/stripe/fullstack/astro/src/pages/api/payments/stripe/checkout/[sessionId].ts.hbs", `import type { APIRoute } from 'astro';
-import { getStripeCheckoutSession } from '@{{projectName}}/payments/lib/stripe';
+import { getStripeCheckoutSession } from '{{packageScope}}/payments/lib/stripe';
 export const GET: APIRoute = async ({ params }) => { try { return Response.json({ data: await getStripeCheckoutSession(params.sessionId!), success: true, error: null }); } catch { return Response.json({ error: 'Checkout session not found' }, { status: 404 }); } };
 `],
   ["payments/stripe/fullstack/astro/src/pages/api/payments/stripe/checkout/index.ts.hbs", `import type { APIRoute } from 'astro';
-import { createStripeEmbeddedCheckout } from '@{{projectName}}/payments/lib/stripe';
+import { createStripeEmbeddedCheckout } from '{{packageScope}}/payments/lib/stripe';
 export const POST: APIRoute = ({ request }) => createStripeEmbeddedCheckout(request.url).then((data) => Response.json({ data, success: true, error: null }));
 `],
   ["payments/stripe/fullstack/astro/src/pages/api/payments/stripe/webhook.ts.hbs", `import type { APIRoute } from 'astro';
-import { processStripeWebhook } from '@{{projectName}}/payments/lib/stripe';
+import { processStripeWebhook } from '{{packageScope}}/payments/lib/stripe';
 export const POST: APIRoute = async ({ request }) => { const signature = request.headers.get('stripe-signature'); if (!signature) return Response.json({ error: 'Missing Stripe-Signature' }, { status: 400 }); const result = await processStripeWebhook(await request.text(), signature); return Response.json(result.body, { status: result.status }); };
 `],
   ["payments/stripe/fullstack/next/src/app/api/payments/stripe/checkout/[sessionId]/route.ts.hbs", `import { NextResponse } from "next/server";
-import { getStripeCheckoutSession } from "@{{projectName}}/payments/lib/stripe";
+import { getStripeCheckoutSession } from "{{packageScope}}/payments/lib/stripe";
 
 export async function GET(_request: Request, context: { params: Promise<{ sessionId: string }> }) {
 	try { return NextResponse.json({ data: await getStripeCheckoutSession((await context.params).sessionId), success: true, error: null }); }
@@ -37517,13 +37517,13 @@ export async function GET(_request: Request, context: { params: Promise<{ sessio
 }
 `],
   ["payments/stripe/fullstack/next/src/app/api/payments/stripe/checkout/route.ts.hbs", `import { NextResponse } from "next/server";
-import { createStripeEmbeddedCheckout } from "@{{projectName}}/payments/lib/stripe";
+import { createStripeEmbeddedCheckout } from "{{packageScope}}/payments/lib/stripe";
 
 export async function POST(request: Request) {
 	return NextResponse.json({ data: await createStripeEmbeddedCheckout(request.url), success: true, error: null });
 }
 `],
-  ["payments/stripe/fullstack/next/src/app/api/payments/stripe/webhook/route.ts.hbs", `import { processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+  ["payments/stripe/fullstack/next/src/app/api/payments/stripe/webhook/route.ts.hbs", `import { processStripeWebhook } from "{{packageScope}}/payments/lib/stripe";
 
 export async function POST(request: Request) {
 	const signature = request.headers.get("stripe-signature");
@@ -37532,41 +37532,41 @@ export async function POST(request: Request) {
 	return Response.json(result.body, { status: result.status });
 }
 `],
-  ["payments/stripe/fullstack/nuxt/server/api/payments/stripe/checkout.post.ts.hbs", `import { createStripeEmbeddedCheckout } from '@{{projectName}}/payments/lib/stripe';
+  ["payments/stripe/fullstack/nuxt/server/api/payments/stripe/checkout.post.ts.hbs", `import { createStripeEmbeddedCheckout } from '{{packageScope}}/payments/lib/stripe';
 export default defineEventHandler((event) => createStripeEmbeddedCheckout(getRequestURL(event).toString()).then((data) => ({ data, success: true, error: null })));
 `],
-  ["payments/stripe/fullstack/nuxt/server/api/payments/stripe/checkout/[sessionId].get.ts.hbs", `import { getStripeCheckoutSession } from '@{{projectName}}/payments/lib/stripe';
+  ["payments/stripe/fullstack/nuxt/server/api/payments/stripe/checkout/[sessionId].get.ts.hbs", `import { getStripeCheckoutSession } from '{{packageScope}}/payments/lib/stripe';
 export default defineEventHandler(async (event) => { try { return { data: await getStripeCheckoutSession(getRouterParam(event, 'sessionId')!), success: true, error: null }; } catch { throw createError({ statusCode: 404, statusMessage: 'Checkout session not found' }); } });
 `],
-  ["payments/stripe/fullstack/nuxt/server/api/payments/stripe/webhook.post.ts.hbs", `import { processStripeWebhook } from '@{{projectName}}/payments/lib/stripe';
+  ["payments/stripe/fullstack/nuxt/server/api/payments/stripe/webhook.post.ts.hbs", `import { processStripeWebhook } from '{{packageScope}}/payments/lib/stripe';
 export default defineEventHandler(async (event) => { const signature = getHeader(event, 'stripe-signature'); if (!signature) throw createError({ statusCode: 400, statusMessage: 'Missing Stripe-Signature' }); const result = await processStripeWebhook(await readRawBody(event) ?? '', signature); return setResponseStatus(event, result.status), result.body; });
 `],
   ["payments/stripe/fullstack/svelte/src/routes/api/payments/stripe/checkout/[sessionId]/+server.ts.hbs", `import { json } from '@sveltejs/kit';
-import { getStripeCheckoutSession } from '@{{projectName}}/payments/lib/stripe';
+import { getStripeCheckoutSession } from '{{packageScope}}/payments/lib/stripe';
 export const GET = async ({ params }) => { try { return json({ data: await getStripeCheckoutSession(params.sessionId), success: true, error: null }); } catch { return json({ error: 'Checkout session not found' }, { status: 404 }); } };
 `],
   ["payments/stripe/fullstack/svelte/src/routes/api/payments/stripe/checkout/+server.ts.hbs", `import { json } from '@sveltejs/kit';
-import { createStripeEmbeddedCheckout } from '@{{projectName}}/payments/lib/stripe';
+import { createStripeEmbeddedCheckout } from '{{packageScope}}/payments/lib/stripe';
 export const POST = ({ request }) => createStripeEmbeddedCheckout(request.url).then((data) => json({ data, success: true, error: null }));
 `],
   ["payments/stripe/fullstack/svelte/src/routes/api/payments/stripe/webhook/+server.ts.hbs", `import { json } from '@sveltejs/kit';
-import { processStripeWebhook } from '@{{projectName}}/payments/lib/stripe';
+import { processStripeWebhook } from '{{packageScope}}/payments/lib/stripe';
 export const POST = async ({ request }) => { const signature = request.headers.get('stripe-signature'); if (!signature) return json({ error: 'Missing Stripe-Signature' }, { status: 400 }); const result = await processStripeWebhook(await request.text(), signature); return json(result.body, { status: result.status }); };
 `],
   ["payments/stripe/fullstack/tanstack-start/src/routes/api/payments/stripe/checkout.ts.hbs", `import { createFileRoute } from "@tanstack/react-router";
-import { createStripeEmbeddedCheckout } from "@{{projectName}}/payments/lib/stripe";
+import { createStripeEmbeddedCheckout } from "{{packageScope}}/payments/lib/stripe";
 export const Route = createFileRoute("/api/payments/stripe/checkout")({ server: { handlers: { POST: ({ request }) => createStripeEmbeddedCheckout(request.url).then((data) => Response.json({ data, success: true, error: null })) } } });
 `],
   ["payments/stripe/fullstack/tanstack-start/src/routes/api/payments/stripe/checkout/$sessionId.ts.hbs", `import { createFileRoute } from "@tanstack/react-router";
-import { getStripeCheckoutSession } from "@{{projectName}}/payments/lib/stripe";
+import { getStripeCheckoutSession } from "{{packageScope}}/payments/lib/stripe";
 export const Route = createFileRoute("/api/payments/stripe/checkout/$sessionId")({ server: { handlers: { GET: ({ params }) => getStripeCheckoutSession(params.sessionId).then((data) => Response.json({ data, success: true, error: null })).catch(() => Response.json({ error: "Checkout session not found" }, { status: 404 })) } } });
 `],
   ["payments/stripe/fullstack/tanstack-start/src/routes/api/payments/stripe/webhook.ts.hbs", `import { createFileRoute } from "@tanstack/react-router";
-import { processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+import { processStripeWebhook } from "{{packageScope}}/payments/lib/stripe";
 export const Route = createFileRoute("/api/payments/stripe/webhook")({ server: { handlers: { POST: async ({ request }) => { const signature = request.headers.get('stripe-signature'); if (!signature) return Response.json({ error: 'Missing Stripe-Signature' }, { status: 400 }); const result = await processStripeWebhook(await request.text(), signature); return Response.json(result.body, { status: result.status }); } } } });
 `],
   ["payments/stripe/server/base/src/lib/stripe.ts.hbs", `import Stripe from "stripe";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
 	apiVersion: "2026-07-29.dahlia",
@@ -37650,7 +37650,7 @@ export async function processStripeWebhook(
 <main><h1>Checkout</h1><div id="checkout"></div></main>
 <script>
   import { loadStripe } from '@stripe/stripe-js';
-  import { fetchStripeClientSecret } from '@{{projectName}}/payments/client';
+  import { fetchStripeClientSecret } from '{{packageScope}}/payments/client';
   const stripe = await loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
   const element = document.querySelector('#checkout');
   if (stripe && element) {
@@ -37671,7 +37671,7 @@ const status = payload?.data?.paymentStatus ?? 'pending';
 `],
   ["payments/stripe/web/nuxt/app/pages/checkout.vue.hbs", `<script setup lang="ts">
 import { loadStripe } from '@stripe/stripe-js'
-import { fetchStripeClientSecret } from '@{{projectName}}/payments/client'
+import { fetchStripeClientSecret } from '{{packageScope}}/payments/client'
 const container = ref<HTMLElement | null>(null)
 onMounted(async () => {
   const config = useRuntimeConfig()
@@ -37701,8 +37701,8 @@ onMounted(async () => {
 
 import { useEffect, useRef, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { env } from "@{{projectName}}/env/web";
-import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+import { env } from "{{packageScope}}/env/web";
+import { fetchStripeClientSecret } from "{{packageScope}}/payments/client";
 
 export default function CheckoutPage() {
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -37728,7 +37728,7 @@ export default function CheckoutPage() {
 	return <main><h1>Checkout</h1>{error ? <p>{error}</p> : <div ref={containerRef} />}</main>;
 }
 `],
-  ["payments/stripe/web/react/next/src/app/checkout/return/page.tsx.hbs", `import { env } from "@{{projectName}}/env/web";
+  ["payments/stripe/web/react/next/src/app/checkout/return/page.tsx.hbs", `import { env } from "{{packageScope}}/env/web";
 
 export default async function CheckoutReturnPage({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
 	const { session_id: sessionId } = await searchParams;
@@ -37739,7 +37739,7 @@ export default async function CheckoutReturnPage({ searchParams }: { searchParam
 }
 `],
   ["payments/stripe/web/react/react-router/src/routes/checkout-return.tsx.hbs", `import { useEffect, useState } from "react";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 export default function CheckoutReturnPage() {
 	const [status, setStatus] = useState("pending");
@@ -37754,8 +37754,8 @@ export default function CheckoutReturnPage() {
 `],
   ["payments/stripe/web/react/react-router/src/routes/checkout.tsx.hbs", `import { useEffect, useRef } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { env } from "@{{projectName}}/env/web";
-import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+import { env } from "{{packageScope}}/env/web";
+import { fetchStripeClientSecret } from "{{packageScope}}/payments/client";
 
 export default function CheckoutPage() {
 	const ref = useRef<HTMLDivElement>(null);
@@ -37770,7 +37770,7 @@ export default function CheckoutPage() {
 `],
   ["payments/stripe/web/react/tanstack-router/src/routes/checkout-return.tsx.hbs", `import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 export const Route = createFileRoute("/checkout/return")({ component: CheckoutReturnPage });
 function CheckoutReturnPage() {
@@ -37782,8 +37782,8 @@ function CheckoutReturnPage() {
   ["payments/stripe/web/react/tanstack-router/src/routes/checkout.tsx.hbs", `import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { env } from "@{{projectName}}/env/web";
-import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+import { env } from "{{packageScope}}/env/web";
+import { fetchStripeClientSecret } from "{{packageScope}}/payments/client";
 
 export const Route = createFileRoute("/checkout")({ component: CheckoutPage });
 function CheckoutPage() {
@@ -37799,7 +37799,7 @@ function CheckoutPage() {
 `],
   ["payments/stripe/web/react/tanstack-start/src/routes/checkout-return.tsx.hbs", `import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 export const Route = createFileRoute("/checkout/return")({ component: CheckoutReturnPage });
 function CheckoutReturnPage() {
@@ -37811,8 +37811,8 @@ function CheckoutReturnPage() {
   ["payments/stripe/web/react/tanstack-start/src/routes/checkout.tsx.hbs", `import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { env } from "@{{projectName}}/env/web";
-import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+import { env } from "{{packageScope}}/env/web";
+import { fetchStripeClientSecret } from "{{packageScope}}/payments/client";
 
 export const Route = createFileRoute("/checkout")({ component: CheckoutPage });
 function CheckoutPage() {
@@ -37828,7 +37828,7 @@ function CheckoutPage() {
 `],
   ["payments/stripe/web/solid/src/routes/checkout-return.tsx.hbs", `import { createFileRoute } from "@tanstack/solid-router";
 import { createSignal, onMount } from "solid-js";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 export const Route = createFileRoute("/checkout/return")({ component: CheckoutReturnPage });
 function CheckoutReturnPage() {
@@ -37840,8 +37840,8 @@ function CheckoutReturnPage() {
   ["payments/stripe/web/solid/src/routes/checkout.tsx.hbs", `import { createFileRoute } from "@tanstack/solid-router";
 import { onMount } from "solid-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { env } from "@{{projectName}}/env/web";
-import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+import { env } from "{{packageScope}}/env/web";
+import { fetchStripeClientSecret } from "{{packageScope}}/payments/client";
 
 export const Route = createFileRoute("/checkout")({ component: CheckoutPage });
 function CheckoutPage() {
@@ -37853,8 +37853,8 @@ function CheckoutPage() {
   ["payments/stripe/web/svelte/src/routes/checkout/+page.svelte.hbs", `<script lang="ts">
 	import { onMount } from 'svelte';
 	import { loadStripe } from '@stripe/stripe-js';
-	import { env } from '@{{projectName}}/env/web';
-	import { fetchStripeClientSecret } from '@{{projectName}}/payments/client';
+	import { env } from '{{packageScope}}/env/web';
+	import { fetchStripeClientSecret } from '{{packageScope}}/payments/client';
 	let container: HTMLDivElement;
 	onMount(async () => {
 		const stripe = await loadStripe(env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -37868,7 +37868,7 @@ function CheckoutPage() {
 `],
   ["payments/stripe/web/svelte/src/routes/checkout/return/+page.svelte.hbs", `<script lang="ts">
 	import { onMount } from 'svelte';
-	import { env } from '@{{projectName}}/env/web';
+	import { env } from '{{packageScope}}/env/web';
 	let status = 'pending';
 	onMount(() => { const sessionId = new URLSearchParams(window.location.search).get('session_id'); if (!sessionId) return; const baseUrl = {{#if (eq backend "self")}}''{{else}}env.PUBLIC_SERVER_URL{{/if}}; void fetch(\`\${baseUrl}/api/payments/stripe/checkout/\${sessionId}\`).then((response) => response.json()).then((payload: { data?: { paymentStatus?: string } }) => { status = payload.data?.paymentStatus ?? 'pending'; }); });
 </script>

@@ -14,6 +14,8 @@ export type ExpandedLayoutConfig = {
   apps: Record<LayoutAppId, string>;
   /** Core and known integration packages, plus any custom overrides. */
   packages: Record<string, string>;
+  /** Custom npm scope; absent means the default `@<projectName>`. */
+  scope?: string;
 };
 
 const APP_IDS = LayoutAppIdSchema.options;
@@ -25,6 +27,7 @@ function upgradeLegacyLayout(layout: LayoutConfig | undefined): {
   dirs?: Partial<LayoutDirs>;
   apps?: Partial<Record<LayoutAppId, string>>;
   packages?: Record<string, string>;
+  scope?: string;
 } {
   if (layout?.preset === "server-separated") {
     return { ...layout, preset: "standard", apps: { web: "apps/client", ...layout.apps } };
@@ -63,7 +66,31 @@ export function expandLayoutConfig(layout?: LayoutConfig): ExpandedLayoutConfig 
     ]),
   );
 
-  return { version: 1, preset: upgraded.preset, dirs, apps, packages };
+  return {
+    version: 1,
+    preset: upgraded.preset,
+    dirs,
+    apps,
+    packages,
+    ...(upgraded.scope ? { scope: upgraded.scope } : {}),
+  };
+}
+
+/** npm scope of the workspace packages: `layout.scope`, or `@<projectName>` by default. */
+export function getLayoutPackageScope(
+  layout: Pick<LayoutConfig, "scope"> | undefined,
+  projectName: string,
+): string {
+  return layout?.scope ?? `@${projectName}`;
+}
+
+/** Workspace package name, e.g. `@my-app/ui` or `@acme/ui` with a custom scope. */
+export function getLayoutPackageName(
+  layout: Pick<LayoutConfig, "scope"> | undefined,
+  projectName: string,
+  id: string,
+): string {
+  return `${getLayoutPackageScope(layout, projectName)}/${id}`;
 }
 
 /** Path of any package id, including integration ids not listed in the layout. */

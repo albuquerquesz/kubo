@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/solid-router";
 {{#if (and (includes payments "abacatepay") (ne backend "convex"))}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 {{#if (eq api "orpc")}}
 import { useQuery } from "@tanstack/solid-query";

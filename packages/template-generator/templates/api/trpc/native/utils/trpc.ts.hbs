@@ -7,8 +7,8 @@ import { getClerkAuthToken } from "@/utils/clerk-auth";
 import { QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import type { AppRouter } from "@{{projectName}}/api/routers/index";
-import { env } from "@{{projectName}}/env/native";
+import type { AppRouter } from "{{packageScope}}/api/routers/index";
+import { env } from "{{packageScope}}/env/native";
 
 export const queryClient = new QueryClient();
 

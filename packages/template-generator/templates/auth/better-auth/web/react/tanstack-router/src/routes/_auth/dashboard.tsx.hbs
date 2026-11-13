@@ -1,6 +1,6 @@
 {{#if (includes payments "abacatepay")}}
-import { Button } from "@{{projectName}}/ui/components/button";
-import { env } from "@{{projectName}}/env/web";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 {{#if (eq api "orpc")}}
 import { orpc } from "@/utils/orpc";

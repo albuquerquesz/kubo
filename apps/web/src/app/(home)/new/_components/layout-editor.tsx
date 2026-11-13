@@ -167,8 +167,8 @@ export function LayoutEditor({ layout, onChange, buildCodeCommand }: LayoutEdito
       <header className="space-y-1">
         <h2 className="font-semibold text-base">Estrutura de pastas</h2>
         <p className="text-muted-foreground text-sm">
-          Escolha onde ficam os apps e os pacotes do projeto. O comando e a prévia usam este layout;
-          os imports entre pacotes (<code>@seu-app/ui</code>) não mudam.
+          Escolha onde ficam os apps e os pacotes do projeto e o escopo npm dos pacotes. O comando e
+          a prévia usam este layout.
         </p>
       </header>
 
@@ -226,6 +226,30 @@ export function LayoutEditor({ layout, onChange, buildCodeCommand }: LayoutEdito
         </div>
         <p className="text-muted-foreground text-xs">
           Use <code>.</code> para colocar direto na raiz do projeto.
+        </p>
+      </section>
+
+      <section className="space-y-2" aria-labelledby="layout-scope-heading">
+        <h3
+          id="layout-scope-heading"
+          className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide"
+        >
+          Escopo dos pacotes
+        </h3>
+        <div className="sm:max-w-[calc(50%-0.375rem)]">
+          <PathField
+            id="layout-scope"
+            label="Escopo npm"
+            value={draft.scope}
+            placeholder="@nome-do-projeto"
+            error={fieldError("scope")}
+            onChange={(value) => updateDraft({ ...draft, scope: value })}
+          />
+        </div>
+        <p className="text-muted-foreground text-xs">
+          Os pacotes do workspace viram <code>{draft.scope.trim() || "@nome-do-projeto"}/ui</code>,{" "}
+          <code>{draft.scope.trim() || "@nome-do-projeto"}/env</code> e assim por diante. Vazio usa
+          o nome do projeto.
         </p>
       </section>
 
@@ -307,7 +331,10 @@ export function LayoutEditor({ layout, onChange, buildCodeCommand }: LayoutEdito
       ) : null}
 
       {savedProfile ? (
-        <section className="space-y-2 rounded-md border border-border p-3" aria-labelledby="layout-code-heading">
+        <section
+          className="space-y-2 rounded-md border border-border p-3"
+          aria-labelledby="layout-code-heading"
+        >
           <h3 id="layout-code-heading" className="font-medium text-sm">
             Comando com o layout salvo
           </h3>
@@ -332,7 +359,12 @@ export function LayoutEditor({ layout, onChange, buildCodeCommand }: LayoutEdito
               </p>
             </div>
           ) : null}
-          <Button variant="outline" size="sm" onClick={() => void handleCreateCode()} disabled={creatingCode}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void handleCreateCode()}
+            disabled={creatingCode}
+          >
             <KeyRound data-icon="inline-start" />
             {creatingCode ? "Gerando…" : redeemCode ? "Gerar outro código" : "Gerar comando"}
           </Button>

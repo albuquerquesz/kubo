@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/solid-router";
 import { onMount } from "solid-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { env } from "@{{projectName}}/env/web";
-import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+import { env } from "{{packageScope}}/env/web";
+import { fetchStripeClientSecret } from "{{packageScope}}/payments/client";
 
 export const Route = createFileRoute("/checkout")({ component: CheckoutPage });
 function CheckoutPage() {

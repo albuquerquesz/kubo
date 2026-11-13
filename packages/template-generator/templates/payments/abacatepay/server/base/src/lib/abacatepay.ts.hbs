@@ -1,12 +1,12 @@
 import crypto from "node:crypto";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 import {
 	createAbacatePayCheckout,
 	getAbacatePayCheckoutByCheckoutId,
 	hasAbacatePayWebhookEvent,
 	markAbacatePayCheckoutCompleted,
 	recordAbacatePayWebhookEvent,
-} from "@{{projectName}}/db/abacatepay";
+} from "{{packageScope}}/db/abacatepay";
 
 const ABACATEPAY_API_BASE_URL = "https://api.abacatepay.com/v2";
 const ABACATEPAY_PRODUCT_ID = "prod_your_product_id";

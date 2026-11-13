@@ -15,7 +15,7 @@
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "@/*": ["./src/*"],
-      "@{{projectName}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
+      "{{packageScope}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
     },
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,

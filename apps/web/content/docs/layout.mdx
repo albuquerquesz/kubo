@@ -9,17 +9,19 @@ O **layout** define em que pasta cada app (`web`, `server`, `native`…) e cada 
 
 - um **preset**: `standard` (padrão — `apps/` e `packages/`) ou `libs` (`apps/` e `libs/`);
 - **pastas de convenção** (`dirs`): onde ficam os apps e os pacotes; `.` significa a raiz do projeto;
-- **exceções** por app ou pacote: um caminho específico para um item (por exemplo, o app web na raiz).
+- **exceções** por app ou pacote: um caminho específico para um item (por exemplo, o app web na raiz);
+- um **escopo** opcional (`scope`) para o nome dos pacotes do workspace: com `"scope": "@acme"`, os pacotes viram `@acme/ui`, `@acme/env`… Sem escopo, o padrão continua `@<nome-do-projeto>`.
 
-Os imports entre pacotes usam o nome do pacote (`@meu-app/ui`), então o código não muda quando as pastas mudam. Paths de `tsconfig`, `.env`, workspaces, Docker e deploy são gerados a partir do layout.
+Os imports entre pacotes usam o nome do pacote (`@meu-app/ui`, ou `@acme/ui` com escopo), então o código não muda quando as pastas mudam. Paths de `tsconfig`, `.env`, workspaces, Docker e deploy são gerados a partir do layout.
 
 O layout padrão (`standard`) gera exatamente a mesma estrutura de antes — nada muda para quem não usa a opção.
 
 ## Editor em kubojs.dev/new
 
-Na aba **Layout** do [Stack Builder](/new) você escolhe o preset, as pastas de convenção e, em "Caminhos por app e pacote", as exceções. Cada campo é validado na hora:
+Na aba **Layout** do [Stack Builder](/new) você escolhe o preset, as pastas de convenção, o escopo dos pacotes e, em "Caminhos por app e pacote", as exceções. Cada campo é validado na hora:
 
 - caminhos absolutos, `..`, `node_modules`, `.git` e caracteres inválidos são recusados;
+- o escopo precisa ter a forma `@acme` (minúsculas, dígitos, `.`, `_` ou `-`);
 - dois itens na mesma pasta, pastas que diferem só por maiúsculas/minúsculas e uma pasta dentro da outra aparecem como **conflito de pastas**.
 
 Enquanto houver erro, o comando continua com o último layout válido. O comando copiado (`--layout ...`), a aba **Prévia** e o link de compartilhamento já usam o layout. O resumo "Resultado" lista todas as pastas possíveis; só as que a sua stack usa são geradas.
@@ -37,6 +39,7 @@ Direto, sem conta:
 ```bash
 kubojs my-app --yes --layout libs
 kubojs my-app --yes --layout '{"preset":"libs","apps":{"web":"web"}}'
+kubojs my-app --yes --layout '{"scope":"@acme"}'
 ```
 
 Com o layout salvo na conta, use **Gerar comando** na aba Layout:
@@ -59,7 +62,7 @@ Detalhes das flags em [Opções do CLI](/docs/cli/options#--layout-presetjson).
 
 - Vale para **novos projetos**. Projetos existentes não são migrados nem têm arquivos movidos; o `kubo add` respeita o layout gravado em `kubo.config.ts`.
 - Os IDs são fixos: apps `web`, `server`, `native`, `desktop`, `docs`, `api`; pacotes `db`, `auth`, `backend`, `config`, `env`, `infra`, `ui`, `storage`, `api`, `payments`, `email` e os pacotes de integração (ex.: `millionsend`).
-- O nome dos pacotes (`@meu-app/*`) ainda não é configurável.
+- O escopo muda só o prefixo (`@acme/ui`); o nome de cada pacote (`ui`, `env`…) é fixo. O `package.json` da raiz continua com o nome do projeto.
 - Um layout salvo por conta.
 
 ## Para mantenedores do site

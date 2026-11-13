@@ -1,13 +1,13 @@
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@{{projectName}}/ui/components/card";
-import { Checkbox } from "@{{projectName}}/ui/components/checkbox";
-import { Input } from "@{{projectName}}/ui/components/input";
+} from "{{packageScope}}/ui/components/card";
+import { Checkbox } from "{{packageScope}}/ui/components/checkbox";
+import { Input } from "{{packageScope}}/ui/components/input";
 import { createFileRoute } from "@tanstack/react-router";
 {{#if (eq backend "convex")}}
 import { Trash2 } from "lucide-react";
@@ -20,8 +20,8 @@ import { useState, type FormEvent } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { convexQuery } from "@convex-dev/react-query";
 import { useMutation } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
-import type { Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
+import type { Id } from "{{packageScope}}/backend/convex/_generated/dataModel";
 {{else}}
 {{#if (eq api "trpc")}}
 import { useTRPC } from "@/utils/trpc";

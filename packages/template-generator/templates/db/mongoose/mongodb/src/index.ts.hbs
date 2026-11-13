@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 await mongoose.connect(env.DATABASE_URL);
 

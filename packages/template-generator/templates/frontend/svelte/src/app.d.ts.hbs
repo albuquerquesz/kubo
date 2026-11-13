@@ -2,7 +2,7 @@
 /// <reference path="{{layoutRelative "app:web/src" "package:env" "env.d.ts"}}" />
 {{/if}}
 {{#if (and (eq backend "self") (eq api "orpc"))}}
-import type { AppRouterClient } from "@{{projectName}}/api/routers/index";
+import type { AppRouterClient } from "{{packageScope}}/api/routers/index";
 
 {{/if}}
 // See https://svelte.dev/docs/kit/types#app.d.ts

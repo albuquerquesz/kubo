@@ -86,7 +86,7 @@ The Model Context Protocol server and tools that expose Kubo planning, creation,
 _Avoid_: MCP addon
 
 **Layout**:
-The folder structure of a generated project: where each app and package lives. Defined by a preset, convention dirs and per-app/package overrides, and stored in `kubo.config.ts`. Imports between packages use package names, so they do not change with the layout.
+The folder structure of a generated project: where each app and package lives. Defined by a preset, convention dirs, per-app/package overrides and an optional package scope (`@acme`, default `@<projectName>`), and stored in `kubo.config.ts`. Imports between packages use package names, so they do not change with the folders.
 _Avoid_: Topology, plugin, structure template
 
 **Layout Preset**:

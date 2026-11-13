@@ -6,6 +6,7 @@ import {
   LAYOUT_PRESET_DIRS,
   LayoutAppIdSchema,
   LayoutPackageIdSchema,
+  LayoutScopeSchema,
   normalizeLayoutPath,
   type ExpandedLayoutConfig,
   type LayoutConfig,
@@ -22,9 +23,15 @@ export type LayoutDraft = {
   dirs: { apps: string; packages: string };
   apps: Partial<Record<string, string>>;
   packages: Partial<Record<string, string>>;
+  /** npm scope (`@acme`); empty means the default `@<projectName>`. */
+  scope: string;
 };
 
-export type LayoutDraftField = `dirs.${"apps" | "packages"}` | `apps.${string}` | `packages.${string}`;
+export type LayoutDraftField =
+  | `dirs.${"apps" | "packages"}`
+  | `apps.${string}`
+  | `packages.${string}`
+  | "scope";
 
 export type LayoutDraftValidation = {
   /** Valid layout to apply, or undefined when the draft has errors. */
@@ -46,6 +53,7 @@ export function layoutToDraft(layout: LayoutConfig | undefined): LayoutDraft {
     },
     apps: { ...legacyApps, ...layout?.apps },
     packages: { ...layout?.packages },
+    scope: layout?.scope ?? "",
   };
 }
 
@@ -70,12 +78,14 @@ export function draftToLayout(draft: LayoutDraft): LayoutConfig {
 
   const apps = compactOverrides(draft.apps);
   const packages = compactOverrides(draft.packages);
+  const scope = draft.scope.trim();
   return {
     version: 1,
     preset: draft.preset,
     ...(Object.keys(dirs).length > 0 ? { dirs } : {}),
     ...(Object.keys(apps).length > 0 ? { apps } : {}),
     ...(Object.keys(packages).length > 0 ? { packages } : {}),
+    ...(scope ? { scope } : {}),
   };
 }
 
@@ -94,6 +104,12 @@ export function validateLayoutDraft(draft: LayoutDraft): LayoutDraftValidation {
       const issue = getLayoutPathIssue(value);
       if (issue) fieldErrors[`${kind}.${id}`] = describeLayoutPathIssue(issue);
     }
+  }
+
+  const scope = draft.scope.trim();
+  if (scope) {
+    const parsed = LayoutScopeSchema.safeParse(scope);
+    if (!parsed.success) fieldErrors.scope = parsed.error.issues[0]?.message ?? "Invalid scope";
   }
 
   if (Object.keys(fieldErrors).length > 0) {
@@ -119,8 +135,9 @@ export function getConventionPath(
 ): string {
   const presetDirs = LAYOUT_PRESET_DIRS[draft.preset];
   const dirInput = draft.dirs[kind].trim();
-  const dir = dirInput && !getLayoutPathIssue(dirInput, { allowRoot: true })
-    ? normalizeLayoutPath(dirInput) || "."
-    : presetDirs[kind];
+  const dir =
+    dirInput && !getLayoutPathIssue(dirInput, { allowRoot: true })
+      ? normalizeLayoutPath(dirInput) || "."
+      : presetDirs[kind];
   return dir === "." ? id : `${dir}/${id}`;
 }
