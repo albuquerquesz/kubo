@@ -47,8 +47,8 @@ describe("logo marquee metrics", () => {
     expect(logoMarqueeMetrics(LOGO_MARQUEE_BREAKPOINT_PX)).toEqual(LOGO_MARQUEE_DESKTOP);
   });
 
-  test("seven BR integration cells", () => {
-    expect(LOGO_MARQUEE_CELL_COUNT).toBe(7);
+  test("eight BR integration cells", () => {
+    expect(LOGO_MARQUEE_CELL_COUNT).toBe(8);
   });
 
   test("click slop is 6px", () => {
@@ -137,6 +137,9 @@ describe("shipped markup + assets", () => {
     expect(src).toContain("https://notifique.dev/logo-notifique.png");
     expect(src).toContain('href: "https://resend.com"');
     expect(src).toContain("/integrations/resend.svg");
+    expect(src).toContain("MillionSend");
+    expect(src).toContain('href: "https://millionsend.com"');
+    expect(src).toContain("/integrations/millionsend.svg");
     expect(src).toContain("AraraHQ");
     expect(src).toContain('href: "https://ararahq.com"');
     expect(src).toContain("/integrations/arara.svg");
@@ -150,6 +153,7 @@ describe("shipped markup + assets", () => {
     expect(readFileSync(join(dir, "abacatepay.svg"), "utf8").length).toBeGreaterThan(100);
     expect(readFileSync(join(dir, "getmonitor.svg"), "utf8").length).toBeGreaterThan(50);
     expect(readFileSync(join(dir, "arara.svg"), "utf8").length).toBeGreaterThan(50);
+    expect(readFileSync(join(dir, "millionsend.svg"), "utf8").length).toBeGreaterThan(50);
     expect(readFileSync(join(dir, "resend.svg"), "utf8").length).toBeGreaterThan(50);
     expect(readFileSync(join(dir, "resend.svg"), "utf8")).not.toContain('fill="#000');
     // PNG is binary — just ensure readable non-empty
