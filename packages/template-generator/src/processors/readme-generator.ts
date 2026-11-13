@@ -8,6 +8,7 @@ import {
 } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
+import { relocateLayoutPaths } from "../layout-paths";
 import { getDbScriptSupport } from "../utils/db-scripts";
 import {
   generateDeploymentCommands,
@@ -130,7 +131,7 @@ function getClerkSetupLines(
 }
 
 export function processReadme(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const content = generateReadmeContent(config);
+  const content = relocateLayoutPaths(generateReadmeContent(config), config);
   vfs.writeFile("README.md", content);
 }
 

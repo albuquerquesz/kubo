@@ -6,6 +6,7 @@
 import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
+import { appDir } from "../layout-paths";
 
 type VercelRewrite = { source: string; destination: string | { service: string } };
 
@@ -61,7 +62,7 @@ export function processVercelConfig(vfs: VirtualFileSystem, config: ProjectConfi
 
   if (hasWeb) {
     const web: VercelService = {
-      root: "apps/web",
+      root: appDir(config, "web"),
       framework: getWebFramework(frontend, isDesktop),
       installCommand,
     };
@@ -80,7 +81,7 @@ export function processVercelConfig(vfs: VirtualFileSystem, config: ProjectConfi
 
   if (hasServer) {
     const server: VercelService = {
-      root: "apps/server",
+      root: appDir(config, "server"),
       framework: backend,
       entrypoint: "src/index.ts",
       installCommand,

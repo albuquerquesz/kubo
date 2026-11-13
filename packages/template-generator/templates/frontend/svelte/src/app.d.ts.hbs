@@ -1,5 +1,5 @@
 {{#if (eq webDeploy "cloudflare")}}
-/// <reference path="../../../packages/env/env.d.ts" />
+/// <reference path="{{layoutRelative "app:web/src" "package:env" "env.d.ts"}}" />
 {{/if}}
 {{#if (and (eq backend "self") (eq api "orpc"))}}
 import type { AppRouterClient } from "@{{projectName}}/api/routers/index";

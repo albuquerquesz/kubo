@@ -7,13 +7,14 @@ import {
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix, processSingleTemplate } from "./utils";
+import { pkgDir, pkgFile } from "../layout-paths";
 
 export async function processConfigPackage(
   vfs: VirtualFileSystem,
   templates: TemplateData,
   config: ProjectConfig,
 ): Promise<void> {
-  processTemplatesFromPrefix(vfs, templates, "packages/config", "packages/config", config);
+  processTemplatesFromPrefix(vfs, templates, "packages/config", pkgDir(config, "config"), config);
 }
 
 export async function processEnvPackage(
@@ -30,14 +31,14 @@ export async function processEnvPackage(
     vfs,
     templates,
     "packages/env/package.json",
-    "packages/env/package.json",
+    pkgFile(config, "env", "package.json"),
     config,
   );
   processSingleTemplate(
     vfs,
     templates,
     "packages/env/tsconfig.json",
-    "packages/env/tsconfig.json",
+    pkgFile(config, "env", "tsconfig.json"),
     config,
   );
 
@@ -46,7 +47,7 @@ export async function processEnvPackage(
       vfs,
       templates,
       "packages/env/src/web.ts",
-      "packages/env/src/web.ts",
+      pkgFile(config, "env", "src/web.ts"),
       config,
     );
   }
@@ -56,7 +57,7 @@ export async function processEnvPackage(
       vfs,
       templates,
       "packages/env/src/native.ts",
-      "packages/env/src/native.ts",
+      pkgFile(config, "env", "src/native.ts"),
       config,
     );
   }
@@ -66,7 +67,7 @@ export async function processEnvPackage(
       vfs,
       templates,
       "packages/env/src/server.ts",
-      "packages/env/src/server.ts",
+      pkgFile(config, "env", "src/server.ts"),
       config,
     );
 
@@ -78,7 +79,7 @@ export async function processEnvPackage(
         vfs,
         templates,
         "packages/env/src/cloudflare-local.ts",
-        "packages/env/src/cloudflare-local.ts",
+        pkgFile(config, "env", "src/cloudflare-local.ts"),
         config,
       );
     }
@@ -94,5 +95,5 @@ export async function processUiPackage(
 
   if (!hasReactWeb) return;
 
-  processTemplatesFromPrefix(vfs, templates, "packages/ui", "packages/ui", config);
+  processTemplatesFromPrefix(vfs, templates, "packages/ui", pkgDir(config, "ui"), config);
 }

@@ -2,6 +2,7 @@ import type { ProjectConfig } from "@kubojs/types";
 import { IndentationText, Node, Project, QuoteKind } from "ts-morph";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
+import { appDir, appFile } from "../layout-paths";
 
 export function processAlchemyPlugins(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { webDeploy, frontend } = config;
@@ -15,20 +16,20 @@ export function processAlchemyPlugins(vfs: VirtualFileSystem, config: ProjectCon
   const isAstro = frontend.includes("astro");
 
   if (isNext) {
-    processNextAlchemy(vfs);
+    processNextAlchemy(vfs, config);
   } else if (isNuxt) {
-    processNuxtAlchemy(vfs);
+    processNuxtAlchemy(vfs, config);
   } else if (isSvelte) {
-    processSvelteAlchemy(vfs);
+    processSvelteAlchemy(vfs, config);
   } else if (isTanstackStart) {
-    processTanStackStartAlchemy(vfs);
+    processTanStackStartAlchemy(vfs, config);
   } else if (isAstro) {
-    processAstroAlchemy(vfs);
+    processAstroAlchemy(vfs, config);
   }
 }
 
-function processNextAlchemy(vfs: VirtualFileSystem) {
-  const webAppDir = "apps/web";
+function processNextAlchemy(vfs: VirtualFileSystem, config: ProjectConfig) {
+  const webAppDir = appDir(config, "web");
   const openNextConfigPath = `${webAppDir}/open-next.config.ts`;
 
   if (!vfs.exists(openNextConfigPath)) {
@@ -51,8 +52,8 @@ export default defineCloudflareConfig({});
   }
 }
 
-function processNuxtAlchemy(vfs: VirtualFileSystem) {
-  const nuxtConfigPath = "apps/web/nuxt.config.ts";
+function processNuxtAlchemy(vfs: VirtualFileSystem, config: ProjectConfig) {
+  const nuxtConfigPath = appFile(config, "web", "nuxt.config.ts");
   if (!vfs.exists(nuxtConfigPath)) return;
 
   const content = vfs.readFile(nuxtConfigPath);
@@ -237,8 +238,8 @@ const hasAlchemyConfig = existsSync(alchemyConfigPath);`,
   vfs.writeFile(nuxtConfigPath, sourceFile.getFullText());
 }
 
-function processSvelteAlchemy(vfs: VirtualFileSystem) {
-  const svelteConfigPath = "apps/web/svelte.config.js";
+function processSvelteAlchemy(vfs: VirtualFileSystem, config: ProjectConfig) {
+  const svelteConfigPath = appFile(config, "web", "svelte.config.js");
   if (!vfs.exists(svelteConfigPath)) return;
 
   const content = vfs.readFile(svelteConfigPath);
@@ -332,8 +333,8 @@ const shouldUseAlchemy = existsSync(alchemyConfigPath);`,
   vfs.writeFile(svelteConfigPath, sourceFile.getFullText());
 }
 
-function processTanStackStartAlchemy(vfs: VirtualFileSystem) {
-  const viteConfigPath = "apps/web/vite.config.ts";
+function processTanStackStartAlchemy(vfs: VirtualFileSystem, config: ProjectConfig) {
+  const viteConfigPath = appFile(config, "web", "vite.config.ts");
   if (!vfs.exists(viteConfigPath)) return;
 
   const content = vfs.readFile(viteConfigPath);
@@ -470,8 +471,8 @@ const shouldUseAlchemy = existsSync(alchemyConfigPath);`,
   vfs.writeFile(viteConfigPath, sourceFile.getFullText());
 }
 
-function processAstroAlchemy(vfs: VirtualFileSystem) {
-  const webAppDir = "apps/web";
+function processAstroAlchemy(vfs: VirtualFileSystem, config: ProjectConfig) {
+  const webAppDir = appDir(config, "web");
   const astroConfigPath = `${webAppDir}/astro.config.mjs`;
 
   if (!vfs.exists(astroConfigPath)) return;

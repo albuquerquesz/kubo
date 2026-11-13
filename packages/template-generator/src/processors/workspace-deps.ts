@@ -2,6 +2,7 @@ import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
+import { appFile, pkgFile } from "../layout-paths";
 
 export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const {
@@ -18,22 +19,22 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
 
   const workspaceVersion = packageManager === "npm" ? "*" : "workspace:*";
   const packages = {
-    config: vfs.exists("packages/config/package.json"),
-    env: vfs.exists("packages/env/package.json"),
-    infra: vfs.exists("packages/infra/package.json"),
-    db: vfs.exists("packages/db/package.json"),
-    auth: vfs.exists("packages/auth/package.json"),
-    payments: vfs.exists("packages/payments/package.json"),
-    email: vfs.exists("packages/email/package.json"),
-    notifique: vfs.exists("packages/notifique/package.json"),
-    millionsend: vfs.exists("packages/millionsend/package.json"),
-    arara: vfs.exists("packages/arara/package.json"),
-    api: vfs.exists("apps/api/package.json"),
-    ui: vfs.exists("packages/ui/package.json"),
-    backend: vfs.exists("packages/backend/package.json"),
-    server: vfs.exists("apps/server/package.json"),
-    web: vfs.exists("apps/web/package.json"),
-    native: vfs.exists("apps/native/package.json"),
+    config: vfs.exists(pkgFile(config, "config", "package.json")),
+    env: vfs.exists(pkgFile(config, "env", "package.json")),
+    infra: vfs.exists(pkgFile(config, "infra", "package.json")),
+    db: vfs.exists(pkgFile(config, "db", "package.json")),
+    auth: vfs.exists(pkgFile(config, "auth", "package.json")),
+    payments: vfs.exists(pkgFile(config, "payments", "package.json")),
+    email: vfs.exists(pkgFile(config, "email", "package.json")),
+    notifique: vfs.exists(pkgFile(config, "notifique", "package.json")),
+    millionsend: vfs.exists(pkgFile(config, "millionsend", "package.json")),
+    arara: vfs.exists(pkgFile(config, "arara", "package.json")),
+    api: vfs.exists(appFile(config, "api", "package.json")),
+    ui: vfs.exists(pkgFile(config, "ui", "package.json")),
+    backend: vfs.exists(pkgFile(config, "backend", "package.json")),
+    server: vfs.exists(appFile(config, "server", "package.json")),
+    web: vfs.exists(appFile(config, "web", "package.json")),
+    native: vfs.exists(appFile(config, "native", "package.json")),
   };
 
   const configDep = packages.config ? { [`@${projectName}/config`]: workspaceVersion } : {};
@@ -60,7 +61,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     }
     addPackageDependency({
       vfs,
-      packagePath: "packages/env/package.json",
+      packagePath: pkgFile(config, "env", "package.json"),
       dependencies: commonDeps,
       devDependencies: commonDevDeps,
       customDevDependencies: envDevDeps,
@@ -70,7 +71,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   if (packages.infra) {
     addPackageDependency({
       vfs,
-      packagePath: "packages/infra/package.json",
+      packagePath: pkgFile(config, "infra", "package.json"),
       dependencies: commonDeps,
       devDependencies: ["typescript"],
       customDevDependencies: configDep,
@@ -80,7 +81,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   if (packages.db) {
     addPackageDependency({
       vfs,
-      packagePath: "packages/db/package.json",
+      packagePath: pkgFile(config, "db", "package.json"),
       dependencies: commonDeps,
       devDependencies: ["typescript"],
       customDependencies: envDep,
@@ -95,7 +96,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     }
     addPackageDependency({
       vfs,
-      packagePath: "packages/auth/package.json",
+      packagePath: pkgFile(config, "auth", "package.json"),
       dependencies: commonDeps,
       devDependencies: ["typescript"],
       customDependencies: authDeps,
@@ -110,7 +111,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     }
     addPackageDependency({
       vfs,
-      packagePath: "packages/payments/package.json",
+      packagePath: pkgFile(config, "payments", "package.json"),
       dependencies: commonDeps,
       devDependencies: ["typescript"],
       customDependencies: paymentsDeps,
@@ -125,7 +126,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     }
     addPackageDependency({
       vfs,
-      packagePath: "packages/email/package.json",
+      packagePath: pkgFile(config, "email", "package.json"),
       dependencies: emailDeps,
       devDependencies: ["typescript"],
       customDependencies: envDep,
@@ -136,7 +137,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   if (packages.millionsend) {
     addPackageDependency({
       vfs,
-      packagePath: "packages/millionsend/package.json",
+      packagePath: pkgFile(config, "millionsend", "package.json"),
       dependencies: ["millionsend"],
       devDependencies: ["typescript"],
       customDependencies: backend === "convex" ? {} : envDep,
@@ -147,7 +148,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   if (packages.notifique) {
     addPackageDependency({
       vfs,
-      packagePath: "packages/notifique/package.json",
+      packagePath: pkgFile(config, "notifique", "package.json"),
       dependencies: commonDeps,
       devDependencies: ["typescript"],
       customDependencies: envDep,
@@ -158,7 +159,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   if (packages.arara) {
     addPackageDependency({
       vfs,
-      packagePath: "packages/arara/package.json",
+      packagePath: pkgFile(config, "arara", "package.json"),
       dependencies: ["@ararahq/sdk"],
       devDependencies: ["typescript"],
       customDevDependencies: configDep,
@@ -175,7 +176,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     }
     addPackageDependency({
       vfs,
-      packagePath: "apps/api/package.json",
+      packagePath: appFile(config, "api", "package.json"),
       dependencies: commonDeps,
       devDependencies: ["typescript"],
       customDependencies: apiPackageDeps,
@@ -193,7 +194,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     }
     addPackageDependency({
       vfs,
-      packagePath: "packages/backend/package.json",
+      packagePath: pkgFile(config, "backend", "package.json"),
       dependencies: commonDeps,
       devDependencies: ["typescript"],
       customDependencies: backendDeps,
@@ -213,7 +214,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     if (packages.arara) serverDeps[`@${projectName}/arara`] = workspaceVersion;
     addPackageDependency({
       vfs,
-      packagePath: "apps/server/package.json",
+      packagePath: appFile(config, "server", "package.json"),
       dependencies: commonDeps,
       devDependencies: ["typescript", "tsdown", "unrun"],
       customDependencies: serverDeps,
@@ -248,7 +249,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
 
     addPackageDependency({
       vfs,
-      packagePath: "apps/web/package.json",
+      packagePath: appFile(config, "web", "package.json"),
       dependencies: commonDeps,
       devDependencies: ["typescript"],
       customDependencies: webPackageDeps,
@@ -259,7 +260,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   if (packages.ui) {
     addPackageDependency({
       vfs,
-      packagePath: "packages/ui/package.json",
+      packagePath: pkgFile(config, "ui", "package.json"),
       devDependencies: ["typescript"],
       customDevDependencies: configDep,
     });
@@ -272,7 +273,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
       nativeDeps[`@${projectName}/backend`] = workspaceVersion;
     addPackageDependency({
       vfs,
-      packagePath: "apps/native/package.json",
+      packagePath: appFile(config, "native", "package.json"),
       dependencies: commonDeps,
       customDependencies: nativeDeps,
       customDevDependencies: configDep,

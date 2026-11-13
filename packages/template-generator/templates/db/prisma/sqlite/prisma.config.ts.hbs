@@ -4,9 +4,9 @@ import dotenv from "dotenv";
 
 dotenv.config({
   {{#if (eq backend "self")}}
-  path: "../../apps/web/.env",
+  path: "{{layoutRelative "package:db" "app:web" ".env"}}",
   {{else}}
-  path: "../../apps/server/.env",
+  path: "{{layoutRelative "package:db" "app:server" ".env"}}",
   {{/if}}
 });
 

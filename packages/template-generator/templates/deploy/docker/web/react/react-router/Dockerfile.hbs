@@ -38,7 +38,7 @@ ARG VITE_CLERK_PUBLISHABLE_KEY
 ENV VITE_CLERK_PUBLISHABLE_KEY=${VITE_CLERK_PUBLISHABLE_KEY}
 {{/if}}
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 
 FROM node:24-slim AS runner
 WORKDIR /app
@@ -47,4 +47,4 @@ ENV NODE_ENV=production
 ENV PORT=3001
 ENV HOST=0.0.0.0
 EXPOSE 3001
-CMD ["sh", "-c", "cd apps/web && npm run start"]
+CMD ["sh", "-c", "cd {{layoutPath "app:web"}} && npm run start"]

@@ -136,6 +136,12 @@ export function findLayoutConflicts(expanded: ExpandedLayoutConfig): LayoutConfl
   return conflicts;
 }
 
+/** Workspace glob for a convention dir: `apps` → `apps/*`, `.` → `*`. */
+export function getLayoutDirGlob(dir: string): string {
+  const normalized = normalizeLayoutPath(dir);
+  return normalized === "" ? "*" : `${normalized}/*`;
+}
+
 /**
  * Workspace globs covering every app and package folder, e.g. `["apps/*", "packages/*"]`.
  * Paths outside the convention dirs get their own exact entry.
@@ -145,13 +151,13 @@ export function getLayoutWorkspaceGlobs(
   usedPaths?: readonly string[],
 ): string[] {
   const paths = usedPaths ?? [...Object.values(expanded.apps), ...Object.values(expanded.packages)];
+  const conventionDirs = new Set([expanded.dirs.apps, expanded.dirs.packages]);
   const globs = new Set<string>();
   for (const value of paths) {
     const normalized = normalizeLayoutPath(value);
-    const parent = normalized.includes("/") ? normalized.slice(0, normalized.lastIndexOf("/")) : "";
-    const isConventionChild =
-      parent !== "" && (parent === expanded.dirs.apps || parent === expanded.dirs.packages);
-    globs.add(isConventionChild ? `${parent}/*` : normalized);
+    const slash = normalized.lastIndexOf("/");
+    const parent = slash === -1 ? "." : normalized.slice(0, slash);
+    globs.add(conventionDirs.has(parent) ? getLayoutDirGlob(parent) : normalized);
   }
   return [...globs];
 }

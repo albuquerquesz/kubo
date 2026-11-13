@@ -2,6 +2,7 @@ import { hasAnyFrontend, type ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency } from "../utils/add-deps";
+import { appFile, pkgFile } from "../layout-paths";
 
 type PackageJson = {
   name?: string;
@@ -33,13 +34,13 @@ export function processAddonsDeps(vfs: VirtualFileSystem, config: ProjectConfig)
   if (config.addons.includes("s3-storage")) {
     addPackageDependency({
       vfs,
-      packagePath: "packages/storage/package.json",
+      packagePath: pkgFile(config, "storage", "package.json"),
       dependencies: ["@aws-sdk/client-s3", "@aws-sdk/s3-request-presigner"],
     });
   }
 
   if (config.addons.includes("pwa") && hasPwaCompatibleFrontend) {
-    const webPkgPath = "apps/web/package.json";
+    const webPkgPath = appFile(config, "web", "package.json");
     if (vfs.exists(webPkgPath)) {
       addPackageDependency({
         vfs,
@@ -56,7 +57,7 @@ export function processAddonsDeps(vfs: VirtualFileSystem, config: ProjectConfig)
   }
 
   if (config.addons.includes("tauri")) {
-    const webPkgPath = "apps/web/package.json";
+    const webPkgPath = appFile(config, "web", "package.json");
     if (vfs.exists(webPkgPath)) {
       addPackageDependency({ vfs, packagePath: webPkgPath, devDependencies: ["@tauri-apps/cli"] });
       const webPkg = vfs.readJson<PackageJson>(webPkgPath);

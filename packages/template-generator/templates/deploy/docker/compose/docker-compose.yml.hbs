@@ -5,7 +5,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: apps/web/Dockerfile
+      dockerfile: {{layoutPath "app:web"}}/Dockerfile
 {{#if (and (not (includes frontend "nuxt")) (or (and (ne backend "self") (ne backend "none") (ne backend "convex")) (eq backend "convex") (and (eq auth "clerk") (or (includes frontend "next") (includes frontend "react-router") (includes frontend "tanstack-router") (includes frontend "tanstack-start")))))}}
       args:
 {{#if (and (ne backend "self") (ne backend "none") (ne backend "convex"))}}
@@ -26,7 +26,7 @@ services:
       - "3001:3001"
 {{/if}}
     env_file:
-      - path: apps/web/.env
+      - path: {{layoutPath "app:web"}}/.env
         required: false
 {{#if (eq backend "self")}}
 {{#if (or (eq dbSetup "docker") (eq auth "better-auth"))}}
@@ -89,12 +89,12 @@ services:
   server:
     build:
       context: .
-      dockerfile: apps/server/Dockerfile
+      dockerfile: {{layoutPath "app:server"}}/Dockerfile
     init: true
     ports:
       - "3000:3000"
     env_file:
-      - path: apps/server/.env
+      - path: {{layoutPath "app:server"}}/.env
         required: false
 {{#if (or (eq webDeploy "docker") (eq dbSetup "docker"))}}
     environment:

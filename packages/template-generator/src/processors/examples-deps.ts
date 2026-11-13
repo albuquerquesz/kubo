@@ -2,6 +2,7 @@ import { hasNativeFrontend, hasReactFrontend, type ProjectConfig } from "@kubojs
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
+import { appFile, pkgFile } from "../layout-paths";
 
 export function processExamplesDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
   if (!config.examples || config.examples.length === 0 || config.examples[0] === "none") return;
@@ -21,7 +22,7 @@ export function processExamplesDeps(vfs: VirtualFileSystem, config: ProjectConfi
 
 function setupTodoDependencies(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { orm, database, backend } = config;
-  const apiPkgPath = "apps/api/package.json";
+  const apiPkgPath = appFile(config, "api", "package.json");
   if (!vfs.exists(apiPkgPath) || backend === "none") return;
 
   if (orm === "drizzle") {
@@ -38,10 +39,10 @@ function setupTodoDependencies(vfs: VirtualFileSystem, config: ProjectConfig): v
 function setupAIDependencies(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { frontend, backend } = config;
 
-  const webPkgPath = "apps/web/package.json";
-  const nativePkgPath = "apps/native/package.json";
-  const serverPkgPath = "apps/server/package.json";
-  const convexBackendPkgPath = "packages/backend/package.json";
+  const webPkgPath = appFile(config, "web", "package.json");
+  const nativePkgPath = appFile(config, "native", "package.json");
+  const serverPkgPath = appFile(config, "server", "package.json");
+  const convexBackendPkgPath = pkgFile(config, "backend", "package.json");
 
   const webExists = vfs.exists(webPkgPath);
   const nativeExists = vfs.exists(nativePkgPath);

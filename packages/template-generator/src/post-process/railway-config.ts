@@ -6,6 +6,7 @@
 import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
+import { appFile } from "../layout-paths";
 
 const railwayConfig = {
   $schema: "https://railway.com/railway.schema.json",
@@ -18,10 +19,10 @@ const railwayConfig = {
 
 export function processRailwayConfig(vfs: VirtualFileSystem, config: ProjectConfig): void {
   if (config.webDeploy === "railway") {
-    vfs.writeJson("apps/web/railway.json", railwayConfig);
+    vfs.writeJson(appFile(config, "web", "railway.json"), railwayConfig);
   }
 
   if (config.serverDeploy === "railway" && config.backend !== "self") {
-    vfs.writeJson("apps/server/railway.json", railwayConfig);
+    vfs.writeJson(appFile(config, "server", "railway.json"), railwayConfig);
   }
 }

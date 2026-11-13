@@ -2,6 +2,7 @@ import type { Frontend, ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processSingleTemplate, processTemplatesFromPrefix } from "./utils";
+import { appDir, pkgDir, pkgFile } from "../layout-paths";
 
 const FULLSTACK_FRONTENDS: readonly Frontend[] = [
   "next",
@@ -39,21 +40,21 @@ function processPaymentPackage(
     vfs,
     templates,
     "packages/payments/package.json",
-    "packages/payments/package.json",
+    pkgFile(config, "payments", "package.json"),
     config,
   );
   processSingleTemplate(
     vfs,
     templates,
     "packages/payments/tsconfig.json",
-    "packages/payments/tsconfig.json",
+    pkgFile(config, "payments", "tsconfig.json"),
     config,
   );
   processSingleTemplate(
     vfs,
     templates,
     "packages/payments/src/index.ts",
-    "packages/payments/src/index.ts",
+    pkgFile(config, "payments", "src/index.ts"),
     config,
   );
 
@@ -62,7 +63,7 @@ function processPaymentPackage(
       vfs,
       templates,
       "packages/payments/src/client.ts",
-      "packages/payments/src/client.ts",
+      pkgFile(config, "payments", "src/client.ts"),
       config,
     );
   }
@@ -79,7 +80,7 @@ function processBackendPayment(
       vfs,
       templates,
       `payments/${provider}/convex/backend`,
-      "packages/backend",
+      pkgDir(config, "backend"),
       config,
     );
     return;
@@ -90,7 +91,7 @@ function processBackendPayment(
       vfs,
       templates,
       `payments/${provider}/server/base`,
-      "packages/payments",
+      pkgDir(config, "payments"),
       config,
     );
   }
@@ -106,7 +107,7 @@ function processBackendPayment(
       vfs,
       templates,
       `payments/${provider}/db/${config.orm}/${config.database}`,
-      "packages/db",
+      pkgDir(config, "db"),
       config,
     );
   }
@@ -125,7 +126,7 @@ function processFrontendPayment(
         vfs,
         templates,
         `payments/${provider}/fullstack/${fullstackFrontend}`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
     }
@@ -139,7 +140,7 @@ function processFrontendPayment(
     vfs,
     templates,
     `payments/${provider}/${target.templatePath}${target.templatePath === "web/react" ? `/${frontend}` : ""}`,
-    "apps/web",
+    appDir(config, "web"),
     config,
   );
 }

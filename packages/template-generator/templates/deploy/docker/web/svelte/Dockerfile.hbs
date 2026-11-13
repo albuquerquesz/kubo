@@ -34,7 +34,7 @@ ARG PUBLIC_CONVEX_URL
 ENV PUBLIC_CONVEX_URL=${PUBLIC_CONVEX_URL}
 {{/if}}
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 ENV SKIP_ENV_VALIDATION=
 {{#if (and (eq backend "self") (eq auth "better-auth"))}}
 ENV BETTER_AUTH_SECRET=
@@ -47,5 +47,5 @@ ENV HOST=0.0.0.0
 ENV PORT=3001
 EXPOSE 3001
 
-WORKDIR /app/apps/web
+WORKDIR /app/{{layoutPath "app:web"}}
 CMD ["node", "build/index.js"]

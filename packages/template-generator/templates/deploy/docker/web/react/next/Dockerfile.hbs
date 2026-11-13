@@ -38,20 +38,20 @@ ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
 {{/if}}
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 # standalone output excludes public/; ensure it exists so the runner copy never fails
-RUN mkdir -p apps/web/public
+RUN mkdir -p {{layoutPath "app:web"}}/public
 
 FROM node:24-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY --from=builder /app/apps/web/.next/standalone ./
-COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder /app/apps/web/public ./apps/web/public
+COPY --from=builder /app/{{layoutPath "app:web"}}/.next/standalone ./
+COPY --from=builder /app/{{layoutPath "app:web"}}/.next/static ./{{layoutPath "app:web"}}/.next/static
+COPY --from=builder /app/{{layoutPath "app:web"}}/public ./{{layoutPath "app:web"}}/public
 
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3001
 EXPOSE 3001
 
-CMD ["node", "apps/web/server.js"]
+CMD ["node", "{{layoutPath "app:web"}}/server.js"]

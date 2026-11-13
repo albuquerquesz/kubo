@@ -2,9 +2,10 @@ import { hasNativeFrontend, type ProjectConfig } from "@kubojs/types";
 import { Node, Project, SyntaxKind } from "ts-morph";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
+import { pkgFile } from "../layout-paths";
 
 export function processAuthPlugins(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const authIndexPath = "packages/auth/src/index.ts";
+  const authIndexPath = pkgFile(config, "auth", "src/index.ts");
   if (!vfs.exists(authIndexPath)) return;
 
   const content = vfs.readFile(authIndexPath);

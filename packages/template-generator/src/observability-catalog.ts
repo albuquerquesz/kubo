@@ -2,6 +2,7 @@ import { hasWebFrontend, type ObservabilityProvider, type ProjectConfig } from "
 
 import type { VirtualFileSystem } from "./core/virtual-fs";
 import type { AvailableDependencies } from "./utils/add-deps";
+import { appFile } from "./layout-paths";
 
 export type ObservabilityTarget = "web" | "vite" | "next" | "nuxt";
 
@@ -27,7 +28,7 @@ export type ObservabilityCatalogEntry = {
 const hasPackage = (vfs: VirtualFileSystem, path: string): boolean => vfs.exists(path);
 
 const hasWebTarget = (vfs: VirtualFileSystem, config: ProjectConfig): boolean =>
-  hasWebFrontend(config.frontend) && hasPackage(vfs, "apps/web/package.json");
+  hasWebFrontend(config.frontend) && hasPackage(vfs, appFile(config, "web", "package.json"));
 
 const hasViteTarget = (vfs: VirtualFileSystem, config: ProjectConfig): boolean =>
   hasWebTarget(vfs, config) &&
@@ -51,23 +52,23 @@ export const OBSERVABILITY_CATALOG: readonly ObservabilityCatalogEntry[] = [
       {
         target: "vite",
         templatePath: "observability/himetrica/browser.ts",
-        destinationPath: "apps/web/src/lib/himetrica.ts",
+        destinationPath: appFile(config, "web", "src/lib/himetrica.ts"),
       },
       {
         target: "next",
         templatePath: "observability/himetrica/next.tsx",
-        destinationPath: "apps/web/src/components/himetrica.tsx",
+        destinationPath: appFile(config, "web", "src/components/himetrica.tsx"),
       },
       {
         target: "nuxt",
         templatePath: "observability/himetrica/nuxt.ts",
-        destinationPath: "apps/web/app/plugins/himetrica.client.ts",
+        destinationPath: appFile(config, "web", "app/plugins/himetrica.client.ts"),
       },
     ],
     dependencies: [
       {
         target: "web",
-        packagePath: "apps/web/package.json",
+        packagePath: appFile(config, "web", "package.json"),
         dependencies: ["@himetrica/tracker-js"],
       },
     ],

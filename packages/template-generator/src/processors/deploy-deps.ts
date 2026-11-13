@@ -2,6 +2,7 @@ import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency } from "../utils/add-deps";
+import { appFile } from "../layout-paths";
 
 export function processDeployDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { webDeploy, serverDeploy, frontend, backend, addons } = config;
@@ -47,7 +48,7 @@ export function processDeployDeps(vfs: VirtualFileSystem, config: ProjectConfig)
   if (isVercelWeb && frontend.includes("tanstack-start")) {
     // Nitro emits Vercel's Build Output API; without it the Start build is a
     // plain node server the platform cannot serve
-    const webPkgPath = "apps/web/package.json";
+    const webPkgPath = appFile(config, "web", "package.json");
     if (vfs.exists(webPkgPath)) {
       addPackageDependency({ vfs, packagePath: webPkgPath, dependencies: ["nitro"] });
     }
@@ -61,7 +62,7 @@ export function processDeployDeps(vfs: VirtualFileSystem, config: ProjectConfig)
   ) {
     // Astro needs the Vercel adapter for SSR; the default @astrojs/node
     // standalone output is not served by Vercel's astro framework preset.
-    const webPkgPath = "apps/web/package.json";
+    const webPkgPath = appFile(config, "web", "package.json");
     if (vfs.exists(webPkgPath)) {
       addPackageDependency({
         vfs,
@@ -78,7 +79,7 @@ export function processDeployDeps(vfs: VirtualFileSystem, config: ProjectConfig)
     !addons.includes("tauri")
   ) {
     // Vercel docs recommend the explicit adapter over adapter-auto resolving it at build time
-    const webPkgPath = "apps/web/package.json";
+    const webPkgPath = appFile(config, "web", "package.json");
     if (vfs.exists(webPkgPath)) {
       addPackageDependency({
         vfs,
@@ -89,7 +90,7 @@ export function processDeployDeps(vfs: VirtualFileSystem, config: ProjectConfig)
   }
 
   if (isDockerWeb) {
-    const webPkgPath = "apps/web/package.json";
+    const webPkgPath = appFile(config, "web", "package.json");
     if (vfs.exists(webPkgPath)) {
       if (frontend.includes("svelte")) {
         addPackageDependency({
@@ -117,7 +118,7 @@ export function processDeployDeps(vfs: VirtualFileSystem, config: ProjectConfig)
   }
 
   if (isCloudflareServer && !isBackendSelf) {
-    const serverPkgPath = "apps/server/package.json";
+    const serverPkgPath = appFile(config, "server", "package.json");
     if (vfs.exists(serverPkgPath)) {
       addPackageDependency({
         vfs,
@@ -128,7 +129,7 @@ export function processDeployDeps(vfs: VirtualFileSystem, config: ProjectConfig)
   }
 
   if (isCloudflareWeb) {
-    const webPkgPath = "apps/web/package.json";
+    const webPkgPath = appFile(config, "web", "package.json");
     if (!vfs.exists(webPkgPath)) return;
 
     if (frontend.includes("next")) {

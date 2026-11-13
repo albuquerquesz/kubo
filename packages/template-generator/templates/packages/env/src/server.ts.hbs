@@ -70,7 +70,7 @@ export const env = createEnvProxy(resolveEnvValue);
 import { config } from "dotenv";
 import { fileURLToPath } from "node:url";
 
-config({ path: fileURLToPath(new URL("../../../.env", import.meta.url)) });
+config({ path: fileURLToPath(new URL("{{layoutRelative "package:env/src" "root" ".env"}}", import.meta.url)) });
 config();
 
 const runtimeEnv = typeof process === "undefined" ? {} : process.env;
@@ -102,9 +102,9 @@ import { z } from "zod";
 const envFilePath = resolve(
 	dirname(fileURLToPath(import.meta.url)),
 {{#if (eq backend "self")}}
-	"../../../apps/web/.env",
+	"{{layoutRelative "package:env/src" "app:web" ".env"}}",
 {{else}}
-	"../../../apps/server/.env",
+	"{{layoutRelative "package:env/src" "app:server" ".env"}}",
 {{/if}}
 );
 config({ path: envFilePath });

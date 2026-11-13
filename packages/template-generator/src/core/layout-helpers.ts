@@ -1,6 +1,8 @@
 import {
   expandLayoutConfig,
+  getLayoutDirGlob,
   getLayoutPackagePath,
+  joinLayoutPath,
   relativeLayoutPath,
   LayoutConfigSchema,
   type ExpandedLayoutConfig,
@@ -11,8 +13,10 @@ import type { HelperOptions } from "handlebars";
 import Handlebars from "handlebars";
 
 /**
- * Layout refs used in templates: `app:<id>`, `package:<id>`, `root`, or a
- * project-relative path containing "/" (e.g. `apps/web/.env` stays literal).
+ * Layout refs used in templates:
+ * - `app:<id>` / `package:<id>`, optionally with a subpath: `package:env/src`
+ * - `dir:apps` / `dir:packages`: the convention directories
+ * - `root`: the project root
  */
 type LayoutRef = string;
 
@@ -29,10 +33,26 @@ function isAppId(expanded: ExpandedLayoutConfig, id: string): id is LayoutAppId 
 
 export function resolveLayoutRef(expanded: ExpandedLayoutConfig, ref: LayoutRef): string {
   if (ref === "root" || ref === ".") return ".";
-  const [kind, id] = ref.split(":", 2);
-  if (kind === "package" && id) return getLayoutPackagePath(expanded, id);
-  if (kind === "app" && id && isAppId(expanded, id)) return expanded.apps[id];
-  throw new Error(`Unknown layout ref "${ref}" (expected app:<id>, package:<id> or root)`);
+  const match = /^(app|package|dir):([a-z][a-z0-9-]*)(\/.+)?$/.exec(ref);
+  if (match) {
+    const [, kind, id, sub = ""] = match;
+    const base = resolveLayoutBase(expanded, kind!, id!);
+    if (base !== undefined) return sub ? joinLayoutPath(base, sub.slice(1)) : base;
+  }
+  throw new Error(
+    `Unknown layout ref "${ref}" (expected app:<id>, package:<id>, dir:apps, dir:packages or root)`,
+  );
+}
+
+function resolveLayoutBase(
+  expanded: ExpandedLayoutConfig,
+  kind: string,
+  id: string,
+): string | undefined {
+  if (kind === "package") return getLayoutPackagePath(expanded, id);
+  if (kind === "app") return isAppId(expanded, id) ? expanded.apps[id] : undefined;
+  if (id === "apps" || id === "packages") return expanded.dirs[id];
+  return undefined;
 }
 
 /**
@@ -62,7 +82,17 @@ function layoutRelativeHelper(from: LayoutRef, to: LayoutRef, ...rest: unknown[]
   return [relative, ...sub].filter((part) => part !== ".").join("/") || ".";
 }
 
+/** `{{layoutDirGlob "apps"}}` → `apps/*`; `{{layoutDirGlob "packages"}}` → `packages/*` (or `libs/*`). */
+function layoutDirGlobHelper(kind: unknown, options: HelperOptions): string {
+  const { dirs } = expandLayoutConfig(getLayoutFromOptions(options));
+  if (kind !== "apps" && kind !== "packages") {
+    throw new Error(`Unknown layout dir "${String(kind)}" (expected apps or packages)`);
+  }
+  return getLayoutDirGlob(dirs[kind]);
+}
+
 export function registerLayoutHelpers(handlebars: typeof Handlebars = Handlebars): void {
   handlebars.registerHelper("layoutPath", layoutPathHelper);
   handlebars.registerHelper("layoutRelative", layoutRelativeHelper);
+  handlebars.registerHelper("layoutDirGlob", layoutDirGlobHelper);
 }

@@ -2,6 +2,7 @@ import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix } from "./utils";
+import { appDir, pkgDir } from "../layout-paths";
 
 export async function processBackendTemplates(
   vfs: VirtualFileSystem,
@@ -15,7 +16,7 @@ export async function processBackendTemplates(
       vfs,
       templates,
       "backend/convex/packages/backend",
-      "packages/backend",
+      pkgDir(config, "backend"),
       config,
     );
     return;
@@ -23,12 +24,12 @@ export async function processBackendTemplates(
 
   if (config.backend === "self") return;
 
-  processTemplatesFromPrefix(vfs, templates, "backend/server/base", "apps/server", config);
+  processTemplatesFromPrefix(vfs, templates, "backend/server/base", appDir(config, "server"), config);
   processTemplatesFromPrefix(
     vfs,
     templates,
     `backend/server/${config.backend}`,
-    "apps/server",
+    appDir(config, "server"),
     config,
   );
 }

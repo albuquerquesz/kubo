@@ -12,7 +12,17 @@ export { processEnvVariables } from "./processors/env-vars";
 export { processPackageConfigs, processRailwayConfig, processVercelConfig } from "./post-process";
 export { writeKuboConfigToVfs, writeKubojsConfigToVfs, KUBO_CONFIG_FILE } from "./kubo-config";
 export { createLayoutResolver, resolveLayout } from "./layout-resolver";
-export { getCatalogPackagePaths, getStoragePackagePath, getWebAppPath } from "./layout-paths";
+export {
+  appDir,
+  appFile,
+  getCatalogPackagePaths,
+  getStoragePackagePath,
+  getWebAppPath,
+  getWorkspaceGlobs,
+  pkgDir,
+  pkgFile,
+  relocateLayoutPaths,
+} from "./layout-paths";
 export { serializeKuboConfigFile, buildKuboConfigFromProject } from "./kubo-config-serializer";
 
 export { EMBEDDED_TEMPLATES, TEMPLATE_COUNT } from "./templates.generated";

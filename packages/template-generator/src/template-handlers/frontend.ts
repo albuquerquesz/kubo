@@ -8,6 +8,7 @@ import {
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix } from "./utils";
+import { appDir } from "../layout-paths";
 
 export async function processFrontendTemplates(
   vfs: VirtualFileSystem,
@@ -26,7 +27,7 @@ export async function processFrontendTemplates(
 
   if (hasWebFrontend(config.frontend)) {
     if (hasReactWeb) {
-      processTemplatesFromPrefix(vfs, templates, "frontend/react/web-base", "apps/web", config);
+      processTemplatesFromPrefix(vfs, templates, "frontend/react/web-base", appDir(config, "web"), config);
 
       const reactFramework = findFrontend(config.frontend, reactWebFrontends);
       if (reactFramework) {
@@ -34,40 +35,40 @@ export async function processFrontendTemplates(
           vfs,
           templates,
           `frontend/react/${reactFramework}`,
-          "apps/web",
+          appDir(config, "web"),
           config,
         );
       }
     } else if (hasNuxtWeb) {
-      processTemplatesFromPrefix(vfs, templates, "frontend/nuxt", "apps/web", config);
+      processTemplatesFromPrefix(vfs, templates, "frontend/nuxt", appDir(config, "web"), config);
     } else if (hasSvelteWeb) {
-      processTemplatesFromPrefix(vfs, templates, "frontend/svelte", "apps/web", config);
+      processTemplatesFromPrefix(vfs, templates, "frontend/svelte", appDir(config, "web"), config);
     } else if (hasSolidWeb) {
-      processTemplatesFromPrefix(vfs, templates, "frontend/solid", "apps/web", config);
+      processTemplatesFromPrefix(vfs, templates, "frontend/solid", appDir(config, "web"), config);
     } else if (hasAstroWeb) {
-      processTemplatesFromPrefix(vfs, templates, "frontend/astro", "apps/web", config);
+      processTemplatesFromPrefix(vfs, templates, "frontend/astro", appDir(config, "web"), config);
     }
   }
 
   if (hasNativeBare || hasNativeUniwind || hasUnistyles) {
-    processTemplatesFromPrefix(vfs, templates, "frontend/native/base", "apps/native", config);
+    processTemplatesFromPrefix(vfs, templates, "frontend/native/base", appDir(config, "native"), config);
 
     if (hasNativeBare) {
-      processTemplatesFromPrefix(vfs, templates, "frontend/native/bare", "apps/native", config);
+      processTemplatesFromPrefix(vfs, templates, "frontend/native/bare", appDir(config, "native"), config);
     } else if (hasNativeUniwind) {
-      processTemplatesFromPrefix(vfs, templates, "frontend/native/uniwind", "apps/native", config);
+      processTemplatesFromPrefix(vfs, templates, "frontend/native/uniwind", appDir(config, "native"), config);
     } else if (hasUnistyles) {
       processTemplatesFromPrefix(
         vfs,
         templates,
         "frontend/native/unistyles",
-        "apps/native",
+        appDir(config, "native"),
         config,
       );
     }
 
     if (!isConvex && (config.api === "trpc" || config.api === "orpc")) {
-      processTemplatesFromPrefix(vfs, templates, `api/${config.api}/native`, "apps/native", config);
+      processTemplatesFromPrefix(vfs, templates, `api/${config.api}/native`, appDir(config, "native"), config);
     }
   }
 }

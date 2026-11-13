@@ -2,6 +2,7 @@ import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency } from "../utils/add-deps";
+import { appFile } from "../layout-paths";
 
 type PackageJson = {
   scripts?: Record<string, string>;
@@ -13,7 +14,7 @@ export function processRuntimeDeps(vfs: VirtualFileSystem, config: ProjectConfig
 
   if (backend === "convex" || backend === "self" || runtime === "none") return;
 
-  const serverPath = "apps/server/package.json";
+  const serverPath = appFile(config, "server", "package.json");
   if (!vfs.exists(serverPath)) return;
 
   const pkgJson = vfs.readJson<PackageJson>(serverPath);

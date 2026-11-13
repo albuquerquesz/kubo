@@ -7,6 +7,7 @@ import {
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
+import { appFile, pkgFile } from "../layout-paths";
 
 // Intentional: @convex-dev/better-auth is tested against Better Auth 1.6.15.
 const CONVEX_BETTER_AUTH_VERSION = "1.6.15";
@@ -24,9 +25,9 @@ export function processAuthDeps(vfs: VirtualFileSystem, config: ProjectConfig): 
 
 function processConvexAuthDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { auth, frontend } = config;
-  const webPath = "apps/web/package.json";
-  const nativePath = "apps/native/package.json";
-  const backendPath = "packages/backend/package.json";
+  const webPath = appFile(config, "web", "package.json");
+  const nativePath = appFile(config, "native", "package.json");
+  const backendPath = pkgFile(config, "backend", "package.json");
 
   const webExists = vfs.exists(webPath);
   const nativeExists = vfs.exists(nativePath);
@@ -129,11 +130,11 @@ function processConvexAuthDeps(vfs: VirtualFileSystem, config: ProjectConfig): v
 
 function processStandardAuthDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { auth, backend, frontend, orm } = config;
-  const authPath = "packages/auth/package.json";
-  const apiPath = "apps/api/package.json";
-  const webPath = "apps/web/package.json";
-  const nativePath = "apps/native/package.json";
-  const serverPath = "apps/server/package.json";
+  const authPath = pkgFile(config, "auth", "package.json");
+  const apiPath = appFile(config, "api", "package.json");
+  const webPath = appFile(config, "web", "package.json");
+  const nativePath = appFile(config, "native", "package.json");
+  const serverPath = appFile(config, "server", "package.json");
 
   const authExists = vfs.exists(authPath);
   const apiExists = vfs.exists(apiPath);
