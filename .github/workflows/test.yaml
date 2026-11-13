@@ -65,7 +65,10 @@ jobs:
           BTS_TELEMETRY: 0
 
       # Generated projects with custom layouts must install, build and type-check.
+      # Skipped on release PRs: generated projects depend on @kubojs/config@<new version>,
+      # which is only on npm after publishing (release.yaml runs its own publish smoke).
       - name: Layout build smoke
+        if: ${{ !startsWith(github.head_ref, 'release/') }}
         working-directory: apps/cli
         run: bun test test/generated-builds.test.ts
         env:
