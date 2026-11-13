@@ -60,6 +60,7 @@ import {
   WebDeploySchema,
 } from "./types";
 import { markProgrammaticTelemetrySource, setTelemetrySource } from "./utils/analytics";
+import { parseLayoutFlag } from "./utils/layout-input";
 import { CLIError, ProjectCreationError, UserCancelledError } from "./utils/errors";
 import { getLatestCLIVersion } from "./utils/get-latest-cli-version";
 import { validateConfigCompatibility } from "./validation";
@@ -186,14 +187,24 @@ export const router = t.router({
           dbSetupOptions: DbSetupOptionsSchema.optional().describe(
             "Structured database setup options",
           ),
+          layout: z
+            .string()
+            .optional()
+            .describe(
+              'Folder layout: a preset (standard, libs) or JSON, e.g. \'{"preset":"libs","apps":{"web":"web"}}\'',
+            ),
         }),
       ]),
     )
     .mutation(async ({ input }) => {
       const [projectName, options] = input;
+      const layoutResult =
+        options.layout === undefined ? Result.ok(undefined) : parseLayoutFlag(options.layout);
+      if (layoutResult.isErr()) throw layoutResult.error;
       const combinedInput = {
         projectName,
         ...options,
+        layout: layoutResult.value,
       };
       const result = await createProjectHandler(combinedInput);
 

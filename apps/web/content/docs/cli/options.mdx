@@ -109,6 +109,29 @@ kubojs my-app --yes --directory-conflict overwrite
 kubojs my-app --yes --directory-conflict increment
 ```
 
+### `--layout <preset|json>`
+
+Define a estrutura de pastas do projeto. Aceita um preset ou um objeto JSON:
+
+- `standard` (padrão): apps em `apps/`, pacotes em `packages/`
+- `libs`: apps em `apps/`, pacotes em `libs/`
+- JSON: preset + pastas de convenção (`dirs`) + exceções por app (`apps`) ou pacote (`packages`)
+
+```bash
+# Packages in libs/
+kubojs my-app --yes --layout libs
+
+# Web app at the project root, everything else in the libs preset
+kubojs my-app --yes --layout '{"preset":"libs","apps":{"web":"web"}}'
+
+# Custom convention dirs
+kubojs my-app --yes --layout '{"dirs":{"apps":"src/apps","packages":"src/packages"}}'
+```
+
+O layout é validado antes de qualquer arquivo ser gravado: caminhos absolutos, `..`, `node_modules`, pastas repetidas, pastas que diferem só por maiúsculas e pastas aninhadas (uma app dentro de outra) são rejeitados. O layout escolhido fica salvo em `kubo.config.ts`, e o `kubo add` passa a respeitá-lo. Os imports entre pacotes usam o nome do pacote (`@meu-app/ui`), então não mudam com o layout.
+
+IDs de apps: `web`, `server`, `native`, `desktop`, `docs`, `api`. IDs de pacotes: `db`, `auth`, `backend`, `config`, `env`, `infra`, `ui`, `storage`, `api`, `payments`, `email` e os pacotes de integração (ex.: `millionsend`).
+
 ### `--disable-analytics / --no-disable-analytics`
 
 Controla se dados de analytics e telemetria são coletados.

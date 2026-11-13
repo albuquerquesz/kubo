@@ -458,6 +458,9 @@ export const CreateInputSchema = z
     renderTitle: z.boolean().optional(),
     disableAnalytics: z.boolean().optional(),
     manualDb: z.boolean().optional(),
+    layout: LayoutConfigSchema.optional().describe(
+      "Project folder layout (preset, convention dirs and per-app/package overrides)",
+    ),
   })
   .strict()
   .refine((input) => !(input.manualDb !== undefined && input.dbSetupOptions?.mode !== undefined), {
