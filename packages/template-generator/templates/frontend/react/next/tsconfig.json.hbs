@@ -29,7 +29,7 @@
   },
   "include": [
     {{#if (eq serverDeploy "cloudflare")}}
-    "../server/env.d.ts",
+    "{{layoutRelativeShort "app:web" "app:server" "env.d.ts"}}",
     {{/if}}
     "next-env.d.ts",
     "**/*.ts",

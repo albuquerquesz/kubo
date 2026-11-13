@@ -102,3 +102,13 @@ export function relocateLayoutFilePath(
 function joinAppsDir(dir: string, id: string): string {
   return dir === "." ? id : `${dir}/${id}`;
 }
+
+/**
+ * Relative path from folder `fromDir` to project path `to`, written through the project root
+ * (same style as the `layoutRelative` template helper): `("apps/web", "packages/env")` →
+ * `../../packages/env`.
+ */
+export function relativeFromRoot(fromDir: string, to: string): string {
+  const depth = fromDir === "." || fromDir === "" ? 0 : fromDir.split("/").filter(Boolean).length;
+  return [...Array.from({ length: depth }, () => ".."), to].join("/");
+}

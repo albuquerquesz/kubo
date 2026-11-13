@@ -6,11 +6,11 @@ export default defineConfig({
     output: {
       mode: "split",
       client: "hono",
-      target: "../server/src/generated/routes.ts",
-      schemas: "../server/src/generated/schemas",
+      target: "{{layoutRelativeShort "app:api" "app:server" "src/generated/routes.ts"}}",
+      schemas: "{{layoutRelativeShort "app:api" "app:server" "src/generated/schemas"}}",
       override: {
         hono: {
-          handlers: "../server/src/generated/handlers",
+          handlers: "{{layoutRelativeShort "app:api" "app:server" "src/generated/handlers"}}",
         },
       },
     },

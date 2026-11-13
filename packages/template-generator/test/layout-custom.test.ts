@@ -40,7 +40,9 @@ async function generateFiles(
 
 /** Relative refs that must point at something generated (not globs, not runtime files). */
 const RELATIVE_REF = /["'](\.\.\/(?:\.\.\/)*[A-Za-z@][^"'*{}]*)["']/g;
-const RUNTIME_FILES = /(^|\/)\.env(\.local)?$|\/migrations$|\.d\.ts$|\/generated(\/|$)/;
+const RUNTIME_FILES =
+  /(^|\/)\.env(\.local)?$|\/migrations$|\.d\.ts$|\/(generated|dist|build|out|\.output)(\/|$)/;
+const RUNTIME_SEGMENT = /\/(generated|dist|build|out|\.output)(\/|$)/;
 
 function danglingRefs(files: Map<string, string>): string[] {
   const dirs = new Set<string>();

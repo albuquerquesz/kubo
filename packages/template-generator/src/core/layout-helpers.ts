@@ -4,6 +4,7 @@ import {
   getLayoutPackagePath,
   joinLayoutPath,
   layoutPathDepth,
+  relativeLayoutPath,
   LayoutConfigSchema,
   type ExpandedLayoutConfig,
   type LayoutAppId,
@@ -83,6 +84,21 @@ function layoutRelativeHelper(from: LayoutRef, to: LayoutRef, ...rest: unknown[]
   return [...ups, toPath, ...sub].filter((part) => part !== ".").join("/") || ".";
 }
 
+/**
+ * Shortest relative path from the folder of `from` to `to` (siblings stay `../x`).
+ * `{{layoutRelativeShort "app:desktop" "app:web" "dist"}}` → `../web/dist` in the standard layout.
+ */
+function layoutRelativeShortHelper(from: LayoutRef, to: LayoutRef, ...rest: unknown[]): string {
+  const options = rest.pop() as HelperOptions;
+  const expanded = expandLayoutConfig(getLayoutFromOptions(options));
+  const relative = relativeLayoutPath(
+    resolveLayoutRef(expanded, String(from)),
+    resolveLayoutRef(expanded, String(to)),
+  );
+  const sub = rest.filter((part): part is string => typeof part === "string");
+  return [relative, ...sub].filter((part) => part !== ".").join("/") || ".";
+}
+
 /** `{{layoutDirGlob "apps"}}` → `apps/*`; `{{layoutDirGlob "packages"}}` → `packages/*` (or `libs/*`). */
 function layoutDirGlobHelper(kind: unknown, options: HelperOptions): string {
   const { dirs } = expandLayoutConfig(getLayoutFromOptions(options));
@@ -96,4 +112,5 @@ export function registerLayoutHelpers(handlebars: typeof Handlebars = Handlebars
   handlebars.registerHelper("layoutPath", layoutPathHelper);
   handlebars.registerHelper("layoutRelative", layoutRelativeHelper);
   handlebars.registerHelper("layoutDirGlob", layoutDirGlobHelper);
+  handlebars.registerHelper("layoutRelativeShort", layoutRelativeShortHelper);
 }

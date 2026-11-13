@@ -115,7 +115,7 @@ export const EMBEDDED_TEMPLATES: Map<string, string> = new Map([
   ["addons/electrobun/apps/desktop/electrobun.config.ts.hbs", `import type { ElectrobunConfig } from "electrobun";
 
 const webBuildDir =
-  "{{#if (includes frontend "react-router")}}../web/build/client{{else if (includes frontend "tanstack-start")}}../web/dist/client{{else if (includes frontend "next")}}../web/out{{else if (includes frontend "nuxt")}}../web/.output/public{{else if (includes frontend "svelte")}}../web/build{{else}}../web/dist{{/if}}";
+  "{{#if (includes frontend "react-router")}}{{layoutRelativeShort "app:desktop" "app:web" "build/client"}}{{else if (includes frontend "tanstack-start")}}{{layoutRelativeShort "app:desktop" "app:web" "dist/client"}}{{else if (includes frontend "next")}}{{layoutRelativeShort "app:desktop" "app:web" "out"}}{{else if (includes frontend "nuxt")}}{{layoutRelativeShort "app:desktop" "app:web" ".output/public"}}{{else if (includes frontend "svelte")}}{{layoutRelativeShort "app:desktop" "app:web" "build"}}{{else}}{{layoutRelativeShort "app:desktop" "app:web" "dist"}}{{/if}}";
 
 export default {
   app: {
@@ -498,7 +498,7 @@ export { Bucket } from "./bucket";
 export type { BucketConfig, BucketUploadInput } from "./bucket";
 `],
   ["addons/s3-storage/packages/storage/tsconfig.json.hbs", `{
-  "extends": "../config/tsconfig.base.json",
+  "extends": "{{layoutRelativeShort "package:storage" "package:config" "tsconfig.base.json"}}",
   "include": ["src"]
 }
 `],
@@ -1906,11 +1906,11 @@ export default defineConfig({
     output: {
       mode: "split",
       client: "hono",
-      target: "../server/src/generated/routes.ts",
-      schemas: "../server/src/generated/schemas",
+      target: "{{layoutRelativeShort "app:api" "app:server" "src/generated/routes.ts"}}",
+      schemas: "{{layoutRelativeShort "app:api" "app:server" "src/generated/schemas"}}",
       override: {
         hono: {
-          handlers: "../server/src/generated/handlers",
+          handlers: "{{layoutRelativeShort "app:api" "app:server" "src/generated/handlers"}}",
         },
       },
     },
@@ -30244,7 +30244,7 @@ export function ThemeProvider({
   },
   "include": [
     {{#if (eq serverDeploy "cloudflare")}}
-    "../server/env.d.ts",
+    "{{layoutRelativeShort "app:web" "app:server" "env.d.ts"}}",
     {{/if}}
     "next-env.d.ts",
     "**/*.ts",

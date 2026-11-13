@@ -2,7 +2,7 @@ import type { ProjectConfig } from "@kubojs/types";
 import { IndentationText, Node, Project, QuoteKind } from "ts-morph";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
-import { appDir, appFile } from "../layout-paths";
+import { appDir, appFile, pkgFile, relativeFromRoot } from "../layout-paths";
 
 export function processAlchemyPlugins(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { webDeploy, frontend } = config;
@@ -114,7 +114,7 @@ const hasAlchemyConfig = existsSync(alchemyConfigPath);`,
       .findIndex((statement) => Node.isExportAssignment(statement));
     sourceFile.insertStatements(
       firstExport === -1 ? sourceFile.getStatements().length : firstExport,
-      `const cloudflareWorkersShimPath = fileURLToPath(new URL("../../packages/env/src/cloudflare-local.ts", import.meta.url));`,
+      `const cloudflareWorkersShimPath = fileURLToPath(new URL("${relativeFromRoot(appDir(config, "web"), pkgFile(config, "env", "src/cloudflare-local.ts"))}", import.meta.url));`,
     );
   }
 
@@ -396,7 +396,7 @@ const shouldUseAlchemy = existsSync(alchemyConfigPath);`,
       .findIndex((statement) => Node.isExportAssignment(statement));
     sourceFile.insertStatements(
       firstExport === -1 ? sourceFile.getStatements().length : firstExport,
-      `const cloudflareWorkersShimPath = fileURLToPath(new URL("../../packages/env/src/cloudflare-local.ts", import.meta.url));`,
+      `const cloudflareWorkersShimPath = fileURLToPath(new URL("${relativeFromRoot(appDir(config, "web"), pkgFile(config, "env", "src/cloudflare-local.ts"))}", import.meta.url));`,
     );
   }
 
@@ -547,7 +547,7 @@ const shouldUseAlchemy = existsSync(alchemyConfigPath);`,
       .findIndex((statement) => Node.isExportAssignment(statement));
     sourceFile.insertStatements(
       firstExport === -1 ? sourceFile.getStatements().length : firstExport,
-      `const cloudflareWorkersShimPath = fileURLToPath(new URL("../../packages/env/src/cloudflare-local.ts", import.meta.url));`,
+      `const cloudflareWorkersShimPath = fileURLToPath(new URL("${relativeFromRoot(appDir(config, "web"), pkgFile(config, "env", "src/cloudflare-local.ts"))}", import.meta.url));`,
     );
   }
 
