@@ -6,6 +6,7 @@ import type { ProjectConfig } from "../../types";
 import { addPackageDependency } from "../../utils/add-package-deps";
 import { addEnvVariablesToFile, type EnvVariable } from "../../utils/env-utils";
 import { DatabaseSetupError } from "../../utils/errors";
+import { getDbEnvTargetApp } from "../../utils/layout-paths";
 
 export async function setupCloudflareD1(
   config: ProjectConfig,
@@ -22,7 +23,7 @@ export async function setupCloudflareD1(
 
   return Result.tryPromise({
     try: async () => {
-      const targetApp = backend === "self" ? "apps/web" : "apps/server";
+      const targetApp = getDbEnvTargetApp(config);
       const envPath = path.join(projectDir, targetApp, ".env");
       const variables: EnvVariable[] = [
         {
@@ -34,7 +35,7 @@ export async function setupCloudflareD1(
 
       await addEnvVariablesToFile(envPath, variables);
 
-      const serverDir = path.join(projectDir, backend === "self" ? "apps/web" : "apps/server");
+      const serverDir = path.join(projectDir, getDbEnvTargetApp(config));
       await addPackageDependency({
         dependencies: ["@prisma/adapter-d1"],
         projectDir: serverDir,

@@ -6,11 +6,12 @@ import fs from "fs-extra";
 import type { ProjectConfig } from "../../types";
 import { addEnvVariablesToFile, type EnvVariable } from "../../utils/env-utils";
 import { DatabaseSetupError } from "../../utils/errors";
+import { getDbEnvTargetApp } from "../../utils/layout-paths";
 
 export async function setupPlanetScale(
   config: ProjectConfig,
 ): Promise<Result<void, DatabaseSetupError>> {
-  const { projectDir, database, orm, backend } = config;
+  const { projectDir, database, orm } = config;
 
   if (!["mysql", "postgres"].includes(database)) {
     return Result.ok(undefined);
@@ -18,7 +19,7 @@ export async function setupPlanetScale(
 
   return Result.tryPromise({
     try: async () => {
-      const targetApp = backend === "self" ? "apps/web" : "apps/server";
+      const targetApp = getDbEnvTargetApp(config);
       const envPath = path.join(projectDir, targetApp, ".env");
 
       if (database === "mysql" && orm === "drizzle") {

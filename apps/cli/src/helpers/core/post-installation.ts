@@ -16,6 +16,7 @@ import { cliColors } from "../../utils/cli-colors";
 import { normalizeCommunication } from "../../utils/config-processing";
 import { getDockerStatus } from "../../utils/docker-utils";
 import { cliConsola } from "../../utils/terminal-output";
+import { relocateLayoutPaths } from "@kubojs/template-generator";
 
 const pc = { ...basePc, cyan: cliColors.signal };
 
@@ -245,7 +246,8 @@ export async function displayPostInstallInstructions(
   output += `\n${pc.bold("Like kubojs?")} Please consider giving us a star\n   on GitHub:\n`;
   output += pc.cyan("https://github.com/albuquerquesz/kubo");
 
-  cliConsola.box(output);
+  // Instructions are written for the standard layout; relocate paths to the project layout.
+  cliConsola.box(relocateLayoutPaths(output, config));
 }
 
 function getNativeInstructions(

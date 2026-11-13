@@ -17,6 +17,7 @@ import {
   type DbSetupMode,
   resolveDbSetupMode,
 } from "../core/db-setup-options";
+import { getDbEnvTargetApp } from "../../utils/layout-paths";
 
 type TursoConfig = {
   dbUrl: string;
@@ -226,12 +227,12 @@ async function createTursoDatabase(
 
 async function writeEnvFile(
   projectDir: string,
-  backend: ProjectConfig["backend"],
+  project: Pick<ProjectConfig, "backend" | "layout">,
   config?: TursoConfig,
 ): Promise<Result<void, DatabaseSetupError>> {
   return Result.tryPromise({
     try: async () => {
-      const targetApp = backend === "self" ? "apps/web" : "apps/server";
+      const targetApp = getDbEnvTargetApp(project);
       const envPath = path.join(projectDir, targetApp, ".env");
       const variables: EnvVariable[] = [
         {
@@ -256,7 +257,7 @@ async function writeEnvFile(
   });
 }
 
-function displayManualSetupInstructions(targetApp: "apps/web" | "apps/server") {
+function displayManualSetupInstructions(targetApp: string) {
   cliLog.info(`Manual Turso Setup Instructions:
 
 1. Visit https://turso.tech and create an account
@@ -272,8 +273,8 @@ export async function setupTurso(
   config: ProjectConfig,
   cliInput?: DatabaseSetupCliOptions,
 ): Promise<TursoSetupResult> {
-  const { projectDir, backend } = config;
-  const targetApp: "apps/web" | "apps/server" = backend === "self" ? "apps/web" : "apps/server";
+  const { projectDir } = config;
+  const targetApp: string = getDbEnvTargetApp(config);
   const setupMode = resolveDbSetupMode("turso", {
     manualDb: cliInput?.manualDb,
     dbSetupOptions: cliInput?.dbSetupOptions ?? config.dbSetupOptions,
@@ -281,7 +282,7 @@ export async function setupTurso(
   const setupSpinner = createSpinner();
 
   if (setupMode === "manual") {
-    const envResult = await writeEnvFile(projectDir, backend);
+    const envResult = await writeEnvFile(projectDir, config);
     if (envResult.isErr()) {
       return envResult;
     }
@@ -321,7 +322,7 @@ export async function setupTurso(
   }
 
   if (mode === "manual") {
-    const envResult = await writeEnvFile(projectDir, backend);
+    const envResult = await writeEnvFile(projectDir, config);
     if (envResult.isErr()) {
       return envResult;
     }
@@ -337,7 +338,7 @@ export async function setupTurso(
   if (isWindows) {
     setupSpinner.stop(pc.yellow("Turso setup not supported on Windows"));
     cliLog.warn(pc.yellow("Automatic Turso setup is not supported on Windows."));
-    const envResult = await writeEnvFile(projectDir, backend);
+    const envResult = await writeEnvFile(projectDir, config);
     if (envResult.isErr()) {
       return envResult;
     }
@@ -370,7 +371,7 @@ export async function setupTurso(
     }
 
     if (!shouldInstall) {
-      const envResult = await writeEnvFile(projectDir, backend);
+      const envResult = await writeEnvFile(projectDir, config);
       if (envResult.isErr()) {
         return envResult;
       }
@@ -381,7 +382,7 @@ export async function setupTurso(
     const installResult = await installTursoCLI(isMac);
     if (installResult.isErr()) {
       cliLog.error(pc.red(installResult.error.message));
-      const envResult = await writeEnvFile(projectDir, backend);
+      const envResult = await writeEnvFile(projectDir, config);
       if (envResult.isErr()) {
         return envResult;
       }
@@ -394,7 +395,7 @@ export async function setupTurso(
   if (!isLoggedIn) {
     if (isSilent()) {
       cliLog.warn(pc.yellow("Turso CLI is not logged in. Falling back to manual setup."));
-      const envResult = await writeEnvFile(projectDir, backend);
+      const envResult = await writeEnvFile(projectDir, config);
       if (envResult.isErr()) {
         return envResult;
       }
@@ -405,7 +406,7 @@ export async function setupTurso(
     const loginResult = await loginToTurso();
     if (loginResult.isErr()) {
       cliLog.error(pc.red(loginResult.error.message));
-      const envResult = await writeEnvFile(projectDir, backend);
+      const envResult = await writeEnvFile(projectDir, config);
       if (envResult.isErr()) {
         return envResult;
       }
@@ -439,7 +440,7 @@ export async function setupTurso(
     const createResult = await createTursoDatabase(suggestedName, selectedGroup);
     if (createResult.isErr()) {
       cliLog.error(pc.red(createResult.error.message));
-      const envResult = await writeEnvFile(projectDir, backend);
+      const envResult = await writeEnvFile(projectDir, config);
       if (envResult.isErr()) {
         return envResult;
       }
@@ -448,7 +449,7 @@ export async function setupTurso(
       return Result.ok(undefined);
     }
 
-    const envResult = await writeEnvFile(projectDir, backend, createResult.value);
+    const envResult = await writeEnvFile(projectDir, config, createResult.value);
     if (envResult.isErr()) {
       return envResult;
     }
@@ -480,7 +481,7 @@ export async function setupTurso(
         continue;
       }
       cliLog.error(pc.red(createResult.error.message));
-      const envResult = await writeEnvFile(projectDir, backend);
+      const envResult = await writeEnvFile(projectDir, config);
       if (envResult.isErr()) {
         return envResult;
       }
@@ -489,7 +490,7 @@ export async function setupTurso(
       return Result.ok(undefined);
     }
 
-    const envResult = await writeEnvFile(projectDir, backend, createResult.value);
+    const envResult = await writeEnvFile(projectDir, config, createResult.value);
     if (envResult.isErr()) {
       return envResult;
     }

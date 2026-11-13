@@ -9,6 +9,7 @@ import { AddonSetupError } from "../../utils/errors";
 import { shouldSkipExternalCommands } from "../../utils/external-commands";
 import { getPackageRunnerPrefix } from "../../utils/package-runner";
 import { createSpinner } from "../../utils/terminal-output";
+import { appDir } from "../../utils/layout-paths";
 
 function getWebFrontend(frontend: Pick<ProjectConfig, "frontend">["frontend"]) {
   return frontend.find((value) => (desktopWebFrontends as readonly string[]).includes(value));
@@ -88,7 +89,7 @@ export async function setupTauri(config: ProjectConfig): Promise<Result<void, Ad
 
   const { packageManager, frontend, projectDir } = config;
   const s = createSpinner();
-  const clientPackageDir = path.join(projectDir, "apps/web");
+  const clientPackageDir = path.join(projectDir, appDir(config, "web"));
 
   if (!(await fs.pathExists(clientPackageDir))) {
     return Result.ok(undefined);

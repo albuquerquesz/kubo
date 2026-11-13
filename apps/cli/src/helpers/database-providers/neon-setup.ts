@@ -23,6 +23,7 @@ import {
   type DbSetupMode,
   resolveDbSetupMode,
 } from "../core/db-setup-options";
+import { getDbEnvTargetApp } from "../../utils/layout-paths";
 
 type NeonConfig = {
   connectionString: string;
@@ -127,12 +128,12 @@ async function createNeonProject(
 
 async function writeEnvFile(
   projectDir: string,
-  backend: ProjectConfig["backend"],
+  project: Pick<ProjectConfig, "backend" | "layout">,
   config?: NeonConfig,
 ): Promise<Result<void, DatabaseSetupError>> {
   return Result.tryPromise({
     try: async () => {
-      const targetApp = backend === "self" ? "apps/web" : "apps/server";
+      const targetApp = getDbEnvTargetApp(project);
       const envPath = path.join(projectDir, targetApp, ".env");
       const variables: EnvVariable[] = [
         {
@@ -157,12 +158,12 @@ async function writeEnvFile(
 async function setupWithNeonDb(
   projectDir: string,
   packageManager: PackageManager,
-  backend: ProjectConfig["backend"],
+  project: Pick<ProjectConfig, "backend" | "layout">,
 ): Promise<Result<void, DatabaseSetupError>> {
   const s = createSpinner();
   s.start("Creating Neon database using neon-new...");
 
-  const targetApp = backend === "self" ? "apps/web" : "apps/server";
+  const targetApp = getDbEnvTargetApp(project);
   const targetDir = path.join(projectDir, targetApp);
 
   const ensureDirResult = await Result.tryPromise({
@@ -201,7 +202,7 @@ async function setupWithNeonDb(
   });
 }
 
-function displayManualSetupInstructions(target: "apps/web" | "apps/server") {
+function displayManualSetupInstructions(target: string) {
   cliLog.info(`Manual Neon PostgreSQL Setup Instructions:
 
 1. Get Neon with kubojs referral: https://get.neon.com/sbA3tIe
@@ -216,15 +217,15 @@ export async function setupNeonPostgres(
   config: ProjectConfig,
   cliInput?: DatabaseSetupCliOptions,
 ): Promise<NeonSetupResult> {
-  const { packageManager, projectDir, backend } = config;
+  const { packageManager, projectDir } = config;
   const setupMode = resolveDbSetupMode("neon", {
     manualDb: cliInput?.manualDb,
     dbSetupOptions: cliInput?.dbSetupOptions ?? config.dbSetupOptions,
   });
-  const target: "apps/web" | "apps/server" = backend === "self" ? "apps/web" : "apps/server";
+  const target: string = getDbEnvTargetApp(config);
 
   if (shouldSkipExternalCommands()) {
-    const envResult = await writeEnvFile(projectDir, backend);
+    const envResult = await writeEnvFile(projectDir, config);
     if (envResult.isErr()) {
       return envResult;
     }
@@ -233,7 +234,7 @@ export async function setupNeonPostgres(
   }
 
   if (setupMode === "manual") {
-    const envResult = await writeEnvFile(projectDir, backend);
+    const envResult = await writeEnvFile(projectDir, config);
     if (envResult.isErr()) {
       return envResult;
     }
@@ -273,7 +274,7 @@ export async function setupNeonPostgres(
   }
 
   if (selectedMode === "manual") {
-    const envResult = await writeEnvFile(projectDir, backend);
+    const envResult = await writeEnvFile(projectDir, config);
     if (envResult.isErr()) {
       return envResult;
     }
@@ -314,10 +315,10 @@ export async function setupNeonPostgres(
   }
 
   if (setupMethod === "neondb") {
-    const neonDbResult = await setupWithNeonDb(projectDir, packageManager, backend);
+    const neonDbResult = await setupWithNeonDb(projectDir, packageManager, config);
     if (neonDbResult.isErr()) {
       cliLog.error(pc.red(neonDbResult.error.message));
-      const envResult = await writeEnvFile(projectDir, backend);
+      const envResult = await writeEnvFile(projectDir, config);
       if (envResult.isErr()) {
         return envResult;
       }
@@ -376,7 +377,7 @@ export async function setupNeonPostgres(
 
   if (neonConfigResult.isErr()) {
     cliLog.error(pc.red(neonConfigResult.error.message));
-    const envResult = await writeEnvFile(projectDir, backend);
+    const envResult = await writeEnvFile(projectDir, config);
     if (envResult.isErr()) {
       return envResult;
     }
@@ -387,7 +388,7 @@ export async function setupNeonPostgres(
   const finalSpinner = createSpinner();
   finalSpinner.start("Configuring database connection");
 
-  const envResult = await writeEnvFile(projectDir, backend, neonConfigResult.value);
+  const envResult = await writeEnvFile(projectDir, config, neonConfigResult.value);
   if (envResult.isErr()) {
     finalSpinner.stop(pc.red("Failed to configure database connection"));
     return envResult;
