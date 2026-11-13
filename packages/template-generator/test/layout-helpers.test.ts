@@ -39,3 +39,38 @@ describe("layout Handlebars helpers", () => {
     expect(() => render(`{{layoutPath "app:mobile"}}`)).toThrow("Unknown layout ref");
   });
 });
+
+describe("migrated templates render the standard paths", () => {
+  const standard = {
+    projectName: "x",
+    frontend: ["next"],
+    addons: [],
+    backend: "hono",
+    runtime: "bun",
+    database: "sqlite",
+    orm: "drizzle",
+    webDeploy: "cloudflare",
+    serverDeploy: "cloudflare",
+  } as unknown as ProjectConfig;
+
+  async function renderTemplate(file: string): Promise<string> {
+    const source = await Bun.file(new URL(`../templates/${file}`, import.meta.url)).text();
+    return processTemplateString(source, standard);
+  }
+
+  it("ui globals.css keeps the Tailwind @source path", async () => {
+    const css = await renderTemplate("packages/ui/src/styles/globals.css.hbs");
+    expect(css.split("\n").slice(0, 5).join("\n")).toContain(
+      '@source "../../../apps/**/*.{ts,tsx}";',
+    );
+  });
+
+  it("infra alchemy.run.ts keeps the standard relative paths", async () => {
+    const lines = (await renderTemplate("packages/infra/alchemy.run.ts.hbs"))
+      .split("\n")
+      .filter((line) => /\.\.\/|cwd:|migrationsDir|config\(\{ path/.test(line));
+    expect(lines.join("\n")).toContain('config({ path: "../../apps/web/.env" });');
+    expect(lines.join("\n")).not.toContain("&#x");
+    expect(lines.filter((line) => line.includes("cwd:")).every((line) => /"\.\.\/\.\.\/apps\/(web|server)"/.test(line))).toBe(true);
+  });
+});

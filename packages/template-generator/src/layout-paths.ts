@@ -80,3 +80,25 @@ export function relocateLayoutPaths(text: string, config: Pick<ProjectConfig, "l
     .replace(/(├── |└── )apps\//g, `$1${expanded.dirs.apps}/`)
     .replace(/(├── |└── )packages\//g, `$1${expanded.dirs.packages}/`);
 }
+
+/**
+ * Maps a standard-layout file path to the project's layout:
+ * `apps/desktop/package.json` → `<layout desktop>/package.json`. Identity for the standard layout
+ * and for paths outside `apps/<id>` / `packages/<id>`. Used for templates copied from a root prefix.
+ */
+export function relocateLayoutFilePath(
+  filePath: string,
+  config: Pick<ProjectConfig, "layout">,
+): string {
+  const match = /^(apps|packages)\/([a-z][a-z0-9-]*)(\/.*)?$/.exec(filePath);
+  if (!match) return filePath;
+  const [, kind, id, rest = ""] = match;
+  const expanded = expandLayoutConfig(config.layout);
+  if (kind === "packages") return `${getLayoutPackagePath(expanded, id!)}${rest}`;
+  if (isLayoutAppId(id!)) return `${expanded.apps[id]}${rest}`;
+  return `${joinAppsDir(expanded.dirs.apps, id!)}${rest}`;
+}
+
+function joinAppsDir(dir: string, id: string): string {
+  return dir === "." ? id : `${dir}/${id}`;
+}

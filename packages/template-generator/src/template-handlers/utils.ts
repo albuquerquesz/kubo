@@ -2,6 +2,7 @@ import type { ProjectConfig } from "@kubojs/types";
 
 import { processTemplateString, transformFilename, isBinaryFile } from "../core/template-processor";
 import type { VirtualFileSystem } from "../core/virtual-fs";
+import { relocateLayoutFilePath } from "../layout-paths";
 
 export type TemplateData = Map<string, string>;
 
@@ -53,7 +54,10 @@ export function processTemplatesFromPrefix(
 
     const relativePath = templatePath.slice(normalizedPrefix.length);
     const outputPath = transformFilename(relativePath);
-    const destPath = destPrefix ? `${destPrefix}/${outputPath}` : outputPath;
+    // Root-prefixed templates (e.g. addons/<addon>/apps/desktop/...) follow the layout.
+    const destPath = destPrefix
+      ? `${destPrefix}/${outputPath}`
+      : relocateLayoutFilePath(outputPath, config);
 
     let processedContent: string;
     if (isBinaryFile(templatePath)) {
