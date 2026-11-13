@@ -22,6 +22,7 @@ import { setupPrismaPostgres } from "../database-providers/prisma-postgres-setup
 import { setupSupabase } from "../database-providers/supabase-setup";
 import { setupTurso } from "../database-providers/turso-setup";
 import { type DatabaseSetupCliOptions, mergeResolvedDbSetupOptions } from "./db-setup-options";
+import { appDir, pkgDir } from "../../utils/layout-paths";
 
 export async function setupDatabase(
   config: ProjectConfig,
@@ -32,7 +33,7 @@ export async function setupDatabase(
   if (backend === "convex" || database === "none") {
     // Clean up server db dir if not using convex
     if (backend !== "convex") {
-      const serverDbDir = path.join(projectDir, "apps/server/src/db");
+      const serverDbDir = path.join(projectDir, appDir(config, "server"), "src/db");
       if (await fs.pathExists(serverDbDir)) {
         await fs.remove(serverDbDir);
       }
@@ -40,7 +41,7 @@ export async function setupDatabase(
     return;
   }
 
-  const dbPackageDir = path.join(projectDir, "packages/db");
+  const dbPackageDir = path.join(projectDir, pkgDir(config, "db"));
   if (!(await fs.pathExists(dbPackageDir))) {
     return;
   }

@@ -22,17 +22,18 @@ import {
   type DbSetupMode,
   resolveDbSetupMode,
 } from "../core/db-setup-options";
+import { getDbEnvTargetApp, pkgDir } from "../../utils/layout-paths";
 
 type SupabaseSetupResult = Result<void, DatabaseSetupError | UserCancelledError>;
 
 async function writeSupabaseEnvFile(
   projectDir: string,
-  backend: ProjectConfig["backend"],
+  project: Pick<ProjectConfig, "backend" | "layout">,
   databaseUrl: string,
 ): Promise<Result<void, DatabaseSetupError>> {
   return Result.tryPromise({
     try: async () => {
-      const targetApp = backend === "self" ? "apps/web" : "apps/server";
+      const targetApp = getDbEnvTargetApp(project);
       const envPath = path.join(projectDir, targetApp, ".env");
       const dbUrlToUse = databaseUrl || "postgresql://postgres:postgres@127.0.0.1:54322/postgres";
       const variables: EnvVariable[] = [
@@ -144,7 +145,7 @@ async function startSupabase(
 }
 
 function displayManualSupabaseInstructions(
-  targetApp: "apps/web" | "apps/server",
+  targetApp: string,
   output?: string | null,
 ) {
   cliLog.info(
@@ -169,14 +170,14 @@ export async function setupSupabase(
   config: ProjectConfig,
   cliInput?: DatabaseSetupCliOptions,
 ): Promise<SupabaseSetupResult> {
-  const { projectDir, packageManager, backend } = config;
-  const targetApp: "apps/web" | "apps/server" = backend === "self" ? "apps/web" : "apps/server";
+  const { projectDir, packageManager } = config;
+  const targetApp: string = getDbEnvTargetApp(config);
   const setupMode = resolveDbSetupMode("supabase", {
     manualDb: cliInput?.manualDb,
     dbSetupOptions: cliInput?.dbSetupOptions ?? config.dbSetupOptions,
   });
 
-  const serverDir = path.join(projectDir, "packages", "db");
+  const serverDir = path.join(projectDir, pkgDir(config, "db"));
 
   const ensureDirResult = await Result.tryPromise({
     try: () => fs.ensureDir(serverDir),
@@ -194,7 +195,7 @@ export async function setupSupabase(
 
   if (setupMode === "manual") {
     displayManualSupabaseInstructions(targetApp);
-    return writeSupabaseEnvFile(projectDir, backend, "");
+    return writeSupabaseEnvFile(projectDir, config, "");
   }
 
   let mode: DbSetupMode | undefined = setupMode;
@@ -230,28 +231,28 @@ export async function setupSupabase(
 
   if (mode === "manual") {
     displayManualSupabaseInstructions(targetApp);
-    return writeSupabaseEnvFile(projectDir, backend, "");
+    return writeSupabaseEnvFile(projectDir, config, "");
   }
 
   const initResult = await initializeSupabase(serverDir, packageManager);
   if (initResult.isErr()) {
     cliLog.error(pc.red(initResult.error.message));
     displayManualSupabaseInstructions(targetApp);
-    return writeSupabaseEnvFile(projectDir, backend, "");
+    return writeSupabaseEnvFile(projectDir, config, "");
   }
 
   const startResult = await startSupabase(serverDir, packageManager);
   if (startResult.isErr()) {
     cliLog.error(pc.red(startResult.error.message));
     displayManualSupabaseInstructions(targetApp);
-    return writeSupabaseEnvFile(projectDir, backend, "");
+    return writeSupabaseEnvFile(projectDir, config, "");
   }
 
   const supabaseOutput = startResult.value;
   const dbUrl = extractDbUrl(supabaseOutput);
 
   if (dbUrl) {
-    const envResult = await writeSupabaseEnvFile(projectDir, backend, dbUrl);
+    const envResult = await writeSupabaseEnvFile(projectDir, config, dbUrl);
     if (envResult.isOk()) {
       cliLog.success(pc.green("Supabase local development setup ready!"));
     } else {

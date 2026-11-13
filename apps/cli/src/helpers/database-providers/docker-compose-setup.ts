@@ -5,11 +5,12 @@ import { Result } from "better-result";
 import type { Database, ProjectConfig } from "../../types";
 import { addEnvVariablesToFile, type EnvVariable } from "../../utils/env-utils";
 import { DatabaseSetupError } from "../../utils/errors";
+import { getDbEnvTargetApp } from "../../utils/layout-paths";
 
 export async function setupDockerCompose(
   config: ProjectConfig,
 ): Promise<Result<void, DatabaseSetupError>> {
-  const { database, projectDir, projectName, backend } = config;
+  const { database, projectDir, projectName } = config;
 
   if (database === "none" || database === "sqlite") {
     return Result.ok(undefined);
@@ -17,7 +18,7 @@ export async function setupDockerCompose(
 
   const result = await Result.tryPromise({
     try: async () => {
-      await writeEnvFile(projectDir, database, projectName, backend);
+      await writeEnvFile(projectDir, database, projectName, config);
     },
     catch: (e) =>
       new DatabaseSetupError({
@@ -34,9 +35,9 @@ async function writeEnvFile(
   projectDir: string,
   database: Database,
   projectName: string,
-  backend?: string,
+  project: Pick<ProjectConfig, "backend" | "layout">,
 ) {
-  const targetApp = backend === "self" ? "apps/web" : "apps/server";
+  const targetApp = getDbEnvTargetApp(project);
   const envPath = path.join(projectDir, targetApp, ".env");
   const variables: EnvVariable[] = [
     {

@@ -6,6 +6,7 @@ import fs from "fs-extra";
 
 import type { Frontend, ProjectConfig } from "../types";
 import { ProjectCreationError } from "./errors";
+import { appDir } from "./layout-paths";
 
 const TANSTACK_ROUTE_TREE_FRONTENDS = [
   "tanstack-router",
@@ -34,7 +35,7 @@ function needsRouteTree(frontend: readonly Frontend[]): boolean {
  */
 export async function generateRouteTreeIfNeeded(
   projectDir: string,
-  config: Pick<ProjectConfig, "frontend">,
+  config: Pick<ProjectConfig, "frontend" | "layout">,
 ): Promise<Result<void, ProjectCreationError>> {
   if (!needsRouteTree(config.frontend)) {
     return Result.ok(undefined);
@@ -45,7 +46,7 @@ export async function generateRouteTreeIfNeeded(
     return Result.ok(undefined);
   }
 
-  const webAppDir = path.join(projectDir, "apps/web");
+  const webAppDir = path.join(projectDir, appDir(config, "web"));
   const routesDir = path.join(webAppDir, "src/routes");
 
   if (!(await fs.pathExists(routesDir))) {
