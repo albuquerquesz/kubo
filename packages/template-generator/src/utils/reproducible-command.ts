@@ -26,6 +26,20 @@ function getBaseCommand(packageManager: ProjectConfig["packageManager"]): string
   return "npx kubojs@latest";
 }
 
+/**
+ * `--layout libs` for a bare preset, `--layout '<json>'` for custom layouts, nothing for the
+ * default standard layout (so existing commands stay unchanged).
+ */
+function formatLayoutFlag(layout: ProjectConfig["layout"]): string | undefined {
+  if (!layout) return undefined;
+  const { version: _version, preset = "standard", ...rest } = layout;
+  if (Object.keys(rest).length === 0) {
+    if (preset === "standard") return undefined;
+    if (preset !== "server-separated") return `--layout ${preset}`;
+  }
+  return `--layout '${JSON.stringify({ preset, ...rest })}'`;
+}
+
 export function generateReproducibleCommand(config: ProjectConfig): string {
   const baseCommand = getBaseCommand(config.packageManager);
 
@@ -67,6 +81,8 @@ export function generateReproducibleCommand(config: ProjectConfig): string {
   flags.push(config.git ? "--git" : "--no-git");
   flags.push(`--package-manager ${config.packageManager}`);
   flags.push(config.install ? "--install" : "--no-install");
+  const layoutFlag = formatLayoutFlag(config.layout);
+  if (layoutFlag) flags.push(layoutFlag);
 
   const projectPathArg = config.relativePath ? ` ${config.relativePath}` : "";
 

@@ -27,6 +27,7 @@ import {
   displayError,
 } from "../../utils/errors";
 import { validateAgentSafePathInput } from "../../utils/input-hardening";
+import { validateCreateLayout } from "../../utils/layout-input";
 import { handleDirectoryConflict, setupProjectDirectory } from "../../utils/project-directory";
 import { addToHistory } from "../../utils/project-history";
 import { validateProjectName } from "../../utils/project-name-validation";
@@ -224,6 +225,9 @@ async function createProjectHandlerInternal(
       cliConsola.fatal("YOLO mode enabled - skipping checks. Things may break!");
     }
 
+    // Validate the layout before any directory is created or file is written.
+    const layout = yield* validateCreateLayout(input.layout);
+
     let currentPathInput: string;
     if (isSilent()) {
       const silentProjectName = yield* Result.await(resolveProjectNameForSilent(input));
@@ -410,6 +414,10 @@ async function createProjectHandlerInternal(
         ...config,
         dbSetupOptions: effectiveDbSetupOptions,
       };
+    }
+
+    if (layout) {
+      config = { ...config, layout };
     }
 
     if (!input.yolo) {

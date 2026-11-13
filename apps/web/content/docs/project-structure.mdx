@@ -36,6 +36,10 @@ Observações:
 - `pnpm-workspace.yaml`, `bunfig.toml` e `.npmrc` são adicionados conforme o gerenciador de pacotes escolhido.
 - `packages/infra` é criado somente quando o deploy Cloudflare está habilitado.
 
+<Callout title="Layout personalizado">
+  Os caminhos desta página seguem o layout padrão (`standard`). Com `--layout` você pode mover apps e pacotes (por exemplo, pacotes em `libs/` ou o app web na raiz). Veja [`--layout`](/docs/cli/options#--layout-presetjson).
+</Callout>
+
 ## Estrutura do monorepo por backend
 
 ### Backends de server (hono, express, fastify, elysia)
