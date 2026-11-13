@@ -1,7 +1,17 @@
 "use client";
 
 import { parseAsBoolean, useQueryState } from "nuqs";
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import {
+  createContext,
+  Suspense,
+  useCallback,
+  useContext,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+  type Ref,
+} from "react";
 
 import { AuthModal } from "@/components/auth/auth-modal";
 import { authClient } from "@/lib/auth-client";
@@ -22,6 +32,29 @@ type AuthModalContextValue = {
 const AuthModalContext = createContext<AuthModalContextValue | null>(null);
 
 export function AuthModalProvider({ children }: { children: React.ReactNode }) {
+  const controllerRef = useRef<AuthModalContextValue>(null);
+
+  const open = useCallback(
+    (options?: AuthModalOptions) => controllerRef.current?.open(options),
+    [],
+  );
+  const close = useCallback(() => controllerRef.current?.close(), []);
+  const value = useMemo(() => ({ open, close }), [open, close]);
+
+  // The `?auth` query flag is read with `useSearchParams`, which opts the
+  // whole subtree out of static prerendering unless it sits behind Suspense.
+  // Keeping it in its own boundary leaves `children` statically renderable.
+  return (
+    <AuthModalContext.Provider value={value}>
+      {children}
+      <Suspense fallback={null}>
+        <AuthModalController ref={controllerRef} />
+      </Suspense>
+    </AuthModalContext.Provider>
+  );
+}
+
+function AuthModalController({ ref }: { ref: Ref<AuthModalContextValue> }) {
   const [isOpen, setIsOpen] = useQueryState(
     AUTH_MODAL_QUERY_KEY,
     parseAsBoolean.withDefault(false).withOptions({ history: "replace" }),
@@ -40,18 +73,15 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
     void setIsOpen(null);
   }, [setIsOpen]);
 
-  const value = useMemo(() => ({ open, close }), [open, close]);
+  useImperativeHandle(ref, () => ({ open, close }), [open, close]);
 
   return (
-    <AuthModalContext.Provider value={value}>
-      {children}
-      <AuthModal
-        open={isOpen}
-        onOpenChange={(next) => (next ? open(options) : close())}
-        reason={options.reason}
-        callbackURL={options.callbackURL}
-      />
-    </AuthModalContext.Provider>
+    <AuthModal
+      open={isOpen}
+      onOpenChange={(next) => (next ? open(options) : close())}
+      reason={options.reason}
+      callbackURL={options.callbackURL}
+    />
   );
 }
 
