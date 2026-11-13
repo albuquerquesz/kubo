@@ -6,8 +6,10 @@
   "experimentalSortPackageJson": true,
   "ignorePatterns": [
     "*.hbs",
+    "apps/breakbot/**",
     "apps/cli/templates/**",
     "packages/backend/convex/_generated/**",
+    "packages/game-core/**",
     "packages/template-generator/src/templates.generated.ts"
   ]
 }

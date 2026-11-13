@@ -1,0 +1,14 @@
+language js
+
+or {
+	TsReturnTypeAnnotation(ty=$type) as $annotation where {
+		$type <: not TsPredicateReturnType(),
+		$type <: not TsAssertsReturnType(),
+		register_diagnostic(span=$annotation, message="Anotação de retorno desnecessária: deixe o TS inferir.", severity="error")
+	},
+	JsVariableDeclarator(variable_annotation=$annotation, initializer=$init) where {
+		$annotation <: TsTypeAnnotation(),
+		$init <: JsInitializerClause(),
+		register_diagnostic(span=$annotation, message="Anotação de variável desnecessária: o inicializador já define o tipo.", severity="error")
+	}
+}

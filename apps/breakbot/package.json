@@ -1,0 +1,46 @@
+{
+	"name": "breakbot",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"imports": {
+		"#/*": "./src/*"
+	},
+	"scripts": {
+		"dev": "vite dev --port 3000",
+		"build": "vite build && node scripts/upload-sourcemaps.mjs",
+		"preview": "vite preview",
+		"typecheck": "tsc -p tsconfig.json",
+		"test": "vitest run --passWithNoTests --dir src",
+		"e2e": "playwright test",
+		"lint": "biome check .",
+		"format": "biome format --write ."
+	},
+	"dependencies": {
+		"@breakbot/game-core": "workspace:*",
+		"@fontsource/jetbrains-mono": "^5.2.8",
+		"@react-three/drei": "^10.7.9",
+		"@react-three/fiber": "^9.8.2",
+		"@tailwindcss/vite": "^4.3.3",
+		"@tanstack/react-router": "1.170.46",
+		"@tanstack/react-start": "1.169.4",
+		"posthog-js": "^1.443.0",
+		"react": "^19.3.1",
+		"react-dom": "^19.3.1",
+		"tailwindcss": "^4.3.3",
+		"three": "^0.187.0",
+		"zustand": "^5.0.16"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.6.4",
+		"@playwright/test": "^1.64.1",
+		"@types/node": "^22.10.2",
+		"@types/react": "^19.2.0",
+		"@types/react-dom": "^19.2.0",
+		"@types/three": "^0.187.0",
+		"@vitejs/plugin-react": "^6.0.1",
+		"typescript": "^6.0.2",
+		"vite": "^8.3.5",
+		"vitest": "^5.0.5"
+	}
+}

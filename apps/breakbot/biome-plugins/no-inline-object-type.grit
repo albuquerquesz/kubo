@@ -1,0 +1,7 @@
+language js
+
+TsObjectType() as $literal where {
+	$literal <: not within TsTypeAliasDeclaration(),
+	$literal <: not within TsInterfaceDeclaration(),
+	register_diagnostic(span=$literal, message="Tipo inline: declare um `type` nomeado.", severity="error")
+}

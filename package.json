@@ -25,13 +25,14 @@
       "typescript": "^6.0.3",
       "unrun": "^0.3.1",
       "yaml": "^2.9.0",
-      "zod": "^4.4.3"
+      "zod": "4.4.3"
     }
   },
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --filter=web",
     "dev:video": "turbo run dev --filter=@kubojs/video",
+    "dev:breakbot": "turbo run dev --filter=breakbot",
     "dev:remote": "turbo run dev:remote --filter=web",
     "dev:convex": "cd packages/backend && bun run dev",
     "cli": "bun run build:cli && ./apps/cli/dist/cli.mjs",
@@ -42,7 +43,7 @@
     "test": "bun run check && bun test packages/types packages/config packages/env packages/template-generator && cd apps/cli && bun test",
     "test:complete": "bun run check && bun run build && cd apps/cli && BTS_MATRIX_MODE=smoke BTS_BUILD_SAMPLES=1 bun test --bail=5",
     "lint": "turbo run lint",
-    "check": "oxfmt . && oxlint .",
+    "check": "oxfmt . && oxlint . --ignore-pattern 'apps/breakbot/**' --ignore-pattern 'packages/game-core/**'",
     "prepare": "lefthook install",
     "release": "bun run scripts/release.ts",
     "downloads": "bun run scripts/npm-downloads.ts",

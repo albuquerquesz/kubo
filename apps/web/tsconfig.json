@@ -17,7 +17,8 @@
     "paths": {
       "fumadocs-mdx:collections/*": ["./.source/*"],
       "@/*": ["./src/*"],
-      "@/public/*": ["./public/*"]
+      "@/public/*": ["./public/*"],
+      "three": ["./node_modules/@types/three"]
     },
     "plugins": [
       {

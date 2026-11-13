@@ -7,6 +7,8 @@ This repo is a Bun + Turborepo monorepo.
 - `apps/cli`: published CLI (`create-kubojs`, bins `create-kubojs` + `kubojs`), with source in `apps/cli/src` and tests in `apps/cli/test`.
 - `apps/web`: Next.js docs/site (`apps/web/src`, `apps/web/content/docs`, `apps/web/public`).
 - `apps/video`: Remotion app for brand/launch videos (`@kubojs/video`). Not part of the Next site; Studio + `remotion render` only.
+- `apps/breakbot`: Breakbot ("PUSH") 3D browser game (Vite + TanStack Start + React Three Fiber). Uses its own Biome config (`apps/breakbot/biome.json`) and is excluded from `oxfmt`/`oxlint`. See `apps/breakbot/SPEC.md` and `apps/breakbot/CLAUDE.md`.
+- `packages/game-core`: Breakbot game rules and simulation (`@breakbot/game-core`, vitest).
 - `packages/template-generator`: template generation engine used by the CLI.
 - `packages/types`: shared schemas/types.
 - `packages/backend`: Convex backend used by web features.
@@ -16,6 +18,7 @@ This repo is a Bun + Turborepo monorepo.
 - `bun install`: install workspace dependencies.
 - `bun dev`: run web app locally (`next dev --port 3333`).
 - `bun run dev:video`: run Remotion Studio (`apps/video`).
+- `bun run dev:breakbot`: run the Breakbot game (`apps/breakbot`, port 3000).
 - `bun cli`: watch-build CLI package.
 - `bun build`: build all packages/apps through Turbo.
 - `bun build:cli`: build only the CLI target.

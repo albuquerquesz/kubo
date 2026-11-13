@@ -1,0 +1,5 @@
+language js
+
+TsUnknownType() as $unknown where {
+	register_diagnostic(span=$unknown, message="Não use `unknown`. Valide na borda e trabalhe com um tipo nomeado.", severity="error")
+}
