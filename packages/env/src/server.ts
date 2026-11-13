@@ -3,14 +3,13 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    NOTIFIQUE_API_KEY: z.string().min(1),
-    NOTIFIQUE_FROM_EMAIL: z.string().min(1),
-    NOTIFIQUE_NEWSLETTER_LIST_ID: z.string().trim().min(1),
+    RESEND_API_KEY: z.string().min(1),
+    /** Verified Resend sender, e.g. `Kubo <noreply@kubojs.dev>`. */
+    EMAIL_FROM: z.string().min(1),
   },
   runtimeEnv: {
-    NOTIFIQUE_API_KEY: process.env.NOTIFIQUE_API_KEY,
-    NOTIFIQUE_FROM_EMAIL: process.env.NOTIFIQUE_FROM_EMAIL,
-    NOTIFIQUE_NEWSLETTER_LIST_ID: process.env.NOTIFIQUE_NEWSLETTER_LIST_ID,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    EMAIL_FROM: process.env.EMAIL_FROM,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION || process.env.NODE_ENV === "test",
   emptyStringAsUndefined: true,

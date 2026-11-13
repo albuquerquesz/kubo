@@ -6,7 +6,6 @@ import type { NextConfig } from "next";
 
 // Validate env at build/dev boot (set SKIP_ENV_VALIDATION=1 to bypass).
 import "./src/env/client";
-import "./src/env/server";
 
 const withMDX = createMDX();
 const appDir = path.dirname(fileURLToPath(import.meta.url));
