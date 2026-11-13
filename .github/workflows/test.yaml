@@ -53,6 +53,10 @@ jobs:
       - name: Build Template Generator
         run: cd packages/template-generator && bun run build
 
+      - name: Test Template Generator
+        working-directory: packages/template-generator
+        run: bun test
+
       - name: Test CLI
         working-directory: apps/cli
         run: bun run test:ci
