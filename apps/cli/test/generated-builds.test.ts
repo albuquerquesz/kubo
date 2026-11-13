@@ -57,7 +57,33 @@ const baseConfig = {
   disableAnalytics: true,
 } satisfies Partial<CreateInput>;
 
+const layoutSampleConfig = {
+  ...baseConfig,
+  frontend: ["tanstack-router"],
+  backend: "hono",
+  runtime: "bun",
+  database: "sqlite",
+  orm: "drizzle",
+  api: "trpc",
+  auth: "better-auth",
+  payments: "none",
+  addons: ["turborepo"],
+  examples: ["todo"],
+} satisfies Partial<CreateInput>;
+
 const buildSamples: BuildSample[] = [
+  // Custom layouts: install, build and type-check must work outside apps/* and packages/*.
+  {
+    name: "layout-libs-web-at-root",
+    config: { ...layoutSampleConfig, layout: { version: 1, preset: "libs", apps: { web: "web" } } },
+  },
+  {
+    name: "layout-nested-dirs",
+    config: {
+      ...layoutSampleConfig,
+      layout: { version: 1, preset: "standard", dirs: { apps: "src/apps", packages: "src/packages" } },
+    },
+  },
   {
     name: "hono-trpc-drizzle-todo",
     packageManagers: ["bun", "npm", "pnpm"],

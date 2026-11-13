@@ -85,9 +85,27 @@ _Avoid_: Update path, addon install path
 The Model Context Protocol server and tools that expose Kubo planning, creation, addon, guidance, and schema operations to agents.
 _Avoid_: MCP addon
 
+**Layout**:
+The folder structure of a generated project: where each app and package lives. Defined by a preset, convention dirs and per-app/package overrides, and stored in `kubo.config.ts`. Imports between packages use package names, so they do not change with the layout.
+_Avoid_: Topology, plugin, structure template
+
+**Layout Preset**:
+An official starting point for a **Layout** (`standard`: `apps/` + `packages/`, the default; `libs`: `apps/` + `libs/`).
+_Avoid_: Template, theme
+
+**Layout Profile**:
+The single **Layout** a signed-in user saves in their kubojs.dev account ("Perfil de layout" in the UI).
+_Avoid_: Saved preset, user template
+
+**Layout Code**:
+A single-use, 10-minute code that lets the CLI fetch a **Layout Profile** without signing in (`create --layout-code`).
+_Avoid_: Token, login code
+
 ## Relationships
 
 - A **Project Configuration** contains one **Core Stack**
+- A **Project Configuration** has one **Layout**; a missing layout means the `standard` **Layout Preset**
+- A **Layout Code** carries a snapshot of a **Layout Profile**, never a session
 - A **Project Configuration** may include zero or more **Addons**
 - A **Project Configuration** may include zero or more **Examples**
 - The **Exhaustive Matrix** covers **Core Stack** combinations
