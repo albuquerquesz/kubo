@@ -82,12 +82,15 @@ export type InitResult = z.infer<typeof InitResultSchema>;
 
 export interface ResolvedLayout {
   preset: LayoutPreset;
+  dirs: { apps: string; packages: string };
   apps: Record<LayoutAppId, string>;
-  packages: Record<LayoutPackageId, string>;
+  packages: Record<string, string>;
   path(logical: LayoutAppId, kind: "app"): string;
-  path(logical: LayoutPackageId, kind: "package"): string;
+  path(logical: string, kind: "package"): string;
   file(logical: LayoutAppId, kind: "app", ...segments: string[]): string;
-  file(logical: LayoutPackageId, kind: "package", ...segments: string[]): string;
+  file(logical: string, kind: "package", ...segments: string[]): string;
+  /** Relative POSIX path between two project-relative paths. */
+  relative(from: string, to: string): string;
   rootPackagePath(): string;
 }
 

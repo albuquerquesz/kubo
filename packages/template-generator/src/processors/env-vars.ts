@@ -7,6 +7,7 @@ import {
 } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
+import { appDir, appFile, pkgDir } from "../layout-paths";
 
 export interface EnvVariable {
   key: string;
@@ -669,7 +670,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
   const hasWebApp = hasWebFrontend(frontend);
 
   if (hasWebApp) {
-    const clientDir = "apps/web";
+    const clientDir = appDir(config, "web");
     if (vfs.directoryExists(clientDir)) {
       const envPath = `${clientDir}/.env`;
       const clientVars = buildClientVars(frontend, backend, auth, observability, payments);
@@ -708,7 +709,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
   }
 
   if (hasNativeFrontend(frontend)) {
-    const nativeDir = "apps/native";
+    const nativeDir = appDir(config, "native");
     if (vfs.directoryExists(nativeDir)) {
       const envPath = `${nativeDir}/.env`;
       const nativeVars = buildNativeVars(frontend, backend, auth);
@@ -717,7 +718,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
   }
 
   if (backend === "convex") {
-    const convexBackendDir = "packages/backend";
+    const convexBackendDir = pkgDir(config, "backend");
     if (vfs.directoryExists(convexBackendDir)) {
       const envLocalPath = `${convexBackendDir}/.env.local`;
 
@@ -770,13 +771,13 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
   );
 
   if (backend === "self") {
-    const webDir = "apps/web";
+    const webDir = appDir(config, "web");
     if (vfs.directoryExists(webDir)) {
       const envPath = `${webDir}/.env`;
       writeEnvFile(vfs, envPath, serverVars);
     }
-  } else if (vfs.directoryExists("apps/server")) {
-    const envPath = "apps/server/.env";
+  } else if (vfs.directoryExists(appDir(config, "server"))) {
+    const envPath = appFile(config, "server", ".env");
     writeEnvFile(vfs, envPath, serverVars);
   }
 
@@ -784,7 +785,7 @@ export function processEnvVariables(vfs: VirtualFileSystem, config: ProjectConfi
   const isIndividualAlchemy = webDeploy === "cloudflare" || serverDeploy === "cloudflare";
 
   if (isUnifiedAlchemy || isIndividualAlchemy) {
-    const infraDir = "packages/infra";
+    const infraDir = pkgDir(config, "infra");
     if (vfs.directoryExists(infraDir)) {
       const envPath = `${infraDir}/.env`;
       const infraAlchemyVars: EnvVariable[] = [

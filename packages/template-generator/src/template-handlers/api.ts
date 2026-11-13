@@ -7,6 +7,7 @@ import {
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix, processSingleTemplate } from "./utils";
+import { appDir, appFile } from "../layout-paths";
 
 function moveGeneratedFile(
   vfs: VirtualFileSystem,
@@ -28,26 +29,29 @@ export async function processApiTemplates(
   if (config.api === "none") return;
   if (config.backend === "convex") return;
 
-  processTemplatesFromPrefix(vfs, templates, `api/${config.api}/server`, "apps/api", config);
+  processTemplatesFromPrefix(vfs, templates, `api/${config.api}/server`, appDir(config, "api"), config);
   if (config.api === "orval") {
     moveGeneratedFile(
       vfs,
-      "apps/api/src/generated/routes.ts",
-      "apps/server/src/generated/routes.ts",
+      appFile(config, "api", "src/generated/routes.ts"),
+      appFile(config, "server", "src/generated/routes.ts"),
     );
     moveGeneratedFile(
       vfs,
-      "apps/api/src/generated/handlers/health.ts",
-      "apps/server/src/generated/handlers/health.ts",
+      appFile(config, "api", "src/generated/handlers/health.ts"),
+      appFile(config, "server", "src/generated/handlers/health.ts"),
     );
     return;
   }
   // src/routers/index.ts moves up one level to src/router.ts, so its parent-relative
   // imports (e.g. "../index") must become sibling-relative ("./index").
-  moveGeneratedFile(vfs, "apps/api/src/routers/index.ts", "apps/api/src/router.ts", (content) =>
-    content.replace(/(from\s+["'])\.\.\//g, "$1./"),
+  moveGeneratedFile(
+    vfs,
+    appFile(config, "api", "src/routers/index.ts"),
+    appFile(config, "api", "src/router.ts"),
+    (content) => content.replace(/(from\s+["'])\.\.\//g, "$1./"),
   );
-  vfs.writeFile("apps/api/src/routers/index.ts", 'export * from "../router";\n');
+  vfs.writeFile(appFile(config, "api", "src/routers/index.ts"), 'export * from "../router";\n');
 
   const hasReactWeb = hasReactFrontend(config.frontend);
   const hasNuxtWeb = config.frontend.includes("nuxt");
@@ -60,7 +64,7 @@ export async function processApiTemplates(
       vfs,
       templates,
       `api/${config.api}/web/react/base`,
-      "apps/web",
+      appDir(config, "web"),
       config,
     );
 
@@ -73,7 +77,7 @@ export async function processApiTemplates(
         vfs,
         templates,
         `api/${config.api}/fullstack/${reactFramework}`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
     }
@@ -83,43 +87,43 @@ export async function processApiTemplates(
         vfs,
         templates,
         `api/${config.api}/fullstack/nuxt`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
       processSingleTemplate(
         vfs,
         templates,
         `api/${config.api}/web/nuxt/app/plugins/vue-query.ts`,
-        "apps/web/app/plugins/vue-query.ts",
+        appFile(config, "web", "app/plugins/vue-query.ts"),
         config,
       );
     } else {
-      processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/nuxt`, "apps/web", config);
+      processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/nuxt`, appDir(config, "web"), config);
     }
   } else if (hasSvelteWeb && config.api === "orpc") {
-    processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/svelte`, "apps/web", config);
+    processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/svelte`, appDir(config, "web"), config);
     if (config.backend === "self") {
       processTemplatesFromPrefix(
         vfs,
         templates,
         `api/${config.api}/fullstack/svelte`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
       if (config.auth !== "better-auth") {
-        vfs.writeFile("apps/web/src/hooks.server.ts", 'import "./lib/orpc.server";\n');
+        vfs.writeFile(appFile(config, "web", "src/hooks.server.ts"), 'import "./lib/orpc.server";\n');
       }
     }
   } else if (hasSolidWeb && config.api === "orpc") {
-    processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/solid`, "apps/web", config);
+    processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/solid`, appDir(config, "web"), config);
   } else if (hasAstroWeb && config.api === "orpc") {
-    processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/astro`, "apps/web", config);
+    processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/astro`, appDir(config, "web"), config);
     if (config.backend === "self") {
       processTemplatesFromPrefix(
         vfs,
         templates,
         `api/${config.api}/fullstack/astro`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
     }

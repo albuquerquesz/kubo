@@ -1,6 +1,6 @@
-import path from "node:path";
-
 import { z } from "zod";
+
+import { describeLayoutPathIssue, getLayoutPathIssue } from "./layout-path";
 
 export const DatabaseSchema = z
   .enum(["none", "sqlite", "postgres", "mysql", "mongodb"])
@@ -323,12 +323,20 @@ export const DbSetupOptionsSchema = z
   })
   .describe("Database setup configuration");
 
+export const LAYOUT_PRESET_IDS = ["standard", "libs"] as const;
+
 export const LayoutPresetSchema = z
-  .enum(["standard", "server-separated"])
-  .describe("Official project topology preset");
+  .enum(LAYOUT_PRESET_IDS)
+  .describe("Official layout preset: the default convention directories");
+
+/** Presets accepted for backward compatibility; expanded to an official preset + overrides. */
+export const LegacyLayoutPresetSchema = z
+  .literal("server-separated")
+  .describe("Deprecated: equivalent to standard with apps.web = apps/client");
 
 export const LayoutAppIdSchema = z.enum(["web", "server", "native", "desktop", "docs", "api"]);
 
+/** Core package ids. Integration packages (catalog providers) use any slug id. */
 export const LayoutPackageIdSchema = z.enum([
   "db",
   "auth",
@@ -341,18 +349,36 @@ export const LayoutPackageIdSchema = z.enum([
   "api",
   "payments",
   "email",
-  "arara",
-  "notifique",
-  "millionsend",
 ]);
 
-export const LayoutRelativePathSchema = z
+export const LayoutPackageKeySchema = z
   .string()
-  .min(1, "Layout path cannot be empty")
-  .refine((value) => value !== "." && value !== "..", "Layout path cannot be . or ..")
-  .refine((value) => !path.isAbsolute(value), "Layout path must be relative to the project root")
-  .refine((value) => !value.split(/[/\\]/).includes(".."), "Layout path cannot contain .. segments")
-  .describe("Project-relative directory path");
+  .regex(/^[a-z][a-z0-9-]*$/, "Package id must be a lowercase slug")
+  .describe("Logical package id (core id or catalog integration id)");
+
+function layoutPathSchema(allowRoot: boolean) {
+  return z.string().superRefine((value, ctx) => {
+    const issue = getLayoutPathIssue(value, { allowRoot });
+    if (issue) ctx.addIssue({ code: "custom", message: describeLayoutPathIssue(issue) });
+  });
+}
+
+export const LayoutRelativePathSchema = layoutPathSchema(false).describe(
+  "Project-relative directory path (POSIX, no .. segments)",
+);
+
+export const LayoutDirSchema = layoutPathSchema(true).describe(
+  "Project-relative convention directory; '.' means the project root",
+);
+
+const LayoutDirsSchema = z
+  .object({
+    apps: LayoutDirSchema,
+    packages: LayoutDirSchema,
+  })
+  .partial()
+  .strict()
+  .describe("Convention directories that hold apps and packages");
 
 const LayoutAppsSchema = z
   .object({
@@ -363,35 +389,24 @@ const LayoutAppsSchema = z
     docs: LayoutRelativePathSchema,
     api: LayoutRelativePathSchema,
   })
-  .partial();
+  .partial()
+  .strict()
+  .describe("Per-app path overrides");
 
 const LayoutPackagesSchema = z
-  .object({
-    db: LayoutRelativePathSchema,
-    auth: LayoutRelativePathSchema,
-    backend: LayoutRelativePathSchema,
-    config: LayoutRelativePathSchema,
-    env: LayoutRelativePathSchema,
-    infra: LayoutRelativePathSchema,
-    ui: LayoutRelativePathSchema,
-    storage: LayoutRelativePathSchema,
-    api: LayoutRelativePathSchema,
-    payments: LayoutRelativePathSchema,
-    email: LayoutRelativePathSchema,
-    arara: LayoutRelativePathSchema,
-    notifique: LayoutRelativePathSchema,
-    millionsend: LayoutRelativePathSchema,
-  })
-  .partial();
+  .record(LayoutPackageKeySchema, LayoutRelativePathSchema)
+  .describe("Per-package path overrides");
 
 export const LayoutConfigSchema = z
   .object({
-    preset: LayoutPresetSchema.default("standard"),
+    version: z.literal(1).optional().describe("Layout contract version"),
+    preset: z.union([LayoutPresetSchema, LegacyLayoutPresetSchema]).default("standard"),
+    dirs: LayoutDirsSchema.optional(),
     apps: LayoutAppsSchema.optional(),
     packages: LayoutPackagesSchema.optional(),
   })
   .strict()
-  .describe("Declarative project folder topology");
+  .describe("Declarative project folder layout: convention directories plus overrides");
 
 export const ProjectNameSchema = z
   .string()

@@ -2,6 +2,7 @@ import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix } from "./utils";
+import { appDir, pkgDir } from "../layout-paths";
 
 const webTemplateDeployments: readonly ProjectConfig["webDeploy"][] = ["docker", "guaracloud"];
 const serverTemplateDeployments: readonly ProjectConfig["serverDeploy"][] = [
@@ -17,7 +18,7 @@ export async function processDeployTemplates(
   const isBackendSelf = config.backend === "self";
 
   if (config.webDeploy === "cloudflare" || config.serverDeploy === "cloudflare") {
-    processTemplatesFromPrefix(vfs, templates, "packages/infra", "packages/infra", config);
+    processTemplatesFromPrefix(vfs, templates, "packages/infra", pkgDir(config, "infra"), config);
   }
 
   if (config.webDeploy === "docker" || config.serverDeploy === "docker") {
@@ -50,7 +51,7 @@ export async function processDeployTemplates(
           vfs,
           templates,
           `${webTemplateRoot}/${templateMap[f]}`,
-          "apps/web",
+          appDir(config, "web"),
           config,
         );
       }
@@ -62,6 +63,6 @@ export async function processDeployTemplates(
       config.serverDeploy === "guaracloud"
         ? "deploy/docker/server"
         : `deploy/${config.serverDeploy}/server`;
-    processTemplatesFromPrefix(vfs, templates, serverTemplateRoot, "apps/server", config);
+    processTemplatesFromPrefix(vfs, templates, serverTemplateRoot, appDir(config, "server"), config);
   }
 }

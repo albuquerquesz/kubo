@@ -3,11 +3,18 @@
  * Updates package names, scripts, and workspaces after template generation
  */
 
-import { hasNativeFrontend, hasWebFrontend, type ProjectConfig } from "@kubojs/types";
+import {
+  expandLayoutConfig,
+  getLayoutDirGlob,
+  hasNativeFrontend,
+  hasWebFrontend,
+  type ProjectConfig,
+} from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { dependencyVersionMap } from "../utils/add-deps";
 import { getDbScriptSupport } from "../utils/db-scripts";
+import { appDir, appFile, getCatalogPackagePaths, getWorkspaceGlobs, pkgFile } from "../layout-paths";
 
 type PackageJson = {
   name?: string;
@@ -116,7 +123,7 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
     // it's skipped. Root `build` runs the non-desktop workspaces, then the desktop
     // (which self-builds its web app, mirroring `vite build && electrobun build`) —
     // serialized so PMs without topological ordering don't run two web builds at once.
-    scripts.build = getElectrobunRootBuildCommand(vfs, packageManager, {
+    scripts.build = getElectrobunRootBuildCommand(vfs, config, {
       hasTurborepo,
       hasVitePlus,
     });
@@ -302,20 +309,24 @@ function updateRootPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): v
     };
   }
 
+  const { dirs } = expandLayoutConfig(config.layout);
+  const appsGlob = getLayoutDirGlob(dirs.apps);
+  const packagesGlob = getLayoutDirGlob(dirs.packages);
+  const addWorkspace = (glob: string) => {
+    if (!workspaces.includes(glob)) workspaces.push(glob);
+  };
+
   if (backend === "convex") {
-    if (!workspaces.includes("packages/*")) {
-      workspaces.push("packages/*");
-    }
-    const needsAppsDir = config.frontend.length > 0;
-    if (needsAppsDir && !workspaces.includes("apps/*")) {
-      workspaces.push("apps/*");
-    }
+    addWorkspace(packagesGlob);
+    if (config.frontend.length > 0) addWorkspace(appsGlob);
   } else {
-    if (!workspaces.includes("apps/*")) {
-      workspaces.push("apps/*");
-    }
-    if (!workspaces.includes("packages/*")) {
-      workspaces.push("packages/*");
+    addWorkspace(appsGlob);
+    addWorkspace(packagesGlob);
+  }
+  // Apps/packages moved outside the convention dirs get an exact entry.
+  for (const glob of getWorkspaceGlobs(config)) {
+    if (glob !== appsGlob && glob !== packagesGlob && vfs.exists(`${glob}/package.json`)) {
+      addWorkspace(glob);
     }
   }
 
@@ -414,7 +425,7 @@ function getPackageManagerConfig(
 
 function getElectrobunRootBuildCommand(
   vfs: VirtualFileSystem,
-  packageManager: ProjectConfig["packageManager"],
+  config: ProjectConfig,
   options: { hasTurborepo: boolean; hasVitePlus: boolean },
 ): string {
   if (options.hasTurborepo) {
@@ -425,13 +436,14 @@ function getElectrobunRootBuildCommand(
     return "vp run -r build --filter '!desktop' && vp run --filter desktop build";
   }
 
-  switch (packageManager) {
+  const desktopDir = appDir(config, "desktop");
+  switch (config.packageManager) {
     case "npm":
       return [
-        ...getWorkspacePackagePathsWithScript(vfs, "build")
-          .filter((workspacePath) => workspacePath !== "apps/desktop")
+        ...getWorkspacePackagePathsWithScript(vfs, "build", config)
+          .filter((workspacePath) => workspacePath !== desktopDir)
           .map((workspacePath) => `npm run build --workspace ${workspacePath} --if-present`),
-        "npm run build --workspace apps/desktop",
+        `npm run build --workspace ${desktopDir}`,
       ].join(" && ");
     case "pnpm":
       return "pnpm -r --filter '!desktop' build && pnpm --filter desktop build";
@@ -441,34 +453,45 @@ function getElectrobunRootBuildCommand(
   }
 }
 
-function getWorkspacePackagePathsWithScript(vfs: VirtualFileSystem, scriptName: string): string[] {
+/** True when `workspacePath` is an app or package folder of the layout. */
+function isLayoutWorkspacePath(workspacePath: string, config: ProjectConfig): boolean {
+  const { dirs } = expandLayoutConfig(config.layout);
+  if (getCatalogPackagePaths(config).includes(workspacePath) && workspacePath !== ".") return true;
+  return [dirs.apps, dirs.packages].some(
+    (dir) => dir !== "." && workspacePath.startsWith(`${dir}/`),
+  );
+}
+
+function getWorkspacePackagePathsWithScript(
+  vfs: VirtualFileSystem,
+  scriptName: string,
+  config: ProjectConfig,
+): string[] {
+  const packagesDir = expandLayoutConfig(config.layout).dirs.packages;
+  const desktopDir = appDir(config, "desktop");
+  const webDir = appDir(config, "web");
+  // Packages first, then apps, then web, with desktop last (it builds web itself).
+  const group = (workspacePath: string) => {
+    if (workspacePath === desktopDir) return 3;
+    if (packagesDir !== "." && workspacePath.startsWith(`${packagesDir}/`)) return 0;
+    if (workspacePath === webDir) return 2;
+    return 1;
+  };
+
   return vfs
     .getAllFiles()
     .filter((filePath) => filePath.endsWith("/package.json"))
     .map((filePath) => filePath.slice(0, -"/package.json".length))
-    .filter(
-      (workspacePath) => workspacePath.startsWith("apps/") || workspacePath.startsWith("packages/"),
-    )
+    .filter((workspacePath) => isLayoutWorkspacePath(workspacePath, config))
     .filter((workspacePath) => {
       const pkgJson = vfs.readJson<PackageJson>(`${workspacePath}/package.json`);
       return Boolean(pkgJson?.scripts?.[scriptName]);
     })
-    .sort(compareWorkspacePackagePaths);
-}
-
-function compareWorkspacePackagePaths(a: string, b: string): number {
-  const group = (workspacePath: string) => {
-    if (workspacePath === "apps/desktop") return 3;
-    if (workspacePath.startsWith("packages/")) return 0;
-    if (workspacePath === "apps/web") return 2;
-    return 1;
-  };
-
-  return group(a) - group(b) || a.localeCompare(b);
+    .sort((a, b) => group(a) - group(b) || a.localeCompare(b));
 }
 
 function updateDesktopPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("apps/desktop/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(appFile(config, "desktop", "package.json"));
   if (!pkgJson) return;
 
   const { packageManager, addons, frontend } = config;
@@ -500,7 +523,7 @@ function updateDesktopPackageJson(vfs: VirtualFileSystem, config: ProjectConfig)
     "check-types": "tsc --noEmit",
   };
 
-  vfs.writeJson("apps/desktop/package.json", pkgJson);
+  vfs.writeJson(appFile(config, "desktop", "package.json"), pkgJson);
 }
 
 function getDesktopWebCommand(
@@ -540,7 +563,7 @@ function getLocalRunCommand(packageManager: ProjectConfig["packageManager"]): st
 }
 
 function updateDbPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("packages/db/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(pkgFile(config, "db", "package.json"));
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/db`;
@@ -586,35 +609,35 @@ function updateDbPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): voi
     scripts["db:down"] = "docker compose down";
   }
 
-  vfs.writeJson("packages/db/package.json", pkgJson);
+  vfs.writeJson(pkgFile(config, "db", "package.json"), pkgJson);
 }
 
 function updateAuthPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("packages/auth/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(pkgFile(config, "auth", "package.json"));
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/auth`;
-  vfs.writeJson("packages/auth/package.json", pkgJson);
+  vfs.writeJson(pkgFile(config, "auth", "package.json"), pkgJson);
 }
 
 function updateApiPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("apps/api/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(appFile(config, "api", "package.json"));
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/api`;
-  vfs.writeJson("apps/api/package.json", pkgJson);
+  vfs.writeJson(appFile(config, "api", "package.json"), pkgJson);
 }
 
 function updateConfigPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("packages/config/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(pkgFile(config, "config", "package.json"));
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/config`;
-  vfs.writeJson("packages/config/package.json", pkgJson);
+  vfs.writeJson(pkgFile(config, "config", "package.json"), pkgJson);
 }
 
 function updateEnvPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("packages/env/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(pkgFile(config, "env", "package.json"));
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/env`;
@@ -637,71 +660,71 @@ function updateEnvPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): vo
 
   pkgJson.exports = exports;
 
-  vfs.writeJson("packages/env/package.json", pkgJson);
+  vfs.writeJson(pkgFile(config, "env", "package.json"), pkgJson);
 }
 
 function updatePaymentsPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("packages/payments/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(pkgFile(config, "payments", "package.json"));
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/payments`;
-  vfs.writeJson("packages/payments/package.json", pkgJson);
+  vfs.writeJson(pkgFile(config, "payments", "package.json"), pkgJson);
 }
 
 function updateEmailPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("packages/email/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(pkgFile(config, "email", "package.json"));
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/email`;
-  vfs.writeJson("packages/email/package.json", pkgJson);
+  vfs.writeJson(pkgFile(config, "email", "package.json"), pkgJson);
 }
 
 function updateNotifiquePackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("packages/notifique/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(pkgFile(config, "notifique", "package.json"));
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/notifique`;
-  vfs.writeJson("packages/notifique/package.json", pkgJson);
+  vfs.writeJson(pkgFile(config, "notifique", "package.json"), pkgJson);
 }
 
 function updateAraraPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("packages/arara/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(pkgFile(config, "arara", "package.json"));
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/arara`;
-  vfs.writeJson("packages/arara/package.json", pkgJson);
+  vfs.writeJson(pkgFile(config, "arara", "package.json"), pkgJson);
 }
 
 function updateUiPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("packages/ui/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(pkgFile(config, "ui", "package.json"));
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/ui`;
-  vfs.writeJson("packages/ui/package.json", pkgJson);
+  vfs.writeJson(pkgFile(config, "ui", "package.json"), pkgJson);
 }
 
 function updateInfraPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("packages/infra/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(pkgFile(config, "infra", "package.json"));
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/infra`;
-  vfs.writeJson("packages/infra/package.json", pkgJson);
+  vfs.writeJson(pkgFile(config, "infra", "package.json"), pkgJson);
 }
 
 function updateConvexPackageJson(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const pkgJson = vfs.readJson<PackageJson>("packages/backend/package.json");
+  const pkgJson = vfs.readJson<PackageJson>(pkgFile(config, "backend", "package.json"));
   if (!pkgJson) return;
 
   pkgJson.name = `@${config.projectName}/backend`;
   pkgJson.scripts = pkgJson.scripts || {};
-  vfs.writeJson("packages/backend/package.json", pkgJson);
+  vfs.writeJson(pkgFile(config, "backend", "package.json"), pkgJson);
 }
 
 function renameDevScriptsForAlchemy(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { serverDeploy, webDeploy, backend } = config;
 
   if (serverDeploy === "cloudflare" && backend !== "self") {
-    const serverPkgPath = "apps/server/package.json";
+    const serverPkgPath = appFile(config, "server", "package.json");
     const serverPkg = vfs.readJson<PackageJson>(serverPkgPath);
     if (serverPkg?.scripts?.dev) {
       serverPkg.scripts["dev:bare"] = serverPkg.scripts.dev;
@@ -711,7 +734,7 @@ function renameDevScriptsForAlchemy(vfs: VirtualFileSystem, config: ProjectConfi
   }
 
   if (webDeploy === "cloudflare") {
-    const webPkgPath = "apps/web/package.json";
+    const webPkgPath = appFile(config, "web", "package.json");
     const webPkg = vfs.readJson<PackageJson>(webPkgPath);
     if (webPkg?.scripts?.dev) {
       webPkg.scripts["dev:bare"] = webPkg.scripts.dev;
@@ -726,7 +749,7 @@ function updateVitePlusPackageScripts(vfs: VirtualFileSystem, config: ProjectCon
     return;
   }
 
-  const webPkgPath = "apps/web/package.json";
+  const webPkgPath = appFile(config, "web", "package.json");
   const webPkg = vfs.readJson<PackageJson>(webPkgPath);
   if (!webPkg?.scripts) {
     return;

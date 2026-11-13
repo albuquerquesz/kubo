@@ -8,6 +8,7 @@ import {
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processTemplatesFromPrefix } from "./utils";
+import { appDir, pkgDir } from "../layout-paths";
 
 export async function processAuthTemplates(
   vfs: VirtualFileSystem,
@@ -33,7 +34,7 @@ export async function processAuthTemplates(
       vfs,
       templates,
       "auth/clerk/convex/backend",
-      "packages/backend",
+      pkgDir(config, "backend"),
       config,
     );
 
@@ -44,7 +45,7 @@ export async function processAuthTemplates(
           vfs,
           templates,
           `auth/clerk/convex/web/react/${reactFramework}`,
-          "apps/web",
+          appDir(config, "web"),
           config,
         );
       }
@@ -55,7 +56,7 @@ export async function processAuthTemplates(
         vfs,
         templates,
         "auth/clerk/convex/native/base",
-        "apps/native",
+        appDir(config, "native"),
         config,
       );
 
@@ -69,7 +70,7 @@ export async function processAuthTemplates(
           vfs,
           templates,
           `auth/clerk/convex/native/${nativeFramework}`,
-          "apps/native",
+          appDir(config, "native"),
           config,
         );
       }
@@ -82,7 +83,7 @@ export async function processAuthTemplates(
       vfs,
       templates,
       "auth/better-auth/convex/backend",
-      "packages/backend",
+      pkgDir(config, "backend"),
       config,
     );
 
@@ -91,7 +92,7 @@ export async function processAuthTemplates(
         vfs,
         templates,
         "auth/better-auth/convex/web/react/base",
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
 
@@ -101,7 +102,7 @@ export async function processAuthTemplates(
           vfs,
           templates,
           `auth/better-auth/convex/web/react/${reactFramework}`,
-          "apps/web",
+          appDir(config, "web"),
           config,
         );
       }
@@ -112,7 +113,7 @@ export async function processAuthTemplates(
         vfs,
         templates,
         "auth/better-auth/convex/native/base",
-        "apps/native",
+        appDir(config, "native"),
         config,
       );
 
@@ -126,7 +127,7 @@ export async function processAuthTemplates(
           vfs,
           templates,
           `auth/better-auth/convex/native/${nativeFramework}`,
-          "apps/native",
+          appDir(config, "native"),
           config,
         );
       }
@@ -139,7 +140,7 @@ export async function processAuthTemplates(
       vfs,
       templates,
       `auth/${authProvider}/server/base`,
-      "packages/auth",
+      pkgDir(config, "auth"),
       config,
     );
 
@@ -148,7 +149,7 @@ export async function processAuthTemplates(
         vfs,
         templates,
         "auth/better-auth/server/nestjs",
-        "apps/server",
+        appDir(config, "server"),
         config,
       );
     }
@@ -158,7 +159,7 @@ export async function processAuthTemplates(
         vfs,
         templates,
         `auth/${authProvider}/server/db/${config.orm}/${config.database}`,
-        "packages/db",
+        pkgDir(config, "db"),
         config,
       );
     }
@@ -169,7 +170,7 @@ export async function processAuthTemplates(
       vfs,
       templates,
       `auth/${authProvider}/web/react/base`,
-      "apps/web",
+      appDir(config, "web"),
       config,
     );
 
@@ -179,7 +180,7 @@ export async function processAuthTemplates(
         vfs,
         templates,
         `auth/${authProvider}/web/react/${reactFramework}`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
 
@@ -191,7 +192,7 @@ export async function processAuthTemplates(
           vfs,
           templates,
           `auth/${authProvider}/fullstack/${reactFramework}`,
-          "apps/web",
+          appDir(config, "web"),
           config,
         );
       }
@@ -202,18 +203,18 @@ export async function processAuthTemplates(
         vfs,
         templates,
         `auth/${authProvider}/fullstack/nuxt`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
     }
-    processTemplatesFromPrefix(vfs, templates, `auth/${authProvider}/web/nuxt`, "apps/web", config);
+    processTemplatesFromPrefix(vfs, templates, `auth/${authProvider}/web/nuxt`, appDir(config, "web"), config);
   } else if (hasSvelteWeb) {
     if (config.backend === "self" && authProvider === "better-auth") {
       processTemplatesFromPrefix(
         vfs,
         templates,
         `auth/${authProvider}/fullstack/svelte`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
     }
@@ -221,7 +222,7 @@ export async function processAuthTemplates(
       vfs,
       templates,
       `auth/${authProvider}/web/svelte`,
-      "apps/web",
+      appDir(config, "web"),
       config,
     );
   } else if (hasSolidWeb) {
@@ -229,7 +230,7 @@ export async function processAuthTemplates(
       vfs,
       templates,
       `auth/${authProvider}/web/solid`,
-      "apps/web",
+      appDir(config, "web"),
       config,
     );
   } else if (hasAstroWeb) {
@@ -238,7 +239,7 @@ export async function processAuthTemplates(
         vfs,
         templates,
         `auth/${authProvider}/fullstack/astro`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
     }
@@ -246,7 +247,7 @@ export async function processAuthTemplates(
       vfs,
       templates,
       `auth/${authProvider}/web/astro`,
-      "apps/web",
+      appDir(config, "web"),
       config,
     );
   }
@@ -256,7 +257,7 @@ export async function processAuthTemplates(
       vfs,
       templates,
       `auth/${authProvider}/native/base`,
-      "apps/native",
+      appDir(config, "native"),
       config,
     );
 
@@ -270,7 +271,7 @@ export async function processAuthTemplates(
         vfs,
         templates,
         `auth/${authProvider}/native/${nativeFramework}`,
-        "apps/native",
+        appDir(config, "native"),
         config,
       );
     }

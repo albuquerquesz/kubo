@@ -22,7 +22,7 @@ RUN --mount=type=cache,target=/root/.npm npm install
 {{/if}}
 
 ENV NODE_ENV=production
-RUN cd apps/server && {{packageManager}} run build
+RUN cd {{layoutPath "app:server"}} && {{packageManager}} run build
 ENV SKIP_ENV_VALIDATION=
 {{#if (eq orm "prisma")}}
 ENV DATABASE_URL=
@@ -30,7 +30,7 @@ ENV DATABASE_URL=
 
 EXPOSE 3000
 
-WORKDIR /app/apps/server
+WORKDIR /app/{{layoutPath "app:server"}}
 {{#if (eq runtime "bun")}}
 CMD ["bun", "dist/index.mjs"]
 {{else}}

@@ -2,6 +2,7 @@ import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency } from "../utils/add-deps";
+import { appFile } from "../layout-paths";
 
 export function processFrontendDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { addons, frontend, webDeploy } = config;
@@ -16,7 +17,7 @@ export function processFrontendDeps(vfs: VirtualFileSystem, config: ProjectConfi
     return;
   }
 
-  const webPackagePath = "apps/web/package.json";
+  const webPackagePath = appFile(config, "web", "package.json");
   if (!vfs.exists(webPackagePath)) return;
 
   addPackageDependency({

@@ -2,13 +2,14 @@ import type { ProjectConfig } from "@kubojs/types";
 import { IndentationText, Node, Project, QuoteKind } from "ts-morph";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
+import { appFile } from "../layout-paths";
 
 export function processPwaPlugins(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { addons, projectName } = config;
 
   if (!addons.includes("pwa")) return;
 
-  const viteConfigPath = "apps/web/vite.config.ts";
+  const viteConfigPath = appFile(config, "web", "vite.config.ts");
   if (!vfs.exists(viteConfigPath)) return;
 
   const content = vfs.readFile(viteConfigPath);

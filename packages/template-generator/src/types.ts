@@ -46,5 +46,5 @@ export class GeneratorError extends TaggedError("GeneratorError")<{
 
 export class LayoutResolveError extends TaggedError("LayoutResolveError")<{
   message: string;
-  code: "missing_paths" | "path_collision";
+  code: "missing_paths" | "path_collision" | "case_collision" | "path_overlap";
 }>() {}

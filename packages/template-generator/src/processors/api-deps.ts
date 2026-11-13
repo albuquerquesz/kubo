@@ -9,6 +9,7 @@ import {
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
+import { appFile } from "../layout-paths";
 
 type FrontendType = {
   hasReactWeb: boolean;
@@ -35,18 +36,18 @@ export function processApiDeps(vfs: VirtualFileSystem, config: ProjectConfig): v
   const frontendType = getFrontendType(frontend);
 
   if (backend === "convex") {
-    addConvexDeps(vfs, frontend, frontendType);
+    addConvexDeps(vfs, frontend, frontendType, config);
     return;
   }
 
   if (api === "none") return;
 
-  addApiPackageDeps(vfs, api, backend, frontend, auth);
-  addServerDeps(vfs, api, backend);
-  addSelfBackendWebDeps(vfs, api, backend, frontendType);
-  addWebClientDeps(vfs, api, backend, frontend, frontendType);
-  if (frontendType.hasNative) addNativeDeps(vfs, api, backend);
-  addQueryDeps(vfs, frontend, backend);
+  addApiPackageDeps(vfs, api, backend, frontend, auth, config);
+  addServerDeps(vfs, api, backend, config);
+  addSelfBackendWebDeps(vfs, api, backend, frontendType, config);
+  addWebClientDeps(vfs, api, backend, frontend, frontendType, config);
+  if (frontendType.hasNative) addNativeDeps(vfs, api, backend, config);
+  addQueryDeps(vfs, frontend, backend, config);
 }
 
 function addApiPackageDeps(
@@ -55,8 +56,9 @@ function addApiPackageDeps(
   backend: Backend,
   frontend: Frontend[],
   auth: ProjectConfig["auth"],
+  config: ProjectConfig,
 ): void {
-  const pkgPath = "apps/api/package.json";
+  const pkgPath = appFile(config, "api", "package.json");
   if (!vfs.exists(pkgPath)) return;
 
   if (api === "trpc") {
@@ -101,8 +103,8 @@ function addApiPackageDeps(
   }
 }
 
-function addServerDeps(vfs: VirtualFileSystem, api: API, backend: Backend): void {
-  const serverPath = "apps/server/package.json";
+function addServerDeps(vfs: VirtualFileSystem, api: API, backend: Backend, config: ProjectConfig): void {
+  const serverPath = appFile(config, "server", "package.json");
   if (!vfs.exists(serverPath)) return;
 
   if (backend === "convex") return;
@@ -133,10 +135,11 @@ function addSelfBackendWebDeps(
   api: API,
   backend: Backend,
   _frontendType: FrontendType,
+  config: ProjectConfig,
 ): void {
   if (backend !== "self") return;
 
-  const webPath = "apps/web/package.json";
+  const webPath = appFile(config, "web", "package.json");
   if (!vfs.exists(webPath)) return;
 
   if (api === "trpc") {
@@ -160,8 +163,9 @@ function addWebClientDeps(
   backend: Backend,
   frontend: Frontend[],
   frontendType: FrontendType,
+  config: ProjectConfig,
 ): void {
-  const webPath = "apps/web/package.json";
+  const webPath = appFile(config, "web", "package.json");
   if (!vfs.exists(webPath) || backend === "convex") return;
 
   if (api === "orval" && frontendType.hasNuxtWeb) {
@@ -241,8 +245,8 @@ function addWebClientDeps(
   }
 }
 
-function addNativeDeps(vfs: VirtualFileSystem, api: API, backend: Backend): void {
-  const nativePath = "apps/native/package.json";
+function addNativeDeps(vfs: VirtualFileSystem, api: API, backend: Backend, config: ProjectConfig): void {
+  const nativePath = appFile(config, "native", "package.json");
   if (!vfs.exists(nativePath)) return;
 
   if (backend === "convex") return;
@@ -262,9 +266,9 @@ function addNativeDeps(vfs: VirtualFileSystem, api: API, backend: Backend): void
   }
 }
 
-function addQueryDeps(vfs: VirtualFileSystem, frontend: Frontend[], backend: Backend): void {
-  const webPath = "apps/web/package.json";
-  const nativePath = "apps/native/package.json";
+function addQueryDeps(vfs: VirtualFileSystem, frontend: Frontend[], backend: Backend, config: ProjectConfig): void {
+  const webPath = appFile(config, "web", "package.json");
+  const nativePath = appFile(config, "native", "package.json");
   const frontendType = getFrontendType(frontend);
 
   if (frontendType.hasReactWeb && vfs.exists(webPath) && backend !== "convex") {
@@ -298,9 +302,10 @@ function addConvexDeps(
   vfs: VirtualFileSystem,
   frontend: Frontend[],
   frontendType: FrontendType,
+  config: ProjectConfig,
 ): void {
-  const webPath = "apps/web/package.json";
-  const nativePath = "apps/native/package.json";
+  const webPath = appFile(config, "web", "package.json");
+  const nativePath = appFile(config, "native", "package.json");
   const webExists = vfs.exists(webPath);
   const nativeExists = vfs.exists(nativePath);
 

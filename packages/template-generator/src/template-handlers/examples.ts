@@ -8,6 +8,7 @@ import {
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processSingleTemplate, processTemplatesFromPrefix } from "./utils";
+import { appDir, appFile, pkgDir } from "../layout-paths";
 
 function moveGeneratedFile(vfs: VirtualFileSystem, from: string, to: string): void {
   const content = vfs.readFile(from);
@@ -41,7 +42,7 @@ export async function processExampleTemplates(
         vfs,
         templates,
         `examples/${example}/convex/packages/backend`,
-        "packages/backend",
+        pkgDir(config, "backend"),
         config,
       );
     } else if (config.backend !== "none" && config.api !== "none") {
@@ -49,7 +50,7 @@ export async function processExampleTemplates(
         vfs,
         templates,
         `examples/${example}/server/${config.orm}/base`,
-        "apps/api",
+        appDir(config, "api"),
         config,
       );
 
@@ -58,7 +59,7 @@ export async function processExampleTemplates(
           vfs,
           templates,
           `examples/${example}/server/${config.orm}/${config.database}`,
-          "packages/db",
+          pkgDir(config, "db"),
           config,
         );
       }
@@ -66,21 +67,21 @@ export async function processExampleTemplates(
       if (example === "todo") {
         moveGeneratedFile(
           vfs,
-          "apps/api/src/routers/todo.ts",
-          "apps/api/src/modules/todo/index.ts",
+          appFile(config, "api", "src/routers/todo.ts"),
+          appFile(config, "api", "src/modules/todo/index.ts"),
         );
         processSingleTemplate(
           vfs,
           templates,
           `api/${config.api}/server/src/modules/todo/model.ts`,
-          "apps/api/src/modules/todo/model.ts",
+          appFile(config, "api", "src/modules/todo/model.ts"),
           config,
         );
         processSingleTemplate(
           vfs,
           templates,
           `api/${config.api}/server/src/modules/todo/service.ts`,
-          "apps/api/src/modules/todo/service.ts",
+          appFile(config, "api", "src/modules/todo/service.ts"),
           config,
         );
       }
@@ -93,7 +94,7 @@ export async function processExampleTemplates(
           vfs,
           templates,
           `examples/${example}/web/react/${reactFramework}`,
-          "apps/web",
+          appDir(config, "web"),
           config,
         );
 
@@ -105,7 +106,7 @@ export async function processExampleTemplates(
             vfs,
             templates,
             `examples/${example}/fullstack/${reactFramework}`,
-            "apps/web",
+            appDir(config, "web"),
             config,
           );
         }
@@ -116,7 +117,7 @@ export async function processExampleTemplates(
           vfs,
           templates,
           `examples/${example}/fullstack/nuxt`,
-          "apps/web",
+          appDir(config, "web"),
           config,
         );
       }
@@ -124,7 +125,7 @@ export async function processExampleTemplates(
         vfs,
         templates,
         `examples/${example}/web/nuxt`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
     } else if (hasSvelteWeb) {
@@ -133,7 +134,7 @@ export async function processExampleTemplates(
           vfs,
           templates,
           `examples/${example}/fullstack/svelte`,
-          "apps/web",
+          appDir(config, "web"),
           config,
         );
       }
@@ -141,7 +142,7 @@ export async function processExampleTemplates(
         vfs,
         templates,
         `examples/${example}/web/svelte`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
     } else if (hasSolidWeb) {
@@ -149,7 +150,7 @@ export async function processExampleTemplates(
         vfs,
         templates,
         `examples/${example}/web/solid`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
     } else if (hasAstroWeb) {
@@ -157,7 +158,7 @@ export async function processExampleTemplates(
         vfs,
         templates,
         `examples/${example}/web/astro`,
-        "apps/web",
+        appDir(config, "web"),
         config,
       );
     }
@@ -173,7 +174,7 @@ export async function processExampleTemplates(
           vfs,
           templates,
           `examples/${example}/native/${nativeFramework}`,
-          "apps/native",
+          appDir(config, "native"),
           config,
         );
       }

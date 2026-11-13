@@ -26,13 +26,13 @@ RUN --mount=type=cache,target=/root/.npm npm install
 {{/if}}
 
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 
 FROM node:24-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY --from=builder /app/apps/web/.output ./
+COPY --from=builder /app/{{layoutPath "app:web"}}/.output ./
 
 ENV HOST=0.0.0.0
 ENV PORT=3001

@@ -3,7 +3,7 @@
  * Deduplicates dependencies across packages using pnpm/bun catalogs
  */
 
-import type { ProjectConfig } from "@kubojs/types";
+import { expandLayoutConfig, getLayoutDirGlob, type ProjectConfig } from "@kubojs/types";
 import yaml from "yaml";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
@@ -58,7 +58,7 @@ export function processCatalogs(vfs: VirtualFileSystem, config: ProjectConfig): 
   if (config.packageManager === "bun") {
     setupBunCatalogs(vfs, catalog);
   } else if (config.packageManager === "pnpm") {
-    setupPnpmCatalogs(vfs, catalog);
+    setupPnpmCatalogs(vfs, catalog, config);
   }
 
   updatePackageJsonsWithCatalogs(vfs, packagesInfo, catalog);
@@ -130,13 +130,18 @@ function setupBunCatalogs(vfs: VirtualFileSystem, catalog: Record<string, string
   vfs.writeJson("package.json", pkgJson);
 }
 
-function setupPnpmCatalogs(vfs: VirtualFileSystem, catalog: Record<string, string>): void {
+function setupPnpmCatalogs(
+  vfs: VirtualFileSystem,
+  catalog: Record<string, string>,
+  config: ProjectConfig,
+): void {
   let content = vfs.readFile("pnpm-workspace.yaml");
 
   if (!content) {
+    const { dirs } = expandLayoutConfig(config.layout);
     content = `packages:
-  - "apps/*"
-  - "packages/*"
+  - "${getLayoutDirGlob(dirs.apps)}"
+  - "${getLayoutDirGlob(dirs.packages)}"
 `;
     vfs.writeFile("pnpm-workspace.yaml", content);
   }

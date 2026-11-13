@@ -2,14 +2,15 @@ import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
+import { appFile, pkgFile } from "../layout-paths";
 
 export function processDatabaseDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { database, orm, backend } = config;
 
   if (backend === "convex" || database === "none") return;
 
-  const dbPkgPath = "packages/db/package.json";
-  const webPkgPath = "apps/web/package.json";
+  const dbPkgPath = pkgFile(config, "db", "package.json");
+  const webPkgPath = appFile(config, "web", "package.json");
 
   if (!vfs.exists(dbPkgPath)) return;
   const webNeedsDbRuntime = backend === "self" && vfs.exists(webPkgPath);

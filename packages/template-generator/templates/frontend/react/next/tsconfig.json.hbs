@@ -21,7 +21,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@{{projectName}}/ui/*": ["../../packages/ui/src/*"]
+      "@{{projectName}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
     }{{#if (or (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}},
     "types": [
       "@cloudflare/workers-types"
@@ -29,7 +29,7 @@
   },
   "include": [
     {{#if (eq serverDeploy "cloudflare")}}
-    "../server/env.d.ts",
+    "{{layoutRelativeShort "app:web" "app:server" "env.d.ts"}}",
     {{/if}}
     "next-env.d.ts",
     "**/*.ts",

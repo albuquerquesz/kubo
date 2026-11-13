@@ -2,19 +2,20 @@ import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
+import { appFile, pkgFile } from "../layout-paths";
 
 export function processBackendDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
   const { backend, runtime, api, auth } = config;
 
   if (backend === "convex") {
-    const convexPath = "packages/backend/package.json";
+    const convexPath = pkgFile(config, "backend", "package.json");
     if (vfs.exists(convexPath)) {
       addPackageDependency({ vfs, packagePath: convexPath, dependencies: ["convex"] });
     }
     return;
   }
 
-  const serverPath = "apps/server/package.json";
+  const serverPath = appFile(config, "server", "package.json");
   if (!vfs.exists(serverPath) || backend === "self" || backend === "none") return;
 
   const deps: AvailableDependencies[] = [];

@@ -38,7 +38,7 @@ ARG VITE_CLERK_PUBLISHABLE_KEY
 ENV VITE_CLERK_PUBLISHABLE_KEY=${VITE_CLERK_PUBLISHABLE_KEY}
 {{/if}}
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 ENV SKIP_ENV_VALIDATION=
 {{#if (and (eq backend "self") (eq auth "better-auth"))}}
 ENV BETTER_AUTH_SECRET=
@@ -52,5 +52,5 @@ ENV PORT=3001
 EXPOSE 3001
 
 # SSR chunks require() externals at runtime; must run from the workspace
-WORKDIR /app/apps/web
+WORKDIR /app/{{layoutPath "app:web"}}
 CMD ["node", ".output/server/index.mjs"]

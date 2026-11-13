@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 import { fileURLToPath } from "node:url";
 
-config({ path: fileURLToPath(new URL("../../../.env", import.meta.url)) });
+config({ path: fileURLToPath(new URL("{{layoutRelative "package:env/src" "root" ".env"}}", import.meta.url)) });
 config();
 
 const runtimeEnv = typeof process === "undefined" ? {} : process.env;

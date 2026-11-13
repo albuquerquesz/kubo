@@ -10,5 +10,6 @@ export * from "./payments";
 export * from "./schemas";
 export * from "./types";
 export * from "./layout";
+export * from "./layout-path";
 export * from "./layout-presets";
 export { normalizeLegacyKuboConfig } from "./kubo-config-normalize";

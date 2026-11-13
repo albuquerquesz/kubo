@@ -115,7 +115,7 @@ export const EMBEDDED_TEMPLATES: Map<string, string> = new Map([
   ["addons/electrobun/apps/desktop/electrobun.config.ts.hbs", `import type { ElectrobunConfig } from "electrobun";
 
 const webBuildDir =
-  "{{#if (includes frontend "react-router")}}../web/build/client{{else if (includes frontend "tanstack-start")}}../web/dist/client{{else if (includes frontend "next")}}../web/out{{else if (includes frontend "nuxt")}}../web/.output/public{{else if (includes frontend "svelte")}}../web/build{{else}}../web/dist{{/if}}";
+  "{{#if (includes frontend "react-router")}}{{layoutRelativeShort "app:desktop" "app:web" "build/client"}}{{else if (includes frontend "tanstack-start")}}{{layoutRelativeShort "app:desktop" "app:web" "dist/client"}}{{else if (includes frontend "next")}}{{layoutRelativeShort "app:desktop" "app:web" "out"}}{{else if (includes frontend "nuxt")}}{{layoutRelativeShort "app:desktop" "app:web" ".output/public"}}{{else if (includes frontend "svelte")}}{{layoutRelativeShort "app:desktop" "app:web" "build"}}{{else}}{{layoutRelativeShort "app:desktop" "app:web" "dist"}}{{/if}}";
 
 export default {
   app: {
@@ -203,7 +203,7 @@ new BrowserWindow({
 console.log("Electrobun desktop shell started.");
 `],
   ["addons/electrobun/apps/desktop/tsconfig.json.hbs", `{
-  "extends": "../../packages/config/tsconfig.base.json",
+  "extends": "{{layoutRelative "app:desktop" "package:config" "tsconfig.base.json"}}",
   "compilerOptions": {
     "lib": ["ESNext", "DOM"],
     "target": "ESNext",
@@ -498,7 +498,7 @@ export { Bucket } from "./bucket";
 export type { BucketConfig, BucketUploadInput } from "./bucket";
 `],
   ["addons/s3-storage/packages/storage/tsconfig.json.hbs", `{
-  "extends": "../config/tsconfig.base.json",
+  "extends": "{{layoutRelativeShort "package:storage" "package:config" "tsconfig.base.json"}}",
   "include": ["src"]
 }
 `],
@@ -1906,11 +1906,11 @@ export default defineConfig({
     output: {
       mode: "split",
       client: "hono",
-      target: "../server/src/generated/routes.ts",
-      schemas: "../server/src/generated/schemas",
+      target: "{{layoutRelativeShort "app:api" "app:server" "src/generated/routes.ts"}}",
+      schemas: "{{layoutRelativeShort "app:api" "app:server" "src/generated/schemas"}}",
       override: {
         hono: {
-          handlers: "../server/src/generated/handlers",
+          handlers: "{{layoutRelativeShort "app:api" "app:server" "src/generated/handlers"}}",
         },
       },
     },
@@ -15287,8 +15287,8 @@ local.db-*
   "private": true,
   "type": "module",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "{{layoutDirGlob "apps"}}",
+    "{{layoutDirGlob "packages"}}"
   ],
   "scripts": {}
 }
@@ -15443,9 +15443,9 @@ import dotenv from "dotenv";
 
 dotenv.config({
     {{#if (eq backend "self")}}
-    path: "../../apps/web/.env",
+    path: "{{layoutRelative "package:db" "app:web" ".env"}}",
     {{else}}
-    path: "../../apps/server/.env",
+    path: "{{layoutRelative "package:db" "app:server" ".env"}}",
     {{/if}}
 });
 
@@ -15536,9 +15536,9 @@ import dotenv from "dotenv";
 
 dotenv.config({
     {{#if (eq backend "self")}}
-    path: "../../apps/web/.env",
+    path: "{{layoutRelative "package:db" "app:web" ".env"}}",
     {{else}}
-    path: "../../apps/server/.env",
+    path: "{{layoutRelative "package:db" "app:server" ".env"}}",
     {{/if}}
 });
 
@@ -15625,9 +15625,9 @@ import dotenv from "dotenv";
 
 dotenv.config({
     {{#if (eq backend "self")}}
-    path: "../../apps/web/.env",
+    path: "{{layoutRelative "package:db" "app:web" ".env"}}",
     {{else}}
-    path: "../../apps/server/.env",
+    path: "{{layoutRelative "package:db" "app:server" ".env"}}",
     {{/if}}
 });
 
@@ -15720,9 +15720,9 @@ import dotenv from "dotenv";
 
 dotenv.config({
     {{#if (eq backend "self")}}
-    path: "../../apps/web/.env",
+    path: "{{layoutRelative "package:db" "app:web" ".env"}}",
     {{else}}
-    path: "../../apps/server/.env",
+    path: "{{layoutRelative "package:db" "app:server" ".env"}}",
     {{/if}}
 });
 
@@ -15765,9 +15765,9 @@ import dotenv from "dotenv";
 
 dotenv.config({
   {{#if (eq backend "self")}}
-  path: "../../apps/web/.env",
+  path: "{{layoutRelative "package:db" "app:web" ".env"}}",
   {{else}}
-  path: "../../apps/server/.env",
+  path: "{{layoutRelative "package:db" "app:server" ".env"}}",
   {{/if}}
 });
 
@@ -15876,9 +15876,9 @@ import dotenv from 'dotenv'
 
 dotenv.config({
     {{#if (eq backend "self")}}
-    path: "../../apps/web/.env",
+    path: "{{layoutRelative "package:db" "app:web" ".env"}}",
     {{else}}
-    path: "../../apps/server/.env",
+    path: "{{layoutRelative "package:db" "app:server" ".env"}}",
     {{/if}}
 })
 
@@ -16013,9 +16013,9 @@ import dotenv from "dotenv";
 
 dotenv.config({
   {{#if (eq backend "self")}}
-  path: "../../apps/web/.env",
+  path: "{{layoutRelative "package:db" "app:web" ".env"}}",
   {{else}}
-  path: "../../apps/server/.env",
+  path: "{{layoutRelative "package:db" "app:server" ".env"}}",
   {{/if}}
 });
 
@@ -16132,7 +16132,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: apps/web/Dockerfile
+      dockerfile: {{layoutPath "app:web"}}/Dockerfile
 {{#if (and (not (includes frontend "nuxt")) (or (and (ne backend "self") (ne backend "none") (ne backend "convex")) (eq backend "convex") (and (eq auth "clerk") (or (includes frontend "next") (includes frontend "react-router") (includes frontend "tanstack-router") (includes frontend "tanstack-start")))))}}
       args:
 {{#if (and (ne backend "self") (ne backend "none") (ne backend "convex"))}}
@@ -16153,7 +16153,7 @@ services:
       - "3001:3001"
 {{/if}}
     env_file:
-      - path: apps/web/.env
+      - path: {{layoutPath "app:web"}}/.env
         required: false
 {{#if (eq backend "self")}}
 {{#if (or (eq dbSetup "docker") (eq auth "better-auth"))}}
@@ -16216,12 +16216,12 @@ services:
   server:
     build:
       context: .
-      dockerfile: apps/server/Dockerfile
+      dockerfile: {{layoutPath "app:server"}}/Dockerfile
     init: true
     ports:
       - "3000:3000"
     env_file:
-      - path: apps/server/.env
+      - path: {{layoutPath "app:server"}}/.env
         required: false
 {{#if (or (eq webDeploy "docker") (eq dbSetup "docker"))}}
     environment:
@@ -16346,7 +16346,7 @@ RUN --mount=type=cache,target=/root/.npm npm install
 {{/if}}
 
 ENV NODE_ENV=production
-RUN cd apps/server && {{packageManager}} run build
+RUN cd {{layoutPath "app:server"}} && {{packageManager}} run build
 ENV SKIP_ENV_VALIDATION=
 {{#if (eq orm "prisma")}}
 ENV DATABASE_URL=
@@ -16354,7 +16354,7 @@ ENV DATABASE_URL=
 
 EXPOSE 3000
 
-WORKDIR /app/apps/server
+WORKDIR /app/{{layoutPath "app:server"}}
 {{#if (eq runtime "bun")}}
 CMD ["bun", "dist/index.mjs"]
 {{else}}
@@ -16397,7 +16397,7 @@ ARG PUBLIC_CONVEX_URL
 ENV PUBLIC_CONVEX_URL=\${PUBLIC_CONVEX_URL}
 {{/if}}
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 ENV SKIP_ENV_VALIDATION=
 {{#if (and (eq backend "self") (eq auth "better-auth"))}}
 ENV BETTER_AUTH_SECRET=
@@ -16410,7 +16410,7 @@ ENV HOST=0.0.0.0
 ENV PORT=3001
 EXPOSE 3001
 
-WORKDIR /app/apps/web
+WORKDIR /app/{{layoutPath "app:web"}}
 CMD ["node", "dist/server/entry.mjs"]
 `],
   ["deploy/docker/web/nuxt/Dockerfile.hbs", `FROM node:24-slim AS builder
@@ -16441,13 +16441,13 @@ RUN --mount=type=cache,target=/root/.npm npm install
 {{/if}}
 
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 
 FROM node:24-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY --from=builder /app/apps/web/.output ./
+COPY --from=builder /app/{{layoutPath "app:web"}}/.output ./
 
 ENV HOST=0.0.0.0
 ENV PORT=3001
@@ -16495,23 +16495,23 @@ ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=\${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
 {{/if}}
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 # standalone output excludes public/; ensure it exists so the runner copy never fails
-RUN mkdir -p apps/web/public
+RUN mkdir -p {{layoutPath "app:web"}}/public
 
 FROM node:24-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY --from=builder /app/apps/web/.next/standalone ./
-COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder /app/apps/web/public ./apps/web/public
+COPY --from=builder /app/{{layoutPath "app:web"}}/.next/standalone ./
+COPY --from=builder /app/{{layoutPath "app:web"}}/.next/static ./{{layoutPath "app:web"}}/.next/static
+COPY --from=builder /app/{{layoutPath "app:web"}}/public ./{{layoutPath "app:web"}}/public
 
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3001
 EXPOSE 3001
 
-CMD ["node", "apps/web/server.js"]
+CMD ["node", "{{layoutPath "app:web"}}/server.js"]
 `],
   ["deploy/docker/web/react/react-router/Dockerfile.hbs", `FROM node:24{{#unless (includes addons "vite-plus")}}-slim{{/unless}} AS builder
 {{#if (eq packageManager "bun")}}
@@ -16553,7 +16553,7 @@ ARG VITE_CLERK_PUBLISHABLE_KEY
 ENV VITE_CLERK_PUBLISHABLE_KEY=\${VITE_CLERK_PUBLISHABLE_KEY}
 {{/if}}
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 
 FROM node:24-slim AS runner
 WORKDIR /app
@@ -16562,7 +16562,7 @@ ENV NODE_ENV=production
 ENV PORT=3001
 ENV HOST=0.0.0.0
 EXPOSE 3001
-CMD ["sh", "-c", "cd apps/web && npm run start"]
+CMD ["sh", "-c", "cd {{layoutPath "app:web"}} && npm run start"]
 `],
   ["deploy/docker/web/react/tanstack-router/Dockerfile.hbs", `FROM node:24{{#unless (includes addons "vite-plus")}}-slim{{/unless}} AS builder
 {{#if (eq packageManager "bun")}}
@@ -16604,11 +16604,11 @@ ARG VITE_CLERK_PUBLISHABLE_KEY
 ENV VITE_CLERK_PUBLISHABLE_KEY=\${VITE_CLERK_PUBLISHABLE_KEY}
 {{/if}}
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 
 FROM nginx:alpine AS runner
-COPY --from=builder /app/apps/web/dist /usr/share/nginx/html
-COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/{{layoutPath "app:web"}}/dist /usr/share/nginx/html
+COPY {{layoutPath "app:web"}}/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 `],
@@ -16671,7 +16671,7 @@ ARG VITE_CLERK_PUBLISHABLE_KEY
 ENV VITE_CLERK_PUBLISHABLE_KEY=\${VITE_CLERK_PUBLISHABLE_KEY}
 {{/if}}
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 ENV SKIP_ENV_VALIDATION=
 {{#if (and (eq backend "self") (eq auth "better-auth"))}}
 ENV BETTER_AUTH_SECRET=
@@ -16685,7 +16685,7 @@ ENV PORT=3001
 EXPOSE 3001
 
 # SSR chunks require() externals at runtime; must run from the workspace
-WORKDIR /app/apps/web
+WORKDIR /app/{{layoutPath "app:web"}}
 CMD ["node", ".output/server/index.mjs"]
 `],
   ["deploy/docker/web/solid/Dockerfile.hbs", `FROM node:24{{#unless (includes addons "vite-plus")}}-slim{{/unless}} AS builder
@@ -16724,11 +16724,11 @@ ARG VITE_CONVEX_URL
 ENV VITE_CONVEX_URL=\${VITE_CONVEX_URL}
 {{/if}}
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 
 FROM nginx:alpine AS runner
-COPY --from=builder /app/apps/web/dist /usr/share/nginx/html
-COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/{{layoutPath "app:web"}}/dist /usr/share/nginx/html
+COPY {{layoutPath "app:web"}}/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 `],
@@ -16787,7 +16787,7 @@ ARG PUBLIC_CONVEX_URL
 ENV PUBLIC_CONVEX_URL=\${PUBLIC_CONVEX_URL}
 {{/if}}
 ENV NODE_ENV=production
-RUN cd apps/web && {{packageManager}} run build
+RUN cd {{layoutPath "app:web"}} && {{packageManager}} run build
 ENV SKIP_ENV_VALIDATION=
 {{#if (and (eq backend "self") (eq auth "better-auth"))}}
 ENV BETTER_AUTH_SECRET=
@@ -16800,7 +16800,7 @@ ENV HOST=0.0.0.0
 ENV PORT=3001
 EXPOSE 3001
 
-WORKDIR /app/apps/web
+WORKDIR /app/{{layoutPath "app:web"}}
 CMD ["node", "build/index.js"]
 `],
   ["deploy/vercel/_vercelignore", `# Local env files must never ship in deployments: Vercel project env vars are
@@ -16824,10 +16824,10 @@ const VALID_ENVIRONMENTS = new Set(["development", "preview", "production"]);
 const VERCEL_COMMAND = [{{#if (eq packageManager "npm")}}"npx", "vercel"{{else if (eq packageManager "pnpm")}}"pnpm", "exec", "vercel"{{else}}"bunx", "vercel"{{/if}}] as const;
 const DEFAULT_FILES = [
 {{#if (eq webDeploy "vercel")}}
-	"apps/web/.env",
+	"{{layoutPath "app:web"}}/.env",
 {{/if}}
 {{#if (and (eq serverDeploy "vercel") (ne backend "self") (ne backend "none") (ne backend "convex"))}}
-	"apps/server/.env",
+	"{{layoutPath "app:server"}}/.env",
 {{/if}}
 ];
 const SKIP_KEYS = new Set([
@@ -25660,8 +25660,8 @@ declare module "cloudflare:workers" {
 }
 `],
   ["extras/pnpm-workspace.yaml.hbs", `packages:
-  - "apps/*"
-  - "packages/*"
+  - "{{layoutDirGlob "apps"}}"
+  - "{{layoutDirGlob "packages"}}"
 {{#if (or (eq runtime "node") (eq webDeploy "cloudflare") (eq serverDeploy "cloudflare") (eq webDeploy "docker") (eq serverDeploy "docker") (eq webDeploy "vercel") (eq serverDeploy "vercel") (eq orm "prisma") (includes addons "lefthook") (includes addons "pwa") (includes addons "turborepo") (includes addons "vite-plus") (includes frontend "react-router") (includes frontend "next") (includes frontend "nuxt"))}}
 
 # pnpm 11 blocks dependency lifecycle scripts unless they are approved here.
@@ -30236,7 +30236,7 @@ export function ThemeProvider({
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@{{projectName}}/ui/*": ["../../packages/ui/src/*"]
+      "@{{projectName}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
     }{{#if (or (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}},
     "types": [
       "@cloudflare/workers-types"
@@ -30244,7 +30244,7 @@ export function ThemeProvider({
   },
   "include": [
     {{#if (eq serverDeploy "cloudflare")}}
-    "../server/env.d.ts",
+    "{{layoutRelativeShort "app:web" "app:server" "env.d.ts"}}",
     {{/if}}
     "next-env.d.ts",
     "**/*.ts",
@@ -30795,7 +30795,7 @@ export default function Home() {
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "@/*": ["./src/*"],
-      "@{{projectName}}/ui/*": ["../../packages/ui/src/*"]
+      "@{{projectName}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
     },
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,
@@ -31300,7 +31300,7 @@ function HomeComponent() {
     "rootDirs": ["."],
     "paths": {
       "@/*": ["./src/*"],
-      "@{{projectName}}/ui/*": ["../../packages/ui/src/*"]
+      "@{{projectName}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
     }
   }
 }
@@ -31939,7 +31939,7 @@ function HomeComponent() {
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@{{projectName}}/ui/*": ["../../packages/ui/src/*"]
+      "@{{projectName}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
     }
   }
 }
@@ -32053,7 +32053,7 @@ dev-dist
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "../../packages/ui/src/styles/globals.css",
+    "css": "{{layoutRelative "app:web" "package:ui" "src/styles/globals.css"}}",
     "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
@@ -32569,7 +32569,7 @@ body {
 }
 `],
   ["frontend/svelte/src/app.d.ts.hbs", `{{#if (eq webDeploy "cloudflare")}}
-/// <reference path="../../../packages/env/env.d.ts" />
+/// <reference path="{{layoutRelative "app:web/src" "package:env" "env.d.ts"}}" />
 {{/if}}
 {{#if (and (eq backend "self") (eq api "orpc"))}}
 import type { AppRouterClient } from "@{{projectName}}/api/routers/index";
@@ -33097,7 +33097,7 @@ export async function sendEmail(input: SendEmailInput) {
   ["packages/env/src/cloudflare-local.ts.hbs", `import { config } from "dotenv";
 import { fileURLToPath } from "node:url";
 
-config({ path: fileURLToPath(new URL("../../../.env", import.meta.url)) });
+config({ path: fileURLToPath(new URL("{{layoutRelative "package:env/src" "root" ".env"}}", import.meta.url)) });
 config();
 
 const runtimeEnv = typeof process === "undefined" ? {} : process.env;
@@ -33213,7 +33213,7 @@ export const env = createEnvProxy(resolveEnvValue);
 import { config } from "dotenv";
 import { fileURLToPath } from "node:url";
 
-config({ path: fileURLToPath(new URL("../../../.env", import.meta.url)) });
+config({ path: fileURLToPath(new URL("{{layoutRelative "package:env/src" "root" ".env"}}", import.meta.url)) });
 config();
 
 const runtimeEnv = typeof process === "undefined" ? {} : process.env;
@@ -33245,9 +33245,9 @@ import { z } from "zod";
 const envFilePath = resolve(
 	dirname(fileURLToPath(import.meta.url)),
 {{#if (eq backend "self")}}
-	"../../../apps/web/.env",
+	"{{layoutRelative "package:env/src" "app:web" ".env"}}",
 {{else}}
-	"../../../apps/server/.env",
+	"{{layoutRelative "package:env/src" "app:server" ".env"}}",
 {{/if}}
 );
 config({ path: envFilePath });
@@ -33558,14 +33558,14 @@ import { config } from "dotenv";
 
 {{#if (and (eq webDeploy "cloudflare") (eq serverDeploy "cloudflare"))}}
 config({ path: "./.env" });
-config({ path: "../../apps/web/.env" });
-config({ path: "../../apps/server/.env" });
+config({ path: "{{layoutRelative "package:infra" "app:web" ".env"}}" });
+config({ path: "{{layoutRelative "package:infra" "app:server" ".env"}}" });
 {{else if (eq webDeploy "cloudflare")}}
 config({ path: "./.env" });
-config({ path: "../../apps/web/.env" });
+config({ path: "{{layoutRelative "package:infra" "app:web" ".env"}}" });
 {{else if (eq serverDeploy "cloudflare")}}
 config({ path: "./.env" });
-config({ path: "../../apps/server/.env" });
+config({ path: "{{layoutRelative "package:infra" "app:server" ".env"}}" });
 {{/if}}
 
 const app = await alchemy("{{projectName}}");
@@ -33573,16 +33573,16 @@ const app = await alchemy("{{projectName}}");
 {{#if (and (or (eq serverDeploy "cloudflare") (and (eq webDeploy "cloudflare") (eq backend "self"))) (eq dbSetup "d1"))}}
 const db = await D1Database("database", {
 	{{#if (eq orm "prisma")}}
-	migrationsDir: "../../packages/db/prisma/migrations",
+	migrationsDir: "{{layoutRelative "package:infra" "package:db" "prisma/migrations"}}",
 	{{else if (eq orm "drizzle")}}
-	migrationsDir: "../../packages/db/src/migrations",
+	migrationsDir: "{{layoutRelative "package:infra" "package:db" "src/migrations"}}",
 	{{/if}}
 });
 {{/if}}
 
 {{#if (eq serverDeploy "cloudflare")}}
 export const server = await Worker("server", {
-  cwd: "../../apps/server",
+  cwd: "{{layoutRelative "package:infra" "app:server"}}",
   entrypoint: "src/index.ts",
   compatibility: "node",
   url: true,
@@ -33645,7 +33645,7 @@ export const server = await Worker("server", {
 {{#if (eq webDeploy "cloudflare")}}
 {{#if (includes frontend "next")}}
 export const web = await Nextjs("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   bindings: {
     {{#if (eq backend "convex")}}
     NEXT_PUBLIC_CONVEX_URL: alchemy.env.NEXT_PUBLIC_CONVEX_URL!,
@@ -33720,7 +33720,7 @@ export const web = await Nextjs("web", {
 });
 {{else if (includes frontend "nuxt")}}
 export const web = await Nuxt("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   bindings: {
     {{#if (eq backend "convex")}}
     NUXT_PUBLIC_CONVEX_URL: alchemy.env.NUXT_PUBLIC_CONVEX_URL!,
@@ -33792,7 +33792,7 @@ export const web = await Nuxt("web", {
 });
 {{else if (includes frontend "svelte")}}
 export const web = await SvelteKit("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   bindings: {
     {{#if (eq backend "convex")}}
     PUBLIC_CONVEX_URL: alchemy.env.PUBLIC_CONVEX_URL!,
@@ -33859,7 +33859,7 @@ export const web = await SvelteKit("web", {
 });
 {{else if (includes frontend "tanstack-start")}}
 export const web = await TanStackStart("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   bindings: {
     {{#if (eq backend "convex")}}
     VITE_CONVEX_URL: alchemy.env.VITE_CONVEX_URL!,
@@ -33929,7 +33929,7 @@ export const web = await TanStackStart("web", {
 });
 {{else if (includes frontend "tanstack-router")}}
 export const web = await Vite("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   assets: "dist",
   bindings: {
     {{#if (eq backend "convex")}}
@@ -33948,7 +33948,7 @@ export const web = await Vite("web", {
 });
 {{else if (includes frontend "react-router")}}
 export const web = await ReactRouter("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   bindings: {
     {{#if (eq backend "convex")}}
     VITE_CONVEX_URL: alchemy.env.VITE_CONVEX_URL!,
@@ -33966,7 +33966,7 @@ export const web = await ReactRouter("web", {
 });
 {{else if (includes frontend "solid")}}
 export const web = await Vite("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   assets: "dist",
   bindings: {
     {{#if (eq backend "convex")}}
@@ -33985,7 +33985,7 @@ export const web = await Vite("web", {
 });
 {{else if (includes frontend "astro")}}
 export const web = await Astro("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   entrypoint: "dist/server/entry.mjs",
   assets: "dist/client",
   {{#if (eq backend "self")}}
@@ -35972,7 +35972,7 @@ export function cn(...inputs: ClassValue[]) {
   ["packages/ui/src/styles/globals.css.hbs", `@import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-@source "../../../apps/**/*.{ts,tsx}";
+@source "{{layoutRelative "package:ui/src/styles" "dir:apps" "**/*.{ts,tsx}"}}";
 @source "../**/*.{ts,tsx}";
 
 @custom-variant dark (&:is(.dark *));
@@ -37918,8 +37918,8 @@ export default defineConfig({
     passWithNoTests: true,
     include: [
       "smoke.test.ts",
-      "apps/*/src/**/*.{test,spec}.ts",
-      "packages/*/src/**/*.{test,spec}.ts",
+      "{{layoutDirGlob "apps"}}/src/**/*.{test,spec}.ts",
+      "{{layoutDirGlob "packages"}}/src/**/*.{test,spec}.ts",
     ],
     exclude: ["**/node_modules/**", "**/e2e/**", "**/.git/**"],
   },

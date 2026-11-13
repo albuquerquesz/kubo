@@ -12,7 +12,7 @@ export function processObservability(vfs: VirtualFileSystem, config: ProjectConf
 
       addPackageDependency({
         vfs,
-        packagePath: dependency.packagePath,
+        packagePath: dependency.packagePath(config),
         dependencies: dependency.dependencies ? [...dependency.dependencies] : undefined,
         devDependencies: dependency.devDependencies ? [...dependency.devDependencies] : undefined,
       });

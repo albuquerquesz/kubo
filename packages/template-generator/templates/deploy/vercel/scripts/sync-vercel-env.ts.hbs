@@ -7,10 +7,10 @@ const VALID_ENVIRONMENTS = new Set(["development", "preview", "production"]);
 const VERCEL_COMMAND = [{{#if (eq packageManager "npm")}}"npx", "vercel"{{else if (eq packageManager "pnpm")}}"pnpm", "exec", "vercel"{{else}}"bunx", "vercel"{{/if}}] as const;
 const DEFAULT_FILES = [
 {{#if (eq webDeploy "vercel")}}
-	"apps/web/.env",
+	"{{layoutPath "app:web"}}/.env",
 {{/if}}
 {{#if (and (eq serverDeploy "vercel") (ne backend "self") (ne backend "none") (ne backend "convex"))}}
-	"apps/server/.env",
+	"{{layoutPath "app:server"}}/.env",
 {{/if}}
 ];
 const SKIP_KEYS = new Set([

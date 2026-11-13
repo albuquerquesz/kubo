@@ -5,8 +5,8 @@ export default defineConfig({
     passWithNoTests: true,
     include: [
       "smoke.test.ts",
-      "apps/*/src/**/*.{test,spec}.ts",
-      "packages/*/src/**/*.{test,spec}.ts",
+      "{{layoutDirGlob "apps"}}/src/**/*.{test,spec}.ts",
+      "{{layoutDirGlob "packages"}}/src/**/*.{test,spec}.ts",
     ],
     exclude: ["**/node_modules/**", "**/e2e/**", "**/.git/**"],
   },

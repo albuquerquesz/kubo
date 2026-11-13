@@ -28,14 +28,14 @@ import { config } from "dotenv";
 
 {{#if (and (eq webDeploy "cloudflare") (eq serverDeploy "cloudflare"))}}
 config({ path: "./.env" });
-config({ path: "../../apps/web/.env" });
-config({ path: "../../apps/server/.env" });
+config({ path: "{{layoutRelative "package:infra" "app:web" ".env"}}" });
+config({ path: "{{layoutRelative "package:infra" "app:server" ".env"}}" });
 {{else if (eq webDeploy "cloudflare")}}
 config({ path: "./.env" });
-config({ path: "../../apps/web/.env" });
+config({ path: "{{layoutRelative "package:infra" "app:web" ".env"}}" });
 {{else if (eq serverDeploy "cloudflare")}}
 config({ path: "./.env" });
-config({ path: "../../apps/server/.env" });
+config({ path: "{{layoutRelative "package:infra" "app:server" ".env"}}" });
 {{/if}}
 
 const app = await alchemy("{{projectName}}");
@@ -43,16 +43,16 @@ const app = await alchemy("{{projectName}}");
 {{#if (and (or (eq serverDeploy "cloudflare") (and (eq webDeploy "cloudflare") (eq backend "self"))) (eq dbSetup "d1"))}}
 const db = await D1Database("database", {
 	{{#if (eq orm "prisma")}}
-	migrationsDir: "../../packages/db/prisma/migrations",
+	migrationsDir: "{{layoutRelative "package:infra" "package:db" "prisma/migrations"}}",
 	{{else if (eq orm "drizzle")}}
-	migrationsDir: "../../packages/db/src/migrations",
+	migrationsDir: "{{layoutRelative "package:infra" "package:db" "src/migrations"}}",
 	{{/if}}
 });
 {{/if}}
 
 {{#if (eq serverDeploy "cloudflare")}}
 export const server = await Worker("server", {
-  cwd: "../../apps/server",
+  cwd: "{{layoutRelative "package:infra" "app:server"}}",
   entrypoint: "src/index.ts",
   compatibility: "node",
   url: true,
@@ -115,7 +115,7 @@ export const server = await Worker("server", {
 {{#if (eq webDeploy "cloudflare")}}
 {{#if (includes frontend "next")}}
 export const web = await Nextjs("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   bindings: {
     {{#if (eq backend "convex")}}
     NEXT_PUBLIC_CONVEX_URL: alchemy.env.NEXT_PUBLIC_CONVEX_URL!,
@@ -190,7 +190,7 @@ export const web = await Nextjs("web", {
 });
 {{else if (includes frontend "nuxt")}}
 export const web = await Nuxt("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   bindings: {
     {{#if (eq backend "convex")}}
     NUXT_PUBLIC_CONVEX_URL: alchemy.env.NUXT_PUBLIC_CONVEX_URL!,
@@ -262,7 +262,7 @@ export const web = await Nuxt("web", {
 });
 {{else if (includes frontend "svelte")}}
 export const web = await SvelteKit("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   bindings: {
     {{#if (eq backend "convex")}}
     PUBLIC_CONVEX_URL: alchemy.env.PUBLIC_CONVEX_URL!,
@@ -329,7 +329,7 @@ export const web = await SvelteKit("web", {
 });
 {{else if (includes frontend "tanstack-start")}}
 export const web = await TanStackStart("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   bindings: {
     {{#if (eq backend "convex")}}
     VITE_CONVEX_URL: alchemy.env.VITE_CONVEX_URL!,
@@ -399,7 +399,7 @@ export const web = await TanStackStart("web", {
 });
 {{else if (includes frontend "tanstack-router")}}
 export const web = await Vite("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   assets: "dist",
   bindings: {
     {{#if (eq backend "convex")}}
@@ -418,7 +418,7 @@ export const web = await Vite("web", {
 });
 {{else if (includes frontend "react-router")}}
 export const web = await ReactRouter("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   bindings: {
     {{#if (eq backend "convex")}}
     VITE_CONVEX_URL: alchemy.env.VITE_CONVEX_URL!,
@@ -436,7 +436,7 @@ export const web = await ReactRouter("web", {
 });
 {{else if (includes frontend "solid")}}
 export const web = await Vite("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   assets: "dist",
   bindings: {
     {{#if (eq backend "convex")}}
@@ -455,7 +455,7 @@ export const web = await Vite("web", {
 });
 {{else if (includes frontend "astro")}}
 export const web = await Astro("web", {
-  cwd: "../../apps/web",
+  cwd: "{{layoutRelative "package:infra" "app:web"}}",
   entrypoint: "dist/server/entry.mjs",
   assets: "dist/client",
   {{#if (eq backend "self")}}

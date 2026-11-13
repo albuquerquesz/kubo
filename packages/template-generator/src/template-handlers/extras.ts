@@ -2,6 +2,7 @@ import { hasNativeFrontend, type ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { type TemplateData, processSingleTemplate } from "./utils";
+import { pkgFile } from "../layout-paths";
 
 export async function processExtrasTemplates(
   vfs: VirtualFileSystem,
@@ -29,6 +30,6 @@ export async function processExtrasTemplates(
     config.serverDeploy === "cloudflare" ||
     (config.backend === "self" && config.webDeploy === "cloudflare")
   ) {
-    processSingleTemplate(vfs, templates, "extras/env.d.ts", "packages/env/env.d.ts", config);
+    processSingleTemplate(vfs, templates, "extras/env.d.ts", pkgFile(config, "env", "env.d.ts"), config);
   }
 }
