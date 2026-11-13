@@ -132,6 +132,16 @@ O layout é validado antes de qualquer arquivo ser gravado: caminhos absolutos, 
 
 IDs de apps: `web`, `server`, `native`, `desktop`, `docs`, `api`. IDs de pacotes: `db`, `auth`, `backend`, `config`, `env`, `infra`, `ui`, `storage`, `api`, `payments`, `email` e os pacotes de integração (ex.: `millionsend`).
 
+### `--layout-code <código>`
+
+Aplica o layout salvo na sua conta. Gere o comando na aba **Layout** de [kubojs.dev/new](/new) (é preciso estar logado e ter um layout salvo):
+
+```bash
+kubojs my-app --yes --layout-code ABCD-EFGH-JKMN
+```
+
+O código vale por 10 minutos e funciona uma única vez; gerar outro invalida o anterior. O CLI troca o código pelo layout antes de criar qualquer arquivo (um código inválido, expirado ou já usado não escreve nada), não guarda credenciais e não envia o código para a telemetria. O projeto gerado registra o layout em `kubo.config.ts`, não o código. Não pode ser combinado com `--layout` nem com `--dry-run`.
+
 ### `--disable-analytics / --no-disable-analytics`
 
 Controla se dados de analytics e telemetria são coletados.

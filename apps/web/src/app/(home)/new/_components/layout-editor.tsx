@@ -2,11 +2,12 @@
 
 import { api } from "@kubojs/backend/convex/_generated/api";
 import type { LayoutConfig, LayoutPreset } from "@kubojs/types";
-import { useMutation, useQuery } from "convex/react";
-import { AlertTriangle, CloudDownload, RotateCcw, Save } from "lucide-react";
+import { useAction, useMutation, useQuery } from "convex/react";
+import { AlertTriangle, CloudDownload, KeyRound, RotateCcw, Save } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
+import CopyInstallCommandButton from "@/app/(home)/_components/copy-install-command-button";
 import { useRequireAuth } from "@/components/auth/auth-modal-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,8 @@ type LayoutEditorProps = {
   layout: LayoutConfig | undefined;
   /** Called with a valid layout, or undefined for the standard one. */
   onChange: (layout: LayoutConfig | undefined) => void;
+  /** Builds the create command that applies the saved layout through a single-use code. */
+  buildCodeCommand: (code: string) => string;
 };
 
 function readPendingSave(): boolean {
@@ -55,7 +58,7 @@ function writePendingSave(pending: boolean): void {
   }
 }
 
-export function LayoutEditor({ layout, onChange }: LayoutEditorProps) {
+export function LayoutEditor({ layout, onChange, buildCodeCommand }: LayoutEditorProps) {
   const [draft, setDraft] = useState<LayoutDraft>(() => layoutToDraft(layout));
   const appliedKey = JSON.stringify(layout ?? null);
   /**
@@ -136,6 +139,21 @@ export function LayoutEditor({ layout, onChange }: LayoutEditorProps) {
     setDraft(layoutToDraft(saved));
     emit(saved);
     toast.success("Layout salvo aplicado");
+  }
+
+  const createCode = useAction(api.layoutCodes.create);
+  const [redeemCode, setRedeemCode] = useState<{ code: string; expiresAt: number } | null>(null);
+  const [creatingCode, setCreatingCode] = useState(false);
+
+  async function handleCreateCode() {
+    setCreatingCode(true);
+    try {
+      setRedeemCode(await createCode({}));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível gerar o código");
+    } finally {
+      setCreatingCode(false);
+    }
   }
 
   function reset() {
@@ -285,6 +303,39 @@ export function LayoutEditor({ layout, onChange }: LayoutEditorProps) {
           <p className="text-muted-foreground text-xs">
             Só as pastas que a sua stack usa são geradas. Veja a árvore completa na aba Prévia.
           </p>
+        </section>
+      ) : null}
+
+      {savedProfile ? (
+        <section className="space-y-2 rounded-md border border-border p-3" aria-labelledby="layout-code-heading">
+          <h3 id="layout-code-heading" className="font-medium text-sm">
+            Comando com o layout salvo
+          </h3>
+          <p className="text-muted-foreground text-xs">
+            Gera um comando de uso único, válido por 10 minutos, que aplica o layout salvo na sua
+            conta. O CLI troca o código pelo layout antes de criar qualquer arquivo.
+          </p>
+          {redeemCode ? (
+            <div className="space-y-1">
+              <CopyInstallCommandButton
+                command={buildCodeCommand(redeemCode.code)}
+                compact
+                className="w-full max-w-full px-4"
+              />
+              <p className="text-muted-foreground text-xs">
+                Expira às{" "}
+                {new Date(redeemCode.expiresAt).toLocaleTimeString("pt-BR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}{" "}
+                e funciona uma vez. Gerar outro invalida este.
+              </p>
+            </div>
+          ) : null}
+          <Button variant="outline" size="sm" onClick={() => void handleCreateCode()} disabled={creatingCode}>
+            <KeyRound data-icon="inline-start" />
+            {creatingCode ? "Gerando…" : redeemCode ? "Gerar outro código" : "Gerar comando"}
+          </Button>
         </section>
       ) : null}
 

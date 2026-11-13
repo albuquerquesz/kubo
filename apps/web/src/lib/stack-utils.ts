@@ -290,3 +290,12 @@ export function getStackCategoryValue(
 
   return stack[category];
 }
+
+/**
+ * Swaps the inline `--layout ...` flag (if any) for `--layout-code <code>`, so the command
+ * applies the layout saved in the account instead of the one in the URL.
+ */
+export function withLayoutCode(command: string, code: string): string {
+  const withoutLayout = command.replace(/ --layout (?:'[^']*'|\S+)/, "");
+  return `${withoutLayout} --layout-code ${code}`;
+}

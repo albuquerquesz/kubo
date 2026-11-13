@@ -68,3 +68,63 @@ export function validateCreateLayout(
   }
   return Result.ok(parsed.data);
 }
+
+const DEFAULT_KUBO_API_URL = "https://kubojs.dev";
+const REDEEM_TIMEOUT_MS = 10_000;
+
+function getRedeemUrl(): string {
+  const base = process.env.KUBO_API_URL?.replace(/\/$/, "") || DEFAULT_KUBO_API_URL;
+  return `${base}/api/layout/redeem`;
+}
+
+/**
+ * Exchanges a single-use code from kubojs.dev for the layout saved in the account. The code
+ * is consumed on success; it is never logged or sent to telemetry.
+ */
+export async function redeemLayoutCode(code: string): Promise<Result<LayoutConfig, CLIError>> {
+  const response = await Result.tryPromise({
+    try: () =>
+      fetch(getRedeemUrl(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+        signal: AbortSignal.timeout(REDEEM_TIMEOUT_MS),
+      }),
+    catch: (cause) =>
+      new CLIError({
+        message: "Could not reach kubojs.dev to redeem the layout code. Check your connection.",
+        cause,
+      }),
+  });
+  if (response.isErr()) return Result.err(response.error);
+
+  if (response.value.status === 400 || response.value.status === 404) {
+    return Result.err(
+      new CLIError({
+        message:
+          "This layout code is invalid, expired or was already used. Generate a new one in the Layout tab at kubojs.dev/new.",
+      }),
+    );
+  }
+  if (!response.value.ok) {
+    return Result.err(
+      new CLIError({ message: `Layout code redemption failed (HTTP ${response.value.status}).` }),
+    );
+  }
+
+  const body = await Result.tryPromise({
+    try: async (): Promise<unknown> => response.value.json(),
+    catch: (cause) => new CLIError({ message: "Invalid response while redeeming the layout code", cause }),
+  });
+  if (body.isErr()) return Result.err(body.error);
+
+  const layout =
+    typeof body.value === "object" && body.value !== null && "layout" in body.value
+      ? body.value.layout
+      : undefined;
+  const parsed = LayoutConfigSchema.safeParse(layout);
+  if (!parsed.success) {
+    return Result.err(new CLIError({ message: "The redeemed layout is not valid." }));
+  }
+  return Result.ok(parsed.data);
+}

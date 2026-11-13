@@ -461,6 +461,11 @@ export const CreateInputSchema = z
     layout: LayoutConfigSchema.optional().describe(
       "Project folder layout (preset, convention dirs and per-app/package overrides)",
     ),
+    layoutCode: z
+      .string()
+      .max(64)
+      .optional()
+      .describe("Single-use code from kubojs.dev that applies the layout saved in the account"),
   })
   .strict()
   .refine((input) => !(input.manualDb !== undefined && input.dbSetupOptions?.mode !== undefined), {

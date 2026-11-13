@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ShareDialog } from "@/components/ui/share-dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { getDesktopBuildNote } from "@/lib/stack-utils";
+import { getDesktopBuildNote, withLayoutCode } from "@/lib/stack-utils";
 import type { Sponsor } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -323,6 +323,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   <LayoutEditor
                     layout={stack.layout}
                     onChange={(layout) => setStack({ layout })}
+                    buildCodeCommand={(code) => withLayoutCode(command, code)}
                   />
                 </ScrollArea>
               ) : (
@@ -418,6 +419,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     <LayoutEditor
                       layout={stack.layout}
                       onChange={(layout) => setStack({ layout })}
+                    buildCodeCommand={(code) => withLayoutCode(command, code)}
                     />
                   </div>
                 </main>
