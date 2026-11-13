@@ -58,15 +58,30 @@ function writePendingSave(pending: boolean): void {
 export function LayoutEditor({ layout, onChange }: LayoutEditorProps) {
   const [draft, setDraft] = useState<LayoutDraft>(() => layoutToDraft(layout));
   const appliedKey = JSON.stringify(layout ?? null);
-  const lastEmittedKey = useRef(appliedKey);
+  /**
+   * Layouts this editor sent to the URL that have not landed yet. URL updates are queued and
+   * resolve one by one while the user keeps typing; an older one landing must not overwrite
+   * the form. Only layouts we did not emit (URL edits, saved profile, reset) resync the draft.
+   */
+  const pendingEmits = useRef<string[]>([]);
+  const layoutRef = useRef(layout);
+  layoutRef.current = layout;
 
-  // Resync the form when the layout changes from outside (URL, saved profile, reset).
+  // Keyed on the layout's content (not object identity, which changes every render).
   useEffect(() => {
-    if (appliedKey !== lastEmittedKey.current) {
-      lastEmittedKey.current = appliedKey;
-      setDraft(layoutToDraft(layout));
+    const pendingIndex = pendingEmits.current.indexOf(appliedKey);
+    if (pendingIndex !== -1) {
+      pendingEmits.current = pendingEmits.current.slice(pendingIndex + 1);
+      return;
     }
-  }, [appliedKey, layout]);
+    pendingEmits.current = [];
+    setDraft(layoutToDraft(layoutRef.current));
+  }, [appliedKey]);
+
+  function emit(next: LayoutConfig | undefined) {
+    pendingEmits.current.push(JSON.stringify(next ?? null));
+    onChange(next);
+  }
 
   const validation = useMemo(() => validateLayoutDraft(draft), [draft]);
 
@@ -74,9 +89,7 @@ export function LayoutEditor({ layout, onChange }: LayoutEditorProps) {
     setDraft(next);
     const result = validateLayoutDraft(next);
     if (!result.layout) return; // keep the last valid layout applied until errors are fixed
-    const applied = parseStackLayout(result.layout) ?? undefined;
-    lastEmittedKey.current = JSON.stringify(applied ?? null);
-    onChange(applied);
+    emit(parseStackLayout(result.layout) ?? undefined);
   }
 
   const { data: session } = authClient.useSession();
@@ -119,10 +132,9 @@ export function LayoutEditor({ layout, onChange }: LayoutEditorProps) {
   }, [isSignedIn, validation.layout]);
 
   function applySaved() {
-    const saved = parseStackLayout(savedProfile?.layout);
-    lastEmittedKey.current = JSON.stringify(saved ?? null);
-    setDraft(layoutToDraft(saved ?? undefined));
-    onChange(saved ?? undefined);
+    const saved = parseStackLayout(savedProfile?.layout) ?? undefined;
+    setDraft(layoutToDraft(saved));
+    emit(saved);
     toast.success("Layout salvo aplicado");
   }
 
@@ -143,7 +155,10 @@ export function LayoutEditor({ layout, onChange }: LayoutEditorProps) {
       </header>
 
       <section className="space-y-2" aria-labelledby="layout-preset-heading">
-        <h3 id="layout-preset-heading" className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
+        <h3
+          id="layout-preset-heading"
+          className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide"
+        >
           Preset
         </h3>
         <div className="grid grid-cols-2 gap-2">
@@ -170,7 +185,10 @@ export function LayoutEditor({ layout, onChange }: LayoutEditorProps) {
       </section>
 
       <section className="space-y-2" aria-labelledby="layout-dirs-heading">
-        <h3 id="layout-dirs-heading" className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
+        <h3
+          id="layout-dirs-heading"
+          className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide"
+        >
           Pastas de convenção
         </h3>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -182,7 +200,9 @@ export function LayoutEditor({ layout, onChange }: LayoutEditorProps) {
               value={draft.dirs[kind]}
               placeholder={kind === "apps" ? "apps" : draft.preset === "libs" ? "libs" : "packages"}
               error={fieldError(`dirs.${kind}`)}
-              onChange={(value) => updateDraft({ ...draft, dirs: { ...draft.dirs, [kind]: value } })}
+              onChange={(value) =>
+                updateDraft({ ...draft, dirs: { ...draft.dirs, [kind]: value } })
+              }
             />
           ))}
         </div>
@@ -244,7 +264,10 @@ export function LayoutEditor({ layout, onChange }: LayoutEditorProps) {
 
       {validation.expanded ? (
         <section className="space-y-2" aria-labelledby="layout-summary-heading">
-          <h3 id="layout-summary-heading" className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
+          <h3
+            id="layout-summary-heading"
+            className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide"
+          >
             Resultado
           </h3>
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 rounded-md bg-muted/20 p-3 font-mono text-xs">
