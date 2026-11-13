@@ -7,6 +7,13 @@
 Changes: npm package settings (human), GitHub Actions workflows, docs.  
 This supersedes the “long-term follow-up” in [`spec-npm-publish-secrets-and-oss.md`](./spec-npm-publish-secrets-and-oss.md) for **production publish auth**. That older spec remains valid for **secrets hygiene**, local OTP/bootstrap, and incident response.
 
+### Completion (2026-11-13)
+
+- Trusted Publisher configured (via `npm trust github`) for all five packages: `@kubojs/types`, `@kubojs/config`, `@kubojs/template-generator`, `create-kubojs`, `@kubojs/cli` → `albuquerquesz/kubo` + `release.yaml`, permission `publish`.
+- First production OIDC release: **0.5.1** (carries an SLSA provenance attestation).
+- `NPM_TOKEN` / `NODE_AUTH_TOKEN` removed from `release.yaml`. The token-based `pr-preview.yaml` and `publish-create-kubojs.yaml` workflows and the repo-root `.npmrc` (`${NPM_TOKEN}`) were deleted. The `NPM_TOKEN` repository secret is no longer referenced.
+- Gotcha: `apps/cli` runs `npm run build` in `prepublishOnly`, so build-time env (`CONVEX_INGEST_URL`, `BTS_TELEMETRY`) lives at the `release` job level.
+
 ### Implementation record (2026-07-30)
 
 | Phase               | Repo state                                                                                                    |
