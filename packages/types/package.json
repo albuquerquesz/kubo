@@ -44,7 +44,7 @@
     "test": "bun test"
   },
   "dependencies": {
-    "zod": "catalog:"
+    "zod": "~4.4.3"
   },
   "devDependencies": {
     "tsdown": "^0.22.0",
