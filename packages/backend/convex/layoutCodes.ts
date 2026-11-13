@@ -4,6 +4,8 @@ import {
   encodeLayoutCode,
   formatLayoutCode,
   hashLayoutCode,
+  isLayoutCodeStale,
+  LAYOUT_CODE_CLEANUP_BATCH,
   LAYOUT_CODE_LENGTH,
   LAYOUT_CODE_TTL_MS,
 } from "../shared/layout-code";
@@ -87,15 +89,46 @@ export const consume = internalMutation({
       .query("layoutCodes")
       .withIndex("by_code_hash", (q) => q.eq("codeHash", args.codeHash))
       .unique();
-    if (!doc || doc.usedAt !== undefined) return null;
+    if (!doc) return null;
 
     const now = Date.now();
-    if (doc.expiresAt < now) {
-      await ctx.db.delete("layoutCodes", doc._id);
+    if (isLayoutCodeStale(doc, now)) {
+      if (doc.usedAt === undefined) await ctx.db.delete("layoutCodes", doc._id);
       return null;
     }
 
     await ctx.db.patch("layoutCodes", doc._id, { usedAt: now });
     return { layout: doc.layout };
+  },
+});
+
+/**
+ * Deletes codes that can no longer be redeemed (expired or already used). Runs from the cron in
+ * `crons.ts`; a full batch reschedules itself so a backlog drains without one huge transaction.
+ */
+export const deleteStale = internalMutation({
+  args: {},
+  returns: v.null(),
+  handler: async (ctx) => {
+    const now = Date.now();
+    const expired = await ctx.db
+      .query("layoutCodes")
+      .withIndex("by_expires_at", (q) => q.lt("expiresAt", now))
+      .take(LAYOUT_CODE_CLEANUP_BATCH);
+    // `undefined` sorts before every number, so this range only matches used codes.
+    const used = await ctx.db
+      .query("layoutCodes")
+      .withIndex("by_used_at", (q) => q.gte("usedAt", 0))
+      .take(LAYOUT_CODE_CLEANUP_BATCH);
+
+    const stale = new Map([...expired, ...used].map((doc) => [doc._id, doc]));
+    for (const doc of stale.values()) {
+      if (isLayoutCodeStale(doc, now)) await ctx.db.delete("layoutCodes", doc._id);
+    }
+
+    if (expired.length === LAYOUT_CODE_CLEANUP_BATCH || used.length === LAYOUT_CODE_CLEANUP_BATCH) {
+      await ctx.scheduler.runAfter(0, internal.layoutCodes.deleteStale, {});
+    }
+    return null;
   },
 });

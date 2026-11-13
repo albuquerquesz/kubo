@@ -4,6 +4,7 @@ import {
   encodeLayoutCode,
   formatLayoutCode,
   hashLayoutCode,
+  isLayoutCodeStale,
   normalizeLayoutCode,
 } from "../shared/layout-code";
 
@@ -31,5 +32,13 @@ describe("layout codes", () => {
     expect(hash).toMatch(/^[0-9a-f]{64}$/);
     expect(hash).toBe(await hashLayoutCode("ABCDEFGHJKMN"));
     expect(hash).not.toContain("ABCD");
+  });
+
+  it("treats used or expired codes as stale", () => {
+    const now = 1_000;
+    expect(isLayoutCodeStale({ expiresAt: now + 1 }, now)).toBe(false);
+    expect(isLayoutCodeStale({ expiresAt: now }, now)).toBe(false);
+    expect(isLayoutCodeStale({ expiresAt: now - 1 }, now)).toBe(true);
+    expect(isLayoutCodeStale({ expiresAt: now + 1, usedAt: now - 5 }, now)).toBe(true);
   });
 });
