@@ -38,4 +38,35 @@ describe("parseAnalyticsEventPayload", () => {
     ).toBeNull();
     expect(parseAnalyticsEventPayload({ backend: "x".repeat(129) })).toBeNull();
   });
+
+  it("accepts audience and outcome fields", () => {
+    expect(
+      parseAnalyticsEventPayload({
+        install_id: "6f1c2a4e-0000-4000-8000-000000000000",
+        source: "mcp",
+        mode: "flags",
+        agent: "claude-code",
+        ci: false,
+        outcome: "failure",
+        error_category: "ProjectCreationError",
+        duration_ms: 1234.6,
+      }),
+    ).toEqual({
+      install_id: "6f1c2a4e-0000-4000-8000-000000000000",
+      source: "mcp",
+      mode: "flags",
+      agent: "claude-code",
+      ci: false,
+      outcome: "failure",
+      error_category: "ProjectCreationError",
+      duration_ms: 1235,
+    });
+  });
+
+  it("rejects unknown outcomes and invalid durations", () => {
+    expect(parseAnalyticsEventPayload({ outcome: "crashed" })).toBeNull();
+    expect(parseAnalyticsEventPayload({ duration_ms: -1 })).toBeNull();
+    expect(parseAnalyticsEventPayload({ duration_ms: "10" })).toBeNull();
+    expect(parseAnalyticsEventPayload({ ci: "yes" })).toBeNull();
+  });
 });

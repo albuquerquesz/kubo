@@ -27,6 +27,7 @@ import {
   TestingSchema,
   WebDeploySchema,
 } from "./types";
+import { setTelemetrySource } from "./utils/analytics";
 import { getLatestCLIVersion } from "./utils/get-latest-cli-version";
 
 const ToolResponseSchema = z.object({
@@ -314,9 +315,10 @@ export function createBtsMcpServer() {
           return formatToolError(getMcpInstallTimeoutMessage(input.packageManager));
         }
 
+        // Opt-out still applies through KUBO_TELEMETRY_DISABLED / DO_NOT_TRACK.
         const result = await create(input.projectName, {
           ...input,
-          disableAnalytics: true,
+          disableAnalytics: false,
         });
 
         if (result.isErr()) {
@@ -398,6 +400,7 @@ export function createBtsMcpServer() {
 }
 
 export async function startBtsMcpServer() {
+  setTelemetrySource("mcp");
   const server = createBtsMcpServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);

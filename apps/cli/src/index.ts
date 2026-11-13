@@ -59,6 +59,7 @@ import {
   type WebDeploy,
   WebDeploySchema,
 } from "./types";
+import { markProgrammaticTelemetrySource, setTelemetrySource } from "./utils/analytics";
 import { CLIError, ProjectCreationError, UserCancelledError } from "./utils/errors";
 import { getLatestCLIVersion } from "./utils/get-latest-cli-version";
 import { validateConfigCompatibility } from "./validation";
@@ -207,6 +208,7 @@ export const router = t.router({
     })
     .input(CreateInputSchema)
     .mutation(async ({ input }) => {
+      setTelemetrySource("json");
       const result = await createProjectHandler(input, { silent: true });
       if (!result) {
         throw new UserCancelledError({ message: "Operation cancelled" });
@@ -326,6 +328,7 @@ export async function create(
   projectName?: string,
   options?: Partial<CreateInput>,
 ): Promise<Result<InitResult, CreateError>> {
+  markProgrammaticTelemetrySource();
   const input = {
     ...options,
     projectName,

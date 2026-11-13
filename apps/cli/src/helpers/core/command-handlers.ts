@@ -10,7 +10,7 @@ import { getDefaultConfig } from "../../constants";
 import { gatherConfig } from "../../prompts/config-prompts";
 import { getProjectName } from "../../prompts/project-name";
 import type { CreateInput, DirectoryConflict, ProjectConfig } from "../../types";
-import { trackProjectCreation } from "../../utils/analytics";
+import { type TelemetryMode, trackCreateEvent } from "../../utils/analytics";
 import { cliColors } from "../../utils/cli-colors";
 import {
   validateAddonsAgainstFrontends,
@@ -121,15 +121,40 @@ export async function createProjectHandler(
     const timeScaffolded = new Date().toISOString();
 
     const result = await createProjectHandlerInternal(input, startTime, timeScaffolded);
+    const mode = getTelemetryMode(input);
 
     if (result.isOk()) {
+      if (!input.dryRun) {
+        await trackCreateEvent(
+          {
+            outcome: "success",
+            mode,
+            durationMs: result.value.elapsedTimeMs,
+            config: result.value.projectConfig,
+          },
+          input.disableAnalytics,
+        );
+      }
       return result.value;
     }
 
     const error = result.error;
     const elapsedTimeMs = Date.now() - startTime;
+    const cancelled = UserCancelledError.is(error);
 
-    if (UserCancelledError.is(error)) {
+    if (!input.dryRun) {
+      await trackCreateEvent(
+        {
+          outcome: cancelled ? "cancelled" : "failure",
+          mode,
+          durationMs: elapsedTimeMs,
+          errorCategory: cancelled ? undefined : getErrorCategory(error),
+        },
+        input.disableAnalytics,
+      );
+    }
+
+    if (cancelled) {
       if (isSilent()) {
         return createEmptyResult(timeScaffolded, elapsedTimeMs, error.message);
       }
@@ -146,6 +171,42 @@ export async function createProjectHandler(
     displayError(error as AppError);
     process.exit(1);
   });
+}
+
+/** Stack-selecting flags; their presence means the user chose the stack via flags, not prompts. */
+const STACK_FLAG_KEYS = [
+  "database",
+  "orm",
+  "backend",
+  "runtime",
+  "frontend",
+  "api",
+  "auth",
+  "payments",
+  "addons",
+  "examples",
+  "dbSetup",
+  "webDeploy",
+  "serverDeploy",
+] as const satisfies ReadonlyArray<keyof CreateInput>;
+
+function getTelemetryMode(input: CreateInput): TelemetryMode {
+  if (input.template && input.template !== "none") return "template";
+  if (input.yes) return "yes";
+  if (isSilent() || STACK_FLAG_KEYS.some((key) => input[key] !== undefined)) return "flags";
+  return "interactive";
+}
+
+function getTag(value: unknown): string | undefined {
+  if (typeof value !== "object" || value === null || !("_tag" in value)) return undefined;
+  return typeof value._tag === "string" ? value._tag : undefined;
+}
+
+/** Error class names only (e.g. `CLIError:ValidationError`), never messages or paths. */
+function getErrorCategory(error: CreateHandlerError): string {
+  const tag = getTag(error) ?? "UnknownError";
+  const causeTag = "cause" in error ? getTag(error.cause) : undefined;
+  return causeTag ? `${tag}:${causeTag}` : tag;
 }
 
 async function createProjectHandlerInternal(
@@ -417,8 +478,6 @@ async function createProjectHandlerInternal(
         ),
       );
     }
-
-    await trackProjectCreation(config, input.disableAnalytics);
 
     // Track locally in history.json (non-fatal)
     const historyResult = await addToHistory(config, reproducibleCommand);

@@ -28,4 +28,11 @@ export const analyticsStats = defineTable({
   hourlyDistribution: v.optional(distributionValidator),
   stackCombinations: v.optional(distributionValidator),
   dbOrmCombinations: v.optional(distributionValidator),
+  uniqueInstalls: v.optional(v.number()),
+  source: v.optional(distributionValidator),
+  mode: v.optional(distributionValidator),
+  agent: v.optional(distributionValidator),
+  ci: v.optional(distributionValidator),
+  outcome: v.optional(distributionValidator),
+  errorCategory: v.optional(distributionValidator),
 });
