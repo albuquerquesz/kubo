@@ -104,26 +104,30 @@ For MCP project creation, prefer `install: false`. Long dependency installs can 
 
 ## Telemetry
 
-This CLI collects anonymous usage data to help improve the tool. The data collected includes:
+This CLI collects anonymous usage data to help improve the tool. Each `create` run (except `--dry-run`) sends one event with:
 
-- Configuration options selected
-- CLI version
-- Node.js version
-- Platform (OS)
+- Selected stack options (only when the project is created)
+- Outcome (`success`, `failure`, `cancelled`), duration and, on failure, the error class name (never the message)
+- How the CLI was invoked (`cli`, `json`, `mcp`, `api`) and how the stack was chosen (`interactive`, `flags`, `yes`, `template`)
+- CLI version, Node.js version, platform, whether it runs in CI, and the coding agent detected from environment markers (e.g. `claude-code`, `cursor`, `codex`)
+- A random anonymous install ID stored in the kubojs config directory (`telemetry.json`), used to count unique installs
 
-**Telemetry is enabled by default in published versions** to help us understand usage patterns and improve the tool.
+Project names, paths, file contents, error messages and environment variable values are never sent. See https://kubojs.dev/docs/analytics.
 
 ### Disabling Telemetry
 
-You can disable telemetry by setting the `BTS_TELEMETRY_DISABLED` environment variable:
-
 ```bash
 # Disable telemetry for a single run
-BTS_TELEMETRY_DISABLED=1 npx kubojs
+KUBO_TELEMETRY_DISABLED=1 npx kubojs
+
+# DO_NOT_TRACK is also honored
+DO_NOT_TRACK=1 npx kubojs
 
 # Disable telemetry globally in your shell profile (.bashrc, .zshrc, etc.)
-export BTS_TELEMETRY_DISABLED=1
+export KUBO_TELEMETRY_DISABLED=1
 ```
+
+The legacy `BTS_TELEMETRY_DISABLED=1` variable still works.
 
 ## Examples
 

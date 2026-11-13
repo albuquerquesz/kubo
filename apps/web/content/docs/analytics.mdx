@@ -5,27 +5,34 @@ description: O que coletamos, como desativar e onde ver insights agregados
 
 ## O que é coletado
 
-Na criação bem-sucedida de um projeto, a CLI envia um único evento (`project_created`) com:
+A cada execução de `create` (exceto `--dry-run`), a CLI envia um único evento com:
 
-- Opções selecionadas (escolhas da stack), incluindo: `frontend`, `backend`, `runtime`, `database`, `orm`, `api`, `auth`, `payments`, `addons`, `examples`, `dbSetup`, `webDeploy`, `serverDeploy`, `packageManager`, `git`, `install`
-- Dados de ambiente: `cli_version`, `node_version`, `platform`
+- **Escolhas da stack** (só quando o projeto é criado): `frontend`, `backend`, `runtime`, `database`, `orm`, `api`, `auth`, `payments`, `addons`, `examples`, `dbSetup`, `webDeploy`, `serverDeploy`, `packageManager`, `git`, `install`
+- **Resultado**: `outcome` (`success`, `failure` ou `cancelled`), `duration_ms` e, em falhas, `error_category` (só o nome da classe do erro, como `CLIError:ValidationError`; nunca a mensagem)
+- **Como a CLI foi usada**: `source` (`cli`, `json`, `mcp` ou `api`) e `mode` (`interactive`, `flags`, `yes` ou `template`)
+- **Ambiente**: `cli_version`, `node_version`, `platform`, `ci` (se roda em CI) e `agent` (agente de código detectado por variáveis de ambiente, como `claude-code`, `cursor` ou `codex`)
+- **ID de instalação anônimo** (`install_id`): um UUID aleatório criado na primeira execução e salvo em `~/.config/kubojs/telemetry.json` (ou no diretório de config do seu sistema). Ele não é derivado da sua máquina nem de você; serve só para contar instalações únicas. Apague o arquivo para gerar outro.
 
 Não é coletado:
 
-- Nome do projeto, caminho ou conteúdo de arquivos (explicitamente omitidos)
-- Segredos ou variáveis de ambiente da sua máquina
+- Nome do projeto, caminho ou conteúdo de arquivos
+- Mensagens de erro, segredos ou variáveis de ambiente da sua máquina (apenas a presença de marcadores de agente/CI)
+- Endereço IP (não é armazenado)
+
+Na primeira execução, a CLI mostra um aviso sobre a telemetria.
 
 ## Desativar telemetria
 
-A telemetria fica habilitada por padrão. Para desativar:
+A telemetria fica habilitada por padrão. Para desativar, use qualquer uma das variáveis:
 
 ```bash
-BTS_TELEMETRY_DISABLED=1 npx kubojs@latest
+KUBO_TELEMETRY_DISABLED=1 npx kubojs@latest
+DO_NOT_TRACK=1 npx kubojs@latest
 ```
 
 <Callout title="Nota">O comando acima desativa apenas para uma execução.</Callout>
 
-Adicione `export BTS_TELEMETRY_DISABLED=1` ao perfil do shell para tornar permanente.
+Adicione `export KUBO_TELEMETRY_DISABLED=1` ao perfil do shell para tornar permanente. A variável antiga `BTS_TELEMETRY_DISABLED=1` continua funcionando.
 
 ## Onde ver analytics
 
@@ -39,9 +46,9 @@ Observações:
 
 ## Transparência total
 
-Um único evento por scaffold; sem IP nem identificadores de projeto. Veja o código-fonte abaixo.
+Um único evento por execução; sem IP, nome de projeto ou dados pessoais. Veja o código-fonte abaixo.
 
-Em caso de dúvida, defina `BTS_TELEMETRY_DISABLED=1` e siga em frente. Você continua podendo usar todos os recursos da CLI.
+Em caso de dúvida, defina `KUBO_TELEMETRY_DISABLED=1` e siga em frente. Você continua podendo usar todos os recursos da CLI.
 
 ## Código-fonte
 

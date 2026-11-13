@@ -1,37 +1,37 @@
 import { v } from "convex/values";
 
 import { buildDailyWindow } from "../shared/analytics-date-utils";
+import type { Doc } from "./_generated/dataModel";
 import { internalMutation, query } from "./_generated/server";
 
 const MAX_DAILY_STATS_WINDOW = 366;
 
-function incrementKey(
-  dist: Record<string, number>,
-  key: string | undefined,
-): Record<string, number> {
-  if (!key) return dist;
-  return { ...dist, [key]: (dist[key] || 0) + 1 };
+type Distribution = Record<string, number>;
+type StatsDoc = Doc<"analyticsStats">;
+type StatsFields = Omit<StatsDoc, "_id" | "_creationTime">;
+
+// Convex record keys must be non-empty ASCII and must not start with "$" or "_".
+function isValidRecordKey(key: string): boolean {
+  return /^[\x20-\x7e]+$/.test(key) && !key.startsWith("$") && !key.startsWith("_");
 }
 
-function incrementKeys(
-  dist: Record<string, number>,
-  keys: string[] | undefined,
-): Record<string, number> {
-  if (!keys) return dist;
-  const result = { ...dist };
-  for (const key of keys) {
-    result[key] = (result[key] || 0) + 1;
+function incrementKey(dist: Distribution | undefined, key: string | undefined): Distribution {
+  const base = dist ?? {};
+  if (!key || !isValidRecordKey(key)) return base;
+  return { ...base, [key]: (base[key] ?? 0) + 1 };
+}
+
+function incrementKeys(dist: Distribution | undefined, keys: string[] | undefined): Distribution {
+  let result = dist ?? {};
+  for (const key of keys ?? []) {
+    result = incrementKey(result, key);
   }
   return result;
 }
 
-function incrementBool(
-  dist: Record<string, number>,
-  val: boolean | undefined,
-): Record<string, number> {
-  if (val === undefined) return dist;
-  const key = val ? "Yes" : "No";
-  return { ...dist, [key]: (dist[key] || 0) + 1 };
+function incrementBool(dist: Distribution | undefined, val: boolean | undefined): Distribution {
+  if (val === undefined) return dist ?? {};
+  return incrementKey(dist, val ? "Yes" : "No");
 }
 
 function getMajorVersion(version: string | undefined): string | undefined {
@@ -40,100 +40,152 @@ function getMajorVersion(version: string | undefined): string | undefined {
   return `v${clean.split(".")[0]}`;
 }
 
+const analyticsEventArgs = {
+  database: v.optional(v.string()),
+  orm: v.optional(v.string()),
+  backend: v.optional(v.string()),
+  runtime: v.optional(v.string()),
+  frontend: v.optional(v.array(v.string())),
+  addons: v.optional(v.array(v.string())),
+  examples: v.optional(v.array(v.string())),
+  auth: v.optional(v.string()),
+  payments: v.optional(v.string()),
+  git: v.optional(v.boolean()),
+  packageManager: v.optional(v.string()),
+  install: v.optional(v.boolean()),
+  dbSetup: v.optional(v.string()),
+  api: v.optional(v.string()),
+  webDeploy: v.optional(v.string()),
+  serverDeploy: v.optional(v.string()),
+  cli_version: v.optional(v.string()),
+  node_version: v.optional(v.string()),
+  platform: v.optional(v.string()),
+  install_id: v.optional(v.string()),
+  source: v.optional(v.string()),
+  mode: v.optional(v.string()),
+  agent: v.optional(v.string()),
+  ci: v.optional(v.boolean()),
+  outcome: v.optional(v.union(v.literal("success"), v.literal("failure"), v.literal("cancelled"))),
+  error_category: v.optional(v.string()),
+  duration_ms: v.optional(v.number()),
+};
+
+type AnalyticsEventArgs = {
+  [K in keyof typeof analyticsEventArgs]?: (typeof analyticsEventArgs)[K]["type"];
+};
+
+const EMPTY_STATS: StatsFields = {
+  totalProjects: 0,
+  lastEventTime: 0,
+  backend: {},
+  frontend: {},
+  database: {},
+  orm: {},
+  api: {},
+  auth: {},
+  runtime: {},
+  packageManager: {},
+  platform: {},
+  addons: {},
+  examples: {},
+  dbSetup: {},
+  webDeploy: {},
+  serverDeploy: {},
+  payments: {},
+  git: {},
+  install: {},
+  nodeVersion: {},
+  cliVersion: {},
+};
+
+/** Audience and outcome metrics, counted for every event (success, failure, cancel). */
+function applyAudienceStats(
+  stats: StatsFields,
+  args: AnalyticsEventArgs,
+  now: number,
+  isNewInstall: boolean,
+): StatsFields {
+  return {
+    ...stats,
+    lastEventTime: now,
+    uniqueInstalls: (stats.uniqueInstalls ?? 0) + (isNewInstall ? 1 : 0),
+    source: incrementKey(stats.source, args.source ?? "cli"),
+    mode: incrementKey(stats.mode, args.mode),
+    agent: incrementKey(stats.agent, args.agent ?? "none"),
+    ci: incrementBool(stats.ci, args.ci),
+    outcome: incrementKey(stats.outcome, args.outcome ?? "success"),
+    errorCategory: incrementKey(stats.errorCategory, args.error_category),
+    platform: incrementKey(stats.platform, args.platform),
+    nodeVersion: incrementKey(stats.nodeVersion, getMajorVersion(args.node_version)),
+    cliVersion: incrementKey(stats.cliVersion, args.cli_version),
+  };
+}
+
+/** Stack choices, counted only for projects that were actually created. */
+function applyStackStats(stats: StatsFields, args: AnalyticsEventArgs, now: number): StatsFields {
+  const hourKey = String(new Date(now).getUTCHours()).padStart(2, "0");
+  const stackKey = `${args.backend || "none"} + ${args.frontend?.[0] || "none"}`;
+  const dbOrmKey = `${args.database || "none"} + ${args.orm || "none"}`;
+
+  return {
+    ...stats,
+    totalProjects: stats.totalProjects + 1,
+    backend: incrementKey(stats.backend, args.backend),
+    frontend: incrementKeys(stats.frontend, args.frontend),
+    database: incrementKey(stats.database, args.database),
+    orm: incrementKey(stats.orm, args.orm),
+    api: incrementKey(stats.api, args.api),
+    auth: incrementKey(stats.auth, args.auth),
+    runtime: incrementKey(stats.runtime, args.runtime),
+    packageManager: incrementKey(stats.packageManager, args.packageManager),
+    addons: incrementKeys(stats.addons, args.addons),
+    examples: incrementKeys(stats.examples, args.examples),
+    dbSetup: incrementKey(stats.dbSetup, args.dbSetup),
+    webDeploy: incrementKey(stats.webDeploy, args.webDeploy),
+    serverDeploy: incrementKey(stats.serverDeploy, args.serverDeploy),
+    payments: incrementKey(stats.payments, args.payments),
+    git: incrementBool(stats.git, args.git),
+    install: incrementBool(stats.install, args.install),
+    hourlyDistribution: incrementKey(stats.hourlyDistribution, hourKey),
+    stackCombinations: incrementKey(stats.stackCombinations, stackKey),
+    dbOrmCombinations: incrementKey(stats.dbOrmCombinations, dbOrmKey),
+  };
+}
+
 export const ingestEvent = internalMutation({
-  args: {
-    database: v.optional(v.string()),
-    orm: v.optional(v.string()),
-    backend: v.optional(v.string()),
-    runtime: v.optional(v.string()),
-    frontend: v.optional(v.array(v.string())),
-    addons: v.optional(v.array(v.string())),
-    examples: v.optional(v.array(v.string())),
-    auth: v.optional(v.string()),
-    payments: v.optional(v.string()),
-    git: v.optional(v.boolean()),
-    packageManager: v.optional(v.string()),
-    install: v.optional(v.boolean()),
-    dbSetup: v.optional(v.string()),
-    api: v.optional(v.string()),
-    webDeploy: v.optional(v.string()),
-    serverDeploy: v.optional(v.string()),
-    cli_version: v.optional(v.string()),
-    node_version: v.optional(v.string()),
-    platform: v.optional(v.string()),
-  },
+  args: analyticsEventArgs,
   returns: v.null(),
   handler: async (ctx, args) => {
-    const id = await ctx.db.insert("analyticsEvents", args);
-    const event = await ctx.db.get(id);
-    const now = event!._creationTime;
+    const isNewInstall =
+      args.install_id !== undefined &&
+      (await ctx.db
+        .query("analyticsEvents")
+        .withIndex("by_install_id", (q) => q.eq("install_id", args.install_id))
+        .first()) === null;
 
-    const hourKey = String(new Date(now).getUTCHours()).padStart(2, "0");
-    const fe = args.frontend?.[0] || "none";
-    const be = args.backend || "none";
-    const stackKey = `${be} + ${fe}`;
-    const db = args.database || "none";
-    const o = args.orm || "none";
-    const dbOrmKey = `${db} + ${o}`;
+    const id = await ctx.db.insert("analyticsEvents", args);
+    const event = await ctx.db.get("analyticsEvents", id);
+    const now = event?._creationTime ?? Date.now();
+    // Events from CLI versions without `outcome` were only sent on success.
+    const created = (args.outcome ?? "success") === "success";
 
     const existingStats = await ctx.db.query("analyticsStats").first();
+    const { _id, _creationTime, ...current } = existingStats ?? {
+      _id: undefined,
+      _creationTime: undefined,
+      ...EMPTY_STATS,
+    };
 
-    if (existingStats) {
-      await ctx.db.patch("analyticsStats", existingStats._id, {
-        totalProjects: existingStats.totalProjects + 1,
-        lastEventTime: now,
-        backend: incrementKey(existingStats.backend, args.backend),
-        frontend: incrementKeys(existingStats.frontend, args.frontend),
-        database: incrementKey(existingStats.database, args.database),
-        orm: incrementKey(existingStats.orm, args.orm),
-        api: incrementKey(existingStats.api, args.api),
-        auth: incrementKey(existingStats.auth, args.auth),
-        runtime: incrementKey(existingStats.runtime, args.runtime),
-        packageManager: incrementKey(existingStats.packageManager, args.packageManager),
-        platform: incrementKey(existingStats.platform, args.platform),
-        addons: incrementKeys(existingStats.addons, args.addons),
-        examples: incrementKeys(existingStats.examples, args.examples),
-        dbSetup: incrementKey(existingStats.dbSetup, args.dbSetup),
-        webDeploy: incrementKey(existingStats.webDeploy, args.webDeploy),
-        serverDeploy: incrementKey(existingStats.serverDeploy, args.serverDeploy),
-        payments: incrementKey(existingStats.payments, args.payments),
-        git: incrementBool(existingStats.git, args.git),
-        install: incrementBool(existingStats.install, args.install),
-        nodeVersion: incrementKey(existingStats.nodeVersion, getMajorVersion(args.node_version)),
-        cliVersion: incrementKey(existingStats.cliVersion, args.cli_version),
-        hourlyDistribution: incrementKey(existingStats.hourlyDistribution || {}, hourKey),
-        stackCombinations: incrementKey(existingStats.stackCombinations || {}, stackKey),
-        dbOrmCombinations: incrementKey(existingStats.dbOrmCombinations || {}, dbOrmKey),
-      });
+    let next = applyAudienceStats(current, args, now, isNewInstall);
+    if (created) next = applyStackStats(next, args, now);
+
+    if (_id) {
+      await ctx.db.replace("analyticsStats", _id, next);
     } else {
-      const emptyDist: Record<string, number> = {};
-      await ctx.db.insert("analyticsStats", {
-        totalProjects: 1,
-        lastEventTime: now,
-        backend: incrementKey(emptyDist, args.backend),
-        frontend: incrementKeys(emptyDist, args.frontend),
-        database: incrementKey(emptyDist, args.database),
-        orm: incrementKey(emptyDist, args.orm),
-        api: incrementKey(emptyDist, args.api),
-        auth: incrementKey(emptyDist, args.auth),
-        runtime: incrementKey(emptyDist, args.runtime),
-        packageManager: incrementKey(emptyDist, args.packageManager),
-        platform: incrementKey(emptyDist, args.platform),
-        addons: incrementKeys(emptyDist, args.addons),
-        examples: incrementKeys(emptyDist, args.examples),
-        dbSetup: incrementKey(emptyDist, args.dbSetup),
-        webDeploy: incrementKey(emptyDist, args.webDeploy),
-        serverDeploy: incrementKey(emptyDist, args.serverDeploy),
-        payments: incrementKey(emptyDist, args.payments),
-        git: incrementBool(emptyDist, args.git),
-        install: incrementBool(emptyDist, args.install),
-        nodeVersion: incrementKey(emptyDist, getMajorVersion(args.node_version)),
-        cliVersion: incrementKey(emptyDist, args.cli_version),
-        hourlyDistribution: incrementKey(emptyDist, hourKey),
-        stackCombinations: incrementKey(emptyDist, stackKey),
-        dbOrmCombinations: incrementKey(emptyDist, dbOrmKey),
-      });
+      await ctx.db.insert("analyticsStats", next);
     }
+
+    if (!created) return null;
 
     const today = new Date(now).toISOString().slice(0, 10);
     const dailyStats = await ctx.db
@@ -181,6 +233,13 @@ export const getStats = query({
       hourlyDistribution: distributionValidator,
       stackCombinations: distributionValidator,
       dbOrmCombinations: distributionValidator,
+      uniqueInstalls: v.number(),
+      source: distributionValidator,
+      mode: distributionValidator,
+      agent: distributionValidator,
+      ci: distributionValidator,
+      outcome: distributionValidator,
+      errorCategory: distributionValidator,
     }),
     v.null(),
   ),
@@ -212,6 +271,13 @@ export const getStats = query({
       hourlyDistribution: stats.hourlyDistribution || {},
       stackCombinations: stats.stackCombinations || {},
       dbOrmCombinations: stats.dbOrmCombinations || {},
+      uniqueInstalls: stats.uniqueInstalls ?? 0,
+      source: stats.source ?? {},
+      mode: stats.mode ?? {},
+      agent: stats.agent ?? {},
+      ci: stats.ci ?? {},
+      outcome: stats.outcome ?? {},
+      errorCategory: stats.errorCategory ?? {},
     };
   },
 });

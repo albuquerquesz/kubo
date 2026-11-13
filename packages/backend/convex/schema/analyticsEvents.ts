@@ -21,4 +21,12 @@ export const analyticsEvents = defineTable({
   cli_version: v.optional(v.string()),
   node_version: v.optional(v.string()),
   platform: v.optional(v.string()),
-});
+  install_id: v.optional(v.string()),
+  source: v.optional(v.string()),
+  mode: v.optional(v.string()),
+  agent: v.optional(v.string()),
+  ci: v.optional(v.boolean()),
+  outcome: v.optional(v.union(v.literal("success"), v.literal("failure"), v.literal("cancelled"))),
+  error_category: v.optional(v.string()),
+  duration_ms: v.optional(v.number()),
+}).index("by_install_id", ["install_id"]);
