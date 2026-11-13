@@ -23,10 +23,14 @@ function listFiles(node: VirtualNode, prefix: string, out: Map<string, string>):
     out.set(prefix, node.content);
     return;
   }
-  for (const child of node.children) listFiles(child, prefix ? `${prefix}/${child.name}` : child.name, out);
+  for (const child of node.children)
+    listFiles(child, prefix ? `${prefix}/${child.name}` : child.name, out);
 }
 
-async function generateFiles(config: ReturnType<typeof buildGoldenConfigs>[number], layout: LayoutConfig) {
+async function generateFiles(
+  config: ReturnType<typeof buildGoldenConfigs>[number],
+  layout: LayoutConfig,
+) {
   const result = await generate({ config: { ...config, layout }, templates: EMBEDDED_TEMPLATES });
   if (result.isErr()) throw result.error;
   const files = new Map<string, string>();
@@ -48,19 +52,23 @@ function danglingRefs(files: Map<string, string>): string[] {
   for (const [file, content] of files) {
     if (!/\.(json|ts|tsx|mts|js|mjs|css|vue|svelte|astro)$/.test(file)) continue;
     for (const match of content.matchAll(RELATIVE_REF)) {
-      const ref = match[1]!;
+      // Strip bundler queries (?url, ?raw) and map ESM ".js" specifiers to their TS sources.
+      const ref = match[1]!.replace(/\?.*$/, "");
       const target = path.posix.normalize(path.posix.join(path.posix.dirname(file), ref));
       if (target.startsWith("..")) continue; // leaves the project: not ours to check
       if (RUNTIME_FILES.test(target)) {
         // .env, migrations and generated clients appear at runtime; the package must exist.
-        const owner = target.includes("/generated") ? target.slice(0, target.indexOf("/generated")) : path.posix.dirname(target);
+        const owner = target.includes("/generated")
+          ? target.slice(0, target.indexOf("/generated"))
+          : path.posix.dirname(target);
         const base = owner.replace(/\/(prisma|src)$/, "");
         if (!dirs.has(base) && !files.has(base)) {
           dangling.push(`${file} -> ${ref}`);
         }
         continue;
       }
-      const candidates = [target, `${target}.ts`, `${target}.tsx`, `${target}/index.ts`];
+      const tsTarget = target.replace(/\.js$/, ".ts");
+      const candidates = [target, tsTarget, `${target}.ts`, `${target}.tsx`, `${target}/index.ts`];
       if (!candidates.some((candidate) => files.has(candidate) || dirs.has(candidate))) {
         dangling.push(`${file} -> ${ref}`);
       }

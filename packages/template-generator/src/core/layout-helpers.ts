@@ -3,7 +3,7 @@ import {
   getLayoutDirGlob,
   getLayoutPackagePath,
   joinLayoutPath,
-  relativeLayoutPath,
+  layoutPathDepth,
   LayoutConfigSchema,
   type ExpandedLayoutConfig,
   type LayoutAppId,
@@ -68,9 +68,10 @@ function layoutPathHelper(ref: LayoutRef, ...rest: unknown[]): string {
 }
 
 /**
- * Relative path from the folder of `from` to `to`.
+ * Relative path from the folder of `from` to `to`, always written through the project root
+ * (`../../packages/db`, never the shorter `../db`) to match the style of the existing templates.
  * `{{layoutRelative "app:web" "package:ui"}}` → `../../packages/ui` in the standard layout.
- * `{{layoutRelative "app:web" "app:server" ".env"}}` → `../server/.env`.
+ * `{{layoutRelative "package:db" "app:server" ".env"}}` → `../../apps/server/.env`.
  */
 function layoutRelativeHelper(from: LayoutRef, to: LayoutRef, ...rest: unknown[]): string {
   const options = rest.pop() as HelperOptions;
@@ -78,8 +79,8 @@ function layoutRelativeHelper(from: LayoutRef, to: LayoutRef, ...rest: unknown[]
   const fromPath = resolveLayoutRef(expanded, String(from));
   const toPath = resolveLayoutRef(expanded, String(to));
   const sub = rest.filter((part): part is string => typeof part === "string");
-  const relative = relativeLayoutPath(fromPath, toPath);
-  return [relative, ...sub].filter((part) => part !== ".").join("/") || ".";
+  const ups = Array.from({ length: layoutPathDepth(fromPath) }, () => "..");
+  return [...ups, toPath, ...sub].filter((part) => part !== ".").join("/") || ".";
 }
 
 /** `{{layoutDirGlob "apps"}}` → `apps/*`; `{{layoutDirGlob "packages"}}` → `packages/*` (or `libs/*`). */

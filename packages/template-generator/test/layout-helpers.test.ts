@@ -9,7 +9,12 @@ function render(template: string, layout?: ProjectConfig["layout"]): string {
 
 describe("layout Handlebars helpers", () => {
   it("renders standard paths identical to the old hardcoded ones", () => {
-    expect(render(`{{layoutRelative "app:web" "app:server" ".env"}}`)).toBe("../server/.env");
+    expect(render(`{{layoutRelative "app:web" "app:server" ".env"}}`)).toBe(
+      "../../apps/server/.env",
+    );
+    expect(render(`{{layoutRelative "package:infra" "package:db" "src/migrations"}}`)).toBe(
+      "../../packages/db/src/migrations",
+    );
     expect(render(`{{layoutRelative "package:db" "app:server" ".env"}}`)).toBe(
       "../../apps/server/.env",
     );
@@ -58,10 +63,12 @@ describe("migrated templates render the standard paths", () => {
     return processTemplateString(source, standard);
   }
 
-  it("ui globals.css keeps the Tailwind @source path", async () => {
+  it("ui globals.css points @source at the apps dir relative to the stylesheet", async () => {
+    // Tailwind resolves @source from the CSS file (packages/ui/src/styles), so the
+    // apps dir is four levels up. The old hardcoded "../../../apps" pointed at packages/apps.
     const css = await renderTemplate("packages/ui/src/styles/globals.css.hbs");
     expect(css.split("\n").slice(0, 5).join("\n")).toContain(
-      '@source "../../../apps/**/*.{ts,tsx}";',
+      '@source "../../../../apps/**/*.{ts,tsx}";',
     );
   });
 
@@ -71,6 +78,10 @@ describe("migrated templates render the standard paths", () => {
       .filter((line) => /\.\.\/|cwd:|migrationsDir|config\(\{ path/.test(line));
     expect(lines.join("\n")).toContain('config({ path: "../../apps/web/.env" });');
     expect(lines.join("\n")).not.toContain("&#x");
-    expect(lines.filter((line) => line.includes("cwd:")).every((line) => /"\.\.\/\.\.\/apps\/(web|server)"/.test(line))).toBe(true);
+    expect(
+      lines
+        .filter((line) => line.includes("cwd:"))
+        .every((line) => /"\.\.\/\.\.\/apps\/(web|server)"/.test(line)),
+    ).toBe(true);
   });
 });
