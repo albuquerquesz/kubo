@@ -1,0 +1,30 @@
+// Paleta do protótipo (GitHub dark). Espelha as cores do @theme em styles.css para o 3D.
+export const palette = {
+	void: "#05070a",
+	shoulder: "#06080b",
+	asphalt: "#10151c",
+	panel: "#161b22",
+	ink: "#0d1117",
+	line: "#30363d",
+	bright: "#f0f6fc",
+	stripe: "#e6edf3",
+	go: "#3fb950",
+	goEdge: "#2ea043",
+	goDeep: "#196c2e",
+	goLight: "#56d364",
+	steel: "#8b949e",
+	tire: "#22272e",
+	alert: "#f85149",
+	warn: "#e3b341",
+	amber: "#d29922",
+	sky: "#58a6ff",
+	skyDeep: "#1f5bad",
+	grape: "#a371f7",
+	grapeDeep: "#6e40c9",
+	stone: "#c2a57f",
+	stoneDeep: "#7d6648",
+	wood: "#8a5a2b",
+	woodDeep: "#5c3a1a",
+} as const;
+
+export type PaletteColor = (typeof palette)[keyof typeof palette];

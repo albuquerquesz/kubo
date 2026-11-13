@@ -1,0 +1,5 @@
+language js
+
+JsElseClause() as $else where {
+	register_diagnostic(span=$else, message="Object Calisthenics: não use `else`. Use retorno antecipado ou um mapa de lookup.", severity="error")
+}

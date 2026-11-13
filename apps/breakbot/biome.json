@@ -1,0 +1,53 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": ["**", "!**/routeTree.gen.ts", "!**/*.css"]
+	},
+	"plugins": [
+		"./biome-plugins/no-else.grit",
+		"./biome-plugins/no-type-assertion.grit",
+		"./biome-plugins/no-unknown.grit",
+		"./biome-plugins/no-inline-object-type.grit",
+		"./biome-plugins/no-inferrable-annotation.grit"
+	],
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"suspicious": {
+				"noExplicitAny": "error"
+			},
+			"style": {
+				"noNonNullAssertion": "error",
+				"noUselessElse": "error",
+				"noInferrableTypes": "error",
+				"noParameterAssign": "error",
+				"noNestedTernary": "error",
+				"useArrayLiterals": "off"
+			},
+			"complexity": {
+				"noExcessiveCognitiveComplexity": {
+					"level": "error",
+					"options": {
+						"maxAllowedComplexity": 10
+					}
+				}
+			}
+		}
+	},
+	"formatter": {
+		"lineWidth": 100
+	}
+}

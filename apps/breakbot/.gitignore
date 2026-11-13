@@ -1,0 +1,11 @@
+node_modules
+.turbo
+dist
+.output
+.nitro
+.tanstack
+.vinxi
+*.local
+.env
+test-results
+playwright-report

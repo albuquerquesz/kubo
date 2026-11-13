@@ -1,0 +1,128 @@
+@import "tailwindcss";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/700.css";
+@import "@fontsource/jetbrains-mono/800.css";
+
+@theme {
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --color-void: #05070a;
+  --color-panel: #161b22;
+  --color-ink: #0d1117;
+  --color-line: #30363d;
+  --color-fg: #c9d1d9;
+  --color-bright: #f0f6fc;
+  --color-mute: #8b949e;
+  --color-faint: #6e7681;
+  --color-go: #3fb950;
+  --color-go-deep: #238636;
+  --color-go-edge: #2ea043;
+  --color-alert: #f85149;
+  --color-warn: #e3b341;
+  --color-sky: #58a6ff;
+  --color-grape: #a371f7;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--color-void);
+  overflow: hidden;
+  overscroll-behavior: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  font-family: var(--font-mono);
+  color: var(--color-fg);
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@keyframes glitch {
+  0%, 90%, 100% { text-shadow: none; transform: none; }
+  91% { text-shadow: 3px 0 var(--color-alert), -3px 0 var(--color-sky); transform: translateX(2px) skewX(-4deg); }
+  93% { text-shadow: -3px 0 var(--color-alert), 3px 0 var(--color-sky); transform: translateX(-2px); }
+  95% { text-shadow: none; transform: none; }
+}
+
+@keyframes pulse-go {
+  0% { box-shadow: 0 0 0 0 rgb(46 160 67 / 0.45); }
+  70% { box-shadow: 0 0 0 12px rgb(46 160 67 / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(46 160 67 / 0); }
+}
+
+@keyframes sway {
+  0%, 100% { transform: translateX(-60px); }
+  50% { transform: translateX(60px); }
+}
+
+@keyframes coin-pop {
+  0% { opacity: 0; transform: translateY(6px); }
+  20%, 70% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+@keyframes banner {
+  0% { opacity: 0; }
+  15%, 80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes confetti-fall {
+  0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(90vh) rotate(540deg); }
+}
+
+@keyframes slam {
+  0% { opacity: 0; transform: scale(1.7) rotate(-3deg); }
+  60% { opacity: 1; transform: scale(0.94) rotate(0.5deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes rise {
+  0% { opacity: 0; transform: translateY(16px) scale(0.9); }
+  70% { opacity: 1; transform: translateY(-2px) scale(1.03); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes nudge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes shine {
+  0%, 60% { transform: translateX(-120%) skewX(-20deg); }
+  100% { transform: translateX(260%) skewX(-20deg); }
+}
+
+@keyframes grow {
+  from { transform: scaleX(0); }
+}
+
+@utility animate-fade { animation: fade 0.3s ease-out; }
+@utility animate-pop { animation: pop 0.35s ease-out; }
+@utility animate-blink { animation: blink 1s steps(1) infinite; }
+@utility animate-glitch { animation: glitch 3.2s infinite; }
+@utility animate-pulse-go { animation: pulse-go 2s infinite; }
+@utility animate-sway { animation: sway 1.4s ease-in-out infinite; }
+@utility animate-banner { animation: banner 2.4s ease-out forwards; }
+@utility animate-coin-pop { animation: coin-pop 1.6s ease-out forwards; }
+@utility animate-slam { animation: slam 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+@utility animate-rise { animation: rise 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+@utility animate-nudge { animation: nudge 1.6s ease-in-out infinite; }
+@utility animate-shine { animation: shine 2.8s ease-in-out infinite; }
+@utility animate-grow { animation: grow 0.9s cubic-bezier(0.3, 0.8, 0.3, 1) both; }
+@utility animate-confetti { animation: confetti-fall 4s cubic-bezier(0.2, 0.6, 0.4, 1) both; }

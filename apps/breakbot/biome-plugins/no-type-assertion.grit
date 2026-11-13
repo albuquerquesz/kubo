@@ -1,0 +1,6 @@
+language js
+
+TsAsExpression(ty=$type) as $assertion where {
+	$type <: not r"const",
+	register_diagnostic(span=$assertion, message="Não use `as` (exceto `as const`). Modele o tipo para o TS inferir.", severity="error")
+}
