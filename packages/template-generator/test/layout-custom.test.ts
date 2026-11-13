@@ -59,10 +59,10 @@ function danglingRefs(files: Map<string, string>): string[] {
       const target = path.posix.normalize(path.posix.join(path.posix.dirname(file), ref));
       if (target.startsWith("..")) continue; // leaves the project: not ours to check
       if (RUNTIME_FILES.test(target)) {
-        // .env, migrations and generated clients appear at runtime; the package must exist.
-        const owner = target.includes("/generated")
-          ? target.slice(0, target.indexOf("/generated"))
-          : path.posix.dirname(target);
+        // .env, migrations, generated clients and build output appear at runtime;
+        // the package or app that owns them must exist.
+        const segment = RUNTIME_SEGMENT.exec(target);
+        const owner = segment ? target.slice(0, segment.index) : path.posix.dirname(target);
         const base = owner.replace(/\/(prisma|src)$/, "");
         if (!dirs.has(base) && !files.has(base)) {
           dangling.push(`${file} -> ${ref}`);
