@@ -26,6 +26,7 @@ export const stackUrlKeys: UrlKeys<
   webDeploy: "wd",
   serverDeploy: "sd",
   yolo: "yolo",
+  layout: "lay",
   viewMode: "view",
   selectedFile: "file",
 };

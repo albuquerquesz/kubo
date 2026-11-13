@@ -1,4 +1,4 @@
-import type { ProjectConfig } from "@kubojs/types";
+import { formatLayoutFlag, type ProjectConfig } from "@kubojs/types";
 
 function normalizeMultiValues(values: string[] | string | undefined): string[] {
   if (!values || (Array.isArray(values) && values.length === 0)) return [];
@@ -24,20 +24,6 @@ function getBaseCommand(packageManager: ProjectConfig["packageManager"]): string
   }
 
   return "npx kubojs@latest";
-}
-
-/**
- * `--layout libs` for a bare preset, `--layout '<json>'` for custom layouts, nothing for the
- * default standard layout (so existing commands stay unchanged).
- */
-function formatLayoutFlag(layout: ProjectConfig["layout"]): string | undefined {
-  if (!layout) return undefined;
-  const { version: _version, preset = "standard", ...rest } = layout;
-  if (Object.keys(rest).length === 0) {
-    if (preset === "standard") return undefined;
-    if (preset !== "server-separated") return `--layout ${preset}`;
-  }
-  return `--layout '${JSON.stringify({ preset, ...rest })}'`;
 }
 
 export function generateReproducibleCommand(config: ProjectConfig): string {

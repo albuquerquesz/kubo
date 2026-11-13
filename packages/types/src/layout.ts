@@ -161,3 +161,24 @@ export function getLayoutWorkspaceGlobs(
   }
   return [...globs];
 }
+
+/** True when the layout expands to exactly the standard folders (the CLI default). */
+export function isStandardLayout(layout: LayoutConfig | undefined): boolean {
+  if (!layout) return true;
+  return (
+    JSON.stringify(expandLayoutConfig(layout)) ===
+    JSON.stringify(expandLayoutConfig({ preset: "standard" }))
+  );
+}
+
+/**
+ * `--layout` CLI flag for a layout: nothing for the standard layout, `--layout libs` for a bare
+ * preset, `--layout '<json>'` otherwise. Layout paths cannot contain quotes, so single-quoting
+ * the JSON is shell-safe.
+ */
+export function formatLayoutFlag(layout: LayoutConfig | undefined): string | undefined {
+  if (!layout || isStandardLayout(layout)) return undefined;
+  const { version: _version, preset = "standard", ...rest } = layout;
+  if (Object.keys(rest).length === 0 && preset !== "server-separated") return `--layout ${preset}`;
+  return `--layout '${JSON.stringify({ preset, ...rest })}'`;
+}

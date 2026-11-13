@@ -3,12 +3,14 @@ import {
   createSerializer,
   parseAsArrayOf as parseAsArrayOfServer,
   parseAsBoolean as parseAsBooleanServer,
+  parseAsJson as parseAsJsonServer,
   parseAsString as parseAsStringServer,
   type UrlKeys,
 } from "nuqs/server";
 
 import { DEFAULT_STACK, type StackState } from "@/lib/constant";
 import { sanitizeStackState } from "@/lib/sanitize-stack-addons";
+import { parseStackLayout } from "@/lib/stack-layout";
 import { stackUrlKeys } from "@/lib/stack-url-keys";
 
 const legacyFrontendUrlKeys = {
@@ -40,6 +42,7 @@ const canonicalServerStackParsers = {
   webDeploy: parseAsStringServer.withDefault(DEFAULT_STACK.webDeploy),
   serverDeploy: parseAsStringServer.withDefault(DEFAULT_STACK.serverDeploy),
   yolo: parseAsBooleanServer.withDefault(DEFAULT_STACK.yolo),
+  layout: parseAsJsonServer(parseStackLayout),
 };
 
 const serverStackParsers = {

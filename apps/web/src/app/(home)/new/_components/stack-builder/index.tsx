@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, FolderTree, Terminal } from "lucide-react";
+import { AlertTriangle, FolderCog, FolderTree, Terminal } from "lucide-react";
 import { startTransition, useCallback, useRef, useState } from "react";
 
 import CopyInstallCommandButton from "@/app/(home)/_components/copy-install-command-button";
@@ -13,6 +13,7 @@ import type { Sponsor } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 import { ActionButtons } from "../action-buttons";
+import { LayoutEditor } from "../layout-editor";
 import { PresetDialog } from "../preset-dialog";
 import { PreviewPanel } from "../preview-panel";
 import { SpecialSponsorsPanel } from "../special-sponsors-panel";
@@ -277,6 +278,23 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   <FolderTree className="h-3 w-3" />
                   Prévia
                 </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    startTransition(() => {
+                      setViewMode("layout");
+                    });
+                  }}
+                  className={cn(
+                    "builder-focus-ring flex items-center gap-1.5 rounded px-2 py-1 font-mono text-[11px] uppercase tracking-wide",
+                    viewMode === "layout"
+                      ? "bg-primary/12 text-primary"
+                      : "text-muted-foreground hover:bg-muted/30",
+                  )}
+                >
+                  <FolderCog className="h-3 w-3" />
+                  Layout
+                </button>
               </div>
               {viewMode === "command" && (
                 <div className="lg:hidden">
@@ -300,6 +318,13 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     </main>
                   </ScrollArea>
                 </div>
+              ) : viewMode === "layout" ? (
+                <ScrollArea className="h-full overflow-hidden">
+                  <LayoutEditor
+                    layout={stack.layout}
+                    onChange={(layout) => setStack({ layout })}
+                  />
+                </ScrollArea>
               ) : (
                 <PreviewPanel
                   stack={effectiveStack}
@@ -388,6 +413,13 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     onSelect={handleTechSelect}
                     showAllCategories
                   />
+
+                  <div className="mt-6 rounded-xl border border-border">
+                    <LayoutEditor
+                      layout={stack.layout}
+                      onChange={(layout) => setStack({ layout })}
+                    />
+                  </div>
                 </main>
               </ScrollArea>
 
