@@ -18,7 +18,7 @@ export function processObservabilityTemplates(
         vfs,
         templates,
         artifact.templatePath,
-        artifact.destinationPath,
+        artifact.destinationPath(config),
         config,
       );
     }

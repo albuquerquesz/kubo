@@ -9,12 +9,14 @@ export type ObservabilityTarget = "web" | "vite" | "next" | "nuxt";
 export type ObservabilityArtifact = {
   readonly target: ObservabilityTarget;
   readonly templatePath: string;
-  readonly destinationPath: string;
+  /** Destination resolved against the project layout. */
+  readonly destinationPath: (config: ProjectConfig) => string;
 };
 
 export type ObservabilityDependency = {
   readonly target: ObservabilityTarget;
-  readonly packagePath: string;
+  /** package.json path resolved against the project layout. */
+  readonly packagePath: (config: ProjectConfig) => string;
   readonly dependencies?: readonly AvailableDependencies[];
   readonly devDependencies?: readonly AvailableDependencies[];
 };
@@ -52,23 +54,23 @@ export const OBSERVABILITY_CATALOG: readonly ObservabilityCatalogEntry[] = [
       {
         target: "vite",
         templatePath: "observability/himetrica/browser.ts",
-        destinationPath: appFile(config, "web", "src/lib/himetrica.ts"),
+        destinationPath: (config) => appFile(config, "web", "src/lib/himetrica.ts"),
       },
       {
         target: "next",
         templatePath: "observability/himetrica/next.tsx",
-        destinationPath: appFile(config, "web", "src/components/himetrica.tsx"),
+        destinationPath: (config) => appFile(config, "web", "src/components/himetrica.tsx"),
       },
       {
         target: "nuxt",
         templatePath: "observability/himetrica/nuxt.ts",
-        destinationPath: appFile(config, "web", "app/plugins/himetrica.client.ts"),
+        destinationPath: (config) => appFile(config, "web", "app/plugins/himetrica.client.ts"),
       },
     ],
     dependencies: [
       {
         target: "web",
-        packagePath: appFile(config, "web", "package.json"),
+        packagePath: (config) => appFile(config, "web", "package.json"),
         dependencies: ["@himetrica/tracker-js"],
       },
     ],
