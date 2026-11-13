@@ -26,6 +26,7 @@ import {
 
 import { DEFAULT_STACK, type StackState } from "./constant";
 import type { TechCategory } from "./types";
+import { parseStackLayout } from "./stack-layout";
 
 export type FrontendCategory = "webFrontend" | "nativeFrontend";
 
@@ -159,6 +160,7 @@ export function normalizeStackState(value: unknown): StackState | null {
     api: selectValue(raw.api, API_VALUES, DEFAULT_STACK.api),
     webDeploy: selectValue(raw.webDeploy, WEB_DEPLOY_VALUES, DEFAULT_STACK.webDeploy),
     serverDeploy: selectValue(raw.serverDeploy, SERVER_DEPLOY_VALUES, DEFAULT_STACK.serverDeploy),
+    layout: parseStackLayout(raw.layout) ?? undefined,
   };
 
   const parsed = ProjectConfigDraftSchema.safeParse(draft);

@@ -16,6 +16,7 @@
     "@erquhart/convex-oss-stats": "catalog:",
     "@kubojs/email": "workspace:*",
     "@kubojs/env": "workspace:*",
+    "@kubojs/types": "workspace:*",
     "better-auth": "catalog:",
     "convex": "catalog:",
     "convex-helpers": "catalog:"

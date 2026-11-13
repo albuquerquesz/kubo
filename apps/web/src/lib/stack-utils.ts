@@ -1,4 +1,9 @@
-import { isDesktopWebFrontend, isSelfHostedFrontend, type ProjectConfigDraft } from "@kubojs/types";
+import {
+  formatLayoutFlag,
+  isDesktopWebFrontend,
+  isSelfHostedFrontend,
+  type ProjectConfigDraft,
+} from "@kubojs/types";
 
 import { isStackDefault, type StackState, TECH_OPTIONS } from "@/lib/constant";
 import { CREATE_COMMANDS, DEFAULT_PACKAGE_MANAGER } from "@/lib/create-commands";
@@ -182,8 +187,10 @@ export function generateStackCommand(input: StackBuilderInput) {
     (key) => key === "projectName" || isStackDefault(stack, key, stack[key]),
   );
 
+  const layoutFlag = formatLayoutFlag(stack.layout);
+
   if (isStackDefaultExceptProjectName) {
-    return `${base} ${projectName} --yes`;
+    return `${base} ${projectName} --yes${layoutFlag ? ` ${layoutFlag}` : ""}`;
   }
 
   const flags = [
@@ -228,6 +235,10 @@ export function generateStackCommand(input: StackBuilderInput) {
     flags.push("--yolo");
   }
 
+  if (layoutFlag) {
+    flags.push(layoutFlag);
+  }
+
   return `${base} ${projectName} ${flags.join(" ")}`;
 }
 
@@ -251,6 +262,9 @@ function serializeStackToSearchString(stack: StackState) {
       stackParams.set(urlKey, Array.isArray(value) ? value.join(",") : String(value));
     }
   });
+  if (stack.layout) {
+    stackParams.set(stackUrlKeys.layout ?? "lay", JSON.stringify(stack.layout));
+  }
   return stackParams.toString();
 }
 

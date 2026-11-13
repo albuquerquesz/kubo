@@ -3,6 +3,7 @@
 import {
   parseAsArrayOf,
   parseAsBoolean,
+  parseAsJson,
   parseAsString,
   parseAsStringEnum,
   useQueryStates,
@@ -12,6 +13,7 @@ import { useRef } from "react";
 import { DEFAULT_STACK, type StackState } from "@/lib/constant";
 
 import { sanitizeStackState } from "./sanitize-stack-addons";
+import { parseStackLayout } from "./stack-layout";
 import { stackUrlKeys } from "./stack-url-keys";
 
 const legacyFrontendUrlKeys = {
@@ -20,6 +22,8 @@ const legacyFrontendUrlKeys = {
 } as const;
 
 const allStackUrlKeys = { ...stackUrlKeys, ...legacyFrontendUrlKeys };
+
+export type StackViewMode = "command" | "preview" | "layout";
 
 export const stackParsers = {
   projectName: parseAsString.withDefault(DEFAULT_STACK.projectName),
@@ -43,9 +47,10 @@ export const stackParsers = {
   webDeploy: parseAsString.withDefault(DEFAULT_STACK.webDeploy),
   serverDeploy: parseAsString.withDefault(DEFAULT_STACK.serverDeploy),
   yolo: parseAsBoolean.withDefault(DEFAULT_STACK.yolo),
+  layout: parseAsJson(parseStackLayout),
   legacyWebFrontend: parseAsArrayOf(parseAsString).withDefault([]),
   legacyNativeFrontend: parseAsArrayOf(parseAsString).withDefault([]),
-  viewMode: parseAsStringEnum<"command" | "preview">(["command", "preview"]).withDefault("command"),
+  viewMode: parseAsStringEnum<StackViewMode>(["command", "preview", "layout"]).withDefault("command"),
   selectedFile: parseAsString.withDefault(""),
 };
 
@@ -78,6 +83,8 @@ export function useStackState() {
         const finalStack = sanitizeStackState({ ...current, ...newStack });
         return {
           ...finalStack,
+          // Explicit null clears the URL key when the layout goes back to the standard one.
+          layout: finalStack.layout ?? null,
           viewMode: prev.viewMode,
           selectedFile: prev.selectedFile,
           ...clearLegacyFrontendQuery,
@@ -92,7 +99,7 @@ export function useStackState() {
     await next;
   };
 
-  const setViewMode = async (mode: "command" | "preview") => {
+  const setViewMode = async (mode: StackViewMode) => {
     await setQueryState({ viewMode: mode, selectedFile });
   };
 
