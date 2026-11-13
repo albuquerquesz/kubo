@@ -94,7 +94,7 @@ An official starting point for a **Layout** (`standard`: `apps/` + `packages/`, 
 _Avoid_: Template, theme
 
 **Layout Profile**:
-The single **Layout** a signed-in user saves in their kubojs.dev account ("Perfil de layout" in the UI).
+A named **Layout** a signed-in user saves in their kubojs.dev account ("Perfil de layout" in the UI); an account has up to 20, with unique names.
 _Avoid_: Saved preset, user template
 
 **Layout Code**:

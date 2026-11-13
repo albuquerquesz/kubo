@@ -28,9 +28,14 @@ Enquanto houver erro, o comando continua com o último layout válido. O comando
 
 Não é preciso conta para editar e copiar o comando.
 
-## Salvar na conta
+## Perfis salvos
 
-Com login (Google ou link mágico por email), **Salvar na conta** guarda o seu layout. Se você não estiver logado, o botão abre o login e salva ao voltar. **Usar layout salvo** aplica o layout guardado. Cada conta tem um layout salvo, visível só para ela.
+Com login (Google ou link mágico por email), você guarda layouts como **perfis** com nome (por exemplo, "Trabalho" e "Pessoal"). Se você não estiver logado, **Salvar na conta** abre o login e salva ao voltar.
+
+- Clicar em um perfil em **Perfis salvos** carrega o layout dele no editor.
+- **Atualizar perfil** grava o layout atual no perfil selecionado; **Salvar como novo** cria outro perfil com o nome digitado.
+- **Excluir** pede confirmação com um segundo clique.
+- Cada conta tem até 20 perfis, com nomes únicos (sem diferenciar maiúsculas), visíveis só para ela.
 
 ## Aplicar no CLI
 
@@ -42,7 +47,7 @@ kubojs my-app --yes --layout '{"preset":"libs","apps":{"web":"web"}}'
 kubojs my-app --yes --layout '{"scope":"@acme"}'
 ```
 
-Com o layout salvo na conta, use **Gerar comando** na aba Layout:
+Com um perfil selecionado, use **Gerar comando** na aba Layout:
 
 ```bash
 kubojs my-app --yes --layout-code ABCD-EFGH-JKMN
@@ -51,7 +56,8 @@ kubojs my-app --yes --layout-code ABCD-EFGH-JKMN
 O código:
 
 - vale por **10 minutos** e funciona **uma única vez**; gerar outro invalida o anterior;
-- dá acesso apenas a uma cópia do layout salvo — não faz login no CLI nem acessa outros dados da conta;
+- aplica a versão salva do perfil selecionado (não as edições ainda não salvas);
+- dá acesso apenas a uma cópia desse layout — não faz login no CLI nem acessa outros dados da conta;
 - é trocado pelo layout **antes** de qualquer arquivo ser criado: código inválido, expirado ou já usado não escreve nada;
 - não é registrado em logs nem enviado à telemetria; o projeto guarda o layout em `kubo.config.ts`, não o código;
 - não pode ser usado com `--layout` nem com `--dry-run`.
@@ -63,7 +69,7 @@ Detalhes das flags em [Opções do CLI](/docs/cli/options#--layout-presetjson).
 - Vale para **novos projetos**. Projetos existentes não são migrados nem têm arquivos movidos; o `kubo add` respeita o layout gravado em `kubo.config.ts`.
 - Os IDs são fixos: apps `web`, `server`, `native`, `desktop`, `docs`, `api`; pacotes `db`, `auth`, `backend`, `config`, `env`, `infra`, `ui`, `storage`, `api`, `payments`, `email` e os pacotes de integração (ex.: `millionsend`).
 - O escopo muda só o prefixo (`@acme/ui`); o nome de cada pacote (`ui`, `env`…) é fixo. O `package.json` da raiz continua com o nome do projeto.
-- Um layout salvo por conta.
+- Até 20 perfis por conta.
 
 ## Para mantenedores do site
 
