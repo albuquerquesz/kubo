@@ -193,6 +193,10 @@ export const router = t.router({
             .describe(
               'Folder layout: a preset (standard, libs) or JSON, e.g. \'{"preset":"libs","apps":{"web":"web"}}\'',
             ),
+          layoutCode: z
+            .string()
+            .optional()
+            .describe("Single-use code from the Layout tab at kubojs.dev/new (applies your saved layout)"),
         }),
       ]),
     )

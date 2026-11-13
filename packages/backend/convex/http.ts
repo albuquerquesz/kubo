@@ -1,6 +1,7 @@
 import { httpRouter } from "convex/server";
 
 import { parseAnalyticsEventPayload } from "../shared/analytics-event";
+import { hashLayoutCode, normalizeLayoutCode } from "../shared/layout-code";
 import { renderUnsubscribePage, type UnsubscribePageState } from "../shared/newsletter";
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
@@ -64,6 +65,37 @@ http.route({
 
     const found = await ctx.runMutation(internal.newsletter.unsubscribe, { token });
     return found ? htmlResponse("done") : htmlResponse("invalid", 404);
+  }),
+});
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+  });
+}
+
+// Exchanges a single-use layout code for the layout. Called by the CLI via kubojs.dev.
+// The code is never logged.
+http.route({
+  path: "/layout/redeem",
+  method: "POST",
+  handler: httpAction(async (ctx, req) => {
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return jsonResponse({ error: "invalid_request" }, 400);
+    }
+    const rawCode = typeof body === "object" && body !== null && "code" in body ? body.code : null;
+    const code = normalizeLayoutCode(rawCode);
+    if (!code) return jsonResponse({ error: "invalid_code" }, 400);
+
+    const result = await ctx.runMutation(internal.layoutCodes.consume, {
+      codeHash: await hashLayoutCode(code),
+    });
+    if (!result) return jsonResponse({ error: "invalid_or_expired" }, 404);
+    return jsonResponse({ layout: result.layout });
   }),
 });
 

@@ -27,7 +27,7 @@ import {
   displayError,
 } from "../../utils/errors";
 import { validateAgentSafePathInput } from "../../utils/input-hardening";
-import { validateCreateLayout } from "../../utils/layout-input";
+import { redeemLayoutCode, validateCreateLayout } from "../../utils/layout-input";
 import { handleDirectoryConflict, setupProjectDirectory } from "../../utils/project-directory";
 import { addToHistory } from "../../utils/project-history";
 import { validateProjectName } from "../../utils/project-name-validation";
@@ -174,6 +174,24 @@ export async function createProjectHandler(
   });
 }
 
+/** `--layout` and `--layout-code` are exclusive; a code is redeemed (and consumed) here. */
+async function resolveInputLayout(
+  input: CreateInput,
+): Promise<Result<CreateInput["layout"], CLIError>> {
+  if (input.layoutCode === undefined) return Result.ok(input.layout);
+  if (input.layout !== undefined) {
+    return Result.err(new CLIError({ message: "Use either --layout or --layout-code, not both." }));
+  }
+  if (input.dryRun) {
+    return Result.err(
+      new CLIError({
+        message: "--layout-code is single-use and cannot be combined with --dry-run.",
+      }),
+    );
+  }
+  return redeemLayoutCode(input.layoutCode);
+}
+
 /** Stack-selecting flags; their presence means the user chose the stack via flags, not prompts. */
 const STACK_FLAG_KEYS = [
   "database",
@@ -225,8 +243,8 @@ async function createProjectHandlerInternal(
       cliConsola.fatal("YOLO mode enabled - skipping checks. Things may break!");
     }
 
-    // Validate the layout before any directory is created or file is written.
-    const layout = yield* validateCreateLayout(input.layout);
+    // Resolve and validate the layout before any directory is created or file is written.
+    const layout = yield* validateCreateLayout(yield* Result.await(resolveInputLayout(input)));
 
     let currentPathInput: string;
     if (isSilent()) {

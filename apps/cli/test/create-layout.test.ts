@@ -103,3 +103,67 @@ describe("create with a layout", () => {
     if (result.isOk()) expect(result.value.reproducibleCommand).not.toContain("--layout");
   });
 });
+
+describe("create with --layout-code", () => {
+  const redeemed: unknown[] = [];
+  const server = Bun.serve({
+    port: 0,
+    async fetch(req) {
+      const body = (await req.json()) as { code?: string };
+      redeemed.push(body.code);
+      if (body.code === "GOOD-CODE-0001" && redeemed.length === 1) {
+        return Response.json({ layout: { version: 1, preset: "libs" } });
+      }
+      return Response.json({ error: "invalid_or_expired" }, { status: 404 });
+    },
+  });
+  process.env.KUBO_API_URL = `http://localhost:${server.port}`;
+
+  afterAll(() => {
+    server.stop(true);
+    delete process.env.KUBO_API_URL;
+  });
+
+  it("redeems the code and generates the saved layout", async () => {
+    const projectPath = path.join(SMOKE_DIR_PATH, "code-layout");
+    await fs.remove(projectPath);
+    const result = await create(projectPath, {
+      yes: true,
+      install: false,
+      git: false,
+      disableAnalytics: true,
+      directoryConflict: "overwrite",
+      layoutCode: "GOOD-CODE-0001",
+    });
+    expect(result.isOk()).toBe(true);
+    expect(await fs.pathExists(path.join(projectPath, "libs"))).toBe(true);
+    if (result.isOk()) {
+      expect(result.value.reproducibleCommand).toContain("--layout libs");
+      expect(result.value.reproducibleCommand).not.toContain("GOOD-CODE");
+    }
+  });
+
+  it("fails without writing when the code was already used", async () => {
+    const projectPath = path.join(SMOKE_DIR_PATH, "code-reused");
+    await fs.remove(projectPath);
+    const result = await create(projectPath, {
+      yes: true,
+      disableAnalytics: true,
+      directoryConflict: "overwrite",
+      layoutCode: "GOOD-CODE-0001",
+    });
+    expect(result.isErr()).toBe(true);
+    if (result.isErr()) expect(result.error.message).toContain("already used");
+    expect(await fs.pathExists(projectPath)).toBe(false);
+  });
+
+  it("rejects --layout together with --layout-code", async () => {
+    const result = await create(path.join(SMOKE_DIR_PATH, "code-both"), {
+      yes: true,
+      disableAnalytics: true,
+      layout: { preset: "libs" },
+      layoutCode: "GOOD-CODE-0001",
+    });
+    expect(result.isErr()).toBe(true);
+  });
+});

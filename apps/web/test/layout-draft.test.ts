@@ -84,3 +84,21 @@ describe("stack layout state", () => {
     expect(JSON.parse(url.searchParams.get("lay") ?? "null")).toEqual({ version: 1, preset: "libs" });
   });
 });
+
+describe("withLayoutCode", () => {
+  test("replaces inline layout flags with the code", async () => {
+    const { withLayoutCode } = await import("../src/lib/stack-utils");
+    expect(withLayoutCode("bun create kubojs@latest app --yes --layout libs", "AAAA-BBBB-CCCC")).toBe(
+      "bun create kubojs@latest app --yes --layout-code AAAA-BBBB-CCCC",
+    );
+    expect(
+      withLayoutCode(
+        `bun create kubojs@latest app --frontend next --layout '{"preset":"libs","apps":{"web":"web"}}' --yolo`,
+        "AAAA-BBBB-CCCC",
+      ),
+    ).toBe("bun create kubojs@latest app --frontend next --yolo --layout-code AAAA-BBBB-CCCC");
+    expect(withLayoutCode("bun create kubojs@latest app --yes", "X")).toBe(
+      "bun create kubojs@latest app --yes --layout-code X",
+    );
+  });
+});

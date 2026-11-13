@@ -3,6 +3,7 @@ import { defineSchema } from "convex/server";
 import { analyticsDailyStats } from "./schema/analyticsDailyStats";
 import { analyticsEvents } from "./schema/analyticsEvents";
 import { analyticsStats } from "./schema/analyticsStats";
+import { layoutCodes } from "./schema/layoutCodes";
 import { layoutProfiles } from "./schema/layoutProfiles";
 import { newsletterSubscribers } from "./schema/newsletterSubscribers";
 import { showcase } from "./schema/showcase";
@@ -18,4 +19,5 @@ export default defineSchema({
   analyticsDailyStats,
   newsletterSubscribers,
   layoutProfiles,
+  layoutCodes,
 });
