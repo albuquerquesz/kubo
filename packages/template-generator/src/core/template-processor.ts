@@ -8,6 +8,9 @@ import {
 import Handlebars from "handlebars";
 import isBinaryPath from "is-binary-path";
 
+import { registerLayoutHelpers } from "./layout-helpers";
+
+registerLayoutHelpers(Handlebars);
 Handlebars.registerHelper("eq", (a, b) => a === b);
 Handlebars.registerHelper("ne", (a, b) => a !== b);
 Handlebars.registerHelper("and", (...args) => args.slice(0, -1).every(Boolean));

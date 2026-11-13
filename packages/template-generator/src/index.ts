@@ -11,7 +11,7 @@ export { processVitePlusConfig } from "./processors/vite-plus-generator";
 export { processEnvVariables } from "./processors/env-vars";
 export { processPackageConfigs, processRailwayConfig, processVercelConfig } from "./post-process";
 export { writeKuboConfigToVfs, writeKubojsConfigToVfs, KUBO_CONFIG_FILE } from "./kubo-config";
-export { resolveLayout } from "./layout-resolver";
+export { createLayoutResolver, resolveLayout } from "./layout-resolver";
 export { getCatalogPackagePaths, getStoragePackagePath, getWebAppPath } from "./layout-paths";
 export { serializeKuboConfigFile, buildKuboConfigFromProject } from "./kubo-config-serializer";
 
