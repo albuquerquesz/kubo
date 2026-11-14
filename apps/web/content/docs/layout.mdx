@@ -16,14 +16,14 @@ Os imports entre pacotes usam o nome do pacote (`@meu-app/ui`, ou `@acme/ui` com
 
 O layout padrão (`standard`) gera exatamente a mesma estrutura de antes — nada muda para quem não usa a opção.
 
-## Editor em kubojs.dev/new
+## Editor em kubojs.dev/new/layout
 
-Na aba **Layout** do [Stack Builder](/new) você escolhe o preset, as pastas de convenção e, em "Caminhos por app e pacote", as exceções. Cada campo é validado na hora:
+O layout é a segunda etapa do [Stack Builder](/new): depois de escolher as tecnologias, abra [**Layout**](/new/layout) pelo cartão **Estrutura do projeto** na barra lateral, pelo passo **2 Layout** no topo ou pelo card **Próxima etapa** no fim da lista. Lá você escolhe o preset, as pastas de convenção e, em "Caminhos por app e pacote", as exceções. Cada campo é validado na hora:
 
 - caminhos absolutos, `..`, `node_modules`, `.git` e caracteres inválidos são recusados;
 - dois itens na mesma pasta, pastas que diferem só por maiúsculas/minúsculas e uma pasta dentro da outra aparecem como **conflito de pastas**.
 
-Enquanto houver erro, o comando continua com o último layout válido. O comando copiado (`--layout ...`), a prévia de arquivos logo abaixo do editor e o link de compartilhamento já usam o layout. O resumo "Resultado" lista todas as pastas possíveis; só as que a sua stack usa são geradas.
+Enquanto houver erro, o comando continua com o último layout válido. O comando copiado (`--layout ...`), a prévia de arquivos ao lado do editor e o link de compartilhamento já usam o layout. O resumo "Resultado" lista todas as pastas possíveis; só as que a sua stack usa são geradas.
 
 Não é preciso conta para editar e copiar o comando.
 
@@ -46,7 +46,7 @@ kubojs my-app --yes --layout '{"preset":"libs","apps":{"web":"web"}}'
 kubojs my-app --yes --layout '{"scope":"@acme"}'
 ```
 
-Com um perfil selecionado, use **Gerar comando** na aba Layout:
+Com um perfil selecionado, use **Gerar comando** na página de layout:
 
 ```bash
 kubojs my-app --yes --layout-code ABCD-EFGH-JKMN
