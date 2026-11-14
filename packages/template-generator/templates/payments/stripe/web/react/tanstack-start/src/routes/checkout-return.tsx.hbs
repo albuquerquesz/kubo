@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 export const Route = createFileRoute("/checkout/return")({ component: CheckoutReturnPage });
 function CheckoutReturnPage() {

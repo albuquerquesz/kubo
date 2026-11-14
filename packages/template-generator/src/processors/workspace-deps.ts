@@ -1,21 +1,11 @@
 import type { ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
+import { appFile, pkgFile, scopedName } from "../layout-paths";
 import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
-import { appFile, pkgFile } from "../layout-paths";
 
 export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
-  const {
-    projectName,
-    packageManager,
-    runtime,
-    backend,
-    database,
-    auth,
-    api,
-    serverDeploy,
-    webDeploy,
-  } = config;
+  const { packageManager, runtime, backend, database, auth, api, serverDeploy, webDeploy } = config;
 
   const workspaceVersion = packageManager === "npm" ? "*" : "workspace:*";
   const packages = {
@@ -37,9 +27,9 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
     native: vfs.exists(appFile(config, "native", "package.json")),
   };
 
-  const configDep = packages.config ? { [`@${projectName}/config`]: workspaceVersion } : {};
-  const envDep = packages.env ? { [`@${projectName}/env`]: workspaceVersion } : {};
-  const uiDep = packages.ui ? { [`@${projectName}/ui`]: workspaceVersion } : {};
+  const configDep = packages.config ? { [scopedName(config, "config")]: workspaceVersion } : {};
+  const envDep = packages.env ? { [scopedName(config, "env")]: workspaceVersion } : {};
+  const uiDep = packages.ui ? { [scopedName(config, "ui")]: workspaceVersion } : {};
   const isCloudflare = serverDeploy === "cloudflare" || webDeploy === "cloudflare";
   const runtimeDevDeps = getRuntimeDevDeps(runtime);
   const commonDeps: AvailableDependencies[] = ["dotenv", "zod"];
@@ -57,7 +47,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   if (packages.env) {
     const envDevDeps: Record<string, string> = { ...configDep };
     if (isCloudflare && packages.infra) {
-      envDevDeps[`@${projectName}/infra`] = workspaceVersion;
+      envDevDeps[scopedName(config, "infra")] = workspaceVersion;
     }
     addPackageDependency({
       vfs,
@@ -92,7 +82,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   if (packages.auth) {
     const authDeps: Record<string, string> = { ...envDep };
     if (database !== "none" && packages.db) {
-      authDeps[`@${projectName}/db`] = workspaceVersion;
+      authDeps[scopedName(config, "db")] = workspaceVersion;
     }
     addPackageDependency({
       vfs,
@@ -107,7 +97,7 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   if (packages.payments) {
     const paymentsDeps: Record<string, string> = { ...envDep };
     if (database !== "none" && packages.db) {
-      paymentsDeps[`@${projectName}/db`] = workspaceVersion;
+      paymentsDeps[scopedName(config, "db")] = workspaceVersion;
     }
     addPackageDependency({
       vfs,
@@ -169,10 +159,10 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   if (packages.api) {
     const apiPackageDeps: Record<string, string> = { ...envDep };
     if (auth !== "none" && packages.auth) {
-      apiPackageDeps[`@${projectName}/auth`] = workspaceVersion;
+      apiPackageDeps[scopedName(config, "auth")] = workspaceVersion;
     }
     if (database !== "none" && packages.db) {
-      apiPackageDeps[`@${projectName}/db`] = workspaceVersion;
+      apiPackageDeps[scopedName(config, "db")] = workspaceVersion;
     }
     addPackageDependency({
       vfs,
@@ -187,10 +177,10 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   if (packages.backend) {
     const backendDeps: Record<string, string> = {};
     if (packages.millionsend) {
-      backendDeps[`@${projectName}/millionsend`] = workspaceVersion;
+      backendDeps[scopedName(config, "millionsend")] = workspaceVersion;
     }
     if (config.communication.includes("arara") && packages.arara) {
-      backendDeps[`@${projectName}/arara`] = workspaceVersion;
+      backendDeps[scopedName(config, "arara")] = workspaceVersion;
     }
     addPackageDependency({
       vfs,
@@ -204,14 +194,14 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
 
   if (packages.server) {
     const serverDeps: Record<string, string> = { ...envDep };
-    if (api !== "none" && packages.api) serverDeps[`@${projectName}/api`] = workspaceVersion;
-    if (auth !== "none" && packages.auth) serverDeps[`@${projectName}/auth`] = workspaceVersion;
-    if (database !== "none" && packages.db) serverDeps[`@${projectName}/db`] = workspaceVersion;
-    if (packages.payments) serverDeps[`@${projectName}/payments`] = workspaceVersion;
-    if (packages.millionsend) serverDeps[`@${projectName}/millionsend`] = workspaceVersion;
-    if (packages.email) serverDeps[`@${projectName}/email`] = workspaceVersion;
-    if (packages.notifique) serverDeps[`@${projectName}/notifique`] = workspaceVersion;
-    if (packages.arara) serverDeps[`@${projectName}/arara`] = workspaceVersion;
+    if (api !== "none" && packages.api) serverDeps[scopedName(config, "api")] = workspaceVersion;
+    if (auth !== "none" && packages.auth) serverDeps[scopedName(config, "auth")] = workspaceVersion;
+    if (database !== "none" && packages.db) serverDeps[scopedName(config, "db")] = workspaceVersion;
+    if (packages.payments) serverDeps[scopedName(config, "payments")] = workspaceVersion;
+    if (packages.millionsend) serverDeps[scopedName(config, "millionsend")] = workspaceVersion;
+    if (packages.email) serverDeps[scopedName(config, "email")] = workspaceVersion;
+    if (packages.notifique) serverDeps[scopedName(config, "notifique")] = workspaceVersion;
+    if (packages.arara) serverDeps[scopedName(config, "arara")] = workspaceVersion;
     addPackageDependency({
       vfs,
       packagePath: appFile(config, "server", "package.json"),
@@ -225,27 +215,28 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
   if (packages.web) {
     const webPackageDeps: Record<string, string> = { ...envDep, ...uiDep };
 
-    if (api !== "none" && packages.api) webPackageDeps[`@${projectName}/api`] = workspaceVersion;
+    if (api !== "none" && packages.api)
+      webPackageDeps[scopedName(config, "api")] = workspaceVersion;
     if (backend === "self" && auth !== "none" && packages.auth) {
-      webPackageDeps[`@${projectName}/auth`] = workspaceVersion;
+      webPackageDeps[scopedName(config, "auth")] = workspaceVersion;
     }
     if (backend === "self" && packages.payments) {
-      webPackageDeps[`@${projectName}/payments`] = workspaceVersion;
+      webPackageDeps[scopedName(config, "payments")] = workspaceVersion;
     }
     if (backend === "self" && packages.millionsend) {
-      webPackageDeps[`@${projectName}/millionsend`] = workspaceVersion;
+      webPackageDeps[scopedName(config, "millionsend")] = workspaceVersion;
     }
     if (backend === "self" && packages.email) {
-      webPackageDeps[`@${projectName}/email`] = workspaceVersion;
+      webPackageDeps[scopedName(config, "email")] = workspaceVersion;
     }
     if (backend === "self" && packages.notifique) {
-      webPackageDeps[`@${projectName}/notifique`] = workspaceVersion;
+      webPackageDeps[scopedName(config, "notifique")] = workspaceVersion;
     }
     if (backend === "self" && packages.arara) {
-      webPackageDeps[`@${projectName}/arara`] = workspaceVersion;
+      webPackageDeps[scopedName(config, "arara")] = workspaceVersion;
     }
     if (backend === "convex" && packages.backend)
-      webPackageDeps[`@${projectName}/backend`] = workspaceVersion;
+      webPackageDeps[scopedName(config, "backend")] = workspaceVersion;
 
     addPackageDependency({
       vfs,
@@ -268,9 +259,9 @@ export function processWorkspaceDeps(vfs: VirtualFileSystem, config: ProjectConf
 
   if (packages.native) {
     const nativeDeps: Record<string, string> = { ...envDep };
-    if (api !== "none" && packages.api) nativeDeps[`@${projectName}/api`] = workspaceVersion;
+    if (api !== "none" && packages.api) nativeDeps[scopedName(config, "api")] = workspaceVersion;
     if (backend === "convex" && packages.backend)
-      nativeDeps[`@${projectName}/backend`] = workspaceVersion;
+      nativeDeps[scopedName(config, "backend")] = workspaceVersion;
     addPackageDependency({
       vfs,
       packagePath: appFile(config, "native", "package.json"),

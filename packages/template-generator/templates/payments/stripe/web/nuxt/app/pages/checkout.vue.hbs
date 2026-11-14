@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { loadStripe } from '@stripe/stripe-js'
-import { fetchStripeClientSecret } from '@{{projectName}}/payments/client'
+import { fetchStripeClientSecret } from '{{packageScope}}/payments/client'
 const container = ref<HTMLElement | null>(null)
 onMounted(async () => {
   const config = useRuntimeConfig()

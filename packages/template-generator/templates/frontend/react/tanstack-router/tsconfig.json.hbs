@@ -11,7 +11,7 @@
     "rootDirs": ["."],
     "paths": {
       "@/*": ["./src/*"],
-      "@{{projectName}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
+      "{{packageScope}}/ui/*": ["{{layoutRelative "app:web" "package:ui" "src/*"}}"]
     }
   }
 }

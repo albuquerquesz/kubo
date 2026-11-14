@@ -1,4 +1,5 @@
 import {
+  getLayoutPackageScope,
   getPublicEnvKey,
   getStripePublicEnvKey,
   getWebPort,
@@ -65,8 +66,10 @@ const getServerUrlSource = `function getServerUrl(url: string) {
 Handlebars.registerPartial("getServerUrl", getServerUrlSource);
 Handlebars.registerPartial("getServerUrlSpaces", getServerUrlSource.replaceAll("\t", "  "));
 
+/** `{{packageScope}}` in templates: `layout.scope`, or `@<projectName>` by default. */
 export function processTemplateString(content: string, context: ProjectConfig): string {
-  return Handlebars.compile(content)(context);
+  const packageScope = getLayoutPackageScope(context.layout, context.projectName);
+  return Handlebars.compile(content)({ ...context, packageScope });
 }
 
 export function isBinaryFile(filePath: string): boolean {

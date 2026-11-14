@@ -9,26 +9,32 @@ O **layout** define em que pasta cada app (`web`, `server`, `native`…) e cada 
 
 - um **preset**: `standard` (padrão — `apps/` e `packages/`) ou `libs` (`apps/` e `libs/`);
 - **pastas de convenção** (`dirs`): onde ficam os apps e os pacotes; `.` significa a raiz do projeto;
-- **exceções** por app ou pacote: um caminho específico para um item (por exemplo, o app web na raiz).
+- **exceções** por app ou pacote: um caminho específico para um item (por exemplo, o app web na raiz);
+- um **escopo** opcional (`scope`) para o nome dos pacotes do workspace: com `"scope": "@acme"`, os pacotes viram `@acme/ui`, `@acme/env`… Sem escopo, o padrão continua `@<nome-do-projeto>`.
 
-Os imports entre pacotes usam o nome do pacote (`@meu-app/ui`), então o código não muda quando as pastas mudam. Paths de `tsconfig`, `.env`, workspaces, Docker e deploy são gerados a partir do layout.
+Os imports entre pacotes usam o nome do pacote (`@meu-app/ui`, ou `@acme/ui` com escopo), então o código não muda quando as pastas mudam. Paths de `tsconfig`, `.env`, workspaces, Docker e deploy são gerados a partir do layout.
 
 O layout padrão (`standard`) gera exatamente a mesma estrutura de antes — nada muda para quem não usa a opção.
 
-## Editor em kubojs.dev/new
+## Editor em kubojs.dev/new/layout
 
-Na aba **Layout** do [Stack Builder](/new) você escolhe o preset, as pastas de convenção e, em "Caminhos por app e pacote", as exceções. Cada campo é validado na hora:
+O layout é a segunda etapa do [Stack Builder](/new): depois de escolher as tecnologias, abra [**Layout**](/new/layout) pelo cartão **Estrutura do projeto** na barra lateral, pelo passo **2 Layout** no topo ou pelo card **Próxima etapa** no fim da lista. Lá você escolhe o preset, as pastas de convenção e, em "Caminhos por app e pacote", as exceções. Cada campo é validado na hora:
 
 - caminhos absolutos, `..`, `node_modules`, `.git` e caracteres inválidos são recusados;
 - dois itens na mesma pasta, pastas que diferem só por maiúsculas/minúsculas e uma pasta dentro da outra aparecem como **conflito de pastas**.
 
-Enquanto houver erro, o comando continua com o último layout válido. O comando copiado (`--layout ...`), a aba **Prévia** e o link de compartilhamento já usam o layout. O resumo "Resultado" lista todas as pastas possíveis; só as que a sua stack usa são geradas.
+Enquanto houver erro, o comando continua com o último layout válido. O comando copiado (`--layout ...`), a prévia de arquivos ao lado do editor e o link de compartilhamento já usam o layout. O resumo "Resultado" lista todas as pastas possíveis; só as que a sua stack usa são geradas.
 
 Não é preciso conta para editar e copiar o comando.
 
-## Salvar na conta
+## Perfis salvos
 
-Com login (Google ou link mágico por email), **Salvar na conta** guarda o seu layout. Se você não estiver logado, o botão abre o login e salva ao voltar. **Usar layout salvo** aplica o layout guardado. Cada conta tem um layout salvo, visível só para ela.
+Com login (Google ou link mágico por email), você guarda layouts como **perfis** com nome (por exemplo, "Trabalho" e "Pessoal"). Se você não estiver logado, **Salvar na conta** abre o login e salva ao voltar.
+
+- Clicar em um perfil em **Perfis salvos** carrega o layout dele no editor.
+- **Atualizar perfil** grava o layout atual no perfil selecionado; **Salvar como novo** cria outro perfil com o nome digitado.
+- **Excluir** pede confirmação com um segundo clique.
+- Cada conta tem até 20 perfis, com nomes únicos (sem diferenciar maiúsculas), visíveis só para ela.
 
 ## Aplicar no CLI
 
@@ -37,9 +43,10 @@ Direto, sem conta:
 ```bash
 kubojs my-app --yes --layout libs
 kubojs my-app --yes --layout '{"preset":"libs","apps":{"web":"web"}}'
+kubojs my-app --yes --layout '{"scope":"@acme"}'
 ```
 
-Com o layout salvo na conta, use **Gerar comando** na aba Layout:
+Com um perfil selecionado, use **Gerar comando** na página de layout:
 
 ```bash
 kubojs my-app --yes --layout-code ABCD-EFGH-JKMN
@@ -48,7 +55,8 @@ kubojs my-app --yes --layout-code ABCD-EFGH-JKMN
 O código:
 
 - vale por **10 minutos** e funciona **uma única vez**; gerar outro invalida o anterior;
-- dá acesso apenas a uma cópia do layout salvo — não faz login no CLI nem acessa outros dados da conta;
+- aplica a versão salva do perfil selecionado (não as edições ainda não salvas);
+- dá acesso apenas a uma cópia desse layout — não faz login no CLI nem acessa outros dados da conta;
 - é trocado pelo layout **antes** de qualquer arquivo ser criado: código inválido, expirado ou já usado não escreve nada;
 - não é registrado em logs nem enviado à telemetria; o projeto guarda o layout em `kubo.config.ts`, não o código;
 - não pode ser usado com `--layout` nem com `--dry-run`.
@@ -59,8 +67,8 @@ Detalhes das flags em [Opções do CLI](/docs/cli/options#--layout-presetjson).
 
 - Vale para **novos projetos**. Projetos existentes não são migrados nem têm arquivos movidos; o `kubo add` respeita o layout gravado em `kubo.config.ts`.
 - Os IDs são fixos: apps `web`, `server`, `native`, `desktop`, `docs`, `api`; pacotes `db`, `auth`, `backend`, `config`, `env`, `infra`, `ui`, `storage`, `api`, `payments`, `email` e os pacotes de integração (ex.: `millionsend`).
-- O nome dos pacotes (`@meu-app/*`) ainda não é configurável.
-- Um layout salvo por conta.
+- O escopo muda só o prefixo (`@acme/ui`); o nome de cada pacote (`ui`, `env`…) é fixo. O `package.json` da raiz continua com o nome do projeto.
+- Até 20 perfis por conta.
 
 ## Para mantenedores do site
 

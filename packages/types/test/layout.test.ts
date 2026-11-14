@@ -4,8 +4,11 @@ import { getLayoutConfigJsonSchema } from "../src/json-schema";
 import {
   expandLayoutConfig,
   findLayoutConflicts,
+  formatLayoutFlag,
+  getLayoutPackageName,
   getLayoutPackagePath,
   getLayoutWorkspaceGlobs,
+  isStandardLayout,
 } from "../src/layout";
 import {
   getLayoutPathIssue,
@@ -78,6 +81,15 @@ describe("layout schema", () => {
 
   it("still accepts the deprecated server-separated preset", () => {
     expect(LayoutConfigSchema.safeParse({ preset: "server-separated" }).success).toBe(true);
+  });
+
+  it("accepts npm scopes and rejects malformed ones", () => {
+    for (const scope of ["@acme", "@my-co", "@a.b_c", "@0x"]) {
+      expect(LayoutConfigSchema.safeParse({ scope }).success).toBe(true);
+    }
+    for (const scope of ["acme", "@", "@Acme", "@acme/ui", "@-acme", `@${"a".repeat(64)}`]) {
+      expect(LayoutConfigSchema.safeParse({ scope }).success).toBe(false);
+    }
   });
 
   it("generates a JSON schema", () => {
@@ -175,5 +187,21 @@ describe("getLayoutWorkspaceGlobs", () => {
       "libs/*",
       "design/ui",
     ]);
+  });
+});
+
+describe("package scope", () => {
+  it("defaults to @<projectName> and keeps the layout standard", () => {
+    expect(getLayoutPackageName(undefined, "my-app", "ui")).toBe("@my-app/ui");
+    expect(getLayoutPackageName({}, "my-app", "ui")).toBe("@my-app/ui");
+    expect(expandLayoutConfig({ preset: "standard" })).not.toHaveProperty("scope");
+  });
+
+  it("uses a custom scope and carries it into the --layout flag", () => {
+    const layout = { preset: "standard" as const, scope: "@acme" };
+    expect(getLayoutPackageName(layout, "my-app", "ui")).toBe("@acme/ui");
+    expect(expandLayoutConfig(layout).scope).toBe("@acme");
+    expect(isStandardLayout(layout)).toBe(false);
+    expect(formatLayoutFlag(layout)).toBe(`--layout '{"preset":"standard","scope":"@acme"}'`);
   });
 });

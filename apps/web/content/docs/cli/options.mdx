@@ -126,15 +126,18 @@ kubojs my-app --yes --layout '{"preset":"libs","apps":{"web":"web"}}'
 
 # Custom convention dirs
 kubojs my-app --yes --layout '{"dirs":{"apps":"src/apps","packages":"src/packages"}}'
+
+# Pacotes do workspace com escopo próprio: @acme/ui, @acme/env…
+kubojs my-app --yes --layout '{"scope":"@acme"}'
 ```
 
-O layout é validado antes de qualquer arquivo ser gravado: caminhos absolutos, `..`, `node_modules`, pastas repetidas, pastas que diferem só por maiúsculas e pastas aninhadas (uma app dentro de outra) são rejeitados. O layout escolhido fica salvo em `kubo.config.ts`, e o `kubo add` passa a respeitá-lo. Os imports entre pacotes usam o nome do pacote (`@meu-app/ui`), então não mudam com o layout.
+O layout é validado antes de qualquer arquivo ser gravado: caminhos absolutos, `..`, `node_modules`, pastas repetidas, pastas que diferem só por maiúsculas e pastas aninhadas (uma app dentro de outra) são rejeitados. O layout escolhido fica salvo em `kubo.config.ts`, e o `kubo add` passa a respeitá-lo. Os imports entre pacotes usam o nome do pacote (`@meu-app/ui`), então não mudam com o layout. O campo opcional `scope` troca esse prefixo (`"scope": "@acme"` → `@acme/ui`); sem ele, o padrão é `@<nome-do-projeto>`.
 
 IDs de apps: `web`, `server`, `native`, `desktop`, `docs`, `api`. IDs de pacotes: `db`, `auth`, `backend`, `config`, `env`, `infra`, `ui`, `storage`, `api`, `payments`, `email` e os pacotes de integração (ex.: `millionsend`).
 
 ### `--layout-code <código>`
 
-Aplica o layout salvo na sua conta. Gere o comando na aba **Layout** de [kubojs.dev/new](/new) (é preciso estar logado e ter um layout salvo):
+Aplica um perfil de layout salvo na sua conta. Selecione o perfil na aba **Layout** de [kubojs.dev/new](/new) e clique em **Gerar comando** (é preciso estar logado e ter um perfil salvo):
 
 ```bash
 kubojs my-app --yes --layout-code ABCD-EFGH-JKMN

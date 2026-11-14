@@ -2,31 +2,29 @@ import type { UrlKeys } from "nuqs";
 
 import type { StackState } from "@/lib/constant";
 
-export const stackUrlKeys: UrlKeys<
-  Record<keyof StackState, unknown> & { viewMode: unknown; selectedFile: unknown }
-> = {
-  projectName: "name",
-  frontend: "fe",
-  runtime: "rt",
-  backend: "be",
-  api: "api",
-  database: "db",
-  orm: "orm",
-  dbSetup: "dbs",
-  auth: "au",
-  payments: "pay",
-  observability: "obs",
-  communication: "comm",
-  packageManager: "pm",
-  addons: "add",
-  testing: "test",
-  examples: "ex",
-  git: "git",
-  install: "i",
-  webDeploy: "wd",
-  serverDeploy: "sd",
-  yolo: "yolo",
-  layout: "lay",
-  viewMode: "view",
-  selectedFile: "file",
-};
+export const stackUrlKeys: UrlKeys<Record<keyof StackState, unknown> & { selectedFile: unknown }> =
+  {
+    projectName: "name",
+    frontend: "fe",
+    runtime: "rt",
+    backend: "be",
+    api: "api",
+    database: "db",
+    orm: "orm",
+    dbSetup: "dbs",
+    auth: "au",
+    payments: "pay",
+    observability: "obs",
+    communication: "comm",
+    packageManager: "pm",
+    addons: "add",
+    testing: "test",
+    examples: "ex",
+    git: "git",
+    install: "i",
+    webDeploy: "wd",
+    serverDeploy: "sd",
+    yolo: "yolo",
+    layout: "lay",
+    selectedFile: "file",
+  };

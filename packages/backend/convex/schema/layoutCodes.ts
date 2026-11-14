@@ -12,4 +12,6 @@ export const layoutCodes = defineTable({
   usedAt: v.optional(v.number()),
 })
   .index("by_code_hash", ["codeHash"])
-  .index("by_owner", ["ownerTokenIdentifier"]);
+  .index("by_owner", ["ownerTokenIdentifier"])
+  .index("by_expires_at", ["expiresAt"])
+  .index("by_used_at", ["usedAt"]);

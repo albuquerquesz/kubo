@@ -1,2 +1,2 @@
-import { processStripeWebhook } from '@{{projectName}}/payments/lib/stripe';
+import { processStripeWebhook } from '{{packageScope}}/payments/lib/stripe';
 export default defineEventHandler(async (event) => { const signature = getHeader(event, 'stripe-signature'); if (!signature) throw createError({ statusCode: 400, statusMessage: 'Missing Stripe-Signature' }); const result = await processStripeWebhook(await readRawBody(event) ?? '', signature); return setResponseStatus(event, result.status), result.body; });

@@ -1,17 +1,11 @@
 "use client";
 
-import { api } from "@kubojs/backend/convex/_generated/api";
 import type { LayoutConfig, LayoutPreset } from "@kubojs/types";
-import { useAction, useMutation, useQuery } from "convex/react";
-import { AlertTriangle, CloudDownload, KeyRound, RotateCcw, Save } from "lucide-react";
+import { AlertTriangle, RotateCcw } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
 
-import CopyInstallCommandButton from "@/app/(home)/_components/copy-install-command-button";
-import { useRequireAuth } from "@/components/auth/auth-modal-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
 import {
   getConventionPath,
   LAYOUT_APP_IDS,
@@ -24,8 +18,7 @@ import {
 import { parseStackLayout } from "@/lib/stack-layout";
 import { cn } from "@/lib/utils";
 
-/** Set before a sign-in redirect so the layout is saved when the user comes back. */
-const PENDING_SAVE_KEY = "kubo:pending-layout-save";
+import { LayoutProfiles } from "./layout-profiles";
 
 const PRESETS: { id: LayoutPreset; title: string; description: string }[] = [
   { id: "standard", title: "Standard", description: "apps/ e packages/" },
@@ -37,26 +30,9 @@ type LayoutEditorProps = {
   layout: LayoutConfig | undefined;
   /** Called with a valid layout, or undefined for the standard one. */
   onChange: (layout: LayoutConfig | undefined) => void;
-  /** Builds the create command that applies the saved layout through a single-use code. */
+  /** Builds the create command that applies a saved profile through a single-use code. */
   buildCodeCommand: (code: string) => string;
 };
-
-function readPendingSave(): boolean {
-  try {
-    return window.sessionStorage.getItem(PENDING_SAVE_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
-function writePendingSave(pending: boolean): void {
-  try {
-    if (pending) window.sessionStorage.setItem(PENDING_SAVE_KEY, "1");
-    else window.sessionStorage.removeItem(PENDING_SAVE_KEY);
-  } catch {
-    // Storage can be unavailable (private mode); the user can click save again.
-  }
-}
 
 export function LayoutEditor({ layout, onChange, buildCodeCommand }: LayoutEditorProps) {
   const [draft, setDraft] = useState<LayoutDraft>(() => layoutToDraft(layout));
@@ -95,65 +71,9 @@ export function LayoutEditor({ layout, onChange, buildCodeCommand }: LayoutEdito
     emit(parseStackLayout(result.layout) ?? undefined);
   }
 
-  const { data: session } = authClient.useSession();
-  const isSignedIn = Boolean(session?.user);
-  const savedProfile = useQuery(api.layoutProfiles.getMine, isSignedIn ? {} : "skip");
-  const saveMine = useMutation(api.layoutProfiles.saveMine);
-  const requireAuth = useRequireAuth();
-  const [saving, setSaving] = useState(false);
-
-  async function save() {
-    if (!validation.layout) return;
-    setSaving(true);
-    try {
-      await saveMine({ layout: validation.layout });
-      writePendingSave(false);
-      toast.success("Layout salvo na sua conta");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Não foi possível salvar o layout");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  function handleSave() {
-    requireAuth(() => void save(), {
-      reason: "Entre para salvar seu layout e reutilizá-lo nos próximos projetos.",
-    });
-    if (!isSignedIn) writePendingSave(true);
-  }
-
-  // Finish a save that was interrupted by the sign-in redirect.
-  const resumedRef = useRef(false);
-  useEffect(() => {
-    if (!isSignedIn || resumedRef.current || !validation.layout) return;
-    if (!readPendingSave()) return;
-    resumedRef.current = true;
-    void save();
-    // save() reads the current validation; running once after sign-in is intended.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSignedIn, validation.layout]);
-
-  function applySaved() {
-    const saved = parseStackLayout(savedProfile?.layout) ?? undefined;
+  function applyProfile(saved: LayoutConfig | undefined) {
     setDraft(layoutToDraft(saved));
     emit(saved);
-    toast.success("Layout salvo aplicado");
-  }
-
-  const createCode = useAction(api.layoutCodes.create);
-  const [redeemCode, setRedeemCode] = useState<{ code: string; expiresAt: number } | null>(null);
-  const [creatingCode, setCreatingCode] = useState(false);
-
-  async function handleCreateCode() {
-    setCreatingCode(true);
-    try {
-      setRedeemCode(await createCode({}));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Não foi possível gerar o código");
-    } finally {
-      setCreatingCode(false);
-    }
   }
 
   function reset() {
@@ -167,8 +87,7 @@ export function LayoutEditor({ layout, onChange, buildCodeCommand }: LayoutEdito
       <header className="space-y-1">
         <h2 className="font-semibold text-base">Estrutura de pastas</h2>
         <p className="text-muted-foreground text-sm">
-          Escolha onde ficam os apps e os pacotes do projeto. O comando e a prévia usam este layout;
-          os imports entre pacotes (<code>@seu-app/ui</code>) não mudam.
+          Escolha onde ficam os apps e os pacotes do projeto. O comando e a prévia usam este layout.
         </p>
       </header>
 
@@ -224,9 +143,6 @@ export function LayoutEditor({ layout, onChange, buildCodeCommand }: LayoutEdito
             />
           ))}
         </div>
-        <p className="text-muted-foreground text-xs">
-          Use <code>.</code> para colocar direto na raiz do projeto.
-        </p>
       </section>
 
       <details className="group rounded-md border border-border">
@@ -301,55 +217,18 @@ export function LayoutEditor({ layout, onChange, buildCodeCommand }: LayoutEdito
             ))}
           </dl>
           <p className="text-muted-foreground text-xs">
-            Só as pastas que a sua stack usa são geradas. Veja a árvore completa na aba Prévia.
+            Só as pastas que a sua stack usa são geradas. A prévia mostra a árvore completa.
           </p>
         </section>
       ) : null}
 
-      {savedProfile ? (
-        <section className="space-y-2 rounded-md border border-border p-3" aria-labelledby="layout-code-heading">
-          <h3 id="layout-code-heading" className="font-medium text-sm">
-            Comando com o layout salvo
-          </h3>
-          <p className="text-muted-foreground text-xs">
-            Gera um comando de uso único, válido por 10 minutos, que aplica o layout salvo na sua
-            conta. O CLI troca o código pelo layout antes de criar qualquer arquivo.
-          </p>
-          {redeemCode ? (
-            <div className="space-y-1">
-              <CopyInstallCommandButton
-                command={buildCodeCommand(redeemCode.code)}
-                compact
-                className="w-full max-w-full px-4"
-              />
-              <p className="text-muted-foreground text-xs">
-                Expira às{" "}
-                {new Date(redeemCode.expiresAt).toLocaleTimeString("pt-BR", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}{" "}
-                e funciona uma vez. Gerar outro invalida este.
-              </p>
-            </div>
-          ) : null}
-          <Button variant="outline" size="sm" onClick={() => void handleCreateCode()} disabled={creatingCode}>
-            <KeyRound data-icon="inline-start" />
-            {creatingCode ? "Gerando…" : redeemCode ? "Gerar outro código" : "Gerar comando"}
-          </Button>
-        </section>
-      ) : null}
+      <LayoutProfiles
+        layout={validation.layout}
+        onApply={applyProfile}
+        buildCodeCommand={buildCodeCommand}
+      />
 
-      <div className="flex flex-wrap items-center gap-2">
-        <Button onClick={handleSave} disabled={!validation.layout || saving}>
-          <Save data-icon="inline-start" />
-          {saving ? "Salvando…" : "Salvar na conta"}
-        </Button>
-        {savedProfile ? (
-          <Button variant="outline" onClick={applySaved}>
-            <CloudDownload data-icon="inline-start" />
-            Usar layout salvo
-          </Button>
-        ) : null}
+      <div>
         <Button variant="ghost" onClick={reset}>
           <RotateCcw data-icon="inline-start" />
           Restaurar padrão

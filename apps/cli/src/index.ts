@@ -60,9 +60,9 @@ import {
   WebDeploySchema,
 } from "./types";
 import { markProgrammaticTelemetrySource, setTelemetrySource } from "./utils/analytics";
-import { parseLayoutFlag } from "./utils/layout-input";
 import { CLIError, ProjectCreationError, UserCancelledError } from "./utils/errors";
 import { getLatestCLIVersion } from "./utils/get-latest-cli-version";
+import { parseLayoutFlag } from "./utils/layout-input";
 import { validateConfigCompatibility } from "./validation";
 
 export const SchemaNameSchema = z
@@ -191,12 +191,14 @@ export const router = t.router({
             .string()
             .optional()
             .describe(
-              'Folder layout: a preset (standard, libs) or JSON, e.g. \'{"preset":"libs","apps":{"web":"web"}}\'',
+              'Folder layout: a preset (standard, libs) or JSON, e.g. \'{"preset":"libs","apps":{"web":"web"},"scope":"@acme"}\'',
             ),
           layoutCode: z
             .string()
             .optional()
-            .describe("Single-use code from the Layout tab at kubojs.dev/new (applies your saved layout)"),
+            .describe(
+              "Single-use code from the Layout tab at kubojs.dev/new (applies your saved layout)",
+            ),
         }),
       ]),
     )

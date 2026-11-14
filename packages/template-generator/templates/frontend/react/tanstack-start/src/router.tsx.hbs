@@ -8,7 +8,7 @@ import Loader from "./components/loader";
 {{#if (includes observability "himetrica")}}
 import "./lib/himetrica";
 {{/if}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{else}}
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import Loader from "./components/loader";
@@ -22,10 +22,10 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { toast } from "sonner";
-import type { AppRouter } from "@{{projectName}}/api/routers/index";
+import type { AppRouter } from "{{packageScope}}/api/routers/index";
 import { TRPCProvider } from "./utils/trpc";
 {{#unless (eq backend "self")}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/unless}}
 {{#if (eq auth "clerk")}}
 import { getClerkAuthToken } from "@/utils/clerk-auth";

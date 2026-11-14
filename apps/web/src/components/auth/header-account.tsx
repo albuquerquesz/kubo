@@ -15,7 +15,15 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
-export function HeaderAccount({ className }: { className?: string }) {
+type HeaderAccountProps = {
+  /** Classes for the quiet "Entrar" button and the account trigger. */
+  className?: string;
+  /** Classes for the highlighted "Criar conta" button. */
+  ctaClassName?: string;
+};
+
+/** Signed out: "Entrar" + "Criar conta", both opening the auth modal. Signed in: account menu. */
+export function HeaderAccount({ className, ctaClassName }: HeaderAccountProps) {
   const { open } = useAuthModal();
   const { data: session, isPending } = authClient.useSession();
 
@@ -26,9 +34,14 @@ export function HeaderAccount({ className }: { className?: string }) {
   const user = session?.user;
   if (!user) {
     return (
-      <button type="button" className={cn(className, "min-w-20")} onClick={() => open()}>
-        Entrar
-      </button>
+      <>
+        <button type="button" className={cn(className, "min-w-20")} onClick={() => open()}>
+          Entrar
+        </button>
+        <button type="button" className={ctaClassName} onClick={() => open()}>
+          Criar conta
+        </button>
+      </>
     );
   }
 

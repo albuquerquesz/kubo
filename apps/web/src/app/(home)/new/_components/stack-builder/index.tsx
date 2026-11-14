@@ -1,13 +1,14 @@
 "use client";
 
-import { AlertTriangle, FolderCog, FolderTree, Terminal } from "lucide-react";
-import { startTransition, useCallback, useRef, useState } from "react";
+import { AlertTriangle, ArrowRight, FolderTree } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useRef, useState } from "react";
 
 import CopyInstallCommandButton from "@/app/(home)/_components/copy-install-command-button";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ShareDialog } from "@/components/ui/share-dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { builderStepHref, type BuilderStep } from "@/lib/builder-steps";
 import { getDesktopBuildNote, withLayoutCode } from "@/lib/stack-utils";
 import type { Sponsor } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -17,16 +18,22 @@ import { LayoutEditor } from "../layout-editor";
 import { PresetDialog } from "../preset-dialog";
 import { PreviewPanel } from "../preview-panel";
 import { SpecialSponsorsPanel } from "../special-sponsors-panel";
+import { BuilderStepLink } from "./builder-step-link";
+import { BuilderStepper } from "./builder-stepper";
 import { CategoryNav, scrollToCategorySection } from "./category-nav";
+import { ProjectNameField } from "./project-name-field";
+import { ProjectStructureCard } from "./project-structure-card";
 import { SelectedStackBadges } from "./selected-stack-badges";
 import { TechCategories } from "./tech-categories";
 import { useStackBuilder } from "./use-stack-builder";
 
 type StackBuilderProps = {
+  /** `stack` is `/new` (technologies), `layout` is `/new/layout` (folder structure + preview). */
+  step?: BuilderStep;
   specialSponsors?: Sponsor[];
 };
 
-export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
+export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuilderProps) {
   const {
     applyPreset,
     categoryProgress,
@@ -36,7 +43,6 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
     handleTechSelect,
     lastSavedStack,
     loadSavedStack,
-    mobileTab,
     projectNameError,
     removeSelectedTech,
     resetStack,
@@ -44,17 +50,17 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
     scrollAreaRef,
     selectedCount,
     selectedFile,
-    setMobileTab,
     setSelectedFile,
     setStack,
-    setViewMode,
     stack,
-    viewMode,
   } = useStackBuilder();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const effectiveStack = compatibilityAnalysis.adjustedStack || stack;
   const desktopBuildNote = getDesktopBuildNote(effectiveStack);
   const [shareOpen, setShareOpen] = useState(false);
   const hasPromptedShareAfterCopyRef = useRef(false);
+  const isLayoutStep = step === "layout";
 
   const handleCommandCopied = useCallback(() => {
     if (hasPromptedShareAfterCopyRef.current) return;
@@ -77,6 +83,58 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
     />
   );
 
+  const renderProjectName = (id: string) => (
+    <ProjectNameField
+      id={id}
+      value={stack.projectName || ""}
+      error={projectNameError}
+      onChange={(projectName) => setStack({ projectName })}
+    />
+  );
+
+  const commandButton = (
+    <CopyInstallCommandButton
+      command={command}
+      compact
+      confetti
+      className="w-full max-w-full px-4"
+      onCopied={handleCommandCopied}
+    />
+  );
+
+  const structureCard = <ProjectStructureCard layout={stack.layout} step={step} />;
+
+  const layoutEditor = (
+    <LayoutEditor
+      layout={stack.layout}
+      onChange={(layout) => setStack({ layout })}
+      buildCodeCommand={(code) => withLayoutCode(command, code)}
+    />
+  );
+
+  const previewPanel = (
+    <PreviewPanel
+      stack={effectiveStack}
+      selectedFilePath={selectedFile}
+      onSelectFile={setSelectedFile}
+    />
+  );
+
+  const desktopBuildNoteBox = desktopBuildNote ? (
+    <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-2">
+      <div className="mb-1 flex items-center gap-1.5 font-mono text-[11px] text-amber-600 uppercase tracking-wide dark:text-amber-400">
+        <AlertTriangle className="h-3.5 w-3.5" />
+        Nota de build desktop
+      </div>
+      <p className="text-muted-foreground text-xs">{desktopBuildNote}</p>
+    </div>
+  ) : null;
+
+  const jumpToCategory = (category: string) => {
+    if (isLayoutStep) router.push(builderStepHref("stack", searchParams.toString()));
+    scrollToCategorySection("section", category);
+  };
+
   return (
     <TooltipProvider>
       <div className="flex h-full w-full flex-col overflow-hidden bg-background text-foreground">
@@ -90,36 +148,10 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
         >
           Compartilhar stack
         </ShareDialog>
+
         <div className="sticky top-0 z-20 border-border border-b bg-fd-background/95 px-3 py-2 backdrop-blur-sm sm:hidden">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 rounded-md bg-muted/20 p-1">
-              <button
-                type="button"
-                onClick={() => setMobileTab("build")}
-                className={cn(
-                  "builder-focus-ring rounded px-2 py-1 font-mono text-[11px] uppercase",
-                  mobileTab === "build"
-                    ? "bg-primary/12 text-primary"
-                    : "text-muted-foreground hover:bg-muted/30",
-                )}
-              >
-                Montar
-              </button>
-              <button
-                type="button"
-                onClick={() => setMobileTab("preview")}
-                className={cn(
-                  "builder-focus-ring rounded px-2 py-1 font-mono text-[11px] uppercase",
-                  mobileTab === "preview"
-                    ? "bg-primary/12 text-primary"
-                    : "text-muted-foreground hover:bg-muted/30",
-                )}
-              >
-                Prévia
-              </button>
-            </div>
-          </div>
-          {mobileTab === "build" && (
+          <BuilderStepper current={step} />
+          {!isLayoutStep && (
             <div className="mt-2">
               <CategoryNav progress={categoryProgress} idPrefix="section-mobile" />
             </div>
@@ -131,44 +163,13 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
             <ScrollArea className="min-h-0 flex-1">
               <div className="p-2">
                 <div className="overflow-hidden rounded-2xl bg-fd-background/80">
-                  <section className="space-y-2 border-b border-border/20 px-3 py-3">
-                    <label className="flex flex-col">
-                      <span className="mb-1 font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-                        Nome do projeto
-                      </span>
-                      <Input
-                        type="text"
-                        value={stack.projectName || ""}
-                        onChange={(event) => {
-                          setStack({ projectName: event.target.value });
-                        }}
-                        aria-invalid={!!projectNameError}
-                        aria-describedby={projectNameError ? "project-name-error" : undefined}
-                        className={cn(
-                          "builder-focus-ring min-h-12 min-w-0 w-full rounded-full border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 dark:bg-background md:text-sm",
-                          projectNameError
-                            ? "border-destructive bg-destructive/10 text-destructive-foreground dark:bg-destructive/10"
-                            : undefined,
-                        )}
-                        placeholder="my-kubo-app"
-                      />
-                      {projectNameError && (
-                        <p id="project-name-error" className="mt-1 text-destructive text-xs">
-                          {projectNameError}
-                        </p>
-                      )}
-                    </label>
+                  <section className="border-b border-border/20 px-3 py-3">
+                    {renderProjectName("project-name")}
                   </section>
 
-                  <section className="border-border/20 border-b px-3 py-3">
-                    <CopyInstallCommandButton
-                      command={command}
-                      compact
-                      confetti
-                      className="w-full max-w-full px-4"
-                      onCopied={handleCommandCopied}
-                    />
-                  </section>
+                  <section className="border-border/20 border-b px-3 py-3">{commandButton}</section>
+
+                  <section className="border-border/20 border-b px-3 py-3">{structureCard}</section>
 
                   <section className="border-border/20 border-b px-3 py-3">
                     <PresetDialog onApplyPreset={applyPreset} />
@@ -188,14 +189,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     <SelectedStackBadges
                       stack={stack}
                       onRemove={removeSelectedTech}
-                      onJump={(category) => {
-                        if (viewMode !== "command") {
-                          startTransition(() => {
-                            setViewMode("command");
-                          });
-                        }
-                        scrollToCategorySection("section", category);
-                      }}
+                      onJump={jumpToCategory}
                     />
                   </section>
 
@@ -217,15 +211,9 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     </section>
                   )}
 
-                  {desktopBuildNote && (
-                    <section className="space-y-2 border-border/20 border-t px-3 py-3">
-                      <div className="flex items-center gap-1.5 font-mono text-[11px] text-amber-600 uppercase tracking-wide dark:text-amber-400">
-                        <AlertTriangle className="h-3.5 w-3.5" />
-                        Nota de build desktop
-                      </div>
-                      <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-2 text-muted-foreground text-xs">
-                        {desktopBuildNote}
-                      </div>
+                  {desktopBuildNoteBox && (
+                    <section className="border-border/20 border-t px-3 py-3">
+                      {desktopBuildNoteBox}
                     </section>
                   )}
                 </div>
@@ -241,209 +229,146 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
             ) : null}
           </aside>
 
-          <div className="grid min-h-0 min-w-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden lg:grid-cols-[minmax(0,1fr)_15rem]">
+          <div
+            className={cn(
+              "grid min-h-0 min-w-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden",
+              !isLayoutStep && "lg:grid-cols-[minmax(0,1fr)_15rem]",
+            )}
+          >
             <div className="sticky top-0 z-10 flex flex-col gap-2 border-border border-b bg-fd-background px-3 py-2 lg:col-span-2">
-              <div className="flex w-fit items-center gap-1 rounded-md bg-muted/20 p-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    startTransition(() => {
-                      setViewMode("command");
-                    });
-                  }}
-                  className={cn(
-                    "builder-focus-ring flex items-center gap-1.5 rounded px-2 py-1 font-mono text-[11px] uppercase tracking-wide",
-                    viewMode === "command"
-                      ? "bg-primary/12 text-primary"
-                      : "text-muted-foreground hover:bg-muted/30",
-                  )}
-                >
-                  <Terminal className="h-3 w-3" />
-                  Configurar
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    startTransition(() => {
-                      setViewMode("preview");
-                    });
-                  }}
-                  className={cn(
-                    "builder-focus-ring flex items-center gap-1.5 rounded px-2 py-1 font-mono text-[11px] uppercase tracking-wide",
-                    viewMode === "preview"
-                      ? "bg-primary/12 text-primary"
-                      : "text-muted-foreground hover:bg-muted/30",
-                  )}
-                >
-                  <FolderTree className="h-3 w-3" />
-                  Prévia
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    startTransition(() => {
-                      setViewMode("layout");
-                    });
-                  }}
-                  className={cn(
-                    "builder-focus-ring flex items-center gap-1.5 rounded px-2 py-1 font-mono text-[11px] uppercase tracking-wide",
-                    viewMode === "layout"
-                      ? "bg-primary/12 text-primary"
-                      : "text-muted-foreground hover:bg-muted/30",
-                  )}
-                >
-                  <FolderCog className="h-3 w-3" />
-                  Layout
-                </button>
-              </div>
-              {viewMode === "command" && (
+              <BuilderStepper current={step} />
+              {!isLayoutStep && (
                 <div className="lg:hidden">
                   <CategoryNav progress={categoryProgress} idPrefix="section" />
                 </div>
               )}
             </div>
 
-            <section className="flex min-h-0 flex-col overflow-hidden">
-              {viewMode === "command" ? (
-                <div ref={scrollAreaRef} className="min-h-0 flex-1">
-                  <ScrollArea className="h-full overflow-hidden scroll-smooth">
-                    <main className="p-2 sm:p-4">
-                      <TechCategories
-                        mode="desktop"
-                        stack={stack}
-                        compatibilityNotes={compatibilityAnalysis.notes}
-                        onSelect={handleTechSelect}
-                        showAllCategories
-                      />
-                    </main>
-                  </ScrollArea>
+            {isLayoutStep ? (
+              <section className="flex min-h-0 flex-col overflow-y-auto xl:flex-row xl:overflow-hidden">
+                <div className="shrink-0 xl:min-h-0 xl:w-[min(34rem,45%)] xl:overflow-y-auto xl:border-rule xl:border-r">
+                  {layoutEditor}
                 </div>
-              ) : viewMode === "layout" ? (
-                <ScrollArea className="h-full overflow-hidden">
-                  <LayoutEditor
-                    layout={stack.layout}
-                    onChange={(layout) => setStack({ layout })}
-                    buildCodeCommand={(code) => withLayoutCode(command, code)}
-                  />
-                </ScrollArea>
-              ) : (
-                <PreviewPanel
-                  stack={effectiveStack}
-                  selectedFilePath={selectedFile}
-                  onSelectFile={setSelectedFile}
-                />
-              )}
-            </section>
+                <div className="mx-3 mb-5 h-[36rem] shrink-0 overflow-hidden rounded-md border border-border sm:mx-5 xl:m-0 xl:h-auto xl:min-h-0 xl:flex-1 xl:rounded-none xl:border-0">
+                  {previewPanel}
+                </div>
+              </section>
+            ) : (
+              <>
+                <section className="flex min-h-0 flex-col overflow-hidden">
+                  <div ref={scrollAreaRef} className="min-h-0 flex-1">
+                    <ScrollArea className="h-full overflow-hidden scroll-smooth">
+                      <main className="p-2 sm:p-4">
+                        <TechCategories
+                          mode="desktop"
+                          stack={stack}
+                          compatibilityNotes={compatibilityAnalysis.notes}
+                          onSelect={handleTechSelect}
+                          showAllCategories
+                        />
+                        <NextStepCta className="mt-6" />
+                      </main>
+                    </ScrollArea>
+                  </div>
+                </section>
 
-            <aside className="hidden min-h-0 flex-col overflow-hidden border-rule border-l bg-background lg:flex">
-              {viewMode === "command" && (
-                <CategoryNav
-                  progress={categoryProgress}
-                  idPrefix="section"
-                  orientation="vertical"
-                />
-              )}
-            </aside>
+                <aside className="hidden min-h-0 flex-col overflow-hidden border-rule border-l bg-background lg:flex">
+                  <CategoryNav
+                    progress={categoryProgress}
+                    idPrefix="section"
+                    orientation="vertical"
+                    trailing={
+                      <BuilderStepLink
+                        step="layout"
+                        className="builder-focus-ring mt-2 flex w-full shrink-0 items-center justify-between rounded-[0.5rem] border border-primary/40 px-3 py-2 font-mono text-primary text-xs uppercase tracking-wide transition-colors hover:bg-primary/10"
+                      >
+                        Layout
+                        <ArrowRight className="size-3.5" />
+                      </BuilderStepLink>
+                    }
+                  />
+                </aside>
+              </>
+            )}
           </div>
         </div>
 
         <div className="flex flex-1 flex-col overflow-hidden sm:hidden">
-          {mobileTab === "build" && (
-            <div className="flex min-h-0 flex-1 flex-col">
-              <ScrollArea className="h-full overflow-hidden scroll-smooth">
-                <main className="p-2 pb-6">
-                  <div className="mb-4 space-y-2 rounded-xl bg-muted/10 p-2">
-                    <label className="flex flex-col">
-                      <span className="mb-1 font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
-                        Nome do projeto
-                      </span>
-                      <Input
-                        type="text"
-                        value={stack.projectName || ""}
-                        onChange={(event) => {
-                          setStack({ projectName: event.target.value });
-                        }}
-                        aria-invalid={!!projectNameError}
-                        aria-describedby={
-                          projectNameError ? "project-name-error-mobile" : undefined
-                        }
-                        className={cn(
-                          "builder-focus-ring min-h-12 min-w-0 w-full rounded-full border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 dark:bg-background md:text-sm",
-                          projectNameError
-                            ? "border-destructive bg-destructive/10 text-destructive-foreground dark:bg-destructive/10"
-                            : undefined,
-                        )}
-                        placeholder="my-kubo-app"
-                      />
-                      {projectNameError && (
-                        <p id="project-name-error-mobile" className="mt-1 text-destructive text-xs">
-                          {projectNameError}
-                        </p>
-                      )}
-                    </label>
-
-                    <div className="space-y-1">
-                      <CopyInstallCommandButton
-                        command={command}
-                        compact
-                        confetti
-                        className="w-full max-w-full px-4"
-                        onCopied={handleCommandCopied}
-                      />
-                    </div>
-
-                    <PresetDialog onApplyPreset={applyPreset} />
-
-                    {actionButtons}
-
-                    {desktopBuildNote && (
-                      <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-2">
-                        <div className="mb-1 flex items-center gap-1.5 font-mono text-[10px] text-amber-600 uppercase tracking-wide dark:text-amber-400">
-                          <AlertTriangle className="h-3 w-3" />
-                          Nota de build desktop
-                        </div>
-                        <p className="text-muted-foreground text-xs">{desktopBuildNote}</p>
-                      </div>
-                    )}
-                  </div>
-
-                  <TechCategories
-                    mode="mobile"
-                    stack={stack}
-                    compatibilityNotes={compatibilityAnalysis.notes}
-                    onSelect={handleTechSelect}
-                    showAllCategories
-                  />
-
-                  <div className="mt-6 rounded-xl border border-border">
-                    <LayoutEditor
-                      layout={stack.layout}
-                      onChange={(layout) => setStack({ layout })}
-                    buildCodeCommand={(code) => withLayoutCode(command, code)}
-                    />
-                  </div>
-                </main>
-              </ScrollArea>
-
-              {specialSponsors.length > 0 ? (
-                <div className="border-border/35 border-t bg-fd-background/95 p-2 backdrop-blur-sm">
-                  <div className="rounded-xl bg-fd-background/80 p-2">
-                    <SpecialSponsorsPanel sponsors={specialSponsors} compact />
-                  </div>
+          <div className="flex min-h-0 flex-1 flex-col">
+            <ScrollArea className="h-full overflow-hidden scroll-smooth">
+              <main className="p-2 pb-6">
+                <div className="mb-4 space-y-2 rounded-xl bg-muted/10 p-2">
+                  {renderProjectName("project-name-mobile")}
+                  {commandButton}
+                  {structureCard}
+                  {!isLayoutStep && (
+                    <>
+                      <PresetDialog onApplyPreset={applyPreset} />
+                      {actionButtons}
+                      {desktopBuildNoteBox}
+                    </>
+                  )}
                 </div>
-              ) : null}
-            </div>
-          )}
 
-          {mobileTab === "preview" && (
-            <PreviewPanel
-              stack={effectiveStack}
-              selectedFilePath={selectedFile}
-              onSelectFile={setSelectedFile}
-            />
-          )}
+                {isLayoutStep ? (
+                  <>
+                    <div className="rounded-xl border border-border">{layoutEditor}</div>
+                    <div className="mt-4 h-[32rem] overflow-hidden rounded-xl border border-border">
+                      {previewPanel}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <TechCategories
+                      mode="mobile"
+                      stack={stack}
+                      compatibilityNotes={compatibilityAnalysis.notes}
+                      onSelect={handleTechSelect}
+                      showAllCategories
+                    />
+                    <NextStepCta className="mt-6" />
+                  </>
+                )}
+              </main>
+            </ScrollArea>
+
+            {specialSponsors.length > 0 ? (
+              <div className="border-border/35 border-t bg-fd-background/95 p-2 backdrop-blur-sm">
+                <div className="rounded-xl bg-fd-background/80 p-2">
+                  <SpecialSponsorsPanel sponsors={specialSponsors} compact />
+                </div>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </TooltipProvider>
+  );
+}
+
+/** End of the technology list: points to the layout step. */
+function NextStepCta({ className }: { className?: string }) {
+  return (
+    <BuilderStepLink
+      step="layout"
+      className={cn(
+        "builder-focus-ring group flex items-center gap-4 rounded-xl border border-primary/40 bg-primary/6 p-4 transition-colors hover:bg-primary/10",
+        className,
+      )}
+    >
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+        <FolderTree className="size-5" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
+          Próxima etapa
+        </span>
+        <span className="block font-semibold text-base">Monte a estrutura de pastas</span>
+        <span className="block text-muted-foreground text-sm">
+          Escolha onde ficam os apps e os pacotes e veja a árvore do projeto.
+        </span>
+      </span>
+      <ArrowRight className="size-5 shrink-0 text-primary motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5" />
+    </BuilderStepLink>
   );
 }

@@ -397,6 +397,16 @@ const LayoutPackagesSchema = z
   .record(LayoutPackageKeySchema, LayoutRelativePathSchema)
   .describe("Per-package path overrides");
 
+/** npm scope for the generated workspace packages, e.g. `@acme` → `@acme/ui`. */
+export const LayoutScopeSchema = z
+  .string()
+  .max(64, "Package scope must be at most 64 characters")
+  .regex(
+    /^@[a-z0-9][a-z0-9._-]*$/,
+    "Package scope must look like @acme (lowercase letters, digits, '.', '_' or '-')",
+  )
+  .describe("npm scope of the workspace packages; defaults to @<projectName>");
+
 export const LayoutConfigSchema = z
   .object({
     version: z.literal(1).optional().describe("Layout contract version"),
@@ -404,6 +414,7 @@ export const LayoutConfigSchema = z
     dirs: LayoutDirsSchema.optional(),
     apps: LayoutAppsSchema.optional(),
     packages: LayoutPackagesSchema.optional(),
+    scope: LayoutScopeSchema.optional(),
   })
   .strict()
   .describe("Declarative project folder layout: convention directories plus overrides");

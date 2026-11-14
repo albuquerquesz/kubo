@@ -1,8 +1,8 @@
 {{#if (eq backend "convex")}}
 <script lang="ts">
 	import { useQuery, useConvexClient } from 'convex-svelte';
-	import { api } from '@{{projectName}}/backend/convex/_generated/api';
-	import type { Id } from '@{{projectName}}/backend/convex/_generated/dataModel';
+	import { api } from '{{packageScope}}/backend/convex/_generated/api';
+	import type { Id } from '{{packageScope}}/backend/convex/_generated/dataModel';
 
 	let newTodoText = $state('');
 	let isAdding = $state(false);

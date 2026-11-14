@@ -18,8 +18,6 @@ import type { TechCategory } from "@/lib/types";
 
 import { analyzeStackCompatibility, isOptionCompatible, validateProjectName } from "../utils";
 
-export type MobileTab = "build" | "preview";
-
 export type CategoryProgressItem = {
   category: TechCategory;
   selected: number;
@@ -181,12 +179,11 @@ export function nextStackAfterTechSelect(
 
 export function useStackBuilder() {
   const analytics = useKuboHimetrica();
-  const [stack, setStack, viewMode, setViewMode, selectedFile, setSelectedFile] = useStackState();
+  const [stack, setStack, selectedFile, setSelectedFile] = useStackState();
 
   const [copied, setCopied] = useState(false);
   const [lastSavedStack, setLastSavedStack] = useState<StackState | null>(null);
   const [, setLastChanges] = useState<Array<{ category: string; message: string }>>([]);
-  const [mobileTab, setMobileTab] = useState<MobileTab>("build");
 
   const contentRef = useRef<HTMLDivElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
@@ -203,7 +200,7 @@ export function useStackBuilder() {
       );
       if (viewport) contentRef.current = viewport;
     }
-  }, [viewMode]);
+  }, []);
 
   const compatibilityAnalysis = analyzeStackCompatibility(stack);
   const projectNameError = validateProjectName(stack.projectName);
@@ -374,7 +371,6 @@ export function useStackBuilder() {
     handleTechSelect,
     lastSavedStack,
     loadSavedStack,
-    mobileTab,
     projectNameError,
     removeSelectedTech,
     resetStack,
@@ -382,11 +378,8 @@ export function useStackBuilder() {
     scrollAreaRef,
     selectedCount,
     selectedFile,
-    setMobileTab,
     setSelectedFile,
     setStack,
-    setViewMode,
     stack,
-    viewMode,
   };
 }

@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 import { createDb{{#if (and (ne serverDeploy "cloudflare") (or (ne backend "self") (ne webDeploy "cloudflare")))}}, db{{/if}} } from "./index";
 import { abacatePayCheckout, abacatePayWebhookEvent } from "./schema/abacatepay";

@@ -107,6 +107,24 @@ describe("custom layouts", () => {
     }, 180_000);
   }
 
+  it("a custom scope renames every workspace package and nothing else", async () => {
+    for (const config of configs) {
+      const standard = await generateFiles(config, { preset: "standard" });
+      const scoped = await generateFiles(config, { preset: "standard", scope: "@acme" });
+      expect([...scoped.keys()]).toEqual([...standard.keys()]);
+      // .env files get fresh random secrets on every run.
+      const mask = (content: string) =>
+        content.replace(/=[A-Za-z0-9+/_-]{24,}={0,2}$/gm, "=<secret>");
+      for (const [file, content] of scoped) {
+        expect(content).not.toContain(`@${config.projectName}/`);
+        const unscoped = content
+          .replaceAll("@acme/", `@${config.projectName}/`)
+          .replaceAll("@acme\\/", `@${config.projectName}\\/`); // tsdown alwaysBundle regex
+        expect(mask(unscoped)).toBe(mask(standard.get(file)!));
+      }
+    }
+  }, 180_000);
+
   it("standard layout also has no dangling relative references", async () => {
     for (const config of configs) {
       expect(danglingRefs(await generateFiles(config, { preset: "standard" }))).toEqual([]);
