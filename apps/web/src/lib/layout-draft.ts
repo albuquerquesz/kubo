@@ -141,3 +141,29 @@ export function getConventionPath(
       : presetDirs[kind];
   return dir === "." ? id : `${dir}/${id}`;
 }
+
+export type LayoutSummary = {
+  preset: LayoutPreset;
+  /** Convention folders after the preset and `dirs` (`.` is the project root). */
+  dirs: { apps: string; packages: string };
+  /** Per-app/package paths set on top of the convention. */
+  overrides: number;
+  /** True when anything differs from the standard layout. */
+  isCustom: boolean;
+};
+
+/** Short description of a layout for the builder sidebar. */
+export function summarizeLayout(layout: LayoutConfig | undefined): LayoutSummary {
+  const draft = layoutToDraft(layout);
+  const { dirs } = expandLayoutConfig(draftToLayout(draft));
+  const overrides = [draft.apps, draft.packages]
+    .flatMap((values) => Object.values(values))
+    .filter((value) => (value ?? "").trim() !== "").length;
+  const standardDirs = LAYOUT_PRESET_DIRS.standard;
+  const isCustom =
+    draft.preset !== "standard" ||
+    dirs.apps !== standardDirs.apps ||
+    dirs.packages !== standardDirs.packages ||
+    overrides > 0;
+  return { preset: draft.preset, dirs, overrides, isCustom };
+}

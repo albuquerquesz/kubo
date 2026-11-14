@@ -5,6 +5,7 @@ import {
   draftToLayout,
   getConventionPath,
   layoutToDraft,
+  summarizeLayout,
   validateLayoutDraft,
 } from "../src/lib/layout-draft";
 import { parseStackLayout } from "../src/lib/stack-layout";
@@ -128,5 +129,29 @@ describe("withLayoutCode", () => {
     expect(withLayoutCode("bun create kubojs@latest app --yes", "X")).toBe(
       "bun create kubojs@latest app --yes --layout-code X",
     );
+  });
+});
+
+describe("layout summary", () => {
+  test("standard layout is not custom", () => {
+    expect(summarizeLayout(undefined)).toEqual({
+      preset: "standard",
+      dirs: { apps: "apps", packages: "packages" },
+      overrides: 0,
+      isCustom: false,
+    });
+  });
+
+  test("counts overrides and resolves dirs", () => {
+    const summary = summarizeLayout({
+      version: 1,
+      preset: "libs",
+      dirs: { apps: "." },
+      apps: { web: "web" },
+      packages: { db: "data/db" },
+    });
+    expect(summary.dirs).toEqual({ apps: ".", packages: "libs" });
+    expect(summary.overrides).toBe(2);
+    expect(summary.isCustom).toBe(true);
   });
 });

@@ -217,7 +217,7 @@ export function LayoutEditor({ layout, onChange, buildCodeCommand }: LayoutEdito
             ))}
           </dl>
           <p className="text-muted-foreground text-xs">
-            Só as pastas que a sua stack usa são geradas. Veja a árvore completa logo abaixo.
+            Só as pastas que a sua stack usa são geradas. A prévia mostra a árvore completa.
           </p>
         </section>
       ) : null}

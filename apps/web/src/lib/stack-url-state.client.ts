@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  parseAsArrayOf,
-  parseAsBoolean,
-  parseAsJson,
-  parseAsString,
-  parseAsStringEnum,
-  useQueryStates,
-} from "nuqs";
+import { parseAsArrayOf, parseAsBoolean, parseAsJson, parseAsString, useQueryStates } from "nuqs";
 import { useRef } from "react";
 
 import { DEFAULT_STACK, type StackState } from "@/lib/constant";
@@ -22,11 +15,6 @@ const legacyFrontendUrlKeys = {
 } as const;
 
 const allStackUrlKeys = { ...stackUrlKeys, ...legacyFrontendUrlKeys };
-
-export type StackViewMode = "command" | "layout";
-
-/** `preview` was its own tab; old links with `?view=preview` now open the layout tab. */
-type StackViewModeParam = StackViewMode | "preview";
 
 export const stackParsers = {
   projectName: parseAsString.withDefault(DEFAULT_STACK.projectName),
@@ -53,9 +41,6 @@ export const stackParsers = {
   layout: parseAsJson(parseStackLayout),
   legacyWebFrontend: parseAsArrayOf(parseAsString).withDefault([]),
   legacyNativeFrontend: parseAsArrayOf(parseAsString).withDefault([]),
-  viewMode: parseAsStringEnum<StackViewModeParam>(["command", "preview", "layout"]).withDefault(
-    "command",
-  ),
   selectedFile: parseAsString.withDefault(""),
 };
 
@@ -69,8 +54,6 @@ export const stackQueryStatesOptions = {
 export function useStackState() {
   const [queryState, setQueryState] = useQueryStates(stackParsers, stackQueryStatesOptions);
   const stack = sanitizeStackState(queryState);
-  const viewMode: StackViewMode =
-    queryState.viewMode === "preview" ? "layout" : queryState.viewMode;
   const selectedFile = queryState.selectedFile;
   const updateQueue = useRef(Promise.resolve());
 
@@ -91,7 +74,6 @@ export function useStackState() {
           ...finalStack,
           // Explicit null clears the URL key when the layout goes back to the standard one.
           layout: finalStack.layout ?? null,
-          viewMode: prev.viewMode,
           selectedFile: prev.selectedFile,
           ...clearLegacyFrontendQuery,
         };
@@ -105,13 +87,9 @@ export function useStackState() {
     await next;
   };
 
-  const setViewMode = async (mode: StackViewMode) => {
-    await setQueryState({ viewMode: mode, selectedFile });
-  };
-
   const setSelectedFile = async (filePath: string | null) => {
     await setQueryState({ selectedFile: filePath || "" });
   };
 
-  return [stack, updateStack, viewMode, setViewMode, selectedFile, setSelectedFile] as const;
+  return [stack, updateStack, selectedFile, setSelectedFile] as const;
 }
