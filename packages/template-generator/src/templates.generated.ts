@@ -32968,7 +32968,9 @@ export default defineNuxtPlugin(() => {
 
 export type AraraClient = NodeSDK;
 
-export const arara = new NodeSDK({ apiKey: process.env.ARARA_API_KEY });
+export const arara = new NodeSDK({
+  apiKey: process.env.ARARA_API_KEY,
+});
 `],
   ["packages/arara/tsconfig.json.hbs", `{
   "extends": "{{packageScope}}/config/tsconfig.base.json",
