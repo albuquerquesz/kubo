@@ -18,13 +18,12 @@ O layout padrão (`standard`) gera exatamente a mesma estrutura de antes — nad
 
 ## Editor em kubojs.dev/new
 
-Na aba **Layout** do [Stack Builder](/new) você escolhe o preset, as pastas de convenção, o escopo dos pacotes e, em "Caminhos por app e pacote", as exceções. Cada campo é validado na hora:
+Na aba **Layout** do [Stack Builder](/new) você escolhe o preset, as pastas de convenção e, em "Caminhos por app e pacote", as exceções. Cada campo é validado na hora:
 
 - caminhos absolutos, `..`, `node_modules`, `.git` e caracteres inválidos são recusados;
-- o escopo precisa ter a forma `@acme` (minúsculas, dígitos, `.`, `_` ou `-`);
 - dois itens na mesma pasta, pastas que diferem só por maiúsculas/minúsculas e uma pasta dentro da outra aparecem como **conflito de pastas**.
 
-Enquanto houver erro, o comando continua com o último layout válido. O comando copiado (`--layout ...`), a aba **Prévia** e o link de compartilhamento já usam o layout. O resumo "Resultado" lista todas as pastas possíveis; só as que a sua stack usa são geradas.
+Enquanto houver erro, o comando continua com o último layout válido. O comando copiado (`--layout ...`), a prévia de arquivos logo abaixo do editor e o link de compartilhamento já usam o layout. O resumo "Resultado" lista todas as pastas possíveis; só as que a sua stack usa são geradas.
 
 Não é preciso conta para editar e copiar o comando.
 

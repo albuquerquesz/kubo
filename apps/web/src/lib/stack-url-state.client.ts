@@ -23,7 +23,10 @@ const legacyFrontendUrlKeys = {
 
 const allStackUrlKeys = { ...stackUrlKeys, ...legacyFrontendUrlKeys };
 
-export type StackViewMode = "command" | "preview" | "layout";
+export type StackViewMode = "command" | "layout";
+
+/** `preview` was its own tab; old links with `?view=preview` now open the layout tab. */
+type StackViewModeParam = StackViewMode | "preview";
 
 export const stackParsers = {
   projectName: parseAsString.withDefault(DEFAULT_STACK.projectName),
@@ -50,7 +53,9 @@ export const stackParsers = {
   layout: parseAsJson(parseStackLayout),
   legacyWebFrontend: parseAsArrayOf(parseAsString).withDefault([]),
   legacyNativeFrontend: parseAsArrayOf(parseAsString).withDefault([]),
-  viewMode: parseAsStringEnum<StackViewMode>(["command", "preview", "layout"]).withDefault("command"),
+  viewMode: parseAsStringEnum<StackViewModeParam>(["command", "preview", "layout"]).withDefault(
+    "command",
+  ),
   selectedFile: parseAsString.withDefault(""),
 };
 
@@ -64,7 +69,8 @@ export const stackQueryStatesOptions = {
 export function useStackState() {
   const [queryState, setQueryState] = useQueryStates(stackParsers, stackQueryStatesOptions);
   const stack = sanitizeStackState(queryState);
-  const viewMode = queryState.viewMode;
+  const viewMode: StackViewMode =
+    queryState.viewMode === "preview" ? "layout" : queryState.viewMode;
   const selectedFile = queryState.selectedFile;
   const updateQueue = useRef(Promise.resolve());
 

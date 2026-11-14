@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, FolderCog, FolderTree, Terminal } from "lucide-react";
+import { AlertTriangle, FolderCog, Terminal } from "lucide-react";
 import { startTransition, useCallback, useRef, useState } from "react";
 
 import CopyInstallCommandButton from "@/app/(home)/_components/copy-install-command-button";
@@ -265,23 +265,6 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                   type="button"
                   onClick={() => {
                     startTransition(() => {
-                      setViewMode("preview");
-                    });
-                  }}
-                  className={cn(
-                    "builder-focus-ring flex items-center gap-1.5 rounded px-2 py-1 font-mono text-[11px] uppercase tracking-wide",
-                    viewMode === "preview"
-                      ? "bg-primary/12 text-primary"
-                      : "text-muted-foreground hover:bg-muted/30",
-                  )}
-                >
-                  <FolderTree className="h-3 w-3" />
-                  Prévia
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    startTransition(() => {
                       setViewMode("layout");
                     });
                   }}
@@ -318,20 +301,23 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     </main>
                   </ScrollArea>
                 </div>
-              ) : viewMode === "layout" ? (
+              ) : (
                 <ScrollArea className="h-full overflow-hidden">
                   <LayoutEditor
                     layout={stack.layout}
                     onChange={(layout) => setStack({ layout })}
                     buildCodeCommand={(code) => withLayoutCode(command, code)}
                   />
+                  <div className="mx-auto w-full max-w-5xl px-3 pb-5 sm:px-5">
+                    <div className="h-[36rem] overflow-hidden rounded-md border border-border">
+                      <PreviewPanel
+                        stack={effectiveStack}
+                        selectedFilePath={selectedFile}
+                        onSelectFile={setSelectedFile}
+                      />
+                    </div>
+                  </div>
                 </ScrollArea>
-              ) : (
-                <PreviewPanel
-                  stack={effectiveStack}
-                  selectedFilePath={selectedFile}
-                  onSelectFile={setSelectedFile}
-                />
               )}
             </section>
 
@@ -419,7 +405,7 @@ export function StackBuilder({ specialSponsors = [] }: StackBuilderProps) {
                     <LayoutEditor
                       layout={stack.layout}
                       onChange={(layout) => setStack({ layout })}
-                    buildCodeCommand={(code) => withLayoutCode(command, code)}
+                      buildCodeCommand={(code) => withLayoutCode(command, code)}
                     />
                   </div>
                 </main>
