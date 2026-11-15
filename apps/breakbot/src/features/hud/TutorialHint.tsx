@@ -10,7 +10,7 @@ export const TutorialHint = () => {
 			<p className="animate-pulse font-extrabold text-[15px] text-bright [text-shadow:0_0_6px_#05070a]">
 				Segure e arraste
 			</p>
-			<div className="w-32 border-go/40 border-t-2 border-dashed" />
+			<div className="w-32 border-kubo/50 border-t-2 border-dashed" />
 			<span className="animate-sway text-4xl">👆</span>
 		</div>
 	);

@@ -11,7 +11,7 @@ type ConfettiPiece = {
 };
 
 const PIECE_COUNT = 72;
-const COLORS = [palette.go, palette.warn, palette.sky, palette.grape, palette.alert];
+const COLORS = [palette.kubo, palette.warn, palette.sky, palette.grape, palette.alert];
 
 // Variação puramente visual: pode usar Math.random (a regra do RNG com seed vale só para o core).
 const randomBetween = (min: number, max: number) => min + Math.random() * (max - min);
