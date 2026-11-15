@@ -1,6 +1,6 @@
 ---
 title: Analytics e telemetria
-description: O que coletamos, como desativar e onde ver insights agregados
+description: O que coletamos e como desativar
 ---
 
 ## O que é coletado
@@ -33,16 +33,6 @@ DO_NOT_TRACK=1 npx kubojs@latest
 <Callout title="Nota">O comando acima desativa apenas para uma execução.</Callout>
 
 Adicione `export KUBO_TELEMETRY_DISABLED=1` ao perfil do shell para tornar permanente. A variável antiga `BTS_TELEMETRY_DISABLED=1` continua funcionando.
-
-## Onde ver analytics
-
-- Snapshot JSON bruto: `https://r2.kubojs.dev/analytics-data.json`
-- Export CSV: `https://r2.kubojs.dev/export.csv`
-
-Observações:
-
-- Agregados são regenerados periodicamente a partir dos eventos recebidos
-- Dados brutos não são expostos publicamente; os snapshots acima contêm apenas estatísticas resumidas
 
 ## Transparência total
 
