@@ -1,0 +1,31 @@
+---
+title: Privacidade e cookies
+description: O que o site kubojs.dev coleta, quando, e como mudar sua escolha
+---
+
+## Consentimento
+
+Na primeira visita, o site mostra um aviso de cookies. **Nada de análise é carregado nem enviado antes de você clicar em Aceitar.** Se você recusar, o site funciona normalmente e nenhuma das ferramentas abaixo é ativada.
+
+Para mudar a escolha a qualquer momento, use **Preferências de cookies** no rodapé. A resposta fica salva só no seu navegador (`localStorage`, chave `kubo:analytics-consent`).
+
+## O que coletamos com o seu aceite
+
+- **Análise de uso (Himetrica):** páginas visitadas, cliques nas opções do Stack Builder (por exemplo, qual framework foi escolhido) e erros do site, para entender o que é mais usado.
+- **Gravação de sessão (PostHog), só no Stack Builder** (`/new` e `/new/preview`): uma reprodução anônima de como a página foi usada (movimentos, cliques e rolagem), para encontrar pontos de confusão.
+  - Tudo o que você digita fica mascarado: nome do projeto, email do login e qualquer outro campo nunca aparecem na gravação.
+  - Não usamos cookies do PostHog (os dados ficam no `localStorage`) e o sinal "Do Not Track" do navegador é respeitado.
+  - As gravações são guardadas por 30 dias.
+
+## O que não coletamos
+
+- Senhas ou o conteúdo dos campos de texto.
+- Dados para publicidade. Nada é vendido ou compartilhado para anúncios.
+
+## Login
+
+Se você entrar com Google ou link por email, guardamos seu nome, email e foto de perfil para manter a sessão e os dados da sua conta. Esses cookies são necessários para o login funcionar e não dependem do aviso de análise.
+
+## CLI
+
+A telemetria do CLI (`create-kubojs`) é separada e está descrita em [Analytics e telemetria](/docs/analytics).
