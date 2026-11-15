@@ -1,14 +1,14 @@
 "use client";
 
-import { AlertTriangle, ArrowRight, FolderTree } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { AlertTriangle, ArrowLeft, ArrowRight, FolderTree } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 
 import CopyInstallCommandButton from "@/app/(home)/_components/copy-install-command-button";
+import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ShareDialog } from "@/components/ui/share-dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { builderStepHref, type BuilderStep } from "@/lib/builder-steps";
+import type { BuilderStep } from "@/lib/builder-steps";
 import { getDesktopBuildNote, withLayoutCode } from "@/lib/stack-utils";
 import type { Sponsor } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -53,13 +53,10 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
     setStack,
     stack,
   } = useStackBuilder();
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const effectiveStack = compatibilityAnalysis.adjustedStack || stack;
   const desktopBuildNote = getDesktopBuildNote(effectiveStack);
   const [shareOpen, setShareOpen] = useState(false);
   const hasPromptedShareAfterCopyRef = useRef(false);
-  const isLayoutStep = step === "layout";
 
   const handleCommandCopied = useCallback(() => {
     if (hasPromptedShareAfterCopyRef.current) return;
@@ -101,24 +98,6 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
     />
   );
 
-  const structureCard = <ProjectStructureCard layout={stack.layout} step={step} />;
-
-  const layoutEditor = (
-    <LayoutEditor
-      layout={stack.layout}
-      onChange={(layout) => setStack({ layout })}
-      buildCodeCommand={(code) => withLayoutCode(command, code)}
-    />
-  );
-
-  const previewPanel = (
-    <PreviewPanel
-      stack={effectiveStack}
-      selectedFilePath={selectedFile}
-      onSelectFile={setSelectedFile}
-    />
-  );
-
   const desktopBuildNoteBox = desktopBuildNote ? (
     <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-2">
       <div className="mb-1 flex items-center gap-1.5 font-mono text-[11px] text-amber-600 uppercase tracking-wide dark:text-amber-400">
@@ -129,30 +108,68 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
     </div>
   ) : null;
 
-  const jumpToCategory = (category: string) => {
-    if (isLayoutStep) router.push(builderStepHref("stack", searchParams.toString()));
-    scrollToCategorySection("section", category);
-  };
+  /* Single controlled share dialog for first-copy prompt (desktop+mobile ActionButtons stay uncontrolled). */
+  const shareDialog = (
+    <ShareDialog
+      stackUrl={stackUrl}
+      stackState={effectiveStack}
+      open={shareOpen}
+      onOpenChange={setShareOpen}
+      trigger={<button type="button" tabIndex={-1} className="sr-only" aria-hidden />}
+    >
+      Compartilhar stack
+    </ShareDialog>
+  );
+
+  // The layout step is a focused page: no stack sidebar, just a way back, the command and the editor.
+  if (step === "layout") {
+    return (
+      <TooltipProvider>
+        <div className="flex h-full w-full flex-col overflow-hidden bg-background text-foreground">
+          {shareDialog}
+
+          <div className="flex shrink-0 flex-wrap items-center gap-2 border-border border-b bg-fd-background px-3 py-2 sm:flex-nowrap sm:px-5">
+            <BuilderStepLink
+              step="stack"
+              className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "-ml-2.5 shrink-0")}
+            >
+              <ArrowLeft data-icon="inline-start" />
+              Voltar para a stack
+            </BuilderStepLink>
+            <div className="w-full min-w-0 sm:ml-auto sm:w-[min(36rem,60%)]">{commandButton}</div>
+          </div>
+
+          <section className="flex min-h-0 flex-1 flex-col overflow-y-auto xl:flex-row xl:overflow-hidden">
+            <div className="shrink-0 xl:min-h-0 xl:w-[min(34rem,45%)] xl:overflow-y-auto xl:border-rule xl:border-r">
+              <LayoutEditor
+                layout={stack.layout}
+                onChange={(layout) => setStack({ layout })}
+                buildCodeCommand={(code) => withLayoutCode(command, code)}
+              />
+            </div>
+            <div className="mx-3 mb-5 h-[36rem] shrink-0 overflow-hidden rounded-md border border-border sm:mx-5 xl:m-0 xl:h-auto xl:min-h-0 xl:flex-1 xl:rounded-none xl:border-0">
+              <PreviewPanel
+                stack={effectiveStack}
+                selectedFilePath={selectedFile}
+                onSelectFile={setSelectedFile}
+              />
+            </div>
+          </section>
+        </div>
+      </TooltipProvider>
+    );
+  }
+
+  const structureCard = <ProjectStructureCard layout={stack.layout} />;
 
   return (
     <TooltipProvider>
       <div className="flex h-full w-full flex-col overflow-hidden bg-background text-foreground">
-        {/* Single controlled share dialog for first-copy prompt (desktop+mobile ActionButtons stay uncontrolled). */}
-        <ShareDialog
-          stackUrl={stackUrl}
-          stackState={effectiveStack}
-          open={shareOpen}
-          onOpenChange={setShareOpen}
-          trigger={<button type="button" tabIndex={-1} className="sr-only" aria-hidden />}
-        >
-          Compartilhar stack
-        </ShareDialog>
+        {shareDialog}
 
-        {!isLayoutStep && (
-          <div className="sticky top-0 z-20 border-border border-b bg-fd-background/95 px-3 py-2 backdrop-blur-sm sm:hidden">
-            <CategoryNav progress={categoryProgress} idPrefix="section-mobile" />
-          </div>
-        )}
+        <div className="sticky top-0 z-20 border-border border-b bg-fd-background/95 px-3 py-2 backdrop-blur-sm sm:hidden">
+          <CategoryNav progress={categoryProgress} idPrefix="section-mobile" />
+        </div>
 
         <div className="hidden h-full flex-1 grid-cols-[19rem_minmax(0,1fr)] overflow-hidden border-border sm:grid lg:grid-cols-[24rem_minmax(0,1fr)]">
           <aside className="flex min-h-0 flex-col overflow-hidden border-rule border-r bg-fd-background">
@@ -185,7 +202,7 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
                     <SelectedStackBadges
                       stack={stack}
                       onRemove={removeSelectedTech}
-                      onJump={jumpToCategory}
+                      onJump={(category) => scrollToCategorySection("section", category)}
                     />
                   </section>
 
@@ -228,64 +245,49 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
           <div
             className={cn(
               "grid min-h-0 min-w-0 overflow-hidden",
-              isLayoutStep
-                ? "grid-rows-[minmax(0,1fr)]"
-                : "grid-rows-[auto_minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_15rem] lg:grid-rows-[minmax(0,1fr)]",
+              "grid-rows-[auto_minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_15rem] lg:grid-rows-[minmax(0,1fr)]",
             )}
           >
             {/* Below lg the category nav sits on top; from lg it moves to the right rail. */}
-            {!isLayoutStep && (
-              <div className="sticky top-0 z-10 border-border border-b bg-fd-background px-3 py-2 lg:hidden">
-                <CategoryNav progress={categoryProgress} idPrefix="section" />
-              </div>
-            )}
+            <div className="sticky top-0 z-10 border-border border-b bg-fd-background px-3 py-2 lg:hidden">
+              <CategoryNav progress={categoryProgress} idPrefix="section" />
+            </div>
 
-            {isLayoutStep ? (
-              <section className="flex min-h-0 flex-col overflow-y-auto xl:flex-row xl:overflow-hidden">
-                <div className="shrink-0 xl:min-h-0 xl:w-[min(34rem,45%)] xl:overflow-y-auto xl:border-rule xl:border-r">
-                  {layoutEditor}
-                </div>
-                <div className="mx-3 mb-5 h-[36rem] shrink-0 overflow-hidden rounded-md border border-border sm:mx-5 xl:m-0 xl:h-auto xl:min-h-0 xl:flex-1 xl:rounded-none xl:border-0">
-                  {previewPanel}
+            <>
+              <section className="flex min-h-0 flex-col overflow-hidden">
+                <div ref={scrollAreaRef} className="min-h-0 flex-1">
+                  <ScrollArea className="h-full overflow-hidden scroll-smooth">
+                    <main className="p-2 sm:p-4">
+                      <TechCategories
+                        mode="desktop"
+                        stack={stack}
+                        compatibilityNotes={compatibilityAnalysis.notes}
+                        onSelect={handleTechSelect}
+                        showAllCategories
+                      />
+                      <NextStepCta className="mt-6" />
+                    </main>
+                  </ScrollArea>
                 </div>
               </section>
-            ) : (
-              <>
-                <section className="flex min-h-0 flex-col overflow-hidden">
-                  <div ref={scrollAreaRef} className="min-h-0 flex-1">
-                    <ScrollArea className="h-full overflow-hidden scroll-smooth">
-                      <main className="p-2 sm:p-4">
-                        <TechCategories
-                          mode="desktop"
-                          stack={stack}
-                          compatibilityNotes={compatibilityAnalysis.notes}
-                          onSelect={handleTechSelect}
-                          showAllCategories
-                        />
-                        <NextStepCta className="mt-6" />
-                      </main>
-                    </ScrollArea>
-                  </div>
-                </section>
 
-                <aside className="hidden min-h-0 flex-col overflow-hidden border-rule border-l bg-background lg:flex">
-                  <CategoryNav
-                    progress={categoryProgress}
-                    idPrefix="section"
-                    orientation="vertical"
-                    trailing={
-                      <BuilderStepLink
-                        step="layout"
-                        className="builder-focus-ring mt-2 flex w-full shrink-0 items-center justify-between rounded-[0.5rem] border border-primary/40 px-3 py-2 font-mono text-primary text-xs uppercase tracking-wide transition-colors hover:bg-primary/10"
-                      >
-                        Layout
-                        <ArrowRight className="size-3.5" />
-                      </BuilderStepLink>
-                    }
-                  />
-                </aside>
-              </>
-            )}
+              <aside className="hidden min-h-0 flex-col overflow-hidden border-rule border-l bg-background lg:flex">
+                <CategoryNav
+                  progress={categoryProgress}
+                  idPrefix="section"
+                  orientation="vertical"
+                  trailing={
+                    <BuilderStepLink
+                      step="layout"
+                      className="builder-focus-ring mt-2 flex w-full shrink-0 items-center justify-between rounded-[0.5rem] border border-primary/40 px-3 py-2 font-mono text-primary text-xs uppercase tracking-wide transition-colors hover:bg-primary/10"
+                    >
+                      Layout
+                      <ArrowRight className="size-3.5" />
+                    </BuilderStepLink>
+                  }
+                />
+              </aside>
+            </>
           </div>
         </div>
 
@@ -297,34 +299,21 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
                   {renderProjectName("project-name-mobile")}
                   {commandButton}
                   {structureCard}
-                  {!isLayoutStep && (
-                    <>
-                      <PresetDialog onApplyPreset={applyPreset} />
-                      {actionButtons}
-                      {desktopBuildNoteBox}
-                    </>
-                  )}
+                  <PresetDialog onApplyPreset={applyPreset} />
+                  {actionButtons}
+                  {desktopBuildNoteBox}
                 </div>
 
-                {isLayoutStep ? (
-                  <>
-                    <div className="rounded-xl border border-border">{layoutEditor}</div>
-                    <div className="mt-4 h-[32rem] overflow-hidden rounded-xl border border-border">
-                      {previewPanel}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <TechCategories
-                      mode="mobile"
-                      stack={stack}
-                      compatibilityNotes={compatibilityAnalysis.notes}
-                      onSelect={handleTechSelect}
-                      showAllCategories
-                    />
-                    <NextStepCta className="mt-6" />
-                  </>
-                )}
+                <>
+                  <TechCategories
+                    mode="mobile"
+                    stack={stack}
+                    compatibilityNotes={compatibilityAnalysis.notes}
+                    onSelect={handleTechSelect}
+                    showAllCategories
+                  />
+                  <NextStepCta className="mt-6" />
+                </>
               </main>
             </ScrollArea>
 

@@ -10,7 +10,6 @@ type BuilderStepLinkProps = {
   step: BuilderStep;
   className?: string;
   children: ReactNode;
-  "aria-current"?: "step";
 };
 
 /** Link to a builder step that carries the current stack query along. */

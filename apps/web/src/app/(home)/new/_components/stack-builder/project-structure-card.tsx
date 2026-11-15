@@ -1,11 +1,10 @@
 "use client";
 
 import type { LayoutConfig } from "@kubojs/types";
-import { ArrowLeft, ArrowRight, Folder } from "lucide-react";
+import { ArrowRight, Folder } from "lucide-react";
 import { useMemo } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
-import type { BuilderStep } from "@/lib/builder-steps";
 import { summarizeLayout } from "@/lib/layout-draft";
 import { cn } from "@/lib/utils";
 
@@ -18,23 +17,11 @@ function folderLabel(dir: string) {
 }
 
 /** Sidebar entry point for the layout step: current folder structure plus a link to edit it. */
-export function ProjectStructureCard({
-  layout,
-  step,
-}: {
-  layout: LayoutConfig | undefined;
-  step: BuilderStep;
-}) {
+export function ProjectStructureCard({ layout }: { layout: LayoutConfig | undefined }) {
   const summary = useMemo(() => summarizeLayout(layout), [layout]);
-  const isLayoutStep = step === "layout";
 
   return (
-    <div
-      className={cn(
-        "space-y-3 rounded-xl border p-3",
-        isLayoutStep ? "border-primary/50 bg-primary/6" : "border-rule bg-muted/10",
-      )}
-    >
+    <div className="space-y-3 rounded-xl border border-rule bg-muted/10 p-3">
       <div className="flex items-center justify-between gap-2">
         <p className="font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
           Estrutura do projeto
@@ -72,20 +59,11 @@ export function ProjectStructureCard({
       ) : null}
 
       <BuilderStepLink
-        step={isLayoutStep ? "stack" : "layout"}
-        className={cn(buttonVariants({ variant: isLayoutStep ? "ghost" : "outline" }), "w-full")}
+        step="layout"
+        className={cn(buttonVariants({ variant: "outline" }), "w-full")}
       >
-        {isLayoutStep ? (
-          <>
-            <ArrowLeft data-icon="inline-start" />
-            Voltar para a stack
-          </>
-        ) : (
-          <>
-            Personalizar layout
-            <ArrowRight data-icon="inline-end" />
-          </>
-        )}
+        Personalizar layout
+        <ArrowRight data-icon="inline-end" />
       </BuilderStepLink>
     </div>
   );
