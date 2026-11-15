@@ -1606,7 +1606,8 @@ export default defineNuxtPlugin((nuxt) => {
 
   if (import.meta.client) {
     nuxt.hooks.hook('app:created', () => {
-      hydrate(queryClient, vueQueryState.value)
+      // Nothing to hydrate on client-only renders (no server state was serialized).
+      if (vueQueryState.value) hydrate(queryClient, vueQueryState.value)
     })
   }
 })
@@ -25760,12 +25761,14 @@ export default defineConfig({
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check-types": "astro check"
   },
   "dependencies": {
     "astro": "^7.0.5"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.12",
     "@tailwindcss/vite": "^4.3.2",
     "tailwindcss": "^4.3.2"
   }
@@ -29741,16 +29744,19 @@ export default defineNuxtConfig({
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "check-types": "nuxt typecheck"
   },
   "dependencies": {
     "@nuxt/ui": "^4.9.0",
     "nuxt": "^4.4.8",
-    "vue": "^3.5.39"
+    "vue": "^3.5.39",
+    "vue-router": "^5.5.1"
   },
   "devDependencies": {
     "tailwindcss": "^4.3.2",
-    "@iconify-json/lucide": "^1.2.115"
+    "@iconify-json/lucide": "^1.2.115",
+    "vue-tsc": "^3.3.14"
   }
 }
 `],
@@ -32198,7 +32204,8 @@ dist-ssr
     "dev": "vite dev",
     "build": "vite build",
     "serve": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.2",
