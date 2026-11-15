@@ -1,6 +1,6 @@
 ---
 title: Layout de pastas
-description: Escolha onde ficam os apps e os pacotes do projeto, salve seu layout na conta e aplique no CLI
+description: Escolha pelo CLI onde ficam os apps e os pacotes do projeto
 ---
 
 ## O que é
@@ -16,25 +16,9 @@ Os imports entre pacotes usam o nome do pacote (`@meu-app/ui`, ou `@acme/ui` com
 
 O layout padrão (`standard`) gera exatamente a mesma estrutura de antes — nada muda para quem não usa a opção.
 
-## Editor em kubojs.dev/new/layout
+## No site
 
-O layout é a segunda etapa do [Stack Builder](/new): depois de escolher as tecnologias, abra [**Layout**](/new/layout) pelo cartão **Estrutura do projeto** na barra lateral, pelo link **Layout** na lista de categorias ou pelo card **Próxima etapa** no fim da lista. A página de layout mostra só o comando para copiar, o editor e a prévia; **Voltar para a stack** leva de volta às tecnologias. Lá você escolhe o preset, as pastas de convenção e, em "Caminhos por app e pacote", as exceções. Cada campo é validado na hora:
-
-- caminhos absolutos, `..`, `node_modules`, `.git` e caracteres inválidos são recusados;
-- dois itens na mesma pasta, pastas que diferem só por maiúsculas/minúsculas e uma pasta dentro da outra aparecem como **conflito de pastas**.
-
-Enquanto houver erro, o comando continua com o último layout válido. O comando copiado (`--layout ...`), a prévia de arquivos ao lado do editor e o link de compartilhamento já usam o layout. O resumo "Resultado" lista todas as pastas possíveis; só as que a sua stack usa são geradas.
-
-Não é preciso conta para editar e copiar o comando.
-
-## Perfis salvos
-
-Com login (Google ou link mágico por email), você guarda layouts como **perfis** com nome (por exemplo, "Trabalho" e "Pessoal"). Se você não estiver logado, **Salvar na conta** abre o login e salva ao voltar.
-
-- Clicar em um perfil em **Perfis salvos** carrega o layout dele no editor.
-- **Atualizar perfil** grava o layout atual no perfil selecionado; **Salvar como novo** cria outro perfil com o nome digitado.
-- **Excluir** pede confirmação com um segundo clique.
-- Cada conta tem até 20 perfis, com nomes únicos (sem diferenciar maiúsculas), visíveis só para ela.
+O [Stack Builder](/new) não tem editor de layout: os projetos criados por lá usam o layout padrão. Um link de stack que já traga um layout (parâmetro `lay` na URL) continua aplicando esse layout no comando copiado e na [prévia](/new/preview).
 
 ## Aplicar no CLI
 
@@ -46,20 +30,7 @@ kubojs my-app --yes --layout '{"preset":"libs","apps":{"web":"web"}}'
 kubojs my-app --yes --layout '{"scope":"@acme"}'
 ```
 
-Com um perfil selecionado, use **Gerar comando** na página de layout:
-
-```bash
-kubojs my-app --yes --layout-code ABCD-EFGH-JKMN
-```
-
-O código:
-
-- vale por **10 minutos** e funciona **uma única vez**; gerar outro invalida o anterior;
-- aplica a versão salva do perfil selecionado (não as edições ainda não salvas);
-- dá acesso apenas a uma cópia desse layout — não faz login no CLI nem acessa outros dados da conta;
-- é trocado pelo layout **antes** de qualquer arquivo ser criado: código inválido, expirado ou já usado não escreve nada;
-- não é registrado em logs nem enviado à telemetria; o projeto guarda o layout em `kubo.config.ts`, não o código;
-- não pode ser usado com `--layout` nem com `--dry-run`.
+Também existe `--layout-code <código>`, que aplica um perfil de layout salvo na conta. No momento o site não gera esses códigos, então use `--layout`.
 
 Detalhes das flags em [Opções do CLI](/docs/cli/options#--layout-presetjson).
 
@@ -68,13 +39,12 @@ Detalhes das flags em [Opções do CLI](/docs/cli/options#--layout-presetjson).
 - Vale para **novos projetos**. Projetos existentes não são migrados nem têm arquivos movidos; o `kubo add` respeita o layout gravado em `kubo.config.ts`.
 - Os IDs são fixos: apps `web`, `server`, `native`, `desktop`, `docs`, `api`; pacotes `db`, `auth`, `backend`, `config`, `env`, `infra`, `ui`, `storage`, `api`, `payments`, `email` e os pacotes de integração (ex.: `millionsend`).
 - O escopo muda só o prefixo (`@acme/ui`); o nome de cada pacote (`ui`, `env`…) é fixo. O `package.json` da raiz continua com o nome do projeto.
-- Até 20 perfis por conta.
 
 ## Para mantenedores do site
 
-O login e os layouts salvos usam Better Auth + Convex. Configuração necessária (valores ficam no Convex/Vercel, nunca no repositório):
+O login usa Better Auth + Convex. Configuração necessária (valores ficam no Convex/Vercel, nunca no repositório):
 
 - **Convex** (`bunx convex env set ...`): `SITE_URL` (ex.: `https://kubojs.dev`), `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`.
 - **Vercel**: `NEXT_PUBLIC_CONVEX_URL` e `NEXT_PUBLIC_CONVEX_SITE_URL` da deployment Convex correspondente.
 - **Google OAuth**: callback autorizado `https://<seu-domínio>/api/auth/callback/google` (e `http://localhost:3333/api/auth/callback/google` para dev).
-- Ordem de deploy: publique as funções Convex (`bunx convex deploy`) antes do site, para a aba Layout não chamar funções inexistentes.
+- Ordem de deploy: publique as funções Convex (`bunx convex deploy`) antes do site, para o site não chamar funções inexistentes.

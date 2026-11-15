@@ -1,14 +1,14 @@
 /** The stack builder is split in two pages that share the same URL query (the stack state). */
-export type BuilderStep = "stack" | "layout";
+export type BuilderStep = "stack" | "preview";
 
 export const BUILDER_STEP_PATHS: Record<BuilderStep, string> = {
   stack: "/new",
-  layout: "/new/layout",
+  preview: "/new/preview",
 };
 
 /**
  * Query key of the old in-page tabs (`?view=layout` / `?view=preview`). Those links are
- * redirected to `/new/layout` in `next.config.ts`; the key is dropped when moving between steps.
+ * redirected to `/new/preview` in `next.config.ts`; the key is dropped when moving between steps.
  */
 export const LEGACY_VIEW_QUERY_KEY = "view";
 
