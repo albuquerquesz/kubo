@@ -1,6 +1,6 @@
 {
   "name": "@kubojs/config",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Authoring helpers for kubo.config.ts in KuboJS projects",
   "keywords": [
     "config",
@@ -38,7 +38,7 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@kubojs/types": "^0.7.1"
+    "@kubojs/types": "^0.7.2"
   },
   "devDependencies": {
     "tsdown": "^0.22.0",
