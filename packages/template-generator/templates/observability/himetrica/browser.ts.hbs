@@ -1,5 +1,5 @@
 import { HimetricaClient } from "@himetrica/tracker-js";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 export const himetrica =
   typeof window !== "undefined" && env.{{publicEnvKey frontend "HIMETRICA_API_KEY"}}

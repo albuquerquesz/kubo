@@ -1,8 +1,8 @@
 {{#if (or (eq runtime "bun") (eq runtime "node") (eq runtime "none"))}}
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 import * as schema from "./schema";
 
@@ -43,7 +43,7 @@ import * as schema from "./schema";
 
 {{#if (eq dbSetup "planetscale")}}
 import { drizzle } from "drizzle-orm/planetscale-serverless";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 export function createDb() {
 	return drizzle({
@@ -57,7 +57,7 @@ export function createDb() {
 }
 {{else}}
 import { drizzle } from "drizzle-orm/mysql2";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 export function createDb() {
 	return drizzle({

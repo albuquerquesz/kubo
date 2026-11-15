@@ -3,12 +3,12 @@ import "./lib/orpc.server";
 {{/if}}
 import { building } from "$app/environment";
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare"))}}
-import { env as localEnv } from "@{{projectName}}/env/server";
+import { env as localEnv } from "{{packageScope}}/env/server";
 {{/if}}
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import type { Handle } from "@sveltejs/kit";

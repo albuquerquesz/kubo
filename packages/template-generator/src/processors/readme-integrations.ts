@@ -1,5 +1,7 @@
 import type { ProjectConfig } from "@kubojs/types";
 
+import { scopedName } from "../layout-paths";
+
 type IntegrationSetup = {
   readonly enabled: (config: ProjectConfig) => boolean;
   readonly render: (config: ProjectConfig) => string;
@@ -50,7 +52,7 @@ This project includes the official [MillionSend TypeScript SDK](https://github.c
 ${convexNote}
 
 \`\`\`ts
-import { millionsend, sendEmail } from "@${config.projectName}/millionsend";
+import { millionsend, sendEmail } from "${scopedName(config, "millionsend")}";
 
 await sendEmail({
   to: "user@example.com",
@@ -133,7 +135,7 @@ Agent skill / API map:
 
 const generateAraraSetup = (config: ProjectConfig): string => {
   const envPath = config.backend === "convex" ? "packages/backend/.env.local" : "the server .env";
-  const importPath = `@${config.projectName}/arara`;
+  const importPath = scopedName(config, "arara");
   return `
 ## AraraHQ Setup
 

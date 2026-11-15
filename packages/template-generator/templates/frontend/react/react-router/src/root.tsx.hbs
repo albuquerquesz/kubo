@@ -13,7 +13,7 @@ import "./lib/himetrica";
 {{/if}}
 import Header from "./components/header";
 import { ThemeProvider } from "./components/theme-provider";
-import { Toaster } from "@{{projectName}}/ui/components/sonner";
+import { Toaster } from "{{packageScope}}/ui/components/sonner";
 {{#if (eq auth "clerk")}}
 import { ClerkProvider{{#if (or (eq backend "convex") (ne api "none"))}}, useAuth{{/if}} } from "@clerk/react-router";
 import { clerkMiddleware, rootAuthLoader } from "@clerk/react-router/server";
@@ -25,7 +25,7 @@ import { setClerkAuthTokenGetter } from "@/utils/clerk-auth";
 
 {{#if (eq backend "convex")}}
 import { ConvexReactClient } from "convex/react";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
   {{#if (eq auth "clerk")}}
 import { ConvexProviderWithClerk } from "convex/react-clerk";
   {{else if (eq auth "better-auth")}}

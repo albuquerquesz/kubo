@@ -1,8 +1,8 @@
 import { getRequestEvent } from "$app/server";
-import { createContext } from "@{{projectName}}/api/context";
-import { appRouter, type AppRouterClient } from "@{{projectName}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
+import { appRouter, type AppRouterClient } from "{{packageScope}}/api/routers/index";
 {{#if (eq webDeploy "cloudflare")}}
-import { env as localEnv } from "@{{projectName}}/env/server";
+import { env as localEnv } from "{{packageScope}}/env/server";
 {{/if}}
 import { createRouterClient } from "@orpc/server";
 

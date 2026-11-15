@@ -8,19 +8,19 @@ import { createRouterClient } from "@orpc/server";
 import type { RouterClient } from "@orpc/server";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { appRouter } from "@{{projectName}}/api/routers/index";
-import { createContext } from "@{{projectName}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
 {{else if (includes frontend "tanstack-start")}}
 import type { RouterClient } from "@orpc/server";
-import type { AppRouter } from "@{{projectName}}/api/routers/index";
-import { env } from "@{{projectName}}/env/web";
+import type { AppRouter } from "{{packageScope}}/api/routers/index";
+import { env } from "{{packageScope}}/env/web";
 {{#if (eq auth "clerk")}}
 import { getClerkAuthToken } from "@/utils/clerk-auth";
 {{/if}}
 {{else}}
-import type { AppRouterClient } from "@{{projectName}}/api/routers/index";
+import type { AppRouterClient } from "{{packageScope}}/api/routers/index";
 {{#unless (eq backend "self")}}
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 {{/unless}}
 {{#if (eq auth "clerk")}}
 import { getClerkAuthToken } from "@/utils/clerk-auth";

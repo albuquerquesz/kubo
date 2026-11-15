@@ -125,6 +125,7 @@ function getStackPayload(config: ProjectConfig) {
     install: config.install,
     dbSetup: config.dbSetup,
     api: config.api,
+    architecture: config.architecture,
     webDeploy: config.webDeploy,
     serverDeploy: config.serverDeploy,
   };

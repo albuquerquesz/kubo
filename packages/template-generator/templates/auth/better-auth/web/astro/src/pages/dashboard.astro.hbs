@@ -60,7 +60,7 @@ import Layout from "../layouts/Layout.astro";
   import { orpc } from "../lib/orpc";
   {{/if}}
   {{#if (and (includes payments "abacatepay") (ne backend "self"))}}
-  import { env } from "@{{projectName}}/env/web";
+  import { env } from "{{packageScope}}/env/web";
   {{/if}}
 
   const dashboardContent = document.getElementById("dashboard-content")!;

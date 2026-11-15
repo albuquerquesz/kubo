@@ -9,11 +9,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@{{projectName}}/ui/components/dropdown-menu";
+} from "{{packageScope}}/ui/components/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
 
-import { Button } from "@{{projectName}}/ui/components/button";
-import { Skeleton } from "@{{projectName}}/ui/components/skeleton";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { Skeleton } from "{{packageScope}}/ui/components/skeleton";
 
 export default function UserMenu() {
   const router = useRouter();

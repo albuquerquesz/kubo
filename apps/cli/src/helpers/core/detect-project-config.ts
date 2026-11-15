@@ -21,6 +21,7 @@ export async function detectProjectConfig(projectDir: string) {
     projectDir,
     projectName: path.basename(projectDir),
     layout: kubojsConfig.layout,
+    architecture: kubojsConfig.architecture,
     addonOptions: kubojsConfig.addonOptions,
     dbSetupOptions: kubojsConfig.dbSetupOptions,
     database: kubojsConfig.database,

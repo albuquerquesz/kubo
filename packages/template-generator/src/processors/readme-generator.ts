@@ -8,7 +8,7 @@ import {
 } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
-import { relocateLayoutPaths } from "../layout-paths";
+import { relocateLayoutPaths, scopedName } from "../layout-paths";
 import { getDbScriptSupport } from "../utils/db-scripts";
 import {
   generateDeploymentCommands,
@@ -227,7 +227,7 @@ ${packageManagerRunCmd} dev
 \`\`\`
 
 ${generateRunningInstructions(frontend, backend, webPort, hasNative, isConvex)}
-${generateReactUiSection(hasReactWeb, projectName)}
+${generateReactUiSection(hasReactWeb, scopedName(options, "ui"))}
 ${
   addons.includes("pwa") && hasReactRouter
     ? "\n## PWA Support with React Router v7\n\nThere is a known compatibility issue between VitePWA and React Router v7.\nSee: https://github.com/vite-pwa/vite-plugin-pwa/issues/809\n"
@@ -319,7 +319,7 @@ function generateRunningInstructions(
   return instructions.join("\n");
 }
 
-function generateReactUiSection(hasReactWeb: boolean, projectName: string): string {
+function generateReactUiSection(hasReactWeb: boolean, uiPackageName: string): string {
   if (!hasReactWeb) return "";
 
   return `
@@ -342,7 +342,7 @@ npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
 Import shared components like this:
 
 \`\`\`tsx
-import { Button } from "@${projectName}/ui/components/button"
+import { Button } from "${uiPackageName}/components/button"
 \`\`\`
 
 ### Add app-specific blocks

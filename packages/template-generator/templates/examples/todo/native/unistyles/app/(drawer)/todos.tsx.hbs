@@ -13,8 +13,8 @@ import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 {{#if (eq backend "convex")}}
 import { useMutation, useQuery } from "convex/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
-import type { Doc, Id } from "@{{projectName}}/backend/convex/_generated/dataModel";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
+import type { Doc, Id } from "{{packageScope}}/backend/convex/_generated/dataModel";
 {{else}}
 import { useMutation, useQuery } from "@tanstack/react-query";
 {{/if}}

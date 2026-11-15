@@ -1,5 +1,5 @@
-import { env } from "@{{projectName}}/env/server";
-import { processAbacatePayWebhook } from "@{{projectName}}/payments/lib/abacatepay";
+import { env } from "{{packageScope}}/env/server";
+import { processAbacatePayWebhook } from "{{packageScope}}/payments/lib/abacatepay";
 
 export default defineEventHandler(async (event) => {
   const requestUrl = getRequestURL(event);

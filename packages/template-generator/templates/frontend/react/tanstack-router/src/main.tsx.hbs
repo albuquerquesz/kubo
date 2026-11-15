@@ -23,7 +23,7 @@ import "./lib/himetrica";
   const queryClient = new QueryClient();
 {{/if}}
 {{#if (or (eq backend "convex") (eq auth "clerk"))}}
-  import { env } from "@{{projectName}}/env/web";
+  import { env } from "{{packageScope}}/env/web";
 {{/if}}
 {{#if (eq auth "clerk")}}
   import { ClerkProvider{{#if (or (eq backend "convex") (ne api "none"))}}, useAuth{{/if}} } from "@clerk/react";

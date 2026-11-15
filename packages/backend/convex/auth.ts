@@ -12,11 +12,29 @@ import authConfig from "./auth.config";
 
 export const authComponent = createClient<DataModel>(components.betterAuth);
 
+const extraAuthHosts = (env.AUTH_ALLOWED_HOSTS ?? "")
+  .split(",")
+  .map((host) => host.trim())
+  .filter(Boolean);
+
+/**
+ * With extra hosts, the base URL follows the request host (forwarded by the Next.js auth proxy),
+ * so OAuth callbacks and magic links point back to the site the user is on. Any other host,
+ * SITE_URL's own included, falls back to SITE_URL as-is; that keeps `http://localhost` working,
+ * since a matched host is always built as https. Without extra hosts this is the plain SITE_URL.
+ */
+const authBaseURL =
+  extraAuthHosts.length > 0
+    ? { allowedHosts: extraAuthHosts, fallback: env.SITE_URL, protocol: "https" as const }
+    : env.SITE_URL;
+
+const authTrustedOrigins = [env.SITE_URL, ...extraAuthHosts.map((host) => `https://${host}`)];
+
 export function createAuth(ctx: GenericCtx<DataModel>) {
   return betterAuth({
-    baseURL: env.SITE_URL,
+    baseURL: authBaseURL,
     secret: env.BETTER_AUTH_SECRET,
-    trustedOrigins: [env.SITE_URL],
+    trustedOrigins: authTrustedOrigins,
     database: authComponent.adapter(ctx),
     socialProviders: {
       google: {

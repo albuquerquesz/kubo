@@ -1,5 +1,5 @@
 {{#if (eq backend "convex")}}
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import {
   useSmoothText,
   useUIMessages,
@@ -14,26 +14,26 @@ import {
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { Streamdown } from "streamdown";
 
-import { Bubble, BubbleContent } from "@{{projectName}}/ui/components/bubble";
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Bubble, BubbleContent } from "{{packageScope}}/ui/components/bubble";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@{{projectName}}/ui/components/empty";
+} from "{{packageScope}}/ui/components/empty";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
-} from "@{{projectName}}/ui/components/input-group";
+} from "{{packageScope}}/ui/components/input-group";
 import {
   Message,
   MessageContent as MessageBody,
   MessageHeader,
-} from "@{{projectName}}/ui/components/message";
+} from "{{packageScope}}/ui/components/message";
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -41,12 +41,12 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from "@{{projectName}}/ui/components/message-scroller";
+} from "{{packageScope}}/ui/components/message-scroller";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@{{projectName}}/ui/components/tooltip";
+} from "{{packageScope}}/ui/components/tooltip";
 
 function StreamingMessageText({
   text,
@@ -271,28 +271,28 @@ import {
 } from "lucide-react";
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { Streamdown } from "streamdown";
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
-import { Bubble, BubbleContent } from "@{{projectName}}/ui/components/bubble";
-import { Button } from "@{{projectName}}/ui/components/button";
+import { Bubble, BubbleContent } from "{{packageScope}}/ui/components/bubble";
+import { Button } from "{{packageScope}}/ui/components/button";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@{{projectName}}/ui/components/empty";
+} from "{{packageScope}}/ui/components/empty";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
-} from "@{{projectName}}/ui/components/input-group";
+} from "{{packageScope}}/ui/components/input-group";
 import {
   Message,
   MessageContent as MessageBody,
   MessageHeader,
-} from "@{{projectName}}/ui/components/message";
+} from "{{packageScope}}/ui/components/message";
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -300,12 +300,12 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from "@{{projectName}}/ui/components/message-scroller";
+} from "{{packageScope}}/ui/components/message-scroller";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@{{projectName}}/ui/components/tooltip";
+} from "{{packageScope}}/ui/components/tooltip";
 
 export default function AI() {
   const [input, setInput] = useState("");

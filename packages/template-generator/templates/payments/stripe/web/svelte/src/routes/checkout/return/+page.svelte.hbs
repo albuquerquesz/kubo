@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { env } from '@{{projectName}}/env/web';
+	import { env } from '{{packageScope}}/env/web';
 	let status = 'pending';
 	onMount(() => { const sessionId = new URLSearchParams(window.location.search).get('session_id'); if (!sessionId) return; const baseUrl = {{#if (eq backend "self")}}''{{else}}env.PUBLIC_SERVER_URL{{/if}}; void fetch(`${baseUrl}/api/payments/stripe/checkout/${sessionId}`).then((response) => response.json()).then((payload: { data?: { paymentStatus?: string } }) => { status = payload.data?.paymentStatus ?? 'pending'; }); });
 </script>

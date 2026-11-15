@@ -1,8 +1,6 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { FaGithub, FaXTwitter } from "react-icons/fa6";
 
 import { HeaderAccount } from "@/components/auth/header-account";
 import { KuboMark } from "@/components/brand/kubo-mark";
@@ -10,23 +8,13 @@ import { cn } from "@/lib/utils";
 
 const primaryLinks = [{ href: "/docs", label: "Docs" }] as const;
 
-const socialLinks = [
-  {
-    href: "https://x.com/byalbuquerquesz",
-    label: "Kubo no X",
-    icon: FaXTwitter,
-  },
-  {
-    href: "https://github.com/albuquerquesz/kubo",
-    label: "Kubo no GitHub",
-    icon: FaGithub,
-  },
-] as const;
-
 const headerRowClass = "h-12";
 
 const utilityLinkClass =
   "flex items-center justify-center border-rule border-l px-3 font-mono text-sm text-muted-foreground tracking-[0.04em] transition-colors duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring sm:px-3.5";
+
+const ctaClass =
+  "inline-flex min-w-32 shrink-0 select-none items-center justify-center bg-primary px-5 font-semibold text-base text-primary-foreground tracking-[-0.02em] transition-colors duration-150 ease-out hover:bg-accent focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring";
 
 function BrandMark() {
   return (
@@ -74,38 +62,10 @@ export function SiteHeader({ className }: { className?: string }) {
         <BrandMark />
         <DesktopNavigation />
         <div className="min-w-0 flex-1" />
-        {socialLinks.map((link) => {
-          const Icon = link.icon;
-          return (
-            <a
-              key={link.href}
-              href={link.href}
-              target="_blank"
-              rel="noreferrer"
-              className={cn(utilityLinkClass, headerRowClass)}
-              aria-label={link.label}
-            >
-              <Icon className="size-5" />
-            </a>
-          );
-        })}
-        <HeaderAccount className={cn(utilityLinkClass, headerRowClass)} />
-        <Link
-          href="/new"
-          className={cn(
-            "group/button inline-flex shrink-0 select-none items-center justify-center gap-2 border-0 bg-primary px-5",
-            "rounded-none font-semibold text-base tracking-[-0.02em] text-primary-foreground transition-all",
-            "hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring",
-            "min-w-36",
-            headerRowClass,
-          )}
-        >
-          Montar stack
-          <ArrowUpRight
-            data-icon="inline-end"
-            className="size-5 motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover/button:-translate-y-0.5 motion-safe:group-hover/button:translate-x-0.5"
-          />
-        </Link>
+        <HeaderAccount
+          className={cn(utilityLinkClass, headerRowClass)}
+          ctaClassName={cn(ctaClass, headerRowClass)}
+        />
       </div>
     </header>
   );

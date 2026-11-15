@@ -1,4 +1,4 @@
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 {{#if (includes payments "stripe")}}
@@ -7,8 +7,8 @@ import fastifyRawBody from "fastify-raw-body";
 
 {{#if (eq api "trpc")}}
 import { fastifyTRPCPlugin, type FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
-import { createContext } from "@{{projectName}}/api/context";
-import { appRouter, type AppRouter } from "@{{projectName}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
+import { appRouter, type AppRouter } from "{{packageScope}}/api/routers/index";
 {{/if}}
 
 {{#if (eq api "orpc")}}
@@ -17,8 +17,8 @@ import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { RPCHandler } from "@orpc/server/fastify";
 import { onError } from "@orpc/server";
-import { createContext } from "@{{projectName}}/api/context";
-import { appRouter } from "@{{projectName}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
 {{/if}}
 
 {{#if (includes examples "ai")}}
@@ -28,17 +28,17 @@ import { devToolsMiddleware } from "@ai-sdk/devtools";
 {{/if}}
 
 {{#if (eq auth "better-auth")}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{#if (includes payments "abacatepay")}}
 import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
-} from "@{{projectName}}/payments/lib/abacatepay";
+} from "{{packageScope}}/payments/lib/abacatepay";
 {{/if}}
 {{#if (includes payments "stripe")}}
-import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "{{packageScope}}/payments/lib/stripe";
 {{/if}}
 {{#if (eq auth "clerk")}}
 import { clerkPlugin } from "@clerk/fastify";

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { loadStripe } from '@stripe/stripe-js';
-	import { env } from '@{{projectName}}/env/web';
-	import { fetchStripeClientSecret } from '@{{projectName}}/payments/client';
+	import { env } from '{{packageScope}}/env/web';
+	import { fetchStripeClientSecret } from '{{packageScope}}/payments/client';
 	let container: HTMLDivElement;
 	onMount(async () => {
 		const stripe = await loadStripe(env.PUBLIC_STRIPE_PUBLISHABLE_KEY);

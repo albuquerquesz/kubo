@@ -1,8 +1,8 @@
 {{#if (or (eq runtime "bun") (eq runtime "node") (eq runtime "none"))}}
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 import * as schema from "./schema";
 
@@ -45,7 +45,7 @@ import * as schema from "./schema";
 {{#if (eq dbSetup "neon")}}
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 export function createDb() {
 	const sql = neon(env.DATABASE_URL || "");
@@ -53,7 +53,7 @@ export function createDb() {
 }
 {{else}}
 import { drizzle } from "drizzle-orm/node-postgres";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 import { Pool } from "pg";
 
 export function createDb() {

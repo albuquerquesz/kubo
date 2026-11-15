@@ -45,6 +45,23 @@ const config: NextConfig = {
   outputFileTracingIncludes: {
     "/og/stack": ["./src/app/og/stack/_assets/**/*"],
   },
+  async redirects() {
+    return [
+      {
+        // The preview used to be an in-page tab (`/new?view=layout`, `/new?view=preview`).
+        source: "/new",
+        has: [{ type: "query", key: "view", value: "layout|preview" }],
+        destination: "/new/preview",
+        permanent: false,
+      },
+      {
+        // The layout editor page was removed; its links land on the preview.
+        source: "/new/layout",
+        destination: "/new/preview",
+        permanent: false,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

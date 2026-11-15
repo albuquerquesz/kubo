@@ -1,8 +1,8 @@
 {{#if (eq api "orpc")}}
 import z from "zod";
-import "@{{projectName}}/db";
+import "{{packageScope}}/db";
 import { publicProcedure } from "../../index";
-import { Todo } from "@{{projectName}}/db/models/todo.model";
+import { Todo } from "{{packageScope}}/db/models/todo.model";
 
 export const todoRouter = {
     getAll: publicProcedure.handler(async () => {
@@ -37,9 +37,9 @@ export const todoRouter = {
 
 {{#if (eq api "trpc")}}
 import z from "zod";
-import "@{{projectName}}/db";
+import "{{packageScope}}/db";
 import { router, publicProcedure } from "../../index";
-import { Todo } from "@{{projectName}}/db/models/todo.model";
+import { Todo } from "{{packageScope}}/db/models/todo.model";
 
 export const todoRouter = router({
     getAll: publicProcedure.query(async () => {

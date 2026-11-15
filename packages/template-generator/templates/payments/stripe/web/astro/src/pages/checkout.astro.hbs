@@ -3,7 +3,7 @@
 <main><h1>Checkout</h1><div id="checkout"></div></main>
 <script>
   import { loadStripe } from '@stripe/stripe-js';
-  import { fetchStripeClientSecret } from '@{{projectName}}/payments/client';
+  import { fetchStripeClientSecret } from '{{packageScope}}/payments/client';
   const stripe = await loadStripe(import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY);
   const element = document.querySelector('#checkout');
   if (stripe && element) {

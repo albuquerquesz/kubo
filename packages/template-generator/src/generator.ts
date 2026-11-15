@@ -2,6 +2,7 @@ import { normalizeCommunication, normalizeObservability, normalizePayments } fro
 import { Result } from "better-result";
 
 import { applyAddonCatalog } from "./addon-application";
+import { processArchitecture } from "./architecture";
 import { VirtualFileSystem } from "./core/virtual-fs";
 import { writeKuboConfigToVfs } from "./kubo-config";
 import {
@@ -95,6 +96,7 @@ export async function generate(
       await processTestingTemplates(vfs, templates, config);
       await processExtrasTemplates(vfs, templates, config);
       await processDeployTemplates(vfs, templates, config);
+      processArchitecture(vfs, config);
 
       processPackageConfigs(vfs, config);
       processDependencies(vfs, config);

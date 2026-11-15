@@ -1,4 +1,4 @@
-import { Toaster } from "@{{projectName}}/ui/components/sonner";
+import { Toaster } from "{{packageScope}}/ui/components/sonner";
 {{#unless (eq backend "convex")}} {{#unless (eq api "none")}}
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 {{/unless}} {{/unless}}
@@ -77,7 +77,7 @@ export interface RouterAppContext {
 {{else}}
   {{#if (eq api "trpc")}}
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import type { AppRouter } from "@{{projectName}}/api/routers/index";
+import type { AppRouter } from "{{packageScope}}/api/routers/index";
 export interface RouterAppContext {
   trpc: TRPCOptionsProxy<AppRouter>;
   queryClient: QueryClient;

@@ -1,6 +1,6 @@
 ---
 title: Layout de pastas
-description: Escolha onde ficam os apps e os pacotes do projeto, salve seu layout na conta e aplique no CLI
+description: Escolha onde ficam os apps e os pacotes do projeto, no site ou no CLI
 ---
 
 ## O que é
@@ -9,26 +9,16 @@ O **layout** define em que pasta cada app (`web`, `server`, `native`…) e cada 
 
 - um **preset**: `standard` (padrão — `apps/` e `packages/`) ou `libs` (`apps/` e `libs/`);
 - **pastas de convenção** (`dirs`): onde ficam os apps e os pacotes; `.` significa a raiz do projeto;
-- **exceções** por app ou pacote: um caminho específico para um item (por exemplo, o app web na raiz).
+- **exceções** por app ou pacote: um caminho específico para um item (por exemplo, o app web na raiz);
+- um **escopo** opcional (`scope`) para o nome dos pacotes do workspace: com `"scope": "@acme"`, os pacotes viram `@acme/ui`, `@acme/env`… Sem escopo, o padrão continua `@<nome-do-projeto>`.
 
-Os imports entre pacotes usam o nome do pacote (`@meu-app/ui`), então o código não muda quando as pastas mudam. Paths de `tsconfig`, `.env`, workspaces, Docker e deploy são gerados a partir do layout.
+Os imports entre pacotes usam o nome do pacote (`@meu-app/ui`, ou `@acme/ui` com escopo), então o código não muda quando as pastas mudam. Paths de `tsconfig`, `.env`, workspaces, Docker e deploy são gerados a partir do layout.
 
 O layout padrão (`standard`) gera exatamente a mesma estrutura de antes — nada muda para quem não usa a opção.
 
-## Editor em kubojs.dev/new
+## No site
 
-Na aba **Layout** do [Stack Builder](/new) você escolhe o preset, as pastas de convenção e, em "Caminhos por app e pacote", as exceções. Cada campo é validado na hora:
-
-- caminhos absolutos, `..`, `node_modules`, `.git` e caracteres inválidos são recusados;
-- dois itens na mesma pasta, pastas que diferem só por maiúsculas/minúsculas e uma pasta dentro da outra aparecem como **conflito de pastas**.
-
-Enquanto houver erro, o comando continua com o último layout válido. O comando copiado (`--layout ...`), a aba **Prévia** e o link de compartilhamento já usam o layout. O resumo "Resultado" lista todas as pastas possíveis; só as que a sua stack usa são geradas.
-
-Não é preciso conta para editar e copiar o comando.
-
-## Salvar na conta
-
-Com login (Google ou link mágico por email), **Salvar na conta** guarda o seu layout. Se você não estiver logado, o botão abre o login e salva ao voltar. **Usar layout salvo** aplica o layout guardado. Cada conta tem um layout salvo, visível só para ela.
+O [Stack Builder](/new) não tem editor de layout de pastas: para isso, use `--layout` no CLI. Um link de stack que já traga um layout (parâmetro `lay` na URL) continua aplicando esse layout no comando copiado e na [prévia](/new/preview). Para organizar o código por dentro dos apps (por feature, em camadas ou clean), veja [Arquitetura](/docs/architecture).
 
 ## Aplicar no CLI
 
@@ -37,21 +27,10 @@ Direto, sem conta:
 ```bash
 kubojs my-app --yes --layout libs
 kubojs my-app --yes --layout '{"preset":"libs","apps":{"web":"web"}}'
+kubojs my-app --yes --layout '{"scope":"@acme"}'
 ```
 
-Com o layout salvo na conta, use **Gerar comando** na aba Layout:
-
-```bash
-kubojs my-app --yes --layout-code ABCD-EFGH-JKMN
-```
-
-O código:
-
-- vale por **10 minutos** e funciona **uma única vez**; gerar outro invalida o anterior;
-- dá acesso apenas a uma cópia do layout salvo — não faz login no CLI nem acessa outros dados da conta;
-- é trocado pelo layout **antes** de qualquer arquivo ser criado: código inválido, expirado ou já usado não escreve nada;
-- não é registrado em logs nem enviado à telemetria; o projeto guarda o layout em `kubo.config.ts`, não o código;
-- não pode ser usado com `--layout` nem com `--dry-run`.
+Também existe `--layout-code <código>`, que aplica um perfil de layout salvo na conta. No momento o site não gera esses códigos, então use `--layout`.
 
 Detalhes das flags em [Opções do CLI](/docs/cli/options#--layout-presetjson).
 
@@ -59,14 +38,13 @@ Detalhes das flags em [Opções do CLI](/docs/cli/options#--layout-presetjson).
 
 - Vale para **novos projetos**. Projetos existentes não são migrados nem têm arquivos movidos; o `kubo add` respeita o layout gravado em `kubo.config.ts`.
 - Os IDs são fixos: apps `web`, `server`, `native`, `desktop`, `docs`, `api`; pacotes `db`, `auth`, `backend`, `config`, `env`, `infra`, `ui`, `storage`, `api`, `payments`, `email` e os pacotes de integração (ex.: `millionsend`).
-- O nome dos pacotes (`@meu-app/*`) ainda não é configurável.
-- Um layout salvo por conta.
+- O escopo muda só o prefixo (`@acme/ui`); o nome de cada pacote (`ui`, `env`…) é fixo. O `package.json` da raiz continua com o nome do projeto.
 
 ## Para mantenedores do site
 
-O login e os layouts salvos usam Better Auth + Convex. Configuração necessária (valores ficam no Convex/Vercel, nunca no repositório):
+O login usa Better Auth + Convex. Configuração necessária (valores ficam no Convex/Vercel, nunca no repositório):
 
 - **Convex** (`bunx convex env set ...`): `SITE_URL` (ex.: `https://kubojs.dev`), `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`.
 - **Vercel**: `NEXT_PUBLIC_CONVEX_URL` e `NEXT_PUBLIC_CONVEX_SITE_URL` da deployment Convex correspondente.
 - **Google OAuth**: callback autorizado `https://<seu-domínio>/api/auth/callback/google` (e `http://localhost:3333/api/auth/callback/google` para dev).
-- Ordem de deploy: publique as funções Convex (`bunx convex deploy`) antes do site, para a aba Layout não chamar funções inexistentes.
+- Ordem de deploy: publique as funções Convex (`bunx convex deploy`) antes do site, para o site não chamar funções inexistentes.

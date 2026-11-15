@@ -92,6 +92,36 @@ export class VirtualFileSystem {
     }
   }
 
+  /**
+   * Moves a file (optionally transforming its content) and removes the directories it leaves
+   * empty, so the output tree has no dangling folders.
+   */
+  moveFile(from: string, to: string, transform?: (content: string) => string): boolean {
+    const source = this.normalizePath(from);
+    const target = this.normalizePath(to);
+    const content = this.readFile(source);
+    if (content === undefined) return false;
+    const sourcePath = this._sourcePathMap.get(source);
+    this.writeFile(target, transform ? transform(content) : content, sourcePath);
+    if (source === target) return true;
+    this.deleteFile(source);
+    this.pruneEmptyDirs(dirname(source));
+    return true;
+  }
+
+  private pruneEmptyDirs(dirPath: string): void {
+    let dir = dirPath;
+    while (dir && dir !== "/" && dir !== ".") {
+      try {
+        if ((this._fs.readdirSync(dir) as string[]).length > 0) return;
+        this._fs.rmdirSync(dir);
+      } catch {
+        return;
+      }
+      dir = dirname(dir);
+    }
+  }
+
   listDir(dirPath: string): string[] {
     try {
       return (this._fs.readdirSync(this.normalizePath(dirPath) || "/") as string[]).sort();

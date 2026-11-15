@@ -25,6 +25,13 @@ describe("parseLayoutFlag", () => {
     });
   });
 
+  it("accepts a package scope and rejects malformed ones", () => {
+    expect(parseLayoutFlag('{"scope":"@acme"}').unwrap()).toMatchObject({ scope: "@acme" });
+    const invalid = parseLayoutFlag('{"scope":"acme"}');
+    expect(invalid.isErr()).toBe(true);
+    if (invalid.isErr()) expect(invalid.error.message).toContain("scope");
+  });
+
   it("rejects unknown presets, bad JSON and invalid paths", () => {
     expect(parseLayoutFlag("flat").isErr()).toBe(true);
     expect(parseLayoutFlag("{not json").isErr()).toBe(true);
@@ -70,6 +77,33 @@ describe("create with a layout", () => {
     expect(result.value.reproducibleCommand).toContain(
       `--layout '{"preset":"libs","apps":{"web":"web"}}'`,
     );
+  });
+
+  it("names workspace packages with a custom scope", async () => {
+    const projectPath = path.join(SMOKE_DIR_PATH, "scoped-layout");
+    await fs.remove(projectPath);
+
+    const result = await create(projectPath, {
+      yes: true,
+      install: false,
+      git: false,
+      disableAnalytics: true,
+      directoryConflict: "overwrite",
+      layout: parseLayoutFlag('{"scope":"@acme"}').unwrap(),
+    });
+
+    expect(result.isOk()).toBe(true);
+    if (result.isErr()) return;
+
+    const envPkg = await fs.readJson(path.join(projectPath, "packages/env/package.json"));
+    expect(envPkg.name).toBe("@acme/env");
+    const rootPkg = await fs.readJson(path.join(projectPath, "package.json"));
+    expect(rootPkg.name).toBe("scoped-layout");
+    expect(JSON.stringify(rootPkg)).not.toContain("@scoped-layout/");
+
+    const kuboConfig = await fs.readFile(path.join(projectPath, "kubo.config.ts"), "utf8");
+    expect(kuboConfig).toContain('"@acme"');
+    expect(result.value.reproducibleCommand).toContain(`"scope":"@acme"`);
   });
 
   it("fails before writing anything when the layout has conflicting folders", async () => {

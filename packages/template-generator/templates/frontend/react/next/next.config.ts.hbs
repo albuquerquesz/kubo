@@ -1,4 +1,4 @@
-import "@{{projectName}}/env/web";
+import "{{packageScope}}/env/web";
 {{#if (eq webDeploy "cloudflare")}}
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 {{/if}}

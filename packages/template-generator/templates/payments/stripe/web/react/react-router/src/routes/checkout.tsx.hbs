@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { env } from "@{{projectName}}/env/web";
-import { fetchStripeClientSecret } from "@{{projectName}}/payments/client";
+import { env } from "{{packageScope}}/env/web";
+import { fetchStripeClientSecret } from "{{packageScope}}/payments/client";
 
 export default function CheckoutPage() {
 	const ref = useRef<HTMLDivElement>(null);

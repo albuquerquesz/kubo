@@ -7,6 +7,8 @@
 const CODE_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 export const LAYOUT_CODE_LENGTH = 12; // 60 bits of entropy
 export const LAYOUT_CODE_TTL_MS = 10 * 60 * 1000;
+/** Max codes deleted per cleanup run; a full batch schedules another run right away. */
+export const LAYOUT_CODE_CLEANUP_BATCH = 256;
 
 /** Builds a code from random bytes (caller supplies `crypto.getRandomValues` output). */
 export function encodeLayoutCode(randomBytes: Uint8Array): string {
@@ -46,4 +48,12 @@ export function normalizeLayoutCode(input: unknown): string | null {
 export async function hashLayoutCode(normalizedCode: string): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(normalizedCode));
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+/** A code that can no longer be redeemed: already used or past its expiry. */
+export function isLayoutCodeStale(
+  code: { expiresAt: number; usedAt?: number | undefined },
+  now: number,
+): boolean {
+  return code.usedAt !== undefined || code.expiresAt < now;
 }

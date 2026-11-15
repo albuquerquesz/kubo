@@ -15,7 +15,7 @@ function toClerkContextAuth(auth: { userId: string | null } | null): ClerkContex
 
 {{#if (and (eq auth "clerk") (or (eq backend 'self') (eq backend 'hono') (eq backend 'elysia')))}}
 import { createClerkClient } from "@clerk/backend";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 const clerkClient = createClerkClient({
 	secretKey: env.CLERK_SECRET_KEY,
@@ -34,9 +34,9 @@ async function authenticateClerkRequest(request: Request): Promise<ClerkContextA
 import type { NextRequest } from "next/server";
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 
@@ -66,9 +66,9 @@ export async function createContext({{#if (eq auth "none")}}_req{{else}}req{{/if
 {{else if (and (eq backend 'self') (includes frontend "tanstack-start"))}}
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 
@@ -99,9 +99,9 @@ export async function createContext({{#if (eq auth "none")}}_options{{else}}{ re
 import type { Context as HonoContext } from "hono";
 {{#if (eq auth "better-auth")}}
 {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (and (eq backend "self") (eq webDeploy "cloudflare")))}}
-import { createAuth } from "@{{projectName}}/auth";
+import { createAuth } from "{{packageScope}}/auth";
 {{else}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 {{/if}}
 
@@ -135,7 +135,7 @@ export async function createContext({{#if (eq auth "none")}}_options{{else}}{ co
 {{else if (eq backend 'elysia')}}
 import type { Context as ElysiaContext } from "elysia";
 {{#if (eq auth "better-auth")}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{/if}}
 
 export type CreateContextOptions = {
@@ -169,7 +169,7 @@ export async function createContext({{#if (eq auth "none")}}_options{{else}}{ co
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 {{#if (eq auth "better-auth")}}
 import { fromNodeHeaders } from "better-auth/node";
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{else if (eq auth "clerk")}}
 import { getAuth } from "@clerk/express";
 {{/if}}
@@ -201,7 +201,7 @@ export async function createContext({{#if (eq auth "none")}}_opts{{else}}opts{{/
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 {{#if (eq auth "better-auth")}}
 import { fromNodeHeaders } from "better-auth/node";
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 {{else if (eq auth "clerk")}}
 import { getAuth } from "@clerk/fastify";
 {{/if}}

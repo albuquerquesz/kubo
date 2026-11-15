@@ -1,4 +1,4 @@
-import { env } from "@{{projectName}}/env/web";
+import { env } from "{{packageScope}}/env/web";
 
 async function getCheckoutStatus(checkoutId: string) {
 	const baseUrl = {{#if (eq backend "self")}}""{{else}}env.NEXT_PUBLIC_SERVER_URL{{/if}};

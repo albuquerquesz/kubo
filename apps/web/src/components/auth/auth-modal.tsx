@@ -143,7 +143,7 @@ function AuthModalForm({ reason, callbackURL }: Pick<AuthModalProps, "reason" | 
                 onChange={(event) => setEmail(event.target.value)}
                 aria-invalid={state.status === "error" || undefined}
                 disabled={isSending}
-                className="h-11 rounded-[0.375rem] px-3.5 text-sm md:text-sm"
+                className="h-11 px-5 text-sm md:text-sm"
               />
               <Button
                 type="submit"

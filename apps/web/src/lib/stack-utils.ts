@@ -188,9 +188,11 @@ export function generateStackCommand(input: StackBuilderInput) {
   );
 
   const layoutFlag = formatLayoutFlag(stack.layout);
+  const architectureFlag = stack.architecture ? `--architecture ${stack.architecture}` : undefined;
+  const extraFlags = [layoutFlag, architectureFlag].filter(Boolean).join(" ");
 
   if (isStackDefaultExceptProjectName) {
-    return `${base} ${projectName} --yes${layoutFlag ? ` ${layoutFlag}` : ""}`;
+    return `${base} ${projectName} --yes${extraFlags ? ` ${extraFlags}` : ""}`;
   }
 
   const flags = [
@@ -235,8 +237,8 @@ export function generateStackCommand(input: StackBuilderInput) {
     flags.push("--yolo");
   }
 
-  if (layoutFlag) {
-    flags.push(layoutFlag);
+  if (extraFlags) {
+    flags.push(extraFlags);
   }
 
   return `${base} ${projectName} ${flags.join(" ")}`;
@@ -264,6 +266,9 @@ function serializeStackToSearchString(stack: StackState) {
   });
   if (stack.layout) {
     stackParams.set(stackUrlKeys.layout ?? "lay", JSON.stringify(stack.layout));
+  }
+  if (stack.architecture) {
+    stackParams.set(stackUrlKeys.architecture ?? "arch", stack.architecture);
   }
   return stackParams.toString();
 }

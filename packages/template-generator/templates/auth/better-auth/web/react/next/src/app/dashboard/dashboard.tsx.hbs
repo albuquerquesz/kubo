@@ -1,7 +1,7 @@
 "use client";
 {{#if (includes payments "abacatepay")}}
-import { Button } from "@{{projectName}}/ui/components/button";
-import { env } from "@{{projectName}}/env/web";
+import { Button } from "{{packageScope}}/ui/components/button";
+import { env } from "{{packageScope}}/env/web";
 {{/if}}
 import { authClient } from "@/lib/auth-client";
 {{#if (eq api "orpc")}}

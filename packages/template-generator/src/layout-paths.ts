@@ -1,11 +1,20 @@
 import {
   expandLayoutConfig,
+  getLayoutPackageName,
   getLayoutPackagePath,
   getLayoutWorkspaceGlobs,
   LayoutAppIdSchema,
   type LayoutAppId,
   type ProjectConfig,
 } from "@kubojs/types";
+
+/** Workspace package name in the config's scope (`ui` → `@my-app/ui`, or `@acme/ui`). */
+export function scopedName(
+  config: Pick<ProjectConfig, "layout" | "projectName">,
+  id: string,
+): string {
+  return getLayoutPackageName(config.layout, config.projectName, id);
+}
 
 export function getWebAppPath(config: ProjectConfig): string {
   return expandLayoutConfig(config.layout).apps.web;

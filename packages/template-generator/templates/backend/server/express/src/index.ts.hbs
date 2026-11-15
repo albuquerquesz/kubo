@@ -1,8 +1,8 @@
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{#if (eq api "trpc")}}
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { createContext } from "@{{projectName}}/api/context";
-import { appRouter } from "@{{projectName}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
 {{/if}}
 {{#if (eq api "orpc")}}
 import { OpenAPIHandler } from "@orpc/openapi/node";
@@ -10,8 +10,8 @@ import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { RPCHandler } from "@orpc/server/node";
 import { onError } from "@orpc/server";
-import { appRouter } from "@{{projectName}}/api/routers/index";
-import { createContext } from "@{{projectName}}/api/context";
+import { appRouter } from "{{packageScope}}/api/routers/index";
+import { createContext } from "{{packageScope}}/api/context";
 {{/if}}
 import cors from "cors";
 import express from "express";
@@ -21,7 +21,7 @@ import { google } from "@ai-sdk/google";
 import { devToolsMiddleware } from "@ai-sdk/devtools";
 {{/if}}
 {{#if (eq auth "better-auth")}}
-import { auth } from "@{{projectName}}/auth";
+import { auth } from "{{packageScope}}/auth";
 import { toNodeHandler } from "better-auth/node";
 {{/if}}
 {{#if (includes payments "abacatepay")}}
@@ -29,10 +29,10 @@ import {
 	createAbacatePayHostedCheckout,
 	getStoredAbacatePayCheckout,
 	processAbacatePayWebhook,
-} from "@{{projectName}}/payments/lib/abacatepay";
+} from "{{packageScope}}/payments/lib/abacatepay";
 {{/if}}
 {{#if (includes payments "stripe")}}
-import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "@{{projectName}}/payments/lib/stripe";
+import { createStripeEmbeddedCheckout, getStripeCheckoutSession, processStripeWebhook } from "{{packageScope}}/payments/lib/stripe";
 {{/if}}
 {{#if (eq auth "clerk")}}
 import { clerkMiddleware } from "@clerk/express";

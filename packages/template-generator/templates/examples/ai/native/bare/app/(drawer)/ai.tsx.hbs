@@ -4,7 +4,7 @@ import {
   useUIMessages,
   useSmoothText,
 } from "@convex-dev/agent/react";
-import { api } from "@{{projectName}}/backend/convex/_generated/api";
+import { api } from "{{packageScope}}/backend/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { useRef, useEffect, useState } from "react";
 import {
@@ -531,7 +531,7 @@ import { DefaultChatTransport } from "ai";
 import { Container } from "@/components/container";
 import { useColorScheme } from "@/lib/use-color-scheme";
 import { NAV_THEME } from "@/lib/constants";
-import { env } from "@{{projectName}}/env/native";
+import { env } from "{{packageScope}}/env/native";
 
 const starterPrompts = [
   {

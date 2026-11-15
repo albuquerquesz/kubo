@@ -1,6 +1,6 @@
 {{#if (eq runtime "workers")}}
 import { PrismaClient } from "../prisma/generated/client";
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 
 {{#if (eq dbSetup "planetscale")}}
 import { PrismaPlanetScale } from "@prisma/adapter-planetscale";
@@ -30,9 +30,9 @@ export function createPrismaClient() {
 {{else}}
 import { PrismaClient } from "../prisma/generated/client";
 {{#if (and (eq backend "self") (eq webDeploy "cloudflare") (includes frontend "svelte"))}}
-import type {} from "@{{projectName}}/env/server";
+import type {} from "{{packageScope}}/env/server";
 {{else}}
-import { env } from "@{{projectName}}/env/server";
+import { env } from "{{packageScope}}/env/server";
 {{/if}}
 
 {{#if (eq dbSetup "planetscale")}}

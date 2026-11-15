@@ -90,7 +90,9 @@ export const CodeViewer = memo(function CodeViewer({
           </CodeBlockFiles>
           <CodeBlockCopyButton />
         </CodeBlockHeader>
-        <CodeBlockBody className="flex-1 overflow-auto [&_.shiki]:bg-fd-background! dark:[&_.shiki]:bg-fd-background! bg-fd-background">
+        {/* Long lines wrap instead of scrolling sideways; the continuation lines up with the
+            code, not under the line number (px-4 + w-4 + mr-4 of the number = pl-12). */}
+        <CodeBlockBody className="flex-1 overflow-y-auto overflow-x-hidden [&_.shiki]:bg-fd-background! dark:[&_.shiki]:bg-fd-background! bg-fd-background [&_code]:overflow-x-hidden! [&_.line]:whitespace-pre-wrap [&_.line]:[overflow-wrap:anywhere] [&_.line]:pl-12! [&_.line]:before:absolute [&_.line]:before:left-4">
           {(item) => (
             <CodeBlockItem key={item.language} value={item.language}>
               <CodeBlockContent
