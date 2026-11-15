@@ -271,15 +271,6 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
                   progress={categoryProgress}
                   idPrefix="section"
                   orientation="vertical"
-                  trailing={
-                    <BuilderStepLink
-                      step="preview"
-                      className="builder-focus-ring mt-2 flex w-full shrink-0 items-center justify-between rounded-[0.5rem] border border-primary/40 px-3 py-2 font-mono text-primary text-xs uppercase tracking-wide transition-colors hover:bg-primary/10"
-                    >
-                      Prévia
-                      <ArrowRight className="size-3.5" />
-                    </BuilderStepLink>
-                  }
                 />
               </aside>
             </>
