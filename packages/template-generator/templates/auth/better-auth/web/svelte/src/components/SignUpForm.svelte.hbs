@@ -4,7 +4,7 @@
 	import { authClient } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
 
-	let { switchToSignIn } = $props<{ switchToSignIn: () => void }>();
+	let { switchToSignIn }: { switchToSignIn: () => void } = $props();
 
 	const validationSchema = z.object({
 		name: z.string().min(2, 'Name must be at least 2 characters'),
