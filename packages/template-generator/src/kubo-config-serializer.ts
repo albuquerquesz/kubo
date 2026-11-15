@@ -14,6 +14,7 @@ export function buildKuboConfigFromProject(
     version,
     createdAt: new Date().toISOString(),
     layout: projectConfig.layout ?? { preset: "standard" },
+    ...(projectConfig.architecture ? { architecture: projectConfig.architecture } : {}),
     addonOptions: projectConfig.addonOptions,
     dbSetupOptions: projectConfig.dbSetupOptions,
     database: projectConfig.database,

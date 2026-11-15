@@ -69,6 +69,7 @@ export function generateReproducibleCommand(config: ProjectConfig): string {
   flags.push(config.install ? "--install" : "--no-install");
   const layoutFlag = formatLayoutFlag(config.layout);
   if (layoutFlag) flags.push(layoutFlag);
+  if (config.architecture) flags.push(`--architecture ${config.architecture}`);
 
   const projectPathArg = config.relativePath ? ` ${config.relativePath}` : "";
 

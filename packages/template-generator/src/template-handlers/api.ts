@@ -6,20 +6,8 @@ import {
 } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
-import { type TemplateData, processTemplatesFromPrefix, processSingleTemplate } from "./utils";
 import { appDir, appFile } from "../layout-paths";
-
-function moveGeneratedFile(
-  vfs: VirtualFileSystem,
-  from: string,
-  to: string,
-  transform?: (content: string) => string,
-): void {
-  const content = vfs.readFile(from);
-  if (content === undefined) return;
-  vfs.writeFile(to, transform ? transform(content) : content);
-  vfs.deleteFile(from);
-}
+import { type TemplateData, processTemplatesFromPrefix, processSingleTemplate } from "./utils";
 
 export async function processApiTemplates(
   vfs: VirtualFileSystem,
@@ -29,15 +17,19 @@ export async function processApiTemplates(
   if (config.api === "none") return;
   if (config.backend === "convex") return;
 
-  processTemplatesFromPrefix(vfs, templates, `api/${config.api}/server`, appDir(config, "api"), config);
+  processTemplatesFromPrefix(
+    vfs,
+    templates,
+    `api/${config.api}/server`,
+    appDir(config, "api"),
+    config,
+  );
   if (config.api === "orval") {
-    moveGeneratedFile(
-      vfs,
+    vfs.moveFile(
       appFile(config, "api", "src/generated/routes.ts"),
       appFile(config, "server", "src/generated/routes.ts"),
     );
-    moveGeneratedFile(
-      vfs,
+    vfs.moveFile(
       appFile(config, "api", "src/generated/handlers/health.ts"),
       appFile(config, "server", "src/generated/handlers/health.ts"),
     );
@@ -45,8 +37,7 @@ export async function processApiTemplates(
   }
   // src/routers/index.ts moves up one level to src/router.ts, so its parent-relative
   // imports (e.g. "../index") must become sibling-relative ("./index").
-  moveGeneratedFile(
-    vfs,
+  vfs.moveFile(
     appFile(config, "api", "src/routers/index.ts"),
     appFile(config, "api", "src/router.ts"),
     (content) => content.replace(/(from\s+["'])\.\.\//g, "$1./"),
@@ -98,10 +89,22 @@ export async function processApiTemplates(
         config,
       );
     } else {
-      processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/nuxt`, appDir(config, "web"), config);
+      processTemplatesFromPrefix(
+        vfs,
+        templates,
+        `api/${config.api}/web/nuxt`,
+        appDir(config, "web"),
+        config,
+      );
     }
   } else if (hasSvelteWeb && config.api === "orpc") {
-    processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/svelte`, appDir(config, "web"), config);
+    processTemplatesFromPrefix(
+      vfs,
+      templates,
+      `api/${config.api}/web/svelte`,
+      appDir(config, "web"),
+      config,
+    );
     if (config.backend === "self") {
       processTemplatesFromPrefix(
         vfs,
@@ -111,13 +114,28 @@ export async function processApiTemplates(
         config,
       );
       if (config.auth !== "better-auth") {
-        vfs.writeFile(appFile(config, "web", "src/hooks.server.ts"), 'import "./lib/orpc.server";\n');
+        vfs.writeFile(
+          appFile(config, "web", "src/hooks.server.ts"),
+          'import "./lib/orpc.server";\n',
+        );
       }
     }
   } else if (hasSolidWeb && config.api === "orpc") {
-    processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/solid`, appDir(config, "web"), config);
+    processTemplatesFromPrefix(
+      vfs,
+      templates,
+      `api/${config.api}/web/solid`,
+      appDir(config, "web"),
+      config,
+    );
   } else if (hasAstroWeb && config.api === "orpc") {
-    processTemplatesFromPrefix(vfs, templates, `api/${config.api}/web/astro`, appDir(config, "web"), config);
+    processTemplatesFromPrefix(
+      vfs,
+      templates,
+      `api/${config.api}/web/astro`,
+      appDir(config, "web"),
+      config,
+    );
     if (config.backend === "self") {
       processTemplatesFromPrefix(
         vfs,

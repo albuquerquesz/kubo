@@ -7,15 +7,8 @@ import {
 } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
-import { type TemplateData, processSingleTemplate, processTemplatesFromPrefix } from "./utils";
 import { appDir, appFile, pkgDir } from "../layout-paths";
-
-function moveGeneratedFile(vfs: VirtualFileSystem, from: string, to: string): void {
-  const content = vfs.readFile(from);
-  if (content === undefined) return;
-  vfs.writeFile(to, content);
-  vfs.deleteFile(from);
-}
+import { type TemplateData, processSingleTemplate, processTemplatesFromPrefix } from "./utils";
 
 export async function processExampleTemplates(
   vfs: VirtualFileSystem,
@@ -65,8 +58,7 @@ export async function processExampleTemplates(
       }
 
       if (example === "todo") {
-        moveGeneratedFile(
-          vfs,
+        vfs.moveFile(
           appFile(config, "api", "src/routers/todo.ts"),
           appFile(config, "api", "src/modules/todo/index.ts"),
         );
