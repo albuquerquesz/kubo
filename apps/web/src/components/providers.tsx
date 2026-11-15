@@ -5,6 +5,7 @@ import { ConvexReactClient } from "convex/react";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { AuthModalProvider } from "@/components/auth/auth-modal-provider";
+import { CookieConsentCard } from "@/components/consent/cookie-consent-card";
 import { RemoteDevSync } from "@/components/dev/remote-dev-sync";
 import { KuboHimetricaProvider } from "@/components/himetrica-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -22,6 +23,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         </NuqsAdapter>
       </ConvexBetterAuthProvider>
       <Toaster />
+      <CookieConsentCard />
       {process.env.NODE_ENV === "development" ? <RemoteDevSync /> : null}
     </KuboHimetricaProvider>
   );
