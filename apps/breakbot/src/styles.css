@@ -13,9 +13,10 @@
   --color-bright: #f0f6fc;
   --color-mute: #8b949e;
   --color-faint: #6e7681;
-  --color-go: #3fb950;
-  --color-go-deep: #238636;
-  --color-go-edge: #2ea043;
+  --color-kubo: #c49314;
+  --color-kubo-deep: #7a5a0a;
+  --color-kubo-edge: #d6a72b;
+  --color-kubo-light: #fbc80d;
   --color-alert: #f85149;
   --color-warn: #e3b341;
   --color-sky: #58a6ff;
@@ -57,10 +58,10 @@ body {
   95% { text-shadow: none; transform: none; }
 }
 
-@keyframes pulse-go {
-  0% { box-shadow: 0 0 0 0 rgb(46 160 67 / 0.45); }
-  70% { box-shadow: 0 0 0 12px rgb(46 160 67 / 0); }
-  100% { box-shadow: 0 0 0 0 rgb(46 160 67 / 0); }
+@keyframes pulse-kubo {
+  0% { box-shadow: 0 0 0 0 rgb(196 147 20 / 0.45); }
+  70% { box-shadow: 0 0 0 12px rgb(196 147 20 / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(196 147 20 / 0); }
 }
 
 @keyframes sway {
@@ -116,7 +117,7 @@ body {
 @utility animate-pop { animation: pop 0.35s ease-out; }
 @utility animate-blink { animation: blink 1s steps(1) infinite; }
 @utility animate-glitch { animation: glitch 3.2s infinite; }
-@utility animate-pulse-go { animation: pulse-go 2s infinite; }
+@utility animate-pulse-kubo { animation: pulse-kubo 2s infinite; }
 @utility animate-sway { animation: sway 1.4s ease-in-out infinite; }
 @utility animate-banner { animation: banner 2.4s ease-out forwards; }
 @utility animate-coin-pop { animation: coin-pop 1.6s ease-out forwards; }

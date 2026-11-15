@@ -7,7 +7,7 @@ const { chargeCapacity } = defaultBalance;
 const ChampionButton = () => (
 	<button
 		type="button"
-		className="pointer-events-auto animate-pulse-go rounded-full border-2 border-warn bg-ink/90 px-5 py-2 font-extrabold text-lg text-warn [text-shadow:0_0_8px_#e3b341]"
+		className="pointer-events-auto animate-pulse-kubo rounded-full border-2 border-warn bg-ink/90 px-5 py-2 font-extrabold text-lg text-warn [text-shadow:0_0_8px_#e3b341]"
 		data-testid="champion-button"
 		onClick={fireChampion}
 	>

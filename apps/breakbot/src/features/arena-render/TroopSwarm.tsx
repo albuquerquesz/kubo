@@ -77,7 +77,7 @@ export const TroopSwarm = () => {
 		>
 			<meshStandardMaterial
 				vertexColors
-				emissive={palette.go}
+				emissive={palette.kubo}
 				emissiveIntensity={0.15}
 				roughness={0.45}
 			/>

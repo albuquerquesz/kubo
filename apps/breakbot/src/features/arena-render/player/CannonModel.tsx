@@ -55,15 +55,15 @@ const Barrel = () => (
 	<>
 		<mesh position={[0, BODY_Y, -BODY_RADIUS - BARREL_LENGTH / 2 + 0.2]} rotation-x={Math.PI / 2}>
 			<cylinderGeometry args={[0.18, 0.145, BARREL_LENGTH, 18]} />
-			<meshStandardMaterial color={palette.goEdge} roughness={0.5} />
+			<meshStandardMaterial color={palette.kuboEdge} roughness={0.5} />
 		</mesh>
 		<mesh position={[0, BODY_Y, MUZZLE_MODEL_Z + MUZZLE_LENGTH / 2]} rotation-x={Math.PI / 2}>
 			<cylinderGeometry args={[0.225, 0.225, MUZZLE_LENGTH, 18]} />
-			<meshStandardMaterial color={palette.goDeep} roughness={0.5} />
+			<meshStandardMaterial color={palette.kuboDeep} roughness={0.5} />
 		</mesh>
 		<mesh position={[0, BODY_Y, MUZZLE_MODEL_Z]}>
 			<torusGeometry args={[0.21, 0.026, 8, 24]} />
-			<meshStandardMaterial color={palette.goLight} roughness={0.4} />
+			<meshStandardMaterial color={palette.kuboLight} roughness={0.4} />
 		</mesh>
 	</>
 );
@@ -91,7 +91,7 @@ export const CannonModel = ({ barrel, flash }: CannonParts) => (
 		))}
 		<mesh position-y={BODY_Y}>
 			<sphereGeometry args={[BODY_RADIUS, 28, 20]} />
-			<meshStandardMaterial color={palette.go} roughness={0.35} metalness={0.1} />
+			<meshStandardMaterial color={palette.kubo} roughness={0.35} metalness={0.1} />
 		</mesh>
 		<group ref={barrel}>
 			<Barrel />

@@ -27,7 +27,7 @@ export const AimLine = () => {
 					[0, 0.02, CANNON_SCENE_Z - MUZZLE_AHEAD],
 					[0, 0.02, TOWER_SCENE_Z],
 				]}
-				color={palette.go}
+				color={palette.kubo}
 				transparent
 				opacity={0.3}
 				lineWidth={1}
