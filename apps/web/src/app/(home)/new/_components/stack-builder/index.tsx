@@ -9,25 +9,23 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ShareDialog } from "@/components/ui/share-dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { BuilderStep } from "@/lib/builder-steps";
-import { getDesktopBuildNote, withLayoutCode } from "@/lib/stack-utils";
+import { getDesktopBuildNote } from "@/lib/stack-utils";
 import type { Sponsor } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 import { ActionButtons } from "../action-buttons";
-import { LayoutEditor } from "../layout-editor";
 import { PresetDialog } from "../preset-dialog";
 import { PreviewPanel } from "../preview-panel";
 import { SpecialSponsorsPanel } from "../special-sponsors-panel";
 import { BuilderStepLink } from "./builder-step-link";
 import { CategoryNav, scrollToCategorySection } from "./category-nav";
 import { ProjectNameField } from "./project-name-field";
-import { ProjectStructureCard } from "./project-structure-card";
 import { SelectedStackBadges } from "./selected-stack-badges";
 import { TechCategories } from "./tech-categories";
 import { useStackBuilder } from "./use-stack-builder";
 
 type StackBuilderProps = {
-  /** `stack` is `/new` (technologies), `layout` is `/new/layout` (folder structure + preview). */
+  /** `stack` is `/new` (technologies), `preview` is `/new/preview` (generated file tree). */
   step?: BuilderStep;
   specialSponsors?: Sponsor[];
 };
@@ -121,8 +119,8 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
     </ShareDialog>
   );
 
-  // The layout step is a focused page: no stack sidebar, just a way back, the command and the editor.
-  if (step === "layout") {
+  // The preview step is a focused page: no stack sidebar, just a way back, the command and the file tree.
+  if (step === "preview") {
     return (
       <TooltipProvider>
         <div className="flex h-full w-full flex-col overflow-hidden bg-background text-foreground">
@@ -139,28 +137,17 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
             <div className="w-full min-w-0 sm:ml-auto sm:w-[min(36rem,60%)]">{commandButton}</div>
           </div>
 
-          <section className="flex min-h-0 flex-1 flex-col overflow-y-auto xl:flex-row xl:overflow-hidden">
-            <div className="shrink-0 xl:min-h-0 xl:w-[min(34rem,45%)] xl:overflow-y-auto xl:border-rule xl:border-r">
-              <LayoutEditor
-                layout={stack.layout}
-                onChange={(layout) => setStack({ layout })}
-                buildCodeCommand={(code) => withLayoutCode(command, code)}
-              />
-            </div>
-            <div className="mx-3 mb-5 h-[36rem] shrink-0 overflow-hidden rounded-md border border-border sm:mx-5 xl:m-0 xl:h-auto xl:min-h-0 xl:flex-1 xl:rounded-none xl:border-0">
-              <PreviewPanel
-                stack={effectiveStack}
-                selectedFilePath={selectedFile}
-                onSelectFile={setSelectedFile}
-              />
-            </div>
+          <section className="min-h-0 flex-1 overflow-hidden">
+            <PreviewPanel
+              stack={effectiveStack}
+              selectedFilePath={selectedFile}
+              onSelectFile={setSelectedFile}
+            />
           </section>
         </div>
       </TooltipProvider>
     );
   }
-
-  const structureCard = <ProjectStructureCard layout={stack.layout} />;
 
   return (
     <TooltipProvider>
@@ -181,8 +168,6 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
                   </section>
 
                   <section className="border-border/20 border-b px-3 py-3">{commandButton}</section>
-
-                  <section className="border-border/20 border-b px-3 py-3">{structureCard}</section>
 
                   <section className="border-border/20 border-b px-3 py-3">
                     <PresetDialog onApplyPreset={applyPreset} />
@@ -278,10 +263,10 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
                   orientation="vertical"
                   trailing={
                     <BuilderStepLink
-                      step="layout"
+                      step="preview"
                       className="builder-focus-ring mt-2 flex w-full shrink-0 items-center justify-between rounded-[0.5rem] border border-primary/40 px-3 py-2 font-mono text-primary text-xs uppercase tracking-wide transition-colors hover:bg-primary/10"
                     >
-                      Layout
+                      Prévia
                       <ArrowRight className="size-3.5" />
                     </BuilderStepLink>
                   }
@@ -298,22 +283,19 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
                 <div className="mb-4 space-y-2 rounded-xl bg-muted/10 p-2">
                   {renderProjectName("project-name-mobile")}
                   {commandButton}
-                  {structureCard}
                   <PresetDialog onApplyPreset={applyPreset} />
                   {actionButtons}
                   {desktopBuildNoteBox}
                 </div>
 
-                <>
-                  <TechCategories
-                    mode="mobile"
-                    stack={stack}
-                    compatibilityNotes={compatibilityAnalysis.notes}
-                    onSelect={handleTechSelect}
-                    showAllCategories
-                  />
-                  <NextStepCta className="mt-6" />
-                </>
+                <TechCategories
+                  mode="mobile"
+                  stack={stack}
+                  compatibilityNotes={compatibilityAnalysis.notes}
+                  onSelect={handleTechSelect}
+                  showAllCategories
+                />
+                <NextStepCta className="mt-6" />
               </main>
             </ScrollArea>
 
@@ -331,11 +313,11 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
   );
 }
 
-/** End of the technology list: points to the layout step. */
+/** End of the technology list: points to the preview step. */
 function NextStepCta({ className }: { className?: string }) {
   return (
     <BuilderStepLink
-      step="layout"
+      step="preview"
       className={cn(
         "builder-focus-ring group flex items-center gap-4 rounded-xl border border-primary/40 bg-primary/6 p-4 transition-colors hover:bg-primary/10",
         className,
@@ -348,9 +330,9 @@ function NextStepCta({ className }: { className?: string }) {
         <span className="block font-mono text-[11px] text-muted-foreground uppercase tracking-wide">
           Próxima etapa
         </span>
-        <span className="block font-semibold text-base">Monte a estrutura de pastas</span>
+        <span className="block font-semibold text-base">Veja a prévia do projeto</span>
         <span className="block text-muted-foreground text-sm">
-          Escolha onde ficam os apps e os pacotes e veja a árvore do projeto.
+          Confira a árvore de arquivos e o conteúdo gerado antes de copiar o comando.
         </span>
       </span>
       <ArrowRight className="size-5 shrink-0 text-primary motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5" />

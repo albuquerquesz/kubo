@@ -48,10 +48,16 @@ const config: NextConfig = {
   async redirects() {
     return [
       {
-        // The layout used to be an in-page tab (`/new?view=layout`, `/new?view=preview`).
+        // The preview used to be an in-page tab (`/new?view=layout`, `/new?view=preview`).
         source: "/new",
         has: [{ type: "query", key: "view", value: "layout|preview" }],
-        destination: "/new/layout",
+        destination: "/new/preview",
+        permanent: false,
+      },
+      {
+        // The layout editor page was removed; its links land on the preview.
+        source: "/new/layout",
+        destination: "/new/preview",
         permanent: false,
       },
     ];
