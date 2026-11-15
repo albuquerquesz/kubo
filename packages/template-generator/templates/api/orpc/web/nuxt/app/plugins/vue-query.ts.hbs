@@ -43,7 +43,8 @@ export default defineNuxtPlugin((nuxt) => {
 
   if (import.meta.client) {
     nuxt.hooks.hook('app:created', () => {
-      hydrate(queryClient, vueQueryState.value)
+      // Nothing to hydrate on client-only renders (no server state was serialized).
+      if (vueQueryState.value) hydrate(queryClient, vueQueryState.value)
     })
   }
 })
