@@ -126,10 +126,7 @@ export function ArchitectureDialog({ architecture, onApplyArchitecture }: Archit
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-4 border-border border-t px-5 py-4 sm:px-6">
-          <p className="hidden text-muted-foreground text-xs sm:block">
-            Rotas e arquivos de entrada do framework não mudam de lugar.
-          </p>
+        <div className="flex items-center justify-end gap-4 border-border border-t px-5 py-4 sm:px-6">
           <div className="flex items-center gap-4">
             <DialogClose
               render={
