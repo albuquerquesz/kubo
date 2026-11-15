@@ -11825,7 +11825,7 @@ function RouteComponent() {
 	import { authClient } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
 
-	let { switchToSignUp } = $props<{ switchToSignUp: () => void }>();
+	let { switchToSignUp }: { switchToSignUp: () => void } = $props();
 
 	const validationSchema = z.object({
 		email: z.email('Invalid email address'),
@@ -11937,7 +11937,7 @@ function RouteComponent() {
 	import { authClient } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
 
-	let { switchToSignIn } = $props<{ switchToSignIn: () => void }>();
+	let { switchToSignIn }: { switchToSignIn: () => void } = $props();
 
 	const validationSchema = z.object({
 		name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -32543,6 +32543,7 @@ vite.config.ts.timestamp-*
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check-types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
