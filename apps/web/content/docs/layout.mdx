@@ -1,6 +1,6 @@
 ---
 title: Layout de pastas
-description: Escolha pelo CLI onde ficam os apps e os pacotes do projeto
+description: Escolha onde ficam os apps e os pacotes do projeto, no site ou no CLI
 ---
 
 ## O que é
@@ -18,7 +18,14 @@ O layout padrão (`standard`) gera exatamente a mesma estrutura de antes — nad
 
 ## No site
 
-O [Stack Builder](/new) não tem editor de layout: os projetos criados por lá usam o layout padrão. Um link de stack que já traga um layout (parâmetro `lay` na URL) continua aplicando esse layout no comando copiado e na [prévia](/new/preview).
+No [Stack Builder](/new), o botão **Layout** (ao lado de **Templates**) abre a lista de layouts prontos:
+
+- **Padrão**: `apps/` e `packages/`;
+- **Libs**: `apps/` e `libs/`;
+- **Cliente e servidor**: o front em `apps/client`, ao lado de `apps/server`;
+- **Tudo em src/**: `src/apps/` e `src/packages/`.
+
+Escolha um e clique em **Usar layout**. O layout em uso aparece marcado como **Atual**. O comando copiado (`--layout ...`), a [prévia](/new/preview) e o link de compartilhamento passam a usar o layout escolhido. Para combinações que não estão na lista, use `--layout` direto no CLI.
 
 ## Aplicar no CLI
 
