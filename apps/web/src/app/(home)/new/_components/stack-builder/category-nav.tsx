@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -11,8 +11,6 @@ type CategoryNavProps = {
   progress: CategoryProgressItem[];
   idPrefix: string;
   orientation?: "horizontal" | "vertical";
-  /** Rendered after the categories (e.g. the link to the next builder step). */
-  trailing?: ReactNode;
 };
 
 function getScrollViewport(el: HTMLElement) {
@@ -41,12 +39,7 @@ export function scrollToCategorySection(idPrefix: string, category: string, retr
   viewport.scrollTo({ top, behavior: "smooth" });
 }
 
-export function CategoryNav({
-  progress,
-  idPrefix,
-  orientation = "horizontal",
-  trailing,
-}: CategoryNavProps) {
+export function CategoryNav({ progress, idPrefix, orientation = "horizontal" }: CategoryNavProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const railRef = useRef<HTMLDivElement | null>(null);
   const isVertical = orientation === "vertical";
@@ -150,7 +143,6 @@ export function CategoryNav({
           </button>
         );
       })}
-      {trailing}
     </div>
   );
 }

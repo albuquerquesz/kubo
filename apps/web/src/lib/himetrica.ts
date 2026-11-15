@@ -1,6 +1,7 @@
 import { HimetricaClient } from "@himetrica/tracker-js";
 
 import { env } from "@/env/client";
+import { hasAnalyticsConsent } from "@/lib/consent";
 
 type HimetricaClientFactory = (apiKey: string) => HimetricaClient;
 
@@ -15,11 +16,13 @@ const createClient: HimetricaClientFactory = (apiKey) =>
 export function createHimetricaClientGetter(
   apiKey: string | undefined,
   create: HimetricaClientFactory = createClient,
+  canTrack: () => boolean = hasAnalyticsConsent,
 ): () => HimetricaClient | null {
   let client: HimetricaClient | null = null;
 
   return () => {
-    if (typeof window === "undefined" || !apiKey) return null;
+    // Nothing is created (and nothing is sent) until the visitor accepts analytics.
+    if (typeof window === "undefined" || !apiKey || !canTrack()) return null;
     client ??= create(apiKey);
     return client;
   };

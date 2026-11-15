@@ -2,6 +2,7 @@ import { formatDate } from "@kubojs/datetime";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
+import { CookiePreferencesButton } from "@/components/consent/cookie-consent-card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -104,6 +105,12 @@ export default function Footer() {
         <p className="ui-kicker flex min-h-16 items-center px-5 text-muted-foreground sm:px-8">
           © {formatDate(Date.now(), "year")} Kubo
         </p>
+        <div className="ui-kicker flex min-h-16 items-center gap-6 border-rule px-5 text-muted-foreground sm:justify-end sm:border-l sm:px-8">
+          <Link href="/docs/privacy" className="transition-colors hover:text-foreground">
+            Privacidade
+          </Link>
+          <CookiePreferencesButton className="ui-kicker cursor-pointer transition-colors hover:text-foreground" />
+        </div>
       </div>
     </footer>
   );

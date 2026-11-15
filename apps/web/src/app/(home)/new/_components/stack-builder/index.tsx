@@ -18,6 +18,7 @@ import { ArchitectureDialog } from "../architecture-dialog";
 import { PresetDialog } from "../preset-dialog";
 import { PreviewPanel } from "../preview-panel";
 import { SpecialSponsorsPanel } from "../special-sponsors-panel";
+import { useBuilderSessionReplay } from "../use-builder-session-replay";
 import { BuilderStepLink } from "./builder-step-link";
 import { CategoryNav, scrollToCategorySection } from "./category-nav";
 import { ProjectNameField } from "./project-name-field";
@@ -52,6 +53,7 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
     setStack,
     stack,
   } = useStackBuilder();
+  useBuilderSessionReplay();
   const effectiveStack = compatibilityAnalysis.adjustedStack || stack;
   const desktopBuildNote = getDesktopBuildNote(effectiveStack);
   const [shareOpen, setShareOpen] = useState(false);
@@ -271,15 +273,6 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
                   progress={categoryProgress}
                   idPrefix="section"
                   orientation="vertical"
-                  trailing={
-                    <BuilderStepLink
-                      step="preview"
-                      className="builder-focus-ring mt-2 flex w-full shrink-0 items-center justify-between rounded-[0.5rem] border border-primary/40 px-3 py-2 font-mono text-primary text-xs uppercase tracking-wide transition-colors hover:bg-primary/10"
-                    >
-                      Prévia
-                      <ArrowRight className="size-3.5" />
-                    </BuilderStepLink>
-                  }
                 />
               </aside>
             </>
