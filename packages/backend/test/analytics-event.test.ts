@@ -69,4 +69,22 @@ describe("parseAnalyticsEventPayload", () => {
     expect(parseAnalyticsEventPayload({ duration_ms: "10" })).toBeNull();
     expect(parseAnalyticsEventPayload({ ci: "yes" })).toBeNull();
   });
+
+  it("accepts architecture, communication and observability from CLI 0.7+", () => {
+    expect(
+      parseAnalyticsEventPayload({
+        backend: "hono",
+        architecture: "clean",
+        communication: ["arara"],
+        observability: [],
+      }),
+    ).toEqual({
+      backend: "hono",
+      architecture: "clean",
+      communication: ["arara"],
+      observability: [],
+    });
+    expect(parseAnalyticsEventPayload({ architecture: 1 })).toBeNull();
+    expect(parseAnalyticsEventPayload({ communication: "arara" })).toBeNull();
+  });
 });

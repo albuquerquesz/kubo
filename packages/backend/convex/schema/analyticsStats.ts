@@ -35,4 +35,7 @@ export const analyticsStats = defineTable({
   ci: v.optional(distributionValidator),
   outcome: v.optional(distributionValidator),
   errorCategory: v.optional(distributionValidator),
+  architecture: v.optional(distributionValidator),
+  communication: v.optional(distributionValidator),
+  observability: v.optional(distributionValidator),
 });

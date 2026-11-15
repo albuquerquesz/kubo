@@ -126,6 +126,8 @@ function getStackPayload(config: ProjectConfig) {
     dbSetup: config.dbSetup,
     api: config.api,
     architecture: config.architecture,
+    communication: config.communication,
+    observability: config.observability,
     webDeploy: config.webDeploy,
     serverDeploy: config.serverDeploy,
   };
