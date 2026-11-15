@@ -97,9 +97,9 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
     />
   );
 
-  // Templates and Layout sit side by side in the sidebar (desktop) and the top card (mobile).
+  // Layout sits right below Templates in the sidebar (desktop) and the top card (mobile).
   const presetButtons = (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="flex flex-col gap-2">
       <PresetDialog onApplyPreset={applyPreset} />
       <LayoutDialog layout={stack.layout} onApplyLayout={(layout) => setStack({ layout })} />
     </div>
