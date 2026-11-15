@@ -438,6 +438,10 @@ async function createProjectHandlerInternal(
       config = { ...config, layout };
     }
 
+    if (input.architecture) {
+      config = { ...config, architecture: input.architecture };
+    }
+
     if (!input.yolo) {
       const addonsValidationResult = validateAddonsAgainstFrontends(
         config.addons,

@@ -17,6 +17,7 @@ import {
   AddInputSchema,
   type API,
   APISchema,
+  ArchitectureSchema,
   type Auth,
   AuthSchema,
   type Backend,
@@ -186,6 +187,9 @@ export const router = t.router({
             .describe("Skip automatic/manual database setup prompt and use manual setup"),
           dbSetupOptions: DbSetupOptionsSchema.optional().describe(
             "Structured database setup options",
+          ),
+          architecture: ArchitectureSchema.optional().describe(
+            "Code architecture of the API and web app: feature, layered or clean",
           ),
           layout: z
             .string()
@@ -478,6 +482,7 @@ export async function createVirtual(
     api: options.api || "trpc",
     webDeploy: options.webDeploy || "none",
     serverDeploy: options.serverDeploy || "none",
+    architecture: options.architecture,
   };
 
   const providedFlags = new Set([
