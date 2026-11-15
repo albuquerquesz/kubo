@@ -1,6 +1,14 @@
 "use client";
 
-import { parseAsArrayOf, parseAsBoolean, parseAsJson, parseAsString, useQueryStates } from "nuqs";
+import { ARCHITECTURE_VALUES } from "@kubojs/types";
+import {
+  parseAsArrayOf,
+  parseAsBoolean,
+  parseAsJson,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from "nuqs";
 import { useRef } from "react";
 
 import { DEFAULT_STACK, type StackState } from "@/lib/constant";
@@ -39,6 +47,7 @@ export const stackParsers = {
   serverDeploy: parseAsString.withDefault(DEFAULT_STACK.serverDeploy),
   yolo: parseAsBoolean.withDefault(DEFAULT_STACK.yolo),
   layout: parseAsJson(parseStackLayout),
+  architecture: parseAsStringLiteral(ARCHITECTURE_VALUES),
   legacyWebFrontend: parseAsArrayOf(parseAsString).withDefault([]),
   legacyNativeFrontend: parseAsArrayOf(parseAsString).withDefault([]),
   selectedFile: parseAsString.withDefault(""),
@@ -74,6 +83,7 @@ export function useStackState() {
           ...finalStack,
           // Explicit null clears the URL key when the layout goes back to the standard one.
           layout: finalStack.layout ?? null,
+          architecture: finalStack.architecture ?? null,
           selectedFile: prev.selectedFile,
           ...clearLegacyFrontendQuery,
         };

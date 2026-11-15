@@ -109,6 +109,14 @@ kubojs my-app --yes --directory-conflict overwrite
 kubojs my-app --yes --directory-conflict increment
 ```
 
+### `--architecture <feature|layered|clean>`
+
+Organiza o código da API (`apps/api`) e do app web (`apps/web`): `feature` agrupa por feature, `layered` separa por tipo (routers, services, models) e `clean` usa domain, application, infrastructure e presentation. Sem a flag, a estrutura padrão é mantida. Rotas e arquivos de entrada do framework não mudam de lugar, e os imports são reescritos. Combina com `--yes` e com `--layout`, e fica salva em `kubo.config.ts`. Detalhes em [Arquitetura](/docs/architecture).
+
+```bash
+kubojs my-app --yes --architecture layered
+```
+
 ### `--layout <preset|json>`
 
 Define a estrutura de pastas do projeto. Aceita um preset ou um objeto JSON:

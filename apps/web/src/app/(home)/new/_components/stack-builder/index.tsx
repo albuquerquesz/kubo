@@ -14,7 +14,7 @@ import type { Sponsor } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 import { ActionButtons } from "../action-buttons";
-import { LayoutDialog } from "../layout-dialog";
+import { ArchitectureDialog } from "../architecture-dialog";
 import { PresetDialog } from "../preset-dialog";
 import { PreviewPanel } from "../preview-panel";
 import { SpecialSponsorsPanel } from "../special-sponsors-panel";
@@ -97,11 +97,14 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
     />
   );
 
-  // Layout sits right below Templates in the sidebar (desktop) and the top card (mobile).
+  // Arquitetura sits right below Templates in the sidebar (desktop) and the top card (mobile).
   const presetButtons = (
     <div className="flex flex-col gap-2">
       <PresetDialog onApplyPreset={applyPreset} />
-      <LayoutDialog layout={stack.layout} onApplyLayout={(layout) => setStack({ layout })} />
+      <ArchitectureDialog
+        architecture={stack.architecture}
+        onApplyArchitecture={(architecture) => setStack({ architecture })}
+      />
     </div>
   );
 

@@ -1,3 +1,4 @@
+import { ARCHITECTURE_VALUES } from "@kubojs/types";
 import {
   createLoader,
   createSerializer,
@@ -5,6 +6,7 @@ import {
   parseAsBoolean as parseAsBooleanServer,
   parseAsJson as parseAsJsonServer,
   parseAsString as parseAsStringServer,
+  parseAsStringLiteral as parseAsStringLiteralServer,
   type UrlKeys,
 } from "nuqs/server";
 
@@ -43,6 +45,7 @@ const canonicalServerStackParsers = {
   serverDeploy: parseAsStringServer.withDefault(DEFAULT_STACK.serverDeploy),
   yolo: parseAsBooleanServer.withDefault(DEFAULT_STACK.yolo),
   layout: parseAsJsonServer(parseStackLayout),
+  architecture: parseAsStringLiteralServer(ARCHITECTURE_VALUES),
 };
 
 const serverStackParsers = {
