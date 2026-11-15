@@ -1,4 +1,5 @@
 import { getBackendCapabilities, isBackend } from "./backends";
+import { getCommunicationCompatibilityIssue, normalizeCommunication } from "./communication";
 import {
   CLERK_BACKENDS,
   CLERK_FRONTENDS,
@@ -352,6 +353,29 @@ function normalizePayments(
   setField(config, adjustments, "payments", compatible, "payment");
 }
 
+/**
+ * Drops communication providers the stack cannot run (e.g. AraraHQ on Workers / Cloudflare),
+ * mirroring `normalizePayments`. Without this the validator flags them but the builder never
+ * clears them, leaving a disabled selection behind.
+ */
+function normalizeCommunicationProviders(
+  config: ProjectConfigDraft,
+  adjustments: CompatibilityAdjustment[],
+): void {
+  const providers = normalizeCommunication(config.communication ?? []);
+  const compatible = providers.filter(
+    (provider) =>
+      getCommunicationCompatibilityIssue({
+        provider,
+        backend: config.backend,
+        runtime: config.runtime,
+        serverDeploy: config.serverDeploy,
+      }) === null,
+  );
+  if (compatible.length === providers.length) return;
+  setField(config, adjustments, "communication", compatible, "communication");
+}
+
 function normalizeAddons(config: ProjectConfigDraft, adjustments: CompatibilityAdjustment[]): void {
   const webFrontends = getWebFrontends(config.frontend);
   let addons = config.addons.filter((addon) => {
@@ -491,6 +515,8 @@ export function normalizeCompatibility(input: ProjectConfigDraft): Compatibility
     normalizeDockerWebDeploy(config, adjustments);
     normalizeExamples(config, adjustments);
     normalizeDeployments(config, adjustments);
+    // After deployments: a Workers runtime may have just switched serverDeploy to cloudflare.
+    normalizeCommunicationProviders(config, adjustments);
     if (adjustments.length === count) break;
   }
 

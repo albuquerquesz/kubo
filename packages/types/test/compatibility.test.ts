@@ -170,3 +170,41 @@ describe("canonical compatibility evaluator", () => {
     );
   });
 });
+
+describe("communication normalization", () => {
+  it("drops AraraHQ on a Workers runtime so no disabled selection remains", () => {
+    const { config, adjustments } = normalizeCompatibility({
+      ...validConfig,
+      runtime: "workers",
+      communication: ["arara"],
+    });
+
+    expect(config.communication).toEqual([]);
+    expect(adjustments).toContainEqual({
+      code: "communication",
+      field: "communication",
+      value: [],
+    });
+    expect(evaluate(config).issues).toEqual([]);
+  });
+
+  it("drops AraraHQ when the server deploys to Cloudflare", () => {
+    const { config } = normalizeCompatibility({
+      ...validConfig,
+      runtime: "workers",
+      serverDeploy: "cloudflare",
+      communication: ["arara"],
+    });
+    expect(config.communication).toEqual([]);
+  });
+
+  it("keeps AraraHQ on Node/Bun servers and on Convex", () => {
+    expect(
+      normalizeCompatibility({ ...validConfig, communication: ["arara"] }).config.communication,
+    ).toEqual(["arara"]);
+    expect(
+      normalizeCompatibility({ ...validConfig, backend: "convex", communication: ["arara"] }).config
+        .communication,
+    ).toEqual(["arara"]);
+  });
+});
