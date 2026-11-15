@@ -18,6 +18,7 @@ import { ArchitectureDialog } from "../architecture-dialog";
 import { PresetDialog } from "../preset-dialog";
 import { PreviewPanel } from "../preview-panel";
 import { SpecialSponsorsPanel } from "../special-sponsors-panel";
+import { useBuilderSessionReplay } from "../use-builder-session-replay";
 import { BuilderStepLink } from "./builder-step-link";
 import { CategoryNav, scrollToCategorySection } from "./category-nav";
 import { ProjectNameField } from "./project-name-field";
@@ -52,6 +53,7 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
     setStack,
     stack,
   } = useStackBuilder();
+  useBuilderSessionReplay();
   const effectiveStack = compatibilityAnalysis.adjustedStack || stack;
   const desktopBuildNote = getDesktopBuildNote(effectiveStack);
   const [shareOpen, setShareOpen] = useState(false);

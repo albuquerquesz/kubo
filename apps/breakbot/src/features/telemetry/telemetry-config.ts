@@ -10,6 +10,7 @@ export const readTelemetryConfig = () => {
 		host: environment.VITE_POSTHOG_HOST ?? DEFAULT_HOST,
 		debug: environment.VITE_POSTHOG_DEBUG === "true",
 		superProperties: {
+			app: "breakbot",
 			build: environment.VITE_BUILD_SHA ?? "dev",
 			app_version: environment.VITE_APP_VERSION ?? "dev",
 			environment: environment.MODE,

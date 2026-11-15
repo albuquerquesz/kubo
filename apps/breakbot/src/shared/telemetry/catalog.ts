@@ -108,6 +108,8 @@ export type TelemetryValue = string | number | boolean | null;
 export type TelemetryProperties = Record<string, TelemetryValue>;
 
 export type SuperProperties = Partial<{
+	/** Which Kubo surface sent the event (the PostHog project is shared with kubojs.dev). */
+	app: "breakbot";
 	build: string;
 	app_version: string;
 	environment: string;
