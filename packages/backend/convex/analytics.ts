@@ -34,6 +34,12 @@ function incrementBool(dist: Distribution | undefined, val: boolean | undefined)
   return incrementKey(dist, val ? "Yes" : "No");
 }
 
+/** Provider lists: an empty list counts as "none"; a missing one (older CLIs) is not counted. */
+function providerKeys(list: string[] | undefined): string[] | undefined {
+  if (!list) return undefined;
+  return list.length > 0 ? list : ["none"];
+}
+
 function getMajorVersion(version: string | undefined): string | undefined {
   if (!version) return undefined;
   const clean = version.startsWith("v") ? version.slice(1) : version;
@@ -55,6 +61,9 @@ const analyticsEventArgs = {
   install: v.optional(v.boolean()),
   dbSetup: v.optional(v.string()),
   api: v.optional(v.string()),
+  architecture: v.optional(v.string()),
+  communication: v.optional(v.array(v.string())),
+  observability: v.optional(v.array(v.string())),
   webDeploy: v.optional(v.string()),
   serverDeploy: v.optional(v.string()),
   cli_version: v.optional(v.string()),
@@ -144,6 +153,10 @@ function applyStackStats(stats: StatsFields, args: AnalyticsEventArgs, now: numb
     webDeploy: incrementKey(stats.webDeploy, args.webDeploy),
     serverDeploy: incrementKey(stats.serverDeploy, args.serverDeploy),
     payments: incrementKey(stats.payments, args.payments),
+    // `architecture` is omitted by the CLI when the default structure is used.
+    architecture: incrementKey(stats.architecture, args.architecture ?? "default"),
+    communication: incrementKeys(stats.communication, providerKeys(args.communication)),
+    observability: incrementKeys(stats.observability, providerKeys(args.observability)),
     git: incrementBool(stats.git, args.git),
     install: incrementBool(stats.install, args.install),
     hourlyDistribution: incrementKey(stats.hourlyDistribution, hourKey),
@@ -240,6 +253,9 @@ export const getStats = query({
       ci: distributionValidator,
       outcome: distributionValidator,
       errorCategory: distributionValidator,
+      architecture: distributionValidator,
+      communication: distributionValidator,
+      observability: distributionValidator,
     }),
     v.null(),
   ),
@@ -278,6 +294,9 @@ export const getStats = query({
       ci: stats.ci ?? {},
       outcome: stats.outcome ?? {},
       errorCategory: stats.errorCategory ?? {},
+      architecture: stats.architecture ?? {},
+      communication: stats.communication ?? {},
+      observability: stats.observability ?? {},
     };
   },
 });
@@ -448,6 +467,9 @@ export const backfillStats = internalMutation({
       hourlyDistribution: { ...emptyDist },
       stackCombinations: { ...emptyDist },
       dbOrmCombinations: { ...emptyDist },
+      architecture: { ...emptyDist },
+      communication: { ...emptyDist },
+      observability: { ...emptyDist },
     };
 
     const dailyCounts = new Map<string, number>();
@@ -481,6 +503,9 @@ export const backfillStats = internalMutation({
       stats.webDeploy = incrementKey(stats.webDeploy, ev.webDeploy);
       stats.serverDeploy = incrementKey(stats.serverDeploy, ev.serverDeploy);
       stats.payments = incrementKey(stats.payments, ev.payments);
+      stats.architecture = incrementKey(stats.architecture, ev.architecture ?? "default");
+      stats.communication = incrementKeys(stats.communication, providerKeys(ev.communication));
+      stats.observability = incrementKeys(stats.observability, providerKeys(ev.observability));
       stats.git = incrementBool(stats.git, ev.git);
       stats.install = incrementBool(stats.install, ev.install);
       stats.nodeVersion = incrementKey(stats.nodeVersion, getMajorVersion(ev.node_version));

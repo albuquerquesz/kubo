@@ -13,6 +13,7 @@ const STRING_KEYS = [
   "packageManager",
   "dbSetup",
   "api",
+  "architecture",
   "webDeploy",
   "serverDeploy",
   "cli_version",
@@ -25,7 +26,7 @@ const STRING_KEYS = [
   "error_category",
 ] as const;
 
-const LIST_KEYS = ["frontend", "addons", "examples"] as const;
+const LIST_KEYS = ["frontend", "addons", "examples", "communication", "observability"] as const;
 const BOOLEAN_KEYS = ["git", "install", "ci"] as const;
 const OUTCOMES = ["success", "failure", "cancelled"] as const;
 const ALLOWED_KEYS = new Set<string>([
