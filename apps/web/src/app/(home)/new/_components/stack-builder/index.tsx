@@ -14,6 +14,7 @@ import type { Sponsor } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 import { ActionButtons } from "../action-buttons";
+import { LayoutDialog } from "../layout-dialog";
 import { PresetDialog } from "../preset-dialog";
 import { PreviewPanel } from "../preview-panel";
 import { SpecialSponsorsPanel } from "../special-sponsors-panel";
@@ -96,6 +97,14 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
     />
   );
 
+  // Templates and Layout sit side by side in the sidebar (desktop) and the top card (mobile).
+  const presetButtons = (
+    <div className="grid grid-cols-2 gap-2">
+      <PresetDialog onApplyPreset={applyPreset} />
+      <LayoutDialog layout={stack.layout} onApplyLayout={(layout) => setStack({ layout })} />
+    </div>
+  );
+
   const desktopBuildNoteBox = desktopBuildNote ? (
     <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-2">
       <div className="mb-1 flex items-center gap-1.5 font-mono text-[11px] text-amber-600 uppercase tracking-wide dark:text-amber-400">
@@ -169,9 +178,7 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
 
                   <section className="border-border/20 border-b px-3 py-3">{commandButton}</section>
 
-                  <section className="border-border/20 border-b px-3 py-3">
-                    <PresetDialog onApplyPreset={applyPreset} />
-                  </section>
+                  <section className="border-border/20 border-b px-3 py-3">{presetButtons}</section>
 
                   <section className="border-border/20 border-b px-3 py-3">{actionButtons}</section>
 
@@ -283,7 +290,7 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
                 <div className="mb-4 space-y-2 rounded-xl bg-muted/10 p-2">
                   {renderProjectName("project-name-mobile")}
                   {commandButton}
-                  <PresetDialog onApplyPreset={applyPreset} />
+                  {presetButtons}
                   {actionButtons}
                   {desktopBuildNoteBox}
                 </div>
