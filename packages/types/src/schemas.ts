@@ -86,6 +86,12 @@ export const DatabaseSetupSchema = z
 
 export const APISchema = z.enum(["trpc", "orpc", "orval", "none"]).describe("API type");
 
+export const ArchitectureSchema = z
+  .enum(["feature", "layered", "clean"])
+  .describe(
+    "Code architecture of the generated API and web app: by feature, layered by type, or clean (domain/application/infrastructure/presentation)",
+  );
+
 export const AuthSchema = z
   .enum(["better-auth", "clerk", "none"])
   .describe("Authentication provider");
@@ -472,6 +478,7 @@ export const CreateInputSchema = z
     layout: LayoutConfigSchema.optional().describe(
       "Project folder layout (preset, convention dirs and per-app/package overrides)",
     ),
+    architecture: ArchitectureSchema.optional(),
     layoutCode: z
       .string()
       .max(64)
@@ -507,6 +514,7 @@ export const ProjectConfigSchema = z.object({
   projectDir: z.string(),
   relativePath: z.string(),
   layout: LayoutConfigSchema.optional(),
+  architecture: ArchitectureSchema.optional(),
   addonOptions: AddonOptionsSchema.optional(),
   dbSetupOptions: DbSetupOptionsSchema.optional(),
   database: DatabaseSchema,
@@ -565,6 +573,7 @@ export const KubojsConfigSchema = KuboStackConfigSchema;
 
 export const KuboConfigSchema = KuboStackConfigSchema.extend({
   layout: LayoutConfigSchema.optional(),
+  architecture: ArchitectureSchema.optional(),
 });
 
 export const KubojsConfigFileSchema = z
@@ -607,6 +616,7 @@ export const TESTING_VALUES = TestingSchema.options;
 export const PACKAGE_MANAGER_VALUES = PackageManagerSchema.options;
 export const DATABASE_SETUP_VALUES = DatabaseSetupSchema.options;
 export const API_VALUES = APISchema.options;
+export const ARCHITECTURE_VALUES = ArchitectureSchema.options;
 export const AUTH_VALUES = AuthSchema.options;
 export const PAYMENTS_VALUES = PaymentProviderSchema.options;
 export const OBSERVABILITY_VALUES = ObservabilityProviderSchema.options;

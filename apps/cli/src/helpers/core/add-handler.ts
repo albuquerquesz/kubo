@@ -367,6 +367,7 @@ async function addHandlerInternal(
     projectDir,
     relativePath: ".",
     layout,
+    architecture: existingConfig.architecture,
     addonOptions: mergedAddonOptions,
     database: existingConfig.database,
     orm: existingConfig.orm,

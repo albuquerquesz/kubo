@@ -26,6 +26,10 @@ export function displayConfig(config: Partial<ProjectConfig>) {
     configDisplay.push(`${cliColors.signal("Runtime:")} ${String(config.runtime)}`);
   }
 
+  if (config.architecture !== undefined) {
+    configDisplay.push(`${cliColors.signal("Architecture:")} ${config.architecture}`);
+  }
+
   if (config.api !== undefined) {
     configDisplay.push(`${cliColors.signal("API:")} ${String(config.api)}`);
   }

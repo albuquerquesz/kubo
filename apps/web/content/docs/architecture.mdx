@@ -1,0 +1,75 @@
+---
+title: Arquitetura
+description: Organize o código da API e do app web por feature, em camadas ou no estilo clean
+---
+
+## O que é
+
+A **arquitetura** define como o código fica organizado **dentro** da API (`apps/api`) e do app web (`apps/web`). Ela é diferente do [layout](/docs/layout), que só escolhe onde ficam os apps e os pacotes.
+
+Sem escolher nada, o Kubo gera como sempre: a API em módulos por feature (`src/modules/<feature>/`) e o web separado por tipo (`components/`, `lib/`, `utils/`).
+
+## Opções
+
+### Por feature (`feature`)
+
+Cada feature junta o que é dela.
+
+```text
+apps/api/src/modules/todo/      index.ts  service.ts  model.ts
+apps/web/src/features/auth/     components/  lib/  server/
+apps/web/src/components/        header, loader… (compartilhados)
+```
+
+### Em camadas (`layered`)
+
+O código é separado por tipo.
+
+```text
+apps/api/src/routers/todo.ts
+apps/api/src/services/todo.service.ts
+apps/api/src/models/todo.model.ts
+apps/web/src/components/  lib/  utils/
+```
+
+### Clean (`clean`)
+
+O domínio fica no centro, os casos de uso em `application` e os detalhes em `infrastructure`.
+
+```text
+apps/api/src/domain/todo/todo.model.ts
+apps/api/src/application/todo/todo.service.ts
+apps/api/src/presentation/routers/todo.ts
+apps/web/src/presentation/components/
+apps/web/src/infrastructure/api/      cliente tRPC/oRPC
+apps/web/src/infrastructure/auth/     auth-client
+```
+
+No `clean`, o `components.json` do shadcn passa a apontar para `@/presentation/components`.
+
+## Como usar
+
+No [Stack Builder](/new), clique em **Arquitetura** (abaixo de **Templates**), escolha uma opção e clique em **Usar arquitetura**. O comando copiado, a [prévia](/new/preview) e o link de compartilhamento passam a usar a opção escolhida.
+
+No CLI:
+
+```bash
+kubojs my-app --yes --architecture clean
+```
+
+A arquitetura fica salva em `kubo.config.ts`.
+
+## O que não muda
+
+- As pastas de rotas exigidas pelo framework (`routes/`, `app/`, `pages/`…) e os arquivos de entrada (`main.tsx`, `router.tsx`, `root.tsx`, `hooks.server.ts`…).
+- Os arquivos públicos da API usados por outros pacotes: `src/index.ts`, `src/context.ts`, `src/router.ts` e `src/routers/index.ts`.
+- O pacote `packages/ui` (componentes shadcn).
+
+Os imports entre os arquivos movidos são reescritos na geração, mantendo o estilo original (relativo continua relativo, `@/` continua `@/`, `$lib` continua `$lib`).
+
+## Limites da v1
+
+- Vale para a API com **tRPC** ou **oRPC** e para os fronts TanStack Router, React Router, TanStack Start, Next, Solid, Svelte e Astro. Nuxt e o app nativo mantêm a estrutura padrão.
+- Os exemplos `todo` e `ai` continuam como uma rota única no web.
+- No SvelteKit, o código movido fica dentro de `src/lib/`.
+- O `kubo add` grava arquivos novos nos caminhos padrão.

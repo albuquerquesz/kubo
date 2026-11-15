@@ -1,6 +1,7 @@
 import {
   ADDONS_VALUES,
   API_VALUES,
+  ARCHITECTURE_VALUES,
   AUTH_VALUES,
   BACKEND_VALUES,
   COMMUNICATION_VALUES,
@@ -25,8 +26,8 @@ import {
 } from "@kubojs/types";
 
 import { DEFAULT_STACK, type StackState } from "./constant";
-import type { TechCategory } from "./types";
 import { parseStackLayout } from "./stack-layout";
+import type { TechCategory } from "./types";
 
 export type FrontendCategory = "webFrontend" | "nativeFrontend";
 
@@ -161,6 +162,7 @@ export function normalizeStackState(value: unknown): StackState | null {
     webDeploy: selectValue(raw.webDeploy, WEB_DEPLOY_VALUES, DEFAULT_STACK.webDeploy),
     serverDeploy: selectValue(raw.serverDeploy, SERVER_DEPLOY_VALUES, DEFAULT_STACK.serverDeploy),
     layout: parseStackLayout(raw.layout) ?? undefined,
+    architecture: ARCHITECTURE_VALUES.find((value) => value === raw.architecture),
   };
 
   const parsed = ProjectConfigDraftSchema.safeParse(draft);

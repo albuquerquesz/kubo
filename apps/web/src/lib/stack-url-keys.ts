@@ -26,5 +26,6 @@ export const stackUrlKeys: UrlKeys<Record<keyof StackState, unknown> & { selecte
     serverDeploy: "sd",
     yolo: "yolo",
     layout: "lay",
+    architecture: "arch",
     selectedFile: "file",
   };
