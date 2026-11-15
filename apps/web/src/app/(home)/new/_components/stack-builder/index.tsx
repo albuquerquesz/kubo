@@ -19,7 +19,6 @@ import { PresetDialog } from "../preset-dialog";
 import { PreviewPanel } from "../preview-panel";
 import { SpecialSponsorsPanel } from "../special-sponsors-panel";
 import { BuilderStepLink } from "./builder-step-link";
-import { BuilderStepper } from "./builder-stepper";
 import { CategoryNav, scrollToCategorySection } from "./category-nav";
 import { ProjectNameField } from "./project-name-field";
 import { ProjectStructureCard } from "./project-structure-card";
@@ -149,14 +148,11 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
           Compartilhar stack
         </ShareDialog>
 
-        <div className="sticky top-0 z-20 border-border border-b bg-fd-background/95 px-3 py-2 backdrop-blur-sm sm:hidden">
-          <BuilderStepper current={step} />
-          {!isLayoutStep && (
-            <div className="mt-2">
-              <CategoryNav progress={categoryProgress} idPrefix="section-mobile" />
-            </div>
-          )}
-        </div>
+        {!isLayoutStep && (
+          <div className="sticky top-0 z-20 border-border border-b bg-fd-background/95 px-3 py-2 backdrop-blur-sm sm:hidden">
+            <CategoryNav progress={categoryProgress} idPrefix="section-mobile" />
+          </div>
+        )}
 
         <div className="hidden h-full flex-1 grid-cols-[19rem_minmax(0,1fr)] overflow-hidden border-border sm:grid lg:grid-cols-[24rem_minmax(0,1fr)]">
           <aside className="flex min-h-0 flex-col overflow-hidden border-rule border-r bg-fd-background">
@@ -231,18 +227,18 @@ export function StackBuilder({ step = "stack", specialSponsors = [] }: StackBuil
 
           <div
             className={cn(
-              "grid min-h-0 min-w-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden",
-              !isLayoutStep && "lg:grid-cols-[minmax(0,1fr)_15rem]",
+              "grid min-h-0 min-w-0 overflow-hidden",
+              isLayoutStep
+                ? "grid-rows-[minmax(0,1fr)]"
+                : "grid-rows-[auto_minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_15rem] lg:grid-rows-[minmax(0,1fr)]",
             )}
           >
-            <div className="sticky top-0 z-10 flex flex-col gap-2 border-border border-b bg-fd-background px-3 py-2 lg:col-span-2">
-              <BuilderStepper current={step} />
-              {!isLayoutStep && (
-                <div className="lg:hidden">
-                  <CategoryNav progress={categoryProgress} idPrefix="section" />
-                </div>
-              )}
-            </div>
+            {/* Below lg the category nav sits on top; from lg it moves to the right rail. */}
+            {!isLayoutStep && (
+              <div className="sticky top-0 z-10 border-border border-b bg-fd-background px-3 py-2 lg:hidden">
+                <CategoryNav progress={categoryProgress} idPrefix="section" />
+              </div>
+            )}
 
             {isLayoutStep ? (
               <section className="flex min-h-0 flex-col overflow-y-auto xl:flex-row xl:overflow-hidden">
