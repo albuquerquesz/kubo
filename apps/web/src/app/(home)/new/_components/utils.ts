@@ -14,6 +14,12 @@ export {
 } from "@/lib/stack-compatibility";
 export type { CompatibilityResult } from "@/lib/stack-compatibility";
 
+/**
+ * Whitespace and characters a shell treats specially. The CLI accepts them in a path, but pasted
+ * into a terminal the generated command breaks (for example `!!` expands the shell history).
+ */
+const SHELL_UNSAFE_CHARACTERS = /[\s!$&;(){}[\]'`\\^]/;
+
 export function validateProjectName(name: string): string | undefined {
   const invalidCharacters = ["<", ">", ":", '"', "|", "?", "*"];
   const maxLength = 255;
@@ -25,6 +31,9 @@ export function validateProjectName(name: string): string | undefined {
   }
   if (invalidCharacters.some((character) => name.includes(character))) {
     return "O nome do projeto contém caracteres inválidos";
+  }
+  if (SHELL_UNSAFE_CHARACTERS.test(name)) {
+    return "Evite espaços e caracteres como ! $ & ; ( ) { } [ ] ' ` \\ ^, eles quebram o comando no terminal";
   }
   if (name.startsWith(".") || name.startsWith("-")) {
     return "O nome do projeto não pode começar com ponto ou hífen";

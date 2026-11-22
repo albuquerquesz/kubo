@@ -110,7 +110,7 @@ const TECH_OPTION_METADATA: Record<TechCategory, TechOption[]> = {
     },
     {
       id: "svelte",
-      name: "Svelte",
+      name: "SvelteKit",
       description: "Apps web com reatividade aprimorada",
       icon: `${ICON_BASE_URL}/svelte.svg`,
       color: "from-orange-500 to-orange-700",
