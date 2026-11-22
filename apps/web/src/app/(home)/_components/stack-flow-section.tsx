@@ -1,15 +1,13 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 import KuboCliTerminal from "./kubo-cli-terminal";
 
 export default function StackFlowSection() {
-  const router = useRouter();
-
   return (
     <div className="mx-auto my-12 w-[1200px] max-w-full sm:my-16">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-6 px-1 text-zinc-100">
@@ -21,10 +19,10 @@ export default function StackFlowSection() {
             Monte sua stack em minutos.
           </h2>
         </div>
-        <Button type="button" variant="cta" size="xl" onClick={() => router.push("/new")}>
+        <Link href="/new" className={buttonVariants({ variant: "cta", size: "xl" })}>
           Montar minha stack
           <ArrowUpRight aria-hidden data-icon="inline-end" />
-        </Button>
+        </Link>
       </div>
       <section
         aria-labelledby="stack-flow-title"
