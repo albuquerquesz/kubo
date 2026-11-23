@@ -382,9 +382,11 @@ Implementações de exemplo a incluir:
 - `none`: Sem exemplos
 - `todo`: Exemplo de app todo
 - `ai`: Exemplo de interface de chat com IA
+- `chatbot`: Assistente estilo Grok com CopilotKit sobre o protocolo AG-UI (barra lateral de conversas, raciocínio expansível, tool chips, card de aprovação e CTA "Built with Kubo"). Exige `--backend self` com `--frontend next` ou `--frontend tanstack-start` e não pode ser combinado com `ai`.
 
 ```bash
 kubojs --examples todo ai
+kubojs --backend self --frontend next --examples chatbot
 ```
 
 ## Deploy

@@ -549,7 +549,17 @@ function buildServerVars(
     {
       key: "GOOGLE_GENERATIVE_AI_API_KEY",
       value: "",
-      condition: examples?.includes("ai") || false,
+      condition: examples?.includes("ai") || examples?.includes("chatbot") || false,
+      comment: examples?.includes("chatbot")
+        ? "Google AI key used by the chatbot's default model (google/gemini-2.5-flash)"
+        : undefined,
+    },
+    {
+      key: "CHATBOT_MODEL",
+      value: "google/gemini-2.5-flash",
+      condition: examples?.includes("chatbot") || false,
+      comment:
+        "Chatbot: provider/model for the CopilotKit agent (openai/... uses OPENAI_API_KEY, anthropic/... uses ANTHROPIC_API_KEY)",
     },
     ...buildMillionSendVars(communication),
     {

@@ -1,0 +1,23 @@
+{{#if (and (eq auth "better-auth") (eq backend "self"))}}
+import { createFileRoute, redirect } from "@tanstack/react-router";
+
+import ChatbotApp from "../components/chatbot/chatbot-app";
+import { getUser } from "../functions/get-user";
+
+export const Route = createFileRoute("/chatbot")({
+  component: ChatbotApp,
+  beforeLoad: async () => {
+    const session = await getUser();
+    if (!session) throw redirect({ to: "/login" });
+    return { session };
+  },
+});
+{{else}}
+import { createFileRoute } from "@tanstack/react-router";
+
+import ChatbotApp from "../components/chatbot/chatbot-app";
+
+export const Route = createFileRoute("/chatbot")({
+  component: ChatbotApp,
+});
+{{/if}}

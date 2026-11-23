@@ -1,0 +1,24 @@
+{{#if (and (eq auth "better-auth") (eq backend "self"))}}
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+
+{{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}}
+import { createAuth } from "{{packageScope}}/auth";
+{{else}}
+import { auth } from "{{packageScope}}/auth";
+{{/if}}
+{{/if}}
+import ChatbotApp from "../../components/chatbot/chatbot-app";
+
+export const metadata = { title: "Chatbot" };
+
+export default async function ChatbotPage() {
+{{#if (and (eq auth "better-auth") (eq backend "self"))}}
+  const session = await {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}}createAuth(){{else}}auth{{/if}}.api.getSession({
+    headers: await headers(),
+  });
+  if (!session?.user) redirect("/login");
+
+{{/if}}
+  return <ChatbotApp />;
+}

@@ -1,0 +1,25 @@
+{{#if (eq auth "better-auth")}}
+{{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}}
+import { createAuth } from "{{packageScope}}/auth";
+{{else}}
+import { auth } from "{{packageScope}}/auth";
+{{/if}}
+{{/if}}
+import { handleChatbotRequest } from "../../../../lib/chatbot/runtime";
+
+// CopilotKit runtime over AG-UI: /api/copilotkit/info, /api/copilotkit/agent/:id/run, ...
+export const maxDuration = 60;
+
+async function handler(request: Request): Promise<Response> {
+{{#if (eq auth "better-auth")}}
+  const session = await {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}}createAuth(){{else}}auth{{/if}}.api.getSession({ headers: request.headers });
+  if (!session?.user) return Response.json({ error: "unauthorized" }, { status: 401 });
+
+{{/if}}
+  return handleChatbotRequest(request);
+}
+
+export const GET = handler;
+export const POST = handler;
+export const PATCH = handler;
+export const DELETE = handler;

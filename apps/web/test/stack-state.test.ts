@@ -171,6 +171,20 @@ describe("canonical stack state", () => {
     });
   });
 
+  test("keeps the chatbot example through the command and the sharing URL", async () => {
+    const stack = sanitizeStackState({
+      ...DEFAULT_STACK,
+      backend: "self",
+      frontend: ["tanstack-start"],
+      examples: ["chatbot"],
+    });
+    expect(stack.examples).toEqual(["chatbot"]);
+    expect(generateStackCommand(stack)).toContain("--examples chatbot");
+    const url = new URL(generateStackUrlFromState(stack, "https://example.test"));
+    const loaded = await loadStackParams(Object.fromEntries(url.searchParams));
+    expect(loaded.examples).toEqual(["chatbot"]);
+  });
+
   test("serializes self fullstack directly for each supported frontend", () => {
     for (const frontend of SELF_HOSTED_FRONTENDS) {
       const command = generateStackCommand(

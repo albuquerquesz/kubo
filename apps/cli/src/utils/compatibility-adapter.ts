@@ -33,6 +33,15 @@ const NESTJS_MESSAGES = {
     "Payment integrations are not supported with NestJS yet. Please remove payment providers.",
 } as const satisfies Partial<Record<CompatibilityIssueCode, string>>;
 
+const CHATBOT_EXAMPLE_MESSAGES: Partial<Record<CompatibilityIssueCode, string>> = {
+  "example-chatbot-backend":
+    "The 'chatbot' example runs the CopilotKit runtime inside the web app and requires '--backend self'. Separate backends (Hono, Express, Fastify, Elysia, NestJS) and Convex are not supported yet.",
+  "example-chatbot-frontend":
+    "The 'chatbot' example only supports Next.js or TanStack Start (fullstack). Please use '--frontend next' or '--frontend tanstack-start' without native or other web frontends.",
+  "example-chatbot-ai":
+    "The 'chatbot' and 'ai' examples both generate a chat screen. Please choose only one of them in --examples.",
+};
+
 const FIELD_FLAGS: Partial<Record<CompatibilityField, string>> = {
   runtime: "--runtime",
   database: "--database",
@@ -152,6 +161,11 @@ function getExampleMessage(config: Partial<ProjectConfig>, issue: CompatibilityI
       ? incompatible.charAt(0).toUpperCase() + incompatible.slice(1)
       : "selected";
     return `The 'ai' example is not compatible with the ${frontendName} frontend.`;
+  }
+  const chatbotMessage = CHATBOT_EXAMPLE_MESSAGES[issue.code];
+  if (chatbotMessage) return chatbotMessage;
+  if (issue.code === "example-todo-orval") {
+    return "The Orval API layer does not support the generated todo example yet. Please remove 'todo' from --examples or choose tRPC/oRPC.";
   }
   if (issue.code === "example-todo-database") {
     return "The 'todo' example requires a database. Cannot use --examples todo when database is 'none'.";
@@ -293,16 +307,7 @@ function getCompatibilityMessage(
     return getAddonMessage(issue, config);
   }
   if (issue.code === "testing-frontend") return "playwright testing requires a web frontend";
-  if (
-    issue.code === "example-todo-database" ||
-    issue.code === "example-todo-api" ||
-    issue.code === "example-todo-orval" ||
-    issue.code === "example-ai-frontend" ||
-    issue.code === "example-ai-backend"
-  ) {
-    if (issue.code === "example-todo-orval") {
-      return "The Orval API layer does not support the generated todo example yet. Please remove 'todo' from --examples or choose tRPC/oRPC.";
-    }
+  if (issue.code.startsWith("example-")) {
     return getExampleMessage(config, issue);
   }
   if (issue.code === "communication") {

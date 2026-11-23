@@ -25,6 +25,9 @@ export default function Header() {
     {{#if (includes examples "ai")}}
     { to: "/ai", label: "AI Chat" },
     {{/if}}
+    {{#if (includes examples "chatbot")}}
+    { to: "/chatbot", label: "Chatbot" },
+    {{/if}}
   ] as const;
 
   return (

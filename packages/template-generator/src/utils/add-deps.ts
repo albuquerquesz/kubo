@@ -119,6 +119,9 @@ export const dependencyVersionMap = {
   "@ai-sdk/react": "^4.0.14",
   "@ai-sdk/devtools": "^1.0.1",
   streamdown: "^2.5.0",
+  // CopilotKit packages release in lockstep; keep both on the same exact version.
+  "@copilotkit/react-core": "1.90.0",
+  "@copilotkit/runtime": "1.90.0",
   shiki: "^4.3.0",
 
   "@orpc/server": "^1.14.6",

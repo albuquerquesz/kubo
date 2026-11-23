@@ -23,6 +23,44 @@ describe("compatibility matrix oracle", () => {
     });
   });
 
+  const chatbotBase = {
+    backend: "self",
+    runtime: "none",
+    database: "none",
+    orm: "none",
+    api: "none",
+    examples: ["chatbot"],
+  } as const;
+
+  test.each(["next", "tanstack-start"] as const)("accepts chatbot on %s fullstack", (frontend) => {
+    expect(
+      evaluateMatrixConfig(createMatrixConfig({ ...chatbotBase, frontend: [frontend] })),
+    ).toEqual({ valid: true, rules: [] });
+  });
+
+  test.each([
+    ["svelte", { frontend: ["svelte"] }, "example-chatbot-frontend"],
+    ["nuxt", { frontend: ["nuxt"] }, "example-chatbot-frontend"],
+    ["native", { frontend: ["next", "native-bare"] }, "example-chatbot-frontend"],
+    [
+      "a separate backend",
+      { backend: "hono", runtime: "bun", frontend: ["tanstack-router"] },
+      "example-chatbot-backend",
+    ],
+    ["the ai example", { frontend: ["next"], examples: ["chatbot", "ai"] }, "example-chatbot-ai"],
+  ] as const)("rejects chatbot with %s", (_label, overrides, rule) => {
+    const result = evaluateMatrixConfig(
+      createMatrixConfig({
+        ...chatbotBase,
+        ...overrides,
+        frontend: [...overrides.frontend],
+        examples: [...("examples" in overrides ? overrides.examples : chatbotBase.examples)],
+      }),
+    );
+    expect(result.valid).toBe(false);
+    expect(result.rules).toContain(rule);
+  });
+
   test("reads the structured compatibility code from generation errors", async () => {
     const result = await createVirtual({
       frontend: ["nuxt"],

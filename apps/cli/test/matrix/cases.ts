@@ -410,6 +410,14 @@ export function createSmokeMatrixCases(): MatrixCase[] {
       runtime: "bun",
       frontend: [frontend],
     });
+    // chatbot is fullstack-only: valid for Next.js/TanStack Start, rejected elsewhere.
+    pushUnique(configs, seen, {
+      backend: "self",
+      runtime: "none",
+      frontend: [frontend],
+      api: frontend === "nuxt" || frontend === "svelte" || frontend === "astro" ? "orpc" : "trpc",
+      examples: ["chatbot"],
+    });
   }
 
   for (const backend of MATRIX_BACKENDS) {

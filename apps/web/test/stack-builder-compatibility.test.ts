@@ -539,6 +539,23 @@ describe("stack builder D1 compatibility", () => {
     ).toBeNull();
   });
 
+  test("offers the chatbot only for Next.js or TanStack Start fullstack without the AI example", () => {
+    const fullstack = createStack({ frontend: ["next"], backend: "self", api: "none" });
+    expect(getDisabledReason(fullstack, "examples", "chatbot")).toBeNull();
+    expect(getDisabledReason({ ...fullstack, examples: ["ai"] }, "examples", "chatbot")).toBe(
+      "O Chatbot e o exemplo de IA geram a mesma tela de chat; escolha só um",
+    );
+
+    const separate = createStack({ frontend: ["tanstack-router"], backend: "hono" });
+    expect(getDisabledReason(separate, "examples", "chatbot")).toContain("backend fullstack");
+
+    const svelte = createStack({ frontend: ["svelte"], backend: "self", api: "orpc" });
+    expect(getDisabledReason(svelte, "examples", "chatbot")).toContain("Next.js ou TanStack Start");
+    expect(
+      analyzeStackCompatibility({ ...svelte, examples: ["chatbot"] }).adjustedStack?.examples,
+    ).toEqual(["none"]);
+  });
+
   test("blocks the AI example for Astro frontends", () => {
     const stack = createStack({
       frontend: ["astro"],

@@ -7,6 +7,7 @@ import {
   STATIC_DESKTOP_ADDONS,
   WEB_FRONTENDS_REQUIRING_ORPC,
   ADDON_COMPATIBILITY,
+  isChatbotExampleSupported,
 } from "./compatibility";
 import { isDesktopWebFrontend } from "./constants";
 import {
@@ -459,6 +460,15 @@ function normalizeExamples(
     examples = examples.filter((example) => example !== "ai");
   }
   setField(config, adjustments, "examples", examples.length > 0 ? examples : ["none"], "example");
+  if (config.examples.includes("chatbot") && !isChatbotExampleSupported(config)) {
+    setField(
+      config,
+      adjustments,
+      "examples",
+      removeFromList(config.examples, "chatbot", ["none"]),
+      "example-chatbot",
+    );
+  }
 }
 
 function normalizeDeployments(

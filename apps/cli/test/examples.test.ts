@@ -1,6 +1,24 @@
-import { describe, it } from "bun:test";
+import { describe, expect, it } from "bun:test";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 
-import { expectError, expectSuccess, runTRPCTest } from "./test-utils";
+import { expectError, expectSuccess, runTRPCTest, type TestConfig } from "./test-utils";
+
+const CHATBOT_BASE: TestConfig = {
+  examples: ["chatbot"],
+  backend: "self",
+  runtime: "none",
+  database: "none",
+  orm: "none",
+  auth: "none",
+  api: "none",
+  frontend: ["next"],
+  addons: ["none"],
+  dbSetup: "none",
+  webDeploy: "none",
+  serverDeploy: "none",
+  install: false,
+};
 
 describe("Example Configurations", () => {
   describe("Todo Example", () => {
@@ -481,6 +499,68 @@ describe("Example Configurations", () => {
       });
 
       expectSuccess(result);
+    });
+  });
+
+  describe("Chatbot Example", () => {
+    it("creates a Next.js fullstack chatbot and records it for reproduction", async () => {
+      const result = await runTRPCTest({ ...CHATBOT_BASE, projectName: "chatbot-next" });
+
+      expectSuccess(result);
+      expect(result.result?.reproducibleCommand).toContain("--examples chatbot");
+      const kuboConfig = await readFile(join(result.projectDir!, "kubo.config.ts"), "utf8");
+      expect(kuboConfig).toContain('"chatbot"');
+      const page = await readFile(
+        join(result.projectDir!, "apps/web/src/app/chatbot/page.tsx"),
+        "utf8",
+      );
+      expect(page).toContain("ChatbotApp");
+    });
+
+    it("creates a TanStack Start fullstack chatbot", async () => {
+      const result = await runTRPCTest({
+        ...CHATBOT_BASE,
+        projectName: "chatbot-tanstack-start",
+        frontend: ["tanstack-start"],
+      });
+
+      expectSuccess(result);
+    });
+
+    it("rejects chatbot with a separate backend", async () => {
+      const result = await runTRPCTest({
+        ...CHATBOT_BASE,
+        projectName: "chatbot-hono-fail",
+        backend: "hono",
+        runtime: "bun",
+        frontend: ["tanstack-router"],
+        expectError: true,
+      });
+
+      expectError(result, "The 'chatbot' example runs the CopilotKit runtime inside the web app");
+    });
+
+    it("rejects chatbot with Svelte", async () => {
+      const result = await runTRPCTest({
+        ...CHATBOT_BASE,
+        projectName: "chatbot-svelte-fail",
+        frontend: ["svelte"],
+        api: "orpc",
+        expectError: true,
+      });
+
+      expectError(result, "The 'chatbot' example only supports Next.js or TanStack Start");
+    });
+
+    it("rejects chatbot combined with the ai example", async () => {
+      const result = await runTRPCTest({
+        ...CHATBOT_BASE,
+        projectName: "chatbot-ai-fail",
+        examples: ["chatbot", "ai"],
+        expectError: true,
+      });
+
+      expectError(result, "The 'chatbot' and 'ai' examples both generate a chat screen");
     });
   });
 

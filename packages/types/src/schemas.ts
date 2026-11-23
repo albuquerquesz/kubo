@@ -63,7 +63,7 @@ const AddonsListSchema = z.array(AddonsSchema).superRefine((addons, ctx) => {
 });
 
 export const ExamplesSchema = z
-  .enum(["todo", "ai", "none"])
+  .enum(["todo", "ai", "chatbot", "none"])
   .describe("Example templates to include");
 
 export const TestingSchema = z.enum(["vitest", "playwright", "none"]).describe("Testing tools");

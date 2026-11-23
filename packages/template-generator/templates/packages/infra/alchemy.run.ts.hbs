@@ -78,7 +78,7 @@ export const server = await Worker("server", {
     CLERK_PUBLISHABLE_KEY: alchemy.env.CLERK_PUBLISHABLE_KEY!,
     {{/if}}
     {{/if}}
-    {{#if (includes examples "ai")}}
+    {{#if (or (includes examples "ai") (includes examples "chatbot"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
 
@@ -154,7 +154,7 @@ export const web = await Nextjs("web", {
     CLERK_PUBLISHABLE_KEY: alchemy.env.CLERK_PUBLISHABLE_KEY!,
     {{/if}}
     {{/if}}
-    {{#if (and (includes examples "ai") (ne backend "convex"))}}
+    {{#if (and (or (includes examples "ai") (includes examples "chatbot")) (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
 
@@ -230,7 +230,7 @@ export const web = await Nuxt("web", {
     CLERK_PUBLISHABLE_KEY: alchemy.env.CLERK_PUBLISHABLE_KEY!,
     {{/if}}
     {{/if}}
-    {{#if (and (includes examples "ai") (ne backend "convex"))}}
+    {{#if (and (or (includes examples "ai") (includes examples "chatbot")) (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
 
@@ -294,7 +294,7 @@ export const web = await SvelteKit("web", {
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
     {{/if}}
-    {{#if (and (includes examples "ai") (ne backend "convex"))}}
+    {{#if (and (or (includes examples "ai") (includes examples "chatbot")) (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
 
@@ -368,7 +368,7 @@ export const web = await TanStackStart("web", {
     CLERK_PUBLISHABLE_KEY: alchemy.env.CLERK_PUBLISHABLE_KEY!,
     {{/if}}
     {{/if}}
-    {{#if (and (includes examples "ai") (ne backend "convex"))}}
+    {{#if (and (or (includes examples "ai") (includes examples "chatbot")) (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
 

@@ -15,6 +15,7 @@ import {
   getGuaraCloudScriptSets,
   getVercelScriptNames,
 } from "./readme-deployment";
+import { generateExampleSetups } from "./readme-examples";
 import { generateIntegrationSetups, getIntegrationFeatures } from "./readme-integrations";
 
 function getDesktopStaticBuildNote(frontend: ProjectConfig["frontend"]): string {
@@ -218,7 +219,7 @@ ${getClerkSetupLines(frontend, backend, api, false).join("\n")}`
 }
 ${payments.includes("abacatepay") ? generateAbacatePaySetup(options, packageManagerRunCmd, webPort) : ""}
 ${payments.includes("stripe") ? generateStripeSetup(options, packageManagerRunCmd, webPort) : ""}
-${generateIntegrationSetups(options)}
+${generateIntegrationSetups(options)}${generateExampleSetups(options)}
 
 Then, run the development server:
 

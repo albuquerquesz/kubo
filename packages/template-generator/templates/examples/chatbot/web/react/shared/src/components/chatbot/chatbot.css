@@ -1,0 +1,605 @@
+/*
+ * Chatbot example styles.
+ *
+ * Design tokens, keyframes and the `primitive-*` / `animated-underline` helpers come from
+ * Beautiful UI (https://www.beautifului.dev, MIT, see ./beautiful-ui/LICENSE). They are scoped
+ * to `.kubo-chatbot` so they never leak into the rest of the app or override shadcn tokens.
+ * The CSS icons (`.kc-icon-*`) are original to this template.
+ */
+
+@theme inline {
+  --color-page: var(--page);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-inset: var(--inset);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-hover: var(--hover);
+  --color-hover-2: var(--hover-2);
+  --color-field: var(--field);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-tint: var(--accent-tint);
+  --color-green: var(--green);
+  --color-green-tint: var(--green-tint);
+  --color-red: var(--red);
+  --color-red-tint: var(--red-tint);
+  --shadow-hairline: var(--shadow-hairline);
+  --shadow-btn: var(--shadow-btn);
+  --shadow-card: var(--shadow-card);
+  --shadow-raised: var(--shadow-raised);
+  --shadow-overlay: var(--shadow-overlay);
+  --radius-chip: 6px;
+  --radius-control: 8px;
+  --radius-card: 10px;
+  --radius-window: 14px;
+}
+
+.kubo-chatbot[data-theme="light"] {
+  color-scheme: light;
+  --page: oklch(98.5% 0.001 286.376);
+  --canvas: oklch(96.1% 0.002 247.84);
+  --surface: oklch(100% 0 0);
+  --inset: oklch(97.9% 0.002 247.839);
+  --hover: oklch(97% 0.002 247.839);
+  --hover-2: oklch(93.3% 0.003 247.86);
+  --ink: oklch(24.7% 0.006 258.361);
+  --ink-2: oklch(50.6% 0.01 264.477);
+  --ink-3: oklch(69.5% 0.009 264.505);
+  --line: oklch(94.6% 0.003 264.542);
+  --line-strong: oklch(91.2% 0.005 258.326);
+  --field: oklch(96.1% 0.001 286.375);
+  --accent: oklch(62.6% 0.205 254.947);
+  --accent-ink: oklch(55.6% 0.187 255.617);
+  --accent-tint: oklch(96% 0.019 252.878);
+  --green: oklch(60.3% 0.155 150.883);
+  --green-tint: oklch(95.8% 0.017 159.118);
+  --red: oklch(62.1% 0.192 23.042);
+  --red-tint: oklch(95.6% 0.017 17.462);
+  --shadow-xs: 0 0 4px 0 #0000000a;
+  --shadow-hairline: 0 0 0 1px var(--line);
+  --shadow-btn: 0 0 0 1px var(--line-strong), var(--shadow-xs);
+  --shadow-card:
+    0 0 0 1px var(--line), 0 18px 47px 0 #00000008, 0 7.5px 19px 0 #00000005,
+    0 4px 10.5px 0 #00000005;
+  --shadow-raised:
+    0 0 0 1px var(--line), 0 17.54px 23.39px 0 #0000000a, 0 9.4px 12.5px 0 #00000008,
+    0 5.25px 7px 0 #00000005;
+  --shadow-overlay:
+    0 0 0 1px var(--line), 0 25px 50px 0 #0000000d, 0 12px 24px 0 #0000000a, 0 6px 12px 0 #00000008;
+}
+
+.kubo-chatbot[data-theme="dark"] {
+  color-scheme: dark;
+  --page: oklch(20.9% 0.004 264.477);
+  --canvas: oklch(23.1% 0.004 264.487);
+  --surface: oklch(26% 0.006 271.191);
+  --inset: oklch(24.3% 0.004 264.492);
+  --hover: oklch(28.9% 0.006 271.22);
+  --hover-2: oklch(31.8% 0.007 274.747);
+  --ink: oklch(96.4% 0.002 247.839);
+  --ink-2: oklch(73.1% 0.008 260.731);
+  --ink-3: oklch(54.1% 0.01 264.484);
+  --line: oklch(30.8% 0.006 258.354);
+  --line-strong: oklch(35.6% 0.007 264.474);
+  --field: oklch(29.3% 0.006 271.223);
+  --accent: oklch(68% 0.173 253.301);
+  --accent-ink: oklch(78.8% 0.113 248.33);
+  --accent-tint: oklch(68% 0.173 253.301 / 0.16);
+  --green: oklch(70.5% 0.154 153.814);
+  --green-tint: oklch(70.5% 0.154 153.814 / 0.14);
+  --red: oklch(66.6% 0.18 21.433);
+  --red-tint: oklch(66.6% 0.18 21.433 / 0.14);
+  --shadow-hairline: 0 0 0 1px var(--line);
+  --shadow-btn: 0 0 0 1px oklch(100% 0 0 / 0.1), 0 1px 2px oklch(0% 0 0 / 0.3);
+  --shadow-card:
+    0 0 0 1px oklch(100% 0 0 / 0.11), 0 1px 2px oklch(0% 0 0 / 0.2), 0 2px 6px oklch(0% 0 0 / 0.2);
+  --shadow-raised: 0 0 0 1px oklch(100% 0 0 / 0.13), 0 2px 10px oklch(0% 0 0 / 0.22);
+  --shadow-overlay: 0 0 0 1px oklch(100% 0 0 / 0.15), 0 8px 28px oklch(0% 0 0 / 0.34);
+}
+
+.kubo-chatbot {
+  background: var(--page);
+  color: var(--ink);
+}
+
+/* ── Beautiful UI helpers ─────────────────────────────────────────── */
+
+.kubo-chatbot .primitive-icon-button {
+  border-radius: var(--radius-control);
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+}
+
+.kubo-chatbot .primitive-card-pad {
+  padding: 12px;
+}
+
+.kubo-chatbot .primitive-card-footer {
+  padding: 10px;
+}
+
+.kubo-chatbot .animated-underline {
+  display: inline-block;
+  position: relative;
+}
+
+.kubo-chatbot .animated-underline::after {
+  content: "";
+  transform-origin: 0;
+  height: 1px;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  background: currentColor;
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  transform: scaleX(0);
+}
+
+.kubo-chatbot a:hover .animated-underline::after,
+.kubo-chatbot a:focus-visible .animated-underline::after {
+  transform: scaleX(1);
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer-text {
+  0% {
+    background-position: 150%;
+  }
+  to {
+    background-position: -50%;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* Streamdown markdown, tuned to the token palette. */
+.kubo-chatbot .kc-markdown {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.kubo-chatbot .kc-markdown :where(p, ul, ol, pre, blockquote, table) {
+  margin-block: 0.6em;
+}
+
+.kubo-chatbot .kc-markdown :where(code) {
+  border-radius: 5px;
+  background: var(--inset);
+  box-shadow: var(--shadow-hairline);
+  padding: 0.1em 0.35em;
+  font-size: 0.9em;
+}
+
+/* ── CSS icons (original): thin monochrome strokes + micro-animations ── */
+
+.kc-icon {
+  --kc-icon-size: 16px;
+  --kc-stroke: 1.6px;
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: var(--kc-icon-size);
+  height: var(--kc-icon-size);
+  color: currentColor;
+}
+
+.kc-icon::before,
+.kc-icon::after,
+.kc-icon > span {
+  content: "";
+  position: absolute;
+  box-sizing: border-box;
+}
+
+/* send: an arrow pointing up that pulses on hover */
+.kc-icon-send::before {
+  left: calc(50% - var(--kc-stroke) / 2);
+  top: 20%;
+  width: var(--kc-stroke);
+  height: 64%;
+  border-radius: 1px;
+  background: currentColor;
+}
+.kc-icon-send::after {
+  left: 27%;
+  width: 46%;
+  height: 46%;
+  border-left: var(--kc-stroke) solid currentColor;
+  border-top: var(--kc-stroke) solid currentColor;
+  border-radius: 1px;
+  transform: rotate(45deg);
+  transform-origin: center;
+  top: 18%;
+}
+:is(button, a):hover > .kc-icon-send,
+:is(button, a):focus-visible > .kc-icon-send {
+  animation: kc-send-pulse 900ms cubic-bezier(0.23, 1, 0.32, 1) infinite;
+}
+@keyframes kc-send-pulse {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+/* stop: a filled rounded square */
+.kc-icon-stop::before {
+  inset: 26%;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+/* new chat: rounded square with a plus that turns on hover */
+.kc-icon-new-chat::before {
+  inset: 8%;
+  border: var(--kc-stroke) solid currentColor;
+  border-radius: 4px;
+}
+.kc-icon-new-chat::after {
+  left: 30%;
+  top: 30%;
+  width: 40%;
+  height: 40%;
+  background:
+    linear-gradient(currentColor, currentColor) center / 100% var(--kc-stroke) no-repeat,
+    linear-gradient(currentColor, currentColor) center / var(--kc-stroke) 100% no-repeat;
+  transition: transform 260ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+:is(button, a):hover > .kc-icon-new-chat::after {
+  transform: rotate(90deg);
+}
+
+/* thinking: a breathing core with an orbiting satellite */
+.kc-icon-thinking::before {
+  inset: 34%;
+  border-radius: 50%;
+  background: currentColor;
+  animation: kc-breathe 1.6s ease-in-out infinite;
+}
+.kc-icon-thinking::after {
+  inset: 6%;
+  border-radius: 50%;
+  border: var(--kc-stroke) solid transparent;
+  border-top-color: currentColor;
+  animation: spin 1.2s linear infinite;
+}
+@keyframes kc-breathe {
+  0%,
+  100% {
+    transform: scale(0.75);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* loading: a ring that spins */
+.kc-icon-loading::before {
+  inset: 10%;
+  border-radius: 50%;
+  border: var(--kc-stroke) solid color-mix(in oklab, currentColor 25%, transparent);
+  border-top-color: currentColor;
+  animation: spin 700ms linear infinite;
+}
+
+/* copy: two stacked sheets that morph into a check once copied */
+.kc-icon-copy::before {
+  left: 30%;
+  top: 30%;
+  width: 60%;
+  height: 60%;
+  border: var(--kc-stroke) solid currentColor;
+  border-radius: 3px;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+.kc-icon-copy::after {
+  left: 10%;
+  top: 10%;
+  width: 60%;
+  height: 60%;
+  border-left: var(--kc-stroke) solid currentColor;
+  border-top: var(--kc-stroke) solid currentColor;
+  border-radius: 3px 0 0 0;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+.kc-icon-copy > span {
+  left: 22%;
+  top: 18%;
+  width: 34%;
+  height: 58%;
+  border-right: var(--kc-stroke) solid currentColor;
+  border-bottom: var(--kc-stroke) solid currentColor;
+  transform: rotate(45deg) scale(0.4);
+  opacity: 0;
+  transition:
+    opacity 200ms ease,
+    transform 260ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.kc-icon-copy[data-state="done"]::before,
+.kc-icon-copy[data-state="done"]::after {
+  opacity: 0;
+  transform: scale(0.6);
+}
+.kc-icon-copy[data-state="done"] > span {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+
+/* menu: three lines that fold into an X when open */
+.kc-icon-menu > span {
+  left: 12%;
+  width: 76%;
+  height: var(--kc-stroke);
+  border-radius: 1px;
+  background: currentColor;
+  transition:
+    transform 260ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 160ms ease;
+}
+.kc-icon-menu > span:nth-child(1) {
+  top: 24%;
+}
+.kc-icon-menu > span:nth-child(2) {
+  top: calc(50% - var(--kc-stroke) / 2);
+}
+.kc-icon-menu > span:nth-child(3) {
+  bottom: 24%;
+}
+.kc-icon-menu[data-state="open"] > span:nth-child(1) {
+  transform: translateY(calc(var(--kc-icon-size) * 0.26 - var(--kc-stroke) / 2)) rotate(45deg);
+}
+.kc-icon-menu[data-state="open"] > span:nth-child(2) {
+  opacity: 0;
+}
+.kc-icon-menu[data-state="open"] > span:nth-child(3) {
+  transform: translateY(calc(var(--kc-icon-size) * -0.26 + var(--kc-stroke) / 2)) rotate(-45deg);
+}
+
+/* refresh: an open ring with an arrow head, it turns on hover */
+.kc-icon-refresh::before {
+  inset: 14%;
+  border-radius: 50%;
+  border: var(--kc-stroke) solid currentColor;
+  border-right-color: transparent;
+}
+.kc-icon-refresh::after {
+  right: 10%;
+  top: 14%;
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 4px solid currentColor;
+  transform: rotate(150deg);
+}
+.kc-icon-refresh {
+  transition: transform 420ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+:is(button, a):hover > .kc-icon-refresh {
+  transform: rotate(-180deg);
+}
+
+/* thumbs: a cuff plus a rounded palm; filled when active */
+.kc-icon-thumb-up::before,
+.kc-icon-thumb-down::before {
+  left: 8%;
+  top: 44%;
+  width: 22%;
+  height: 46%;
+  border: var(--kc-stroke) solid currentColor;
+  border-radius: 2px;
+}
+.kc-icon-thumb-up::after,
+.kc-icon-thumb-down::after {
+  left: 34%;
+  top: 44%;
+  width: 58%;
+  height: 46%;
+  border: var(--kc-stroke) solid currentColor;
+  border-radius: 2px 6px 6px 2px;
+}
+.kc-icon-thumb-up > span,
+.kc-icon-thumb-down > span {
+  left: 38%;
+  top: 8%;
+  width: 22%;
+  height: 40%;
+  border: var(--kc-stroke) solid currentColor;
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+  transform: rotate(14deg);
+  transform-origin: bottom left;
+}
+.kc-icon-thumb-down {
+  transform: rotate(180deg);
+}
+.kc-icon-thumb-up[data-state="on"]::after,
+.kc-icon-thumb-down[data-state="on"]::after {
+  background: currentColor;
+}
+.kc-icon-thumb-up[data-state="on"] {
+  animation: pop-in 260ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* chevron: a small V, rotated by the caller */
+.kc-icon-chevron::before {
+  left: 30%;
+  top: 18%;
+  width: 40%;
+  height: 40%;
+  border-right: var(--kc-stroke) solid currentColor;
+  border-bottom: var(--kc-stroke) solid currentColor;
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+
+/* close: two crossed strokes */
+.kc-icon-close::before,
+.kc-icon-close::after {
+  left: 14%;
+  top: calc(50% - var(--kc-stroke) / 2);
+  width: 72%;
+  height: var(--kc-stroke);
+  border-radius: 1px;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+.kc-icon-close::after {
+  transform: rotate(-45deg);
+}
+
+/* check */
+.kc-icon-check::before {
+  left: 34%;
+  top: 12%;
+  width: 32%;
+  height: 60%;
+  border-right: var(--kc-stroke) solid currentColor;
+  border-bottom: var(--kc-stroke) solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* sidebar: a window with a left rail */
+.kc-icon-sidebar::before {
+  inset: 12% 6%;
+  border: var(--kc-stroke) solid currentColor;
+  border-radius: 4px;
+}
+.kc-icon-sidebar::after {
+  left: 34%;
+  top: 12%;
+  bottom: 12%;
+  width: var(--kc-stroke);
+  background: currentColor;
+}
+
+/* sun / moon for the theme switch */
+.kc-icon-sun::before {
+  inset: 32%;
+  border-radius: 50%;
+  border: var(--kc-stroke) solid currentColor;
+}
+.kc-icon-sun::after {
+  left: calc(50% - 1px);
+  top: calc(50% - 1px);
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow:
+    0 -7px 0 currentColor,
+    0 7px 0 currentColor,
+    7px 0 0 currentColor,
+    -7px 0 0 currentColor,
+    5px 5px 0 currentColor,
+    -5px -5px 0 currentColor,
+    5px -5px 0 currentColor,
+    -5px 5px 0 currentColor;
+  transition: transform 420ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+:is(button, a):hover > .kc-icon-sun::after {
+  transform: rotate(45deg);
+}
+.kc-icon-moon::before {
+  inset: 14%;
+  border-radius: 50%;
+  box-shadow: inset 4px -3px 0 0 currentColor;
+  transform: rotate(-20deg);
+  transition: transform 420ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+:is(button, a):hover > .kc-icon-moon::before {
+  transform: rotate(-50deg);
+}
+
+/* sparkle: a four-point star used for the assistant mark */
+.kc-icon-sparkle::before {
+  inset: 4%;
+  background: currentColor;
+  clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
+}
+.kc-icon-sparkle[data-state="active"]::before {
+  animation: kc-breathe 1.6s ease-in-out infinite;
+}
+
+/* wrench: a tool call */
+.kc-icon-tool::before {
+  left: 18%;
+  top: 46%;
+  width: 66%;
+  height: var(--kc-stroke);
+  border-radius: 1px;
+  background: currentColor;
+  transform: rotate(-45deg);
+}
+.kc-icon-tool::after {
+  right: 8%;
+  top: 8%;
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  border: var(--kc-stroke) solid currentColor;
+  border-left-color: transparent;
+}
+
+/* Respect reduced motion everywhere inside the chatbot (Beautiful UI's global rule, scoped). */
+@media (prefers-reduced-motion: reduce) {
+  .kubo-chatbot *,
+  .kubo-chatbot ::before,
+  .kubo-chatbot ::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
