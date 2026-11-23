@@ -26,6 +26,7 @@ import { MessageActions } from "./message-actions";
 type AssistantMessage = Extract<AgentMessage, { role: "assistant" }>;
 type ToolMessage = Extract<AgentMessage, { role: "tool" }>;
 type ToolCall = NonNullable<AssistantMessage["toolCalls"]>[number];
+type CoreAgent = Parameters<ReturnType<typeof useCopilotKit>["copilotkit"]["runAgent"]>[0]["agent"];
 
 const SUGGESTIONS = [
   "Explain the AG-UI protocol in two sentences",
@@ -159,8 +160,13 @@ export function ChatThread({
   // The agent is a mutable object: opt out of React Compiler memoization so every
   // streamed update re-renders (Next.js enables the compiler in this template).
   "use no memo";
-  const { agent, isReady } = useAgent();
+  const { agent: hookAgent, isReady } = useAgent();
   const { copilotkit } = useCopilotKit();
+  // Package boundary: @copilotkit/react-core and @copilotkit/core can resolve two
+  // copies of @ag-ui/client (they see different zod versions), so the two
+  // AbstractAgent types differ by name only. At runtime it is the same object,
+  // created by the core, so we use the core's type for it.
+  const agent = hookAgent as unknown as CoreAgent;
   const renderToolCall = useRenderToolCall();
   const [status, setStatus] = useState<ChatbotStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
