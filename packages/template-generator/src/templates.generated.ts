@@ -22166,6 +22166,2968 @@ function RouteComponent() {
 	</form>
 </div>
 `],
+  ["examples/chatbot/fullstack/next/src/app/api/copilotkit/[[...slug]]/route.ts.hbs", `{{#if (eq auth "better-auth")}}
+{{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}}
+import { createAuth } from "{{packageScope}}/auth";
+{{else}}
+import { auth } from "{{packageScope}}/auth";
+{{/if}}
+{{/if}}
+import { handleChatbotRequest } from "../../../../lib/chatbot/runtime";
+
+// CopilotKit runtime over AG-UI: /api/copilotkit/info, /api/copilotkit/agent/:id/run, ...
+export const maxDuration = 60;
+
+async function handler(request: Request): Promise<Response> {
+{{#if (eq auth "better-auth")}}
+  const session = await {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}}createAuth(){{else}}auth{{/if}}.api.getSession({ headers: request.headers });
+  if (!session?.user) return Response.json({ error: "unauthorized" }, { status: 401 });
+
+{{/if}}
+  return handleChatbotRequest(request);
+}
+
+export const GET = handler;
+export const POST = handler;
+export const PATCH = handler;
+export const DELETE = handler;
+`],
+  ["examples/chatbot/fullstack/tanstack-start/src/routes/api/copilotkit/$.ts.hbs", `import { createFileRoute } from "@tanstack/react-router";
+
+{{#if (eq auth "better-auth")}}
+{{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}}
+import { createAuth } from "{{packageScope}}/auth";
+{{else}}
+import { auth } from "{{packageScope}}/auth";
+{{/if}}
+{{/if}}
+import { handleChatbotRequest } from "../../../lib/chatbot/runtime";
+
+// CopilotKit runtime over AG-UI: /api/copilotkit/info, /api/copilotkit/agent/:id/run, ...
+async function handler({ request }: { request: Request }): Promise<Response> {
+{{#if (eq auth "better-auth")}}
+  const session = await {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}}createAuth(){{else}}auth{{/if}}.api.getSession({ headers: request.headers });
+  if (!session?.user) return Response.json({ error: "unauthorized" }, { status: 401 });
+
+{{/if}}
+  return handleChatbotRequest(request);
+}
+
+export const Route = createFileRoute("/api/copilotkit/$")({
+  server: {
+    handlers: {
+      GET: handler,
+      POST: handler,
+      PATCH: handler,
+      DELETE: handler,
+    },
+  },
+});
+`],
+  ["examples/chatbot/web/react/next/src/app/chatbot/page.tsx.hbs", `{{#if (and (eq auth "better-auth") (eq backend "self"))}}
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+
+{{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}}
+import { createAuth } from "{{packageScope}}/auth";
+{{else}}
+import { auth } from "{{packageScope}}/auth";
+{{/if}}
+{{/if}}
+import ChatbotApp from "../../components/chatbot/chatbot-app";
+
+export const metadata = { title: "Chatbot" };
+
+export default async function ChatbotPage() {
+{{#if (and (eq auth "better-auth") (eq backend "self"))}}
+  const session = await {{#if (or (eq runtime "workers") (eq serverDeploy "cloudflare") (eq webDeploy "cloudflare"))}}createAuth(){{else}}auth{{/if}}.api.getSession({
+    headers: await headers(),
+  });
+  if (!session?.user) redirect("/login");
+
+{{/if}}
+  return <ChatbotApp />;
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/beautiful-ui/approval-card.tsx", `"use client";
+
+/*
+ * ADAPTED from Beautiful UI "Approval Card" (ApprovalCard), MIT — see ./LICENSE.
+ * Changes: \`Button\`/\`GlideMenu\` come from ./primitives (recreated, the site does not publish
+ * them), SVG glyphs were replaced by CSS icons, demo questions were removed (the agent sends
+ * them), \`onSubmitted\` reports the chosen option labels plus any custom answer, and the
+ * dismiss button reports \`onDismiss\` instead of collapsing into an "Open approval" button.
+ */
+
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+
+import { CssIcon } from "../css-icons";
+import { Button, GlideMenu } from "./primitives";
+
+/* ─────────────────────────────────────────────────────────
+ * APPROVAL CARD (human-in-the-loop)
+ * One question at a time. The stack slides vertically as you
+ * move between questions (the card's height animates to fit),
+ * the step counter rolls like an odometer, and the footer uses
+ * pill actions — a quiet Skip and a dark Continue with a ⏎.
+ * Single-choice answers auto-advance; multi-select waits.
+ * ───────────────────────────────────────────────────────── */
+
+export type ApprovalQuestion = {
+  q: string;
+  type: "radio" | "check";
+  options: string[];
+};
+
+/** One answer per question: the picked option labels, plus free text when typed. */
+export type ApprovalAnswers = { question: string; selected: string[]; custom?: string }[];
+
+export type ApprovalLabels = {
+  skip: string;
+  continue: string;
+  send: string;
+  customPlaceholder: string;
+  sentMessage: string;
+};
+
+const DEFAULT_LABELS: ApprovalLabels = {
+  skip: "Skip",
+  continue: "Continue",
+  send: "Send",
+  customPlaceholder: "Something else…",
+  sentMessage: "Answers sent",
+};
+
+const ROLL_MS = 400;
+const SLIDE = "360ms cubic-bezier(0.22, 1, 0.36, 1)";
+
+/* odometer digits — each character that changes rolls up (or down) */
+function RollingDigits({ value }: { value: string }) {
+  const prevRef = useRef(value);
+  const [oldVal, setOldVal] = useState(value);
+  const [newVal, setNewVal] = useState(value);
+  const [rolling, setRolling] = useState(false);
+  const [shifted, setShifted] = useState(false);
+  const [dir, setDir] = useState<"up" | "down">("up");
+
+  useEffect(() => {
+    if (prevRef.current === value) return;
+    const from = prevRef.current;
+    prevRef.current = value;
+    const fromN = parseInt(from, 10);
+    const toN = parseInt(value, 10);
+    setDir(Number.isFinite(fromN) && Number.isFinite(toN) && toN < fromN ? "down" : "up");
+    setOldVal(from);
+    setNewVal(value);
+    setRolling(true);
+    setShifted(false);
+
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setShifted(true));
+    });
+    const done = setTimeout(() => {
+      setRolling(false);
+      setOldVal(value);
+      setShifted(false);
+    }, ROLL_MS);
+
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      clearTimeout(done);
+    };
+  }, [value]);
+
+  const chars = rolling ? newVal : oldVal;
+
+  return (
+    <>
+      {Array.from({ length: chars.length }, (_, i) => {
+        const o = oldVal[i] ?? "";
+        const n = chars[i] ?? "";
+        if (!rolling || o === n) {
+          return <span key={\`\${i}-\${n}\`}>{n}</span>;
+        }
+        const top = dir === "down" ? n : o;
+        const bottom = dir === "down" ? o : n;
+        const restY = dir === "down" ? "0" : "-1em";
+        const startY = dir === "down" ? "-1em" : "0";
+        return (
+          <span
+            key={\`\${i}-\${o}-\${n}-\${dir}\`}
+            style={{
+              display: "inline-block",
+              position: "relative",
+              overflow: "hidden",
+              height: "1em",
+              lineHeight: "1em",
+              verticalAlign: "-0.05em",
+            }}
+          >
+            <span
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                transition: "transform 350ms cubic-bezier(0.4, 0, 0.2, 1)",
+                transform: \`translateY(\${shifted ? restY : startY})\`,
+              }}
+            >
+              <span style={{ height: "1em", lineHeight: "1em" }}>{top}</span>
+              <span style={{ height: "1em", lineHeight: "1em" }}>{bottom}</span>
+            </span>
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
+export default function ApprovalCard({
+  questions,
+  labels,
+  onSubmitted,
+  onDismiss,
+  onAnswerChange,
+}: {
+  questions: ApprovalQuestion[];
+  labels?: Partial<ApprovalLabels>;
+  onSubmitted?: (answers: ApprovalAnswers) => void;
+  onDismiss?: () => void;
+  onAnswerChange?: (questionIndex: number, answer: number[]) => void;
+}) {
+  const t = { ...DEFAULT_LABELS, ...labels };
+  const [qi, setQi] = useState(0);
+  const [answers, setAnswers] = useState<Record<number, number[]>>({});
+  const [custom, setCustom] = useState<Record<number, string>>({});
+  const [sent, setSent] = useState(false);
+
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const questionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const measured = useRef(false);
+  const [viewportH, setViewportH] = useState<number | undefined>(undefined);
+  const [trackY, setTrackY] = useState(0);
+  const [animate, setAnimate] = useState(false);
+  // Until the first question is measured, render only the active one so the
+  // initial (and SSR) height is Q1's height — not all questions stacked, which
+  // would flash to full height and then shrink on mount.
+  const [ready, setReady] = useState(false);
+
+  const last = qi === questions.length - 1;
+  const selected = answers[qi] ?? [];
+  const hasAnswer = selected.length > 0 || Boolean(custom[qi]?.trim());
+
+  const sync = (withAnim: boolean) => {
+    const item = questionRefs.current[qi];
+    if (!item) return;
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setViewportH(item.offsetHeight);
+    setTrackY(item.offsetTop);
+    setAnimate(withAnim && !reduce);
+  };
+
+  useLayoutEffect(() => {
+    const withAnim = measured.current;
+    measured.current = true;
+    sync(withAnim);
+    setReady(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qi, answers, custom, sent]);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => sync(measured.current));
+    return () => cancelAnimationFrame(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qi]);
+
+  useEffect(
+    () => () => {
+      if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    },
+    [],
+  );
+
+  const goTo = (next: number) => {
+    if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    setQi(Math.min(Math.max(next, 0), questions.length - 1));
+  };
+
+  const send = (picked: Record<number, number[]> = answers) => {
+    if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    setSent(true);
+    onSubmitted?.(
+      questions.map((question, index) => ({
+        question: question.q,
+        selected: (picked[index] ?? []).map((option) => question.options[option] ?? ""),
+        custom: custom[index]?.trim() || undefined,
+      })),
+    );
+  };
+
+  const advance = () => {
+    if (last) send();
+    else goTo(qi + 1);
+  };
+
+  const toggle = (index: number) => {
+    const type = questions[qi]?.type;
+    const picked = answers[qi] ?? [];
+    const next =
+      type === "radio"
+        ? [index]
+        : picked.includes(index)
+          ? picked.filter((item) => item !== index)
+          : [...picked, index];
+    const nextAnswers = { ...answers, [qi]: next };
+    onAnswerChange?.(qi, next);
+    setAnswers(nextAnswers);
+    if (type === "radio") {
+      setCustom((current) => ({ ...current, [qi]: "" }));
+      if (advanceTimer.current) clearTimeout(advanceTimer.current);
+      advanceTimer.current = setTimeout(() => {
+        if (last) send(nextAnswers);
+        else setQi((current) => Math.min(questions.length - 1, current + 1));
+      }, 480);
+    }
+  };
+
+  if (sent) {
+    return (
+      <div
+        className="flex w-full max-w-80 items-center gap-3"
+        style={{ animation: "pop-in 260ms cubic-bezier(0.23,1,0.32,1) both" }}
+      >
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-green-tint py-1 pr-2.5 pl-1 text-[12.5px] font-medium text-green">
+          <span className="flex size-4.5 items-center justify-center rounded-full bg-green text-white">
+            <CssIcon name="check" size={11} />
+          </span>
+          {t.sentMessage}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full max-w-80">
+      <div
+        className="relative overflow-hidden rounded-card bg-surface shadow-card"
+        style={{ animation: "fade-up 380ms cubic-bezier(0.23,1,0.32,1) both" }}
+      >
+        <button
+          type="button"
+          aria-label="Dismiss"
+          onClick={() => onDismiss?.()}
+          className="primitive-icon-button absolute right-2.5 top-2.5 z-10 text-ink-3 transition-colors duration-100 hover:bg-hover hover:text-ink"
+        >
+          <CssIcon name="close" size={14} />
+        </button>
+        <div className="primitive-card-pad">
+          {/* the question itself is the heading */}
+          <div
+            className="overflow-hidden"
+            style={{ height: viewportH, transition: animate ? \`height \${SLIDE}\` : undefined }}
+            aria-live="polite"
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 26,
+                transform: \`translate3d(0, \${-trackY}px, 0)\`,
+                transition: animate ? \`transform \${SLIDE}\` : undefined,
+                willChange: "transform",
+              }}
+            >
+              {questions.map((question, qIdx) => {
+                const active = qIdx === qi;
+                // Before the first measure, mount only the active question so the
+                // card opens at its real height instead of flashing to full height.
+                if (!ready && !active) return null;
+                const picked = answers[qIdx] ?? [];
+                const questionStyle: CSSProperties = {
+                  opacity: active ? 1 : 0,
+                  transition: animate ? \`opacity \${SLIDE}\` : undefined,
+                  pointerEvents: active ? undefined : "none",
+                };
+                return (
+                  <div
+                    key={qIdx}
+                    ref={(el) => {
+                      questionRefs.current[qIdx] = el;
+                    }}
+                    aria-hidden={active ? undefined : true}
+                    style={questionStyle}
+                  >
+                    <div className="pr-7 text-[14px] font-medium text-ink">{question.q}</div>
+                    <GlideMenu
+                      className="mt-2.5 flex flex-col gap-1"
+                      highlightClassName="inset-x-0 rounded-control bg-hover"
+                    >
+                      {question.options.map((option, i) => {
+                        const on = picked.includes(i);
+                        return (
+                          <button
+                            key={option}
+                            type="button"
+                            data-menu-row
+                            aria-pressed={on}
+                            tabIndex={active ? 0 : -1}
+                            onClick={() => {
+                              if (active) toggle(i);
+                            }}
+                            className="relative z-10 flex items-center gap-1.5 rounded-control pl-1 pr-2 py-1 text-left transition-colors duration-100"
+                          >
+                            <span
+                              className={\`flex size-4 shrink-0 items-center justify-center transition-colors duration-200
+                                \${question.type === "radio" ? "rounded-full" : "rounded-[5px]"}
+                                \${on ? "bg-ink text-canvas" : "shadow-[inset_0_0_0_1.5px_var(--line-strong)] text-transparent"}\`}
+                            >
+                              {question.type === "radio" ? (
+                                <span
+                                  className="size-1.5 rounded-full bg-canvas transition-transform duration-200"
+                                  style={{ transform: on ? "scale(1)" : "scale(0)" }}
+                                />
+                              ) : (
+                                <CssIcon name="check" size={11} />
+                              )}
+                            </span>
+                            <span
+                              className={\`text-[13px] leading-none transition-colors duration-200 \${on ? "text-ink" : "text-ink-2"}\`}
+                            >
+                              {option}
+                            </span>
+                          </button>
+                        );
+                      })}
+                      <label
+                        data-menu-row
+                        className="relative z-10 flex items-center gap-1.5 rounded-control pl-1 pr-2 py-1 transition-colors duration-100"
+                      >
+                        <input
+                          value={custom[qIdx] ?? ""}
+                          tabIndex={active ? 0 : -1}
+                          onChange={(event) => {
+                            if (!active) return;
+                            setCustom((current) => ({ ...current, [qIdx]: event.target.value }));
+                            if (question.type === "radio")
+                              setAnswers((current) => ({ ...current, [qIdx]: [] }));
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" && hasAnswer) {
+                              event.preventDefault();
+                              advance();
+                            }
+                          }}
+                          placeholder={t.customPlaceholder}
+                          aria-label="Custom answer"
+                          className="min-w-0 flex-1 bg-transparent pl-1.5 text-[13px] text-ink outline-none placeholder:text-ink-3"
+                        />
+                      </label>
+                    </GlideMenu>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* footer — step nav (rolling counter) + pill actions */}
+        <div className="primitive-card-footer flex items-center justify-between gap-3">
+          <div className="flex items-center gap-1 text-ink-3">
+            <button
+              type="button"
+              aria-label="Previous question"
+              disabled={qi <= 0}
+              onClick={() => goTo(qi - 1)}
+              className="flex size-[18px] items-center justify-center rounded-[5px] transition-colors duration-100 enabled:hover:text-ink disabled:opacity-30"
+            >
+              <span style={{ transform: "rotate(180deg)" }} className="flex">
+                <CssIcon name="chevron" size={12} />
+              </span>
+            </button>
+            <span
+              className="inline-flex items-center text-[12px] font-medium tabular-nums text-ink-3"
+              style={{ letterSpacing: "-0.1px", lineHeight: 1 }}
+            >
+              <RollingDigits value={\`\${qi + 1} / \${questions.length}\`} />
+            </span>
+            <button
+              type="button"
+              aria-label="Next question"
+              disabled={last}
+              onClick={() => goTo(qi + 1)}
+              className="flex size-[18px] items-center justify-center rounded-[5px] transition-colors duration-100 enabled:hover:text-ink disabled:opacity-30"
+            >
+              <CssIcon name="chevron" size={12} />
+            </button>
+          </div>
+
+          <div className="-mr-0.5 flex items-center gap-1.5">
+            <Button variant="ghost" size="sm" onClick={() => (last ? onDismiss?.() : goTo(qi + 1))}>
+              {t.skip}
+            </Button>
+            <Button variant="accent" size="sm" disabled={!hasAnswer} onClick={advance}>
+              {last ? t.send : t.continue}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/beautiful-ui/chat-bubble.tsx", `"use client";
+
+/*
+ * ADAPTED from Beautiful UI "Chat" (ChatComposer), MIT — see ./LICENSE.
+ * Changes: the card's scripted thread was split into reusable pieces — the right-aligned
+ * user bubble and the labeled agent section — so a real conversation can render them.
+ * The tabbed header and the inline composer are replaced by the sidebar and PromptBar.
+ */
+
+import type { ReactNode } from "react";
+
+/* user bubble — right aligned, soft block */
+export function UserBubble({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex justify-end pl-14">
+      <div
+        className="rounded-xl bg-field px-3 py-1.5 text-[14px] leading-[1.5] whitespace-pre-wrap text-ink
+          transition-[opacity,transform] duration-300"
+        style={{
+          animation: "fade-up 300ms cubic-bezier(0.23,1,0.32,1) both",
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* one agent reply: a quiet label row above the body */
+export function AgentSection({
+  label,
+  sub,
+  resolving,
+  children,
+}: {
+  label: string;
+  sub?: string;
+  /** true while the reply is still being produced */
+  resolving?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className="flex w-full flex-col gap-1.5 transition-[opacity,filter,transform] duration-400"
+      style={{
+        transformOrigin: "top left",
+        transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)",
+        animation: "fade-up 400ms cubic-bezier(0.23,1,0.32,1) both",
+      }}
+    >
+      <div className="flex items-center gap-1 text-[12px] leading-[1.3]">
+        <span className="font-medium text-ink">{label}</span>
+        {sub && <span className="text-ink-2">{sub}</span>}
+        {resolving && <span className="text-ink-3">· writing</span>}
+      </div>
+      <div className="text-[14px] leading-normal text-ink">{children}</div>
+    </div>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/beautiful-ui/LICENSE", `The components in this folder are adapted from Beautiful UI (https://www.beautifului.dev),
+published under the MIT License reproduced below (from https://www.beautifului.dev/license).
+
+MIT License
+
+Copyright (c) 2026 Shane Levine
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/beautiful-ui/primitives.tsx", `"use client";
+
+/*
+ * RECREATED — not copied. Beautiful UI's ApprovalCard imports \`Button\` and \`GlideMenu\`
+ * from the site's own atoms, which the site does not publish. These are written from
+ * scratch for this template to match the props and look ApprovalCard expects.
+ * See ./LICENSE for the components that are adapted from Beautiful UI.
+ */
+
+import {
+  useRef,
+  useState,
+  type ButtonHTMLAttributes,
+  type PointerEvent,
+  type ReactNode,
+} from "react";
+
+const BUTTON_VARIANTS = {
+  ghost: "text-ink-2 hover:bg-hover hover:text-ink",
+  accent: "bg-ink text-surface shadow-btn hover:opacity-90",
+} as const;
+
+const BUTTON_SIZES = {
+  sm: "h-7 px-2.5 text-[12.5px]",
+  md: "h-8 px-3 text-[13px]",
+} as const;
+
+export function Button({
+  variant = "ghost",
+  size = "md",
+  className,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: keyof typeof BUTTON_VARIANTS;
+  size?: keyof typeof BUTTON_SIZES;
+}) {
+  return (
+    <button
+      type="button"
+      {...props}
+      className={\`inline-flex items-center justify-center gap-1.5 rounded-full font-medium transition-[background-color,color,opacity,transform] duration-150 enabled:active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 \${BUTTON_VARIANTS[variant]} \${BUTTON_SIZES[size]}\${className ? \` \${className}\` : ""}\`}
+    />
+  );
+}
+
+/** A list whose rows share one highlight that glides to the hovered \`[data-menu-row]\`. */
+export function GlideMenu({
+  children,
+  className,
+  highlightClassName,
+}: {
+  children: ReactNode;
+  className?: string;
+  highlightClassName?: string;
+}) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState<{ top: number; height: number } | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  const onPointerOver = (event: PointerEvent<HTMLDivElement>) => {
+    if (!(event.target instanceof Element)) return;
+    const row = event.target.closest("[data-menu-row]");
+    if (!(row instanceof HTMLElement) || !rootRef.current?.contains(row)) return;
+    setBox({ top: row.offsetTop, height: row.offsetHeight });
+    setVisible(true);
+  };
+
+  return (
+    <div
+      ref={rootRef}
+      onPointerOver={onPointerOver}
+      onPointerLeave={() => setVisible(false)}
+      className={\`relative\${className ? \` \${className}\` : ""}\`}
+    >
+      <span
+        aria-hidden="true"
+        className={\`pointer-events-none absolute\${highlightClassName ? \` \${highlightClassName}\` : ""}\`}
+        style={{
+          top: box?.top ?? 0,
+          height: box?.height ?? 0,
+          opacity: visible && box ? 1 : 0,
+          transition:
+            "top 220ms cubic-bezier(0.23,1,0.32,1), height 220ms cubic-bezier(0.23,1,0.32,1), opacity 150ms ease",
+        }}
+      />
+      {children}
+    </div>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/beautiful-ui/prompt-bar.tsx", `"use client";
+
+/*
+ * ADAPTED from Beautiful UI "Prompt Bar" (PromptBar), MIT — see ./LICENSE.
+ * Changes: the self-running demo, the @ sources / slash menus, third-party brand marks,
+ * fake dictation, attachments and the \`glimm\` WebGL sweep were removed. Kept: the
+ * auto-growing textarea that moves wrapped text above the controls, the hero ("tall")
+ * sizing, the Rounded/Pill variants, the model label and the tactile send button, which
+ * turns into a stop button while the agent runs. Glyphs are CSS icons.
+ */
+
+import { useLayoutEffect, useRef, useState } from "react";
+
+import { CssIcon } from "../css-icons";
+
+export default function PromptBar({
+  variant = "Rounded",
+  tall = false,
+  placeholder,
+  modelLabel,
+  running = false,
+  disabled = false,
+  autoFocus = false,
+  onSend,
+  onStop,
+}: {
+  variant?: "Rounded" | "Pill";
+  /** hero sizing: a multi-line input with controls on their own row */
+  tall?: boolean;
+  placeholder?: string;
+  /** shown next to the send button, e.g. the configured model */
+  modelLabel?: string;
+  /** the agent is answering: the send button becomes stop */
+  running?: boolean;
+  disabled?: boolean;
+  autoFocus?: boolean;
+  onSend?: (text: string) => void;
+  onStop?: () => void;
+}) {
+  const pill = variant === "Pill";
+  const [draft, setDraft] = useState("");
+  const [expanded, setExpanded] = useState(false);
+  const wide = expanded || tall;
+  const controlsRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const measureRef = useRef<HTMLSpanElement>(null);
+  const modelRef = useRef<HTMLSpanElement>(null);
+
+  /* Move wrapped text above the controls, then grow to a compact maximum. */
+  useLayoutEffect(() => {
+    const input = inputRef.current;
+    const controls = controlsRef.current;
+    const measure = measureRef.current;
+    if (!input || !controls || !measure) return;
+
+    const fixedControlsWidth = 28 + (modelRef.current?.offsetWidth ?? 0);
+    const inlineGaps = 4 * 2;
+    const inlineInputWidth = controls.clientWidth - fixedControlsWidth - inlineGaps;
+    const needsFullWidth = draft.includes("\\n") || measure.offsetWidth + 8 > inlineInputWidth;
+    if (needsFullWidth !== expanded) {
+      setExpanded(needsFullWidth);
+    }
+
+    const minHeight = tall ? 68 : 28;
+    const maxHeight = tall ? 180 : 140;
+    input.style.height = "0px";
+    const contentHeight = input.scrollHeight;
+    input.style.height = \`\${Math.min(Math.max(contentHeight, minHeight), maxHeight)}px\`;
+    input.style.overflowY = contentHeight > maxHeight ? "auto" : "hidden";
+  }, [draft, expanded, tall]);
+
+  const canSend = !disabled && draft.trim().length > 0;
+  const send = () => {
+    if (!canSend || running) return;
+    onSend?.(draft.trim());
+    setDraft("");
+  };
+
+  return (
+    <div data-promptbar className="w-full">
+      <div
+        className={\`relative isolate flex flex-col overflow-hidden border border-line bg-surface shadow-card transition-[border-color,border-radius] duration-150 focus-within:border-line-strong \${
+          tall ? "gap-2.5 p-3.5" : "gap-1.5 p-1.5"
+        } \${pill ? (wide ? "rounded-[24px]" : "rounded-full") : tall ? "rounded-[22px]" : "rounded-[14px]"}\`}
+      >
+        <span
+          ref={measureRef}
+          aria-hidden="true"
+          className="pointer-events-none invisible absolute text-[14px] leading-[18px] whitespace-pre"
+        >
+          {draft}
+        </span>
+
+        <div
+          ref={controlsRef}
+          className="grid grid-cols-[minmax(0,1fr)_auto_28px] items-end gap-x-1 gap-y-1.5"
+        >
+          <textarea
+            ref={inputRef}
+            rows={1}
+            value={draft}
+            autoFocus={autoFocus}
+            disabled={disabled}
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+                event.preventDefault();
+                send();
+              }
+            }}
+            placeholder={placeholder ?? "Write a message…"}
+            aria-label="Prompt"
+            className={\`\${tall ? "min-h-[68px] px-2 py-2 text-[15px] leading-6" : "min-h-7 px-1.5 py-[5px] text-[14px] leading-[18px]"} w-full min-w-0 resize-none bg-transparent text-ink outline-none [overflow-wrap:anywhere] placeholder:text-ink-3 disabled:opacity-50 \${
+              wide ? "col-span-full col-start-1 row-start-1" : "col-start-1 row-start-1"
+            }\`}
+          />
+
+          {/* model label */}
+          {modelLabel ? (
+            <span
+              ref={modelRef}
+              title="Set CHATBOT_MODEL to change the model"
+              className={\`flex h-7 shrink-0 items-center gap-1 px-1.5 font-mono text-[11.5px] text-ink-3 \${
+                pill ? "rounded-full" : "rounded-[8px]"
+              } \${wide ? "col-start-2 row-start-2 justify-self-end" : "col-start-2 row-start-1"}\`}
+            >
+              {modelLabel}
+            </span>
+          ) : (
+            <span className={wide ? "col-start-2 row-start-2" : "col-start-2 row-start-1"} />
+          )}
+
+          {/* send / stop — tactile square (round in the pill variant) */}
+          <button
+            type="button"
+            aria-label={running ? "Stop" : "Send"}
+            disabled={running ? false : !canSend}
+            onClick={running ? onStop : send}
+            className={\`flex size-7 shrink-0 items-center justify-center transition-[background-color,color,transform] duration-200 enabled:active:scale-[0.94] \${
+              pill ? "rounded-full" : "rounded-[8px]"
+            } \${wide ? "col-start-3 row-start-2" : "col-start-3 row-start-1"}\`}
+            style={{
+              background: canSend || running ? "var(--ink)" : "var(--line-strong)",
+              color: canSend || running ? "var(--surface)" : "var(--ink-2)",
+            }}
+          >
+            <CssIcon name={running ? "stop" : "send"} size={16} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/beautiful-ui/streaming-text.tsx", `"use client";
+
+/*
+ * ADAPTED from Beautiful UI "Streaming Text" (StreamingText), MIT — see ./LICENSE.
+ * Changes: renders the real streamed answer (markdown via Streamdown) instead of the
+ * scripted token loop; the caret, the delayed action row and the follow-up list keep the
+ * original look. Citations/sources were dropped (the built-in agent returns none).
+ */
+
+import type { ReactNode } from "react";
+import { Streamdown } from "streamdown";
+
+import { CssIcon } from "../css-icons";
+
+export type StreamingLabels = {
+  /** heading above the follow-up prompts */
+  followUps: string;
+};
+
+const DEFAULT_LABELS: StreamingLabels = {
+  followUps: "Follow-ups",
+};
+
+export default function StreamingText({
+  content,
+  streaming,
+  actions,
+  followUps = [],
+  labels,
+  onFollowUp,
+}: {
+  /** the text received so far */
+  content: string;
+  /** true while tokens are still arriving */
+  streaming: boolean;
+  /** per-message actions, revealed once the stream completes */
+  actions?: ReactNode;
+  /** follow-up prompt suggestions shown once the stream completes */
+  followUps?: string[];
+  labels?: Partial<StreamingLabels>;
+  onFollowUp?: (text: string, index: number) => void;
+}) {
+  const l = { ...DEFAULT_LABELS, ...labels };
+  const done = !streaming;
+
+  return (
+    <div className="w-full">
+      <div className="kc-markdown">
+        <Streamdown>{content}</Streamdown>
+        {streaming && (
+          <span
+            className="ml-0.5 inline-block h-3.5 w-0.5 translate-y-0.5 rounded-full bg-ink"
+            style={{ animation: "fade-in 150ms ease-out both" }}
+          />
+        )}
+      </div>
+
+      {/* action icons row */}
+      {actions && (
+        <div
+          className="mt-2 flex items-center gap-0.5 transition-opacity duration-400"
+          style={{ opacity: done ? 1 : 0, pointerEvents: done ? "auto" : "none" }}
+        >
+          {actions}
+        </div>
+      )}
+
+      {/* follow-ups */}
+      {followUps.length > 0 && (
+        <div
+          className="mt-2.5 transition-opacity duration-400"
+          style={{ opacity: done ? 1 : 0, pointerEvents: done ? "auto" : "none" }}
+        >
+          <p className="text-[12px] font-medium text-ink-2">{l.followUps}</p>
+          <div className="mt-0.5 flex flex-col">
+            {followUps.map((text, i) => (
+              <button
+                key={text}
+                type="button"
+                onClick={() => onFollowUp?.(text, i)}
+                className="-mx-1.5 flex items-center gap-2 rounded-[7px] border-b border-line
+                  px-1.5 py-1.5 text-left text-[12.5px] text-ink transition-colors
+                  duration-100 hover:bg-hover-2"
+                style={
+                  done
+                    ? { animation: \`fade-up 350ms cubic-bezier(0.23,1,0.32,1) \${i * 90}ms both\` }
+                    : { opacity: 0 }
+                }
+              >
+                <span className="text-ink-3" style={{ transform: "rotate(-90deg)" }}>
+                  <CssIcon name="chevron" size={11} />
+                </span>
+                {text}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/beautiful-ui/thinking-state.tsx", `"use client";
+
+/*
+ * ADAPTED from Beautiful UI "Thinking" (ThinkingState), MIT — see ./LICENSE.
+ * Changes: driven by live props (\`working\`, \`rows\`) instead of the timed demo sequence,
+ * only the Steps and Reasoning variants are kept, SVG glyphs replaced by CSS icons.
+ *
+ *   Steps      step list with spinner → muted checks
+ *   Reasoning  prose reasoning that expands, then settles
+ *
+ * The trace expands while the agent works and stays expandable once it settles.
+ */
+
+import { useLayoutEffect, useRef, useState } from "react";
+
+import { CssIcon } from "../css-icons";
+
+export type ThinkingRow = {
+  primary: string;
+  secondary?: string;
+};
+
+export default function ThinkingState({
+  variant = "Reasoning",
+  working,
+  rows,
+  active = "Thinking",
+  done = "Thought it through",
+}: {
+  variant?: "Steps" | "Reasoning";
+  /** true while the agent is still producing this trace */
+  working: boolean;
+  rows: ThinkingRow[];
+  active?: string;
+  done?: string;
+}) {
+  const [manualExpanded, setManualExpanded] = useState<boolean | null>(null);
+  const expanded = manualExpanded ?? working;
+  const traceRef = useRef<HTMLDivElement>(null);
+  const [lineHeight, setLineHeight] = useState(0);
+  useLayoutEffect(() => {
+    if (traceRef.current) setLineHeight(traceRef.current.offsetHeight);
+  }, [rows, expanded, variant, working]);
+
+  return (
+    <div className="flex w-full flex-col">
+      {/* header */}
+      <button
+        type="button"
+        aria-expanded={expanded}
+        onClick={() => setManualExpanded((current) => !(current ?? working))}
+        className="-mx-1.5 flex w-fit items-center gap-2 rounded-control px-1.5 py-1
+          transition-colors duration-100 hover:bg-hover-2"
+      >
+        <span
+          className="flex shrink-0 transition-colors duration-200"
+          style={{ color: working ? "var(--ink-2)" : "var(--ink-3)" }}
+        >
+          <CssIcon name={working ? "thinking" : "sparkle"} size={15} />
+        </span>
+        <span role="status" className="contents">
+          {working ? (
+            <span
+              className="bg-clip-text text-[13px] font-medium whitespace-nowrap text-transparent"
+              style={{
+                backgroundImage:
+                  "linear-gradient(90deg, var(--ink-3) 35%, var(--ink) 50%, var(--ink-3) 65%)",
+                backgroundSize: "200% 100%",
+                animation: "shimmer-text 1.4s linear infinite",
+              }}
+            >
+              {active}
+            </span>
+          ) : (
+            <span
+              className="text-[13px] font-medium whitespace-nowrap text-ink-2"
+              style={{ animation: "fade-in 350ms ease-out both" }}
+            >
+              {done}
+            </span>
+          )}
+        </span>
+        <span
+          className="text-ink-3 transition-transform duration-300"
+          style={{ transform: expanded ? "rotate(180deg)" : "rotate(0)" }}
+        >
+          <CssIcon name="chevron" size={12} />
+        </span>
+      </button>
+
+      {/* expandable trace */}
+      <div
+        className="grid transition-[grid-template-rows,opacity] duration-400"
+        style={{
+          gridTemplateRows: expanded ? "1fr" : "0fr",
+          opacity: expanded ? 1 : 0,
+          transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)",
+        }}
+      >
+        <div className="overflow-hidden">
+          <div className="relative mt-1 ml-[5px] pl-4">
+            <span
+              aria-hidden
+              className="absolute left-[3px] w-px bg-line"
+              style={{
+                top: -8,
+                height: lineHeight ? lineHeight - 2 : 0,
+                transition: "height 500ms cubic-bezier(0.23,1,0.32,1)",
+              }}
+            />
+            <div ref={traceRef} className="flex flex-col gap-1 py-1">
+              {rows.map((row, i) => (
+                <div
+                  key={\`\${i}-\${row.primary.slice(0, 24)}\`}
+                  className="flex min-h-7 w-full items-center gap-2 rounded-[6px] px-1.5 py-0.5 text-left"
+                  style={{
+                    animation: \`fade-up 320ms cubic-bezier(0.23,1,0.32,1) \${Math.min(i, 4) * 120}ms both\`,
+                  }}
+                >
+                  {variant === "Steps" &&
+                    (i < rows.length - 1 || !working ? (
+                      <span className="text-ink-3">
+                        <CssIcon name="check" size={13} />
+                      </span>
+                    ) : (
+                      <span className="text-ink-2">
+                        <CssIcon name="loading" size={12} />
+                      </span>
+                    ))}
+                  <span
+                    className={\`min-w-0 text-[12.5px] \${variant === "Reasoning" ? "whitespace-pre-wrap leading-relaxed text-ink-2" : "truncate font-medium text-ink"}\`}
+                  >
+                    {row.primary}
+                  </span>
+                  {row.secondary && (
+                    <span className="shrink-0 font-mono text-[11.5px] text-ink-3">
+                      {row.secondary}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/beautiful-ui/tool-chips.tsx", `"use client";
+
+/*
+ * ADAPTED from Beautiful UI "Tool Chips" (ToolChips), MIT — see ./LICENSE.
+ * Changes: rows come from the agent's real tool calls (no timed reveal), each row shows a
+ * running/complete state, file-diff chips and the diff preview portal were removed, and
+ * SVG glyphs were replaced by CSS icons.
+ *
+ * An agent run as compact rows: a tool call with an inline chip. Hover a row to reveal
+ * its chevron; every row expands to show what the tool received and returned.
+ */
+
+import { useState } from "react";
+
+import { CssIcon } from "../css-icons";
+
+export type ToolDetailLine = { text: string; tone?: "add" };
+
+export type ToolStep = {
+  id: string;
+  label: string;
+  chip: string;
+  running: boolean;
+  detail: ToolDetailLine[];
+};
+
+export default function ToolChips({
+  steps,
+  header,
+  className,
+}: {
+  steps: ToolStep[];
+  header?: string;
+  className?: string;
+}) {
+  const [open, setOpen] = useState(true);
+  const [openRows, setOpenRows] = useState<Set<string>>(new Set());
+  const title = header ?? \`\${steps.length} tool call\${steps.length === 1 ? "" : "s"}\`;
+
+  const toggleRow = (id: string) =>
+    setOpenRows((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  return (
+    <div className={\`w-full max-w-md pb-1\${className ? \` \${className}\` : ""}\`}>
+      {/* collapsed run header */}
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+        className="-mx-1.5 flex w-fit items-center gap-1.5 rounded-control px-1.5 py-1 text-[12.5px] text-ink-2 transition-colors duration-100 hover:bg-hover-2"
+      >
+        <span
+          className="transition-transform duration-200"
+          style={{ transform: open ? "rotate(0deg)" : "rotate(-90deg)" }}
+        >
+          <CssIcon name="chevron" size={11} />
+        </span>
+        <span className="tabular-nums">{title}</span>
+      </button>
+
+      {/* tool call rows */}
+      <div
+        className="grid transition-[grid-template-rows,opacity] duration-300"
+        style={{ gridTemplateRows: open ? "1fr" : "0fr", opacity: open ? 1 : 0 }}
+      >
+        {/* -mx-1 + px-1.5 keeps content at the same x while giving the
+            row hover pills room inside this overflow-hidden clip box */}
+        <div className="-mx-1 overflow-hidden px-1.5 pb-1">
+          <div className="mt-1.5 flex flex-col gap-1">
+            {steps.map((row) => {
+              const rowOpen = openRows.has(row.id);
+              return (
+                <div
+                  key={row.id}
+                  style={{ animation: "fade-up 300ms cubic-bezier(0.23,1,0.32,1) both" }}
+                >
+                  <button
+                    type="button"
+                    aria-expanded={rowOpen}
+                    onClick={() => toggleRow(row.id)}
+                    className="group/row -mx-[3px] flex h-7 w-[calc(100%+6px)] min-w-0 items-center gap-2 rounded-control px-[3px] text-left transition-colors duration-100 hover:bg-hover-2"
+                  >
+                    <span className="relative flex size-4 shrink-0 items-center justify-center text-ink-3">
+                      <span
+                        className={\`flex transition-opacity duration-100 group-hover/row:opacity-0 \${rowOpen ? "opacity-0" : ""}\`}
+                      >
+                        <CssIcon name={row.running ? "loading" : "tool"} size={13} />
+                      </span>
+                      <span
+                        className={\`absolute flex transition-[opacity,transform] duration-150 group-hover/row:opacity-100 \${rowOpen ? "opacity-100" : "opacity-0"}\`}
+                        style={{ transform: rowOpen ? "rotate(0deg)" : "rotate(-90deg)" }}
+                      >
+                        <CssIcon name="chevron" size={11} />
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-[12.5px] font-medium text-ink">{row.label}</span>
+                    <span
+                      className="inline-flex h-5.5 min-w-0 flex-1 cursor-pointer items-center truncate rounded-chip bg-field px-1.5
+                        font-mono text-[11.5px] text-ink-2 shadow-hairline transition-colors duration-100 hover:bg-hover-2"
+                    >
+                      {row.chip}
+                    </span>
+                  </button>
+
+                  {/* expanded detail */}
+                  <div
+                    className="grid transition-[grid-template-rows,opacity] duration-300"
+                    style={{
+                      gridTemplateRows: rowOpen ? "1fr" : "0fr",
+                      opacity: rowOpen ? 1 : 0,
+                      transitionTimingFunction: "cubic-bezier(0.23, 1, 0.32, 1)",
+                    }}
+                  >
+                    <div className="min-h-0 overflow-hidden">
+                      <div className="mt-0.5 mb-1 ml-2 flex flex-col gap-0.5 border-l border-line py-0.5 pl-3.5">
+                        {row.detail.map((line, index) => (
+                          <span
+                            key={\`\${index}-\${line.text.slice(0, 16)}\`}
+                            className={\`truncate font-mono text-[11.5px] leading-[1.6] \${line.tone === "add" ? "text-green" : "text-ink-2"}\`}
+                          >
+                            {line.text}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/chat-thread.tsx", `"use client";
+
+import {
+  ToolCallStatus,
+  useAgent,
+  useCopilotKit,
+  useFrontendTool,
+  useHumanInTheLoop,
+  useRenderToolCall,
+  type ReactHumanInTheLoop,
+} from "@copilotkit/react-core/v2";
+import { useEffect, useRef, useState, type ComponentProps } from "react";
+import { z } from "zod";
+
+import { CHATBOT_STATUS_URL, isChatbotStatus, type ChatbotStatus } from "../../lib/chatbot/config";
+import ApprovalCard from "./beautiful-ui/approval-card";
+import { AgentSection, UserBubble } from "./beautiful-ui/chat-bubble";
+import PromptBar from "./beautiful-ui/prompt-bar";
+import StreamingText from "./beautiful-ui/streaming-text";
+import ThinkingState from "./beautiful-ui/thinking-state";
+import ToolChips, { type ToolDetailLine, type ToolStep } from "./beautiful-ui/tool-chips";
+import { messageText, type AgentMessage, type ChatbotTheme, type Conversation } from "./chat-types";
+import { CssIcon } from "./css-icons";
+import { MessageActions } from "./message-actions";
+
+type AssistantMessage = Extract<AgentMessage, { role: "assistant" }>;
+type ToolMessage = Extract<AgentMessage, { role: "tool" }>;
+type ToolCall = NonNullable<AssistantMessage["toolCalls"]>[number];
+
+const SUGGESTIONS = [
+  "Explain the AG-UI protocol in two sentences",
+  "Switch to the light theme",
+  "Plan a weekend trip and ask me to pick the city",
+];
+
+/* ── Frontend tools the agent can call ─────────────────────────────── */
+
+const themeSchema = z.object({ theme: z.enum(["light", "dark"]) });
+
+const askUserSchema = z.object({
+  question: z.string().describe("The question to show the user"),
+  options: z.array(z.string()).min(1).max(6).describe("Choices the user can pick from"),
+  multiple: z.boolean().optional().describe("Allow picking more than one option"),
+});
+type AskUserArgs = z.infer<typeof askUserSchema>;
+type AskUserRenderProps = ComponentProps<ReactHumanInTheLoop<AskUserArgs>["render"]>;
+
+const ASK_USER_TOOL = "askUser";
+
+/** Human-in-the-loop: the agent pauses until the user answers this card. */
+function AskUserCard(props: AskUserRenderProps) {
+  if (props.status === ToolCallStatus.InProgress) {
+    return (
+      <div className="flex items-center gap-2 text-[12.5px] text-ink-3">
+        <CssIcon name="loading" size={13} /> Preparing a question…
+      </div>
+    );
+  }
+  if (props.status === ToolCallStatus.Complete) {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-tint py-1 pr-2.5 pl-1.5 text-[12.5px] font-medium text-green">
+        <CssIcon name="check" size={11} /> Answer sent
+      </span>
+    );
+  }
+  const { args, respond } = props;
+  return (
+    <ApprovalCard
+      questions={[
+        { q: args.question, type: args.multiple ? "check" : "radio", options: args.options },
+      ]}
+      labels={{ send: "Send answer", sentMessage: "Answer sent" }}
+      onSubmitted={(answers) => void respond({ answers })}
+      onDismiss={() => void respond({ dismissed: true })}
+    />
+  );
+}
+
+function useChatbotTools(onThemeChange: (theme: ChatbotTheme) => void) {
+  useFrontendTool(
+    {
+      name: "setTheme",
+      description: "Switch the chat interface between the light and the dark theme.",
+      parameters: themeSchema,
+      handler: async ({ theme }) => {
+        onThemeChange(theme);
+        return \`Theme switched to \${theme}.\`;
+      },
+    },
+    [onThemeChange],
+  );
+
+  useHumanInTheLoop<AskUserArgs>({
+    name: ASK_USER_TOOL,
+    description:
+      "Ask the user to pick or confirm something before you continue. Use it for anything destructive, irreversible or ambiguous.",
+    parameters: askUserSchema,
+    render: AskUserCard,
+  });
+}
+
+/* ── Rendering helpers ─────────────────────────────────────────────── */
+
+function preview(value: string, max = 64): string {
+  const flat = value.replace(/\\s+/g, " ").trim();
+  return flat.length > max ? \`\${flat.slice(0, max - 1)}…\` : flat;
+}
+
+function toolSteps(message: AssistantMessage, results: Map<string, ToolMessage>): ToolStep[] {
+  return (message.toolCalls ?? []).map((call) => {
+    const result = results.get(call.id);
+    const args = call.function.arguments || "{}";
+    const detail: ToolDetailLine[] = [{ text: \`args \${preview(args, 120)}\` }];
+    if (result)
+      detail.push({ text: \`→ \${preview(messageText(result) || "done", 120)}\`, tone: "add" });
+    return {
+      id: call.id,
+      label: call.function.name,
+      chip: preview(args),
+      running: !result,
+      detail,
+    };
+  });
+}
+
+/** A changed signature means the conversation needs saving. */
+function signature(messages: readonly AgentMessage[]): string {
+  const last = messages.at(-1);
+  const toolCalls = last?.role === "assistant" ? (last.toolCalls?.length ?? 0) : 0;
+  return \`\${messages.length}:\${last?.id ?? ""}:\${last ? messageText(last).length : 0}:\${toolCalls}\`;
+}
+
+function lastIndexOfRole(messages: readonly AgentMessage[], role: AgentMessage["role"]): number {
+  for (let index = messages.length - 1; index >= 0; index--) {
+    if (messages[index]?.role === role) return index;
+  }
+  return -1;
+}
+
+function describeError(error: unknown): string {
+  return error instanceof Error ? error.message : "The agent could not answer. Try again.";
+}
+
+/* ── Thread ───────────────────────────────────────────────────────── */
+
+export function ChatThread({
+  conversation,
+  onMessagesChange,
+  onThemeChange,
+  onOpenSidebar,
+  onNewChat,
+}: {
+  conversation: Conversation;
+  onMessagesChange: (id: string, messages: AgentMessage[]) => void;
+  onThemeChange: (theme: ChatbotTheme) => void;
+  onOpenSidebar: () => void;
+  onNewChat: () => void;
+}) {
+  // The agent is a mutable object: opt out of React Compiler memoization so every
+  // streamed update re-renders (Next.js enables the compiler in this template).
+  "use no memo";
+  const { agent, isReady } = useAgent();
+  const { copilotkit } = useCopilotKit();
+  const renderToolCall = useRenderToolCall();
+  const [status, setStatus] = useState<ChatbotStatus | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const loadedAgentRef = useRef<typeof agent | null>(null);
+  const initialMessagesRef = useRef(conversation.messages);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+
+  useChatbotTools(onThemeChange);
+
+  // Model label + a clear notice when the provider key is missing.
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(CHATBOT_STATUS_URL, { signal: controller.signal })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((value: unknown) => setStatus(isChatbotStatus(value) ? value : null))
+      .catch(() => setStatus(null));
+    return () => controller.abort();
+  }, []);
+
+  // Load this conversation into the agent (the parent remounts us per conversation).
+  useEffect(() => {
+    if (!isReady) return;
+    agent.threadId = conversation.id;
+    agent.setMessages(initialMessagesRef.current);
+    loadedAgentRef.current = agent;
+    return () => {
+      if (agent.isRunning) copilotkit.stopAgent({ agent });
+    };
+  }, [agent, isReady, conversation.id, copilotkit]);
+
+  const messages = agent.messages;
+  const running = agent.isRunning;
+  const currentSignature = signature(messages);
+
+  // Persist what the agent streams back.
+  useEffect(() => {
+    if (loadedAgentRef.current !== agent) return;
+    if (currentSignature === signature(conversation.messages)) return;
+    onMessagesChange(conversation.id, [...agent.messages]);
+  }, [agent, conversation.id, conversation.messages, currentSignature, onMessagesChange]);
+
+  // Keep the newest tokens in view.
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (scroller) scroller.scrollTo({ top: scroller.scrollHeight });
+  }, [currentSignature, running]);
+
+  const run = async () => {
+    setError(null);
+    try {
+      await copilotkit.runAgent({ agent });
+    } catch (runError) {
+      setError(describeError(runError));
+    }
+  };
+
+  const send = (text: string) => {
+    agent.addMessage({ id: crypto.randomUUID(), role: "user", content: text });
+    void run();
+  };
+
+  const regenerate = () => {
+    const lastUser = lastIndexOfRole(messages, "user");
+    if (lastUser < 0) return;
+    agent.setMessages(messages.slice(0, lastUser + 1));
+    void run();
+  };
+
+  const stop = () => copilotkit.stopAgent({ agent });
+
+  const toolResults = new Map<string, ToolMessage>();
+  for (const message of messages) {
+    if (message.role === "tool") toolResults.set(message.toolCallId, message);
+  }
+  const lastAssistantId = messages[lastIndexOfRole(messages, "assistant")]?.id;
+  const lastMessage = messages.at(-1);
+  const waiting =
+    running && (!lastMessage || lastMessage.role === "user" || lastMessage.role === "tool");
+  const empty = messages.length === 0;
+  const missingKey = status && !status.configured ? status : null;
+
+  const header = (
+    <header className="flex h-12 shrink-0 items-center justify-between px-3">
+      <button
+        type="button"
+        aria-label="Open sidebar"
+        onClick={onOpenSidebar}
+        className="primitive-icon-button text-ink-2 transition-colors hover:bg-hover hover:text-ink md:invisible"
+      >
+        <CssIcon name="menu" size={16} />
+      </button>
+      <button
+        type="button"
+        aria-label="New chat"
+        onClick={onNewChat}
+        className="primitive-icon-button text-ink-2 transition-colors hover:bg-hover hover:text-ink"
+      >
+        <CssIcon name="new-chat" size={16} />
+      </button>
+    </header>
+  );
+
+  const notices = (
+    <>
+      {missingKey && (
+        <div
+          role="alert"
+          className="rounded-card bg-red-tint px-3 py-2 text-[12.5px] leading-relaxed text-red"
+        >
+          The AI provider key is not configured. Set <code>{missingKey.envVar}</code> in{" "}
+          <code>apps/web/.env</code> (model <code>{missingKey.model}</code>) and restart the dev
+          server.
+        </div>
+      )}
+      {error && (
+        <div
+          role="alert"
+          className="rounded-card bg-red-tint px-3 py-2 text-[12.5px] leading-relaxed text-red"
+        >
+          {error}
+        </div>
+      )}
+    </>
+  );
+
+  const composer = (
+    <PromptBar
+      tall={empty}
+      autoFocus
+      running={running}
+      disabled={!isReady || Boolean(missingKey)}
+      modelLabel={status?.model}
+      placeholder={empty ? "What do you want to know?" : "Ask anything"}
+      onSend={send}
+      onStop={stop}
+    />
+  );
+
+  if (empty) {
+    return (
+      <div className="flex h-full min-h-0 flex-col">
+        {header}
+        <div className="flex flex-1 flex-col items-center justify-center px-4 pb-16">
+          <div className="flex w-full max-w-2xl flex-col gap-5">
+            <h1
+              className="text-center text-[28px] font-semibold tracking-tight text-ink"
+              style={{ animation: "fade-up 500ms cubic-bezier(0.23,1,0.32,1) both" }}
+            >
+              How can I help you today?
+            </h1>
+            {notices}
+            {composer}
+            <div className="flex flex-wrap justify-center gap-2">
+              {SUGGESTIONS.map((suggestion, index) => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  disabled={!isReady || Boolean(missingKey)}
+                  onClick={() => send(suggestion)}
+                  className="rounded-full border border-line px-3 py-1.5 text-[12.5px] text-ink-2 transition-colors duration-100 hover:bg-hover hover:text-ink disabled:opacity-50"
+                  style={{
+                    animation: \`fade-up 400ms cubic-bezier(0.23,1,0.32,1) \${120 + index * 70}ms both\`,
+                  }}
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-full min-h-0 flex-col">
+      {header}
+      <div ref={scrollerRef} className="min-h-0 flex-1 overflow-y-auto px-4">
+        <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 py-4">
+          {messages.map((message) => {
+            if (message.role === "user") {
+              return <UserBubble key={message.id}>{messageText(message)}</UserBubble>;
+            }
+            if (message.role === "reasoning") {
+              return (
+                <ThinkingState
+                  key={message.id}
+                  variant="Reasoning"
+                  working={running && message.id === lastMessage?.id}
+                  rows={message.content
+                    .split(/\\n{2,}/)
+                    .filter(Boolean)
+                    .map((primary) => ({ primary }))}
+                />
+              );
+            }
+            if (message.role !== "assistant") return null;
+
+            const text = messageText(message);
+            const streaming = running && message.id === lastMessage?.id;
+            const calls: ToolCall[] = message.toolCalls ?? [];
+            return (
+              <AgentSection key={message.id} label="Assistant" resolving={streaming}>
+                <div className="flex flex-col gap-3">
+                  {calls.length > 0 && <ToolChips steps={toolSteps(message, toolResults)} />}
+                  {calls
+                    .filter((call) => call.function.name === ASK_USER_TOOL)
+                    .map((call) => (
+                      <div key={call.id}>
+                        {renderToolCall({ toolCall: call, toolMessage: toolResults.get(call.id) })}
+                      </div>
+                    ))}
+                  {(text || streaming) && (
+                    <StreamingText
+                      content={text}
+                      streaming={streaming}
+                      actions={
+                        text ? (
+                          <MessageActions
+                            text={text}
+                            canRegenerate={!running && message.id === lastAssistantId}
+                            onRegenerate={regenerate}
+                          />
+                        ) : undefined
+                      }
+                    />
+                  )}
+                </div>
+              </AgentSection>
+            );
+          })}
+          {waiting && (
+            <ThinkingState
+              variant="Steps"
+              working
+              active="Thinking"
+              rows={[{ primary: "Reading the conversation" }]}
+            />
+          )}
+        </div>
+      </div>
+      <div
+        className="mx-auto flex w-full max-w-2xl shrink-0 flex-col gap-2 px-4 pt-2 pb-4"
+        style={{ animation: "fade-up 420ms cubic-bezier(0.23,1,0.32,1) both" }}
+      >
+        {notices}
+        {composer}
+      </div>
+    </div>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/chat-types.ts", `import type { useAgent } from "@copilotkit/react-core/v2";
+
+/** An AG-UI message as exposed by the CopilotKit agent. */
+export type AgentMessage = ReturnType<typeof useAgent>["agent"]["messages"][number];
+
+export type Conversation = {
+  id: string;
+  title: string;
+  messages: AgentMessage[];
+  updatedAt: number;
+};
+
+export type ChatbotTheme = "dark" | "light";
+
+const MESSAGE_ROLES = new Set(["user", "assistant", "tool", "reasoning", "system", "developer"]);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+/** Shallow guard for messages read back from localStorage (the trust boundary). */
+export function isAgentMessage(value: unknown): value is AgentMessage {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    typeof value.role === "string" &&
+    MESSAGE_ROLES.has(value.role)
+  );
+}
+
+export function isConversation(value: unknown): value is Conversation {
+  return (
+    isRecord(value) &&
+    typeof value.id === "string" &&
+    typeof value.title === "string" &&
+    typeof value.updatedAt === "number" &&
+    Array.isArray(value.messages) &&
+    value.messages.every(isAgentMessage)
+  );
+}
+
+/** Plain text of a message, whatever shape its content has. */
+export function messageText(message: AgentMessage): string {
+  if (!("content" in message)) return "";
+  const { content } = message;
+  if (typeof content === "string") return content;
+  if (!Array.isArray(content)) return "";
+  return content
+    .map((part: unknown) => (isRecord(part) && typeof part.text === "string" ? part.text : ""))
+    .join("");
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/chatbot-app.tsx", `"use client";
+
+import { CopilotKitProvider } from "@copilotkit/react-core/v2";
+import { useState } from "react";
+
+import { CHATBOT_RUNTIME_URL } from "../../lib/chatbot/config";
+import { ChatThread } from "./chat-thread";
+import { ConversationSidebar } from "./conversation-sidebar";
+import { CssIcon } from "./css-icons";
+import { useChatbotTheme, useConversations } from "./use-conversations";
+
+/**
+ * The chatbot screen: conversation sidebar (a drawer on small screens) + the active thread.
+ * CopilotKit talks to the runtime in this app over AG-UI at CHATBOT_RUNTIME_URL.
+ */
+export default function ChatbotApp() {
+  const { theme, setTheme } = useChatbotTheme();
+  const {
+    ready,
+    conversations,
+    active,
+    selectConversation,
+    createConversation,
+    deleteConversation,
+    saveMessages,
+  } = useConversations();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const newChat = () => {
+    createConversation();
+    setDrawerOpen(false);
+  };
+
+  return (
+    <CopilotKitProvider runtimeUrl={CHATBOT_RUNTIME_URL}>
+      <div
+        data-theme={theme}
+        className="kubo-chatbot relative flex h-full min-h-0 w-full overflow-hidden"
+      >
+        <ConversationSidebar
+          conversations={conversations}
+          activeId={active?.id ?? null}
+          open={drawerOpen}
+          theme={theme}
+          onClose={() => setDrawerOpen(false)}
+          onNewChat={newChat}
+          onSelect={(id) => {
+            selectConversation(id);
+            setDrawerOpen(false);
+          }}
+          onDelete={deleteConversation}
+          onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
+        />
+        <main className="min-w-0 flex-1">
+          {ready && active ? (
+            <ChatThread
+              key={active.id}
+              conversation={active}
+              onMessagesChange={saveMessages}
+              onThemeChange={setTheme}
+              onOpenSidebar={() => setDrawerOpen(true)}
+              onNewChat={newChat}
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-ink-3">
+              <CssIcon name="loading" size={18} />
+            </div>
+          )}
+        </main>
+      </div>
+    </CopilotKitProvider>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/chatbot.css", `/*
+ * Chatbot example styles.
+ *
+ * Design tokens, keyframes and the \`primitive-*\` / \`animated-underline\` helpers come from
+ * Beautiful UI (https://www.beautifului.dev, MIT, see ./beautiful-ui/LICENSE). They are scoped
+ * to \`.kubo-chatbot\` so they never leak into the rest of the app or override shadcn tokens.
+ * The CSS icons (\`.kc-icon-*\`) are original to this template.
+ */
+
+@theme inline {
+  --color-page: var(--page);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-inset: var(--inset);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-hover: var(--hover);
+  --color-hover-2: var(--hover-2);
+  --color-field: var(--field);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-tint: var(--accent-tint);
+  --color-green: var(--green);
+  --color-green-tint: var(--green-tint);
+  --color-red: var(--red);
+  --color-red-tint: var(--red-tint);
+  --shadow-hairline: var(--shadow-hairline);
+  --shadow-btn: var(--shadow-btn);
+  --shadow-card: var(--shadow-card);
+  --shadow-raised: var(--shadow-raised);
+  --shadow-overlay: var(--shadow-overlay);
+  --radius-chip: 6px;
+  --radius-control: 8px;
+  --radius-card: 10px;
+  --radius-window: 14px;
+}
+
+.kubo-chatbot[data-theme="light"] {
+  color-scheme: light;
+  --page: oklch(98.5% 0.001 286.376);
+  --canvas: oklch(96.1% 0.002 247.84);
+  --surface: oklch(100% 0 0);
+  --inset: oklch(97.9% 0.002 247.839);
+  --hover: oklch(97% 0.002 247.839);
+  --hover-2: oklch(93.3% 0.003 247.86);
+  --ink: oklch(24.7% 0.006 258.361);
+  --ink-2: oklch(50.6% 0.01 264.477);
+  --ink-3: oklch(69.5% 0.009 264.505);
+  --line: oklch(94.6% 0.003 264.542);
+  --line-strong: oklch(91.2% 0.005 258.326);
+  --field: oklch(96.1% 0.001 286.375);
+  --accent: oklch(62.6% 0.205 254.947);
+  --accent-ink: oklch(55.6% 0.187 255.617);
+  --accent-tint: oklch(96% 0.019 252.878);
+  --green: oklch(60.3% 0.155 150.883);
+  --green-tint: oklch(95.8% 0.017 159.118);
+  --red: oklch(62.1% 0.192 23.042);
+  --red-tint: oklch(95.6% 0.017 17.462);
+  --shadow-xs: 0 0 4px 0 #0000000a;
+  --shadow-hairline: 0 0 0 1px var(--line);
+  --shadow-btn: 0 0 0 1px var(--line-strong), var(--shadow-xs);
+  --shadow-card:
+    0 0 0 1px var(--line), 0 18px 47px 0 #00000008, 0 7.5px 19px 0 #00000005,
+    0 4px 10.5px 0 #00000005;
+  --shadow-raised:
+    0 0 0 1px var(--line), 0 17.54px 23.39px 0 #0000000a, 0 9.4px 12.5px 0 #00000008,
+    0 5.25px 7px 0 #00000005;
+  --shadow-overlay:
+    0 0 0 1px var(--line), 0 25px 50px 0 #0000000d, 0 12px 24px 0 #0000000a, 0 6px 12px 0 #00000008;
+}
+
+.kubo-chatbot[data-theme="dark"] {
+  color-scheme: dark;
+  --page: oklch(20.9% 0.004 264.477);
+  --canvas: oklch(23.1% 0.004 264.487);
+  --surface: oklch(26% 0.006 271.191);
+  --inset: oklch(24.3% 0.004 264.492);
+  --hover: oklch(28.9% 0.006 271.22);
+  --hover-2: oklch(31.8% 0.007 274.747);
+  --ink: oklch(96.4% 0.002 247.839);
+  --ink-2: oklch(73.1% 0.008 260.731);
+  --ink-3: oklch(54.1% 0.01 264.484);
+  --line: oklch(30.8% 0.006 258.354);
+  --line-strong: oklch(35.6% 0.007 264.474);
+  --field: oklch(29.3% 0.006 271.223);
+  --accent: oklch(68% 0.173 253.301);
+  --accent-ink: oklch(78.8% 0.113 248.33);
+  --accent-tint: oklch(68% 0.173 253.301 / 0.16);
+  --green: oklch(70.5% 0.154 153.814);
+  --green-tint: oklch(70.5% 0.154 153.814 / 0.14);
+  --red: oklch(66.6% 0.18 21.433);
+  --red-tint: oklch(66.6% 0.18 21.433 / 0.14);
+  --shadow-hairline: 0 0 0 1px var(--line);
+  --shadow-btn: 0 0 0 1px oklch(100% 0 0 / 0.1), 0 1px 2px oklch(0% 0 0 / 0.3);
+  --shadow-card:
+    0 0 0 1px oklch(100% 0 0 / 0.11), 0 1px 2px oklch(0% 0 0 / 0.2), 0 2px 6px oklch(0% 0 0 / 0.2);
+  --shadow-raised: 0 0 0 1px oklch(100% 0 0 / 0.13), 0 2px 10px oklch(0% 0 0 / 0.22);
+  --shadow-overlay: 0 0 0 1px oklch(100% 0 0 / 0.15), 0 8px 28px oklch(0% 0 0 / 0.34);
+}
+
+.kubo-chatbot {
+  background: var(--page);
+  color: var(--ink);
+}
+
+/* ── Beautiful UI helpers ─────────────────────────────────────────── */
+
+.kubo-chatbot .primitive-icon-button {
+  border-radius: var(--radius-control);
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+}
+
+.kubo-chatbot .primitive-card-pad {
+  padding: 12px;
+}
+
+.kubo-chatbot .primitive-card-footer {
+  padding: 10px;
+}
+
+.kubo-chatbot .animated-underline {
+  display: inline-block;
+  position: relative;
+}
+
+.kubo-chatbot .animated-underline::after {
+  content: "";
+  transform-origin: 0;
+  height: 1px;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  background: currentColor;
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  transform: scaleX(0);
+}
+
+.kubo-chatbot a:hover .animated-underline::after,
+.kubo-chatbot a:focus-visible .animated-underline::after {
+  transform: scaleX(1);
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer-text {
+  0% {
+    background-position: 150%;
+  }
+  to {
+    background-position: -50%;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* Streamdown markdown, tuned to the token palette. */
+.kubo-chatbot .kc-markdown {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.kubo-chatbot .kc-markdown :where(p, ul, ol, pre, blockquote, table) {
+  margin-block: 0.6em;
+}
+
+.kubo-chatbot .kc-markdown :where(code) {
+  border-radius: 5px;
+  background: var(--inset);
+  box-shadow: var(--shadow-hairline);
+  padding: 0.1em 0.35em;
+  font-size: 0.9em;
+}
+
+/* ── CSS icons (original): thin monochrome strokes + micro-animations ── */
+
+.kc-icon {
+  --kc-icon-size: 16px;
+  --kc-stroke: 1.6px;
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: var(--kc-icon-size);
+  height: var(--kc-icon-size);
+  color: currentColor;
+}
+
+.kc-icon::before,
+.kc-icon::after,
+.kc-icon > span {
+  content: "";
+  position: absolute;
+  box-sizing: border-box;
+}
+
+/* send: an arrow pointing up that pulses on hover */
+.kc-icon-send::before {
+  left: calc(50% - var(--kc-stroke) / 2);
+  top: 20%;
+  width: var(--kc-stroke);
+  height: 64%;
+  border-radius: 1px;
+  background: currentColor;
+}
+.kc-icon-send::after {
+  left: 27%;
+  width: 46%;
+  height: 46%;
+  border-left: var(--kc-stroke) solid currentColor;
+  border-top: var(--kc-stroke) solid currentColor;
+  border-radius: 1px;
+  transform: rotate(45deg);
+  transform-origin: center;
+  top: 18%;
+}
+:is(button, a):hover > .kc-icon-send,
+:is(button, a):focus-visible > .kc-icon-send {
+  animation: kc-send-pulse 900ms cubic-bezier(0.23, 1, 0.32, 1) infinite;
+}
+@keyframes kc-send-pulse {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+/* stop: a filled rounded square */
+.kc-icon-stop::before {
+  inset: 26%;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+/* new chat: rounded square with a plus that turns on hover */
+.kc-icon-new-chat::before {
+  inset: 8%;
+  border: var(--kc-stroke) solid currentColor;
+  border-radius: 4px;
+}
+.kc-icon-new-chat::after {
+  left: 30%;
+  top: 30%;
+  width: 40%;
+  height: 40%;
+  background:
+    linear-gradient(currentColor, currentColor) center / 100% var(--kc-stroke) no-repeat,
+    linear-gradient(currentColor, currentColor) center / var(--kc-stroke) 100% no-repeat;
+  transition: transform 260ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+:is(button, a):hover > .kc-icon-new-chat::after {
+  transform: rotate(90deg);
+}
+
+/* thinking: a breathing core with an orbiting satellite */
+.kc-icon-thinking::before {
+  inset: 34%;
+  border-radius: 50%;
+  background: currentColor;
+  animation: kc-breathe 1.6s ease-in-out infinite;
+}
+.kc-icon-thinking::after {
+  inset: 6%;
+  border-radius: 50%;
+  border: var(--kc-stroke) solid transparent;
+  border-top-color: currentColor;
+  animation: spin 1.2s linear infinite;
+}
+@keyframes kc-breathe {
+  0%,
+  100% {
+    transform: scale(0.75);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* loading: a ring that spins */
+.kc-icon-loading::before {
+  inset: 10%;
+  border-radius: 50%;
+  border: var(--kc-stroke) solid color-mix(in oklab, currentColor 25%, transparent);
+  border-top-color: currentColor;
+  animation: spin 700ms linear infinite;
+}
+
+/* copy: two stacked sheets that morph into a check once copied */
+.kc-icon-copy::before {
+  left: 30%;
+  top: 30%;
+  width: 60%;
+  height: 60%;
+  border: var(--kc-stroke) solid currentColor;
+  border-radius: 3px;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+.kc-icon-copy::after {
+  left: 10%;
+  top: 10%;
+  width: 60%;
+  height: 60%;
+  border-left: var(--kc-stroke) solid currentColor;
+  border-top: var(--kc-stroke) solid currentColor;
+  border-radius: 3px 0 0 0;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+.kc-icon-copy > span {
+  left: 22%;
+  top: 18%;
+  width: 34%;
+  height: 58%;
+  border-right: var(--kc-stroke) solid currentColor;
+  border-bottom: var(--kc-stroke) solid currentColor;
+  transform: rotate(45deg) scale(0.4);
+  opacity: 0;
+  transition:
+    opacity 200ms ease,
+    transform 260ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.kc-icon-copy[data-state="done"]::before,
+.kc-icon-copy[data-state="done"]::after {
+  opacity: 0;
+  transform: scale(0.6);
+}
+.kc-icon-copy[data-state="done"] > span {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+
+/* menu: three lines that fold into an X when open */
+.kc-icon-menu > span {
+  left: 12%;
+  width: 76%;
+  height: var(--kc-stroke);
+  border-radius: 1px;
+  background: currentColor;
+  transition:
+    transform 260ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 160ms ease;
+}
+.kc-icon-menu > span:nth-child(1) {
+  top: 24%;
+}
+.kc-icon-menu > span:nth-child(2) {
+  top: calc(50% - var(--kc-stroke) / 2);
+}
+.kc-icon-menu > span:nth-child(3) {
+  bottom: 24%;
+}
+.kc-icon-menu[data-state="open"] > span:nth-child(1) {
+  transform: translateY(calc(var(--kc-icon-size) * 0.26 - var(--kc-stroke) / 2)) rotate(45deg);
+}
+.kc-icon-menu[data-state="open"] > span:nth-child(2) {
+  opacity: 0;
+}
+.kc-icon-menu[data-state="open"] > span:nth-child(3) {
+  transform: translateY(calc(var(--kc-icon-size) * -0.26 + var(--kc-stroke) / 2)) rotate(-45deg);
+}
+
+/* refresh: an open ring with an arrow head, it turns on hover */
+.kc-icon-refresh::before {
+  inset: 14%;
+  border-radius: 50%;
+  border: var(--kc-stroke) solid currentColor;
+  border-right-color: transparent;
+}
+.kc-icon-refresh::after {
+  right: 10%;
+  top: 14%;
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 4px solid currentColor;
+  transform: rotate(150deg);
+}
+.kc-icon-refresh {
+  transition: transform 420ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+:is(button, a):hover > .kc-icon-refresh {
+  transform: rotate(-180deg);
+}
+
+/* thumbs: a cuff plus a rounded palm; filled when active */
+.kc-icon-thumb-up::before,
+.kc-icon-thumb-down::before {
+  left: 8%;
+  top: 44%;
+  width: 22%;
+  height: 46%;
+  border: var(--kc-stroke) solid currentColor;
+  border-radius: 2px;
+}
+.kc-icon-thumb-up::after,
+.kc-icon-thumb-down::after {
+  left: 34%;
+  top: 44%;
+  width: 58%;
+  height: 46%;
+  border: var(--kc-stroke) solid currentColor;
+  border-radius: 2px 6px 6px 2px;
+}
+.kc-icon-thumb-up > span,
+.kc-icon-thumb-down > span {
+  left: 38%;
+  top: 8%;
+  width: 22%;
+  height: 40%;
+  border: var(--kc-stroke) solid currentColor;
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+  transform: rotate(14deg);
+  transform-origin: bottom left;
+}
+.kc-icon-thumb-down {
+  transform: rotate(180deg);
+}
+.kc-icon-thumb-up[data-state="on"]::after,
+.kc-icon-thumb-down[data-state="on"]::after {
+  background: currentColor;
+}
+.kc-icon-thumb-up[data-state="on"] {
+  animation: pop-in 260ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* chevron: a small V, rotated by the caller */
+.kc-icon-chevron::before {
+  left: 30%;
+  top: 18%;
+  width: 40%;
+  height: 40%;
+  border-right: var(--kc-stroke) solid currentColor;
+  border-bottom: var(--kc-stroke) solid currentColor;
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+
+/* close: two crossed strokes */
+.kc-icon-close::before,
+.kc-icon-close::after {
+  left: 14%;
+  top: calc(50% - var(--kc-stroke) / 2);
+  width: 72%;
+  height: var(--kc-stroke);
+  border-radius: 1px;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+.kc-icon-close::after {
+  transform: rotate(-45deg);
+}
+
+/* check */
+.kc-icon-check::before {
+  left: 34%;
+  top: 12%;
+  width: 32%;
+  height: 60%;
+  border-right: var(--kc-stroke) solid currentColor;
+  border-bottom: var(--kc-stroke) solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* sidebar: a window with a left rail */
+.kc-icon-sidebar::before {
+  inset: 12% 6%;
+  border: var(--kc-stroke) solid currentColor;
+  border-radius: 4px;
+}
+.kc-icon-sidebar::after {
+  left: 34%;
+  top: 12%;
+  bottom: 12%;
+  width: var(--kc-stroke);
+  background: currentColor;
+}
+
+/* sun / moon for the theme switch */
+.kc-icon-sun::before {
+  inset: 32%;
+  border-radius: 50%;
+  border: var(--kc-stroke) solid currentColor;
+}
+.kc-icon-sun::after {
+  left: calc(50% - 1px);
+  top: calc(50% - 1px);
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow:
+    0 -7px 0 currentColor,
+    0 7px 0 currentColor,
+    7px 0 0 currentColor,
+    -7px 0 0 currentColor,
+    5px 5px 0 currentColor,
+    -5px -5px 0 currentColor,
+    5px -5px 0 currentColor,
+    -5px 5px 0 currentColor;
+  transition: transform 420ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+:is(button, a):hover > .kc-icon-sun::after {
+  transform: rotate(45deg);
+}
+.kc-icon-moon::before {
+  inset: 14%;
+  border-radius: 50%;
+  box-shadow: inset 4px -3px 0 0 currentColor;
+  transform: rotate(-20deg);
+  transition: transform 420ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+:is(button, a):hover > .kc-icon-moon::before {
+  transform: rotate(-50deg);
+}
+
+/* sparkle: a four-point star used for the assistant mark */
+.kc-icon-sparkle::before {
+  inset: 4%;
+  background: currentColor;
+  clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
+}
+.kc-icon-sparkle[data-state="active"]::before {
+  animation: kc-breathe 1.6s ease-in-out infinite;
+}
+
+/* wrench: a tool call */
+.kc-icon-tool::before {
+  left: 18%;
+  top: 46%;
+  width: 66%;
+  height: var(--kc-stroke);
+  border-radius: 1px;
+  background: currentColor;
+  transform: rotate(-45deg);
+}
+.kc-icon-tool::after {
+  right: 8%;
+  top: 8%;
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  border: var(--kc-stroke) solid currentColor;
+  border-left-color: transparent;
+}
+
+/* Respect reduced motion everywhere inside the chatbot (Beautiful UI's global rule, scoped). */
+@media (prefers-reduced-motion: reduce) {
+  .kubo-chatbot *,
+  .kubo-chatbot ::before,
+  .kubo-chatbot ::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/conversation-sidebar.tsx", `"use client";
+
+import type { ChatbotTheme, Conversation } from "./chat-types";
+import { CssIcon } from "./css-icons";
+import { KuboCta } from "./kubo-cta";
+
+export function ConversationSidebar({
+  conversations,
+  activeId,
+  open,
+  theme,
+  onClose,
+  onNewChat,
+  onSelect,
+  onDelete,
+  onToggleTheme,
+}: {
+  conversations: Conversation[];
+  activeId: string | null;
+  /** drawer state on small screens; the sidebar is always visible from \`md\` up */
+  open: boolean;
+  theme: ChatbotTheme;
+  onClose: () => void;
+  onNewChat: () => void;
+  onSelect: (id: string) => void;
+  onDelete: (id: string) => void;
+  onToggleTheme: () => void;
+}) {
+  const saved = conversations.filter((conversation) => conversation.messages.length > 0);
+
+  return (
+    <>
+      {/* mobile backdrop */}
+      <button
+        type="button"
+        aria-label="Close sidebar"
+        tabIndex={open ? 0 : -1}
+        onClick={onClose}
+        className={\`absolute inset-0 z-20 bg-black/40 transition-opacity duration-200 md:hidden \${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }\`}
+      />
+
+      <aside
+        aria-label="Conversations"
+        className={\`absolute inset-y-0 left-0 z-30 flex w-72 max-w-[85%] flex-col border-r border-line bg-canvas transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] md:static md:z-auto md:max-w-none md:translate-x-0 \${
+          open ? "translate-x-0" : "-translate-x-full"
+        }\`}
+      >
+        <div className="flex items-center justify-between gap-2 px-3 pt-3 pb-2">
+          <span className="flex items-center gap-2 text-[14px] font-semibold text-ink">
+            <CssIcon name="sparkle" size={16} />
+            Chatbot
+          </span>
+          <button
+            type="button"
+            aria-label="Close sidebar"
+            onClick={onClose}
+            className="primitive-icon-button text-ink-3 transition-colors hover:bg-hover hover:text-ink md:hidden"
+          >
+            <CssIcon name="close" size={14} />
+          </button>
+        </div>
+
+        <div className="px-2">
+          <button
+            type="button"
+            onClick={onNewChat}
+            className="flex h-9 w-full items-center gap-2.5 rounded-control px-2.5 text-[13px] font-medium text-ink transition-colors duration-100 hover:bg-hover"
+          >
+            <CssIcon name="new-chat" size={16} />
+            New chat
+          </button>
+        </div>
+
+        <nav className="mt-3 min-h-0 flex-1 overflow-y-auto px-2">
+          <p className="px-2.5 pb-1 text-[11.5px] font-medium text-ink-3">History</p>
+          {saved.length === 0 ? (
+            <p className="px-2.5 py-1.5 text-[12.5px] text-ink-3">
+              Your conversations show up here.
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-0.5">
+              {saved.map((conversation) => {
+                const active = conversation.id === activeId;
+                return (
+                  <li key={conversation.id} className="group relative">
+                    <button
+                      type="button"
+                      aria-current={active ? "page" : undefined}
+                      onClick={() => onSelect(conversation.id)}
+                      className={\`flex h-8 w-full items-center rounded-control pr-8 pl-2.5 text-left text-[13px] transition-colors duration-100 \${
+                        active ? "bg-hover-2 text-ink" : "text-ink-2 hover:bg-hover hover:text-ink"
+                      }\`}
+                    >
+                      <span className="truncate">{conversation.title}</span>
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={\`Delete “\${conversation.title}”\`}
+                      onClick={() => onDelete(conversation.id)}
+                      className="absolute top-1 right-1 flex size-6 items-center justify-center rounded-[6px] text-ink-3 opacity-0 transition-opacity duration-100 group-hover:opacity-100 hover:text-ink focus-visible:opacity-100"
+                    >
+                      <CssIcon name="close" size={11} />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </nav>
+
+        <div className="flex flex-col gap-2 border-t border-line p-2">
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            className="flex h-8 items-center gap-2.5 rounded-control px-2.5 text-[12.5px] text-ink-2 transition-colors duration-100 hover:bg-hover hover:text-ink"
+          >
+            <CssIcon name={theme === "dark" ? "sun" : "moon"} size={15} />
+            {theme === "dark" ? "Light theme" : "Dark theme"}
+          </button>
+          <KuboCta />
+        </div>
+      </aside>
+    </>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/css-icons.tsx", `/*
+ * Icons drawn only with CSS (borders, pseudo-elements and keyframes in ./chatbot.css).
+ * No SVG, image or icon package: each icon is an empty span plus a few child spans.
+ * Animations are disabled under \`prefers-reduced-motion\`.
+ */
+
+import type { CSSProperties } from "react";
+
+type IconStyle = CSSProperties & { "--kc-icon-size": string };
+
+export type CssIconName =
+  | "send"
+  | "stop"
+  | "new-chat"
+  | "thinking"
+  | "loading"
+  | "copy"
+  | "menu"
+  | "refresh"
+  | "thumb-up"
+  | "thumb-down"
+  | "chevron"
+  | "close"
+  | "check"
+  | "sidebar"
+  | "sun"
+  | "moon"
+  | "sparkle"
+  | "tool";
+
+/** Icons that need extra strokes beyond \`::before\` / \`::after\`. */
+const CHILD_SPANS: Partial<Record<CssIconName, number>> = {
+  copy: 1,
+  menu: 3,
+  "thumb-up": 1,
+  "thumb-down": 1,
+};
+
+export function CssIcon({
+  name,
+  size = 16,
+  state,
+  className,
+}: {
+  name: CssIconName;
+  size?: number;
+  /** drives state transitions such as copy → check, menu → close, thumb on */
+  state?: "done" | "open" | "on" | "active";
+  className?: string;
+}) {
+  const children = CHILD_SPANS[name] ?? 0;
+  const style: IconStyle = { "--kc-icon-size": \`\${size}px\` };
+  return (
+    <span
+      aria-hidden="true"
+      data-state={state}
+      className={\`kc-icon kc-icon-\${name}\${className ? \` \${className}\` : ""}\`}
+      style={style}
+    >
+      {Array.from({ length: children }, (_, index) => (
+        <span key={index} />
+      ))}
+    </span>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/kubo-cta.tsx", `/*
+ * "Built with Kubo" card for the sidebar footer.
+ * It is self-contained: delete this file and its <KuboCta /> usage in
+ * conversation-sidebar.tsx to remove it, nothing else depends on it.
+ */
+
+const KUBO_URL = "https://kubojs.dev/?utm_source=kubo-template&utm_medium=chatbot";
+
+export function KuboCta() {
+  return (
+    <a
+      href={KUBO_URL}
+      target="_blank"
+      rel="noreferrer"
+      className="group flex items-center gap-2.5 rounded-card bg-surface p-2.5 shadow-card transition-colors duration-150 hover:bg-hover"
+    >
+      {/* the Kubo mark: a gold cube drawn with a gradient */}
+      <span
+        aria-hidden="true"
+        className="relative flex size-7 shrink-0 items-center justify-center rounded-[7px] text-[13px] font-bold text-[#2a1f05]"
+        style={{ background: "linear-gradient(135deg, #F5D76E, #E0B43E 45%, #E08A2E)" }}
+      >
+        K
+      </span>
+      <span className="flex min-w-0 flex-col">
+        <span className="text-[12.5px] font-medium text-ink">Built with Kubo</span>
+        <span className="truncate text-[11.5px] text-ink-3">
+          <span className="animated-underline">Start your own stack at kubojs.dev</span>
+        </span>
+      </span>
+    </a>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/message-actions.tsx", `"use client";
+
+import { useEffect, useState } from "react";
+
+import { CssIcon, type CssIconName } from "./css-icons";
+
+type Feedback = "up" | "down" | null;
+
+function ActionButton({
+  label,
+  icon,
+  state,
+  onClick,
+}: {
+  label: string;
+  icon: CssIconName;
+  state?: "done" | "on";
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      aria-pressed={state === "on" ? true : undefined}
+      onClick={onClick}
+      className="flex size-7 items-center justify-center rounded-[6px] text-ink-3 transition-colors duration-100 hover:bg-hover-2 hover:text-ink-2"
+    >
+      <CssIcon name={icon} size={15} state={state} />
+    </button>
+  );
+}
+
+/** Copy, regenerate and thumbs up/down under an assistant answer. */
+export function MessageActions({
+  text,
+  canRegenerate,
+  onRegenerate,
+  onFeedback,
+}: {
+  text: string;
+  canRegenerate: boolean;
+  onRegenerate: () => void;
+  /** hook this up to your analytics or database to collect ratings */
+  onFeedback?: (feedback: Feedback) => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  const [feedback, setFeedback] = useState<Feedback>(null);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 1500);
+    return () => clearTimeout(timer);
+  }, [copied]);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  const rate = (value: Exclude<Feedback, null>) => {
+    const next = feedback === value ? null : value;
+    setFeedback(next);
+    onFeedback?.(next);
+  };
+
+  return (
+    <>
+      <ActionButton
+        label={copied ? "Copied" : "Copy"}
+        icon="copy"
+        state={copied ? "done" : undefined}
+        onClick={copy}
+      />
+      {canRegenerate && <ActionButton label="Regenerate" icon="refresh" onClick={onRegenerate} />}
+      <ActionButton
+        label="Good response"
+        icon="thumb-up"
+        state={feedback === "up" ? "on" : undefined}
+        onClick={() => rate("up")}
+      />
+      <ActionButton
+        label="Bad response"
+        icon="thumb-down"
+        state={feedback === "down" ? "on" : undefined}
+        onClick={() => rate("down")}
+      />
+    </>
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/components/chatbot/use-conversations.ts", `"use client";
+
+import { useCallback, useEffect, useState } from "react";
+
+import {
+  isConversation,
+  messageText,
+  type AgentMessage,
+  type ChatbotTheme,
+  type Conversation,
+} from "./chat-types";
+
+/*
+ * v1 keeps the conversation list in the browser (localStorage). Swap these two helpers for
+ * API calls to persist conversations in your database.
+ */
+const CONVERSATIONS_KEY = "kubo-chatbot:conversations";
+const THEME_KEY = "kubo-chatbot:theme";
+const MAX_TITLE = 48;
+
+function readStorage(key: string): unknown {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeStorage(key: string, value: unknown): void {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Private mode or a full quota: the chat keeps working in memory.
+  }
+}
+
+function newId(): string {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : \`\${Date.now()}-\${Math.random().toString(36).slice(2)}\`;
+}
+
+function titleFrom(messages: AgentMessage[]): string {
+  const firstUser = messages.find((message) => message.role === "user");
+  const text = firstUser ? messageText(firstUser).trim().replace(/\\s+/g, " ") : "";
+  if (!text) return "New chat";
+  return text.length > MAX_TITLE ? \`\${text.slice(0, MAX_TITLE - 1)}…\` : text;
+}
+
+function blankConversation(): Conversation {
+  return { id: newId(), title: "New chat", messages: [], updatedAt: Date.now() };
+}
+
+export function useConversations() {
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
+
+  // Hydrate after mount so server and client render the same first frame.
+  useEffect(() => {
+    const stored = readStorage(CONVERSATIONS_KEY);
+    const list = Array.isArray(stored) ? stored.filter(isConversation) : [];
+    const initial = list.length > 0 ? list : [blankConversation()];
+    setConversations(initial);
+    setActiveId(initial[0]?.id ?? null);
+    setReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    // Empty drafts are not worth persisting.
+    writeStorage(
+      CONVERSATIONS_KEY,
+      conversations.filter((conversation) => conversation.messages.length > 0),
+    );
+  }, [conversations, ready]);
+
+  const createConversation = useCallback(() => {
+    const conversation = blankConversation();
+    setConversations((current) => [
+      conversation,
+      ...current.filter((item) => item.messages.length > 0),
+    ]);
+    setActiveId(conversation.id);
+    return conversation.id;
+  }, []);
+
+  const deleteConversation = useCallback((id: string) => {
+    setConversations((current) => {
+      const next = current.filter((item) => item.id !== id);
+      return next.length > 0 ? next : [blankConversation()];
+    });
+  }, []);
+
+  // Keep a valid selection when the active conversation is deleted.
+  useEffect(() => {
+    if (!ready || conversations.some((item) => item.id === activeId)) return;
+    setActiveId(conversations[0]?.id ?? null);
+  }, [activeId, conversations, ready]);
+
+  const saveMessages = useCallback((id: string, messages: AgentMessage[]) => {
+    setConversations((current) =>
+      current
+        .map((item) =>
+          item.id === id
+            ? { ...item, messages, title: titleFrom(messages), updatedAt: Date.now() }
+            : item,
+        )
+        .sort((a, b) => b.updatedAt - a.updatedAt),
+    );
+  }, []);
+
+  const active = conversations.find((item) => item.id === activeId) ?? null;
+
+  return {
+    ready,
+    conversations,
+    active,
+    selectConversation: setActiveId,
+    createConversation,
+    deleteConversation,
+    saveMessages,
+  };
+}
+
+/** Dark by default (like the reference layout); the choice is remembered per browser. */
+export function useChatbotTheme() {
+  const [theme, setThemeState] = useState<ChatbotTheme>("dark");
+
+  useEffect(() => {
+    const stored = readStorage(THEME_KEY);
+    if (stored === "light" || stored === "dark") setThemeState(stored);
+  }, []);
+
+  const setTheme = useCallback((next: ChatbotTheme) => {
+    setThemeState(next);
+    writeStorage(THEME_KEY, next);
+  }, []);
+
+  return { theme, setTheme };
+}
+`],
+  ["examples/chatbot/web/react/shared/src/lib/chatbot/config.ts", `/** Where the CopilotKit runtime (AG-UI) is mounted in this app. */
+export const CHATBOT_RUNTIME_URL = "/api/copilotkit";
+
+/** Small JSON endpoint next to the runtime: which model is used and whether its key is set. */
+export const CHATBOT_STATUS_URL = \`\${CHATBOT_RUNTIME_URL}/kubo-status\`;
+
+export type ChatbotStatus = {
+  model: string;
+  configured: boolean;
+  /** the environment variable that must hold the provider key */
+  envVar?: string;
+};
+
+export function isChatbotStatus(value: unknown): value is ChatbotStatus {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "model" in value &&
+    typeof value.model === "string" &&
+    "configured" in value &&
+    typeof value.configured === "boolean"
+  );
+}
+`],
+  ["examples/chatbot/web/react/shared/src/lib/chatbot/runtime.ts", `/*
+ * Server-only: the CopilotKit runtime that serves the chatbot over AG-UI.
+ * The API route (Next.js \`app/api/copilotkit/[[...slug]]\` or TanStack Start
+ * \`routes/api/copilotkit/$\`) forwards every request to \`handleChatbotRequest\`.
+ *
+ * Swap the agent here: \`BuiltInAgent\` accepts any "provider/model" string or an AI SDK
+ * LanguageModel, and \`agents\` can hold any AG-UI agent (LangGraph, Mastra, your own...).
+ */
+import { BuiltInAgent, CopilotRuntime, createCopilotRuntimeHandler } from "@copilotkit/runtime/v2";
+
+import { CHATBOT_RUNTIME_URL, CHATBOT_STATUS_URL, type ChatbotStatus } from "./config";
+
+const DEFAULT_MODEL = "google/gemini-2.5-flash";
+
+/** Which environment variable holds the key for each provider prefix of CHATBOT_MODEL. */
+const PROVIDER_KEYS: Record<string, string> = {
+  google: "GOOGLE_GENERATIVE_AI_API_KEY",
+  gemini: "GOOGLE_GENERATIVE_AI_API_KEY",
+  openai: "OPENAI_API_KEY",
+  anthropic: "ANTHROPIC_API_KEY",
+};
+
+const SYSTEM_PROMPT = \`You are a helpful assistant inside a web app generated with Kubo.
+Answer in the user's language and format answers with Markdown.
+You can switch the interface between the light and the dark theme with the setTheme tool.
+Before doing anything destructive, irreversible or ambiguous, call askUser and wait for the answer.\`;
+
+function resolveModel() {
+  const model = process.env.CHATBOT_MODEL?.trim() || DEFAULT_MODEL;
+  const envVar = PROVIDER_KEYS[model.split("/")[0] ?? ""];
+  const apiKey = envVar ? process.env[envVar]?.trim() : undefined;
+  return { model, envVar, apiKey };
+}
+
+export function getChatbotStatus(): ChatbotStatus {
+  const { model, envVar, apiKey } = resolveModel();
+  // Unknown providers are left to the runtime, which reports its own error.
+  return { model, envVar, configured: envVar === undefined || Boolean(apiKey) };
+}
+
+let handler: ((request: Request) => Promise<Response>) | undefined;
+
+function getRuntimeHandler() {
+  if (handler) return handler;
+  const { model, apiKey } = resolveModel();
+  const runtime = new CopilotRuntime({
+    agents: {
+      default: new BuiltInAgent({ model, apiKey, prompt: SYSTEM_PROMPT }),
+    },
+  });
+  handler = createCopilotRuntimeHandler({ runtime, basePath: CHATBOT_RUNTIME_URL });
+  return handler;
+}
+
+export async function handleChatbotRequest(request: Request): Promise<Response> {
+  const status = getChatbotStatus();
+  if (new URL(request.url).pathname === CHATBOT_STATUS_URL) {
+    return Response.json(status, { headers: { "Cache-Control": "no-store" } });
+  }
+  if (!status.configured) {
+    return Response.json(
+      { error: "missing-api-key", envVar: status.envVar, model: status.model },
+      { status: 503 },
+    );
+  }
+  return getRuntimeHandler()(request);
+}
+`],
+  ["examples/chatbot/web/react/tanstack-start/src/routes/chatbot.tsx.hbs", `{{#if (and (eq auth "better-auth") (eq backend "self"))}}
+import { createFileRoute, redirect } from "@tanstack/react-router";
+
+import ChatbotApp from "../components/chatbot/chatbot-app";
+import { getUser } from "../functions/get-user";
+
+export const Route = createFileRoute("/chatbot")({
+  component: ChatbotApp,
+  beforeLoad: async () => {
+    const session = await getUser();
+    if (!session) throw redirect({ to: "/login" });
+    return { session };
+  },
+});
+{{else}}
+import { createFileRoute } from "@tanstack/react-router";
+
+import ChatbotApp from "../components/chatbot/chatbot-app";
+
+export const Route = createFileRoute("/chatbot")({
+  component: ChatbotApp,
+});
+{{/if}}
+`],
   ["examples/todo/convex/packages/backend/convex/todos.ts.hbs", `import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -29807,7 +32769,7 @@ const nextConfig: NextConfig = {
 	{{else if (eq webDeploy "docker")}}
 	output: "standalone",
 	{{/if}}
-	{{#if (includes examples "ai")}}
+	{{#if (or (includes examples "ai") (includes examples "chatbot"))}}
 	transpilePackages: ["shiki"],
 	{{/if}}
 	{{#if (and (eq backend "self") (eq dbSetup "turso"))}}
@@ -32104,6 +35066,9 @@ export default function Header() {
     {{#if (includes examples "ai")}}
     { to: "/ai", label: "AI Chat" },
     {{/if}}
+    {{#if (includes examples "chatbot")}}
+    { to: "/chatbot", label: "Chatbot" },
+    {{/if}}
   ] as const;
 
   return (
@@ -32167,7 +35132,10 @@ export default function Loader() {
 }
 `],
   ["frontend/react/web-base/src/index.css.hbs", `@import '{{packageScope}}/ui/globals.css';
-{{#if (includes examples "ai")}}
+{{#if (includes examples "chatbot")}}
+@import './components/chatbot/chatbot.css';
+{{/if}}
+{{#if (or (includes examples "ai") (includes examples "chatbot"))}}
 @source "../node_modules/streamdown/dist/*.js";
 {{/if}}
 `],
@@ -33618,7 +36586,7 @@ export const server = await Worker("server", {
     CLERK_PUBLISHABLE_KEY: alchemy.env.CLERK_PUBLISHABLE_KEY!,
     {{/if}}
     {{/if}}
-    {{#if (includes examples "ai")}}
+    {{#if (or (includes examples "ai") (includes examples "chatbot"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
 
@@ -33694,7 +36662,7 @@ export const web = await Nextjs("web", {
     CLERK_PUBLISHABLE_KEY: alchemy.env.CLERK_PUBLISHABLE_KEY!,
     {{/if}}
     {{/if}}
-    {{#if (and (includes examples "ai") (ne backend "convex"))}}
+    {{#if (and (or (includes examples "ai") (includes examples "chatbot")) (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
 
@@ -33770,7 +36738,7 @@ export const web = await Nuxt("web", {
     CLERK_PUBLISHABLE_KEY: alchemy.env.CLERK_PUBLISHABLE_KEY!,
     {{/if}}
     {{/if}}
-    {{#if (and (includes examples "ai") (ne backend "convex"))}}
+    {{#if (and (or (includes examples "ai") (includes examples "chatbot")) (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
 
@@ -33834,7 +36802,7 @@ export const web = await SvelteKit("web", {
     BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
     BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
     {{/if}}
-    {{#if (and (includes examples "ai") (ne backend "convex"))}}
+    {{#if (and (or (includes examples "ai") (includes examples "chatbot")) (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
 
@@ -33908,7 +36876,7 @@ export const web = await TanStackStart("web", {
     CLERK_PUBLISHABLE_KEY: alchemy.env.CLERK_PUBLISHABLE_KEY!,
     {{/if}}
     {{/if}}
-    {{#if (and (includes examples "ai") (ne backend "convex"))}}
+    {{#if (and (or (includes examples "ai") (includes examples "chatbot")) (ne backend "convex"))}}
     GOOGLE_GENERATIVE_AI_API_KEY: alchemy.secret.env.GOOGLE_GENERATIVE_AI_API_KEY!,
     {{/if}}
 
@@ -37937,4 +40905,4 @@ export default defineConfig({
 `]
 ]);
 
-export const TEMPLATE_COUNT = 631;
+export const TEMPLATE_COUNT = 654;

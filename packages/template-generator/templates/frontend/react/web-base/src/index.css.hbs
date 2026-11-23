@@ -1,4 +1,7 @@
 @import '{{packageScope}}/ui/globals.css';
-{{#if (includes examples "ai")}}
+{{#if (includes examples "chatbot")}}
+@import './components/chatbot/chatbot.css';
+{{/if}}
+{{#if (or (includes examples "ai") (includes examples "chatbot"))}}
 @source "../node_modules/streamdown/dist/*.js";
 {{/if}}

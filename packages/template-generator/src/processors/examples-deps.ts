@@ -1,8 +1,8 @@
 import { hasNativeFrontend, hasReactFrontend, type ProjectConfig } from "@kubojs/types";
 
 import type { VirtualFileSystem } from "../core/virtual-fs";
-import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
 import { appFile, pkgFile } from "../layout-paths";
+import { addPackageDependency, type AvailableDependencies } from "../utils/add-deps";
 
 export function processExamplesDeps(vfs: VirtualFileSystem, config: ProjectConfig): void {
   if (!config.examples || config.examples.length === 0 || config.examples[0] === "none") return;
@@ -18,6 +18,22 @@ export function processExamplesDeps(vfs: VirtualFileSystem, config: ProjectConfi
   if (config.examples.includes("ai")) {
     setupAIDependencies(vfs, config);
   }
+
+  if (config.examples.includes("chatbot")) {
+    setupChatbotDependencies(vfs, config);
+  }
+}
+
+/** The chatbot runs the CopilotKit runtime in the fullstack web app (AG-UI over its API route). */
+function setupChatbotDependencies(vfs: VirtualFileSystem, config: ProjectConfig): void {
+  const webPkgPath = appFile(config, "web", "package.json");
+  if (config.backend !== "self" || !vfs.exists(webPkgPath)) return;
+
+  addPackageDependency({
+    vfs,
+    packagePath: webPkgPath,
+    dependencies: ["@copilotkit/react-core", "@copilotkit/runtime", "streamdown", "zod"],
+  });
 }
 
 function setupTodoDependencies(vfs: VirtualFileSystem, config: ProjectConfig): void {

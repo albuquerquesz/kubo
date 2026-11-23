@@ -761,6 +761,15 @@ const TECH_OPTION_METADATA: Record<TechCategory, TechOption[]> = {
       default: false,
     },
     {
+      id: "chatbot",
+      name: "Chatbot",
+      description:
+        "Assistente estilo Grok com CopilotKit (AG-UI), só Next.js ou TanStack Start fullstack",
+      icon: "",
+      color: "from-amber-500 to-orange-700",
+      default: false,
+    },
+    {
       id: "none",
       name: "Sem exemplos",
       description: "Não incluir exemplos no projeto",

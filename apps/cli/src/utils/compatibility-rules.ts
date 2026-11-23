@@ -5,6 +5,7 @@ import {
   getCommunicationCompatibilityIssue,
   COMMUNICATION_PRODUCT_NAMES,
   evaluate,
+  isChatbotExampleSupported,
   CONVEX_BETTER_AUTH_SUPPORTED_FRONTENDS,
   WEB_FRONTENDS_REQUIRING_ORPC,
   isCommunicationProvider,
@@ -180,6 +181,13 @@ export function isExampleAIAllowed(backend?: ProjectConfig["backend"], frontends
   return !evaluate({ backend, frontend: frontends, examples: ["ai"] }).issues.some(({ code }) =>
     ["example-ai-frontend", "example-ai-backend"].includes(code),
   );
+}
+
+export function isExampleChatbotAllowed(
+  backend?: ProjectConfig["backend"],
+  frontends: Frontend[] = [],
+): boolean {
+  return isChatbotExampleSupported({ backend, frontend: frontends, examples: ["chatbot"] });
 }
 
 export function validateWebDeployRequiresWebFrontend(
@@ -372,6 +380,9 @@ export function validateExamplesCompatibility(
       "example-todo-orval",
       "example-ai-frontend",
       "example-ai-backend",
+      "example-chatbot-backend",
+      "example-chatbot-frontend",
+      "example-chatbot-ai",
     ],
   );
 }

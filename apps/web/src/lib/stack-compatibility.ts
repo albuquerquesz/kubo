@@ -73,6 +73,14 @@ const BACKEND_CAPABILITY_MESSAGES: Partial<Record<CompatibilityField, string>> =
   payments: "Integrações de pagamento não são compatíveis com este backend",
 } as const satisfies Partial<Record<CompatibilityField, string>>;
 
+const CHATBOT_ISSUE_MESSAGES: Partial<Record<CompatibilityIssueCode, string>> = {
+  "example-chatbot-backend":
+    "O Chatbot exige backend fullstack (Next.js ou TanStack Start); backends separados e Convex ainda não são suportados",
+  "example-chatbot-frontend":
+    "O Chatbot só suporta Next.js ou TanStack Start (sem native nem outros frontends)",
+  "example-chatbot-ai": "O Chatbot e o exemplo de IA geram a mesma tela de chat; escolha só um",
+};
+
 const SELF_HOSTED_FRONTEND_MESSAGES = {
   next: "Next.js fullstack exige frontend Next.js",
   "tanstack-start": "TanStack Start fullstack exige frontend TanStack Start",
@@ -274,6 +282,9 @@ function getAdjustmentMessage(
   if (code === "payment") return "Providers de pagamento incompatíveis foram removidos";
   if (code === "addon") return "Add-on removido (exige frontend compatível)";
   if (code === "testing-frontend") return "Playwright removido (exige frontend compatível)";
+  if (code === "example-chatbot") {
+    return "Chatbot removido (exige Next.js ou TanStack Start fullstack, sem o exemplo de IA)";
+  }
   if (code === "example-todo-database") return "Todo removido (exige banco de dados)";
   if (code === "example-todo-api") return "Todo removido (exige camada de API)";
   if (code.startsWith("example-")) {
@@ -528,6 +539,8 @@ function getIssueMessage(issue: CompatibilityIssue, config: ProjectConfigDraft):
       ? "Exemplo de IA não é compatível com este backend"
       : "O exemplo de IA exige um backend";
   }
+  const chatbotMessage = CHATBOT_ISSUE_MESSAGES[issue.code];
+  if (chatbotMessage) return chatbotMessage;
   if (issue.code === "communication")
     return getCommunicationMessage(config) ?? "Comunicação incompatível";
   if (issue.code === "payment") return getPaymentMessage(config);

@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
 	{{else if (eq webDeploy "docker")}}
 	output: "standalone",
 	{{/if}}
-	{{#if (includes examples "ai")}}
+	{{#if (or (includes examples "ai") (includes examples "chatbot"))}}
 	transpilePackages: ["shiki"],
 	{{/if}}
 	{{#if (and (eq backend "self") (eq dbSetup "turso"))}}

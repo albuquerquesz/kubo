@@ -82,6 +82,15 @@ export async function processExampleTemplates(
     if (hasReactWeb) {
       const reactFramework = findFrontend(config.frontend, reactWebFrontends);
       if (reactFramework) {
+        // Framework-agnostic React files (components, hooks, server helpers) shared by every
+        // React framework; framework folders below can still override a shared file.
+        processTemplatesFromPrefix(
+          vfs,
+          templates,
+          `examples/${example}/web/react/shared`,
+          appDir(config, "web"),
+          config,
+        );
         processTemplatesFromPrefix(
           vfs,
           templates,

@@ -44,7 +44,8 @@ const DIMENSIONS = {
   auth: optionsOf(AuthSchema),
   payments: ["none", ...Object.keys(PAYMENT_PROVIDER_CAPABILITIES)],
   addons: optionsOf(AddonsSchema),
-  examples: optionsOf(ExamplesSchema),
+  // `chatbot` is opt-in and covered by its own tests; keeping it out leaves the fixture stable.
+  examples: optionsOf(ExamplesSchema).filter((example) => example !== "chatbot"),
   testing: optionsOf(TestingSchema),
   observability: ["none", ...Object.keys(OBSERVABILITY_PROVIDER_CAPABILITIES)],
   communication: ["none", ...Object.keys(COMMUNICATION_PROVIDER_CAPABILITIES)],

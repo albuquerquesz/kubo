@@ -76,6 +76,9 @@ export type CompatibilityIssueCode =
   | "example-todo-orval"
   | "example-ai-frontend"
   | "example-ai-backend"
+  | "example-chatbot-frontend"
+  | "example-chatbot-backend"
+  | "example-chatbot-ai"
   | "communication"
   | "payment";
 
@@ -556,7 +559,48 @@ function getExampleIssues(config: CompatibilityConfig): CompatibilityIssue[] {
   ) {
     issues.push(issue("example-ai-frontend", ["examples", "frontend", "backend"]));
   }
+  issues.push(...getChatbotExampleIssues(config));
   return issues;
+}
+
+/** Frontends the `chatbot` example ships for (React + a server route for the CopilotKit runtime). */
+export const CHATBOT_EXAMPLE_FRONTENDS = [
+  "next",
+  "tanstack-start",
+] as const satisfies readonly Frontend[];
+
+function hasOnlyChatbotFrontends(frontends: readonly string[]): boolean {
+  const selected = frontends.filter((frontend) => frontend !== "none");
+  return (
+    selected.length > 0 &&
+    selected.every((frontend) => includesValue(CHATBOT_EXAMPLE_FRONTENDS, frontend))
+  );
+}
+
+/**
+ * The `chatbot` example v1 runs the CopilotKit runtime inside the fullstack web app, so it
+ * needs `backend: self` with Next.js or TanStack Start, and it replaces the `ai` chat page.
+ * Unset fields are not violations (partial configs come from prompts and the builder).
+ */
+function getChatbotExampleIssues(config: CompatibilityConfig): CompatibilityIssue[] {
+  const examples = config.examples ?? [];
+  if (!examples.includes("chatbot")) return [];
+  const issues: CompatibilityIssue[] = [];
+  if (config.backend !== undefined && config.backend !== "self") {
+    issues.push(issue("example-chatbot-backend", ["examples", "backend"]));
+  }
+  if (config.frontend !== undefined && !hasOnlyChatbotFrontends(config.frontend)) {
+    issues.push(issue("example-chatbot-frontend", ["examples", "frontend"]));
+  }
+  if (examples.includes("ai")) {
+    issues.push(issue("example-chatbot-ai", ["examples"]));
+  }
+  return issues;
+}
+
+/** Whether `chatbot` can be generated next to the rest of this configuration. */
+export function isChatbotExampleSupported(config: CompatibilityConfig): boolean {
+  return getChatbotExampleIssues(config).length === 0;
 }
 
 function getAuthenticationIssues(config: CompatibilityConfig): CompatibilityIssue[] {

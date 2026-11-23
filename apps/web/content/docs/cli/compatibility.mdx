@@ -237,6 +237,14 @@ A autenticação Clerk exige:
 - Não compatível com `--frontend astro`
 - Com `--backend convex`, frontends Nuxt e Svelte não são suportados
 
+### Exemplo Chatbot
+
+- Exige `--backend self` (o runtime do CopilotKit roda numa rota de API do app web)
+- Só suporta `--frontend next` ou `--frontend tanstack-start`; Svelte, Nuxt, Solid, Astro e native não são suportados
+- Backends separados (Hono, Express, Fastify, Elysia, NestJS) e Convex não são suportados na v1
+- Não pode ser combinado com `--examples ai` (os dois geram uma tela de chat)
+- Configure `GOOGLE_GENERATIVE_AI_API_KEY` em `apps/web/.env`, ou troque o modelo com `CHATBOT_MODEL`
+
 ## Mensagens de erro comuns
 
 ### "Mongoose ORM requires MongoDB database"
