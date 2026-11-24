@@ -6,7 +6,7 @@ import { CoinIcon } from "#/shared/ui/CoinIcon";
 // Cor pela fração das vidas: verde acima da metade, amarelo acima de um quarto.
 const livesTone = (lives: number) => {
 	const share = lives / defaultBalance.maxLives;
-	if (share > 0.5) return "text-go";
+	if (share > 0.5) return "text-kubo-light";
 	if (share > 0.25) return "text-warn";
 	return "text-alert";
 };

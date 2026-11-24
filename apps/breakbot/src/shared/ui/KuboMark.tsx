@@ -1,0 +1,21 @@
+type KuboMarkProps = {
+	className?: string;
+};
+
+// O cubo do logo do Kubo (mesmo desenho e cor do kubojs.dev).
+export const KuboMark = ({ className = "h-12 w-auto" }: KuboMarkProps) => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 763 678"
+		fill="none"
+		role="img"
+		aria-label="Kubo"
+		className={className}
+	>
+		<path
+			fill="#FBC80D"
+			fillRule="evenodd"
+			d="M100 678H665A8 8 0 0 1 673 670V328H755A8 8 0 0 1 763 320V134A8 8 0 0 1 755 126H673V8A8 8 0 0 1 665 0H561A8 8 0 0 1 553 8V126H213V8A8 8 0 0 1 205 0H100A8 8 0 0 1 92 8V126H10A8 8 0 0 1 2 134V320A8 8 0 0 1 10 328H92V670A8 8 0 0 1 100 678ZM213 292H298V378H213ZM468 292H553V378H468ZM213 547H553V678H213Z"
+		/>
+	</svg>
+);

@@ -1,4 +1,4 @@
-// Paleta do protótipo (GitHub dark). Espelha as cores do @theme em styles.css para o 3D.
+// Paleta do protótipo (GitHub dark), com o dourado do Kubo no lugar do verde do jogador. Espelha as cores do @theme em styles.css para o 3D.
 export const palette = {
 	void: "#05070a",
 	shoulder: "#06080b",
@@ -8,10 +8,11 @@ export const palette = {
 	line: "#30363d",
 	bright: "#f0f6fc",
 	stripe: "#e6edf3",
-	go: "#3fb950",
-	goEdge: "#2ea043",
-	goDeep: "#196c2e",
-	goLight: "#56d364",
+	// Dourado da marca Kubo (CTA do site e logo): tropa, canhão e botões do jogador.
+	kubo: "#c49314",
+	kuboEdge: "#d6a72b",
+	kuboDeep: "#7a5a0a",
+	kuboLight: "#fbc80d",
 	steel: "#8b949e",
 	tire: "#22272e",
 	alert: "#f85149",

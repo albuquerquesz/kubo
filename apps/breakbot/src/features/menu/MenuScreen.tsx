@@ -1,5 +1,6 @@
 import { useProgressStore } from "#/features/progress";
 import { Button } from "#/shared/ui/Button";
+import { KuboMark } from "#/shared/ui/KuboMark";
 import { Overlay } from "#/shared/ui/Overlay";
 
 type MenuScreenProps = {
@@ -19,8 +20,9 @@ const RecordLine = () => {
 
 export const MenuScreen = ({ onPlay }: MenuScreenProps) => (
 	<Overlay>
+		<KuboMark className="h-12 w-auto animate-sway motion-reduce:animate-none" />
 		<h1 className="animate-glitch font-extrabold text-[clamp(54px,17vw,84px)] text-bright leading-none tracking-[-2px]">
-			PUSH<span className="animate-blink text-go">▌</span>
+			PUSH<span className="animate-blink text-kubo-light">▌</span>
 		</h1>
 		<p className="m-0 max-w-80 text-[13px] text-mute leading-relaxed">
 			Segure e arraste pra atirar. Passe pelas <em className="text-fg not-italic">faixas roxas</em>{" "}

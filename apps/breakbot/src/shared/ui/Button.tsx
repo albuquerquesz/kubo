@@ -14,7 +14,7 @@ const BASE =
 
 const variants = {
 	primary:
-		"border-[#56d364]/70 bg-linear-to-b from-go to-go-deep text-white shadow-[0_5px_0_#145224,0_9px_16px_rgb(0_0_0/0.5),inset_0_2px_0_rgb(255_255_255/0.3)] [text-shadow:0_2px_0_#145224] active:shadow-[0_1px_0_#145224,inset_0_2px_0_rgb(255_255_255/0.3)]",
+		"border-kubo-light/70 bg-linear-to-b from-kubo-light to-kubo text-black shadow-[0_5px_0_#5c4306,0_9px_16px_rgb(0_0_0/0.5),inset_0_2px_0_rgb(255_255_255/0.35)] [text-shadow:0_1px_0_rgb(255_255_255/0.35)] active:shadow-[0_1px_0_#5c4306,inset_0_2px_0_rgb(255_255_255/0.35)]",
 	secondary:
 		"border-line bg-linear-to-b from-[#2a313b] to-panel text-bright shadow-[0_5px_0_#05070a,0_9px_16px_rgb(0_0_0/0.5),inset_0_2px_0_rgb(255_255_255/0.08)] [text-shadow:0_2px_0_#05070a] active:shadow-[0_1px_0_#05070a,inset_0_2px_0_rgb(255_255_255/0.08)]",
 } satisfies Record<ButtonVariant, string>;
