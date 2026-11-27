@@ -11,12 +11,12 @@ type Block =
   | { type: "pre"; lang: string; text: string }
   | { type: "table"; headers: string[]; rows: string[][] };
 
-function codeLanguage(lang: string): BundledLanguage {
+function codeLanguage(lang: string): BundledLanguage | null {
   if (lang === "bash" || lang === "sh" || lang === "shell") return "bash";
   if (lang === "json") return "json";
   if (lang === "ts" || lang === "typescript") return "typescript";
   if (lang === "js" || lang === "javascript") return "javascript";
-  return "text";
+  return null;
 }
 
 function parseTableRow(line: string): string[] {
@@ -190,14 +190,21 @@ export async function BlogBody({ markdown }: { markdown: string }) {
           );
         }
         if (block.type === "pre") {
+          const language = codeLanguage(block.lang);
           return (
             <div key={index} className={kuboSurface.code}>
-              <CodeBlockContent
-                language={codeLanguage(block.lang)}
-                className="text-sm [&_pre]:overflow-x-auto [&_pre]:p-4"
-              >
-                {block.text}
-              </CodeBlockContent>
+              {language ? (
+                <CodeBlockContent
+                  language={language}
+                  className="text-sm [&_pre]:overflow-x-auto [&_pre]:p-4"
+                >
+                  {block.text}
+                </CodeBlockContent>
+              ) : (
+                <pre className="overflow-x-auto bg-[#0d1117] p-4 font-mono text-sm leading-6 whitespace-pre text-[#e6edf3]">
+                  {block.text}
+                </pre>
+              )}
             </div>
           );
         }
