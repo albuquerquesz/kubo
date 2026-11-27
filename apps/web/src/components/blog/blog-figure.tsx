@@ -1,5 +1,7 @@
 import { kuboSurface } from "@kubojs/design";
+import Image from "next/image";
 
+import { KuboMark } from "@/components/brand/kubo-mark";
 import type { BlogLang } from "@/lib/blog";
 
 const COPY = {
@@ -21,48 +23,60 @@ const COPY = {
   },
 } as const;
 
-const MEDIA = {
+/**
+ * Every article figure uses the same stage: the Kubo mark, one gold icon
+ * already used on the home page, and the site stage radius.
+ */
+const FIGURES = {
   "escolha-de-stack-explicita": {
-    src: "/blog/stack.jpg",
+    icon: "/assets/gold-apps-grid.png",
     alt: {
-      pt: "Seis blocos, um deles amarelo, representando as peças de uma stack.",
-      en: "Six blocks, one of them yellow, standing in for the pieces of a stack.",
+      pt: "O mascote do Kubo ao lado da grade dourada de peças da home.",
+      en: "The Kubo mascot beside the home page's gold grid of pieces.",
     },
   },
   "telemetria-honesta-em-cli": {
-    src: "/blog/telemetry.jpg",
+    icon: "/assets/gold-bar-chart.png",
     alt: {
-      pt: "Um cubo amarelo pequeno ao lado de um caderno fechado.",
-      en: "A small yellow cube beside a closed notebook.",
+      pt: "O mascote do Kubo ao lado do gráfico dourado da home.",
+      en: "The Kubo mascot beside the home page's gold chart.",
     },
   },
   "agente-de-codigo-instala-o-projeto": {
-    src: "/blog/agent.jpg",
+    icon: "/assets/gold-link.png",
     alt: {
-      pt: "Uma peça amarela se aproximando de uma pilha de peças cinza.",
-      en: "A yellow piece moving toward a stack of gray pieces.",
+      pt: "O mascote do Kubo ao lado do elo dourado da home, o ícone de conexão.",
+      en: "The Kubo mascot beside the home page's gold link, the connection icon.",
     },
   },
 } as const;
 
 export function BlogFigure({ slug, lang }: { slug: string; lang: BlogLang }) {
   const copy = COPY[lang];
-  const media = MEDIA[slug as keyof typeof MEDIA];
-  if (!media) return null;
+  const figure = FIGURES[slug as keyof typeof FIGURES];
+  if (!figure) return null;
 
   return (
     <figure className="space-y-4">
-      <style>{`
-        @keyframes blog-piece-in {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: none; }
-        }
-        .blog-piece { display: inline-block; animation: blog-piece-in 0.45s ease both; }
-        @media (prefers-reduced-motion: reduce) {
-          .blog-piece { animation: none; }
-        }
-      `}</style>
-      <img src={media.src} alt={media.alt[lang]} className="w-full rounded-2xl" />
+      <div
+        className={kuboSurface.stage}
+        style={{
+          backgroundImage: "radial-gradient(circle, rgb(251 200 13 / 0.22) 1px, transparent 1px)",
+          backgroundSize: "18px 18px",
+        }}
+      >
+        <div className="flex aspect-[2/1] items-center justify-center gap-6 px-6 sm:gap-12">
+          <KuboMark className="h-20 w-auto sm:h-32" />
+          <span className="h-px w-8 bg-primary sm:w-14" aria-hidden />
+          <Image
+            src={figure.icon}
+            alt={figure.alt[lang]}
+            width={160}
+            height={160}
+            className="h-20 w-auto sm:h-32"
+          />
+        </div>
+      </div>
       {slug === "escolha-de-stack-explicita" ? (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {copy.stack.map((label, index) => (
@@ -70,9 +84,7 @@ export function BlogFigure({ slug, lang }: { slug: string; lang: BlogLang }) {
               key={label}
               className={`${kuboSurface.tile} px-3 py-4 text-sm text-foreground ${index === 2 ? "border-primary bg-primary/10" : ""}`}
             >
-              <span className="blog-piece" style={{ animationDelay: `${index * 80}ms` }}>
-                {label}
-              </span>
+              {label}
             </div>
           ))}
         </div>

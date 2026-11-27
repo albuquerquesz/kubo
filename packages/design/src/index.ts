@@ -18,6 +18,8 @@ export const kuboSurface = {
   panel: "overflow-hidden rounded-2xl border border-border bg-card",
   tile: "rounded-[0.5rem] border border-border bg-background",
   code: "overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950",
+  stage: "relative overflow-hidden rounded-3xl border border-border bg-zinc-950",
   control:
     "inline-flex items-center gap-2 rounded-[0.375rem] border border-border px-3 py-2 text-sm text-foreground hover:bg-muted",
+  icon: "inline-flex size-9 items-center justify-center rounded-[0.375rem] border border-border text-foreground hover:bg-muted",
 } as const;

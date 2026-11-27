@@ -12,9 +12,12 @@ export function BlogArticle({ post }: { post: BlogPost }) {
   return (
     <main className="min-h-svh overflow-x-clip">
       <article className="mx-auto w-full max-w-4xl px-5 pb-16 pt-24 sm:px-8 sm:pt-28">
-        <Link href="/blog" className={kuboSurface.control}>
-          <ArrowLeft className="size-4" aria-hidden />
-          Blog
+        <Link
+          href="/blog"
+          aria-label={post.lang === "en" ? "Back to the blog" : "Voltar ao blog"}
+          className={kuboSurface.icon}
+        >
+          <ArrowLeft className="size-4" />
         </Link>
         <header className="mt-10">
           <p className="ui-kicker text-primary">{formatBlogDate(post.publishedOn, post.lang)}</p>
