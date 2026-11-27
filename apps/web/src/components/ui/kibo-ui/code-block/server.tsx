@@ -26,8 +26,8 @@ export const CodeBlockContent = async ({
     ? await codeToHtml(children as string, {
         lang: language ?? "typescript",
         themes: themes ?? {
-          light: "vitesse-light",
-          dark: "vitesse-dark",
+          light: "github-dark-default",
+          dark: "github-dark-default",
         },
         transformers: [
           transformerNotationDiff({

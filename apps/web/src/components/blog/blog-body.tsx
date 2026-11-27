@@ -11,15 +11,12 @@ type Block =
   | { type: "pre"; lang: string; text: string }
   | { type: "table"; headers: string[]; rows: string[][] };
 
-function codeLanguage(lang: string): { language: BundledLanguage; syntaxHighlighting: boolean } {
-  if (lang === "bash" || lang === "sh" || lang === "shell") {
-    return { language: "bash", syntaxHighlighting: true };
-  }
-  if (lang === "json") return { language: "json", syntaxHighlighting: true };
-  if (lang === "ts" || lang === "typescript") {
-    return { language: "typescript", syntaxHighlighting: true };
-  }
-  return { language: "bash", syntaxHighlighting: false };
+function codeLanguage(lang: string): BundledLanguage {
+  if (lang === "bash" || lang === "sh" || lang === "shell") return "bash";
+  if (lang === "json") return "json";
+  if (lang === "ts" || lang === "typescript") return "typescript";
+  if (lang === "js" || lang === "javascript") return "javascript";
+  return "text";
 }
 
 function parseTableRow(line: string): string[] {
@@ -193,21 +190,14 @@ export async function BlogBody({ markdown }: { markdown: string }) {
           );
         }
         if (block.type === "pre") {
-          const code = codeLanguage(block.lang);
           return (
             <div key={index} className={kuboSurface.code}>
-              {code.syntaxHighlighting ? (
-                <CodeBlockContent
-                  language={code.language}
-                  className="text-sm [&_pre]:overflow-x-auto [&_pre]:bg-transparent [&_pre]:p-4"
-                >
-                  {block.text}
-                </CodeBlockContent>
-              ) : (
-                <pre className="overflow-x-auto p-4 font-mono text-sm leading-6 whitespace-pre text-zinc-100">
-                  {block.text}
-                </pre>
-              )}
+              <CodeBlockContent
+                language={codeLanguage(block.lang)}
+                className="text-sm [&_pre]:overflow-x-auto [&_pre]:p-4"
+              >
+                {block.text}
+              </CodeBlockContent>
             </div>
           );
         }
