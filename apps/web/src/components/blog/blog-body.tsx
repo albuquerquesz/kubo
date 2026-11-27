@@ -225,11 +225,14 @@ export function BlogBody({ markdown }: { markdown: string }) {
             </div>
           );
         }
-        return (
-          <p key={index}>
-            <BlogInline text={block.text} />
-          </p>
-        );
+        if (block.type === "p") {
+          return (
+            <p key={index}>
+              <BlogInline text={block.text} />
+            </p>
+          );
+        }
+        return null;
       })}
     </div>
   );
