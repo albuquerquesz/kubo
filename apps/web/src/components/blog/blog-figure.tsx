@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import { KuboMark } from "@/components/brand/kubo-mark";
 import type { BlogLang } from "@/lib/blog";
+import { cn } from "@/lib/utils";
 
 const COPY = {
   pt: {
@@ -49,32 +50,78 @@ const FIGURES = {
   },
 } as const;
 
+type FigureSlug = keyof typeof FIGURES;
+
+const COVERS = {
+  "escolha-de-stack-explicita": {
+    src: "/assets/kubo-bg-4.png",
+    alt: {
+      pt: "Mascote do Kubo ao lado do painel de integrações da home.",
+      en: "The Kubo mascot beside the home page integrations panel.",
+    },
+  },
+} as const;
+
+type CoverSlug = keyof typeof COVERS;
+
+function isFigureSlug(slug: string): slug is FigureSlug {
+  return slug in FIGURES;
+}
+
+function isCoverSlug(slug: string): slug is CoverSlug {
+  return slug in COVERS;
+}
+
+const STAGE_DOTS = {
+  backgroundImage: "radial-gradient(circle, rgb(251 200 13 / 0.22) 1px, transparent 1px)",
+  backgroundSize: "18px 18px",
+} as const;
+
+export function blogCover(slug: string) {
+  return isCoverSlug(slug) ? COVERS[slug] : undefined;
+}
+
+export function BlogStage({
+  slug,
+  lang,
+  compact = false,
+}: {
+  slug: string;
+  lang: BlogLang;
+  compact?: boolean;
+}) {
+  if (!isFigureSlug(slug)) return null;
+  const figure = FIGURES[slug];
+
+  return (
+    <div className={cn(kuboSurface.stage, compact && "rounded-[0.85rem]")} style={STAGE_DOTS}>
+      <div
+        className={cn(
+          "flex items-center justify-center",
+          compact ? "aspect-[16/10] gap-4 px-4" : "aspect-[2/1] gap-6 px-6 sm:gap-12",
+        )}
+      >
+        <KuboMark className={compact ? "h-16 w-auto" : "h-20 w-auto sm:h-32"} />
+        <span className={cn("h-px bg-primary", compact ? "w-6" : "w-8 sm:w-14")} aria-hidden />
+        <Image
+          src={figure.icon}
+          alt={figure.alt[lang]}
+          width={160}
+          height={160}
+          className={compact ? "h-16 w-auto" : "h-20 w-auto sm:h-32"}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function BlogFigure({ slug, lang }: { slug: string; lang: BlogLang }) {
   const copy = COPY[lang];
-  const figure = FIGURES[slug as keyof typeof FIGURES];
-  if (!figure) return null;
+  if (!isFigureSlug(slug)) return null;
 
   return (
     <figure className="space-y-4">
-      <div
-        className={kuboSurface.stage}
-        style={{
-          backgroundImage: "radial-gradient(circle, rgb(251 200 13 / 0.22) 1px, transparent 1px)",
-          backgroundSize: "18px 18px",
-        }}
-      >
-        <div className="flex aspect-[2/1] items-center justify-center gap-6 px-6 sm:gap-12">
-          <KuboMark className="h-20 w-auto sm:h-32" />
-          <span className="h-px w-8 bg-primary sm:w-14" aria-hidden />
-          <Image
-            src={figure.icon}
-            alt={figure.alt[lang]}
-            width={160}
-            height={160}
-            className="h-20 w-auto sm:h-32"
-          />
-        </div>
-      </div>
+      <BlogStage slug={slug} lang={lang} />
       {slug === "telemetria-honesta-em-cli" ? (
         <div className="grid gap-3 sm:grid-cols-2">
           <List title={copy.sendsLabel} items={copy.sends} />
