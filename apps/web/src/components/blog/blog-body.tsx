@@ -196,13 +196,18 @@ export async function BlogBody({ markdown }: { markdown: string }) {
           const code = codeLanguage(block.lang);
           return (
             <div key={index} className={kuboSurface.code}>
-              <CodeBlockContent
-                language={code.language}
-                syntaxHighlighting={code.syntaxHighlighting}
-                className="text-sm [&_pre]:overflow-x-auto [&_pre]:bg-transparent [&_pre]:p-4"
-              >
-                {block.text}
-              </CodeBlockContent>
+              {code.syntaxHighlighting ? (
+                <CodeBlockContent
+                  language={code.language}
+                  className="text-sm [&_pre]:overflow-x-auto [&_pre]:bg-transparent [&_pre]:p-4"
+                >
+                  {block.text}
+                </CodeBlockContent>
+              ) : (
+                <pre className="overflow-x-auto p-4 font-mono text-sm leading-6 whitespace-pre text-zinc-100">
+                  {block.text}
+                </pre>
+              )}
             </div>
           );
         }
