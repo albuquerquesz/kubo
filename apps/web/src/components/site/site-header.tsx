@@ -6,7 +6,10 @@ import { HeaderAccount } from "@/components/auth/header-account";
 import { KuboMark } from "@/components/brand/kubo-mark";
 import { cn } from "@/lib/utils";
 
-const primaryLinks = [{ href: "/docs", label: "Docs" }] as const;
+const primaryLinks = [
+  { href: "/docs", label: "Docs" },
+  { href: "/blog", label: "Blog" },
+] as const;
 
 const headerRowClass = "h-12";
 

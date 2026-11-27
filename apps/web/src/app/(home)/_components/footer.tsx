@@ -18,7 +18,10 @@ const footerGroups = [
   },
   {
     label: "Explorar",
-    links: [{ label: "Pacote NPM", href: "https://www.npmjs.com/package/create-kubojs" }],
+    links: [
+      { label: "Blog", href: "/blog" },
+      { label: "Pacote NPM", href: "https://www.npmjs.com/package/create-kubojs" },
+    ],
   },
   {
     label: "Comunidade",
