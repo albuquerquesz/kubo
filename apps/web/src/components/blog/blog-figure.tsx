@@ -6,7 +6,6 @@ import type { BlogLang } from "@/lib/blog";
 
 const COPY = {
   pt: {
-    stack: ["Frontend", "Backend", "Banco", "ORM", "Auth", "Deploy"],
     sends: ["Escolhas da stack", "Resultado", "Origem", "install_id aleatório"],
     skips: ["Nome do projeto", "Caminho", "Conteúdo", "Segredo", "IP"],
     sendsLabel: "O create manda",
@@ -14,7 +13,6 @@ const COPY = {
     agent: ["Você pede a stack", "O agente conecta pelo MCP", "O comando monta só isso"],
   },
   en: {
-    stack: ["Frontend", "Backend", "Database", "ORM", "Auth", "Deploy"],
     sends: ["Stack choices", "Result", "Source", "Random install_id"],
     skips: ["Project name", "Path", "File contents", "Secrets", "IP"],
     sendsLabel: "create sends",
@@ -77,18 +75,6 @@ export function BlogFigure({ slug, lang }: { slug: string; lang: BlogLang }) {
           />
         </div>
       </div>
-      {slug === "escolha-de-stack-explicita" ? (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {copy.stack.map((label, index) => (
-            <div
-              key={label}
-              className={`${kuboSurface.tile} px-3 py-4 text-sm text-foreground ${index === 2 ? "border-primary bg-primary/10" : ""}`}
-            >
-              {label}
-            </div>
-          ))}
-        </div>
-      ) : null}
       {slug === "telemetria-honesta-em-cli" ? (
         <div className="grid gap-3 sm:grid-cols-2">
           <List title={copy.sendsLabel} items={copy.sends} />
