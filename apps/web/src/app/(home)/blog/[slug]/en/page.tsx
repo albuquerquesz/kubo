@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { BlogBody } from "@/components/blog/blog-body";
-import { formatBlogDate, getBlogPost, listBlogSlugs } from "@/lib/blog";
-
-import Footer from "../../../_components/footer";
+import { BlogArticle } from "@/components/blog/blog-article";
+import { getBlogPost, listBlogSlugs } from "@/lib/blog";
 
 export function generateStaticParams() {
   return listBlogSlugs()
@@ -35,40 +32,5 @@ export default async function EnglishBlogPostPage(props: { params: Promise<{ slu
   const { slug } = await props.params;
   const post = getBlogPost(slug, "en");
   if (!post) notFound();
-
-  return (
-    <main className="min-h-svh overflow-x-clip">
-      <article>
-        <header className="border-rule border-b px-5 pb-16 pt-20 sm:px-8 sm:pb-24 sm:pt-28 lg:px-12 lg:pt-36">
-          <div className="mx-auto max-w-[1440px]">
-            <p className="ui-kicker text-primary">
-              <Link href="/blog" className="hover:underline">
-                Blog
-              </Link>
-              {" · "}
-              {formatBlogDate(post.publishedOn, "en")}
-            </p>
-            <h1 className="ui-display mt-8 max-w-4xl text-balance text-4xl sm:text-6xl">
-              {post.title}
-            </h1>
-            <p className="mt-8 max-w-2xl text-lg leading-8 text-muted-foreground">
-              {post.description}
-            </p>
-            <p className="mt-6">
-              <Link
-                href={`/blog/${post.slug}`}
-                className="text-sm text-foreground underline decoration-primary/60 underline-offset-4"
-              >
-                Português
-              </Link>
-            </p>
-          </div>
-        </header>
-        <div className="mx-auto max-w-[1440px] px-5 py-16 sm:px-8 sm:py-24 lg:px-12">
-          <BlogBody markdown={post.body} />
-        </div>
-      </article>
-      <Footer />
-    </main>
-  );
+  return <BlogArticle post={post} />;
 }

@@ -26,6 +26,7 @@
     "@himetrica/tracker-js": "0.1.36",
     "@kubojs/backend": "workspace:*",
     "@kubojs/datetime": "workspace:*",
+    "@kubojs/design": "workspace:*",
     "@kubojs/env": "workspace:*",
     "@kubojs/template-generator": "workspace:*",
     "@kubojs/types": "workspace:*",

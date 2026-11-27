@@ -1,0 +1,19 @@
+{
+  "name": "@kubojs/design",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Radius and surface tokens shared by the Kubo site. Values match the home page and /new.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

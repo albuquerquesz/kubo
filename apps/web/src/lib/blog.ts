@@ -3,6 +3,11 @@ import path from "node:path";
 
 export type BlogLang = "pt" | "en";
 
+export function blogLangFromHeader(acceptLanguage: string | null): BlogLang {
+  const first = acceptLanguage?.split(",")[0]?.trim().toLowerCase() ?? "";
+  return first.startsWith("en") ? "en" : "pt";
+}
+
 export type BlogPost = {
   slug: string;
   lang: BlogLang;

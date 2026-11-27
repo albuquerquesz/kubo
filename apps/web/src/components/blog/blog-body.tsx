@@ -1,11 +1,26 @@
+import { kuboSurface } from "@kubojs/design";
 import type { ReactNode } from "react";
+import type { BundledLanguage } from "shiki";
+
+import { CodeBlockContent } from "@/components/ui/kibo-ui/code-block/server";
 
 type Block =
   | { type: "h2" | "h3"; text: string }
   | { type: "p"; text: string }
   | { type: "ul" | "ol"; items: string[] }
-  | { type: "pre"; text: string }
+  | { type: "pre"; lang: string; text: string }
   | { type: "table"; headers: string[]; rows: string[][] };
+
+function codeLanguage(lang: string): { language: BundledLanguage; syntaxHighlighting: boolean } {
+  if (lang === "bash" || lang === "sh" || lang === "shell") {
+    return { language: "bash", syntaxHighlighting: true };
+  }
+  if (lang === "json") return { language: "json", syntaxHighlighting: true };
+  if (lang === "ts" || lang === "typescript") {
+    return { language: "typescript", syntaxHighlighting: true };
+  }
+  return { language: "bash", syntaxHighlighting: false };
+}
 
 function parseTableRow(line: string): string[] {
   return line
@@ -33,6 +48,7 @@ export function parseBlogBlocks(markdown: string): Block[] {
     }
 
     if (line.startsWith("```")) {
+      const lang = line.slice(3).trim();
       const code: string[] = [];
       index += 1;
       while (index < lines.length && !(lines[index] ?? "").startsWith("```")) {
@@ -40,7 +56,7 @@ export function parseBlogBlocks(markdown: string): Block[] {
         index += 1;
       }
       index += 1;
-      blocks.push({ type: "pre", text: code.join("\n") });
+      blocks.push({ type: "pre", lang, text: code.join("\n") });
       continue;
     }
 
@@ -154,10 +170,11 @@ export function BlogInline({ text }: { text: string }) {
   return <>{nodes}</>;
 }
 
-export function BlogBody({ markdown }: { markdown: string }) {
+export async function BlogBody({ markdown }: { markdown: string }) {
+  const blocks = parseBlogBlocks(markdown);
   return (
-    <div className="max-w-2xl space-y-8 text-base leading-8 text-muted-foreground">
-      {parseBlogBlocks(markdown).map((block, index) => {
+    <div className="w-full space-y-8 text-base leading-8 text-muted-foreground">
+      {blocks.map((block, index) => {
         if (block.type === "h2") {
           return (
             <h2
@@ -176,13 +193,17 @@ export function BlogBody({ markdown }: { markdown: string }) {
           );
         }
         if (block.type === "pre") {
+          const code = codeLanguage(block.lang);
           return (
-            <pre
-              key={index}
-              className="overflow-x-auto border-rule border bg-muted p-4 font-mono text-sm leading-6 text-foreground"
-            >
-              <code>{block.text}</code>
-            </pre>
+            <div key={index} className={kuboSurface.code}>
+              <CodeBlockContent
+                language={code.language}
+                syntaxHighlighting={code.syntaxHighlighting}
+                className="text-sm [&_pre]:overflow-x-auto [&_pre]:bg-transparent [&_pre]:p-4"
+              >
+                {block.text}
+              </CodeBlockContent>
+            </div>
           );
         }
         if (block.type === "ul" || block.type === "ol") {
@@ -199,12 +220,12 @@ export function BlogBody({ markdown }: { markdown: string }) {
         }
         if (block.type === "table") {
           return (
-            <div key={index} className="overflow-x-auto border-rule border">
+            <div key={index} className={kuboSurface.panel}>
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-rule border-b">
+                  <tr className="bg-muted/60">
                     {block.headers.map((header) => (
-                      <th key={header} className="px-3 py-2 font-medium text-foreground">
+                      <th key={header} className="px-4 py-3 font-medium text-foreground">
                         <BlogInline text={header} />
                       </th>
                     ))}
@@ -212,9 +233,9 @@ export function BlogBody({ markdown }: { markdown: string }) {
                 </thead>
                 <tbody>
                   {block.rows.map((row) => (
-                    <tr key={row.join("|")} className="border-rule border-b last:border-b-0">
+                    <tr key={row.join("|")} className="border-border border-t">
                       {row.map((cell, cellIndex) => (
-                        <td key={`${cell}-${cellIndex}`} className="px-3 py-2">
+                        <td key={`${cell}-${cellIndex}`} className="px-4 py-3">
                           <BlogInline text={cell} />
                         </td>
                       ))}

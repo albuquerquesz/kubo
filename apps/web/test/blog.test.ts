@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
 import { parseBlogBlocks } from "../src/components/blog/blog-body";
-import { formatBlogDate, parseBlogSource } from "../src/lib/blog";
+import { blogLangFromHeader, formatBlogDate, parseBlogSource } from "../src/lib/blog";
 
 const source = `# Escolha de stack
 
@@ -34,6 +34,8 @@ describe("blog source", () => {
 
   test("formats the publication date", () => {
     expect(formatBlogDate("2026-11-27", "pt")).toBe("27 nov 2026");
+    expect(blogLangFromHeader("en-US,en;q=0.8")).toBe("en");
+    expect(blogLangFromHeader("pt-BR,pt;q=0.9")).toBe("pt");
     expect(formatBlogDate("2026-11-27", "en")).toBe("Nov 27, 2026");
   });
 
