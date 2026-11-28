@@ -31,6 +31,9 @@ describe("newsletter release email", () => {
     const html = await render(ReleaseChangelogEmail(release));
     const text = toPlainText(html);
 
+    expect(html).toContain("#11110d");
+    expect(html).toContain("#c49314");
+    expect(html).toContain('bgcolor="#11110d"');
     expect(html).toContain("KuboJS 1.2.3");
     expect(html).toContain("Novo fluxo de release");
     expect(html).toContain("https://example.com/releases/v1.2.3");

@@ -15,14 +15,15 @@ import {
 import type { ReleaseChangelogEmailProps } from "./types";
 
 const colors = {
-  background: "#111111",
-  surface: "#1b1b1b",
-  surfaceRaised: "#242424",
-  border: "#343434",
-  text: "#f7f2e8",
-  muted: "#aaa49b",
-  yellow: "#f9ad00",
-  yellowSoft: "#2e260f",
+  background: "#11110d",
+  surface: "#0c0c0c",
+  surfaceRaised: "#121212",
+  border: "#292925",
+  text: "#f1f1f1",
+  muted: "#a0a0a0",
+  yellow: "#c49314",
+  yellowSoft: "#2a220c",
+  onYellow: "#000000",
 };
 
 const fontFamily = "Arial, Helvetica, sans-serif";
@@ -38,11 +39,22 @@ export function ReleaseChangelogEmail({
   npmUrl,
 }: ReleaseChangelogEmailProps) {
   return (
-    <Html lang="pt-BR">
-      <Head />
+    <Html lang="pt-BR" style={{ backgroundColor: colors.background, color: colors.text }}>
+      <Head>
+        <meta name="color-scheme" content="dark only" />
+        <meta name="supported-color-schemes" content="dark only" />
+        <style>{`
+          :root { color-scheme: dark only; supported-color-schemes: dark only; }
+          body, .kubo-canvas { background-color: ${colors.background} !important; color: ${colors.text} !important; }
+        `}</style>
+      </Head>
       <Preview>KuboJS {version}: o que mudou e o que você pode usar agora.</Preview>
-      <Body style={{ ...styles.body, fontFamily }}>
-        <Container style={styles.container}>
+      <Body
+        bgcolor={colors.background}
+        className="kubo-canvas"
+        style={{ ...styles.body, fontFamily }}
+      >
+        <Container bgcolor={colors.background} style={styles.container}>
           <Section style={styles.header}>
             <Text style={styles.brand}>
               <span style={styles.brandMark}>■</span> KUBO
@@ -66,7 +78,11 @@ export function ReleaseChangelogEmail({
           <Section>
             <Text style={styles.sectionLabel}>O QUE MUDOU</Text>
             {changes.map((change, index) => (
-              <Section key={`${change.category}-${change.title}`} style={styles.changeCard}>
+              <Section
+                key={`${change.category}-${change.title}`}
+                bgcolor={colors.surface}
+                style={styles.changeCard}
+              >
                 <Text style={styles.changeIndex}>{String(index + 1).padStart(2, "0")}</Text>
                 <Section style={styles.changeContent}>
                   <Text style={styles.changeCategory}>{change.category}</Text>
@@ -79,7 +95,7 @@ export function ReleaseChangelogEmail({
             ))}
           </Section>
 
-          <Section style={styles.footerCta}>
+          <Section bgcolor={colors.surfaceRaised} style={styles.footerCta}>
             <Text style={styles.footerCtaLabel}>CONTINUE A CONSTRUIR</Text>
             <Text style={styles.footerCtaText}>
               A documentação e os pacotes publicados já estão esperando por você.
@@ -186,7 +202,7 @@ const styles = {
   primaryButton: {
     backgroundColor: colors.yellow,
     borderRadius: "4px",
-    color: "#16120a",
+    color: colors.onYellow,
     fontFamily,
     fontSize: "13px",
     fontWeight: "700",
