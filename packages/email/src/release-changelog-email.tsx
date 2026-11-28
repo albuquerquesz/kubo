@@ -49,84 +49,85 @@ export function ReleaseChangelogEmail({
         `}</style>
       </Head>
       <Preview>KuboJS {version}: o que mudou e o que você pode usar agora.</Preview>
-      <Body
-        bgcolor={colors.background}
-        className="kubo-canvas"
-        style={{ ...styles.body, fontFamily }}
-      >
-        <Container bgcolor={colors.background} style={styles.container}>
-          <Section style={styles.header}>
-            <Text style={styles.brand}>
-              <span style={styles.brandMark}>■</span> KUBO
-            </Text>
-            <Text style={styles.headerMeta}>RELEASE NOTES</Text>
-          </Section>
+      <Body className="kubo-canvas" style={{ ...styles.body, fontFamily }}>
+        <Section
+          bgcolor={colors.background}
+          style={{ backgroundColor: colors.background, margin: 0, width: "100%" }}
+        >
+          <Container bgcolor={colors.background} style={styles.container}>
+            <Section style={styles.header}>
+              <Text style={styles.brand}>
+                <span style={styles.brandMark}>■</span> KUBO
+              </Text>
+              <Text style={styles.headerMeta}>RELEASE NOTES</Text>
+            </Section>
 
-          <Section style={styles.hero}>
-            <Text style={styles.eyebrow}>NOVA VERSÃO · {releaseDate}</Text>
-            <Heading as="h1" style={styles.title}>
-              KuboJS <span style={styles.titleAccent}>{version}</span>
-            </Heading>
-            <Text style={styles.intro}>{intro}</Text>
-            <Button href={releaseUrl} style={styles.primaryButton}>
-              Ver release completa <span style={styles.buttonArrow}>↗</span>
-            </Button>
-          </Section>
+            <Section style={styles.hero}>
+              <Text style={styles.eyebrow}>NOVA VERSÃO · {releaseDate}</Text>
+              <Heading as="h1" style={styles.title}>
+                KuboJS <span style={styles.titleAccent}>{version}</span>
+              </Heading>
+              <Text style={styles.intro}>{intro}</Text>
+              <Button href={releaseUrl} style={styles.primaryButton}>
+                Ver release completa <span style={styles.buttonArrow}>↗</span>
+              </Button>
+            </Section>
 
-          <Hr style={styles.divider} />
+            <Hr style={styles.divider} />
 
-          <Section>
-            <Text style={styles.sectionLabel}>O QUE MUDOU</Text>
-            {changes.map((change, index) => (
-              <Section
-                key={`${change.category}-${change.title}`}
-                bgcolor={colors.surface}
-                style={styles.changeCard}
-              >
-                <Text style={styles.changeIndex}>{String(index + 1).padStart(2, "0")}</Text>
-                <Section style={styles.changeContent}>
-                  <Text style={styles.changeCategory}>{change.category}</Text>
-                  <Heading as="h2" style={styles.changeTitle}>
-                    {change.title}
-                  </Heading>
-                  <Text style={styles.changeDescription}>{change.description}</Text>
+            <Section>
+              <Text style={styles.sectionLabel}>O QUE MUDOU</Text>
+              {changes.map((change, index) => (
+                <Section
+                  key={`${change.category}-${change.title}`}
+                  bgcolor={colors.surface}
+                  style={styles.changeCard}
+                >
+                  <Text style={styles.changeIndex}>{String(index + 1).padStart(2, "0")}</Text>
+                  <Section style={styles.changeContent}>
+                    <Text style={styles.changeCategory}>{change.category}</Text>
+                    <Heading as="h2" style={styles.changeTitle}>
+                      {change.title}
+                    </Heading>
+                    <Text style={styles.changeDescription}>{change.description}</Text>
+                  </Section>
                 </Section>
-              </Section>
-            ))}
-          </Section>
+              ))}
+            </Section>
 
-          <Section bgcolor={colors.surfaceRaised} style={styles.footerCta}>
-            <Text style={styles.footerCtaLabel}>CONTINUE A CONSTRUIR</Text>
-            <Text style={styles.footerCtaText}>
-              A documentação e os pacotes publicados já estão esperando por você.
-            </Text>
-            <Text style={styles.linkRow}>
-              {docsUrl ? (
-                <Link href={docsUrl} style={styles.secondaryLink}>
-                  Documentação ↗
-                </Link>
-              ) : null}
-              {docsUrl && npmUrl ? "  " : null}
-              {npmUrl ? (
-                <Link href={npmUrl} style={styles.secondaryLink}>
-                  npm ↗
-                </Link>
-              ) : null}
-            </Text>
-          </Section>
+            <Section bgcolor={colors.surfaceRaised} style={styles.footerCta}>
+              <Text style={styles.footerCtaLabel}>CONTINUE A CONSTRUIR</Text>
+              <Text style={styles.footerCtaText}>
+                A documentação e os pacotes publicados já estão esperando por você.
+              </Text>
+              <Text style={styles.linkRow}>
+                {docsUrl ? (
+                  <Link href={docsUrl} style={styles.secondaryLink}>
+                    Documentação ↗
+                  </Link>
+                ) : null}
+                {docsUrl && npmUrl ? "  " : null}
+                {npmUrl ? (
+                  <Link href={npmUrl} style={styles.secondaryLink}>
+                    npm ↗
+                  </Link>
+                ) : null}
+              </Text>
+            </Section>
 
-          <Hr style={styles.divider} />
+            <Hr style={styles.divider} />
 
-          <Section style={styles.footer}>
-            <Text style={styles.footerBrand}>KUBOJS</Text>
-            <Text style={styles.footerText}>
-              Feito para founders e devs que querem sair do zero com menos atrito.
-            </Text>
-            <Text style={styles.footerFinePrint}>
-              Você está recebendo este email porque acompanha as novidades do KuboJS.
-            </Text>
-          </Section>
-        </Container>
+            <Section style={styles.footer}>
+              <Text style={styles.footerBrand}>KUBOJS</Text>
+              <Text style={styles.footerText}>
+                Feito para founders e devs que querem sair do zero com menos atrito.
+              </Text>
+              <Text style={styles.footerFinePrint}>
+                Você está recebendo este email porque acompanha as novidades do KuboJS.
+              </Text>
+            </Section>
+          </Container>
+        </Section>
       </Body>
     </Html>
   );
