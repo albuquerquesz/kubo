@@ -47,3 +47,65 @@ export function planSubscription(existing: { status: NewsletterStatus } | null):
   if (!existing) return "insert";
   return existing.status === "unsubscribed" ? "resubscribe" : "noop";
 }
+
+const RELEASE_VERSION = /^\d+\.\d+\.\d+$/;
+const MAX_RELEASE_NOTES = 4000;
+
+export type ReleaseNotice = {
+  version: string;
+  notes: string;
+};
+
+/** Body of the CI call that announces a published npm version. */
+export function parseReleaseNotice(raw: unknown): ReleaseNotice | null {
+  if (typeof raw !== "object" || raw === null) return null;
+  const version = "version" in raw && typeof raw.version === "string" ? raw.version.trim() : "";
+  const notes = "notes" in raw && typeof raw.notes === "string" ? raw.notes.trim() : "";
+  if (!RELEASE_VERSION.test(version)) return null;
+  return { version, notes: notes.slice(0, MAX_RELEASE_NOTES) };
+}
+
+/** Constant-time check for `Authorization: Bearer <secret>`. */
+export function bearerMatches(header: string, secret: string): boolean {
+  const token = header.startsWith("Bearer ") ? header.slice("Bearer ".length) : "";
+  const length = Math.max(token.length, secret.length);
+  let diff = token.length === secret.length ? 0 : 1;
+  for (let index = 0; index < length; index += 1) {
+    const left = token.charCodeAt(index);
+    const right = secret.charCodeAt(index);
+    diff |= (Number.isNaN(left) ? 0 : left) ^ (Number.isNaN(right) ? 0 : right);
+  }
+  return diff === 0;
+}
+
+export type ReleaseNoticeEmail = {
+  version: string;
+  releaseDate: string;
+  intro: string;
+  changes: { category: string; title: string; description: string }[];
+  releaseUrl: string;
+  docsUrl: string;
+  npmUrl: string;
+};
+
+export function releaseNoticeToEmail(input: {
+  version: string;
+  notes: string;
+  releasedOn: string;
+}): ReleaseNoticeEmail {
+  return {
+    version: input.version,
+    releaseDate: input.releasedOn,
+    intro: `O create-kubojs ${input.version} está no npm.`,
+    changes: [
+      {
+        category: "CLI",
+        title: `create-kubojs ${input.version}`,
+        description: input.notes.length > 0 ? input.notes : "Publicado no npm.",
+      },
+    ],
+    releaseUrl: `https://github.com/albuquerquesz/kubo/releases/tag/v${input.version}`,
+    docsUrl: "https://kubojs.dev/docs",
+    npmUrl: `https://www.npmjs.com/package/create-kubojs/v/${input.version}`,
+  };
+}

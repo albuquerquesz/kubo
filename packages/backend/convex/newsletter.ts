@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 
 import { normalizeNewsletterEmail, planSubscription } from "../shared/newsletter";
-import { internalMutation, mutation } from "./_generated/server";
+import { internalMutation, internalQuery, mutation } from "./_generated/server";
 
 export const subscribe = mutation({
   args: { email: v.string() },
@@ -33,6 +33,31 @@ export const subscribe = mutation({
     }
 
     return "subscribed";
+  },
+});
+
+const SUBSCRIBER_PAGE = v.object({
+  page: v.array(v.object({ email: v.string(), unsubscribeToken: v.string() })),
+  continueCursor: v.string(),
+  isDone: v.boolean(),
+});
+
+/** Active subscribers only. Internal: the unsubscribe token must not leave the backend. */
+export const pageSubscribed = internalQuery({
+  args: { cursor: v.union(v.string(), v.null()), numItems: v.number() },
+  returns: SUBSCRIBER_PAGE,
+  handler: async (ctx, args) => {
+    const result = await ctx.db.query("newsletterSubscribers").paginate({
+      cursor: args.cursor,
+      numItems: args.numItems,
+    });
+    return {
+      page: result.page
+        .filter((row) => row.status === "subscribed")
+        .map((row) => ({ email: row.email, unsubscribeToken: row.unsubscribeToken })),
+      continueCursor: result.continueCursor,
+      isDone: result.isDone,
+    };
   },
 });
 

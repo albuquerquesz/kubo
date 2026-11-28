@@ -2,7 +2,12 @@ import { httpRouter } from "convex/server";
 
 import { parseAnalyticsEventPayload } from "../shared/analytics-event";
 import { hashLayoutCode, normalizeLayoutCode } from "../shared/layout-code";
-import { renderUnsubscribePage, type UnsubscribePageState } from "../shared/newsletter";
+import {
+  bearerMatches,
+  parseReleaseNotice,
+  renderUnsubscribePage,
+  type UnsubscribePageState,
+} from "../shared/newsletter";
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
 import { authComponent, createAuth } from "./auth";
@@ -65,6 +70,31 @@ http.route({
 
     const found = await ctx.runMutation(internal.newsletter.unsubscribe, { token });
     return found ? htmlResponse("done") : htmlResponse("invalid", 404);
+  }),
+});
+
+// Called by the release workflow after npm publish. The secret stays in Convex and GitHub.
+http.route({
+  path: "/newsletter/release",
+  method: "POST",
+  handler: httpAction(async (ctx, req) => {
+    const secret = process.env.NEWSLETTER_RELEASE_SECRET;
+    if (!secret) return jsonResponse({ error: "not_configured" }, 503);
+
+    const header = req.headers.get("authorization") ?? "";
+    if (!bearerMatches(header, secret)) return jsonResponse({ error: "unauthorized" }, 401);
+
+    let raw: unknown;
+    try {
+      raw = await req.json();
+    } catch {
+      return jsonResponse({ error: "invalid" }, 400);
+    }
+    const notice = parseReleaseNotice(raw);
+    if (!notice) return jsonResponse({ error: "invalid" }, 400);
+
+    const result = await ctx.runAction(internal.emails.sendRelease, notice);
+    return jsonResponse(result);
   }),
 });
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { BlogBody } from "@/components/blog/blog-body";
 import { BlogFigure } from "@/components/blog/blog-figure";
+import { NewsletterForm } from "@/components/newsletter-form";
 import { formatBlogDate, type BlogPost } from "@/lib/blog";
 
 import Footer from "../../app/(home)/_components/footer";
@@ -30,6 +31,27 @@ export function BlogArticle({ post }: { post: BlogPost }) {
         <div className="mt-12">
           <BlogBody markdown={post.body} />
         </div>
+        <section
+          className={`${kuboSurface.panel} mt-16 p-6 sm:p-8`}
+          aria-labelledby="article-newsletter"
+        >
+          <p className="ui-kicker text-primary">Newsletter</p>
+          <h2 id="article-newsletter" className="mt-4 text-2xl font-semibold tracking-[-0.04em]">
+            {post.lang === "en" ? "Get the next note" : "Receba a próxima nota"}
+          </h2>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
+            {post.lang === "en"
+              ? "Releases and short notes, only when there is something new."
+              : "Lançamentos e notas curtas, só quando houver algo novo."}
+          </p>
+          <NewsletterForm
+            id="article-newsletter-email"
+            className="mt-6"
+            label={post.lang === "en" ? "Your email" : "Seu email"}
+            placeholder={post.lang === "en" ? "you@example.com" : "voce@exemplo.com"}
+            submitLabel={post.lang === "en" ? "Join" : "Entrar"}
+          />
+        </section>
       </article>
       <Footer />
     </main>

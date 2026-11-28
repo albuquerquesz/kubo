@@ -441,6 +441,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Email the newsletter
+        if: steps.check-version.outputs.exists == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEWSLETTER_RELEASE_URL: ${{ secrets.NEWSLETTER_RELEASE_URL }}
+          NEWSLETTER_RELEASE_SECRET: ${{ secrets.NEWSLETTER_RELEASE_SECRET }}
+        run: |
+          if [ -z "$NEWSLETTER_RELEASE_URL" ] || [ -z "$NEWSLETTER_RELEASE_SECRET" ]; then
+            echo "Newsletter release secrets are missing"
+            exit 1
+          fi
+          VERSION="${{ steps.version.outputs.version }}"
+          NOTES=$(gh release view "v$VERSION" --json body --jq '.body // ""')
+          jq -n --arg version "$VERSION" --arg notes "$NOTES" '{version:$version, notes:$notes}' > "$RUNNER_TEMP/release-notice.json"
+          curl --fail-with-body -sS -X POST "$NEWSLETTER_RELEASE_URL" \
+            -H "Authorization: Bearer $NEWSLETTER_RELEASE_SECRET" \
+            -H "Content-Type: application/json" \
+            --data-binary @"$RUNNER_TEMP/release-notice.json"
+
       - name: Release Summary
         if: steps.check-version.outputs.exists == 'false'
         run: |

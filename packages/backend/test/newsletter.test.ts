@@ -1,8 +1,11 @@
 import { describe, expect, it } from "bun:test";
 
 import {
+  bearerMatches,
   normalizeNewsletterEmail,
+  parseReleaseNotice,
   planSubscription,
+  releaseNoticeToEmail,
   renderUnsubscribePage,
 } from "../shared/newsletter";
 
@@ -24,6 +27,46 @@ describe("planSubscription", () => {
     expect(planSubscription(null)).toBe("insert");
     expect(planSubscription({ status: "unsubscribed" })).toBe("resubscribe");
     expect(planSubscription({ status: "subscribed" })).toBe("noop");
+  });
+});
+
+describe("parseReleaseNotice", () => {
+  it("accepts a semver and trims notes", () => {
+    expect(parseReleaseNotice({ version: " 1.2.3 ", notes: "  CLI novo  " })).toEqual({
+      version: "1.2.3",
+      notes: "CLI novo",
+    });
+  });
+
+  it("rejects a missing version, a tag prefix and a non-object", () => {
+    expect(parseReleaseNotice({ notes: "oi" })).toBeNull();
+    expect(parseReleaseNotice({ version: "v1.2.3", notes: "" })).toBeNull();
+    expect(parseReleaseNotice(null)).toBeNull();
+  });
+});
+
+describe("bearerMatches", () => {
+  it("matches only the exact bearer token", () => {
+    expect(bearerMatches("Bearer secreto", "secreto")).toBe(true);
+    expect(bearerMatches("Bearer secreto", "segredo")).toBe(false);
+    expect(bearerMatches("secreto", "secreto")).toBe(false);
+    expect(bearerMatches("Bearer ", "secreto")).toBe(false);
+  });
+});
+
+describe("releaseNoticeToEmail", () => {
+  it("builds one CLI change and a fallback when notes are empty", () => {
+    const email = releaseNoticeToEmail({ version: "1.2.3", notes: "", releasedOn: "27 nov 2026" });
+    expect(email.intro).toBe("O create-kubojs 1.2.3 está no npm.");
+    expect(email.changes).toEqual([
+      {
+        category: "CLI",
+        title: "create-kubojs 1.2.3",
+        description: "Publicado no npm.",
+      },
+    ]);
+    expect(email.releaseUrl).toBe("https://github.com/albuquerquesz/kubo/releases/tag/v1.2.3");
+    expect(email.npmUrl).toBe("https://www.npmjs.com/package/create-kubojs/v/1.2.3");
   });
 });
 

@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { NewsletterForm } from "@/components/newsletter-form";
+
 import Footer from "../../_components/footer";
 
 export const metadata: Metadata = {
-  title: "A newsletter do Kubo está chegando - kubojs",
+  title: "A newsletter do Kubo - kubojs",
   description:
-    "Um espaço para acompanhar lançamentos, decisões de produto e guias curtos sobre projetos TypeScript.",
+    "Notas curtas sobre lançamentos do create-kubojs, decisões de produto e guias de projetos TypeScript.",
   openGraph: {
-    title: "A newsletter do Kubo está chegando",
+    title: "A newsletter do Kubo",
     description:
       "Lançamentos, decisões de produto e guias curtos para montar projetos TypeScript com mais clareza.",
     url: "https://kubojs.dev/updates/newsletter",
@@ -25,7 +27,7 @@ export default function NewsletterAnnouncementPage() {
             <div>
               <p className="ui-kicker text-primary">Atualização · 14 ago 2026</p>
               <h1 className="ui-display mt-8 max-w-4xl text-balance text-5xl sm:text-7xl">
-                A newsletter do Kubo está chegando.
+                A newsletter do Kubo.
               </h1>
               <p className="mt-8 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
                 Um canal direto para acompanhar o que muda no Kubo, sem transformar cada lançamento
@@ -98,16 +100,10 @@ export default function NewsletterAnnouncementPage() {
                 Entre na lista
               </h2>
               <p className="mt-4">
-                O campo de email no rodapé fica sempre à mão. Quando a primeira edição estiver
-                pronta, ela chega com uma única pergunta: o que vale a pena construir agora?
+                O campo abaixo entra na mesma lista do rodapé. Cada release do create-kubojs chega
+                por email, com um link para sair.
               </p>
-              <Link
-                href="/#newsletter-title"
-                className="mt-6 inline-flex min-h-12 items-center gap-2 bg-primary px-5 font-semibold text-primary-foreground transition-colors duration-150 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-              >
-                Quero receber novidades
-                <span aria-hidden="true">↗</span>
-              </Link>
+              <NewsletterForm id="updates-newsletter-email" className="mt-6" />
             </section>
           </div>
 

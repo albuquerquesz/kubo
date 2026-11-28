@@ -3,7 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 import { CookiePreferencesButton } from "@/components/consent/cookie-consent-card";
-import { Button } from "@/components/ui/button";
+import { NewsletterForm } from "@/components/newsletter-form";
 import { cn } from "@/lib/utils";
 
 import FinalCtaDotMatrix from "./final-cta-dot-matrix";
@@ -48,28 +48,7 @@ export default function Footer() {
           <p id="newsletter-title" className="ui-kicker text-primary">
             Newsletter
           </p>
-          <form
-            className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center"
-            action="/api/newsletter"
-            method="post"
-          >
-            <label className="sr-only" htmlFor="footer-newsletter-email">
-              Seu email
-            </label>
-            <input
-              id="footer-newsletter-email"
-              name="email"
-              type="email"
-              required
-              autoComplete="email"
-              placeholder="voce@exemplo.com"
-              className="min-h-12 min-w-0 flex-1 rounded-full border border-rule bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40 sm:max-w-[280px]"
-            />
-            <Button type="submit" variant="cta" size="lg" className="shrink-0">
-              Entrar
-              <ArrowUpRight className="size-4" />
-            </Button>
-          </form>
+          <NewsletterForm id="footer-newsletter-email" className="mt-8" />
         </div>
 
         {footerGroups.map((group, index) => (
